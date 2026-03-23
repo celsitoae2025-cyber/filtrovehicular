@@ -1,0 +1,13 @@
+/* Complementos de UI usados por auth.js (no usar @media dentro de atributos style) */
+.auth-user-greeting {
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .auth-user-greeting {
+        display: block;
+    }
+}

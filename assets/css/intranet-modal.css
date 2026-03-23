@@ -1,0 +1,111 @@
+/* Modal Intranet (panel_cliente y páginas sin bloque de estilos .auth-modal de index) */
+#intranetModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 100000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    padding: 20px;
+}
+
+#intranetModal .auth-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 24px;
+    padding: 36px 32px 40px;
+    color: #1e293b;
+    position: relative;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    max-height: 92vh;
+    overflow-y: auto;
+}
+
+#intranetModal .auth-title {
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 6px;
+    color: #0d2536;
+}
+
+#intranetModal .auth-subtitle {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 22px;
+    line-height: 1.4;
+}
+
+#intranetModal .auth-input-group {
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+#intranetModal .auth-input-group label {
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    color: #64748b;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+#intranetModal .auth-input {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    font-size: 15px;
+    transition: 0.3s;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#intranetModal .auth-input:focus {
+    border-color: #0d2536;
+}
+
+#intranetModal .btn-auth-action {
+    width: 100%;
+    padding: 14px;
+    background: #0d2536;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 8px;
+}
+
+#intranetModal .btn-auth-action:hover {
+    background: #15324d;
+    transform: translateY(-1px);
+}
+
+#intranetModal .auth-close {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    font-size: 22px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#intranetModal .auth-close:hover {
+    color: #dc2626;
+}
+
+#intranetModal #intranetError {
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 12px;
+    display: none;
+}

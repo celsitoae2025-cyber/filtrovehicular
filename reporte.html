@@ -1,0 +1,3679 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Reporte Vehicular</title>
+    <!-- ROBOTO PARA APP NATIVA ESTÁNDAR ANDROID/IOS -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- FONT AWESOME MÓVIL (Clásico y súper legible) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- LIBRERÍAS DE EXPORTACIÓN PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+    <style>
+        :root {
+            /* COLOR SOLICITADO EXACTO */
+            --petrol: #0d2536;
+            --petrol-light: #12334a;
+
+            --bg-main: #f8fafc;
+            --white: #ffffff;
+            --text-dark: #0d2536;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+
+            /* Colores Sistema */
+            --st-ok: #8bc34a;
+            /* Mismo ámbar que el panel Admin (--st-wa) */
+            --st-wa: #f59e0b;
+            --st-wa-rgb: 245, 158, 11;
+            --st-ko: #dc2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            height: 100%;
+            background-color: var(--bg-main);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--bg-main);
+            margin: 0;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100%;
+            min-height: 100dvh;
+        }
+
+        /* Solo cabecera + contenido/pie: columna a altura de viewport (modales fuera) */
+        .layout-root {
+            min-height: 100%;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        /*
+         * Shell principal: ocupa todo el alto bajo el header (flex:1).
+         * El área clara crece entre contenido y pie; el pie queda pegado al borde inferior de la pantalla.
+         */
+        .page-body {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+            max-width: 100%;
+            min-height: 0;
+            background: var(--bg-main);
+        }
+
+        /* CONTENEDOR PRINCIPAL - crece para rellenar hueco (mismo fondo que la página, no “blanco suelto”) */
+        .app-container {
+            flex: 1 1 auto;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 20px 16px;
+            position: relative;
+            z-index: 5;
+            min-height: 0;
+        }
+
+        @media (max-width: 600px) {
+            .app-container {
+                padding: 15px 15px 12px;
+            }
+        }
+
+        /* HEADER TIPO APP NAVBAR */
+        /* TOPBAR / NAVEGACIÓN */
+        .app-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .btn-back {
+            width: 44px;
+            height: 44px;
+            background: #ffffff;
+            color: var(--text-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.1);
+        }
+
+
+
+        .btn-new-search {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: #ffffff;
+            color: var(--text-dark);
+            text-decoration: none;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-new-search:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* SECCIÓN PLACA / HERO */
+        .plate-header {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 14px;
+            margin-bottom: 24px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-icon {
+            font-size: 50px;
+            color: var(--text-dark);
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .ph-title-main {
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--text-dark);
+            opacity: 0.6;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .ph-number {
+            font-size: 48px;
+            font-weight: 900;
+            color: #4b5563; /* Letras gris oscuro grafito */
+            letter-spacing: 4px;
+            background: 
+                /* 1. Bandera Perú a la Izquierda */
+                linear-gradient(to right, #dc2626 0px, #dc2626 10px, #ffffff 10px, #ffffff 20px, #dc2626 20px, #dc2626 30px, transparent 30px) no-repeat 15px 12px / 30px 18px,
+                /* 2. Cuadro Holobox a la Derecha */
+                linear-gradient(#ffffff, #ffffff) no-repeat calc(100% - 15px) 12px / 38px 16px,
+                /* 3. Fondo General Plateado */
+                #f1f5f9;
+            padding: 38px 45px 12px; /* espacio arriba para el header */
+            border-radius: 8px;
+            display: inline-block;
+            border: 3px solid #4b5563; /* Marco gris oscuro */
+            box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.8), 0 5px 15px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Texto "PERU" en el centro */
+        .ph-number::before {
+            content: "PERU";
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 800;
+            color: #000000;
+            letter-spacing: 5px;
+            z-index: 5;
+        }
+
+        /* Holobox Texto a la derecha */
+        .ph-number::after {
+            content: attr(data-plate);
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            width: 38px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6px;
+            font-weight: 900;
+            color: #000000;
+            border: 1px solid #94a3b8;
+            border-radius: 1px;
+            background: transparent; /* Se monta sobre el linear-gradient blanco */
+            letter-spacing: 0px;
+            z-index: 6;
+        }
+
+        @media (max-width: 600px) {
+            .ph-number {
+                font-size: 32px;
+                padding: 30px 30px 6px; /* Altura de cabecera en móvil */
+                letter-spacing: 3px;
+                background: 
+                    linear-gradient(to right, #dc2626 0px, #dc2626 8px, #ffffff 8px, #ffffff 16px, #dc2626 16px, #dc2626 24px, transparent 24px) no-repeat 12px 10px / 24px 14px,
+                    linear-gradient(#ffffff, #ffffff) no-repeat calc(100% - 12px) 10px / 32px 14px,
+                    #f1f5f9;
+            }
+
+            .ph-number::before {
+                top: 10px;
+                font-size: 12px;
+                letter-spacing: 3px;
+            }
+
+            .ph-number::after {
+                top: 10px;
+                right: 12px;
+                width: 32px;
+                height: 14px;
+                font-size: 5px;
+            }
+
+            .hero-icon {
+                font-size: 40px;
+            }
+        }
+
+        /* GRID DE ACORDEONES - SIMILAR A INDEX.HTML */
+        .app-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 8px;
+        }
+
+        .list-title {
+            column-span: all;
+            font-size: 11px;
+            font-weight: 900;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            margin: 10px 0 20px 0;
+            opacity: 0.8;
+            width: 100%;
+        }
+
+        /* ========= ACORDEONES MÓVILES (Estilo iOS Settings / Android Cards) ========= */
+        .acc-card {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid #0d2536;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 12px; /* Reducido de 20px */
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .acc-card:hover .ah-icon {
+            transform: scale(1.1) rotate(10deg);
+            background-color: #f1f5f9; /* mantener fondo original */
+        }
+
+        .acc-header {
+            padding: 10px 16px; /* Reducido de 12px 16px */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        /* Parte Izquierda del Header */
+        .ah-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .ah-icon {
+            width: 36px;  /* Reducido de 40px para igualar index */
+            height: 36px; /* Reducido de 40px para igualar index */
+            border-radius: 10px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            background-color: #f1f5f9;
+            color: var(--petrol);
+            transition: all 0.3s;
+        }
+
+        /* Colores dinámicos retirados para conservar azul institucional fijo */
+
+        .ah-title {
+            font-size: 13.5px; /* Ligeramente ajustado */
+            font-weight: 600;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.1px;
+        }
+
+        /* Parte Derecha del Header (Chevron + Badge Oculto o Visible) */
+        .ah-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .sd-ok {
+            background-color: var(--st-ok);
+        }
+
+        .sd-wa {
+            background-color: var(--st-wa);
+        }
+
+        .sd-ko {
+            background-color: var(--st-ko);
+        }
+
+        .ah-chevron {
+            font-size: 14px;
+            color: #94a3b8;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.5;
+        }
+
+        /* ESTILO PREMIUM DE DETALLE (REFERENCIA USUARIO - COMPACTO AL MÁXIMO) */
+        .detail-card {
+            border: 1px solid #0d2536;
+            border-radius: 10px;
+            margin-top: 5px;
+            border-left: 4px solid var(--st-ok);
+            overflow: hidden;
+        }
+
+        .detail-card.st-wa {
+            border-left-color: var(--st-wa);
+        }
+
+        .detail-card.st-ko {
+            border-left-color: var(--st-ko);
+        }
+
+        .dc-header {
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .dc-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .dc-status {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--st-ok);
+        }
+
+        .dc-status.st-wa {
+            color: var(--st-wa);
+        }
+
+        .dc-status.st-ko {
+            color: var(--st-ko);
+        }
+
+        .dc-body {
+            padding: 10px 12px;
+        }
+
+        .dc-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .dc-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .dc-label {
+            color: #0f172a;
+            font-weight: 400;
+        }
+
+        .dc-value {
+            color: var(--text-dark);
+            font-weight: 600;
+            text-align: right;
+            margin-left: 10px;
+        }
+
+        .dc-footer {
+            padding: 6px;
+            text-align: center;
+            border-top: 1px solid #f8fafc;
+            font-size: 11px;
+            color: var(--petrol);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .dc-footer:hover {
+            background: #f8fafc;
+        }
+
+        /* ACCIONES DE PREVISUALIZACIÓN MINIMALISTAS */
+        .preview-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: flex-end;
+        }
+
+        .mini-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            color: #ef4444;
+            text-decoration: none;
+            font-size: 15px;
+            border: 1px solid #e2e8f0;
+            transition: none;
+            cursor: pointer;
+        }
+
+        .mini-btn:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .mini-btn.primary {
+            background: #f1f5f9;
+            color: #ef4444;
+        }
+
+        /* MODAL DE PREVISUALIZACIÓN FLOTANTE (ELITE) */
+        #previewModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 37, 54, 0.98);
+            z-index: 30000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Para permitir scroll hacia abajo */
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            overflow-y: auto; /* Habilita el scroll completo */
+        }
+
+        .modal-force-close {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 30001;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .modal-force-close:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        .modal-content-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .modal-content-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content-wrapper embed,
+        .modal-content-wrapper object {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            background: white;
+        }
+
+        /* RESUMEN EJECUTIVO PROFESIONAL */
+        /* RESUMEN EJECUTIVO PREMIUN (CERTIFICADO) */
+        .verdict-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border-left: 6px solid #16a34a;
+            transition: transform 0.3s ease;
+        }
+
+        .verdict-card::after {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(22, 163, 74, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .verdict-card.warning { border-left-color: var(--st-wa); }
+        .verdict-card.danger { border-left-color: #dc2626; }
+        
+        .verdict-card.warning::after { background: radial-gradient(circle, rgba(var(--st-wa-rgb), 0.08) 0%, transparent 70%); }
+        .verdict-card.danger::after { background: radial-gradient(circle, rgba(220, 38, 38, 0.05) 0%, transparent 70%); }
+
+        .verdict-icon-box {
+            width: 40px;
+            height: 40px;
+            background: #16a34a;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            box-shadow: none;
+            border: 2px solid #ffffff;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 2;
+        }
+
+        .verdict-icon-box.warning { background: var(--st-wa); box-shadow: none; }
+        .verdict-icon-box.danger { background: #dc2626; box-shadow: none; }
+
+        .verdict-info {
+            flex-grow: 1;
+            position: relative;
+            z-index: 2;
+            padding-right: 45px;
+        }
+
+        .verdict-label {
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .verdict-label::after {
+            content: '';
+            height: 1px;
+            background: #f1f5f9;
+            flex: 1;
+        }
+
+        .verdict-title {
+            font-size: 20px;
+            font-weight: 950;
+            color: #0d2536;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .verdict-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #475569;
+            max-width: 700px;
+            font-weight: 500;
+            text-align: justify;
+        }
+
+        /* Texto alineado al estado advertencia (mismo tono institucional que Admin) */
+        .verdict-card.warning .verdict-text {
+            color: #b45309;
+        }
+
+        .verdict-card.warning .verdict-text strong {
+            color: var(--st-wa);
+            font-weight: 700;
+        }
+
+        /* SECCIÓN DE SUB-ITEMS (ESTILO COMPETENCIA MEJORADO) */
+        .sub-item-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .sub-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+
+        .sub-item-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--petrol);
+        }
+
+        .sub-item-tag {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 50px;
+            text-transform: uppercase;
+        }
+
+        .tag-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .tag-warning {
+            background: #fef3c7;
+            color: var(--st-wa);
+        }
+
+        .tag-success {
+            background: rgba(139, 195, 74, 0.12);
+            color: #8bc34a;
+        }
+
+        .sub-item-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .sub-item-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .cell-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .cell-value {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--petrol);
+        }
+
+        /* SELLO DE SEGURIDAD */
+        .security-seal {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 30px;
+            padding-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            opacity: 0.5;
+            grid-column: 1 / -1;
+        }
+
+        .seal-icon {
+            font-size: 24px;
+        }
+
+        .seal-text {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Contenido Desplegable App */
+        .acc-body {
+            display: none;
+            padding: 0 16px 20px;
+            font-size: 13px;
+            color: #0f172a;
+            font-weight: 400;
+            line-height: 1.4;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .acc-body img, 
+        .acc-body canvas,
+        .acc-body iframe {
+            display: block;
+            margin: 15px auto 0;
+            max-width: 100% !important;
+            height: auto !important;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid #f1f5f9;
+        }
+
+        /* Activar Acordeón */
+        .acc-card.open {
+            border-color: rgba(15, 58, 75, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .acc-card.open .ah-chevron {
+            transform: rotate(180deg);
+        }
+
+        .acc-card.open .acc-body {
+            display: block;
+            padding-top: 5px;
+            border-top-color: transparent;
+        }
+
+        /* Acentuar el título del acordeón abierto con el Azul Petróleo */
+        .acc-card.open .ah-title {
+            color: var(--petrol);
+        }
+
+        /* HEADER — espacio superior real (notch / barra estado) + centrado vertical */
+        .site-header {
+            width: 100%;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            padding-top: calc(18px + env(safe-area-inset-top, 0px));
+            padding-bottom: 18px;
+            padding-left: 0;
+            padding-right: 0;
+            background: #0d2536;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            min-height: calc(52px + env(safe-area-inset-top, 0px));
+            display: flex;
+            align-items: center;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            padding-left: max(20px, env(safe-area-inset-left, 0px));
+            padding-right: max(20px, env(safe-area-inset-right, 0px));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 44px;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-img-h {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .logo-text-group {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .logo-main {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--white);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-plus {
+            font-size: 10px;
+            font-weight: 900;
+            color: #ffffff;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* SELLO DE CABECERA PREMIUM */
+        .header-seal {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(22, 163, 74, 0.1);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(22, 163, 74, 0.2);
+            font-size: 11px;
+            color: #ffffff;
+        }
+
+        .header-seal i {
+            color: #16a34a;
+            font-size: 14px;
+        }
+
+        .seal-label {
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 4px;
+        }
+
+        .seal-time {
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .header-seal {
+                display: none;
+                /* Ocultar en móvil muy pequeño para no romper cabecera o usar versión corta */
+            }
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-trigger {
+            color: var(--white);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            transition: all 0.3s;
+        }
+
+        .dropdown-trigger:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            min-width: 180px;
+            border-radius: 12px;
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2000;
+            margin-top: 10px;
+        }
+
+        .dropdown.open .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            color: #1e293b;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item i {
+            font-size: 14px;
+            color: var(--bg-main);
+        }
+
+        .dropdown-item:hover {
+            background: #f1f5f9;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #f1f5f9;
+            margin: 4px 0;
+        }
+
+        .nav-link {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+        }
+
+        /* FOOTER — último bloque del shell; al pie de la ventana cuando hay poco contenido */
+        .site-footer {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            margin-top: auto;
+            padding: 28px max(20px, env(safe-area-inset-left, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-right, 0px));
+            background: #0d2536;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        .footer-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+            width: 100%;
+        }
+
+        .footer-disclaimer {
+            font-size: 12px;
+            color: #cbd5e1;
+            line-height: 1.65;
+            margin-bottom: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* BOTÓN DE DESCARGA GLOBAL (MÁS DISCRETO) */
+        .full-report-download {
+            margin: 24px auto 0;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            column-span: all;
+            /* Para que en mosaico se mantenga abajo solo */
+        }
+
+        .btn-download-pdf {
+            background: #ef4444;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.2);
+            transition: all 0.3s;
+            margin-bottom: 0;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .btn-download-pdf:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.3);
+            background: #dc2626;
+        }
+
+        .footer-copy {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .footer-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .footer-link {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.45);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #ffffff;
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom {
+                flex-direction: column;
+                justify-content: center;
+            }
+        }
+
+        /* MODALES INFORMATIVOS (FOOTER) */
+        .info-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 11000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .info-modal-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            padding: 30px;
+            color: #1e293b;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .info-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 20px;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .info-title {
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: var(--bg-main);
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        .info-text h4 {
+            margin: 15px 0 5px;
+            color: var(--bg-main);
+        }
+
+        /* SOAT SPECIAL CARD */
+        .soat-special-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: left;
+        }
+
+        .soat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .soat-company {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .soat-status-pill {
+            font-size: 10px;
+            font-weight: 900;
+            color: #16a34a;
+            background: #f0fdf4;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .soat-info-body {
+            padding: 15px;
+        }
+
+        .soat-data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .soat-data-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .soat-data-value {
+            color: #334155;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .soat-actions {
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .soat-history-btn {
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .soat-history-btn:hover {
+            background: #f8fafc;
+        }
+
+        .soat-history-table {
+            display: none;
+            padding: 10px;
+            background: #f8fafc;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .history-grid-mini {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+
+        .history-grid-mini th {
+            text-align: left;
+            color: #94a3b8;
+            padding: 5px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .history-grid-mini td {
+            padding: 8px 5px;
+            color: #475569;
+        }
+
+        /* REGLAS DIGITALES ESTÁNDAR (AUDITORÍA DE ÉLITE) */
+        .digital-action-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f1f5f9;
+            border-top: 1px solid #e2e8f0;
+            padding: 0 10px;
+        }
+
+        .digital-toggle-btn {
+            flex: 1;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #ef4444;
+            cursor: pointer;
+            transition: none;
+            text-transform: uppercase;
+        }
+
+        .digital-toggle-btn:hover {
+            opacity: 0.8;
+        }
+
+        .digital-toggle-btn i {
+            font-size: 15px;
+        }
+
+        .digital-btn-row {
+            display: flex;
+            gap: 12px;
+            padding: 8px;
+        }
+
+        .btn-digital-action {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: transparent;
+            color: #ef4444;
+            text-decoration: none;
+            font-size: 15px;
+            transition: none;
+            cursor: pointer;
+        }
+
+        .btn-digital-action:hover {
+            opacity: 0.8;
+        }
+
+        /* Contenedores de despliegue */
+        .digital-display-area {
+            display: none;
+            padding: 15px;
+            background: #1a2b3c;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .digital-display-area canvas,
+        .digital-display-area img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* MTC SPECIAL CARD (ITV) */
+        .mtc-special-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: left;
+        }
+
+        .mtc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8fafc;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .mtc-company {
+            font-size: 13px;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1.2;
+        }
+
+        .mtc-result-pill {
+            font-size: 10px;
+            font-weight: 900;
+            color: #16a34a;
+            background: #f0fdf4;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .mtc-data-body {
+            padding: 15px;
+        }
+
+        .mtc-data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .mtc-data-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .mtc-data-value {
+            color: #334155;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .mtc-obs-box {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .mtc-obs-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 800;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .mtc-obs-value {
+            font-size: 11px;
+            color: #475569;
+            line-height: 1.4;
+        }
+
+        .mtc-duplicate-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            background: #ffffff;
+            color: #16a34a;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 800;
+            border-top: 1px solid #f1f5f9;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+        }
+
+        .mtc-duplicate-link:hover {
+            background: #f0fdf4;
+            color: #15803d;
+        }
+
+        .mtc-duplicate-link i {
+            font-size: 16px;
+        }
+
+        /* --- ESTADO BLOQUEADO (Locker) --- */
+        #reportMainContent.is-locked .app-content {
+            filter: blur(3px);
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.7;
+        }
+
+        #reportMainContent.is-locked {
+            pointer-events: none;
+        }
+
+        .unlock-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 37, 54, 0.25);
+            backdrop-filter: blur(1px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            color: white;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .unlock-box {
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            color: #0d2536;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: modalFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(40px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .unlock-icon {
+            width: 70px;
+            height: 70px;
+            background: #f0fdf4;
+            color: #16a34a;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 25px;
+            border: 1px solid #dcfce7;
+            box-shadow: 0 10px 25px rgba(22, 163, 74, 0.1);
+            animation: pulseIcon 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .unlock-title {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+            color: #0d2536;
+            line-height: 1.1;
+        }
+
+        .unlock-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #64748b;
+            margin-bottom: 25px;
+            max-width: 320px;
+        }
+
+        .progress-indicator {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 50px;
+            padding: 12px 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+            font-weight: 800;
+            color: #1e3a4f;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .progress-indicator i {
+            color: #16a34a;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: #f1f5f9;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0d2536, #1e3a4f);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .progress-label {
+            font-size: 11px;
+            font-weight: 900;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spin-icon { animation: spin 1.5s linear infinite; color: #16a34a; }
+
+        .wa-float-container {
+            position: fixed;
+            bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+            right: max(18px, env(safe-area-inset-right, 0px));
+            z-index: 100001;
+            width: auto;
+            height: auto;
+            pointer-events: auto;
+        }
+
+        .wa-float {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            background: #25d366;
+            color: white;
+            width: 55px !important;
+            height: 55px !important;
+            border-radius: 50% !important;
+            text-decoration: none;
+            transition: transform 0.3s;
+            box-shadow: none !important;
+        }
+
+        .wa-float:hover {
+            transform: scale(1.1);
+        }
+
+        .wa-icon-box {
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+        }
+
+        .wa-text-box {
+            display: flex;
+            flex-direction: column;
+            margin-left: 15px;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.4s ease;
+        }
+
+        .wa-label {
+            font-size: 16px;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .wa-sub {
+            font-size: 11px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+
+
+        /* Mobile State (Keep small circle on mobile) */
+        @media (max-width: 1024px) {
+            .wa-float {
+                width: 50px !important;
+                height: 50px !important;
+                padding: 0 !important;
+                justify-content: center !important;
+                border-radius: 50% !important;
+            }
+
+            .wa-text-box {
+                display: none !important;
+            }
+
+            .wa-icon-box {
+                font-size: 24px !important;
+                margin-right: 0 !important;
+            }
+        }
+
+        /* MOBILE ADAPTATIONS */
+        @media (max-width: 600px) {
+            .site-header {
+                padding-top: calc(22px + env(safe-area-inset-top, 0px));
+                padding-bottom: 20px;
+                min-height: calc(56px + env(safe-area-inset-top, 0px));
+            }
+
+            .header-content {
+                min-height: 48px;
+            }
+
+            .app-container {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+
+            .plate-header {
+                padding: 20px;
+            }
+
+            /* .ph-number redundante removido para evitar conflictos */
+
+            .ah-title {
+                font-size: 13px;
+            }
+        }
+
+        /* REMOVE SHADOWS GLOBALLY */
+        .acc-card,
+        .detail-card,
+        .info-modal-card,
+        .plate-header {
+            box-shadow: none !important;
+        }
+
+        /* ESTADOS DE LIMPIEZA / VERIFICACION */
+        .verification-details-box {
+            background: #f8fafc;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 12px;
+        }
+
+        .vdb-content {
+            font-size: 13px;
+            color: #1a2b3c;
+            line-height: 1.1;
+            /* PEGADO TOTAL */
+            font-weight: 400;
+            /* NORMAL PARA QUE <b> RESALTE */
+        }
+
+        .vdb-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .verification-wa-box {
+            background: #fffbeb;
+            border: 1px dashed #fde68a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .verification-ko-box {
+            background: #fef2f2;
+            border: 1px dashed #fecaca;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .vcb-icon {
+            font-size: 24px;
+            color: #22c55e;
+        }
+
+        .vwa-icon {
+            font-size: 24px;
+            color: var(--st-wa);
+        }
+
+        .vko-icon {
+            font-size: 24px;
+            color: #dc2626;
+        }
+
+        .vcb-status {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            color: #166534;
+            margin-bottom: 2px;
+        }
+
+        .vwa-status {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            color: #92400e;
+            margin-bottom: 2px;
+        }
+
+        .vko-status {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            color: #991b1b;
+            margin-bottom: 2px;
+        }
+
+        .vcb-text p {
+            font-size: 12px;
+            color: #15803d;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+
+        .skeleton-pulse {
+            opacity: 0.7 !important;
+        }
+
+        /* ELIMINAR TODAS LAS SOMBRAS Y BRILLOS */
+        .acc-card,
+        .detail-card,
+        .plate-header,
+        .sync-pill,
+        .btn-download-pdf,
+        .wa-float,
+        .media-thumb {
+            box-shadow: none !important;
+        }
+
+        .btn-download-pdf.loading {
+            opacity: 0.4;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: rgba(255, 255, 255, 0.4) !important;
+            pointer-events: none;
+        }
+
+        /* --- MEDIA PREVIEW IN REPORT --- */
+        .media-preview-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .media-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #5e92ff;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .media-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(94, 146, 255, 0.4);
+        }
+
+        .media-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-thumb.pdf {
+            background: #1e293b;
+            flex-direction: column;
+            color: #ef4444;
+        }
+
+        .media-thumb.pdf i {
+            font-size: 24px;
+        }
+
+        .media-thumb.pdf span {
+            font-size: 9px;
+            font-weight: 800;
+            color: white;
+            margin-top: 5px;
+        }
+
+        /* VIEWER MODAL (PREVIEW DE ÉLITE) */
+        #previewModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.96);
+            backdrop-filter: blur(20px);
+            z-index: 30000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            animation: viewerIn 0.4s ease-out;
+        }
+
+        @keyframes viewerIn {
+            from { background: rgba(0, 0, 0, 0); backdrop-filter: blur(0px); opacity: 0; }
+            to { background: rgba(0, 0, 0, 0.96); backdrop-filter: blur(20px); opacity: 1; }
+        }
+
+        .modal-force-close {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 31000;
+            transition: 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-force-close:hover {
+            background: #ef4444;
+            transform: rotate(90deg) scale(1.1);
+            border-color: #ef4444;
+        }
+
+        .viewer-scroll-container {
+            width: 90%;
+            max-width: 800px; /* Tamaño más elegante y proporcional */
+            max-height: 85vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .viewer-scroll-container img {
+            max-width: 100%;
+            max-height: 70vh; /* Evita que la imagen sea demasiado alta */
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .viewer-scroll-container {
+                width: 95%;
+                padding: 10px;
+                max-height: 80vh;
+            }
+            .modal-force-close {
+                top: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        .viewer-scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .viewer-scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .pdf-page-preview {
+            max-width: 100%;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .pdf-page-preview:hover {
+            transform: translateY(-5px);
+        }
+
+        @media print {
+            body {
+                background: #fff !important;
+                color: #000 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .site-header,
+            .btn-new-search,
+            .wa-float-container,
+            .site-footer,
+            .full-report-download,
+            .preview-actions,
+            .digital-action-bar,
+            .mtc-duplicate-link,
+            .btn-check-status,
+            .unlock-box,
+            .ph-number,
+            #unlockOverlay {
+                display: none !important;
+            }
+
+            .app-container {
+                max-width: 100% !important;
+                padding: 0 !important;
+                filter: none !important;
+            }
+
+            .plate-header {
+                background: #0d2536 !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                padding: 30px !important;
+                text-align: center !important;
+            }
+
+            .acc-card {
+                border: 1px solid #ddd !important;
+                margin-bottom: 20px !important;
+                page-break-inside: avoid;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .acc-header {
+                background: #f8fafc !important;
+                color: #000 !important;
+                border-bottom: 1px solid #ddd !important;
+            }
+
+            .acc-body {
+                display: block !important;
+                height: auto !important;
+                opacity: 1 !important;
+                padding: 20px !important;
+            }
+
+            .digital-display-area {
+                display: block !important;
+            }
+
+            img,
+            canvas {
+                max-width: 100% !important;
+                height: auto !important;
+                page-break-inside: avoid;
+            }
+
+            .ah-chevron {
+                display: none !important;
+            }
+        }
+    </style>
+    <link rel="icon" type="image/png" href="assets/media/logonegro.png">
+</head>
+
+<body>
+
+    <div class="layout-root">
+    <!-- ELIMINADO BLOQUE REPETIDO -->
+
+    <header class="site-header">
+        <div class="header-content">
+            <a href="index.html" class="header-logo">
+                <img src="assets/media/logo_circular.png" class="logo-img-h" alt="Logo">
+                <div class="logo-text-group">
+                    <span class="logo-main">Filtro Vehicular</span>
+                    <span class="logo-plus">Plus</span>
+                </div>
+            </a>
+            <nav class="header-nav">
+                <div class="header-seal">
+                    <i class="fa-solid fa-shield-check"></i>
+                    <div>
+                        <span class="seal-label">Verificación Verificada</span>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-body">
+        <div class="app-container" id="reportMainContent">
+            <div class="plate-header">
+                <a href="index.html" class="btn-new-search">
+                    <i class="fa-solid fa-arrow-left"></i> Nueva Consulta
+                </a>
+                <div class="ph-title-main">VERIFICACIÓN VEHICULAR CERTIFICADA</div>
+                <div class="ph-number" id="plateVal">---</div>
+            </div>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <div class="app-content">
+                <div id="verdictBox"></div>
+                <div class="list-title" id="sectionListTitle">Historial y Verificaciones Completadas</div>
+                <div id="accCont" style="display: contents;"></div>
+
+                <!-- BOTÓN DE DESCARGA INTEGRADO AL FINAL DE LOS CUADROS -->
+                <div class="full-report-download"
+                    style="display: flex; flex-direction: column; align-items: center; margin-top: 24px; margin-bottom: 0; padding: 0 20px;">
+                    <button class="btn-download-pdf" onclick="downloadFullPDF()">
+                        <i class="fa-solid fa-file-pdf" style="font-size: 18px;"></i> DESCARGAR PDF CERTIFICADO
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-disclaimer">
+                    Información obtenida de fuentes oficiales (SUNARP, SAT, MTC, SBS). Filtro Vehicular Perú no se
+                    responsabiliza por la exactitud de los registros externos.
+                </div>
+                <div class="footer-bottom">
+                    <div class="footer-links">
+                        <a href="javascript:void(0)" onclick="openInfo('terms')" class="footer-link">Términos</a>
+                        <a href="javascript:void(0)" onclick="openInfo('privacy')" class="footer-link">Privacidad</a>
+                        <a href="javascript:void(0)" onclick="openInfo('contact')" class="footer-link">Contacto</a>
+                    </div>
+                    <div class="footer-copy" style="margin-top: 15px; font-size: 10px; opacity: 0.65;">
+                        &copy; 2026 Filtro Vehicular Perú. Todos los derechos reservados.
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    </div><!-- /.layout-root -->
+
+    <!-- CAPA DE BLOQUEO (fuera del flex del body para no romper el pie a pantalla completa) -->
+    <div id="unlockOverlay" class="unlock-overlay" style="display: none;">
+        <div class="unlock-box">
+            <div class="unlock-icon">
+                <i class="fa-solid fa-file-shield"></i>
+            </div>
+            <h3 class="unlock-title">Generando Expediente</h3>
+            <p class="unlock-text">
+                Validando su pago y procesando los registros oficiales en tiempo real. Estimado: 10-15 min. El acceso se habilitará automáticamente.
+            </p>
+            
+            <div class="progress-bar-container">
+                <div id="pbFill" class="progress-bar-fill" style="width: 0%;"></div>
+            </div>
+            
+            <div class="progress-label" id="realTimeProg">Progreso: 0%</div>
+
+            <div class="progress-indicator" style="margin-top: 25px; margin-bottom: 10px;">
+                <span id="realTimeStatus">Validando Pago y SUNARP...</span>
+            </div>
+            <div id="payStatus" style="color: #16a34a; font-weight: 800; font-size: 14px; display: none;">Pago Validado</div>
+        </div>
+    </div>
+
+    <!-- MODAL DE INFORMACION -->
+    <div id="infoModal" class="info-modal" onclick="if(event.target === this) closeInfo()">
+        <div class="info-modal-card">
+            <i class="fa-solid fa-xmark info-close" onclick="closeInfo()"></i>
+            <div id="infoContent"></div>
+        </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZADOR (PREVIEW DE ÉLITE) -->
+    <div id="previewModal" style="display: none;" onclick="if(event.target === this) closePreviewModal()">
+        <div class="modal-force-close" onclick="closePreviewModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <div id="modalContent" class="viewer-scroll-container">
+            <!-- El contenido se inyecta vía JS -->
+        </div>
+    </div>
+
+    <div class="wa-float-container">
+        <a href="https://wa.me/51932465820?text=Hola,%20solicito%20asistencia%20con%20mi%20filtro%20vehicular."
+            class="wa-float" target="_blank">
+            <i class="fa-brands fa-whatsapp" style="font-size: 24px;"></i>
+        </a>
+    </div>
+
+    <script>
+        // --- MOTOR DE ALMACENAMIENTO MASIVO (IndexedDB) ---
+        const DB_NAME = 'FiltroVehicularDB';
+        const STORE_NAME = 'reports';
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, 1);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME);
+                    }
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function getReportDB(key) {
+            // 1. Intentar desde la Nube (Supabase)
+            if (window.sb) {
+                try {
+                    const placa = key.replace('report_', '');
+                    const { data } = await window.sb
+                        .from('informes')
+                        .select('datos')
+                        .eq('placa', placa)
+                        .single();
+                        
+                    if (data && data.datos) return data.datos;
+                } catch (e) { console.error("Error leyendo informe de nube:", e); }
+            }
+
+            // 2. Fallback a Local (IndexedDB)
+            const db = await initDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const store = tx.objectStore(STORE_NAME);
+                const req = store.get(key);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function deleteReportDB(key) {
+            const db = await initDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                const req = store.delete(key);
+                req.onsuccess = () => resolve();
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        // --- SISTEMA DE EXPIRACIÓN Y LIMPIEZA (24 HORAS) ---
+        async function checkExpirations(placa) {
+            const norm = placa.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const dbData = await getReportDB('report_' + norm);
+            const localDataStr = localStorage.getItem('report_' + norm);
+            const data = dbData || (localDataStr ? JSON.parse(localDataStr) : null);
+
+            if (data && data.publishedAt) {
+                const EXPIRY_MS = 24 * 60 * 60 * 1000;
+                const now = Date.now();
+                if (now - data.publishedAt > EXPIRY_MS) {
+                    console.log("Expiración detectada para:", norm);
+                    localStorage.removeItem('report_unlocked_' + norm);
+                    localStorage.removeItem('approved_request_' + norm);
+                    localStorage.removeItem('progress_' + norm);
+                    localStorage.removeItem('report_' + norm);
+                    localStorage.removeItem('pending_request_' + norm);
+                    await deleteReportDB('report_' + norm);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        const pl = new URLSearchParams(window.location.search).get('placa') || 'S/N';
+        const isApproved = new URLSearchParams(window.location.search).get('approved') === 'true';
+        const isPending = new URLSearchParams(window.location.search).get('pending') === 'true';
+
+        const pEl = document.getElementById('plateVal');
+        pEl.innerText = pl.toUpperCase();
+        pEl.setAttribute('data-plate', pl.toUpperCase());
+
+        // LÓGICA DE CARGA ESTRATÉGICA
+        document.addEventListener('DOMContentLoaded', async () => {
+            const hasExpired = await checkExpirations(pl);
+            if (hasExpired) {
+                window.location.href = 'index.html';
+                return;
+            }
+            initReport();
+        });
+
+        async function initReport() {
+            const norm = pl.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const dbData = await getReportDB('report_' + norm);
+            const localDataStr = localStorage.getItem('report_' + norm);
+            const data = dbData || (localDataStr ? JSON.parse(localDataStr) : null);
+            
+            if (data && data.items) {
+                localStorage.setItem('report_unlocked_' + norm, 'true');
+                initReportDisplay(data);
+                return;
+            }
+            renderReport(dataList, 'ok');
+        }
+        const cont = document.getElementById('accCont');
+
+        window.cleanMessages = {
+            'sunarp': 'El vehículo no registra anotaciones de robo, embargos ni gravámenes vigentes en el registro de propiedad vehicular.',
+            'historial': 'Historial de registros y transferencias validado. No se detectan irregularidades en la trayectoria documental de la unidad.',
+            'caracteristicas': 'Características técnicas originales verificadas (color, motor, serie). Sin reportes de cambios no autorizados.',
+            'lima': 'No se registran deudas pendientes por conceptos de papeletas o impuesto vehicular en la jurisdicción de Lima.',
+            'callao': 'No se registran deudas pendientes por conceptos de papeletas o impuesto vehicular en la jurisdicción del Callao.',
+            'region': 'Consulta regional realizada con éxito. Sin registros de deudas tributarias o administrativas detectadas.',
+            'atu': 'El vehículo se encuentra libre de infracciones y medidas preventivas ante la Autoridad de Transporte Urbano.',
+            'siniestralidad': 'Sin registros de siniestros o pérdidas totales reportadas por las compañías de seguros ante la SBS.',
+            'estado_placa': 'Placa física y registro administrativo en estado activo y vigente. Sin duplicados sospechosos.',
+            'foto_pit': 'Verificación de fotopapeletas en tiempo real completada. Sin capturas de imagen por infracciones pendientes.',
+            'citv': 'La unidad cuenta con su Inspección Técnica aprobada y vigente. Sin observaciones técnicas pendientes.',
+            'soat': 'Póliza de Seguro Obligatorio validada y vigente en el sistema nacional de aseguradoras.',
+            'sutran': 'Sin registros de infracciones al reglamento nacional de transportes ante la SUTRAN.',
+            'lunas': 'Permiso de lunas oscurecidas validado y vigente, cumpliendo con la normativa de seguridad nacional.',
+            'fise': 'El vehículo no registra deudas ni subsidios pendientes en el programa de inclusión energética FISE.',
+            'gnv': 'Consulta de financiamiento GNV realizada. El vehículo no presenta saldos pendientes por este concepto.',
+            'denuncias': 'Verificación policial completada. La unidad no figura con denuncias por robo, hurto o requisitorias vigentes.',
+            'boleta': 'Boleta informativa generada con éxito. Sin registros de afectaciones vigentes en la partida registral.',
+            'tive': 'Tarjeta de Identificación Vehicular Electrónica (TIVE) verificada y vinculada correctamente al propietario.',
+            'propietarios': 'Historial de transferencias revisado. El tracto sucesivo de propietarios anteriores se encuentra en regla.',
+            'record': 'Récord del conductor y del vehículo sin puntos acumulados ni sanciones graves vigentes en el MTC.',
+            'otros': 'No se han detectado otras afectaciones o limitaciones de uso en los sistemas integrados de consulta.'
+        };
+
+        const dataList = [
+            { id: 'sunarp', icon: 'fa-id-card', title: 'Propiedad Vehicular SUNARP', st: 'ok', text: '' },
+            { id: 'historial', icon: 'fa-file-lines', title: 'Historial Completo por Placa', st: 'ok', text: '' },
+            { id: 'caracteristicas', icon: 'fa-car-side', title: 'Cambio de Características', st: 'ok', text: '' },
+            { id: 'lima', icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Lima', st: 'ok', text: '' },
+            { id: 'callao', icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Callao', st: 'ok', text: '' },
+            { id: 'region', icon: 'fa-map-location-dot', title: 'Deudas y Multas por Región', st: 'ok', text: '' },
+            { id: 'atu', icon: 'fa-triangle-exclamation', title: 'Papeletas de Tránsito ATU', st: 'ok', text: '' },
+            { id: 'siniestralidad', icon: 'fa-heart-pulse', title: 'Siniestralidad por Placa', st: 'ok', text: '' },
+            { id: 'estado_placa', icon: 'fa-sheet-plastic', title: 'Estado de Placa', st: 'ok', text: '' },
+            { id: 'foto_pit', icon: 'fa-camera', title: 'Foto Pit Lima', st: 'ok', text: '' },
+            { id: 'citv', icon: 'fa-screwdriver-wrench', title: 'Inspección Técnica Vehicular CITV', st: 'ok', text: '' },
+            { id: 'soat', icon: 'fa-shield-halved', title: 'Vigencia del SOAT', st: 'ok', text: '' },
+            { id: 'sutran', icon: 'fa-truck', title: 'Papeletas SUTRAN', st: 'ok', text: '' },
+            { id: 'lunas', icon: 'fa-circle-half-stroke', title: 'Lunas Oscurecidas', st: 'ok', text: '' },
+            { id: 'fise', icon: 'fa-gas-pump', title: 'FISE GNV Subsidio Gas', st: 'ok', text: '' },
+            { id: 'gnv', icon: 'fa-coins', title: 'Consulta Deuda GNV', st: 'ok', text: '' },
+            { id: 'denuncias', icon: 'fa-handcuffs', title: 'Denuncias y Órdenes de Captura', st: 'ok', text: '' },
+            { id: 'boleta', icon: 'fa-building-columns', title: 'Boleta Informativa', st: 'ok', text: '' },
+            { id: 'tive', icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', st: 'ok', text: '' },
+            { id: 'propietarios', icon: 'fa-users', title: 'Historial de Propietarios Inscritos', st: 'ok', text: '' },
+            { id: 'record', icon: 'fa-address-card', title: 'Récord de Conductor (DNI)', st: 'ok', text: '' },
+            { id: 'otros', icon: 'fa-list-check', title: 'Otras Afectaciones', st: 'ok', text: '' }
+        ];
+
+        // MAPA PERSISTENTE DE ICONOS PARA FALLBACK
+        const iconMap = {};
+        dataList.forEach(d => iconMap[d.id] = d.icon);
+
+        function openInfo(type) {
+            const modal = document.getElementById('infoModal');
+            const content = document.getElementById('infoContent');
+            modal.style.display = 'flex';
+
+            let html = '';
+            if (type === 'terms') {
+                html = `
+                    <h2 class="info-title">Términos y Condiciones de Uso</h2>
+                    <div class="info-text">
+                        <p>Al acceder a Filtro Vehicular Perú, el usuario acepta que la plataforma es una herramienta de consulta masiva que recopila información de fuentes públicas oficiales (SUNARP, SAT, MTC, SBS). El uso de la información proporcionada es responsabilidad exclusiva del solicitante.</p>
+                        <h4>1. Alcance del Servicio</h4>
+                        <p>Proporcionamos reportes técnicos basados en datos disponibles en tiempo real. No somos responsables por errores de digitación en los registros estatales ni por retrasos en las actualizaciones de sus bases de datos.</p>
+                        <h4>2. Propiedad Intelectual</h4>
+                        <p>El diseño, estructura y metodología de análisis del reporte certificado son propiedad exclusiva de Filtro Vehicular Perú. Queda prohibida la reproducción total o parcial sin autorización comercial.</p>
+                        <h4>3. Pagos y Reembolsos</h4>
+                        <p>Debido a la naturaleza inmediata del servicio de consulta digital, una vez procesado el pago y generado el reporte, no se admiten devoluciones, salvo falla técnica comprobable del sistema.</p>
+                    </div>
+                `;
+            } else if (type === 'privacy') {
+                html = `
+                    <h2 class="info-title">Políticas de Privacidad y Datos</h2>
+                    <div class="info-text">
+                        <p>En cumplimiento con la Ley N° 29733, Ley de Protección de Datos Personales en Perú, informamos sobre el tratamiento de su información.</p>
+                        <h4>1. Recopilación de Datos</h4>
+                        <p>Solo solicitamos el número de placa vehicular para el procesamiento de la consulta. No almacenamos datos sensibles de tarjetas de pago, los cuales son gestionados directamente por pasarelas seguras (Yape/Plin).</p>
+                        <h4>2. Uso de la Información</h4>
+                        <p>Los datos obtenidos de las fuentes oficiales se utilizan únicamente para la generación del reporte solicitado por el cliente. No vendemos ni compartimos bases de datos de consultas con terceros.</p>
+                        <h4>3. Seguridad Digital</h4>
+                        <p>Implementamos protocolos de cifrado y seguridad de élite para proteger la integridad de la navegación y asegurar que su consulta sea anónima frente a los sistemas del estado.</p>
+                    </div>
+                `;
+            } else if (type === 'contact') {
+                html = `
+                    <h2 class="info-title">Atención al Cliente y Soporte Central</h2>
+                    <div class="info-text">
+                        <p>Nuestro equipo de soporte técnico y atención al ciudadano está disponible para resolver cualquier duda sobre su reporte certificado de manera inmediata y profesional.</p>
+                        <h4>Canales de Atención Directa</h4>
+                        <p><b>Soporte WhatsApp Central:</b> +51 932 465 820<br>
+                        (Gestión de pagos, reportes pendientes y verificación de sellos digitales).</p>
+                        <h4>Horarios de Operación Sistema</h4>
+                        <p>Lunes a Sábado: 08:30 AM - 09:00 PM<br>
+                        Domingos y Feriados: 09:00 AM - 02:00 PM</p>
+                        <p>Todas nuestras consultas son tratadas bajo estrictos protocolos de confidencialidad y seguridad técnica de élite.</p>
+                    </div>
+                `;
+            }
+            content.innerHTML = html;
+        }
+
+        function toggleAcc(btn) {
+            const card = btn.parentElement;
+            const isOpen = card.classList.contains('open');
+            document.querySelectorAll('.acc-card').forEach(c => c.classList.remove('open'));
+            if (!isOpen) card.classList.add('open');
+        }
+
+        function toggleDropdown(e) {
+            if (e) e.stopPropagation();
+            const drp = document.getElementById('userDropdown');
+            if (drp) drp.classList.toggle('open');
+        }
+
+        window.addEventListener('click', () => {
+            const drp = document.getElementById('userDropdown');
+            if (drp) drp.classList.remove('open');
+        });
+
+        function base64ToBlobUrl(base64) {
+            try {
+                const parts = base64.split(';base64,');
+                const contentType = parts[0].split(':')[1];
+                const raw = window.atob(parts[1]);
+                const uInt8Array = new Uint8Array(raw.length);
+                for (let i = 0; i < raw.length; ++i) uInt8Array[i] = raw.charCodeAt(i);
+                return URL.createObjectURL(new Blob([uInt8Array], { type: contentType }));
+            } catch (e) { return base64; }
+        }
+
+
+        const icCls = { 'ok': 'ic-ok', 'wa': 'ic-wa', 'ko': 'ic-ko' };
+        const dotCls = { 'ok': 'sd-ok', 'wa': 'sd-wa', 'ko': 'sd-ko' };
+        const serviceToIdMap = {
+            'propiedad vehicular sunarp': 'sunarp',
+            'historial completo por placa': 'historial',
+            'cambio de caracteristicas': 'caracteristicas',
+            'deudas y multas sat lima': 'lima',
+            'deudas y multas sat callao': 'callao',
+            'deudas y multas por region': 'regiones',
+            'papeletas de transito atu': 'atu',
+            'siniestralidad por placa': 'siniestralidad',
+            'estado de placa': 'placa',
+            'foto pit lima': 'foto_pit',
+            'inspeccion tecnica vehicular citv': 'citv',
+            'vigencia del soat': 'soat',
+            'papeletas sutran': 'sutran',
+            'lunas oscurecidas': 'lunas',
+            'fise gnv subsidio gas': 'fise',
+            'consulta deuda gnv': 'gnv',
+            'denuncias y ordenes de captura': 'denuncias',
+            'boleta informativa': 'boleta',
+            'tarjeta de propiedad (tive)': 'tive',
+            'historial de propietarios inscritos': 'propietarios',
+            'record de conductor (dni)': 'record',
+            'otras afectaciones': 'otros'
+        };
+
+        function normText(s) {
+            return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+        }
+
+        function pickItemByService(items, servicio) {
+            if (!servicio || !items || !items.length) return null;
+            const objetivo = normText(servicio);
+            const byExactTitle = items.find((it) => normText(it.title) === objetivo);
+            const byFuzzyTitle = items.find((it) => normText(it.title).includes(objetivo) || objetivo.includes(normText(it.title)));
+            const mappedId = serviceToIdMap[objetivo] || '';
+            const byMappedId = mappedId ? items.find((it) => String(it.id || '').toLowerCase() === mappedId) : null;
+            return byExactTitle || byMappedId || byFuzzyTitle || null;
+        }
+
+        // MOTOR DE PROGRESO SUAVE (Simulación Realista)
+        let simulatedProgress = 0;
+        let progressInterval = null;
+
+        async function fetchIndividualContext(placaNorm) {
+            const ctx = { isIndividual: false, servicio: '' };
+            if (!window.sb) return ctx;
+            try {
+                const raw = String(placaNorm || '').toUpperCase();
+                const noDash = raw.replace(/[^A-Z0-9]/g, '');
+                const variants = [...new Set([raw, noDash].filter(Boolean))];
+                const { data: rows } = await window.sb
+                    .from('solicitudes')
+                    .select('placa, datos')
+                    .in('placa', variants);
+                const row = (rows || []).find((r) => {
+                    const d = r && r.datos;
+                    return d && d.isIndividual && String(d.status || '').toLowerCase() === 'approved';
+                });
+                if (row && row.datos) {
+                    ctx.isIndividual = true;
+                    ctx.servicio = String(row.datos.servicio || '').trim();
+                }
+            } catch (e) {}
+            return ctx;
+        }
+
+        async function updateLocker(placa) {
+            const norm = placa.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const isPermanentlyUnlocked = localStorage.getItem('report_unlocked_' + norm) === 'true';
+            const mainContent = document.getElementById('reportMainContent');
+            const unlockOverlay = document.getElementById('unlockOverlay');
+            const statusIndicator = document.getElementById('realTimeStatus');
+            const progTxt = document.getElementById('realTimeProg');
+            const pbFill = document.getElementById('pbFill');
+
+            const dbReport = await getReportDB('report_' + norm);
+            const localReportStr = localStorage.getItem('report_' + norm);
+            const reportData = dbReport || (localReportStr ? JSON.parse(localReportStr) : null);
+
+            if (isPermanentlyUnlocked || reportData) {
+                if (reportData) localStorage.setItem('report_unlocked_' + norm, 'true');
+                mainContent.classList.remove('is-locked');
+                if (unlockOverlay) {
+                    unlockOverlay.style.display = 'none';
+                    unlockOverlay.style.opacity = '0';
+                }
+                if (progressInterval) clearInterval(progressInterval);
+                return true;
+            }
+
+            let isApprovedByAdmin = localStorage.getItem('approved_request_' + norm) === 'true';
+
+            // 🌟 Consulta de Nube para multidispositivos (PC/Celular sincronizados)
+            if (!isApprovedByAdmin && window.sb) {
+                try {
+                    const { data } = await window.sb.from('solicitudes').select('datos').eq('placa', norm).single();
+                    if (data && data.datos && data.datos.status === 'approved') {
+                        isApprovedByAdmin = true;
+                        localStorage.setItem('approved_request_' + norm, 'true'); 
+                    }
+                } catch(e) {}
+            }
+
+            if (simulatedProgress === 0) {
+                simulatedProgress = parseInt(localStorage.getItem('progress_' + norm) || '0');
+            }
+
+
+
+            // Solo añadir bloqueo si no está cargado
+            mainContent.classList.add('is-locked');
+            if (unlockOverlay) {
+                unlockOverlay.style.display = 'flex';
+                setTimeout(() => unlockOverlay.style.opacity = '1', 10);
+                
+                if (isApprovedByAdmin) {
+                    const payStatus = document.getElementById('payStatus');
+                    if (payStatus) payStatus.style.display = 'block';
+                    
+                    if (!progressInterval) {
+                        startSmoothProgress(norm);
+                    }
+                } else {
+                    statusIndicator.innerHTML = 'Esperando validación del administrador...';
+                }
+            }
+            return false;
+        }
+
+        function startSmoothProgress(placa) {
+            if (progressInterval) return;
+            
+            const statusIndicator = document.getElementById('realTimeStatus');
+            const progTxt = document.getElementById('realTimeProg');
+            const pbFill = document.getElementById('pbFill');
+
+            progressInterval = setInterval(async () => {
+                const dbReport = await getReportDB('report_' + placa);
+                const localReport = localStorage.getItem('report_' + placa);
+                const hasReport = dbReport || localReport;
+
+                if (hasReport) {
+                    simulatedProgress = 100;
+                    clearInterval(progressInterval);
+                    updateLocker(placa);
+                    return;
+                }
+
+                // Aumentar progreso aleatoriamente
+                if (simulatedProgress < 99) {
+                    simulatedProgress += Math.floor(Math.random() * 2) + 1;
+                }
+
+                if (simulatedProgress > 99) simulatedProgress = 99;
+
+                // Guardar progreso para persistencia
+                localStorage.setItem('progress_' + placa, simulatedProgress);
+
+                // Actualizar Interfaz
+                if (pbFill) pbFill.style.width = `${simulatedProgress}%`;
+                if (progTxt) progTxt.textContent = `Analizando: ${simulatedProgress}%`;
+
+                // Actualizar Etiquetas Técnicas
+                const labels = [
+                    'Validando Pago y SUNARP...',
+                    'Analizando historial de transferencias...',
+                    'Consultando registros de multas SAT...',
+                    'Verificando Vigencia MTC/SOAT...',
+                    'Buscando posibles órdenes de captura...',
+                    'Analizando siniestralidad SBS...',
+                    'Consolidando expediente digital...'
+                ];
+                statusIndicator.innerText = labels[Math.floor(simulatedProgress / 15)] || 'Finalizando auditoría...';
+
+            }, 2000);
+        }
+
+        window.onload = async function () {
+            const placa = pl.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            window.reportIndividualContext = await fetchIndividualContext(placa);
+            const isInitiallyUnlocked = await updateLocker(placa);
+
+            if (isInitiallyUnlocked) {
+                initReport(); 
+            }
+
+            // Polling inteligente: Detecta cambios en el reporte para actualizacion instantanea
+            let lastReportHash = "";
+            const globalPoll = setInterval(async () => {
+                const dbReport = await getReportDB('report_' + placa);
+                const localReport = localStorage.getItem('report_' + placa);
+                const currentData = dbReport || (localReport ? JSON.parse(localReport) : null);
+
+                if (currentData) {
+                    const currentHash = JSON.stringify(currentData.items.length) + (currentData.publishedAt || "");
+                    if (currentHash !== lastReportHash) {
+                        lastReportHash = currentHash;
+                        console.log("Actualización de reporte detectada...");
+                        initReportDisplay(currentData);
+                        
+                        const isUnlocked = await updateLocker(placa);
+                        if (isUnlocked) {
+                            // Si se cargó todo, podemos bajar el polling
+                        }
+                    }
+                } else {
+                    initReportDisplay(null);
+                    await updateLocker(placa);
+                }
+            }, 3000);
+        };
+
+        function normalizePlainText(s) {
+            return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+
+        /** Coherencia título vs cuerpo: no mostrar texto "verde" bajo estado WA/KO */
+        function harmonizeVerdictBody(status, rawText) {
+            const st = String(status || 'ok').toLowerCase();
+            const t = String(rawText || '').trim();
+            const n = normalizePlainText(t);
+            const looksGreen =
+                n.includes('verificado y limpio') ||
+                n.includes('trayectoria limpia') ||
+                n.includes('sin alertas') ||
+                n.includes('estado favorable');
+            if (st === 'wa' && (!t || looksGreen)) {
+                return '<strong>Estado:</strong> Advertencia preventiva<br>Se han identificado alertas preventivas o trámites en curso que requieren validación presencial. Se recomienda revisar documentos originales antes de concretar la operación.';
+            }
+            if (st === 'ko' && (!t || looksGreen)) {
+                return '<strong>Estado:</strong> Alerta de filtro detectada<br>Se han detectado afectaciones críticas. Se recomienda no proceder sin verificación física y asesoría legal.';
+            }
+            return t;
+        }
+
+        function initReportDisplay(localData) {
+            const vBox = document.getElementById('verdictBox');
+            if (localData) {
+                const ctx = window.reportIndividualContext || { isIndividual: false, servicio: '' };
+                let listToRender = localData.items || [];
+                let statusToRender = localData.verdictStatus || 'ok';
+                let textToRender = localData.verdictText || '';
+
+                if (ctx.isIndividual && ctx.servicio) {
+                    const item = pickItemByService(listToRender, ctx.servicio);
+                    if (item) {
+                        listToRender = [item];
+                        statusToRender = item.st || statusToRender;
+                        textToRender = item.text || textToRender;
+                    }
+                }
+
+                textToRender = harmonizeVerdictBody(statusToRender, textToRender);
+
+                const secTitle = document.getElementById('sectionListTitle');
+                if (secTitle) {
+                    secTitle.textContent = (ctx.isIndividual && listToRender.length <= 1)
+                        ? 'Detalle del servicio contratado'
+                        : 'Historial y Verificaciones Completadas';
+                }
+
+                const vClass = statusToRender === 'ko' ? 'danger' : (statusToRender === 'wa' ? 'warning' : '');
+                const vIcon = statusToRender === 'ko' ? 'fa-xmark' : (statusToRender === 'wa' ? 'fa-triangle-exclamation' : 'fa-check');
+
+                vBox.innerHTML = `
+                    <div class="verdict-card ${vClass}">
+                        <div class="verdict-icon-box ${vClass}">
+                            <i class="fa-solid ${vIcon}"></i>
+                        </div>
+                        <div class="verdict-info">
+                            <div class="verdict-label">${ctx.isIndividual ? 'Resultado del Servicio Contratado' : 'Resumen Ejecutivo'}</div>
+                            <div class="verdict-title">${statusToRender === 'ok' ? 'Estado Favorable' : (statusToRender === 'wa' ? 'Observaciones Preventivas' : 'Riesgo Crítico Detectado')}</div>
+                            <div class="verdict-text">${textToRender}</div>
+                        </div>
+                    </div>
+                `;
+                // Cachear el estado renderizado para exportación PDF robusta (fallback).
+                window.reportRenderState = {
+                    list: listToRender,
+                    status: statusToRender,
+                    text: textToRender,
+                    isIndividual: !!ctx.isIndividual,
+                    servicio: ctx.servicio || ''
+                };
+                renderReport(listToRender, statusToRender, ctx.isIndividual);
+            } else {
+                // Skeleton UI while generating
+                if (vBox.innerHTML.trim() === "") {
+                    vBox.innerHTML = `
+                        <div class="verdict-card" style="opacity:0.3; filter:grayscale(1);">
+                            <div class="verdict-icon-box"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                            <div class="verdict-info">
+                                <div class="verdict-label" style="width:100px; height:10px; background:#e2e8f0; margin-bottom:10px;"></div>
+                                <div class="verdict-title" style="width:200px; height:20px; background:#e2e8f0; margin-bottom:10px;"></div>
+                                <div class="verdict-text" style="width:100%; height:40px; background:#f1f5f9;"></div>
+                            </div>
+                        </div>
+                    `;
+                    renderSkeleton();
+                }
+            }
+        }
+
+        function renderSkeleton() {
+            cont.innerHTML = '';
+            for(let i=0; i<12; i++) {
+                const sk = document.createElement('div');
+                sk.className = 'acc-card';
+                sk.style.height = '54px';
+                sk.style.background = '#f8fafc';
+                sk.style.marginBottom = '12px';
+                sk.style.borderRadius = '12px';
+                sk.style.opacity = '0.3';
+                cont.appendChild(sk);
+            }
+        }
+
+        function renderReport(list, vs = 'ok', isIndividualView = false) {
+            cont.innerHTML = '';
+            list.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'acc-card';
+
+                let bodyContent = '';
+
+                // 1. Sub-items (Demo)
+                if (item.subItems && item.subItems.length > 0) {
+                    bodyContent += item.subItems.map(s => {
+                        let rows = '';
+                        for (const [key, val] of Object.entries(s.data)) {
+                            rows += `<div class="sub-item-cell"><span class="cell-label">${key}</span><span class="cell-value">${val}</span></div>`;
+                        }
+                        return `<div class="sub-item-box"><div class="sub-item-header"><span class="sub-item-title">${s.title}</span><span class="sub-item-tag tag-${s.statusType}">${s.status}</span></div><div class="sub-item-grid">${rows}</div></div>`;
+                    }).join('');
+                }
+
+                // 2. Estructurado (Demo)
+                if (item.structured) {
+                    bodyContent += item.structured.map(st => {
+                        let rows = st.items.map(r => `<div class="dc-row"><span class="dc-label">${r.label}</span><span class="dc-value">${r.value}</span></div>`).join('');
+                        return `<div class="detail-card st-${item.st}" style="margin-bottom:10px;"><div class="dc-header"><span class="dc-title">${st.title}</span><span class="dc-status st-${item.st}">${st.status}</span></div><div class="dc-body">${rows}</div></div>`;
+                    }).join('');
+                }
+
+                // 3. Texto manual y Estados de Limpieza
+                const isSoat = item.title.toLowerCase().includes('soat');
+                const isMtc = item.title.toLowerCase().includes('mtc') || item.title.toLowerCase().includes('inspección técnica');
+
+                if (isSoat) {
+                    const company = item.text.match(/COMPAÑÍ?A\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const fIni = item.text.match(/F\.\s*INICIO\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const fFin = item.text.match(/F\.\s*FIN\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const vigencia = (fIni && fFin) ? `${fIni} - ${fFin}` : (fIni || fFin || "");
+                    let cert = item.text.match(/CERTIFICADO\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const uso = item.text.match(/USO\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const estado = item.text.match(/ESTADO\s*:\s*([^\n\r]+)/i)?.[1] || "";
+
+                    if (company || cert || vigencia || (item.files && item.files.length > 0)) {
+                        const midSoat = `media_soat_${Math.random().toString(36).substr(2, 9)}`;
+                        const firstFile = (item.files && item.files.length > 0) ? item.files[0].data : null;
+                        
+                        bodyContent += `
+                        <div class="soat-special-card">
+                            <div class="soat-header">
+                                <span class="soat-company">${(company || 'SEGURO REGISTRADO').replace(/├|└|┌/g, '').trim()}</span>
+                                <span class="soat-status-pill">${(estado || 'VIGENTE').replace(/├|└|┌|🟢/g, '').trim()}</span>
+                            </div>
+                            <div class="soat-info-body">
+                                <div class="soat-data-row"><span class="soat-data-label">Certificado:</span><span class="soat-data-value">${(cert || 'N/A').replace(/├|└|┌/g, '').trim()}</span></div>
+                                <div class="soat-data-row"><span class="soat-data-label">Vigencia:</span><span class="soat-data-value">${(vigencia || '---').replace(/├|└|┌/g, '').trim()}</span></div>
+                                <div class="soat-data-row"><span class="soat-data-label">Uso:</span><span class="soat-data-value">${(uso || '---').replace(/├|└|┌/g, '').trim()}</span></div>
+                            </div>
+                            <div id="display_${midSoat}" class="digital-display-area" style="display:block;background:#f8fafc;padding:10px;border-radius:12px;margin:10px 0;text-align:center;">
+                                <div id="${midSoat}" data-pdf="${firstFile}" class="pdf-thumbnail-wrapper" style="max-height: 480px; overflow-y: auto; text-align: center;"></div>
+                            </div>
+                            ${firstFile ? `
+                            <div class="soat-actions">
+                                <div class="digital-action-bar">
+                                    <div class="digital-toggle-btn" onclick="toggleDigital(this, 'SOAT', '${firstFile}', '${midSoat}')">
+                                        <i class="fa-solid fa-eye"></i> <span>Ver SOAT Digital</span>
+                                    </div>
+                                    <a href="${firstFile}" download="Soat_Digital.pdf" class="btn-digital-action" onclick="event.stopPropagation()">
+                                        <i class="fa-solid fa-download"></i>
+                                    </a>
+                                </div>
+                            </div>` : ''}
+                        </div>`;
+                    } else if (item.text) {
+                        bodyContent += `<div style="padding:10px 0; line-height: 1.5; font-size:13px; color:#475569;">${item.text}</div>`;
+                    }
+                } else if (isMtc) {
+                    const certif = item.text.match(/CERTIFICADORA\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const nro = item.text.match(/NRO\s*CERTIFICADO\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const vDesde = item.text.match(/VIGENTE\s*DESDE\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const vHasta = item.text.match(/VIGENTE\s*HASTA\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const vigenciaFull = (vDesde && vHasta) ? `${vDesde} - ${vHasta}` : (vDesde || vHasta || "");
+                    const resMtc = item.text.match(/RESULTADO\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const estMtc = item.text.match(/ESTADO\s*:\s*([^\n\r]+)/i)?.[1] || "";
+                    const obsMtc = item.text.match(/OBSERVACIONES\s*:\s*([^\n\r]+)/i)?.[1] || "";
+
+                    if (certif || nro || vigenciaFull || (item.files && item.files.length > 0)) {
+                        const midMtc = `media_mtc_${Math.random().toString(36).substr(2, 9)}`;
+                        const firstFile = (item.files && item.files.length > 0) ? item.files[0].data : null;
+
+                        bodyContent += `
+                        <div class="mtc-special-card">
+                            <div class="mtc-header">
+                                <span class="mtc-company">${(certif || 'PLANTA REGISTRADA').replace(/├|└|┌/g, '').trim()}</span>
+                                <span class="mtc-result-pill">${(estMtc || 'VIGENTE').replace(/├|└|┌|🟢/g, '').trim()}</span>
+                            </div>
+                            <div class="mtc-data-body">
+                                <div class="mtc-data-row"><span class="mtc-data-label">Nro. Certificado:</span><span class="mtc-data-value">${(nro || '---').replace(/├|└|┌/g, '').trim()}</span></div>
+                                <div class="mtc-data-row"><span class="mtc-data-label">Vigencia ITV:</span><span class="mtc-data-value">${(vigenciaFull || '---').replace(/├|└|┌/g, '').trim()}</span></div>
+                                <div class="mtc-data-row"><span class="mtc-data-label">Resultado:</span><span class="mtc-data-value" style="color:#16a34a;">${(resMtc || 'APROBADO').replace(/├|└|┌/g, '').trim()}</span></div>
+                                <div class="mtc-obs-box">
+                                    <span class="mtc-obs-label">Anote de Observaciones / Deficiencias</span>
+                                    <div class="mtc-obs-value">${(obsMtc || 'Ninguna registrada.').replace(/├|└|┌/g, '').trim()}</div>
+                                </div>
+                            </div>
+                            <div id="display_${midMtc}" class="digital-display-area" style="display:block;background:#f8fafc;padding:10px;border-radius:12px;margin:10px 0;text-align:center;">
+                                <div id="${midMtc}" data-pdf="${firstFile}" class="pdf-thumbnail-wrapper" style="max-height: 480px; overflow-y: auto; text-align: center;"></div>
+                            </div>
+                            ${firstFile ? `
+                            <div class="mtc-actions">
+                                <div class="digital-action-bar">
+                                    <div class="digital-toggle-btn" onclick="toggleDigital(this, 'Inspección', '${firstFile}', '${midMtc}')">
+                                        <i class="fa-solid fa-eye"></i> <span>Ver Inspección Digital</span>
+                                    </div>
+                                    <a href="${firstFile}" download="Certificado_ITV.pdf" class="btn-digital-action" onclick="event.stopPropagation()">
+                                        <i class="fa-solid fa-download"></i>
+                                    </a>
+                                </div>
+                            </div>` : ''}
+                            <a href="https://wa.me/51932465820?text=Hola,%20deseo%20solicitar%20el%20duplicado%20oficial%20de%20mi%20Certificado%20de%20Inspección%20Técnica%20Vehicular%20de%20la%20placa%20${pl.toUpperCase()}." 
+                               class="mtc-duplicate-link" target="_blank" onclick="event.stopPropagation()">
+                                <i class="fa-brands fa-whatsapp"></i> Solicitar Duplicado Oficial
+                            </a>
+                        </div>`;
+                    } else if (item.text) {
+                        bodyContent += `<div style="padding:10px 0; line-height: 1.5; font-size:13px; color:#475569;">${item.text}</div>`;
+                    }
+                } else {
+                    const status = item.st || 'ok';
+
+                    if (item.text && item.text.trim()) {
+                        const borderColors = { 'ok': '#bbf7d0', 'wa': '#fde68a', 'ko': '#fecaca' };
+                        const labelColors = { 'ok': '#166534', 'wa': '#92400e', 'ko': '#991b1b' };
+                        const contentColors = { 'ok': '#15803d', 'wa': '#b45309', 'ko': '#dc2626' };
+                        const bgColors = { 'ok': '#f0fdf4', 'wa': '#fffbeb', 'ko': '#fef2f2' };
+
+                        let innerText = item.text;
+                        if (status === 'ko' && innerText.includes('Verificado y Limpio')) {
+                            innerText = "<b>Estado:</b> Alerta de Filtro Detectada<br>Se han detectado afectaciones críticas en esta categoría. Se recomienda no proceder sin una verificación física exhaustiva y legal.";
+                        } else if (status === 'wa' && innerText.includes('Verificado y Limpio')) {
+                            innerText = "<b>Estado:</b> Advertencia Preventiva<br>Se recomienda revisar los detalles físicos y documentos originales. Mantenga precaución con la información detectada en esta categoría.";
+                        }
+
+                        bodyContent += `
+                        <div class="verification-details-box" style="background: ${bgColors[status]}; border: 1px dashed ${borderColors[status]};">
+                            <div class="vdb-content" style="color: ${contentColors[status]}">${innerText}</div>
+                        </div>`;
+                    } else {
+                        let boxClass = "verification-clean-box";
+                        let iconClass = "fa-shield-check vcb-icon";
+                        let statusTitle = "Estado: Verificado y Limpio";
+                        let cleanMsg = cleanMessages[item.id] || "No se detectan alertas ni afectaciones vigentes. El sistema confirma un estado verificado.";
+                        let textColor = "#15803d";
+
+                        if (status === 'wa') {
+                            boxClass = "verification-wa-box";
+                            iconClass = "fa-triangle-exclamation vwa-icon";
+                            statusTitle = "Estado: Advertencia Preventiva";
+                            cleanMsg = "Se recomienda revisar los detalles físicos y documentos originales. Mantenga precaución con la información detectada en esta categoría.";
+                            textColor = "#92400e";
+                        } else if (status === 'ko') {
+                            boxClass = "verification-ko-box";
+                            iconClass = "fa-circle-xmark vko-icon";
+                            statusTitle = "Estado: Alerta de Filtro Detectada";
+                            cleanMsg = "Se han detectado afectaciones críticas en esta categoría. Se recomienda no proceder sin una verificación física exhaustiva y legal.";
+                            textColor = "#991b1b";
+                        }
+
+                        bodyContent += `
+                        <div class="${boxClass}">
+                            <i class="fa-solid ${iconClass}"></i>
+                            <div class="vcb-text">
+                                <span class="vcb-status ${status === 'wa' ? 'vwa-status' : (status === 'ko' ? 'vko-status' : '')}">${statusTitle}</span>
+                                <p style="color: ${textColor}">${cleanMsg}</p>
+                            </div>
+                        </div>`;
+                    }
+
+                    // 4. Seccion de Evidencia para items estandar
+                    if (item.files && item.files.length > 0) {
+                        item.files.forEach((f, idx) => {
+                            const mid = `media_${item.id}_${idx}_${Math.random().toString(36).substr(2,4)}`;
+                            const isImg = f.data.startsWith('data:image/') || f.name?.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+                            
+                            bodyContent += `
+                            <div class="digital-action-container" style="margin-top: 15px;">
+                                <div id="display_${mid}" class="digital-display-area" style="display: block; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; margin-bottom: 10px; text-align: center;">
+                                    ${isImg ? `<img src="${f.data}" style="max-width: 100%; border-radius: 8px;">` : `<div id="${mid}" data-pdf="${f.data}" class="pdf-thumbnail-wrapper" style="max-height: 480px; overflow-y: auto; text-align: center;"></div>`}
+                                </div>
+                                <div class="digital-action-bar" style="justify-content: space-between;">
+                                    <div class="digital-toggle-btn" onclick="${isImg ? `toggleImage(this, '${mid}')` : `toggleDigital(this, 'Evidencia', '${f.data}', '${mid}')`}">
+                                        <i class="fa-solid fa-eye"></i> <span>Ver Evidencia ${idx + 1}</span>
+                                    </div>
+                                    <a href="${f.data}" download="${f.name || 'document.pdf'}" class="btn-digital-action" onclick="event.stopPropagation()">
+                                        <i class="fa-solid fa-download"></i>
+                                    </a>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                }
+
+                card.innerHTML = `
+                    <button class="acc-header" onclick="toggleAcc(this)">
+                        <div class="ah-left">
+                            <div class="ah-icon"><i class="fa-solid ${item.icon || iconMap[item.id] || 'fa-file-shield'}"></i></div>
+                            <div class="ah-title">${item.title}</div>
+                        </div>
+                        <div class="ah-right">
+                            <div class="status-dot ${dotCls[item.st] || 'sd-' + item.st}"></div>
+                            <i class="fa-solid fa-chevron-down ah-chevron"></i>
+                        </div>
+                    </button>
+                    <div class="acc-body">${bodyContent}</div>
+                `;
+                card.classList.add('st-' + (item.st || 'ok'));
+                cont.appendChild(card);
+            });
+
+            // --- 5. SECCIÓN FINAL: RESULTADO DE AUDITORÍA (solo expediente completo) ---
+            if (isIndividualView) {
+                return;
+            }
+            const statusToUse = vs || 'ok';
+
+            const verdictConfigs = {
+                'ok': {
+                    title: 'Estado Favorable',
+                    desc: 'Tras el análisis técnico digital no se detectaron afectaciones críticas, gravámenes ni infracciones pendientes. El historial registra una trayectoria consistente, lo que representa un riesgo mínimo para la transferencia.',
+                    bg: '#f0fdf4', border: '#bbf7d0', color: '#15803d'
+                },
+                'wa': {
+                    title: 'Observaciones Preventivas',
+                    desc: 'Se han identificado alertas preventivas o trámites en curso que requieren validación presencial. Se recomienda una revisión de documentos originales para garantizar una inversión segura.',
+                    bg: '#fffbeb', border: '#fef3c7', color: '#92400e'
+                },
+                'ko': {
+                    title: 'Riesgo Crítico Detectado',
+                    desc: 'Se detectaron afectaciones críticas, deudas cuantiosas o gravámenes vigentes que comprometen la legalidad de la unidad. Existe un riesgo elevado de limitaciones administrativas o judiciales.',
+                    bg: '#fef2f2', border: '#fecaca', color: '#991b1b'
+                }
+            };
+
+            const cfg = verdictConfigs[statusToUse];
+            const verdictCard = document.createElement('div');
+            verdictCard.style.marginTop = '20px';
+            verdictCard.innerHTML = `
+                <div style="background: ${cfg.bg}; border: 1px dashed ${cfg.border}; padding: 12px; border-radius: 12px;">
+                    <div class="vdb-content" style="color: ${cfg.color}; line-height: 1.3; text-align: justify;">
+                        <b>Resultado:</b> ${cfg.title}<br><div style="height:6px;"></div>
+                        <b>Informe:</b> ${cfg.desc}
+                    </div>
+                </div>
+            `;
+            cont.appendChild(verdictCard);
+            // Trigger automatico de PDFs
+            setTimeout(() => {
+                document.querySelectorAll('[data-pdf]').forEach(c => {
+                    const url = c.getAttribute('data-pdf');
+                    if (url) renderPdfThumbnail(url, c.id);
+                });
+            }, 500);
+        }
+
+
+        function toggleHistory(btn, e) {
+            if (e) e.stopPropagation();
+            const box = btn.parentElement.querySelector('.soat-history-table');
+            if (!box) return;
+            const icon = btn.querySelector('i');
+            const isVisible = box.style.display === 'block';
+
+            box.style.display = isVisible ? 'none' : 'block';
+            if (icon) icon.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+            btn.innerHTML = isVisible ? 'Ver historial completo <i class="fa-solid fa-chevron-down"></i>' : 'Ocultar historial <i class="fa-solid fa-chevron-up"></i>';
+        }
+
+        function toggleDigital(el, label, fileUrl, canvasId) {
+            const display = document.getElementById('display_' + canvasId);
+            if (!display) return;
+            const isVisible = display.style.display === 'block';
+            const span = el.querySelector('span');
+            const icon = el.querySelector('i');
+
+            if (!isVisible) {
+                display.style.display = 'block';
+                if (span) span.textContent = `Ocultar ${label} Digital`;
+                if (icon) icon.className = 'fa-solid fa-eye-slash';
+                renderPdfThumbnail(fileUrl, canvasId);
+            } else {
+                display.style.display = 'none';
+                if (span) span.textContent = `Ver ${label} Digital`;
+                if (icon) icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        function toggleImage(el, canvasId) {
+            const display = document.getElementById('display_' + canvasId);
+            if (!display) return;
+            const isVisible = display.style.display === 'block';
+            const span = el.querySelector('span');
+            const icon = el.querySelector('i');
+
+            if (!isVisible) {
+                display.style.display = 'block';
+                if (span) span.textContent = 'Ocultar Evidencia';
+                if (icon) icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                display.style.display = 'none';
+                if (span) span.textContent = 'Ver Evidencia';
+                if (icon) icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+
+        function openInfo(type) { document.getElementById('infoModal').style.display = 'flex'; }
+        function closeInfo() { document.getElementById('infoModal').style.display = 'none'; }
+
+        // --- MOTOR DE EXPORTACIÓN PDF TÉCNICO LIMPIO ---
+        async function downloadFullPDF() {
+            const btn = document.querySelector('.btn-download-pdf');
+            const originalText = btn.innerHTML;
+
+            try {
+                const pdfjs = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
+                if (!pdfjs || !window.jspdf) {
+                    alert("Error: El sistema de procesamiento de PDF no ha cargado.");
+                    return;
+                }
+
+                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+                const { jsPDF } = window.jspdf;
+
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando Expediente...';
+                btn.disabled = true;
+
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 20;
+                let currentY = 18;
+
+                const placa = (document.getElementById('plateVal').textContent || '---').toUpperCase();
+                let localData = await getReportDB('report_' + placa);
+                if (!localData) {
+                    const localDataRaw = localStorage.getItem('report_' + placa);
+                    if (localDataRaw) localData = JSON.parse(localDataRaw);
+                }
+
+                let itemsParaPDF = [];
+                let vStatus = 'ok';
+                let vText = '';
+                let isIndividualPrint = false;
+                let individualServiceName = '';
+
+                if (localData) {
+                    itemsParaPDF = localData.items || [];
+                    vStatus = localData.verdictStatus || 'ok';
+                    vText = localData.verdictText || '';
+                }
+
+                // Fallback: si la data local aún no sincroniza, usar lo que ya está mostrado en pantalla.
+                if ((!itemsParaPDF || itemsParaPDF.length === 0) && window.reportRenderState) {
+                    itemsParaPDF = window.reportRenderState.list || [];
+                    vStatus = window.reportRenderState.status || vStatus;
+                    vText = window.reportRenderState.text || vText;
+                    if (window.reportRenderState.isIndividual) {
+                        isIndividualPrint = true;
+                        if (!individualServiceName) individualServiceName = window.reportRenderState.servicio || '';
+                    }
+                }
+
+                if (window.sb) {
+                    try {
+                        const placaRaw = String(placa || '').trim().toUpperCase();
+                        const placaNoGuion = placaRaw.replace(/[^A-Z0-9]/g, '');
+                        const variantes = [...new Set([placaRaw, placaNoGuion].filter(Boolean))];
+                        const { data: solicitudes } = await window.sb
+                            .from('solicitudes')
+                            .select('placa, datos')
+                            .in('placa', variantes);
+
+                        const aprobadaIndividual = (solicitudes || []).find((row) => {
+                            const d = row && row.datos;
+                            return d && d.isIndividual && String(d.status || '').toLowerCase() === 'approved';
+                        });
+
+                        if (aprobadaIndividual && aprobadaIndividual.datos) {
+                            isIndividualPrint = true;
+                            individualServiceName = String(aprobadaIndividual.datos.servicio || '').trim();
+                        }
+                    } catch (e) {
+                        console.warn('No se pudo validar tipo de solicitud para impresión:', e);
+                    }
+                }
+
+                let individualItemMatched = false;
+                if (isIndividualPrint && individualServiceName && itemsParaPDF.length) {
+                    const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+                    const objetivo = norm(individualServiceName);
+                    const byExactTitle = itemsParaPDF.find((it) => norm(it.title) === objetivo);
+                    const byFuzzyTitle = itemsParaPDF.find((it) => norm(it.title).includes(objetivo) || objetivo.includes(norm(it.title)));
+                    const serviceToIdMap = {
+                        'propiedad vehicular sunarp': 'sunarp',
+                        'historial completo por placa': 'historial',
+                        'cambio de caracteristicas': 'caracteristicas',
+                        'deudas y multas sat lima': 'lima',
+                        'deudas y multas sat callao': 'callao',
+                        'deudas y multas por region': 'regiones',
+                        'papeletas de transito atu': 'atu',
+                        'siniestralidad por placa': 'siniestralidad',
+                        'estado de placa': 'placa',
+                        'foto pit lima': 'foto_pit',
+                        'inspeccion tecnica vehicular citv': 'citv',
+                        'vigencia del soat': 'soat',
+                        'papeletas sutran': 'sutran',
+                        'lunas oscurecidas': 'lunas',
+                        'fise gnv subsidio gas': 'fise',
+                        'consulta deuda gnv': 'gnv',
+                        'denuncias y ordenes de captura': 'denuncias',
+                        'boleta informativa': 'boleta',
+                        'tarjeta de propiedad (tive)': 'tive',
+                        'historial de propietarios inscritos': 'propietarios',
+                        'record de conductor (dni)': 'record',
+                        'otras afectaciones': 'otros'
+                    };
+                    const mappedId = serviceToIdMap[objetivo] || '';
+                    const byMappedId = mappedId ? itemsParaPDF.find((it) => String(it.id || '').toLowerCase() === mappedId) : null;
+                    const elegido = byExactTitle || byMappedId || byFuzzyTitle;
+                    if (elegido) {
+                        itemsParaPDF = [elegido];
+                        vStatus = elegido.st || vStatus;
+                        vText = elegido.text || vText;
+                        individualItemMatched = true;
+                    }
+                }
+
+                // Si es consulta individual y no se pudo mapear el servicio exacto, evitar PDF vacío.
+                if (isIndividualPrint && !individualItemMatched) {
+                    if (!itemsParaPDF || itemsParaPDF.length === 0) {
+                        itemsParaPDF = [{
+                            id: 'individual_fallback',
+                            title: individualServiceName || 'Consulta Individual',
+                            st: (vStatus && vStatus !== 'ok') ? vStatus : 'wa',
+                            text: vText || 'Solicitud individual procesada. Este reporte corresponde al servicio contratado por el usuario.'
+                        }];
+                    }
+                    // En individual, si no hubo match exacto y quedaba "ok", usar advertencia preventiva (naranja).
+                    if (vStatus === 'ok') {
+                        vStatus = 'wa';
+                    }
+                }
+
+                // --- 1. PORTADA ---
+                pdf.setFontSize(26);
+                pdf.setTextColor(13, 37, 54);
+                pdf.setFont("helvetica", "bold");
+                pdf.text("FILTRO VEHICULAR PLUS", pageWidth / 2, currentY, { align: 'center' });
+
+                currentY += 8;
+                pdf.setFontSize(10);
+                pdf.setFont("helvetica", "normal");
+                pdf.setTextColor(100, 100, 100);
+                pdf.text(
+                    isIndividualPrint
+                        ? "REPORTE TÉCNICO DE CONSULTA INDIVIDUAL"
+                        : "CERTIFICADO TÉCNICO DE VERIFICACIÓN INTEGRAL",
+                    pageWidth / 2,
+                    currentY,
+                    { align: 'center' }
+                );
+
+                currentY += 12;
+                pdf.setDrawColor(226, 232, 240);
+                pdf.line(margin, currentY, pageWidth - margin, currentY);
+
+                currentY += 12;
+                pdf.setFontSize(16);
+                pdf.setFont("helvetica", "bold");
+                pdf.setTextColor(13, 37, 54);
+                pdf.text(`EXPEDIENTE DE PLACA: ${placa}`, margin, currentY);
+
+                const fechaEmi = new Date().toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric' });
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(10);
+                pdf.setTextColor(80, 80, 80);
+                pdf.text(`Emitido el: ${fechaEmi}`, pageWidth - margin, currentY, { align: 'right' });
+
+                currentY += 15;
+
+                const verdictConfigs = {
+                    'ok': { title: 'VEHÍCULO APTO', color: [22, 163, 74], desc: 'Trayectoria limpia detectada.' },
+                    'wa': { title: 'APTO CON OBSERVACIONES', color: [245, 158, 11], desc: 'Alertas preventivas identificadas.' },
+                    'ko': { title: 'VEHÍCULO NO APTO', color: [220, 38, 38], desc: 'Afectaciones críticas detectadas.' }
+                };
+                const vConfig = verdictConfigs[vStatus] || verdictConfigs['ok'];
+
+                // Evitar inconsistencia: si el estado es WA/KO pero el texto luce "verde", usar descripción correcta.
+                const normalizeVerdictText = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+                const vTextNorm = normalizeVerdictText(vText);
+                const looksGreen =
+                    vTextNorm.includes('trayectoria limpia') ||
+                    vTextNorm.includes('verificado y limpio') ||
+                    vTextNorm.includes('sin alertas');
+                if ((vStatus === 'wa' || vStatus === 'ko') && (!vText || looksGreen)) {
+                    vText = vConfig.desc;
+                }
+
+                pdf.setFillColor(vConfig.color[0], vConfig.color[1], vConfig.color[2]);
+                pdf.rect(margin, currentY, pageWidth - (margin * 2), 20, 'F');
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(13);
+                pdf.setTextColor(255, 255, 255);
+                pdf.text(`RESULTADO GLOBAL: ${vConfig.title}`, margin + 8, currentY + 8);
+                pdf.setFont("helvetica", "normal");
+                pdf.setFontSize(9.5);
+                const splitVerdict = pdf.splitTextToSize(vText || vConfig.desc, pageWidth - (margin * 2) - 16);
+                pdf.text(splitVerdict, margin + 8, currentY + 14);
+
+                if (!isIndividualPrint) {
+                    currentY += 30;
+                    pdf.setFontSize(13);
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setTextColor(13, 37, 54);
+                    
+                    pdf.setFillColor(248, 250, 252);
+                    pdf.rect(margin, currentY - 6, pageWidth - (margin * 2), 10, 'F');
+                    pdf.text("I. RESUMEN DE ESTADOS", margin + 5, currentY);
+                    currentY += 10;
+
+                    itemsParaPDF.forEach(item => {
+                        pdf.setFontSize(9);
+                        pdf.setTextColor(60, 60, 60);
+                        pdf.setFont("helvetica", "normal");
+                        pdf.text(item.title || "---", margin + 5, currentY);
+
+                        const st = item.st || 'ok';
+                        const stText = st === 'ok' ? 'Limpio' : (st === 'wa' ? 'Observación' : 'Riesgo');
+                        const stColor = st === 'ok' ? [22, 163, 74] : (st === 'wa' ? [245, 158, 11] : [220, 38, 38]);
+
+                        pdf.setFont("helvetica", "bold");
+                        pdf.setTextColor(stColor[0], stColor[1], stColor[2]);
+                        pdf.text(stText, pageWidth - margin - 5, currentY, { align: 'right' });
+                        
+                        pdf.setDrawColor(240, 240, 240);
+                        pdf.setLineDashPattern([1, 1], 0);
+                        pdf.line(margin + 5, currentY + 2, pageWidth - margin - 5, currentY + 2);
+                        pdf.setLineDashPattern([], 0);
+
+                        currentY += 6.5;
+                    });
+                }
+
+                // --- 2. CATEGORÍAS ---
+                for (let idx = 0; idx < itemsParaPDF.length; idx++) {
+                    const item = itemsParaPDF[idx];
+                    const writeOnCurrentPage = isIndividualPrint && idx === 0;
+                    if (!writeOnCurrentPage) {
+                        pdf.addPage();
+                        currentY = 20;
+                    } else {
+                        // En consulta individual, compactar: mantener texto en la misma hoja de portada.
+                        currentY = Math.max(currentY + 10, 92);
+                    }
+
+                    const st = item.st || 'ok';
+                    const stLabel = st === 'ko' ? 'RIESGO CRÍTICO' : (st === 'wa' ? 'OBSERVACIÓN' : 'SITUACIÓN: LIMPIO');
+                    const stColor = st === 'ko' ? [220, 38, 38] : (st === 'wa' ? [245, 158, 11] : [22, 163, 74]);
+
+                    if (!writeOnCurrentPage) {
+                        pdf.setFillColor(248, 250, 252);
+                        pdf.rect(0, 0, pageWidth, 32, 'F');
+                        pdf.setDrawColor(stColor[0], stColor[1], stColor[2]);
+                        pdf.setLineWidth(1.5);
+                        pdf.line(margin, 14, margin, 27);
+
+                        pdf.setFontSize(14);
+                        pdf.setFont("helvetica", "bold");
+                        pdf.setTextColor(stColor[0], stColor[1], stColor[2]);
+                        pdf.text((item.title || "CATEGORÍA").toUpperCase(), margin + 6, 22);
+
+                        pdf.setFontSize(9);
+                        pdf.setFont("helvetica", "italic");
+                        pdf.text(stLabel, pageWidth - margin, 22, { align: 'right' });
+
+                        currentY = 38;
+                    } else {
+                        pdf.setDrawColor(226, 232, 240);
+                        pdf.line(margin, currentY - 5, pageWidth - margin, currentY - 5);
+                        pdf.setFontSize(12);
+                        pdf.setFont("helvetica", "bold");
+                        pdf.setTextColor(stColor[0], stColor[1], stColor[2]);
+                        pdf.text((item.title || "CATEGORÍA").toUpperCase(), margin, currentY);
+                        pdf.setFontSize(9);
+                        pdf.setFont("helvetica", "italic");
+                        pdf.text(stLabel, pageWidth - margin, currentY, { align: 'right' });
+                        currentY += 8;
+                    }
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(40, 40, 40);
+
+                    let cleanText = item.text || (window.cleanMessages ? window.cleanMessages[item.id] : "") || "No se detectan alertas ni afectaciones vigentes.";
+
+                    const normStateText = String(cleanText || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    if (st === 'ko' && normStateText.includes('verificado y limpio')) {
+                        cleanText = "Estado: Alerta de Filtro Detectada\nSe han detectado afectaciones críticas en esta categoría. Se recomienda no proceder sin una verificación física exhaustiva y legal.";
+                    } else if (st === 'wa' && normStateText.includes('verificado y limpio')) {
+                        cleanText = "Estado: Advertencia Preventiva\nSe recomienda revisar los detalles físicos y documentos originales. Mantenga precaución con la información detectada en esta categoría.";
+                    }
+
+                    // Limpiador profundo y normalizador para jsPDF (Evita bugs de espaciado al pegar desde Word/Web)
+                    cleanText = cleanText
+                        .replace(/<br\s*\/?>/gi, '\n')
+                        .replace(/<[^>]*>/g, '') // Quitar tags
+                        .replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>') // Entidades comunes
+                        .replace(/\t/g, '    ') // Los tabs rompen el cálculo de ancho en jsPDF
+                        .replace(/[\u200B-\u200D\uFEFF]/g, '') // Espacios invisibles (zero-width)
+                        .replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/[–—]/g, '-') // Comillas y guiones inteligentes
+                        .replace(/[•·➢▪]/g, '-') // Viñetas raras a guión normal
+                        .replace(/[^\x20-\x7E\xA0-\xFF\n\r]/g, '') // Remover completamente caracteres unicode chinos/símbolos que jsPDF no soporta nativamente
+                        .trim();
+
+                    const splitText = pdf.splitTextToSize(cleanText, pageWidth - margin * 2);
+                    pdf.text(splitText, margin, currentY);
+                    currentY += (splitText.length * 5.2) + 8;
+
+                    const files = item.files || (item.file ? [{ data: item.file, type: item.file.includes('application/pdf') ? 'pdf' : 'img' }] : []);
+                    if (files.length > 0) {
+                        // Mantener legibilidad: texto en una hoja y evidencias en la siguiente.
+                        pdf.addPage();
+                        currentY = 20;
+                        pdf.setFont("helvetica", "bold");
+                        pdf.setFontSize(12);
+                        pdf.setTextColor(stColor[0], stColor[1], stColor[2]);
+                        pdf.text("EVIDENCIA DOCUMENTAL", margin, currentY);
+                        currentY += 8;
+                        pdf.setDrawColor(226, 232, 240);
+                        pdf.line(margin, currentY, pageWidth - margin, currentY);
+                        currentY += 8;
+                    }
+
+                    for (const f of files) {
+                        try {
+                            if (f.type === 'img') {
+                                const imgProps = pdf.getImageProperties(f.data);
+                                let imgW = pageWidth - (margin * 2);
+                                let imgH = (imgProps.height * imgW) / imgProps.width;
+
+                                // Escalar si no entra
+                                const avail = pageHeight - currentY - 18;
+                                if (imgH > avail) {
+                                    if (avail > (pageHeight * 0.4)) {
+                                        imgH = avail; imgW = (imgProps.width * imgH) / imgProps.height;
+                                    } else {
+                                        pdf.addPage(); currentY = 20;
+                                    }
+                                }
+
+                                const cX = (pageWidth - imgW) / 2;
+                                pdf.addImage(f.data, 'JPEG', cX, currentY, imgW, imgH);
+                                currentY += imgH + 10;
+                            } else if (f.type === 'pdf') {
+                                const b64 = f.data.split(',')[1];
+                                const bin = atob(b64);
+                                const u8 = new Uint8Array(bin.length);
+                                for (let j = 0; j < bin.length; j++) u8[j] = bin.charCodeAt(j);
+                                const doc = await pdfjs.getDocument({ data: u8 }).promise;
+                                for (let pN = 1; pN <= doc.numPages; pN++) {
+                                    const page = await doc.getPage(pN);
+                                    const vPort = page.getViewport({ scale: 2.5 }); // Calidad ultra para PDF
+                                    const cnvs = document.createElement('canvas');
+                                    const ctx = cnvs.getContext('2d');
+                                    cnvs.height = vPort.height; cnvs.width = vPort.width;
+                                    await page.render({ canvasContext: ctx, viewport: vPort }).promise;
+                                    const pImg = cnvs.toDataURL('image/jpeg', 0.95);
+                                    let iW = pageWidth - (margin * 2);
+                                    let iH = (vPort.height * iW) / vPort.width;
+                                    const av = pageHeight - currentY - 18;
+                                    if (iH > av) { pdf.addPage(); currentY = 20; }
+                                    pdf.addImage(pImg, 'JPEG', margin, currentY, iW, iH);
+                                    currentY += iH + 10;
+                                }
+                            }
+                        } catch (e) { console.warn("Evidencia omitida en PDF pericial"); }
+                    }
+                }
+
+                if (!isIndividualPrint) {
+                    pdf.addPage();
+                    currentY = 40;
+                    pdf.setFontSize(18);
+                    pdf.setFont("helvetica", "bold");
+                    pdf.setTextColor(13, 37, 54);
+                    pdf.text("III. GUÍA DE INTERPRETACIÓN PERICIAL", pageWidth / 2, currentY, { align: 'center' });
+                    
+                    currentY += 6;
+                    pdf.setFontSize(10);
+                    pdf.setFont("helvetica", "normal");
+                    pdf.setTextColor(100, 100, 100);
+                    pdf.text("Criterios utilizados para la determinación del estado del vehículo", pageWidth / 2, currentY, { align: 'center' });
+                    
+                    currentY += 30;
+
+                    const risks = [
+                        { t: 'RIESGO ALTO (CRÍTICO)', c: [220, 38, 38], m: 'Se recomienda encarecidamente NO proceder con inversiones o\ncompra-ventas bajo este estado. Factores desencadenantes:\n\n• Múltiples transferencias sospechosas o deudas cuantiosas.\n• Gravámenes activos, embargos u órdenes de captura policial.\n• Datos de motor, chasis, o uso no coincidentes con placa física.' },
+                        { t: 'RIESGO MEDIO (PREVENTIVO)', c: [245, 158, 11], m: 'El vehículo es transable, pero requiere validación física minuciosa o\npago de regularizaciones previas. Factores desencadenantes:\n\n• Historial de siniestros leves o papeletas pendientes de pago.\n• Multas administrativas menores (ej. revalidación de lunas).\n• Documentación en proceso lento de trámite notarial.' },
+                        { t: 'RIESGO BAJO (VERIFICADO)', c: [22, 163, 74], m: 'Aprobación técnica. El vehículo se encuentra saneado y listo\npara transferencia notarial segura. Factores desencadenantes:\n\n• Registro de propiedad inmaculado ante entidades correspondientes.\n• Ausencia total de deudas, multas o gravámenes vigentes.\n• Historial de revisiones técnicas (CITV) constante y aprobado.' }
+                    ];
+
+                    risks.forEach(r => {
+                        pdf.setFillColor(250, 250, 250);
+                        pdf.setDrawColor(230, 230, 230);
+                        pdf.roundedRect(margin, currentY, pageWidth - (margin * 2), 40, 3, 3, 'FD');
+                        pdf.setFillColor(r.c[0], r.c[1], r.c[2]);
+                        pdf.rect(margin, currentY + 1, 6, 38, 'F');
+                        pdf.setTextColor(r.c[0], r.c[1], r.c[2]);
+                        pdf.setFontSize(13);
+                        pdf.setFont("helvetica", "bold");
+                        pdf.text(r.t, margin + 15, currentY + 10);
+                        pdf.setFont("helvetica", "normal");
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(60, 60, 60);
+                        const splitDesc = pdf.splitTextToSize(r.m, pageWidth - margin - 30);
+                        pdf.text(splitDesc, margin + 15, currentY + 18);
+                        currentY += 55;
+                    });
+                }
+
+                // --- PIE DE PÁGINA Y NUMERACIÓN ---
+                const pTotal = typeof pdf.internal.getNumberOfPages === 'function'
+                    ? pdf.internal.getNumberOfPages()
+                    : (typeof pdf.getNumberOfPages === 'function' ? pdf.getNumberOfPages() : pdf.internal.pages.length - 1);
+
+                for (let i = 1; i <= pTotal; i++) {
+                    pdf.setPage(i);
+                    pdf.setFontSize(9);
+                    pdf.setTextColor(150, 150, 150);
+                    pdf.setFont("helvetica", "normal");
+                    pdf.text(`Página ${i} de ${pTotal} - Expediente Filtro Vehicular Plus`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+                }
+
+                const filePrefix = isIndividualPrint ? 'Consulta_Individual' : 'Expediente';
+                pdf.save(`${filePrefix}_${placa}.pdf`);
+            } catch (error) {
+                console.error("Fallo PDF:", error);
+                alert("Error al generar el PDF.");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function closePreviewModal() {
+            const modal = document.getElementById('previewModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.getElementById('modalContent').innerHTML = '';
+                document.body.style.overflow = 'auto'; // Restore scroll
+            }
+        }
+
+        // --- VISUALIZADOR DE ÉLITE (IMÁGENES Y PDFS LIMPIOS) ---
+        async function openPreviewModal(url, type) {
+            const modal = document.getElementById('previewModal');
+            const wrapper = document.getElementById('modalContent');
+            wrapper.innerHTML = '<div style="color:white; font-size:14px; text-align:center; padding:40px;"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>Cargando auditoría digital...</div>';
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            if (type === 'img') {
+                wrapper.innerHTML = `<img src="${url}" style="max-width:100%; border-radius:8px; box-shadow:0 20px 50px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1);">`;
+            } else {
+                try {
+                    const pdfjs = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
+                    if (!pdfjs) throw new Error("PDF.js no cargado");
+
+                    pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+                    let loadingTask;
+                    if (url.startsWith('data:application/pdf')) {
+                        const base64Data = url.split(',')[1];
+                        const binaryData = atob(base64Data);
+                        const uint8Array = new Uint8Array(binaryData.length);
+                        for (let i = 0; i < binaryData.length; i++) uint8Array[i] = binaryData.charCodeAt(i);
+                        loadingTask = pdfjs.getDocument({ data: uint8Array });
+                    } else {
+                        loadingTask = pdfjs.getDocument(url);
+                    }
+
+                    const pdfDoc = await loadingTask.promise;
+                    wrapper.innerHTML = '';
+
+                    for (let pNum = 1; pNum <= pdfDoc.numPages; pNum++) {
+                        const page = await pdfDoc.getPage(pNum);
+                        const viewport = page.getViewport({ scale: 1.3 }); // Reducido para evitar fallos de memoria en multi-página
+                        const canvas = document.createElement('canvas');
+                        canvas.className = 'pdf-page-preview';
+                        canvas.style.maxWidth = '100%';
+                        canvas.style.marginBottom = '25px';
+                        canvas.style.borderRadius = '8px';
+                        canvas.style.boxShadow = 'none';
+                        canvas.style.border = 'none';
+
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        await page.render({ canvasContext: context, viewport: viewport }).promise;
+                        wrapper.appendChild(canvas);
+                    }
+                } catch (e) {
+                    console.error("Error modal PDF:", e);
+                    wrapper.innerHTML = '<div style="color:white; text-align:center; padding:40px;">No se pudo visualizar el documento. Intenta descargarlo directamente.</div>';
+                }
+            }
+        }
+
+        async function renderPdfThumbnail(url, wrapperId) {
+            try {
+                const wrapper = document.getElementById(wrapperId);
+                if (!wrapper || !url) return;
+
+                if (url.startsWith('data:image/') || url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                     wrapper.innerHTML = `<img src="${url}" style="max-width:100%; border-radius:8px;">`;
+                     return;
+                }
+
+                const pdfjs = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
+                if (!pdfjs) return;
+
+                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+                let loadingTask;
+                if (url.startsWith('data:application/pdf')) {
+                    const base64Data = url.split(',')[1];
+                    const binaryData = atob(base64Data);
+                    const uint8Array = new Uint8Array(binaryData.length);
+                    for (let i = 0; i < binaryData.length; i++) uint8Array[i] = binaryData.charCodeAt(i);
+                    loadingTask = pdfjs.getDocument({ data: uint8Array });
+                } else {
+                    loadingTask = pdfjs.getDocument(url);
+                }
+
+                const pdfDoc = await loadingTask.promise;
+                wrapper.innerHTML = ''; // Limpiar el wrapper
+
+                for (let pNum = 1; pNum <= pdfDoc.numPages; pNum++) {
+                    const page = await pdfDoc.getPage(pNum);
+                    const viewport = page.getViewport({ scale: 0.8 }); 
+                    const canvas = document.createElement('canvas');
+                    canvas.style.maxWidth = '100%';
+                    canvas.style.marginBottom = '15px';
+                    canvas.style.borderRadius = '8px';
+                    canvas.style.boxShadow = 'none'; // SIN SOMBRAS
+                    
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+                    wrapper.appendChild(canvas);
+                }
+            } catch (e) {
+                console.error("Error inline PDF:", e);
+            }
+        }
+
+        function closePreviewModal() {
+            const modal = document.getElementById('previewModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.getElementById('modalContent').innerHTML = '';
+                document.body.style.overflow = 'auto'; // Restore scroll
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase-config.js?v=2"></script>
+</body>
+
+</html>

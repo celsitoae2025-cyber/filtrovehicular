@@ -1,0 +1,2653 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Filtro Vehicular Plus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #f3f6fc; /* Fondo gris perlado muy suave */
+            --bg-sidebar: rgba(255, 255, 255, 0.82); /* Glass sidebar */
+            --bg-card: #ffffff;
+            --petrol: #0d2536; 
+            --accent: #06b6d4; /* Color Cian Vibrante */
+            --white: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: transparent; /* No bordes duros */
+            --st-ok: #10b981;
+            --st-wa: #f59e0b;
+            --st-ko: #ef4444;
+        }
+
+        /* --- LOGIN OVERLAY --- */
+        #loginOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 37, 54, 0.96);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            padding: 24px;
+            padding-top: max(24px, env(safe-area-inset-top, 0px));
+            padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+        }
+
+        html.admin-session-ok #loginOverlay {
+            display: none !important;
+            pointer-events: none;
+        }
+
+        #adminAppRoot {
+            display: none;
+            flex: 1;
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            flex-direction: row;
+            position: relative;
+        }
+
+        html.admin-session-ok #adminAppRoot {
+            display: flex !important;
+        }
+
+        @media (max-width: 992px) {
+            #adminAppRoot {
+                flex-direction: column;
+            }
+        }
+
+        .admin-login-hint {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 16px;
+            line-height: 1.5;
+        }
+
+        #adminLoginError {
+            display: none;
+            margin-top: 12px;
+            padding: 10px 12px;
+            background: #fef2f2;
+            color: #b91c1c;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.2);
+            color: var(--text-dark);
+        }
+
+        .login-input {
+            margin-top: 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: var(--text-dark) !important;
+            padding: 15px;
+            border-radius: 12px;
+            width: 100%;
+            text-align: center;
+            font-size: 16px;
+            letter-spacing: 0.05em;
+        }
+
+        .login-input[type="password"] {
+            letter-spacing: 0.2em;
+        }
+
+        .btn-login {
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px;
+            background: var(--petrol);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* SIDEBAR GLASS */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-sidebar);
+            backdrop-filter: blur(12px);
+            border-right: none;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 4px 0 30px rgba(0, 0, 0, 0.02);
+            z-index: 1000;
+        }
+
+        .side-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .side-logo img {
+            width: 32px;
+            filter: none !important;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 12px;
+            margin-bottom: 5px;
+            transition: 0.2s;
+            font-weight: 700;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(13, 37, 54, 0.04);
+            color: var(--petrol);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 40px;
+            max-width: 1200px;
+        }
+
+        .header-admin {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .page-title p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .btn-save {
+            background: var(--petrol);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        /* BOTÓN FLOTANTE ESTILO CIAN (FAB) */
+        .btn-floating-save {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1000000;
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-floating-save i {
+            font-size: 20px;
+        }
+
+        .btn-floating-save:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(6, 182, 212, 0.5);
+        }
+
+        .btn-clear {
+            background: rgba(220, 38, 38, 0.05);
+            color: #dc2626;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            font-size: 13px;
+            border: none;
+        }
+
+        .btn-magic {
+            background: #e0f2fe;
+            color: #0284c7;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            border: none;
+        }
+
+        .plate-selector {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.03);
+            color: var(--text-dark);
+            border: none;
+        }
+
+        .vdb-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--petrol);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.06);
+            padding: 12px 15px;
+            border-radius: 12px;
+            color: var(--text-dark) !important;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.08);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .admin-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.03);
+            color: var(--text-dark);
+            border: none;
+        }
+
+        .card-head {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+
+        .status-picker {
+            display: flex;
+            gap: 10px;
+            background: #e2e8f0;
+            padding: 6px 10px;
+            border-radius: 50px;
+        }
+
+        .status-dot-btn {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .status-dot-btn[data-status="ok"] { background-color: var(--st-ok); }
+        .status-dot-btn[data-status="wa"] { background-color: var(--st-wa); }
+        .status-dot-btn[data-status="ko"] { background-color: var(--st-ko); }
+
+        .status-dot-btn.active {
+            border-color: #ffffff;
+            box-shadow: 0 0 0 2px var(--petrol);
+            transform: scale(1.15);
+        }
+
+        .upload-area.dragover {
+            background: #f0f9ff;
+            border-color: var(--petrol);
+        }
+
+        .file-counter-badge {
+            background: var(--petrol);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            margin-left: 8px;
+            display: none;
+        }
+
+        .file-list-preview {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .file-item-mini {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .file-item-mini img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .file-item-mini .file-icon {
+            font-size: 20px;
+            color: var(--petrol);
+        }
+
+        .admin-card.has-files {
+            border-color: #e2e8f0;
+        }
+
+        .file-item-mini .btn-remove-mini {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 16px;
+            height: 16px;
+            background: rgba(220, 38, 38, 0.8);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .admin-card.has-files {
+            border-color: #e2e8f0;
+        }
+        
+        /* UPLOAD AREA */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            padding: 24px;
+            text-align: center;
+            border-radius: 12px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #ffffff;
+        }
+
+        .upload-area:hover {
+            background: #f8fafc;
+            border-color: var(--petrol);
+        }
+
+        .upload-area i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--petrol);
+        }
+
+        .upload-area p, .upload-area span {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* PREVIEW */
+        .file-preview {
+            margin-top: 15px;
+            position: relative;
+            display: none;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .file-preview img {
+            width: 100%;
+            max-height: 160px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .remove-file {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 11px;
+            z-index: 2;
+            transition: 0.2s;
+        }
+
+        .remove-file:hover {
+            background: var(--st-ko);
+            transform: scale(1.1);
+        }
+
+        .pdf-indicator {
+            background: #ffffff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pdf-indicator i {
+            font-size: 32px;
+            color: #ef4444;
+        }
+
+        .pdf-indicator span {
+            color: var(--text-dark);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .hidden-file-input { display: none; }
+
+        /* REQUESTS PANEL */
+        .requests-panel {
+            display: none;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.03);
+            margin-top: 20px;
+            border: none;
+        }
+
+        /* NOTIFICACIONES FLOTANTES GLOBAL */
+        #requestNotify {
+            position: fixed !important;
+            bottom: 25px !important;
+            right: 25px !important;
+            z-index: 9999999 !important;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            #requestNotify {
+                bottom: 15px !important;
+                left: 15px !important;
+                right: auto !important;
+                max-width: 250px;
+                z-index: 999998; /* Un nivel por debajo del Guardar */
+            }
+        }
+
+        /* ITEMS DE SOLICITUD */
+        .request-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+            gap: 15px;
+        }
+
+        .request-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.06);
+        }
+
+        @media (max-width: 768px) {
+            .request-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .req-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        .req-plate-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: var(--petrol);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .req-plate-btn:hover {
+            background: var(--petrol);
+            color: white;
+            border-color: var(--petrol);
+        }
+
+        .btn-confirm-pay {
+            background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+            color: white !important;
+            font-weight: 800;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+            box-shadow: 0 5px 15px rgba(6, 182, 212, 0.2);
+        }
+
+        .btn-confirm-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.3);
+        }
+
+        .paid-badge {
+            background: #f0fdf4;
+            color: #10b981;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 800;
+            border: 1px solid #d1fae5;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .req-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .req-plate-box {
+            background: var(--petrol);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            font-size: 14px;
+        }
+
+        .req-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .req-time {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .req-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-req {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-approve {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-reject {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        /* --- RESPONSIVIDAD --- */
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+
+            .sidebar {
+                width: 260px;
+                left: -260px;
+                transition: all 0.3s ease;
+                z-index: 20000;
+                background: #ffffff;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.05);
+            }
+
+            .sidebar.active { left: 0; }
+
+            .main-content { margin-left: 0; padding: 20px; }
+
+            .header-admin { flex-direction: column; align-items: flex-start; gap: 20px; margin-top: 60px; }
+
+            .form-grid { grid-template-columns: 1fr; }
+
+            .plate-selector { flex-direction: column; align-items: stretch; }
+
+            .mobile-header {
+                display: flex !important;
+                position: fixed;
+                top: 0; left: 0; right: 0; height: 60px;
+                background: #ffffff;
+                border-bottom: 1px solid var(--border);
+                z-index: 10000;
+                align-items: center;
+                padding: 0 20px;
+                justify-content: space-between;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            }
+
+            .sidebar-overlay {
+                display: none; position: fixed; inset: 0;
+                background: rgba(13, 37, 54, 0.4); z-index: 15000; backdrop-filter: blur(4px);
+            }
+
+            .sidebar-overlay.active { display: block; }
+            .req-actions { width: 100%; justify-content: flex-end; }
+            .btn-floating-save { display: none !important; }
+        }
+
+        @media (max-width: 600px) {
+            .req-plate-box { font-size: 13px; }
+            .card-head {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 12px;
+            }
+            .card-head > div:last-child {
+                width: 100%;
+                justify-content: space-between;
+                display: flex;
+            }
+        }
+
+        .mobile-header { display: none; }
+        .menu-toggle { font-size: 22px; color: var(--petrol); cursor: pointer; }
+
+        /* --- NOTIFICACIONES SUBAGENTE --- */
+        /* Redundancia eliminada para evitar superposición */
+    </style>
+    <link rel="icon" type="image/png" href="assets/media/logonegro.png">
+    <script src="assets/js/admin-auth-config.js?v=2"></script>
+    <script>
+        (function () {
+            try {
+                var raw = sessionStorage.getItem('filtro_admin_auth_v1');
+                if (!raw) return;
+                var o = JSON.parse(raw);
+                if (o && o.exp > Date.now()) document.documentElement.classList.add('admin-session-ok');
+            } catch (e) {}
+        })();
+    </script>
+</head>
+
+<body>
+
+    <div id="loginOverlay" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle">
+        <div class="login-card">
+            <img src="assets/media/logonegro.png" alt="" style="width: 48px; height: 48px; object-fit: contain; margin-bottom: 8px;">
+            <h2 id="adminLoginTitle" style="font-size: 18px; font-weight: 900; color: var(--petrol); margin: 0;">Panel de administración</h2>
+            <p style="font-size: 13px; color: #64748b; margin-top: 8px;">Introduce la clave de acceso.</p>
+            <input type="password" id="adminPassInput" class="login-input" placeholder="Clave de acceso" autocomplete="current-password" autocapitalize="off" spellcheck="false">
+            <button type="button" class="btn-login" id="btnAdminLogin">Entrar</button>
+            <div id="adminLoginError"></div>
+            <p class="admin-login-hint">La clave se configura en <code style="font-size: 11px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">assets/js/admin-auth-config.js</code>. Cierra sesión desde el menú lateral cuando termines.</p>
+            <a href="index.html" style="display: inline-block; margin-top: 18px; font-size: 12px; color: #94a3b8;">← Volver al sitio</a>
+        </div>
+    </div>
+
+    <!-- Modal confirmación (Enter / Esc / clic fuera) -->
+    <div id="adminConfirmModal" onclick="if(event.target===this)closeAdminConfirmModal()" style="display:none; position:fixed; inset:0; z-index:400000; background:rgba(13,37,54,0.55); align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px);" role="dialog" aria-modal="true" aria-labelledby="adminConfirmTitle">
+        <div style="background:#fff; border-radius:16px; padding:22px 22px 18px; max-width:420px; width:100%; box-shadow:0 25px 60px rgba(0,0,0,0.35); border:1px solid #e2e8f0;" onclick="event.stopPropagation()">
+            <h3 id="adminConfirmTitle" style="margin:0 0 10px; font-size:17px; font-weight:900; color:var(--petrol);">Confirmar</h3>
+            <p id="adminConfirmMsg" style="margin:0; font-size:13px; color:#64748b; line-height:1.5;"></p>
+            <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px; flex-wrap:wrap;">
+                <button type="button" id="adminConfirmCancel" style="padding:10px 16px; border-radius:10px; border:1px solid #e2e8f0; background:#f8fafc; color:#475569; font-weight:800; font-size:13px; cursor:pointer;">Cancelar</button>
+                <button type="button" id="adminConfirmOk" style="padding:10px 16px; border-radius:10px; border:none; background:#dc2626; color:#fff; font-weight:800; font-size:13px; cursor:pointer;">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminAppRoot">
+
+    <div class="mobile-header" style="justify-content: space-between;">
+        <div class="side-logo" style="margin-bottom: 0; display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="window.location.href='admin.html'">
+            <img src="assets/media/logonegro.png" alt="Logo" style="width: 32px !important; height: 32px !important; object-fit: contain; filter: none !important;">
+            <span style="font-weight: 900; letter-spacing: 0.5px; color: var(--petrol);">ADMIN</span>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 15px; color: var(--petrol);">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 20px; cursor: pointer;" onclick="saveReport()" title="Publicar"></i>
+            <div style="position: relative;" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars menu-toggle" style="margin-bottom: 0;"></i>
+                <span id="mobileCount" style="display: none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; text-align: center; line-height: 16px; font-weight: 800; border: 1px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.15);">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <div class="sidebar" id="sidebar">
+        <a href="admin.html" class="side-logo" style="display: flex; align-items: center; gap: 12px; margin-bottom: 40px; text-decoration: none; color: var(--text-dark);">
+            <img src="assets/media/logonegro.png" alt="Logo" style="width: 32px !important; height: 32px !important; object-fit: contain; filter: none !important;">
+            <div style="line-height: 1;">
+                <div style="font-size: 14px; font-weight: 900; letter-spacing: 0.5px;">ADMIN</div>
+                <div style="font-size: 10px; opacity: 0.5;">Filtro Vehicular Plus</div>
+            </div>
+        </a>
+        <nav style="display: flex; flex-direction: column; gap: 4px;">
+            <a href="javascript:void(0)" onclick="showView('editor'); toggleSidebar(false)" class="nav-item active" id="nav-editor">
+                <i class="fa-solid fa-file-signature"></i> Nuevo Reporte
+            </a>
+            <a href="javascript:void(0)" onclick="showView('requests'); toggleSidebar(false)" class="nav-item" id="nav-requests" style="display: flex; align-items: center; width: 100%;">
+                <i class="fa-solid fa-list-check"></i> <span>Pendientes</span>
+                <span id="requestsCount" style="display: none; background: #ef4444; color: white; font-size: 11px; padding: 2px 7px; border-radius: 50px; font-weight: 800; margin-left: auto; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.2);">0</span>
+            </a>
+            <a href="javascript:void(0)" onclick="showView('history'); toggleSidebar(false)" class="nav-item" id="nav-history">
+                <i class="fa-solid fa-clock-rotate-left"></i> Historial
+            </a>
+            <a href="javascript:void(0)" onclick="showView('credits'); toggleSidebar(false)" class="nav-item" id="nav-credits">
+                <i class="fa-solid fa-coins" style="color:#0284c7;"></i> Créditos
+            </a>
+            <a href="javascript:void(0)" onclick="showView('users'); toggleSidebar(false)" class="nav-item" id="nav-users">
+                <i class="fa-solid fa-users" style="color:#6366f1;"></i> Usuarios
+            </a>
+        </nav>
+        
+        <!-- Configuración de Alertas Telegram -->
+        <div style="margin-top: auto; padding: 15px; border-top: 1px solid rgba(0,0,0,0.05); background: rgba(0,0,0,0.01);">
+            <div style="font-size: 11px; font-weight: 800; color: var(--petrol); text-transform: uppercase; margin-bottom: 8px;">Configuración Telegram</div>
+            <input type="text" id="tgToken" placeholder="Token del Bot" style="width: 100%; padding: 8px; font-size: 11px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 5px; background: white;">
+            <input type="text" id="tgChatId" placeholder="ID del Chat (Tu ID)" style="width: 100%; padding: 8px; font-size: 11px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px; background: white;">
+            <div style="display: flex; gap: 5px;">
+                <button onclick="saveTelegramSettings()" style="flex: 1; padding: 8px; background: #22c55e; color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer;">Guardar</button>
+                <button onclick="testTelegram()" style="flex: 1; padding: 8px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;"><i class="fa-solid fa-paper-plane" style="font-size: 10px;"></i> Probar</button>
+            </div>
+        </div>
+
+        <a href="javascript:void(0)" onclick="if(typeof adminLogout==='function')adminLogout();" class="nav-item" style="color: #dc2626; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 15px;"><i class="fa-solid fa-shield-halved"></i> Cerrar sesión admin</a>
+        <a href="index.html" class="nav-item" style="color: #64748b; padding-top: 6px;"><i class="fa-solid fa-house"></i> Volver al sitio</a>
+    </div>
+
+    <div class="main-content">
+        <!-- VISTA DE CRÉDITOS -->
+        <div id="creditsView" style="display: none;">
+            <div class="header-admin">
+                <div class="page-title">
+                    <h1>Gestión de Billeteras (Créditos)</h1>
+                    <p>Recarga saldo a los clientes que te pagaron por volumen.</p>
+                </div>
+            </div>
+            <div class="admin-card" style="max-width: 600px;">
+                <h3 style="margin-bottom: 20px; color: var(--petrol); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-wallet" style="color: #06b6d4;"></i> Acreditar Nuevo Saldo</h3>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 800; letter-spacing: 0.5px;">Correo del Cliente</label>
+                    <input type="email" id="creditEmail" placeholder="cliente@ejemplo.com">
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <label style="display:block; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 800; letter-spacing: 0.5px;">Cantidad de Créditos a Asignar</label>
+                    <select id="creditAmount">
+                        <option value="10">+ 10 Créditos (S/ 10.00)</option>
+                        <option value="20">+ 20 Créditos (S/ 20.00 — 1 Filtro Completo)</option>
+                        <option value="35">+ 35 Créditos (S/ 35.00 — 1 Dashboard)</option>
+                        <option value="50">+ 50 Créditos (S/ 50.00)</option>
+                    </select>
+                </div>
+                
+                <button onclick="addCredits()" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #00b4d8, #0077b6); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 25px rgba(0, 180, 216, 0.2);">
+                    <i class="fa-solid fa-circle-check"></i> RECARGAR YAPE CONFIRMADO
+                </button>
+            </div>
+        </div>
+
+        <!-- VISTA DE SOLICITUDES -->
+        <div id="requestsView" class="requests-panel">
+            <h2 style="margin-bottom: 5px;">Solicitudes en Tiempo Real</h2>
+            <p style="color: #64748b; font-size: 13px; margin-bottom: 25px;">Aprueba o descarta las consultas entrantes
+                de los clientes.</p>
+            <div id="requestsList" class="request-list">
+                <div class="empty-req">Cargando solicitudes...</div>
+            </div>
+        </div>
+        
+        <!-- VISTA DE HISTORIAL -->
+        <div id="historyView" class="requests-panel" style="display: none;">
+            <div style="display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:18px;">
+                <div style="flex:1; min-width:200px;">
+                    <h2 style="margin-bottom: 5px;">Historial de Operaciones</h2>
+                    <p style="color: #64748b; font-size: 13px; margin:0;">Registro de solicitudes y recargas aprobadas exitosamente.</p>
+                </div>
+                <button type="button" id="btnClearHistory" onclick="promptDeleteAllHistory()" title="Eliminar todas las entradas del historial (aprobadas) en la nube" style="flex-shrink:0; display:inline-flex; align-items:center; gap:6px; padding:8px 12px; font-size:11px; font-weight:800; border-radius:10px; border:1px solid #fecaca; background:#fef2f2; color:#b91c1c; cursor:pointer; transition:0.2s;">
+                    <i class="fa-solid fa-trash-can" style="font-size:12px;"></i> Vaciar historial
+                </button>
+            </div>
+            <div id="historyList" class="request-list">
+                <div class="empty-req">Cargando historial...</div>
+            </div>
+        </div>
+        
+        <!-- VISTA DE USUARIOS -->
+        <div id="usersView" class="requests-panel" style="display: none;">
+            <h2 style="margin-bottom: 5px;">Gestión de Usuarios</h2>
+            <p style="color: #64748b; font-size: 13px; margin-bottom: 25px;">Lista de correos registrados y saldos de créditos en la base de datos de la nube.</p>
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+                <button onclick="deleteAllUsersCloud()" style="background:var(--petrol); color:#fff; border:none; border-radius:10px; padding:10px 14px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-trash-can"></i> ELIMINAR TODAS LAS CUENTAS
+                </button>
+                <button onclick="deleteAllCloudData()" style="background:#13354c; color:#fff; border:none; border-radius:10px; padding:10px 14px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-biohazard"></i> REINICIO TOTAL NUBE
+                </button>
+            </div>
+            <div id="usersList" class="request-list">
+                <div class="empty-req">Cargando base de datos de usuarios...</div>
+            </div>
+        </div>
+        
+        <!-- VISTA DEL EDITOR (EXISTENTE) -->
+        <div id="editorView">
+            <div class="header-admin" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div class="page-title">
+                    <h1>Panel de Control</h1>
+                    <p>Gestión de Auditoría Pericial y Validación de Solicitudes</p>
+                </div>
+                <!-- Botón Flotante controla la publicación -->
+                <button class="btn-floating-save" onclick="saveReport()" title="Publicar">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </button>
+            </div>
+
+            <div class="plate-selector">
+                <div class="input-group">
+                    <label>Número de Placa</label>
+                    <input type="text" id="targetPlate" placeholder="ABC-123"
+                        style="font-size: 24px; font-weight: 900; text-transform: uppercase; color: var(--accent); letter-spacing: 2px;">
+                </div>
+                <div class="input-group">
+                    <label>Confirmación de Pago</label>
+                    <button class="btn-confirm-pay"
+                        onclick="confirmPayment(document.getElementById('targetPlate').value)">
+                        <i class="fa-solid fa-money-bill-check"></i> Confirmar Pago
+                    </button>
+                </div>
+                <div class="input-group">
+                    <label>Veredicto Global (Final)</label>
+                    <div class="status-picker" id="globalStatus" style="width: fit-content; margin-top: 5px;">
+                        <div class="status-dot-btn active" data-status="ok" onclick="setGlobalStatus(this)"
+                            title="Vehículo Apto"></div>
+                        <div class="status-dot-btn" data-status="wa" onclick="setGlobalStatus(this)"
+                            title="Alerta Moderada"></div>
+                        <div class="status-dot-btn" data-status="ko" onclick="setGlobalStatus(this)"
+                            title="Riesgo Crítico"></div>
+                    </div>
+                </div>
+                <div class="input-group" style="flex: 0 0 170px;">
+                    <label>Fecha del Informe</label>
+                    <input type="date" id="reportDate">
+                </div>
+            </div>
+
+            <!-- VEREDICTO GENERAL -->
+            <div class="admin-card verdict-editor" style="margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <label style="margin-bottom: 0;">Resumen Ejecutivo (Veredicto Auditor)</label>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" onclick="loadVerdictTemplate('ok')"
+                            style="background: #16a34a; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">PANTALLA
+                            VERDE</button>
+                        <button type="button" onclick="loadVerdictTemplate('wa')"
+                            style="background: #d97706; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">PANTALLA
+                            AMBAR</button>
+                        <button type="button" onclick="loadVerdictTemplate('ko')"
+                            style="background: #dc2626; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">PANTALLA
+                            ROJA</button>
+                    </div>
+                </div>
+                <textarea id="verdictText" rows="3"
+                    placeholder="Ej: Vehículo en excelentes condiciones legales. Sin deudas pendientes en Lima ni Callao..."></textarea>
+            </div>
+
+            <div class="form-grid" id="adminGrid">
+                <!-- Las 18 categorías se generan dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    </div><!-- /#adminAppRoot -->
+
+    <script src="assets/js/admin-gate.js"></script>
+    <script>
+        // --- MOTOR DE ALMACENAMIENTO MASIVO (IndexedDB) ---
+        const DB_NAME = 'FiltroVehicularDB';
+        const STORE_NAME = 'reports';
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, 1);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME);
+                    }
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function saveReportDB(key, data) {
+            const db = await initDB();
+            
+            // 1. Guardar localmente (IndexedDB)
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                store.put(data, key);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+
+            // 2. Sincronizar con la Nube (Supabase)
+            if (window.sb) {
+                try {
+                    const placa = data.placa || key.replace('report_', '');
+                    await window.sb
+                        .from('informes')
+                        .upsert({ 
+                            placa: placa, 
+                            datos: data, 
+                            updated_at: new Date() 
+                        });
+                } catch (e) { console.error("Error guardando informe en nube:", e); }
+            }
+        }
+
+        async function getReportDB(key) {
+            // 1. Intentar desde la Nube (Supabase)
+            if (window.sb) {
+                try {
+                    const placa = key.replace('report_', '');
+                    const { data } = await window.sb
+                        .from('informes')
+                        .select('datos')
+                        .eq('placa', placa)
+                        .single();
+                        
+                    if (data && data.datos) return data.datos;
+                } catch (e) { console.error("Error leyendo informe de nube:", e); }
+            }
+
+            // 2. Fallback a Local (IndexedDB)
+            const db = await initDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const store = tx.objectStore(STORE_NAME);
+                const req = store.get(key);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function toggleSidebar(force) {
+            const side = document.getElementById('sidebar');
+            const over = document.getElementById('sidebarOverlay');
+            if (force !== undefined) {
+                if (force) { side.classList.add('active'); over.classList.add('active'); }
+                else { side.classList.remove('active'); over.classList.remove('active'); }
+            } else {
+                side.classList.toggle('active');
+                over.classList.toggle('active');
+            }
+        }
+
+        const normalize = (p) => p.toString().toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+        function solicitudEstadoAprobado(req) {
+            return req && String(req.status || '').toLowerCase().trim() === 'approved';
+        }
+
+        async function countPendingSolicitudesCloud() {
+            if (!window.sb) return 0;
+            const { data } = await window.sb.from('solicitudes').select('datos');
+            const rows = (data || []).map((i) => i.datos).filter((d) => d && d.placa);
+            const approvedNorm = new Set();
+            rows.forEach((d) => {
+                if (solicitudEstadoAprobado(d)) approvedNorm.add(normalize(String(d.placa)));
+            });
+            const pendingNormSeen = new Set();
+            let count = 0;
+            rows.forEach((d) => {
+                if (solicitudEstadoAprobado(d)) return;
+                const n = normalize(String(d.placa));
+                if (approvedNorm.has(n)) return;
+                if (pendingNormSeen.has(n)) return;
+                pendingNormSeen.add(n);
+                count++;
+            });
+            return count;
+        }
+
+        // Configuración de Categorías
+        const categories = [
+            { id: 'sunarp', icon: 'fa-id-card', title: 'Propiedad Vehicular SUNARP', def: 'Estado: Verificado y Limpio\nSin anotaciones vigentes en propiedad vehicular.' },
+            { id: 'historial', icon: 'fa-file-lines', title: 'Historial Completo por Placa', def: 'Estado: Verificado y Limpio\nHistorial de registros y transferencias validado.' },
+            { id: 'caracteristicas', icon: 'fa-car-side', title: 'Cambio de Características', def: 'Estado: Verificado y Limpio\nCaracterísticas técnicas originales verificadas.' },
+            { id: 'lima', icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Lima', def: 'Estado: Verificado y Limpio\nSin deudas de papeletas o impuesto vehicular en Lima.' },
+            { id: 'callao', icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Callao', def: 'Estado: Verificado y Limpio\nSin deudas pendientes en el Callao.' },
+            { id: 'region', icon: 'fa-map-location-dot', title: 'Deudas y Multas por Región', def: 'Estado: Verificado y Limpio\nConsulta regional realizada con éxito.' },
+            { id: 'atu', icon: 'fa-triangle-exclamation', title: 'Papeletas de Tránsito ATU', def: 'Estado: Verificado y Limpio\nVehículo libre de infracciones ante ATU.' },
+            { id: 'siniestralidad', icon: 'fa-heart-pulse', title: 'Siniestralidad por Placa', def: 'Estado: Verificado y Limpio\nSin registros de siniestros o pérdidas totales.' },
+            { id: 'estado_placa', icon: 'fa-sheet-plastic', title: 'Estado de Placa', def: 'Estado: Verificado y Limpio\nPlaca física y registro en estado activo.' },
+            { id: 'foto_pit', icon: 'fa-camera', title: 'Foto Pit Lima', def: 'Estado: Verificado y Limpio\nSin capturas de fotopapeletas pendientes.' },
+            { id: 'citv', icon: 'fa-screwdriver-wrench', title: 'Inspección Técnica Vehicular CITV', def: 'Estado: Verificado y Limpio\nInspección Técnica aprobada y vigente.' },
+            { id: 'soat', icon: 'fa-shield-halved', title: 'Vigencia del SOAT', def: 'Estado: Verificado y Limpio\nPóliza de Seguro Obligatorio validada.' },
+            { id: 'sutran', icon: 'fa-truck', title: 'Papeletas SUTRAN', def: 'Estado: Verificado y Limpio\nSin infracciones al reglamento ante SUTRAN.' },
+            { id: 'lunas', icon: 'fa-circle-half-stroke', title: 'Lunas Oscurecidas', def: 'Estado: Verificado y Limpio\nPermiso de lunas oscurecidas validado y vigente.' },
+            { id: 'fise', icon: 'fa-gas-pump', title: 'FISE GNV Subsidio Gas', def: 'Estado: Verificado y Limpio\nSin deudas ni subsidios en programa FISE.' },
+            { id: 'gnv', icon: 'fa-coins', title: 'Consulta Deuda GNV', def: 'Estado: Verificado y Limpio\nConsulta de financiamiento GNV realizada.' },
+            { id: 'denuncias', icon: 'fa-handcuffs', title: 'Denuncias y Órdenes de Captura', def: 'Estado: Verificado y Limpio\nSin denuncias por robo ni órdenes de captura.' },
+            { id: 'boleta', icon: 'fa-building-columns', title: 'Boleta Informativa', def: 'Estado: Verificado y Limpio\nBoleta informativa generada con éxito.' },
+            { id: 'tive', icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', def: 'Estado: Verificado y Limpio\nTarjeta TIVE verificada correctamente.' },
+            { id: 'propietarios', icon: 'fa-users', title: 'Historial de Propietarios Inscritos', def: 'Estado: Verificado y Limpio\nHistorial de propietarios anteriores validado.' },
+            { id: 'record', icon: 'fa-address-card', title: 'Récord de Conductor (DNI)', def: 'Estado: Verificado y Limpio\nRécord del conductor sin infracciones graves.' },
+            { id: 'otros', icon: 'fa-list-check', title: 'Otras Afectaciones', def: 'Estado: Verificado y Limpio\nSin otras afectaciones en sistemas integrados.' }
+        ];
+
+        function showView(view) {
+            document.getElementById('editorView').style.display = view === 'editor' ? 'block' : 'none';
+            document.getElementById('requestsView').style.display = view === 'requests' ? 'block' : 'none';
+            document.getElementById('creditsView').style.display = view === 'credits' ? 'block' : 'none';
+            if (document.getElementById('historyView')) document.getElementById('historyView').style.display = view === 'history' ? 'block' : 'none';
+            if (document.getElementById('usersView')) document.getElementById('usersView').style.display = view === 'users' ? 'block' : 'none';
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            if (document.getElementById('nav-' + view)) document.getElementById('nav-' + view).classList.add('active');
+            
+            if (view === 'history' && typeof renderHistoryList === 'function') renderHistoryList();
+            if (view === 'users' && typeof renderUsersList === 'function') renderUsersList();
+            if (view === 'requests' && typeof renderRequestsList === 'function') renderRequestsList();
+        }
+
+        async function renderUsersList() {
+            const list = document.getElementById('usersList');
+            if (!list) return;
+
+            if (!window.sb) {
+                list.innerHTML = '<div class="empty-req">Inicia sesión en Supabase Cloud para visualizar usuarios.</div>';
+                return;
+            }
+
+            try {
+                const { data, error } = await window.sb.from('saldos').select('*').order('email', { ascending: true });
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<div class="empty-req">No se encontraron usuarios registrados aún.</div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(u => `
+                    <div class="request-item">
+                        <div class="req-info" style="display:flex; align-items:center; gap:12px; flex:1; min-width:200px;">
+                            <div style="background: #0d2536; color: white; width: 40px; height: 40px; display:flex; align-items:center; justify-content:center; border-radius: 10px; font-size: 16px; flex-shrink:0;">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div class="req-details" style="display:flex; flex-direction:column; gap: 3px; flex:1;">
+                                <div style="font-size: 14px; font-weight: 800; color: #0d2536;">
+                                    ${u.email}
+                                </div>
+                                <div style="font-size: 12px; color: #10b981; font-weight: 800;">
+                                    Saldo: <span style="font-size: 13.5px;">${u.creditos || 0}</span> créditos
+                                </div>
+                            </div>
+                        </div>
+                        <div class="req-actions">
+                            <button class="btn-req btn-reject" onclick="deleteUser('${u.email}')" style="background:#fee2e2; color:#ef4444; padding:9px 12px; border-radius:8px; border:none; cursor:pointer;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                list.innerHTML = `<div class="empty-req">❌ Error descargando usuarios: ${e.message}</div>`;
+            }
+        }
+
+        async function deleteUser(email) {
+            if (!confirm(`¿Estás seguro de eliminar a ${email}? Se borrará permanentemente de la Nube.`)) return;
+            try {
+                const { error } = await window.sb.from('saldos').delete().eq('email', email);
+                if (error) throw error;
+                alert(`✅ Usuario ${email} removido de la nube.`);
+                renderUsersList(); // Refrescar
+            } catch (e) {
+                alert("❌ Fallo crítico al borrar: " + e.message);
+            }
+        }
+
+        async function deleteAllUsersCloud() {
+            if (!window.sb) {
+                alert("❌ Supabase no conectado.");
+                return;
+            }
+
+            const confirmA = confirm("⚠️ Acción crítica: se eliminarán TODAS las cuentas de usuarios en la nube. ¿Deseas continuar?");
+            if (!confirmA) return;
+
+            const phrase = prompt("Escribe ELIMINAR TODO para confirmar:");
+            if (phrase !== "ELIMINAR TODO") {
+                alert("Operación cancelada. Frase de confirmación incorrecta.");
+                return;
+            }
+
+            try {
+                const { error } = await window.sb.from('saldos').delete().neq('email', '');
+                if (error) throw error;
+                alert("✅ Todas las cuentas de usuarios fueron eliminadas de la nube.");
+                renderUsersList();
+            } catch (e) {
+                alert("❌ Fallo crítico al borrar todas las cuentas: " + e.message);
+            }
+        }
+
+        async function deleteAllCloudData() {
+            if (!window.sb) {
+                alert("❌ Supabase no conectado.");
+                return;
+            }
+
+            const confirmA = confirm("⚠️ REINICIO TOTAL: se eliminarán TODAS las cuentas, solicitudes e informes en la nube. ¿Deseas continuar?");
+            if (!confirmA) return;
+
+            const phrase = prompt("Escribe REINICIO TOTAL para confirmar:");
+            if (phrase !== "REINICIO TOTAL") {
+                alert("Operación cancelada. Frase de confirmación incorrecta.");
+                return;
+            }
+
+            try {
+                const { error: errSaldos } = await window.sb.from('saldos').delete().neq('email', '');
+                if (errSaldos) throw errSaldos;
+
+                const { error: errSolicitudes } = await window.sb.from('solicitudes').delete().neq('placa', '');
+                if (errSolicitudes) throw errSolicitudes;
+
+                const { error: errInformes } = await window.sb.from('informes').delete().neq('placa', '');
+                if (errInformes) throw errInformes;
+
+                alert("✅ Reinicio total completado: nube limpia (saldos, solicitudes e informes).");
+                if (typeof renderUsersList === 'function') renderUsersList();
+                if (typeof renderRequestsList === 'function') renderRequestsList();
+                if (typeof renderHistoryList === 'function') renderHistoryList();
+            } catch (e) {
+                alert("❌ Fallo crítico en reinicio total: " + e.message);
+            }
+        }
+
+        async function addCredits() {
+            const email = document.getElementById('creditEmail').value.trim().toLowerCase();
+            const amount = parseInt(document.getElementById('creditAmount').value);
+            
+            if (!email || !email.includes('@')) {
+                alert("Por favor ingresa un correo electrónico válido.");
+                return;
+            }
+
+            try {
+                let currentBalance = 0;
+                let currentData = null;
+
+                // 1. INTENTAR CON LA NUBE ☁️
+                if (window.sb) {
+                    try {
+                        const { data } = await window.sb
+                            .from('saldos')
+                            .select('creditos')
+                            .eq('email', email)
+                            .single();
+                        if (data) { currentData = data; currentBalance = data.creditos; }
+                    } catch(cloudErr) { 
+                        console.warn("Nube inaccesible, leyendo Local..."); 
+                    }
+                }
+
+                // 2. FALLBACK A MEMORIA LOCAL 💾
+                const localKey = 'saldo_' + email;
+                if (!currentData) {
+                    currentBalance = parseInt(localStorage.getItem(localKey)) || 0;
+                }
+
+                const newBalance = currentBalance + amount;
+
+                // 3. GUARDAR EN LA NUBE ☁️
+                let cloudSaved = false;
+                if (window.sb) {
+                    try {
+                        const { error } = await window.sb
+                            .from('saldos')
+                            .upsert({ email: email, creditos: newBalance }, { onConflict: 'email' });
+                        if (!error) cloudSaved = true;
+                    } catch(cloudErr) { }
+                }
+
+                // 4. GUARDAR SIEMPRE LOCALMENTE 💾
+                localStorage.setItem(localKey, newBalance);
+
+                // 5. RESPUESTA TRANSPARENTE 📢
+                if (cloudSaved) {
+                    alert(`✅ ¡Transacción a la Nube Exitosa!\n\nSe recargaron ${amount} créditos a: ${email}.\n(Saldo Actualizado: ${newBalance} Reportes)`);
+                } else {
+                    alert(`📥 ¡Guardado Localmente!\n\nSe recargaron ${amount} créditos a: ${email}.\n(Nota: La nube está desconectada. El saldo se usará en esta PC)`);
+                }
+                document.getElementById('creditEmail').value = '';
+
+            } catch(e) {
+                alert("❌ Fallo Crítico: No se pudo procesar la recarga.\n\nDetalle: " + e.message);
+            }
+        }
+
+        function renderAdminCards() {
+            const grid = document.getElementById('adminGrid');
+            grid.innerHTML = categories.map(cat => `
+                <div class="admin-card" id="card-${cat.id}" data-title="${cat.title.toLowerCase()}" data-files='[]'>
+                    <div class="card-head">
+                        <div class="card-title"><i class="fa-solid ${cat.icon}"></i> ${cat.title}<span class="file-counter-badge" id="badge-${cat.id}">0</span></div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <!-- Barra de Herramientas Estilo WhatsApp -->
+                            <div class="format-toolbar" style="display: flex; gap: 12px; background: #f8fafc; padding: 6px 14px; border-radius: 50px; align-items: center; border: 1px solid #e2e8f0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+                                <i class="fa-solid fa-bold" style="cursor: pointer; font-size: 13px; color: #475569;" onclick="formatText('${cat.id}', '<b>', '</b>')" title="Negrita"></i>
+                                <i class="fa-solid fa-italic" style="cursor: pointer; font-size: 13px; color: #475569;" onclick="formatText('${cat.id}', '<i>', '</i>')" title="Cursiva"></i>
+                                <i class="fa-solid fa-strikethrough" style="cursor: pointer; font-size: 13px; color: #475569;" onclick="formatText('${cat.id}', '<strike>', '</strike>')" title="Tachado"></i>
+                                <i class="fa-solid fa-code" style="cursor: pointer; font-size: 13px; color: #475569;" onclick="formatText('${cat.id}', '<code>', '</code>')" title="Código"></i>
+                                <i class="fa-solid fa-list-ol" style="cursor: pointer; font-size: 13px; color: #475569;" onclick="formatText('${cat.id}', '1. ', '')" title="Lista numerada"></i>
+                                <i class="fa-solid fa-list-ul" style="cursor: pointer; font-size: 13px; color: #475569;" onclick="formatText('${cat.id}', '• ', '')" title="Viñeta"></i>
+                                <i class="fa-solid fa-quote-left" style="cursor: pointer; font-size: 13px; color: #475569;" onclick="formatText('${cat.id}', '> ', '')" title="Cita"></i>
+                            </div>
+                            
+                            <div class="status-picker">
+                                <div class="status-dot-btn active" data-status="ok" onclick="toggleStatus(this, '${cat.id}')"></div>
+                                <div class="status-dot-btn" data-status="wa" onclick="toggleStatus(this, '${cat.id}')"></div>
+                                <div class="status-dot-btn" data-status="ko" onclick="toggleStatus(this, '${cat.id}')"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <textarea placeholder="Escribe aquí los hallazgos periciales...">${cat.def}</textarea>
+                    <div class="upload-area" onclick="triggerFileUpload('${cat.id}')" ondragover="handleDragOver(event, this)" ondragleave="handleDragLeave(event, this)" ondrop="handleDrop(event, '${cat.id}')">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <input type="file" id="file-${cat.id}" class="hidden-file-input" multiple onchange="handleFileChange(event, '${cat.id}')">
+                    </div>
+                    <div class="file-list-mini" id="fileList-${cat.id}"></div>
+                </div>`).join('');
+        }
+
+        function formatText(catId, prefix, suffix) {
+            const textarea = document.querySelector(`#card-${catId} textarea`);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const selectedText = text.substring(start, end);
+
+            let newText;
+            if (prefix === '1. ' || prefix === '• ' || prefix === '> ') {
+                newText = selectedText.split('\n').map(line => prefix + line).join('\n');
+            } else {
+                newText = prefix + selectedText + suffix;
+            }
+
+            const before = text.substring(0, start);
+            const after = text.substring(end);
+
+            textarea.value = before + newText + after;
+            textarea.focus();
+            
+            if (selectedText.length > 0) {
+                textarea.setSelectionRange(start, start + newText.length);
+            } else {
+                textarea.setSelectionRange(start + prefix.length, start + prefix.length);
+            }
+            syncLiveProgress();
+        }
+
+        function toggleStatus(btn, catId) {
+            btn.parentElement.querySelectorAll('.status-dot-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            syncLiveProgress();
+        }
+
+        function setGlobalStatus(btn) {
+            document.querySelectorAll('#globalStatus .status-dot-btn').forEach(d => d.classList.remove('active'));
+            btn.classList.add('active');
+            syncLiveProgress();
+        }
+
+        function loadVerdictTemplate(status) {
+            const verdictArea = document.getElementById('verdictText');
+            const targetDot = document.querySelector(`#globalStatus .status-dot-btn[data-status="${status}"]`);
+            if (targetDot) setGlobalStatus(targetDot);
+
+            const templates = {
+                'ok': "Vehículo en excelentes condiciones legales. Tras la auditoría digital no se detectaron afectaciones críticas, gravámenes ni infracciones pendientes. El historial registra una trayectoria limpia, lo que representa un riesgo mínimo para la transferencia.",
+                'wa': "Se han identificado alertas preventivas o trámites en curso que requieren validación física. Aunque el vehículo es apto para transferencia, recomendamos una revisión minuciosa de los documentos originales para garantizar una compra segura.",
+                'ko': "¡RIESGO CRÍTICO DETECTADO! Se identificaron deudas cuantiosas, afectaciones legales vigentes o gravámenes que comprometen seriamente la legalidad de la unidad. Existe un riesgo elevado de bloqueo administrativo o judicial."
+            };
+            verdictArea.value = templates[status];
+            syncLiveProgress();
+        }
+
+        function magicFormat(btn) {
+            const card = btn.closest('.admin-card');
+            const catId = card.id.replace('card-', '');
+            const textarea = card.querySelector('textarea');
+            let text = textarea.value.trim();
+
+            const templates = {
+                'lima': "<b>Entidad:</b> SAT LIMA<br><b>Estado:</b> Sin Deudas Pendientes<br>Tras la consulta en el sistema de recaudación, el vehículo se encuentra LIBRE de multas y capturas vigentes.",
+                'callao': "<b>Entidad:</b> SAT CALLAO<br><b>Estado:</b> Sin Papeletas Detectadas<br>No se registran infracciones en la jurisdicción del Callao a la fecha de consulta.",
+                'sunarp': "<b>Entidad:</b> SUNARP<br><b>Estado:</b> Sin Gravámenes Registrados<br>La partida registral no presenta bloqueos, embargos ni anotaciones de robo vigentes.",
+                'denuncias': "<b>Entidad:</b> POLICÍA NACIONAL DEL PERÚ<br><b>Estado:</b> Sin Requisitorias<br>La unidad no figura con denuncias por robo ni órdenes de captura a nivel nacional.",
+                'citv': "<b>Entidad:</b> MTC / CITV<br><b>Resultado:</b> APROBADO<br>La unidad cuenta con inspección técnica vigente. El sistema confirma que cumple con los estándares de seguridad.",
+                'siniestralidad': "<b>Entidad:</b> SBS / ASOCIACIÓN DE SEGUROS<br><b>Estado:</b> Historial Limpio<br>No se reportan siniestros de cuantía ni pérdidas totales en la base de datos de aseguradoras.",
+                'lunas': "<b>Entidad:</b> POLICÍA NACIONAL<br><b>Permiso:</b> VIGENTE<br>Cuenta con autorización legal para el uso de vidrios oscurecidos/polarizados a nivel nacional.",
+                'historial': "<b>Estado:</b> Tracto Sucesivo en Regla<br>Se ha verificado la cadena de transferencias. No se detectan saltos registrales ni irregularidades en el historial de dominio.",
+                'caracteristicas': "<b>Estado:</b> Características Originales<br>Motor, color y serie coinciden plenamente con la tarjeta de propiedad. Sin reportes de cambios no autorizados.",
+                'region': "<b>Consulta:</b> Gobiernos Regionales<br><b>Estado:</b> Sin Afectaciones<br>La unidad no registra deudas tributarias ni papeletas en las principales municipalidades regionales del país.",
+                'atu': "<b>Entidad:</b> ATU<br><b>Estado:</b> Libre de Infracciones<br>El vehículo no presenta sanciones por transporte urbano ni medidas preventivas vigentes ante la autoridad.",
+                'estado_placa': "<b>Estado:</b> Activo y Vigente<br>La placa física cumple con los distintivos de seguridad. No se registran duplicados sospechosos en el sistema central.",
+                'foto_pit': "<b>Entidad:</b> MTC / Foto Pit<br><b>Estado:</b> Sin Capturas<br>La verificación por medios electrónicos (fotopapeletas) no arroja infracciones pendientes de pago.",
+                'soat': "<b>Entidad:</b> APESEG / SBS<br><b>Estado:</b> VIGENTE<br>Póliza de Seguro Obligatorio validada. El vehículo cuenta con cobertura activa contra accidentes de tránsito.",
+                'sutran': "<b>Entidad:</b> SUTRAN<br><b>Estado:</b> Sin Sanciones<br>No se registran infracciones al Reglamento Nacional de Transportes en las rutas fiscalizadas a nivel nacional.",
+                'fise': "<b>Programa:</b> FISE GNV<br><b>Estado:</b> Sin Deudas<br>El vehículo no presenta saldos pendientes ni afectaciones por el programa de ahorro energético.",
+                'gnv': "<b>Estado:</b> Consulta de Financiamiento<br>Verificación de bonos y créditos de gas natural completada. Unidad libre de compromisos financieros por conversión.",
+                'boleta': "<b>Documento:</b> Boleta Informativa<br><b>Estado:</b> Limpio<br>Se confirma la inexistencia de afectaciones en la partida registral actual del vehículo.",
+                'tive': "<b>Documento:</b> TIVE Digital<br><b>Estado:</b> Validado<br>La Tarjeta de Identificación Vehicular Electrónica se encuentra vinculada correctamente al propietario actual.",
+                'propietarios': "<b>Análisis:</b> Propietarios Anteriores<br>Se ha revisado el historial de dueños anteriores. Todos los traspasos cumplen con la formalidad legal requerida.",
+                'record': "<b>Entidad:</b> MTC<br><b>Estado:</b> Récord Límpido<br>El historial del conductor asociado y del vehículo no registra puntos negativos ni sanciones graves acumuladas.",
+                'otros': "<b>Estado:</b> Verificación Integral<br>No se han detectado limitaciones adicionales, deudas por arbitrios ni afectaciones administrativas externas."
+            };
+
+            if (templates[catId]) {
+                textarea.value = templates[catId];
+            } else {
+                // Formato genérico "Embellecer"
+                text = text.replace(/(Fecha|Consulta|Impresión)\s*:\s*.*?\n?/gi, '');
+                const placaMatch = text.match(/([A-Z0-9]{3}-?[A-Z0-9]{3})/i);
+                const placa = placaMatch ? placaMatch[0].toUpperCase() : 'ABC-123';
+                textarea.value = `<b>Documento:</b> Verificado<br><b>Resultado:</b> Sin Observaciones<br>Todo se encuentra en regla para la placa ${placa}.`;
+            }
+            syncLiveProgress();
+        }
+
+        function triggerFileUpload(id) { document.getElementById('file-' + id).click(); }
+        function handleDragOver(e, el) { e.preventDefault(); el.classList.add('dragover'); }
+        function handleDragLeave(e, el) { el.classList.remove('dragover'); }
+        function handleDrop(e, id) { e.preventDefault(); handleFileChange({ target: { files: e.dataTransfer.files } }, id); }
+        function handleFileChange(e, id) {
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const card = document.getElementById('card-' + id);
+                    let files = JSON.parse(card.getAttribute('data-files') || '[]');
+
+                    if (file.type.startsWith('image/')) {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const maxW = 1000, maxH = 1000;
+                            let w = img.width;
+                            let h = img.height;
+                            if (w > maxW || h > maxH) {
+                                if (w > h) { h *= maxW / w; w = maxW; }
+                                else { w *= maxH / h; h = maxH; }
+                            }
+                            canvas.width = w; canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, w, h);
+                            const compressedData = canvas.toDataURL('image/jpeg', 0.6); // Compressive algorithm
+
+                            files.push({ name: file.name, type: 'img', data: compressedData });
+                            card.setAttribute('data-files', JSON.stringify(files));
+                            updateFileUI(id);
+                        };
+                        img.src = ev.target.result;
+                    } else {
+                        if (file.size > 2 * 1024 * 1024) alert("Advertencia: El PDF " + file.name + " es pesado. Considere optimizar su tamaño.");
+                        files.push({ name: file.name, type: 'pdf', data: ev.target.result });
+                        card.setAttribute('data-files', JSON.stringify(files));
+                        updateFileUI(id);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function updateFileUI(id) {
+            const card = document.getElementById('card-' + id);
+            const list = document.getElementById('fileList-' + id);
+            const badge = document.getElementById('badge-' + id);
+            const files = JSON.parse(card.getAttribute('data-files') || '[]');
+            badge.textContent = files.length;
+            badge.style.display = files.length > 0 ? 'inline-block' : 'none';
+            list.innerHTML = files.map((f, idx) => `
+                <div class="file-item-mini">
+                    <div class="btn-remove-mini" onclick="removeFile('${id}', ${idx})"><i class="fa-solid fa-xmark"></i></div>
+                    ${f.type === 'img' ? `<img src="${f.data}" alt="p">` : `<div class="file-icon"><i class="fa-solid fa-file-pdf"></i></div>`}
+                </div>`).join('');
+        }
+
+        function removeFile(id, index) {
+            const card = document.getElementById('card-' + id);
+            let files = JSON.parse(card.getAttribute('data-files') || '[]');
+            files.splice(index, 1);
+            card.setAttribute('data-files', JSON.stringify(files));
+            updateFileUI(id);
+        }
+
+        async function saveReport() {
+            try {
+                const plate = normalize(document.getElementById('targetPlate').value);
+                if (!plate) return alert("⚠️ Error: Ingresa un número de placa válido.");
+
+                console.log("Iniciando publicación de:", plate);
+
+                const items = Array.from(document.querySelectorAll('.admin-card[id^="card-"]')).map(card => {
+                    const id = card.id.replace('card-', '');
+                    const files = JSON.parse(card.getAttribute('data-files') || '[]');
+                    const activeDot = card.querySelector('.status-dot-btn.active');
+                    const status = activeDot ? activeDot.dataset.status : 'ok';
+
+                    const catData = categories.find(c => c.id === id);
+                    return {
+                        id,
+                        icon: catData ? catData.icon : "fa-file-shield",
+                        title: catData ? catData.title : "CATEGORÍA",
+                        text: card.querySelector('textarea').value,
+                        st: status,
+                        files: files,
+                        file: files.length > 0 ? files[0].data : ""
+                    };
+                });
+
+                const globalActiveDot = document.querySelector('#globalStatus .status-dot-btn.active');
+                const globalStatus = globalActiveDot ? globalActiveDot.dataset.status : 'ok';
+
+                const report = {
+                    placa: plate,
+                    date: document.getElementById('reportDate').value,
+                    publishedAt: Date.now(), // Marca para expiración de 24h
+                    verdictStatus: globalStatus,
+                    verdictText: document.getElementById('verdictText').value,
+                    items
+                };
+
+                await saveReportDB('report_' + plate, report);
+
+                // Marcar como completamente desbloqueado para persistencia en el dispositivo
+                localStorage.setItem('report_unlocked_' + plate, 'true');
+                localStorage.setItem('approved_request_' + plate, 'true');
+                localStorage.setItem('progress_' + plate, '100');
+                localStorage.removeItem('pending_request_' + plate);
+
+                if (window.sb) {
+                    try {
+                        const publishedAt = Date.now();
+                        const { data: allRows } = await window.sb.from('solicitudes').select('placa, datos');
+                        const samePlate = (allRows || []).filter(
+                            (r) => r && r.placa && normalize(String(r.placa)) === plate
+                        );
+
+                        let datos = {
+                            placa: plate,
+                            status: 'approved',
+                            publishedAt,
+                            timestamp: publishedAt
+                        };
+                        samePlate.forEach((r) => {
+                            if (r.datos && typeof r.datos === 'object') {
+                                datos = Object.assign({}, datos, r.datos, {
+                                    placa: plate,
+                                    status: 'approved',
+                                    publishedAt,
+                                    timestamp: r.datos.timestamp || datos.timestamp
+                                });
+                            }
+                        });
+
+                        await window.sb.from('solicitudes').upsert(
+                            { placa: plate, datos, updated_at: new Date() },
+                            { onConflict: 'placa' }
+                        );
+
+                        const placasBorrar = samePlate
+                            .map((r) => r.placa)
+                            .filter((p) => p && String(p) !== String(plate));
+                        if (placasBorrar.length) {
+                            await window.sb.from('solicitudes').delete().in('placa', placasBorrar);
+                        }
+                    } catch (e) {
+                        console.error("Error sincronizando estado al publicar:", e);
+                    }
+                }
+
+                console.log("Reporte guardado con éxito.");
+                alert(`🚀 ¡ÉXITO! El reporte de la placa ${plate} ha sido publicado y está disponible para el cliente.`);
+                if (typeof renderRequestsList === 'function') await renderRequestsList();
+                try {
+                    const n = await countPendingSolicitudesCloud();
+                    if (typeof updateBadgesCount === 'function') updateBadgesCount(n);
+                } catch (e) {}
+                if (typeof showView === 'function') {
+                    showView('history');
+                    if (typeof toggleSidebar === 'function') toggleSidebar(false);
+                }
+            } catch (error) {
+                console.error("Fallo crítico en saveReport:", error);
+                if (error.name === 'QuotaExceededError') {
+                    alert("❌ ERROR: Almacenamiento lleno. Por favor, reduce el tamaño de las fotos o elimina reportes antiguos.");
+                } else {
+                    alert("❌ ERROR AL PUBLICAR: Verifica que todos los campos estén llenos correctamente.");
+                }
+            }
+        }
+
+        function syncLiveProgress() {
+            const plate = normalize(document.getElementById('targetPlate').value);
+            if (!plate) return;
+
+            // Contar cuántos campos tienen contenido real
+            let filled = 0;
+            if (document.getElementById('verdictText').value.trim().length > 15) filled++;
+
+            document.querySelectorAll('.admin-card textarea').forEach(tx => {
+                if (tx.value.trim().length > 25) filled++;
+            });
+
+            // Calcular porcentaje (máximo 99% hasta que publique)
+            let totalFields = categories.length + 1;
+            let pct = Math.min(99, Math.max(15, Math.floor((filled / totalFields) * 100) + 15));
+
+            localStorage.setItem('progress_' + plate, pct);
+            // Pequeña notificación visual en el admin
+            console.log(`Progreso de ${plate}: ${pct}%`);
+        }
+
+        async function clearAllData() {
+            if (!confirm("¿Limpiar todo el sistema? (Se borrará todo de la PC y de la Nube)")) return;
+            Object.keys(localStorage).forEach(k => { if (k.startsWith('report_') || k.startsWith('pending_') || k.startsWith('approved_') || k.startsWith('progress_') || k === 'last_pending_plate') localStorage.removeItem(k); });
+            try {
+                const db = await initDB();
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                tx.objectStore(STORE_NAME).clear();
+
+                // 🌟 Borrado Maestro en la Nube (Supabase)
+                if (window.sb) {
+                    await window.sb.from('solicitudes').delete().neq('placa', '---');
+                    // También podrías limpiar 'informes' si lo deseas, pero 'solicitudes' limpia el flujo pendiente.
+                }
+            } catch (e) { }
+            location.reload();
+        }
+
+
+        async function renderRequestsList() {
+            const list = document.getElementById('requestsList');
+            if (!list) return;
+
+            let reqs = [];
+
+            // 1. Cargar desde la Nube (Supabase)
+            if (window.sb) {
+                try {
+                    const { data } = await window.sb
+                        .from('solicitudes')
+                        .select('datos')
+                        .order('updated_at', { ascending: false });
+                    if (data) {
+                        reqs = data.map(d => d.datos).filter(r => r && r.placa);
+                    }
+                } catch (e) { 
+                    console.error("Error cargando solicitudes de nube:", e); 
+                }
+            }
+
+            // 🌟 Removido fallback local de solicitudes para Cloud-Sync puro
+
+            if (!reqs.length) {
+                return list.innerHTML = '<div class="empty-req" style="color: #64748b; font-size: 14px; text-align: center; padding: 20px;">No hay solicitudes.</div>';
+            }
+            
+            const approvedNorm = new Set();
+            reqs.forEach((r) => {
+                if (r && r.placa && solicitudEstadoAprobado(r)) approvedNorm.add(normalize(String(r.placa)));
+            });
+
+            const pendingCandidates = reqs.filter((req) => {
+                if (!req || !req.placa) return false;
+                if (solicitudEstadoAprobado(req)) return false;
+                if (approvedNorm.has(normalize(String(req.placa)))) return false;
+                return true;
+            });
+
+            const byNorm = new Map();
+            pendingCandidates.forEach((req) => {
+                const n = normalize(String(req.placa));
+                const prev = byNorm.get(n);
+                if (!prev || (req.timestamp || 0) > (prev.timestamp || 0)) byNorm.set(n, req);
+            });
+            const pendingReqs = Array.from(byNorm.values());
+
+            if (!pendingReqs.length) {
+                return list.innerHTML = '<div class="empty-req" style="color: #64748b; font-size: 14px; text-align: center; padding: 20px;">No hay solicitudes pendientes.</div>';
+            }
+
+            // Vincular WhatsApp desde Solicitudes de Registro previas
+            pendingReqs.forEach(r => {
+                if (!r.whatsapp && r.email) {
+                    const match = reqs.find(all => all.isRegistro && all.email === r.email && all.whatsapp);
+                    if (match) r.whatsapp = match.whatsapp;
+                }
+            });
+            list.innerHTML = pendingReqs.map(req => {
+                const normP = normalize(req.placa);
+                const voucherContent = req.voucher ? `
+                    <div style="margin-top: 10px;">
+                        <img src="${req.voucher}" onclick="viewVoucher('${req.voucher}', '${req.isRecharge ? (req.email || '?') : req.placa}', ${req.isRecharge || req.isDashboard})" style="width: 100px; height: 130px; object-fit: cover; border-radius: 8px; border: 2px solid #cbd5e1; cursor: pointer;" title="Ampliar">
+                    </div>` : ``;
+
+                let dName = req.placa;
+                let dIcon = `fa-car`;
+                let dType = `Consulta Placa`;
+                let dSubtitle = ``;
+
+                if (req.isRecharge) {
+                    dName = `Recarga de Créditos`;
+                    dIcon = `fa-wallet`;
+                    dType = `💳 Recarga`;
+                    dSubtitle = `<b>Email:</b> ${req.email || '?'} | <b>Créditos:</b> +${req.credits || 0}`;
+                } else if (req.isDashboard) {
+                    dName = `Activación Dashboard`;
+                    dIcon = `fa-table-columns`;
+                    dType = `🏢 Dashboard`;
+                    dSubtitle = `<b>Email:</b> ${req.email || '?'} ${req.whatsapp ? `| <b>WhatsApp:</b> ${req.whatsapp}` : ''}`;
+                } else if (req.isIndividual) {
+                    dName = req.servicio || `Consulta Individual`;
+                    dIcon = `fa-file-lines`;
+                    dType = `📄 Reporte`;
+                    dSubtitle = `<b>Email:</b> ${req.email || '?'} | <b>Placa:</b> ${req.placa}`;
+                } else if (req.isRegistro) {
+                    dName = req.nombre || 'Nuevo Usuario';
+                    dIcon = `fa-user-plus`;
+                    dType = `👤 Registro`;
+                    dSubtitle = `<b>Email:</b> ${req.email || '?'} | <b>WhatsApp:</b> ${req.whatsapp || '?'}`;
+                } else {
+                    dName = `Filtro Completo (Placa ${req.placa})`;
+                    dIcon = `fa-car`;
+                    dType = `🚗 Filtro`;
+                    dSubtitle = `<b>Usuario:</b> ${req.email || 'Anónimo'}`;
+                }
+
+                let actionBtn = '';
+                if (req.isRecharge) {
+                    actionBtn = `<button class="btn-req btn-confirm-pay" style="background:#00b4d8; color:white;" onclick="confirmRecharge('${normP}', '${req.email || ''}', ${req.credits || 0})"><i class="fa-solid fa-bolt"></i> Validar</button>`;
+                } else if (req.isDashboard) {
+                    const msgText = `Hola, tu acceso al *Dashboard* en *Filtro Vehicular Plus* ya se encuentra *ACTIVO*.\n\nYa puedes ingresar a la plataforma y revisar tus expedientes en tiempo real.\n\nLink: https://filtrovehicularperu.com`;
+                    if (req.whatsapp) {
+                        const wppUrl = `https://wa.me/51${req.whatsapp}?text=${encodeURIComponent(msgText)}`;
+                        const clickHandler = `if(confirm('¿Activar Dashboard permanente para ${req.email}?')) { window.open('${wppUrl}', '_blank'); confirmDashboardActivation('${req.placa}', '${req.email || ''}'); }`;
+                        actionBtn = `<a href="javascript:void(0)" class="btn-req btn-confirm-pay" style="background:#00b4d8; color:white; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="${clickHandler}"><i class="fa-solid fa-bolt"></i> Activar y Notificar</a>`;
+                    } else {
+                        const wppLink = `javascript:var p = prompt('Ingresa el WhatsApp del cliente (Ej: 987654321):'); if(p) { window.open('https://wa.me/51'+p+'?text='+encodeURIComponent(\`${msgText}\`), '_blank'); confirmDashboardActivation('${req.placa}', '${req.email || ''}'); }`;
+                        actionBtn = `<a href="${wppLink}" class="btn-req btn-confirm-pay" style="background:#00b4d8; color:white; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:5px;"><i class="fa-solid fa-bolt"></i> Activar y Notificar</a>`;
+                    }
+                } else if (req.isIndividual) {
+                    actionBtn = `<button class="btn-req btn-confirm-pay" style="background:#10b981; color:white;" onclick="approveRequest('${req.placa}')"><i class="fa-solid fa-file-pen"></i> Redactar</button>`;
+                } else if (req.isRegistro) {
+                    const msgText = `Hola *${req.nombre}*, tu cuenta en *Filtro Vehicular Plus* ha sido activada con éxito.\n\nYa puedes ingresar a la plataforma para realizar tus consultas vehiculares.\n\n*Tus Credenciales:*\n*Usuario:* ${req.email}\n*Contraseña:* [La que registraste]\n\nLink de acceso: https://filtrovehicularperu.com`;
+                    const wppUrl = `https://wa.me/51${req.whatsapp}?text=${encodeURIComponent(msgText)}`;
+                    actionBtn = `<a href="${wppUrl}" target="_blank" class="btn-req btn-confirm-pay" style="background:#10b981; color:white; text-decoration:none;" onclick="setTimeout(() => confirmRegistro('${req.placa}'), 500)"><i class="fa-solid fa-check"></i> Aprobar y Enviar</a>`;
+                } else {
+                    actionBtn = `<button class="btn-req btn-confirm-pay" style="background:var(--petrol); color:white;" onclick="confirmPayment('${normP}')"><i class="fa-solid fa-money-bill-check"></i> Confirmar Pago</button>`;
+                }
+
+                const timestamp = req.timestamp ? new Date(req.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '---';
+
+                return `
+                <div class="request-item">
+                    <div class="req-info" style="display:flex; align-items:center; gap:12px; flex:1; min-width:200px;">
+                        <div style="background: #0d2536; color: white; width: 40px; height: 40px; display:flex; align-items:center; justify-content:center; border-radius: 10px; font-size: 16px; flex-shrink:0;">
+                            <i class="fa-solid ${dIcon}"></i>
+                        </div>
+                        <div class="req-details" style="display:flex; flex-direction:column; gap: 3px; flex:1;">
+                            <div style="font-size: 14px; font-weight: 800; color: #0d2536; display:flex; align-items:center; gap:8px; flex-wrap: wrap;">
+                                ${dName}
+                                <span style="background: ${req.isRegistro ? '#e0f2fe' : '#fff7ed'}; color: ${req.isRegistro ? '#0284c7' : '#ea580c'}; padding: 3px 8px; border-radius: 6px; font-size:10px; font-weight: 800;">${dType}</span>
+                            </div>
+                            <div style="font-size: 11.5px; color: #64748b; line-height: 1.3;">
+                                ${dSubtitle}
+                            </div>
+                            <div style="font-size: 10px; color:#94a3b8; margin-top: 2px;">
+                                <i class="fa-regular fa-clock" style="margin-right:2px;"></i> ${timestamp}
+                            </div>
+                            ${voucherContent}
+                        </div>
+                    </div>
+                    <div class="req-actions">
+                        ${actionBtn}
+                        <button class="btn-req btn-reject" onclick="event.stopPropagation(); deleteRequest('${req.placa}')" style="background:#fee2e2; color:#ef4444; padding:9px 12px; border-radius:8px; border:none; cursor:pointer;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function renderHistoryList() {
+            const list = document.getElementById('historyList');
+            if (!list) return;
+
+            let reqs = [];
+            if (window.sb) {
+                try {
+                    const { data } = await window.sb.from('solicitudes').select('datos');
+                    if (data) {
+                        reqs = data.map(d => d.datos).filter(r => r && r.placa); // Guard de nulos
+                    }
+                } catch (e) { 
+                    console.error("Error cargando historial de nube:", e); 
+                }
+            }
+
+            // 🌟 Removido fallback local de historial para Cloud-Sync puro
+
+            const approvedReqs = reqs.filter((req) => {
+                if (!req || !req.placa) return false;
+                return solicitudEstadoAprobado(req);
+            });
+
+            // Más reciente primero (fecha de publicación o de solicitud)
+            approvedReqs.sort((a, b) =>
+                (b.publishedAt || b.timestamp || 0) - (a.publishedAt || a.timestamp || 0)
+            );
+
+            if (!approvedReqs.length) {
+                return list.innerHTML = '<div class="empty-req" style="color: #64748b; font-size: 14px; text-align: center; padding: 20px;">No hay historial disponible.</div>';
+            }
+
+            list.innerHTML = approvedReqs.map(req => {
+                const normP = normalize(req.placa);
+                let dName = `Filtro Completo (Placa ${req.placa})`;
+                let dIcon = `fa-car`;
+                let dType = `🚗 Filtro`;
+                let dSubtitle = `<b>Usuario:</b> ${req.email || 'Anónimo'}`;
+
+                if (req.isRecharge) {
+                    dName = `Recarga de Créditos`;
+                    dIcon = `fa-wallet`;
+                    dType = `💳 Recarga`;
+                    dSubtitle = `<b>Email:</b> ${req.email || '?'} | <b>Créditos:</b> +${req.credits || 0}`;
+                } else if (req.isDashboard) {
+                    dName = `Activación Dashboard`;
+                    dIcon = `fa-table-columns`;
+                    dType = `🏢 Dashboard`;
+                    dSubtitle = `<b>Email:</b> ${req.email || '?'}`;
+                } else if (req.isIndividual) {
+                    dName = req.servicio || `Consulta Individual`;
+                    dIcon = `fa-file-lines`;
+                    dType = `📄 Reporte`;
+                    dSubtitle = `<b>Email:</b> ${req.email || '?'} | <b>Placa:</b> ${req.placa}`;
+                } else if (req.isRegistro) {
+                    dName = req.nombre || 'Nuevo Usuario';
+                    dIcon = `fa-user-plus`;
+                    dType = `👤 Registro`;
+                    dSubtitle = `<b>Email:</b> ${req.email || '?'} | <b>WhatsApp:</b> ${req.whatsapp || '?'}`;
+                }
+
+                const tsHist = req.publishedAt || req.timestamp;
+                const timestamp = tsHist
+                    ? new Date(tsHist).toLocaleString('es-PE', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+                    : '---';
+
+                return `
+                <div class="request-item">
+                    <div class="req-info" style="display:flex; align-items:center; gap:12px; flex:1; min-width:200px;">
+                        <div style="background: #0d2536; color: white; width: 40px; height: 40px; display:flex; align-items:center; justify-content:center; border-radius: 10px; font-size: 16px; flex-shrink:0;">
+                            <i class="fa-solid ${dIcon}"></i>
+                        </div>
+                        <div class="req-details" style="display:flex; flex-direction:column; gap: 3px; flex:1;">
+                            <div style="font-size: 14px; font-weight: 800; color: #0d2536; display:flex; align-items:center; gap:8px; flex-wrap: wrap;">
+                                ${dName}
+                                <span style="background: ${req.isRegistro ? '#e0f2fe' : '#fff7ed'}; color: ${req.isRegistro ? '#0284c7' : '#ea580c'}; padding: 3px 8px; border-radius: 6px; font-size:10px; font-weight: 800; border:none !important;">${dType}</span>
+                            </div>
+                            <div style="font-size: 11.5px; color: #64748b; line-height: 1.3;">
+                                ${dSubtitle}
+                            </div>
+                            <div style="font-size: 10px; color:#94a3b8; margin-top: 2px;">
+                                <i class="fa-regular fa-clock" style="margin-right:2px;"></i> ${timestamp}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="req-actions" style="display:flex; gap:8px;">
+                        <span style="background: #d1fae5; color: #059669; padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; display:flex; align-items:center; gap:4px; border: 1px solid #a7f3d0;"><i class="fa-solid fa-circle-check"></i> Aprobado</span>
+                        <button class="btn-req btn-reject" onclick="event.stopPropagation(); deleteRequest('${req.placa}')" style="background:#fee2e2; color:#ef4444; padding:9px 12px; border-radius:8px; border:none; cursor:pointer;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function confirmRecharge(normP, email, credits) {
+            document.getElementById('creditEmail').value = email;
+            const select = document.getElementById('creditAmount');
+            let found = false;
+            for(let i=0; i<select.options.length; i++) {
+                if(select.options[i].value == credits) { select.selectedIndex = i; found = true; break; }
+            }
+            if(!found) select.innerHTML += `<option value="${credits}" selected>+ ${credits} Créditos Custom</option>`;
+            
+            await addCredits(); // Agrega créditos
+            localStorage.setItem('approved_request_' + normP, 'true');
+
+            // --- ACTUALIZAR EN SUPABASE NUESTRA SOLICITUD A APPROVED ---
+            if (window.sb) {
+                try {
+                    // Buscar la recarga con la llave
+                    const { data } = await window.sb.from('solicitudes').select('datos').ilike('placa', '%RECARGA%');
+                    if (data) {
+                        for (let item of data) {
+                            if (item.datos && item.datos.email === email && item.datos.status !== 'approved') {
+                                item.datos.status = 'approved';
+                                await window.sb.from('solicitudes').upsert({ placa: item.datos.placa, datos: item.datos, updated_at: new Date() }, { onConflict: 'placa' });
+                            }
+                        }
+                    }
+                } catch(e) { console.error("Error confirmando carga de recarga:", e); }
+            }
+
+            renderRequestsList();
+            renderHistoryList();
+            if (typeof renderUsersList === 'function') renderUsersList();
+        }
+
+        async function confirmDashboardActivation(placaId, email) {
+            try {
+                if (!window.sb) throw new Error("Supabase no conectado.");
+
+                const safeEmail = String(email || '').trim().toLowerCase();
+                if (!safeEmail) throw new Error("Email inválido para activar dashboard.");
+
+                // Evitar choque por email único: actualizar si existe, crear si no existe.
+                const { data: existingSaldo, error: selErr } = await window.sb
+                    .from('saldos')
+                    .select('email, creditos')
+                    .eq('email', safeEmail)
+                    .maybeSingle();
+                if (selErr) throw selErr;
+
+                if (existingSaldo) {
+                    const { error: updErr } = await window.sb
+                        .from('saldos')
+                        .update({ dashboard_activo: true, updated_at: new Date() })
+                        .eq('email', safeEmail);
+                    if (updErr) throw updErr;
+                } else {
+                    const { error: insErr } = await window.sb
+                        .from('saldos')
+                        .insert({ email: safeEmail, creditos: 0, dashboard_activo: true, updated_at: new Date() });
+                    if (insErr) throw insErr;
+                }
+
+                // Marcar solicitud como aprobada
+                if (window.sb) {
+                    await window.sb.from('solicitudes')
+                        .update({ datos: { placa: placaId, isDashboard: true, email: safeEmail, status: 'approved' } })
+                        .match({ placa: placaId });
+                }
+
+                localStorage.setItem('approved_request_' + placaId, 'true');
+                renderRequestsList();
+                alert(`✅ Dashboard activado con éxito para ${safeEmail}.`);
+
+            } catch(e) {
+                alert("❌ Error: No se pudo activar el Dashboard.\n\n" + e.message);
+            }
+        }
+
+        function initAuthAdmin() {
+            // --- AUDITORÍA DE CONEXIÓN ---
+            console.log("🚀 Auditoria Admin - Supabase URL:", 'https://xojgpfbpomjxpyytmczg.supabase.co');
+            
+            try {
+                if (!window.supabase) throw new Error("Guard: CDN fallido.");
+            } catch (e) {
+                console.error("Error en initAuthAdmin:", e);
+            }
+        }
+
+        async function confirmRegistro(reqKey) {
+            try {
+                if (!window.sb) throw new Error("Supabase no conectado.");
+
+                const { data, error: fetchErr } = await window.sb.from('solicitudes').select('datos').eq('placa', reqKey).single();
+                
+                if (fetchErr) throw fetchErr;
+
+                if (data && data.datos) {
+                    data.datos.status = 'approved';
+                    const { error: upErr } = await window.sb.from('solicitudes').upsert({ placa: reqKey, datos: data.datos, updated_at: new Date() }, { onConflict: 'placa' });
+                    if (upErr) throw upErr;
+                    
+                    // 🌟 INNOVACIÓN: Crear fila en la tabla 'saldos' para que figure en Usuarios
+                    await window.sb.from('saldos').upsert({ 
+                        email: data.datos.email, 
+                        creditos: 0, 
+                        updated_at: new Date() 
+                    }, { onConflict: 'email' });
+
+                    alert(`✅ Registro ${reqKey} aprobado en la Nube con éxito.`);
+                }
+                
+                renderRequestsList();
+                if (typeof renderHistoryList === 'function') renderHistoryList(); 
+            } catch (e) {
+                alert("❌ Fallo crítico al aprobar registro: " + e.message);
+                console.error("Error archivando registro:", e);
+            }
+        }
+
+        function viewVoucher(voucherUrl, title, isSpecial) {
+            if (!voucherUrl) return;
+            
+            let modal = document.getElementById('voucherModal');
+            if(!modal) {
+                modal = document.createElement('div');
+                modal.id = 'voucherModal';
+                modal.style = "position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:99999; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(5px);";
+                modal.onclick = function() { this.style.display = 'none'; };
+                document.body.appendChild(modal);
+            }
+            
+            let titleTxt = `Voucher: ${title}`;
+            
+            modal.innerHTML = `
+                <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:24px; border:1px solid rgba(255,255,255,0.1); text-align:center; max-width:400px; width:90%; position:relative;" onclick="event.stopPropagation()">
+                    <div style="font-size:14px; color:#94a3b8; font-weight:800; margin-bottom:15px; text-transform:uppercase; letter-spacing:1px;">${titleTxt}</div>
+                    <img src="${voucherUrl}" style="width:100%; max-height:70vh; object-fit:contain; border-radius:12px; border:1px solid rgba(255,255,255,0.15); box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+                    <button onclick="document.getElementById('voucherModal').style.display='none';" style="position:absolute; top:-15px; right:-15px; background:#dc2626; color:white; border:none; width:35px; height:35px; border-radius:50%; font-weight:900; cursor:pointer; box-shadow:0 4px 10px rgba(220, 38, 38, 0.3);"><i class="fa-solid fa-times"></i></button>
+                    <div style="margin-top:20px; color:#cbd5e1; font-size:12px; font-weight:600;"><i class="fa-solid fa-lightbulb" style="color:#f59e0b; margin-right:5px;"></i> Revisa el comprobante antes de validar.</div>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+
+        async function openPlateEditor(placa) {
+            const p = normalize(placa);
+            if (document.getElementById('targetPlate').value !== p) {
+                if (confirm(`¿Cargar datos de la placa ${p}? Se limpiará el formulario actual.`)) {
+                    document.getElementById('targetPlate').value = p;
+                    // Limpiar formularios y datos previos en la UI
+                    document.getElementById('verdictText').value = '';
+                    renderAdminCards();
+                    // Intentar cargar si ya existe un reporte guardado
+                    const existing = await getReportDB('report_' + p);
+                    if (existing) {
+                        loadExistingReport(existing);
+                    }
+                }
+            }
+            showView('editor');
+            syncLiveProgress();
+        }
+
+        function loadExistingReport(data) {
+            document.getElementById('verdictText').value = data.verdictText || '';
+            const gStatus = document.querySelector(`#globalStatus .status-dot-btn[data-status="${data.verdictStatus}"]`);
+            if (gStatus) setGlobalStatus(gStatus);
+            
+            data.items.forEach(item => {
+                const card = document.getElementById('card-' + item.id);
+                if (card) {
+                    card.querySelector('textarea').value = item.text;
+                    const stDot = card.querySelector(`.status-dot-btn[data-status="${item.st}"]`);
+                    if (stDot) {
+                        card.querySelectorAll('.status-dot-btn').forEach(d => d.classList.remove('active'));
+                        stDot.classList.add('active');
+                    }
+                    if (item.files) {
+                        card.setAttribute('data-files', JSON.stringify(item.files));
+                        updateFileUI(item.id);
+                    }
+                }
+            });
+        }
+
+        async function confirmPayment(placa) {
+            localStorage.setItem('approved_request_' + placa, 'true');
+            if (!localStorage.getItem('progress_' + placa)) {
+                localStorage.setItem('progress_' + placa, '15');
+            }
+
+            // Sincronizar pago en la Nube
+            if (window.sb) {
+                try {
+                    const { data } = await window.sb.from('solicitudes').select('datos').eq('placa', placa).single();
+                    if (data && data.datos) {
+                        data.datos.status = 'approved';
+                        await window.sb.from('solicitudes').upsert({ placa: placa, datos: data.datos, updated_at: new Date() }, { onConflict: 'placa' });
+                    } else {
+                        // Si no existe, crear registro aprobado basico
+                        const timestamp = Date.now();
+                        const basicData = { placa: placa, timestamp: timestamp, status: 'approved' };
+                        await window.sb.from('solicitudes').upsert({ placa: placa, datos: basicData, updated_at: new Date() }, { onConflict: 'placa' });
+                    }
+                } catch (e) { console.error("Error sincronizando pago en nube:", e); }
+            }
+
+            renderRequestsList();
+            renderHistoryList(); // Cargar historial si está abierto
+            alert(`✅ Pago de la placa ${placa} confirmado. El cliente ya tiene acceso al progreso.`);
+        }
+
+        function approveRequest(rawPlaca) {
+            const placa = normalize(rawPlaca);
+            confirmPayment(placa);
+            openPlateEditor(placa);
+        }
+
+        async function deleteRequest(rawPlaca) {
+            const placa = normalize(rawPlaca);
+            if (confirm(`¿Eliminar solicitud ${rawPlaca}?`)) {
+                // Eliminar con llave RAW (con guiones/símbolos)
+                localStorage.removeItem('pending_request_' + rawPlaca);
+                localStorage.removeItem('approved_request_' + rawPlaca);
+                
+                // Por si acaso, eliminar con llave Normalizada
+                localStorage.removeItem('pending_request_' + placa);
+                localStorage.removeItem('approved_request_' + placa);
+
+                // Sincronizar borrar en la Nube
+                if (window.sb) {
+                    await window.sb.from('solicitudes').delete().eq('placa', rawPlaca);
+                }
+
+                renderRequestsList();
+                if (typeof renderHistoryList === 'function') renderHistoryList();
+            }
+        }
+
+        /** Modal de confirmación reutilizable (Esc cierra, Enter confirma si el foco no está en Cancel) */
+        let _adminConfirmHandler = null;
+        function closeAdminConfirmModal() {
+            var m = document.getElementById('adminConfirmModal');
+            if (m) m.style.display = 'none';
+            if (_adminConfirmHandler) {
+                document.removeEventListener('keydown', _adminConfirmHandler, true);
+                _adminConfirmHandler = null;
+            }
+        }
+
+        function showAdminConfirmModal(opts) {
+            opts = opts || {};
+            var m = document.getElementById('adminConfirmModal');
+            if (!m) return;
+            var titleEl = document.getElementById('adminConfirmTitle');
+            var msgEl = document.getElementById('adminConfirmMsg');
+            var okBtn = document.getElementById('adminConfirmOk');
+            var cancelBtn = document.getElementById('adminConfirmCancel');
+            if (titleEl) titleEl.textContent = opts.title || 'Confirmar';
+            if (msgEl) msgEl.textContent = opts.message || '';
+            if (okBtn) {
+                okBtn.textContent = opts.confirmLabel || 'Aceptar';
+                okBtn.style.background = opts.danger ? '#dc2626' : 'var(--petrol)';
+            }
+            var run = function () {
+                var fn = opts.onConfirm;
+                closeAdminConfirmModal();
+                if (typeof fn === 'function') {
+                    Promise.resolve(fn()).catch(function (err) {
+                        console.error(err);
+                        alert('Error: ' + (err && err.message ? err.message : String(err)));
+                    });
+                }
+            };
+            if (cancelBtn) cancelBtn.onclick = function () { closeAdminConfirmModal(); };
+            if (okBtn) okBtn.onclick = function () { run(); };
+            m.style.display = 'flex';
+            _adminConfirmHandler = function (e) {
+                if (!m || m.style.display !== 'flex') return;
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeAdminConfirmModal();
+                    return;
+                }
+                if (e.key !== 'Enter') return;
+                if (e.target && e.target.tagName === 'TEXTAREA') return;
+                /* Enter en botón: el navegador activa el botón; no duplicar */
+                if (e.target && e.target.tagName === 'BUTTON') return;
+                e.preventDefault();
+                run();
+            };
+            document.addEventListener('keydown', _adminConfirmHandler, true);
+            setTimeout(function () { if (okBtn) okBtn.focus(); }, 80);
+        }
+
+        function promptDeleteAllHistory() {
+            showAdminConfirmModal({
+                title: '¿Vaciar historial?',
+                message: 'Se eliminarán de la nube todas las solicitudes que aparecen como aprobadas en este historial (incluye reportes, recargas, registros, etc.). Los clientes pueden dejar de ver su historial asociado. Esta acción no se puede deshacer.',
+                confirmLabel: 'Sí, vaciar historial',
+                danger: true,
+                onConfirm: function () {
+                    return deleteAllApprovedHistory();
+                }
+            });
+        }
+
+        async function deleteAllApprovedHistory() {
+            if (!window.sb) {
+                alert('No hay conexión a la nube (Supabase).');
+                return;
+            }
+            var listEl = document.getElementById('historyList');
+            if (listEl) listEl.innerHTML = '<div class="empty-req">Eliminando registros...</div>';
+
+            var res = await window.sb.from('solicitudes').select('placa, datos');
+            if (res.error) throw res.error;
+
+            var toDelete = [];
+            var seen = new Set();
+            (res.data || []).forEach(function (row) {
+                var d = row.datos;
+                if (!d || !row.placa) return;
+                if (!solicitudEstadoAprobado(d)) return;
+                if (seen.has(row.placa)) return;
+                seen.add(row.placa);
+                toDelete.push(row.placa);
+            });
+
+            if (!toDelete.length) {
+                if (typeof renderHistoryList === 'function') renderHistoryList();
+                alert('No hay registros de historial para eliminar.');
+                return;
+            }
+
+            for (var i = 0; i < toDelete.length; i++) {
+                var rawPlaca = toDelete[i];
+                var norm = normalize(String(rawPlaca));
+                try {
+                    localStorage.removeItem('pending_request_' + rawPlaca);
+                    localStorage.removeItem('approved_request_' + rawPlaca);
+                    localStorage.removeItem('pending_request_' + norm);
+                    localStorage.removeItem('approved_request_' + norm);
+                } catch (e) {}
+                var del = await window.sb.from('solicitudes').delete().eq('placa', rawPlaca);
+                if (del.error) console.warn('Error borrando placa', rawPlaca, del.error);
+            }
+
+            if (typeof renderHistoryList === 'function') renderHistoryList();
+            if (typeof renderRequestsList === 'function') renderRequestsList();
+            if (typeof renderUsersList === 'function') renderUsersList();
+            alert('Historial vaciado: ' + toDelete.length + ' registro(s) eliminado(s) de la nube.');
+        }
+
+        function initRequestScanner() {
+            // No longer creating a notifyBox for individual popups
+            
+            setInterval(async () => {
+                if (!window.sb) return;
+                
+                try {
+                    const { data } = await window.sb.from('solicitudes').select('datos');
+                    const rows = (data || []).map((item) => item.datos).filter((d) => d && d.placa);
+                    const approvedNorm = new Set();
+                    rows.forEach((d) => {
+                        if (solicitudEstadoAprobado(d)) approvedNorm.add(normalize(String(d.placa)));
+                    });
+                    const pendingNormSeen = new Set();
+                    let count = 0;
+
+                    const reqView = document.getElementById('requestsView');
+                    if (reqView && reqView.offsetParent !== null) renderRequestsList();
+
+                    rows.forEach((d) => {
+                        if (solicitudEstadoAprobado(d)) return;
+                        const n = normalize(String(d.placa));
+                        if (approvedNorm.has(n)) return;
+                        if (pendingNormSeen.has(n)) return;
+                        pendingNormSeen.add(n);
+                        count++;
+
+                        if (window.isFirstScan) {
+                            seenRequests.add(d.placa);
+                        } else if (!seenRequests.has(d.placa)) {
+                            seenRequests.add(d.placa);
+                            let type = d.servicio || 'Filtro de Placa';
+                            let details = `Placa: ${d.placa}`;
+                            if (d.isRecharge) {
+                                type = 'Recarga';
+                                details = `Email: ${d.email}`;
+                            } else if (d.isRegistro) {
+                                type = 'Registro';
+                                details = `Nombre: ${d.nombre}`;
+                            }
+                            const msg = `🔔 NUEVA SOLICITUD\nTipo: ${type}\nDetalles: ${details}`;
+                            sendTelegramAlert(msg);
+                        }
+                    });
+                    window.isFirstScan = false;
+                    updateBadgesCount(count);
+                } catch (e) {
+                    console.error('Fallo Scanner:', e);
+                }
+
+                // 🌟 Removido Respaldo Local para Cloud puro
+
+                // Limpieza de notificaciones aprobadas
+                document.querySelectorAll('[id^="notif-"]').forEach(async el => {
+                    const placa = el.id.replace('notif-', '');
+                    if (window.sb) {
+                        try {
+                            const { data } = await window.sb.from('solicitudes').select('datos').eq('placa', placa).single();
+                            if (data && data.datos && data.datos.status === 'approved' && !data.datos.isIndividual) {
+                                el.remove();
+                            }
+                        } catch(e) {}
+                    }
+
+                });
+            }, 4000);
+        }
+
+        const ADMIN_ALERT_MP3 = 'assets/media/truecallerm_c3121f0d5280629.mp3';
+        let adminAlertAudio = null;
+        let adminAudioUnlocked = false;
+        let adminUnlockInProgress = false;
+
+        function getAdminAlertAudio() {
+            if (!adminAlertAudio) {
+                adminAlertAudio = new Audio(ADMIN_ALERT_MP3);
+                adminAlertAudio.preload = 'auto';
+            }
+            return adminAlertAudio;
+        }
+
+        function tryUnlockAdminAudio() {
+            if (adminAudioUnlocked || adminUnlockInProgress) return;
+            adminUnlockInProgress = true;
+            const a = getAdminAlertAudio();
+            a.volume = 0;
+            a.play()
+                .then(() => {
+                    a.pause();
+                    a.currentTime = 0;
+                    a.volume = 1;
+                    adminAudioUnlocked = true;
+                    adminUnlockInProgress = false;
+                    console.log('Sonido de nuevas solicitudes activado.');
+                })
+                .catch(() => { adminUnlockInProgress = false; });
+        }
+
+        function playAdminAlertSound() {
+            if (!adminAudioUnlocked) {
+                tryUnlockAdminAudio();
+                return;
+            }
+            const a = getAdminAlertAudio();
+            try {
+                a.pause();
+                a.currentTime = 0;
+                a.play().catch(e => console.log('Alerta sonora:', e && e.message));
+            } catch (e) {}
+            try {
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            } catch (e) {}
+        }
+
+        ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(function (ev) {
+            document.addEventListener(ev, tryUnlockAdminAudio, { capture: true, passive: true });
+        });
+
+        function showNotifPlaca(placa, isIndividual = false) {
+            const item = document.createElement('div');
+            item.id = 'notif-' + placa;
+            // Estilo Institucional Clear (Cuadro Blanco Moderno)
+            item.style = "background: #ffffff; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 12px; color: #0d2536; cursor: pointer; display: flex; align-items: center; gap: 12px; pointer-events: auto; box-shadow: 0 15px 35px rgba(13, 37, 54, 0.08); animation: slideInNotif 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards; margin-bottom: 8px;";
+            
+            const isRecharge = placa.startsWith('RECARGA');
+            const isRegistro = placa.startsWith('REGISTRO');
+            const isDashboard = placa.startsWith('DASHBOARD');
+            
+            let labelStr = 'NOTIFICACIÓN';
+            let iconClass = 'fa-bell';
+            
+            if (isRecharge) { 
+                labelStr = 'RECARGA SOLICITADA'; iconClass = 'fa-wallet';
+            } else if (isRegistro) { 
+                labelStr = 'NUEVO USUARIO'; iconClass = 'fa-user-plus';
+            } else if (isDashboard) { 
+                labelStr = 'ACTIVAR DASHBOARD'; iconClass = 'fa-table-columns';
+            } else if (isIndividual) { 
+                labelStr = 'CONSULTA INDIVIDUAL'; iconClass = 'fa-file-lines';
+            } else {
+                labelStr = 'NUEVA PLACA'; iconClass = 'fa-car';
+            }
+            
+            let displayStr = placa;
+            if (isRecharge || isRegistro || isDashboard) displayStr = 'Ver en Pendientes';
+
+            const instColor = '#0d2536'; // Color institucional oscuro
+
+            item.innerHTML = `
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: ${instColor}; color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; box-shadow: 0 5px 10px rgba(13, 37, 54, 0.12);">
+                    <i class="fa-solid ${iconClass}"></i>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1px;">
+                    <div style="font-size: 9px; font-weight: 800; letter-spacing: 0.6px; color: #64748b; text-transform: uppercase;">
+                        ${labelStr}
+                    </div>
+                    <div style="font-size: 14px; font-weight: 800; color: ${instColor}; letter-spacing: -0.2px;">
+                        ${displayStr}
+                    </div>
+                </div>
+                <div style="margin-left: auto; font-size: 11px; color: #94a3b8;">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            `;
+            
+            item.onclick = () => { 
+                if(!isRecharge && !isRegistro && !isDashboard) {
+                    document.getElementById('targetPlate').value = placa; 
+                }
+                showView('requests'); 
+                item.style.opacity = '0.7'; 
+            };
+            
+            document.getElementById('requestNotify').appendChild(item);
+            playAdminAlertSound();
+        }
+
+        let lastRequestsCount = 0;
+
+        // --- ALERTA TELEGRAM TRACKING ---
+        let seenRequests = new Set();
+        window.isFirstScan = true; 
+
+        function saveTelegramSettings() {
+            const token = document.getElementById('tgToken').value.trim();
+            const id = document.getElementById('tgChatId').value.trim();
+            if (!token || !id) return alert("Ingresa tanto el Token como el Chat ID.");
+            localStorage.setItem('telegram_token', token);
+            localStorage.setItem('telegram_chatid', id);
+            alert("Configuracion de Telegram Guardada con exito.");
+        }
+
+        async function testTelegram() {
+            const token = localStorage.getItem('telegram_token');
+            const chatId = localStorage.getItem('telegram_chatid');
+            if (!token || !chatId) return alert("Guarda tu Token y Chat ID primero.");
+
+            try {
+                const url = `https://api.telegram.org/bot${token}/sendMessage`;
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text: "🔔 ¡Prueba de Alerta Exitosa de Filtro Vehicular Plus!" })
+                });
+                const d = await res.json();
+                if (d.ok) {
+                     alert("✅ ¡ÉXITO! Mensaje de prueba enviado a tu Telegram.");
+                } else {
+                     alert("❌ ERROR DE TELEGRAM: " + d.description + "\n\nSolución: Recuerda buscar a tu bot en Telegram y darle a INICIAR.");
+                }
+            } catch (e) { alert("❌ Error de Conexión: " + e.message); }
+        }
+
+        async function sendTelegramAlert(message) {
+            const token = localStorage.getItem('telegram_token');
+            const chatId = localStorage.getItem('telegram_chatid');
+            if (!token || !chatId) return;
+
+            try {
+                const url = `https://api.telegram.org/bot${token}/sendMessage`;
+                await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text: message })
+                });
+            } catch (e) { console.error("Error Telegram Alert:", e); }
+        }
+
+        function updateBadgesCount(n) {
+            const badge = document.getElementById('requestsCount');
+            const mBadge = document.getElementById('mobileCount');
+            
+            console.log("Escáner -> Pendientes:", n, "| Anterior:", lastRequestsCount);
+
+            if (n > lastRequestsCount) {
+                playAdminAlertSound();
+            }
+            lastRequestsCount = n;
+
+            if (n > 0) {
+                if (badge) { badge.innerHTML = n; badge.style.display = 'block'; }
+                if (mBadge) { mBadge.innerHTML = n; mBadge.style.display = 'block'; }
+            } else {
+                if (badge) badge.style.display = 'none';
+                if (mBadge) mBadge.style.display = 'none';
+            }
+        }
+
+        document.getElementById('reportDate').valueAsDate = new Date();
+
+        // Normalización automática del campo de placa
+        document.getElementById('targetPlate').addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            syncLiveProgress();
+        });
+
+        // Remove the old direct assignment for tgToken and tgChatId
+        // if(document.getElementById('tgToken')) {
+        //     document.getElementById('tgToken').value = localStorage.getItem('telegram_token') || '';
+        //     document.getElementById('tgChatId').value = localStorage.getItem('telegram_chatid') || '';
+        // }
+
+        renderAdminCards();
+        // initRequestScanner(); // This will be called inside DOMContentLoaded
+        document.addEventListener('input', syncLiveProgress);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            initAuthAdmin();
+            initRequestScanner();
+
+            // 🌟 INNOVACIÓN: Autollenar inputs de Telegram si ya han sido guardados
+            const token = localStorage.getItem('telegram_token');
+            const id = localStorage.getItem('telegram_chatid');
+            if (token && document.getElementById('tgToken')) document.getElementById('tgToken').value = token;
+            if (id && document.getElementById('tgChatId')) document.getElementById('tgChatId').value = id;
+
+            /* Telegram: Enter en token o chat ID = Guardar (móvil y escritorio) */
+            ['tgToken', 'tgChatId'].forEach(function (tid) {
+                var el = document.getElementById(tid);
+                if (!el) return;
+                el.addEventListener('keydown', function (ev) {
+                    if (ev.key !== 'Enter') return;
+                    ev.preventDefault();
+                    if (typeof saveTelegramSettings === 'function') saveTelegramSettings();
+                });
+            });
+
+            /* Esc: voucher modal; login sin sesión → volver al sitio */
+            document.addEventListener('keydown', function (ev) {
+                if (ev.key !== 'Escape') return;
+                var ac = document.getElementById('adminConfirmModal');
+                if (ac && ac.style.display === 'flex') return;
+                var vm = document.getElementById('voucherModal');
+                if (vm && vm.style.display === 'flex') {
+                    vm.style.display = 'none';
+                    ev.preventDefault();
+                    return;
+                }
+                var ov = document.getElementById('loginOverlay');
+                if (ov && ov.style.display !== 'none' && !document.documentElement.classList.contains('admin-session-ok')) {
+                    ev.preventDefault();
+                    window.location.href = 'index.html';
+                }
+            }, true);
+        });
+
+        // --- MANEJO DE OVERLAY SIDEBAR ---
+        const overlay = document.querySelector('.sidebar-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', () => {
+                if (typeof toggleSidebar === 'function') toggleSidebar(false);
+            });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase-config.js?v=2"></script>
+</body>
+
+</html>

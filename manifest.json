@@ -1,0 +1,16 @@
+{
+  "name": "Filtro Vehicular Plus 2",
+  "short_name": "Filtro 2",
+  "description": "Consulta servicios vehiculares con tu placa",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#0d2536",
+  "icons": [
+    {
+      "src": "assets/media/logopwa.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mis Consultas — Filtro 2</title>
+    <!-- ROBOTO PARA APP NATIVA ESTÁNDAR ANDROID/IOS -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- FONT AWESOME MÓVIL -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/intranet-modal.css">
+    <!-- SUPABASE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bg-deep: #0d2536;
+            --white: #ffffff;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #15324d;
+            --brand-gold: #d97706;
+            --brand-navy: #0d2536;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--white);
+            background-color: var(--bg-deep);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            position: relative;
+        }
+
+        /* HEADER (idéntico al index para consistencia) */
+        .site-header {
+            width: 100%;
+            padding: 20px 0;
+            background: rgba(13, 37, 54, 0.4);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .logo-text-group {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-main {
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .logo-plus {
+            font-size: 10px;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-top: 1px;
+            text-align: right;
+            width: 100%;
+        }
+
+        /* APP CONTAINER y BODY */
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            flex: 1;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .dashboard-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--white);
+            letter-spacing: 1px;
+        }
+
+        .btn-nuevo {
+            background: #ffffff;
+            color: #0d2536;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-nuevo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        /* TABLA MODO TARJETAS */
+        .consultas-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .consulta-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .consulta-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .c-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .c-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-secondary);
+        }
+
+        .c-details {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .c-placa {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--white);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .c-fecha {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .c-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .badge-completado {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        .badge-pendiente {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .btn-ver {
+            background: var(--brand-gold);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-ver:hover {
+            background: #b45309;
+        }
+        
+        .btn-ver-disabled {
+            background: #475569;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* ESTILOS DEL DROPDOWN HEREDADOS */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-trigger {
+            color: var(--white);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 10px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+        }
+        .dropdown-trigger:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(2px); }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            min-width: 180px;
+            border-radius: 12px;
+            padding: 8px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2000;
+            margin-top: 10px;
+        }
+        .dropdown.open .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #0d2536;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        .dropdown-item i { font-size: 16px; opacity: 0.7; }
+        .dropdown-item:hover { background: #f8fafc; color: #0d2536; padding-left: 25px; }
+        .dropdown-divider { height: 1px; background: #f1f5f9; margin: 4px 0; }
+        
+        #loadingSpinner {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="header-content">
+            <a href="index.html" class="header-logo">
+                <img src="assets/media/logo_circular.png" class="logo-img" alt="Logo">
+                <div class="logo-text-group">
+                    <span class="logo-main">Filtro Vehicular</span>
+                    <span class="logo-plus">Plus</span>
+                </div>
+            </a>
+            <!-- Aquí auth.js inyectará el botón o el dropdown -->
+            <nav class="header-nav" id="desktopNavAuth">
+            </nav>
+        </div>
+    </header>
+
+    <div class="app-container">
+        
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Mis Consultas</h1>
+            <a href="index.html" class="btn-nuevo">
+                <i class="fa-solid fa-magnifying-glass"></i> Nueva Consulta
+            </a>
+        </div>
+
+        <div id="loadingSpinner">
+            <i class="fa-solid fa-spinner fa-spin fa-3x" style="margin-bottom: 20px;"></i>
+            <p>Cargando tu historial...</p>
+        </div>
+
+        <div class="consultas-grid" id="consultasList" style="display: none;">
+            <!-- Las tarjetas se inyectarán aquí -->
+        </div>
+
+    </div>
+
+    <!-- Modal Intranet (mismo flujo que index) -->
+    <div class="auth-modal" id="intranetModal" style="display: none;">
+        <div class="auth-card">
+            <i class="fa-solid fa-xmark auth-close" onclick="closeIntranetModal()" aria-label="Cerrar"></i>
+            <div style="width: 64px; height: 64px; background: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 2px solid #bae6fd;">
+                <i class="fa-solid fa-building-shield" style="font-size: 28px; color: #0284c7;"></i>
+            </div>
+            <h3 class="auth-title">Acceso Intranet</h3>
+            <p class="auth-subtitle">Confirma el correo autorizado y las dos claves de acceso.</p>
+            <div class="auth-input-group">
+                <label>Correo Electrónico</label>
+                <input type="email" id="intranetEmail" class="auth-input" placeholder="correo@ejemplo.com" autocomplete="username">
+            </div>
+            <div class="auth-input-group">
+                <label>Contraseña 1</label>
+                <input type="password" id="intranetPass1" class="auth-input" placeholder="••••••••" autocomplete="new-password">
+            </div>
+            <div class="auth-input-group">
+                <label>Contraseña 2</label>
+                <input type="password" id="intranetPass2" class="auth-input" placeholder="••••••••" autocomplete="new-password">
+            </div>
+            <div id="intranetError"></div>
+            <button type="button" class="btn-auth-action" id="intranetSubmitBtn" onclick="submitIntranetAccess()">Entrar al panel</button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DE CUSTOM AUTH -->
+    <!-- Nota: auth.js usa la clase auth-modal, si la llamamos tratará de usar #authModal que no está, pero no se abrirá desde aquí si ya está logueado -->
+    <script src="assets/js/supabase-config.js?v=2"></script>
+    <script src="assets/js/session.js?v=2"></script>
+    <script src="assets/js/intranet-access.js?v=2"></script>
+    <script src="assets/js/auth.js?v=6"></script>
+
+    <script>
+        // Lógica de UI requerida por auth.js para el dropdown
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('open');
+        }
+
+        window.addEventListener('click', () => {
+            const drp = document.getElementById('userDropdown');
+            if (drp) drp.classList.remove('open');
+        });
+
+        // Verificamos si hay sesión
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!window.sb) {
+                alert("Error de conexión con la base de datos.");
+                return;
+            }
+
+            var email = window.FiltroSession && window.FiltroSession.getEmail();
+            if (!email) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            cargarHistorial(email);
+        });
+
+        function formatearFecha(isoString) {
+            const opciones = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+            const fecha = new Date(isoString);
+            return fecha.toLocaleDateString('es-PE', opciones);
+        }
+
+        async function cargarHistorial(email) {
+            const spinner = document.getElementById('loadingSpinner');
+            const lista = document.getElementById('consultasList');
+
+            try {
+                // Consultamos a Supabase
+                const { data, error } = await window.sb
+                    .from('solicitudes')
+                    .select('datos')
+                    .order('updated_at', { ascending: false });
+
+                if (error) throw error;
+
+                spinner.style.display = 'none';
+                lista.style.display = 'flex';
+
+                // Filtrar las solicitudes del cliente (excluyendo recargas)
+                const myReqs = data.map(d => d.datos).filter(r => r && r.email === email && r.placa && !r.isRecharge);
+
+                if (!myReqs || myReqs.length === 0) {
+                    lista.innerHTML = `
+                        <div style="text-align:center; padding: 50px 20px; background: rgba(255,255,255,0.02); border-radius: 20px; border: 1px dashed rgba(255,255,255,0.1);">
+                            <div style="width:80px; height:80px; background:rgba(255,255,255,0.05); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                                <i class="fa-solid fa-folder-open" style="font-size: 30px; color: var(--text-secondary);"></i>
+                            </div>
+                            <h3 style="color: white; margin-bottom: 10px; font-size: 20px;">Aún no tienes consultas registradas</h3>
+                            <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 25px;">Tus futuras verificaciones vehiculares aparecerán en este panel de forma segura.</p>
+                            <a href="index.html" class="btn-nuevo" style="display:inline-flex; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: white;">Ir a consultar placa</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Renderizamos las tarjetas
+                lista.innerHTML = myReqs.map(item => {
+                    const isCompletado = item.status === 'approved';
+                    const badgeClass = isCompletado ? 'badge-completado' : 'badge-pendiente';
+                    const actStatus = isCompletado ? 'Completado' : 'Pendiente';
+                    const btnHtml = isCompletado 
+                        ? `<a href="reporte.html?placa=${item.placa}" class="btn-ver"><i class="fa-solid fa-file-pdf"></i> Ver Reporte</a>`
+                        : `<button class="btn-ver btn-ver-disabled" disabled><i class="fa-solid fa-clock"></i> En Proceso</button>`;
+
+                    const fechaStr = item.timestamp ? formatearFecha(item.timestamp) : 'Fecha no disponible';
+
+                    return `
+                        <div class="consulta-card">
+                            <div class="c-info">
+                                <div class="c-icon"><i class="fa-solid fa-car-side"></i></div>
+                                <div class="c-details">
+                                    <div class="c-placa">${item.placa}</div>
+                                    <div class="c-fecha">${fechaStr}</div>
+                                </div>
+                            </div>
+                            <div class="c-status">
+                                <div class="badge ${badgeClass}">${actStatus}</div>
+                                ${btnHtml}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error("Error al cargar historial:", err);
+                spinner.innerHTML = `<p style="color:#ef4444;">Error al cargar las consultas. Intenta de nuevo más tarde.</p>`;
+            }
+        }
+    </script>
+    <style>
+        #tourOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 999990; display: none; pointer-events: all;
+        }
+        #tourSpotlight {
+            position: absolute; z-index: 999991;
+            box-shadow: 0 0 0 9999px rgba(13, 37, 54, 0.85), 0 0 15px rgba(3, 167, 164, 0.5) inset;
+            border: 3px solid #03a7a4; border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none; display: none;
+        }
+        .tour-relative { position: relative !important; z-index: 999992 !important; pointer-events: none !important;}
+
+        #tourTooltip {
+            position: absolute; z-index: 999995; background: #ffffff; color: #1e293b;
+            width: 290px; border-radius: 14px; border: 2px solid #03a7a4;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.15); padding: 22px;
+            transition: opacity 0.3s ease; display: none; opacity: 0;
+            font-size: 14px; text-align: left;
+        }
+        .tour-title { font-size: 15px; font-weight: 800; margin-bottom: 8px; color: #03a7a4; display: flex; align-items: center; gap: 8px; text-transform: uppercase;}
+        .tour-desc { font-size: 13px; color: #475569; line-height: 1.5; margin-bottom: 15px;}
+        .tour-desc strong { color: #d97706; font-weight: 800;}
+        .tour-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+        .tour-dots { display: flex; gap: 4px; }
+        .tour-dot { width: 6px; height: 6px; border-radius: 50%; background: #e2e8f0; transition: 0.3s;}
+        .tour-dot.active { background: #03a7a4; width: 14px; border-radius: 4px; }
+        .btn-tour { background: #03a7a4; color: #ffffff; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 12px; transition: 0.2s;}
+        .btn-tour-close { color: #94a3b8; font-weight: 600; font-size: 12px; background: none; border: none; cursor: pointer; text-decoration: underline;}
+    </style>
+
+    <div id="tourOverlay"></div>
+    <div id="tourSpotlight"></div>
+    <div id="tourTooltip">
+        <div id="trTitle" class="tour-title"></div>
+        <div id="trText" class="tour-desc"></div>
+        <div class="tour-footer">
+            <button class="btn-tour-close" onclick="endTour()">Cerrar</button>
+            <div id="trDots" class="tour-dots"></div>
+            <button class="btn-tour" id="btnTourNext" onclick="nextTourStep()">Siguiente ➔</button>
+        </div>
+    </div>
+
+    <script>
+        const tourDataObj = [
+            {
+                target: 'desktopNavAuth', 
+                title: '<i class="fa-solid fa-user-circle"></i> 1. Tu Perfil y Saldo',
+                text: 'Haciendo clic en la esquina de arriba podrás ver tu **saldo de créditos** disponible y cerrar sesión cuando lo desees.'
+            },
+            {
+                target: '.btn-nuevo', 
+                title: '<i class="fa-solid fa-magnifying-glass"></i> 2. Iniciar Búsqueda',
+                text: 'Toca aquí cuando necesites regresar al inicio para consultar el estado legal de un vehículo nuevo.'
+            },
+            {
+                target: '.dashboard-title', 
+                title: '<i class="fa-solid fa-folder-open"></i> 3. Tus Descargas',
+                text: 'Todo tu historial quedará guardado <strong>permanente y de forma segura</strong> aquí abajo, para que puedas abrir y descargar tus PDFs cuando quieras.'
+            }
+        ];
+
+        let curStepPanel = 0;
+
+        function getTargetEl(sel) { return document.getElementById(sel) || document.querySelector(sel); }
+
+        function showStepPanel(index) {
+            if(index >= tourDataObj.length) { endTour(); return; }
+            document.querySelectorAll('.tour-relative').forEach(e => e.classList.remove('tour-relative'));
+            const step = tourDataObj[index];
+            const el = getTargetEl(step.target);
+            if(!el) { showStepPanel(index + 1); return; }
+
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            setTimeout(() => {
+                el.classList.add('tour-relative');
+                const rect = el.getBoundingClientRect();
+                
+                const spot = document.getElementById('tourSpotlight');
+                spot.style.display = 'block';
+                spot.style.top = (rect.top + window.scrollY - 8) + 'px';
+                spot.style.left = (rect.left + window.scrollX - 8) + 'px';
+                spot.style.width = (rect.width + 16) + 'px';
+                spot.style.height = (rect.height + 16) + 'px';
+
+                const tip = document.getElementById('tourTooltip');
+                tip.style.display = 'block';
+                
+                document.getElementById('trTitle').innerHTML = step.title;
+                document.getElementById('trText').innerHTML = step.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                document.getElementById('trDots').innerHTML = tourDataObj.map((_, i) => `<div class="tour-dot ${i === index ? 'active' : ''}"></div>`).join('');
+                document.getElementById('btnTourNext').innerHTML = (index === tourDataObj.length - 1) ? 'Finalizar <i class="fa-solid fa-check"></i>' : 'Siguiente <i class="fa-solid fa-arrow-right"></i>';
+
+                let tipTop = rect.bottom + window.scrollY + 20;
+                if(tipTop + 220 > document.body.scrollHeight) tipTop = rect.top + window.scrollY - 240; 
+                let tipLeft = rect.left + window.scrollX - 40;
+                if(tipLeft + 340 > window.innerWidth) tipLeft = window.innerWidth - 350;
+                if(tipLeft < 10) tipLeft = 10;
+
+                tip.style.top = tipTop + 'px';
+                tip.style.left = tipLeft + 'px';
+                
+                setTimeout(() => { tip.style.opacity = 1; }, 50);
+            }, 300); 
+        }
+
+        function nextTourStep() {
+            document.getElementById('tourTooltip').style.opacity = 0;
+            curStepPanel++;
+            showStepPanel(curStepPanel);
+        }
+
+        function endTour() {
+            document.getElementById('tourOverlay').style.display = 'none';
+            document.getElementById('tourSpotlight').style.display = 'none';
+            document.getElementById('tourTooltip').style.display = 'none';
+            document.querySelectorAll('.tour-relative').forEach(e => e.classList.remove('tour-relative'));
+            localStorage.setItem('fv_tour_logged_v1', 'true');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if(!localStorage.getItem('fv_tour_logged_v1')) {
+                setTimeout(() => {
+                    document.getElementById('tourOverlay').style.display = 'block';
+                    curStepPanel = 0;
+                    showStepPanel(0);
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
