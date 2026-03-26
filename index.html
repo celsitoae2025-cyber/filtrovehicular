@@ -2034,6 +2034,11 @@
             z-index: 2000;
             margin-top: 10px;
             overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .dropdown.open .dropdown-menu {
+            pointer-events: auto;
         }
 
         .dropdown.open .dropdown-menu {
@@ -4237,7 +4242,7 @@
             removeDropdownBackdrop();
             var bd = document.createElement('div');
             bd.id = 'dropdownBackdrop';
-            bd.style.cssText = 'position:fixed;inset:0;z-index:1999;background:transparent;';
+            bd.style.cssText = 'position:fixed;inset:0;z-index:999;background:transparent;';
             bd.addEventListener('click', function() { closeUserDropdown(); });
             bd.addEventListener('touchstart', function() { closeUserDropdown(); });
             document.body.appendChild(bd);
