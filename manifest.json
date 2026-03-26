@@ -5,9 +5,11 @@
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#0d2536",
   "theme_color": "#0d2536",
+  "prefer_related_applications": false,
+  "categories": ["business", "productivity"],
   "icons": [
     {
       "src": "logopestañaweb.png",
@@ -32,6 +34,21 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Panel Admin",
+      "short_name": "Admin",
+      "description": "Acceso directo al panel de administración",
+      "url": "./admin.html",
+      "icons": [
+        {
+          "src": "assets/media/logopwa.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

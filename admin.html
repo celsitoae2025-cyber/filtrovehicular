@@ -973,7 +973,13 @@
             
             <div style="font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.9); text-transform: uppercase; margin-bottom: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">Grupo WhatsApp Clientes</div>
             <input type="text" id="whatsappGroupLink" placeholder="https://chat.whatsapp.com/XXXXXX" style="width: 100%; padding: 8px; font-size: 11px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px; background: white;">
-            <button onclick="saveWhatsAppGroupLink()" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s;">Guardar Enlace</button>
+            <button onclick="saveWhatsAppGroupLink()" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-bottom: 15px;">Guardar Enlace</button>
+            
+            <div style="font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.9); text-transform: uppercase; margin-bottom: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">🔔 Notificaciones Push</div>
+            <button id="btnEnablePush" onclick="subscribeToPushNotifications()" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <i class="fa-solid fa-bell"></i> Activar Notificaciones en Tiempo Real
+            </button>
+            <div style="font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 6px; line-height: 1.4;">Recibe alertas instantáneas incluso con la app cerrada</div>
             
         </div>
 
@@ -2966,6 +2972,187 @@ Link: https://filtrovehicularperu.com`;
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/supabase-config.js?v=2"></script>
+
+    <!-- FIREBASE CLOUD MESSAGING - Notificaciones Push -->
+    <script type="module">
+        // Importar Firebase SDK
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js';
+
+        // CONFIGURACIÓN DE FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyBReBBPABzIAEneLzjjlGYKddRF7WyQxfw",
+            authDomain: "filtro2026-d9530.firebaseapp.com",
+            projectId: "filtro2026-d9530",
+            storageBucket: "filtro2026-d9530.firebasestorage.app",
+            messagingSenderId: "472315272675",
+            appId: "1:472315272675:web:3389b0bb4c03a4b4ae94d6"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        // Función para solicitar permiso y suscribirse a notificaciones push
+        window.subscribeToPushNotifications = async function() {
+            try {
+                // Verificar soporte
+                if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+                    alert('❌ Las notificaciones push no están soportadas en este navegador');
+                    return;
+                }
+
+                // Registrar Service Worker de Firebase
+                const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+                console.log('✅ Firebase Service Worker registrado');
+
+                // Solicitar permiso
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    alert('⚠️ Debes permitir las notificaciones para recibir alertas en tiempo real');
+                    return;
+                }
+
+                // Obtener token de FCM
+                const currentToken = await getToken(messaging, {
+                    vapidKey: 'BMKugK9-B_-lE2KFMip7uBFoaiDPT2SsRDbk9MKpB1qb4PISecRmveI6NgGfo2PBZRmMvXaHRhwgJCaYPSB5ve4',
+                    serviceWorkerRegistration: registration
+                });
+
+                if (currentToken) {
+                    console.log('✅ Token FCM obtenido:', currentToken);
+                    
+                    // Guardar token en Supabase para enviar notificaciones desde el backend
+                    if (window.sb) {
+                        const { error } = await window.sb
+                            .from('admin_push_tokens')
+                            .upsert([{
+                                token: currentToken,
+                                device_type: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+                                updated_at: new Date().toISOString()
+                            }], { onConflict: 'token' });
+
+                        if (error) {
+                            console.error('Error guardando token:', error);
+                        } else {
+                            console.log('✅ Token guardado en Supabase');
+                        }
+                    }
+
+                    alert('✅ Notificaciones push activadas correctamente\n\nRecibirás alertas en tiempo real incluso cuando la app esté cerrada.');
+                    localStorage.setItem('push_notifications_enabled', 'true');
+                    
+                    // Actualizar UI del botón
+                    const btn = document.getElementById('btnEnablePush');
+                    if (btn) {
+                        btn.innerHTML = '<i class="fa-solid fa-bell"></i> Notificaciones Activadas';
+                        btn.style.background = '#8bc34a';
+                        btn.disabled = true;
+                    }
+                } else {
+                    console.warn('No se pudo obtener el token FCM');
+                    alert('⚠️ Error al obtener el token de notificaciones');
+                }
+            } catch (error) {
+                console.error('Error al suscribirse a push:', error);
+                alert('❌ Error al activar notificaciones: ' + error.message);
+            }
+        };
+
+        // Manejar notificaciones cuando la app está abierta
+        onMessage(messaging, (payload) => {
+            console.log('📬 Notificación recibida (app abierta):', payload);
+            
+            // Mostrar notificación del navegador
+            if (Notification.permission === 'granted') {
+                new Notification(payload.notification.title, {
+                    body: payload.notification.body,
+                    icon: './assets/media/logopwa.png',
+                    badge: './assets/media/logopwa.png',
+                    tag: 'admin-notification',
+                    requireInteraction: true
+                });
+            }
+
+            // Opcional: Actualizar UI o recargar datos
+            if (payload.data?.type === 'new_user' || payload.data?.type === 'new_payment') {
+                console.log('🔄 Actualizando datos...');
+                // Aquí puedes recargar la tabla de usuarios o solicitudes
+            }
+        });
+
+        // Auto-activar notificaciones si ya estaban habilitadas
+        if (localStorage.getItem('push_notifications_enabled') === 'true') {
+            console.log('🔔 Notificaciones ya activadas, reconectando...');
+            // No mostrar alert, solo reconectar en silencio
+        }
+    </script>
+
+    <!-- MANTENER SERVICE WORKER ACTIVO - Evita cierre automático de la PWA -->
+    <script>
+        // Registrar Service Worker principal
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('✅ Service Worker registrado:', registration.scope);
+                })
+                .catch(error => {
+                    console.error('❌ Error registrando Service Worker:', error);
+                });
+
+            // Enviar ping cada 30 segundos para mantener el SW activo
+            setInterval(() => {
+                if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage('keepAlive');
+                }
+            }, 30000);
+
+            // Mantener la app activa en segundo plano (Wake Lock API)
+            let wakeLock = null;
+            async function requestWakeLock() {
+                try {
+                    if ('wakeLock' in navigator) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        console.log('🔒 Wake Lock activado - La app permanecerá activa');
+                        
+                        wakeLock.addEventListener('release', () => {
+                            console.log('🔓 Wake Lock liberado');
+                        });
+                    }
+                } catch (err) {
+                    console.warn('Wake Lock no disponible:', err);
+                }
+            }
+
+            // Activar Wake Lock cuando el usuario interactúa
+            document.addEventListener('click', () => {
+                if (!wakeLock || wakeLock.released) {
+                    requestWakeLock();
+                }
+            }, { once: true });
+
+            // Reactivar Wake Lock si la página vuelve a ser visible
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && (!wakeLock || wakeLock.released)) {
+                    requestWakeLock();
+                }
+            });
+        }
+
+        // Prevenir que el navegador suspenda la página
+        let preventSuspend = setInterval(() => {
+            // Operación mínima para mantener la página "viva"
+            void(0);
+        }, 60000); // Cada 1 minuto
+
+        // Limpiar al cerrar
+        window.addEventListener('beforeunload', () => {
+            clearInterval(preventSuspend);
+            if (wakeLock) {
+                wakeLock.release();
+            }
+        });
+    </script>
 
     <!-- SISTEMA DE IMPRESIÓN PROFESIONAL -->
     <script>
