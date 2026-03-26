@@ -42,12 +42,11 @@ function renderLoggedOutState() {
     updateIntranetFooterBar(false);
 
     nav.innerHTML = `
-        <button type="button" class="btn-dashboard-trigger" onclick="toggleDashboard()" title="Dashboard">
-            <i class="fa-solid fa-table-columns"></i>
-        </button>
-        <button type="button" class="btn-header-login" id="mainAuthBtn" onclick="openAuthModal()" title="Entrar">
-            <i class="fa-solid fa-user" aria-hidden="true"></i>
-        </button>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <button type="button" class="btn-header-login" id="mainAuthBtn" onclick="openAuthModal()" title="Entrar" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:#ffffff;border:none;cursor:pointer;">
+                <i class="fa-solid fa-user" aria-hidden="true" style="color:#0d2536;font-size:16px;"></i>
+            </button>
+        </div>
     `;
 }
 
@@ -58,20 +57,29 @@ async function renderLoggedInState() {
     var displayName = currentUser.nombre || currentUser.email.split('@')[0];
 
     var creditos = 0;
+    var plataformaActiva = false;
     try {
         if (window.sb) {
             var res = await window.sb
                 .from('saldos')
-                .select('creditos, dashboard_activo')
+                .select('creditos, dashboard_activo, plataforma_activa')
                 .eq('email', currentUser.email)
                 .single();
             if (res.data) {
                 creditos = res.data.creditos;
                 window.dashboardActivo = res.data.dashboard_activo || false;
+                plataformaActiva = res.data.plataforma_activa || false;
+                window.plataformaActiva = plataformaActiva;
             }
         }
     } catch (e) {
         console.error('Error obteniendo créditos:', e);
+    }
+
+    // Actualizar logo según estado de plataforma
+    var logoStatus = document.getElementById('logoStatus');
+    if (logoStatus) {
+        logoStatus.textContent = plataformaActiva ? 'Plus' : 'Demo';
     }
 
     var soles = creditos.toFixed(2);
@@ -92,75 +100,234 @@ async function renderLoggedInState() {
 
     if (!document.getElementById('profileClienteModal')) {
         var modalHtml = `
-            <div id="profileClienteModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-                <div style="background: #ffffff; width: 90%; max-width: 380px; border-radius: 20px; padding: 30px 24px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.3);">
-                    <button onclick="document.getElementById('profileClienteModal').style.display='none'" style="position: absolute; top: 12px; right: 15px; background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer;">&times;</button>
-                    <div style="text-align: center; margin-bottom: 25px;">
-                        <div style="width: 70px; height: 70px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 15px;">
-                            <i class="fa-solid fa-user-circle"></i>
+            <div id="profileClienteModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(13,37,54,0.7);z-index:999999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);font-family:'Roboto',sans-serif;">
+                <div style="background:#ffffff;width:92%;max-width:400px;border-radius:16px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+                    <!-- Header azul institucional -->
+                    <div style="background:#0d2536;padding:28px 24px 22px;text-align:center;position:relative;">
+                        <button onclick="document.getElementById('profileClienteModal').style.display='none'" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;color:rgba(255,255,255,0.5);cursor:pointer;transition:0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">&times;</button>
+                        <div style="width:64px;height:64px;border-radius:50%;background:rgba(139,195,74,0.15);border:2px solid #8bc34a;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                            <i class="fa-solid fa-user" style="font-size:24px;color:#8bc34a;"></i>
                         </div>
-                        <h3 style="font-size: 20px; color: #0d2536; margin: 0 0 5px; font-weight: 900;" id="profName">Nombre</h3>
-                        <p style="color: #64748b; font-size: 13px; margin: 0;" id="profEmail">correo@ejemplo.com</p>
+                        <h3 style="font-size:18px;color:#ffffff;margin:0 0 4px;font-weight:800;letter-spacing:0.3px;" id="profName">Nombre</h3>
+                        <p style="color:rgba(255,255,255,0.6);font-size:12px;margin:0;" id="profEmail">correo@ejemplo.com</p>
                     </div>
-                    <div style="background: #f8fafc; border-radius: 12px; padding: 15px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;">
-                            <span style="color: #64748b; font-weight: 600;">Estado de Cuenta:</span>
-                            <span style="color: #10b981; font-weight: 800;">Activo <i class="fa-solid fa-circle-check"></i></span>
+
+                    <!-- Contenido -->
+                    <div style="padding:20px 24px 24px;">
+
+                        <!-- Info personal -->
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Información personal</div>
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #e2e8f0;">
+                                    <i class="fa-solid fa-user-tag" style="color:#0d2536;font-size:13px;width:16px;text-align:center;"></i>
+                                    <div style="flex:1;">
+                                        <div style="font-size:10px;color:#94a3b8;font-weight:500;">Nombre completo</div>
+                                        <div style="font-size:13px;color:#0d2536;font-weight:700;" id="profNameField">---</div>
+                                    </div>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <i class="fa-solid fa-envelope" style="color:#0d2536;font-size:13px;width:16px;text-align:center;"></i>
+                                    <div style="flex:1;">
+                                        <div style="font-size:10px;color:#94a3b8;font-weight:500;">Correo electrónico</div>
+                                        <div style="font-size:13px;color:#0d2536;font-weight:700;" id="profEmailField">---</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                            <span style="color: #64748b; font-weight: 600;">Plataforma:</span>
-                            <span style="color: #0d2536; font-weight: 800;">Filtro Vehicular Plus</span>
+
+                        <!-- Verificación de email -->
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Verificación de email</div>
+                            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;">
+                                <div style="width:32px;height:32px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="fa-solid fa-circle-check" style="color:#22c55e;font-size:16px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:13px;color:#15803d;font-weight:700;">Correo verificado</div>
+                                    <div style="font-size:11px;color:#4ade80;">Tu dirección de email ha sido confirmada</div>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Cambiar contraseña -->
+                        <div style="margin-bottom:20px;">
+                            <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Seguridad</div>
+                            <div id="profChangePassSection">
+                                <button onclick="toggleChangePassword()" id="btnTogglePass" style="width:100%;padding:12px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:0.2s;" onmouseover="this.style.borderColor='#8bc34a'" onmouseout="this.style.borderColor='#e2e8f0'">
+                                    <i class="fa-solid fa-lock" style="color:#0d2536;font-size:14px;"></i>
+                                    <span style="font-size:13px;color:#0d2536;font-weight:600;flex:1;text-align:left;">Cambiar contraseña</span>
+                                    <i class="fa-solid fa-chevron-right" style="color:#94a3b8;font-size:11px;"></i>
+                                </button>
+                                <div id="changePassForm" style="display:none;margin-top:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
+                                    <div style="margin-bottom:10px;">
+                                        <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Contraseña actual</label>
+                                        <input type="password" id="profCurrentPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;" onfocus="this.style.borderColor='#8bc34a'" onblur="this.style.borderColor='#e2e8f0'">
+                                    </div>
+                                    <div style="margin-bottom:10px;">
+                                        <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Nueva contraseña</label>
+                                        <input type="password" id="profNewPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;" onfocus="this.style.borderColor='#8bc34a'" onblur="this.style.borderColor='#e2e8f0'">
+                                    </div>
+                                    <div style="margin-bottom:12px;">
+                                        <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Confirmar nueva contraseña</label>
+                                        <input type="password" id="profConfirmPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;" onfocus="this.style.borderColor='#8bc34a'" onblur="this.style.borderColor='#e2e8f0'">
+                                    </div>
+                                    <div id="profPassError" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#dc2626;font-weight:600;"></div>
+                                    <div id="profPassSuccess" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#15803d;font-weight:600;"></div>
+                                    <button onclick="handleChangePassword()" style="width:100%;padding:10px;background:#8bc34a;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='#7cb342'" onmouseout="this.style.background='#8bc34a'">
+                                        <i class="fa-solid fa-key" style="margin-right:6px;"></i> Actualizar contraseña
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel Admin (solo para admin) -->
+                        ${isAdminEmail ? `
+                        <div style="margin-bottom:16px;">
+                            <button onclick="window.location.href='admin.html'" style="width:100%;padding:14px 16px;background:linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);border:2px solid #8bc34a;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:0.2s;box-shadow:0 4px 12px rgba(139,195,74,0.2);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 16px rgba(139,195,74,0.3)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 12px rgba(139,195,74,0.2)'">
+                                <div style="width:36px;height:36px;background:rgba(139,195,74,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="fa-solid fa-shield-halved" style="color:#8bc34a;font-size:16px;"></i>
+                                </div>
+                                <div style="flex:1;text-align:left;">
+                                    <div style="font-size:13px;color:#ffffff;font-weight:700;margin-bottom:2px;">Panel Administrador</div>
+                                    <div style="font-size:10px;color:rgba(255,255,255,0.6);font-weight:500;">Acceso completo al sistema</div>
+                                </div>
+                                <i class="fa-solid fa-arrow-right" style="color:#8bc34a;font-size:14px;"></i>
+                            </button>
+                        </div>
+                        ` : ''}
+
+                        <!-- Botón cerrar -->
+                        <button onclick="document.getElementById('profileClienteModal').style.display='none'" style="width:100%;padding:12px;background:#0d2536;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:0.2s;letter-spacing:0.3px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
+                            Cerrar
+                        </button>
                     </div>
-                    <button onclick="document.getElementById('profileClienteModal').style.display='none'" style="width: 100%; padding: 12px; background: #0d2536; color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer;">Cerrar</button>
                 </div>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', modalHtml);
 
+        window.toggleChangePassword = function() {
+            var form = document.getElementById('changePassForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        };
+
+        window.handleChangePassword = async function() {
+            var errEl = document.getElementById('profPassError');
+            var okEl = document.getElementById('profPassSuccess');
+            errEl.style.display = 'none';
+            okEl.style.display = 'none';
+
+            var current = document.getElementById('profCurrentPass').value;
+            var newP = document.getElementById('profNewPass').value;
+            var confirmPass = document.getElementById('profConfirmPass').value;
+
+            if (!current || !newP || !confirmPass) {
+                errEl.textContent = 'Completa todos los campos.';
+                errEl.style.display = 'block';
+                return;
+            }
+            if (newP.length < 6) {
+                errEl.textContent = 'La nueva contraseña debe tener al menos 6 caracteres.';
+                errEl.style.display = 'block';
+                return;
+            }
+            if (newP !== confirmPass) {
+                errEl.textContent = 'Las contraseñas no coinciden.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            try {
+                if (!window.sb) throw new Error('Sin conexión');
+                var email = window.currentUserProfile.email;
+                var { data: users } = await window.sb.from('solicitudes').select('placa, datos').like('placa', 'REGISTRO_%');
+                var userReg = (users || []).find(u => u.datos && u.datos.email === email);
+                if (!userReg) {
+                    errEl.textContent = 'No se encontró tu registro. Contacta soporte.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                var storedPass = userReg.datos.password || userReg.datos.pass;
+                if (String(storedPass) !== current) {
+                    errEl.textContent = 'La contraseña actual es incorrecta.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+                var updatedDatos = Object.assign({}, userReg.datos, { password: newP, pass: newP });
+                await window.sb.from('solicitudes').update({ datos: updatedDatos }).eq('placa', userReg.placa);
+
+                okEl.textContent = 'Contraseña actualizada correctamente.';
+                okEl.style.display = 'block';
+                document.getElementById('profCurrentPass').value = '';
+                document.getElementById('profNewPass').value = '';
+                document.getElementById('profConfirmPass').value = '';
+            } catch(e) {
+                errEl.textContent = 'Error al actualizar. Intenta de nuevo.';
+                errEl.style.display = 'block';
+            }
+        };
+
         window.mostrarPerfilCliente = function () {
             if (window.currentUserProfile) {
                 document.getElementById('profName').innerText = window.currentUserProfile.nombre;
                 document.getElementById('profEmail').innerText = window.currentUserProfile.email;
+                document.getElementById('profNameField').innerText = window.currentUserProfile.nombre;
+                document.getElementById('profEmailField').innerText = window.currentUserProfile.email;
             }
+            // Reset password form
+            document.getElementById('changePassForm').style.display = 'none';
+            document.getElementById('profPassError').style.display = 'none';
+            document.getElementById('profPassSuccess').style.display = 'none';
             document.getElementById('profileClienteModal').style.display = 'flex';
         };
     }
 
     nav.innerHTML = `
-        <button type="button" class="btn-dashboard-trigger" onclick="toggleDashboard()" title="Dashboard">
-            <i class="fa-solid fa-table-columns"></i>
-        </button>
         <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display:flex;align-items:center;background:${bgColor};padding:6px 12px;border-radius:20px;border:1px solid ${borderColor};">
+                <span style="color:${textColor};font-size:13px;font-weight:700;font-family:'Roboto',sans-serif;">S/ ${soles}</span>
+            </div>
             <div class="auth-user-greeting">
                 Hola, <span style="color:#5e92ff">${displayName}</span>
             </div>
             <div class="dropdown" id="userDropdown">
-                <div class="dropdown-trigger" onclick="toggleDropdown(event)" style="background: #0d2536; border: 1px solid #0284c7; color: white;">
+                <div class="dropdown-trigger" onclick="toggleDropdown(event)" style="background: #0d2536; border: 1px solid #0284c7; color: white; position: relative;">
                     <i class="fa-solid fa-bars"></i>
+                    <span id="notificationBadge" style="position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); border: 2px solid white; display: none;"></span>
                 </div>
-                <div class="dropdown-menu">
-                    <div class="dropdown-item" onclick="mostrarPerfilCliente()" style="cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; padding: 12px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; gap: 2px;">
-                        <span style="font-size: 13px; font-weight: 900; color: #0d2536;"><i class="fa-solid fa-user-circle" style="margin-right: 5px; color: #3b82f6;"></i> Mi Perfil</span>
-                        <span style="font-size: 11px; color: #64748b; margin-left: 20px;">${maskedEmail}</span>
+                <div class="dropdown-menu" id="userDropdownMenu">
+                    <div class="dropdown-item" onclick="mostrarPerfilCliente()" style="cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; padding: 16px 20px; background: linear-gradient(135deg, #0d2536 0%, #15324d 100%); border-bottom: 1px solid rgba(255,255,255,0.1); gap: 4px; border-radius: 16px 16px 0 0;">
+                        <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                            <span style="font-size: 13px; font-weight: 700; color: #ffffff;"><i class="fa-solid fa-user-circle" style="margin-right: 6px; color: #8bc34a;"></i> Mi Perfil</span>
+                            ${plataformaActiva ? 
+                                '<span style="background: #8bc34a; color: #fff; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px;"><i class="fa-solid fa-check" style="margin-right: 3px;"></i>PLUS</span>' : 
+                                '<span style="background: #f59e0b; color: #fff; font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px;">DEMO</span>'
+                            }
+                        </div>
+                        <span style="font-size: 11px; color: rgba(255,255,255,0.7); margin-left: 24px;">${maskedEmail}</span>
                     </div>
-                    <div class="dropdown-item" style="background: ${bgColor}; color: ${textColor}; font-weight: 800; border-bottom: 1px solid ${borderColor}; pointer-events: none;">
-                        <i class="fa-solid fa-wallet"></i> Saldo: S/ ${soles}
+                    ${!plataformaActiva ? `
+                    <div class="dropdown-item" onclick="closeUserDropdown(); mostrarModalActivacion('activar');" style="cursor: pointer; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; font-weight: 700; padding: 13px 20px; border-bottom: 1px solid #e2e8f0;">
+                        <i class="fa-solid fa-rocket" style="color: #ffffff;"></i> Activar Plataforma - S/ 35
                     </div>
-                    <a href="panel_cliente.html" class="dropdown-item">
-                        <i class="fa-solid fa-file-invoice"></i> Mis Consultas
+                    ` : ''}
+                    <div class="dropdown-item" style="background: linear-gradient(135deg, #7cb342 0%, #689f38 100%); color: #ffffff; font-weight: 700; pointer-events: none; padding: 14px 20px; font-size: 14px; border-bottom: 1px solid #e2e8f0;">
+                        <i class="fa-solid fa-wallet" style="color: #ffffff;"></i> Saldo: S/ ${soles}
+                    </div>
+                    <a href="panel_cliente.html" onclick="closeUserDropdown()" class="dropdown-item" id="misConsultasLink" style="padding: 13px 20px; border-bottom: 1px solid #f1f5f9;">
+                        <i class="fa-solid fa-file-invoice" style="color: #3b82f6;"></i> Mis Consultas
                     </a>
                     ${isAdminEmail ? `
-                    <a href="javascript:void(0)" onclick="openIntranetModal(event)" class="dropdown-item" style="background: #eff6ff; color: #0c4a6e; font-weight: 800;">
-                        <i class="fa-solid fa-building-shield"></i> Acceso Intranet
+                    <a href="javascript:void(0)" onclick="openIntranetModal(event)" class="dropdown-item" style="background: #eff6ff; color: #0c4a6e; font-weight: 700; padding: 13px 20px; border-bottom: 1px solid #f1f5f9;">
+                        <i class="fa-solid fa-building-shield" style="color: #0284c7;"></i> Acceso Intranet
                     </a>
                     ` : ''}
-                    <a href="javascript:void(0)" onclick="openAccess()" class="dropdown-item">
-                        <i class="fa-solid fa-coins"></i> Mis Créditos
+                    <a href="javascript:void(0)" onclick="closeUserDropdown(); openAccess();" class="dropdown-item" style="padding: 13px 20px; border-bottom: 1px solid #f1f5f9;">
+                        <i class="fa-solid fa-coins" style="color: #FFCD00;"></i> Mis Créditos
                     </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item" style="color: #dc2626;">
-                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item" style="color: #ef4444; padding: 13px 20px; border-radius: 0 0 16px 16px;">
+                        <i class="fa-solid fa-right-from-bracket" style="color: #ef4444;"></i> Cerrar Sesión
                     </a>
                 </div>
             </div>
@@ -168,6 +335,219 @@ async function renderLoggedInState() {
     `;
 
     updateIntranetFooterBar(false);
+    
+    // Iniciar sistema de verificación de notificaciones
+    startNotificationChecker();
+}
+
+// Sistema de notificaciones
+function startNotificationChecker() {
+    if (!currentUser) return;
+    
+    // Guardar estado inicial
+    const initialState = {
+        plataformaActiva: window.plataformaActiva || false,
+        dashboardActivo: window.dashboardActivo || false
+    };
+    
+    // Verificar cada 30 segundos
+    setInterval(async () => {
+        if (!currentUser || !window.sb) return;
+        
+        try {
+            const { data, error } = await window.sb
+                .from('saldos')
+                .select('plataforma_activa, dashboard_activo')
+                .eq('email', currentUser.email)
+                .single();
+            
+            if (error || !data) return;
+            
+            const newPlataformaActiva = data.plataforma_activa || false;
+            const newDashboardActivo = data.dashboard_activo || false;
+            
+            // Detectar cambios
+            const plataformaActivada = !initialState.plataformaActiva && newPlataformaActiva;
+            const dashboardActivado = !initialState.dashboardActivo && newDashboardActivo;
+            
+            if (plataformaActivada || dashboardActivado) {
+                // Actualizar estado global
+                window.plataformaActiva = newPlataformaActiva;
+                window.dashboardActivo = newDashboardActivo;
+                
+                // Actualizar logo
+                const logoStatus = document.getElementById('logoStatus');
+                if (logoStatus) {
+                    logoStatus.textContent = newPlataformaActiva ? 'Plus' : 'Demo';
+                }
+                
+                // Mostrar notificación
+                showActivationNotification(plataformaActivada, dashboardActivado);
+                
+                // Actualizar estado inicial para no mostrar de nuevo
+                initialState.plataformaActiva = newPlataformaActiva;
+                initialState.dashboardActivo = newDashboardActivo;
+                
+                // Actualizar UI del usuario
+                if (typeof renderLoggedInState === 'function') {
+                    renderLoggedInState();
+                }
+            }
+        } catch (e) {
+            console.error('Error verificando notificaciones:', e);
+        }
+    }, 30000); // Cada 30 segundos
+}
+
+function showActivationNotification(plataformaActivada, dashboardActivado) {
+    // Mostrar badge en ícono
+    const badge = document.getElementById('notificationBadge');
+    if (badge) {
+        badge.textContent = '1';
+        badge.style.display = 'flex';
+    }
+    
+    // Agregar notificación al dropdown
+    const dropdownMenu = document.getElementById('userDropdownMenu');
+    if (dropdownMenu) {
+        const notificationHtml = plataformaActivada ? `
+            <div id="activationNotification" class="dropdown-item" onclick="closeNotification('plataforma')" style="cursor: pointer; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; font-weight: 700; padding: 13px 20px; border-bottom: 2px solid #f59e0b; animation: pulse 2s infinite;">
+                <i class="fa-solid fa-rocket" style="color: #f59e0b;"></i> ¡Plataforma Activada!
+            </div>
+        ` : `
+            <div id="activationNotification" class="dropdown-item" onclick="closeNotification('dashboard')" style="cursor: pointer; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #1e40af; font-weight: 700; padding: 13px 20px; border-bottom: 2px solid #3b82f6; animation: pulse 2s infinite;">
+                <i class="fa-solid fa-table-columns" style="color: #3b82f6;"></i> ¡Dashboard Activado!
+            </div>
+        `;
+        
+        dropdownMenu.insertAdjacentHTML('afterbegin', notificationHtml);
+    }
+    
+    // Mostrar modal de bienvenida
+    setTimeout(() => {
+        showWelcomeModal(plataformaActivada, dashboardActivado);
+    }, 1000);
+}
+
+function showWelcomeModal(plataformaActivada, dashboardActivado) {
+    const modalHtml = plataformaActivada ? `
+        <div id="welcomeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); animation: fadeIn 0.3s ease-out;">
+            <style>
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+                @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+            </style>
+            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); width: 92%; max-width: 420px; border-radius: 24px; padding: 35px 25px; text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.3); animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards; border: 2px solid #f59e0b;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: 0 15px 35px rgba(245, 158, 11, 0.25); animation: pulse 2s infinite;">
+                    <i class="fa-solid fa-rocket"></i>
+                </div>
+                <h2 style="font-size: 26px; color: #0d2536; margin: 0 0 12px; font-weight: 900; letter-spacing: -0.5px;">¡Plataforma Activada!</h2>
+                <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin: 0 0 25px; font-weight: 500;">Tu cuenta <span style="color: #f59e0b; font-weight: 700;">PLUS</span> está lista. Ahora tienes acceso completo a:</p>
+                
+                <div style="background: #f8fafc; border-radius: 16px; padding: 20px; margin-bottom: 25px; border: 1px solid #e2e8f0; text-align: left;">
+                    <div style="display: grid; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 32px; height: 32px; background: #8bc34a; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fa-solid fa-check" style="color: white; font-size: 14px;"></i>
+                            </div>
+                            <span style="font-size: 13px; color: #334155; font-weight: 600;">22 Servicios en Categorías</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 32px; height: 32px; background: #8bc34a; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fa-solid fa-check" style="color: white; font-size: 14px;"></i>
+                            </div>
+                            <span style="font-size: 13px; color: #334155; font-weight: 600;">Dashboard Organizado</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 32px; height: 32px; background: #8bc34a; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fa-solid fa-check" style="color: white; font-size: 14px;"></i>
+                            </div>
+                            <span style="font-size: 13px; color: #334155; font-weight: 600;">Historial de Consultas</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 32px; height: 32px; background: #8bc34a; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fa-solid fa-check" style="color: white; font-size: 14px;"></i>
+                            </div>
+                            <span style="font-size: 13px; color: #334155; font-weight: 600;">Acceso Permanente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="dismissNotification();" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 8px 20px rgba(139, 195, 74, 0.3); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 28px rgba(139, 195, 74, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(139, 195, 74, 0.3)';">
+                    <i class="fa-solid fa-bolt" style="margin-right: 8px;"></i> ¡COMENZAR AHORA!
+                </button>
+                
+                <p style="margin-top: 15px; font-size: 11px; color: #94a3b8; line-height: 1.4;">
+                    <i class="fa-solid fa-info-circle" style="margin-right: 4px;"></i>
+                    Recuerda recargar créditos para realizar consultas
+                </p>
+            </div>
+        </div>
+    ` : `
+        <div id="welcomeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); animation: fadeIn 0.3s ease-out;">
+            <style>
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+            </style>
+            <div style="background: #ffffff; width: 92%; max-width: 380px; border-radius: 24px; padding: 30px 25px; text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.3); animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards; border: 2px solid #3b82f6;">
+                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 18px; box-shadow: 0 12px 30px rgba(59, 130, 246, 0.2);">
+                    <i class="fa-solid fa-table-columns"></i>
+                </div>
+                <h2 style="font-size: 24px; color: #0d2536; margin: 0 0 10px; font-weight: 900;">¡Dashboard Activado!</h2>
+                <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 25px;">Ahora puedes acceder al Dashboard y revisar tus expedientes organizados.</p>
+                <button onclick="dismissNotification(); if(typeof switchServicesTab === 'function') switchServicesTab('dashboard');" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 6px 18px rgba(59, 130, 246, 0.3); margin-bottom: 10px;">
+                    <i class="fa-solid fa-table-columns" style="margin-right: 6px;"></i> IR AL DASHBOARD
+                </button>
+                <button onclick="dismissNotification();" style="width: 100%; padding: 12px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer;">Cerrar</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function dismissNotification() {
+    // Ocultar badge
+    const badge = document.getElementById('notificationBadge');
+    if (badge) {
+        badge.style.display = 'none';
+    }
+    
+    // Eliminar notificación del dropdown
+    const notification = document.getElementById('activationNotification');
+    if (notification) {
+        notification.remove();
+    }
+    
+    // Cerrar modal de bienvenida
+    const modal = document.getElementById('welcomeModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function closeNotification(type) {
+    // Ocultar badge
+    const badge = document.getElementById('notificationBadge');
+    if (badge) {
+        badge.style.display = 'none';
+    }
+    
+    // Eliminar notificación del dropdown
+    const notification = document.getElementById('activationNotification');
+    if (notification) {
+        notification.remove();
+    }
+    
+    // Cerrar dropdown
+    closeUserDropdown();
+    
+    // Mostrar modal de bienvenida si no se ha mostrado
+    if (type === 'plataforma') {
+        showWelcomeModal(true, false);
+    } else {
+        showWelcomeModal(false, true);
+    }
 }
 
 function openAuthModal() {
@@ -177,8 +557,11 @@ function openAuthModal() {
         return;
     }
     modal.style.display = 'flex';
+    document.getElementById('authEmail').value = '';
+    document.getElementById('authPassword').value = '';
     document.getElementById('authError').style.display = 'none';
     isLoginMode = true;
+    loginStep = 1; // Reset to step 1
     updateAuthInterface();
 }
 
@@ -187,10 +570,36 @@ function closeAuthModal() {
     if (modal) modal.style.display = 'none';
 }
 
+function togglePasswordVisibility() {
+    var passInput = document.getElementById('authPassword');
+    var icon = document.getElementById('togglePasswordIcon');
+    if (!passInput || !icon) return;
+    
+    if (passInput.type === 'password') {
+        passInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+let loginStep = 1; // 1 = email, 2 = password
+
 function toggleAuthMode() {
     isLoginMode = !isLoginMode;
+    loginStep = 1; // Reset to step 1
     var err = document.getElementById('authError');
     if (err) err.style.display = 'none';
+    
+    // Limpiar campos
+    var emailInput = document.getElementById('authEmail');
+    var passInput = document.getElementById('authPassword');
+    if (emailInput) emailInput.value = '';
+    if (passInput) passInput.value = '';
+    
     updateAuthInterface();
 }
 
@@ -201,34 +610,85 @@ function updateAuthInterface() {
     var toggleLink = document.getElementById('authToggleText');
     var nameGroup = document.getElementById('nameGroup');
     var wppGroup = document.getElementById('wppGroup');
+    var passwordGroup = document.getElementById('passwordGroup');
     if (!btn || !title || !sub || !toggleLink) return;
 
     if (isLoginMode) {
-        title.innerText = 'Iniciar Sesión';
-        sub.innerText = 'Accede a tu historial de reportes';
-        btn.innerText = 'INGRESAR';
+        if (loginStep === 1) {
+            // Paso 1: Solo email
+            title.innerText = 'Iniciar Sesión';
+            sub.innerText = 'Ingresa tu correo electrónico';
+            btn.innerText = 'CONTINUAR';
+            if (passwordGroup) passwordGroup.style.display = 'none';
+        } else {
+            // Paso 2: Contraseña
+            title.innerText = 'Bienvenido de nuevo';
+            sub.innerText = 'Ingresa tu contraseña para continuar';
+            btn.innerText = 'INGRESAR';
+            if (passwordGroup) passwordGroup.style.display = 'block';
+        }
         if (nameGroup) nameGroup.style.display = 'none';
         if (wppGroup) wppGroup.style.display = 'none';
-        toggleLink.innerHTML = '¿No tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()">Regístrate aquí</span>';
+        toggleLink.innerHTML = '¿No tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #0d2536; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#8bc34a\';" onmouseout="this.style.color=\'#0d2536\';"> Regístrate aquí</span>';
     } else {
+        // Modo Registro
         title.innerText = 'Crear mi Cuenta';
         sub.innerText = 'Solo necesitas tu correo para empezar';
         btn.innerText = 'REGISTRARME HOY';
         if (nameGroup) nameGroup.style.display = 'block';
         if (wppGroup) wppGroup.style.display = 'block';
-        toggleLink.innerHTML = '¿Ya tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()">Inicia Sesión</span>';
+        if (passwordGroup) passwordGroup.style.display = 'block';
+        toggleLink.innerHTML = '¿Ya tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #0d2536; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#8bc34a\';" onmouseout="this.style.color=\'#0d2536\';"> Inicia Sesión</span>';
     }
 }
 
 async function handleAuthSubmit() {
-    var email = document.getElementById('authEmail').value.trim().toLowerCase();
-    var pass = document.getElementById('authPassword').value;
     var errBox = document.getElementById('authError');
     var btn = document.getElementById('authButton');
     if (!errBox || !btn) return;
 
     errBox.style.display = 'none';
 
+    // Modo Login con dos pasos
+    if (isLoginMode) {
+        if (loginStep === 1) {
+            // Paso 1: Validar email
+            var email = document.getElementById('authEmail').value.trim().toLowerCase();
+            if (!email) {
+                errBox.innerText = 'Por favor, ingresa tu correo electrónico.';
+                errBox.style.display = 'block';
+                return;
+            }
+            
+            // Mostrar indicador de carga
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Verificando...';
+            btn.disabled = true;
+            
+            // Delay visual de 1.5 segundos
+            setTimeout(() => {
+                // Pasar al paso 2
+                loginStep = 2;
+                btn.disabled = false;
+                updateAuthInterface();
+                
+                // Focus en campo de contraseña
+                setTimeout(() => {
+                    var passInput = document.getElementById('authPassword');
+                    if (passInput) passInput.focus();
+                }, 100);
+            }, 1500);
+            
+            return;
+        }
+    }
+
+    // Capturar valores DESPUÉS de verificar el paso
+    var email = document.getElementById('authEmail').value.trim().toLowerCase();
+    var pass = document.getElementById('authPassword').value;
+
+    console.log('🔐 Intentando autenticar:', { email: email, passLength: pass.length, isLoginMode: isLoginMode, loginStep: loginStep });
+
+    // Validación para registro o paso 2 de login
     if (!email || !pass) {
         errBox.innerText = 'Por favor, llena correo y contraseña.';
         errBox.style.display = 'block';
@@ -244,7 +704,9 @@ async function handleAuthSubmit() {
         }
 
         if (isLoginMode) {
-            if (email === 'juandevillar80@gmail.com' && pass === '123456') {
+            console.log('Modo login - Verificando credenciales...');
+            if (email === 'juandevillar80@gmail.com' && pass === '201090') {
+                console.log('Admin login exitoso');
                 currentUser = { email: email, nombre: 'Admin' };
                 localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
                 closeAuthModal();
@@ -261,9 +723,14 @@ async function handleAuthSubmit() {
 
             if (fetchRes.error) throw new Error('Error consultando sistema. Intente luego.');
 
+            console.log('📊 Datos obtenidos de Supabase:', fetchRes.data ? fetchRes.data.length + ' registros' : 'ninguno');
+            
             var userMatch = (fetchRes.data || []).find(function (item) {
-                return item.datos && item.datos.email === email && item.datos.pass === pass;
+                if (!item.datos || item.datos.email !== email) return false;
+                return item.datos.pass === pass || item.datos.password === pass;
             });
+
+            console.log('🔎 Usuario encontrado:', userMatch ? 'Sí' : 'No');
 
             if (!userMatch) {
                 throw new Error('Correo o contraseña incorrectos.');
@@ -323,33 +790,61 @@ async function handleAuthSubmit() {
 
             closeAuthModal();
 
+            // Obtener enlace del grupo de WhatsApp desde localStorage
+            var whatsappGroupLink = localStorage.getItem('whatsapp_group_link') || '';
+            var groupButtonHtml = '';
+            
+            // Si hay enlace de grupo configurado, agregar botón de unirse al grupo
+            if (whatsappGroupLink) {
+                groupButtonHtml = `
+                    <a href="${whatsappGroupLink}" target="_blank" id="joinGroupBtn" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+                        <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Unirse al Grupo de Clientes
+                    </a>`;
+            }
+
             var alertHtml = `
-                <div id="customAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); animation: fadeInAlert 0.3s ease-out;">
+                <div id="customAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13,37,54,0.85); z-index: 9999999; display: flex; align-items: center; justify-content: center; animation: fadeInAlert 0.3s ease-out;">
                     <style>
                         @keyframes fadeInAlert { from { opacity: 0; } to { opacity: 1; } }
-                        @keyframes scaleUpAlert { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+                        @keyframes scaleUpAlert { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
                     </style>
-                    <div style="background: #ffffff; width: 92%; max-width: 360px; border-radius: 24px; padding: 30px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.3); animation: scaleUpAlert 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards; border: 1px solid rgba(0,0,0,0.05);">
-                        <div style="width: 64px; height: 64px; border-radius: 50%; background: #f1f8e9; color: #8bc34a; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 15px; box-shadow: 0 10px 20px rgba(139, 195, 74, 0.15);">
+                    <div style="background: #ffffff; width: 90%; max-width: 420px; border-radius: 20px; padding: 35px 30px; text-align: center; animation: scaleUpAlert 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;">
+                        <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
                             <i class="fa-solid fa-circle-check"></i>
                         </div>
-                        <h3 style="font-size: 20px; color: #0d2536; margin: 0 0 10px; font-weight: 900; letter-spacing: -0.5px;">¡Registro Exitoso!</h3>
-                        <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 25px; font-weight: 500;">Tu cuenta se encuentra en revisión.<br>Escribe a nuestro WhatsApp de soporte para activar tu acceso de inmediato.</p>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <a href="https://wa.me/51932465820?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; background: #8bc34a; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: 0.2s; box-shadow: 0 12px 24px rgba(139, 195, 74, 0.25);">
-                                <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i> Contactar Soporte
+                        <h3 style="font-size: 22px; color: #0d2536; margin: 0 0 12px; font-weight: 900; letter-spacing: -0.5px;">¡Cuenta Creada Exitosamente!</h3>
+                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 28px; font-weight: 500;">Tu registro ha sido recibido correctamente.<br><br>Para <b style="color: #0d2536;">activar tu cuenta</b> y comenzar a usar la plataforma, contacta a nuestro equipo de soporte por WhatsApp.<br><br><span style="color: #8bc34a; font-weight: 700;">Te responderemos en minutos.</span></p>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <a href="https://wa.me/51932465820?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+                                <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Contactar por WhatsApp
                             </a>
-                            <button onclick="document.getElementById('customAlertModal').remove()" style="width: 100%; padding: 13px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s;">Cerrar</button>
+                            ${groupButtonHtml}
+                            <button onclick="document.getElementById('customAlertModal').remove()" style="width: 100%; padding: 14px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#e2e8f0';" onmouseout="this.style.background='#f1f5f9';">Entendido</button>
                         </div>
                     </div>
                 </div>`;
             document.body.insertAdjacentHTML('beforeend', alertHtml);
+            
+            // Abrir automáticamente el enlace del grupo después de 2 segundos si existe
+            if (whatsappGroupLink) {
+                setTimeout(function() {
+                    var joinBtn = document.getElementById('joinGroupBtn');
+                    if (joinBtn) {
+                        joinBtn.click();
+                    }
+                }, 2000);
+            }
         }
     } catch (err) {
         errBox.innerText = err.message;
         errBox.style.display = 'block';
     } finally {
-        btn.innerText = isLoginMode ? 'INGRESAR' : 'REGISTRARME HOY';
+        // Resetear botón según modo y paso
+        if (isLoginMode) {
+            btn.innerText = loginStep === 1 ? 'CONTINUAR' : 'INGRESAR';
+        } else {
+            btn.innerText = 'REGISTRARME HOY';
+        }
         btn.disabled = false;
     }
 }
@@ -368,6 +863,8 @@ async function handleLogout() {
 function closeUserDropdown() {
     var drp = document.getElementById('userDropdown');
     if (drp) drp.classList.remove('open');
+    var bd = document.getElementById('dropdownBackdrop');
+    if (bd) bd.remove();
 }
 
 window.openIntranetModal = function (e) {

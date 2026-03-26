@@ -6,7 +6,7 @@
  * 3. Esto protege el front; refuerza con políticas RLS en Supabase para datos sensibles.
  */
 window.FILTRO_ADMIN_CONFIG = {
-    passphrase: '80415783',
+    passphrase: 'Xmen@2026',
     sessionHours: 8,
     maxAttempts: 5,
     lockoutMinutes: 15

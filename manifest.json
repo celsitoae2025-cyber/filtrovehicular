@@ -1,16 +1,25 @@
 {
-  "name": "Filtro Vehicular Plus 2",
-  "short_name": "Filtro 2",
+  "name": "Filtro Vehicular Plus",
+  "short_name": "Filtro Vehicular",
   "description": "Consulta servicios vehiculares con tu placa",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#000000",
+  "orientation": "portrait",
+  "background_color": "#0d2536",
   "theme_color": "#0d2536",
   "icons": [
     {
+      "src": "assets/media/iconopestaña.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
       "src": "assets/media/logopwa.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

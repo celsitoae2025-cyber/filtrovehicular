@@ -1,0 +1,104 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    LISTA DE 22 SERVICIOS - FILTRO VEHICULAR PLUS
+═══════════════════════════════════════════════════════════════════════════════
+
+Ubicación: index.html (líneas 2751-2774)
+Fecha: 25 de marzo de 2026
+
+───────────────────────────────────────────────────────────────────────────────
+
+#   SERVICIO                                    TIPO        PRECIO/URL
+───────────────────────────────────────────────────────────────────────────────
+
+1.  Propiedad Vehicular SUNARP                  URL         https://consultavehicular.sunarp.gob.pe/consulta-vehicular/
+    Ícono: fa-id-card
+
+2.  Historial Completo por Placa                PRECIO      S/ 10.00
+    Ícono: fa-file-lines
+
+3.  Cambio de Características                   PRECIO      S/ 5.00
+    Ícono: fa-car-side
+
+4.  Deudas y Multas SAT Lima                    PRECIO      S/ 5.00
+    Ícono: fa-money-bill-wave
+
+5.  Deudas y Multas SAT Callao                  PRECIO      S/ 5.00
+    Ícono: fa-money-bill-wave
+
+6.  Deudas y Multas por Región                  PRECIO      S/ 5.00
+    Ícono: fa-map-location-dot
+
+7.  Papeletas de Tránsito ATU                   PRECIO      S/ 5.00
+    Ícono: fa-triangle-exclamation
+
+8.  Siniestralidad por Placa                    PRECIO      S/ 5.00
+    Ícono: fa-heart-pulse
+
+9.  Estado de Placa                             URL         https://www.placas.pe/#/home/verificarEstadoPlaca
+    Ícono: fa-sheet-plastic
+
+10. Foto Pit Lima                               PRECIO      S/ 5.00
+    Ícono: fa-camera
+
+11. Inspección Técnica Vehicular CITV           PRECIO      S/ 5.00
+    Ícono: fa-screwdriver-wrench
+
+12. Vigencia del SOAT                           PRECIO      S/ 5.00
+    Ícono: fa-shield-halved
+
+13. Papeletas SUTRAN                            PRECIO      S/ 5.00
+    Ícono: fa-truck
+
+14. Lunas Oscurecidas                           URL         https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas
+    Ícono: fa-circle-half-stroke
+
+15. FISE GNV Subsidio Gas                       URL         https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio
+    Ícono: fa-gas-pump
+
+16. Consulta Deuda GNV                          URL         https://infogas.com.pe/consulta-placa/
+    Ícono: fa-coins
+
+17. Denuncias y Órdenes de Captura              PRECIO      S/ 10.00
+    Ícono: fa-handcuffs
+
+18. Boleta Informativa                          PRECIO      S/ 10.00
+    Ícono: fa-building-columns
+
+19. Tarjeta de Propiedad (TIVE)                 PRECIO      S/ 10.00
+    Ícono: fa-id-badge
+
+20. Historial de Propietarios Inscritos         PRECIO      S/ 5.00
+    Ícono: fa-users
+
+21. Récord de Conductor (DNI)                   URL         https://recordconductor.mtc.gob.pe/
+    Ícono: fa-address-card
+
+22. Otras Afectaciones                          PRECIO      S/ 5.00
+    Ícono: fa-list-check
+
+───────────────────────────────────────────────────────────────────────────────
+
+RESUMEN:
+───────────────────────────────────────────────────────────────────────────────
+
+Total de servicios:                             22
+Servicios con PRECIO (pagos):                   16 servicios
+Servicios con URL (redirección externa):        6 servicios
+
+DESGLOSE DE PRECIOS:
+- Servicios a S/ 5.00:                          13 servicios = S/ 65.00
+- Servicios a S/ 10.00:                         3 servicios  = S/ 30.00
+                                                ─────────────────────────
+TOTAL si se compran todos los servicios:                      S/ 95.00
+
+SERVICIOS GRATUITOS (URLs externas):
+1. Propiedad Vehicular SUNARP
+2. Estado de Placa
+3. Lunas Oscurecidas
+4. FISE GNV Subsidio Gas
+5. Consulta Deuda GNV
+6. Récord de Conductor (DNI)
+
+═══════════════════════════════════════════════════════════════════════════════
+                            FIN DEL DOCUMENTO
+═══════════════════════════════════════════════════════════════════════════════

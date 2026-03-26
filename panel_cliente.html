@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mis Consultas — Filtro 2</title>
+    <title>FILTRO VEHICULAR | Plataforma Integral</title>
     <!-- ROBOTO PARA APP NATIVA ESTÁNDAR ANDROID/IOS -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <!-- FONT AWESOME MÓVIL -->
@@ -13,16 +13,21 @@
     <link rel="stylesheet" href="assets/css/intranet-modal.css">
     <!-- SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- PDF LIBS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
     <style>
         :root {
-            --bg-deep: #0d2536;
+            --bg-light: #f8fafc;
             --white: #ffffff;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent: #15324d;
-            --brand-gold: #d97706;
+            --text-primary: #0d2536;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --brand-green: #8bc34a;
             --brand-navy: #0d2536;
+            --success: #10b981;
+            --warning: #f59e0b;
         }
 
         * {
@@ -34,8 +39,8 @@
 
         body {
             font-family: 'Roboto', sans-serif;
-            color: var(--white);
-            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            background-color: var(--bg-light);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -44,13 +49,12 @@
             position: relative;
         }
 
-        /* HEADER (idéntico al index para consistencia) */
+        /* HEADER (IGUAL AL INDEX.HTML) */
         .site-header {
             width: 100%;
             padding: 20px 0;
-            background: rgba(13, 37, 54, 0.4);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: #0d2536;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -69,7 +73,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: var(--white);
+            color: #ffffff;
             text-decoration: none;
         }
 
@@ -77,41 +81,42 @@
             width: 40px;
             height: 40px;
             object-fit: contain;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
         }
 
         .logo-text-group {
             display: flex;
             flex-direction: column;
+            align-items: flex-end;
             line-height: 1;
+            margin-top: 2px;
         }
 
         .logo-main {
             font-size: 16px;
             font-weight: 900;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
+            margin: 0;
+            padding: 0;
+            color: #ffffff;
         }
 
         .logo-plus {
-            font-size: 10px;
-            font-weight: 900;
+            font-size: 9px;
+            font-weight: 300;
             color: rgba(255, 255, 255, 0.7);
             text-transform: uppercase;
-            letter-spacing: 5px;
-            margin-top: 1px;
-            text-align: right;
-            width: 100%;
+            letter-spacing: 4px;
+            margin: 1px -4px 0 0;
+            padding: 0;
         }
 
-        /* APP CONTAINER y BODY */
+        /* APP CONTAINER */
         .app-container {
             width: 100%;
-            max-width: 900px;
+            max-width: 800px;
             flex: 1;
-            padding: 30px 20px;
+            padding: 20px 14px;
             display: flex;
             flex-direction: column;
         }
@@ -120,98 +125,105 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
         }
 
         .dashboard-title {
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--white);
-            letter-spacing: 1px;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--brand-navy);
+            letter-spacing: -0.3px;
         }
 
         .btn-nuevo {
-            background: #ffffff;
-            color: #0d2536;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 14px;
+            background: var(--brand-green);
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-weight: 700;
+            font-size: 11px;
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(139, 195, 74, 0.2);
         }
 
         .btn-nuevo:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+            background: #7cb342;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(139, 195, 74, 0.3);
         }
 
-        /* TABLA MODO TARJETAS */
+        /* CARDS DE CONSULTAS */
         .consultas-grid {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 6px;
         }
 
         .consulta-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 20px;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: all 0.3s;
-            flex-wrap: wrap;
-            gap: 15px;
+            transition: all 0.2s ease;
+            gap: 8px;
         }
 
         .consulta-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.15);
+            border-color: #cbd5e1;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
         }
 
         .c-info {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 8px;
             flex: 1;
-            min-width: 200px;
+            min-width: 0;
         }
 
         .c-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border-radius: 7px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            color: var(--text-secondary);
+            font-size: 13px;
+            color: var(--brand-navy);
+            flex-shrink: 0;
         }
 
         .c-details {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 1px;
+            min-width: 0;
+            flex: 1;
         }
 
         .c-placa {
-            font-size: 22px;
-            font-weight: 900;
-            color: var(--white);
-            letter-spacing: 2px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--brand-navy);
+            letter-spacing: 0.5px;
             text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .c-fecha {
-            font-size: 12px;
+            font-size: 10px;
             color: var(--text-secondary);
             font-weight: 500;
         }
@@ -219,62 +231,86 @@
         .c-status {
             display: flex;
             align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
+            gap: 6px;
         }
 
-        .badge {
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-align: center;
-        }
-
-        .badge-completado {
-            background: rgba(16, 185, 129, 0.15);
-            color: #34d399;
-            border: 1px solid rgba(52, 211, 153, 0.3);
+        .c-status .badge {
+            display: none;
         }
 
         .badge-pendiente {
-            background: rgba(245, 158, 11, 0.15);
-            color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.3);
+            background: #fef3c7;
+            color: #92400e;
         }
 
         .btn-ver {
-            background: var(--brand-gold);
+            background: var(--brand-navy);
             color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 10px;
             text-decoration: none;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            transition: 0.3s;
+            gap: 4px;
+            transition: all 0.2s ease;
             border: none;
             cursor: pointer;
+            white-space: nowrap;
         }
 
         .btn-ver:hover {
-            background: #b45309;
+            background: #15324d;
+            box-shadow: 0 3px 8px rgba(13, 37, 54, 0.2);
+        }
+
+        .btn-descargar {
+            background: #dc2626;
+            padding: 5px 8px;
+            font-size: 9.5px;
+        }
+
+        .btn-descargar:hover {
+            background: #b91c1c;
+            box-shadow: 0 3px 8px rgba(220, 38, 38, 0.25);
         }
         
         .btn-ver-disabled {
-            background: #475569;
+            background: #e2e8f0;
             color: #94a3b8;
             cursor: not-allowed;
         }
+        
+        .btn-ver-disabled:hover {
+            box-shadow: none;
+        }
 
-        /* ESTILOS DEL DROPDOWN HEREDADOS */
+        @media (max-width: 600px) {
+            .dashboard-title {
+                font-size: 16px;
+            }
+            .btn-nuevo {
+                font-size: 11px;
+                padding: 7px 12px;
+            }
+            .consulta-card {
+                flex-direction: row;
+                align-items: center;
+            }
+            .c-info {
+                flex: 1;
+                min-width: 0;
+            }
+            .c-status {
+                flex-shrink: 0;
+            }
+        }
+
+        /* DROPDOWN HEREDADO DEL INDEX */
         .dropdown { position: relative; display: inline-block; }
         .dropdown-trigger {
-            color: var(--white);
+            color: var(--brand-navy);
             font-size: 18px;
             cursor: pointer;
             padding: 10px;
@@ -282,48 +318,55 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
+            background: #f1f5f9;
             border-radius: 50%;
             width: 40px;
             height: 40px;
+            border: 1px solid var(--border-color);
         }
-        .dropdown-trigger:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(2px); }
+        .dropdown-trigger:hover { background: #e2e8f0; }
         .dropdown-menu {
             position: absolute;
             top: 100%;
             right: 0;
             background: #ffffff;
-            min-width: 180px;
-            border-radius: 12px;
-            padding: 8px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            min-width: 260px;
+            border-radius: 16px;
+            padding: 0;
+            box-shadow: 0 20px 40px rgba(13, 37, 54, 0.15), 0 0 0 1px rgba(13, 37, 54, 0.05);
             opacity: 0;
             visibility: hidden;
             transform: translateY(10px);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 2000;
             margin-top: 10px;
+            overflow: hidden;
         }
         .dropdown.open .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
         .dropdown-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 20px;
+            padding: 14px 20px;
             color: #0d2536;
             text-decoration: none;
-            font-size: 14px;
-            font-weight: 700;
-            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-family: 'Roboto', sans-serif;
         }
-        .dropdown-item i { font-size: 16px; opacity: 0.7; }
-        .dropdown-item:hover { background: #f8fafc; color: #0d2536; padding-left: 25px; }
-        .dropdown-divider { height: 1px; background: #f1f5f9; margin: 4px 0; }
+        .dropdown-item i { font-size: 16px; width: 20px; text-align: center; }
+        .dropdown-item:hover { background: #f8fafc; color: #0d2536; padding-left: 24px; }
+        .dropdown-divider { height: 1px; background: #e2e8f0; margin: 8px 0; }
         
         #loadingSpinner {
             text-align: center;
-            padding: 50px;
+            padding: 80px 20px;
             color: var(--text-secondary);
+        }
+        
+        #loadingSpinner i {
+            color: var(--brand-green);
         }
     </style>
 </head>
@@ -449,17 +492,19 @@
                 lista.style.display = 'flex';
 
                 // Filtrar las solicitudes del cliente (excluyendo recargas)
-                const myReqs = data.map(d => d.datos).filter(r => r && r.email === email && r.placa && !r.isRecharge);
+                const myReqs = data.map(d => d.datos).filter(r => r && r.email === email && r.placa && !r.isRecharge && !r.isRegistro && !r.isActivacion && !r.isDashboard);
 
                 if (!myReqs || myReqs.length === 0) {
                     lista.innerHTML = `
-                        <div style="text-align:center; padding: 50px 20px; background: rgba(255,255,255,0.02); border-radius: 20px; border: 1px dashed rgba(255,255,255,0.1);">
-                            <div style="width:80px; height:80px; background:rgba(255,255,255,0.05); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
-                                <i class="fa-solid fa-folder-open" style="font-size: 30px; color: var(--text-secondary);"></i>
+                        <div style="text-align:center; padding: 60px 20px; background: #ffffff; border-radius: 16px; border: 2px dashed #e2e8f0;">
+                            <div style="width:80px; height:80px; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                                <i class="fa-solid fa-folder-open" style="font-size: 32px; color: #94a3b8;"></i>
                             </div>
-                            <h3 style="color: white; margin-bottom: 10px; font-size: 20px;">Aún no tienes consultas registradas</h3>
-                            <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 25px;">Tus futuras verificaciones vehiculares aparecerán en este panel de forma segura.</p>
-                            <a href="index.html" class="btn-nuevo" style="display:inline-flex; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: white;">Ir a consultar placa</a>
+                            <h3 style="color: #0d2536; margin-bottom: 10px; font-size: 20px; font-weight: 800;">Aún no tienes consultas registradas</h3>
+                            <p style="color: #64748b; font-size: 14px; margin-bottom: 25px; max-width: 400px; margin-left: auto; margin-right: auto; line-height: 1.6;">Tus futuras verificaciones vehiculares aparecerán en este panel de forma segura.</p>
+                            <a href="index.html" class="btn-nuevo" style="display:inline-flex;">
+                                <i class="fa-solid fa-magnifying-glass"></i> Ir a consultar placa
+                            </a>
                         </div>
                     `;
                     return;
@@ -469,24 +514,41 @@
                 lista.innerHTML = myReqs.map(item => {
                     const isCompletado = item.status === 'approved';
                     const badgeClass = isCompletado ? 'badge-completado' : 'badge-pendiente';
+                    const badgeIcon = isCompletado ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-clock"></i>';
                     const actStatus = isCompletado ? 'Completado' : 'Pendiente';
+                    
+                    // Extraer placa y servicio
+                    const placa = item.placa || 'Sin placa';
+                    const serviceName = item.servicio || item.service || item.tipo || item.descripcion;
+                    
+                    // PLACA siempre como título principal
+                    const displayTitle = placa;
+                    
+                    // Servicio o fecha como subtítulo
+                    let displaySubtitle = '';
+                    if (serviceName) {
+                        displaySubtitle = serviceName;
+                    } else if (item.timestamp) {
+                        displaySubtitle = formatearFecha(item.timestamp);
+                    } else {
+                        displaySubtitle = 'Consulta vehicular';
+                    }
+                    
                     const btnHtml = isCompletado 
-                        ? `<a href="reporte.html?placa=${item.placa}" class="btn-ver"><i class="fa-solid fa-file-pdf"></i> Ver Reporte</a>`
-                        : `<button class="btn-ver btn-ver-disabled" disabled><i class="fa-solid fa-clock"></i> En Proceso</button>`;
-
-                    const fechaStr = item.timestamp ? formatearFecha(item.timestamp) : 'Fecha no disponible';
+                        ? `<button class="btn-ver btn-descargar" onclick="descargarReporte('${item.placa}', this)"><i class="fa-solid fa-file-arrow-down"></i> Descargar</button>`
+                        : `<button class="btn-ver btn-ver-disabled" disabled><i class="fa-solid fa-hourglass-half"></i> En Proceso</button>`;
 
                     return `
                         <div class="consulta-card">
                             <div class="c-info">
-                                <div class="c-icon"><i class="fa-solid fa-car-side"></i></div>
+                                <div class="c-icon"><i class="fa-solid fa-car"></i></div>
                                 <div class="c-details">
-                                    <div class="c-placa">${item.placa}</div>
-                                    <div class="c-fecha">${fechaStr}</div>
+                                    <div class="c-placa">${displayTitle}</div>
+                                    <div class="c-fecha">${displaySubtitle}</div>
                                 </div>
                             </div>
                             <div class="c-status">
-                                <div class="badge ${badgeClass}">${actStatus}</div>
+                                <div class="badge ${badgeClass}">${badgeIcon} ${actStatus}</div>
                                 ${btnHtml}
                             </div>
                         </div>
@@ -498,138 +560,514 @@
                 spinner.innerHTML = `<p style="color:#ef4444;">Error al cargar las consultas. Intenta de nuevo más tarde.</p>`;
             }
         }
-    </script>
-    <style>
-        #tourOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 999990; display: none; pointer-events: all;
-        }
-        #tourSpotlight {
-            position: absolute; z-index: 999991;
-            box-shadow: 0 0 0 9999px rgba(13, 37, 54, 0.85), 0 0 15px rgba(3, 167, 164, 0.5) inset;
-            border: 3px solid #03a7a4; border-radius: 12px;
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            pointer-events: none; display: none;
-        }
-        .tour-relative { position: relative !important; z-index: 999992 !important; pointer-events: none !important;}
 
-        #tourTooltip {
-            position: absolute; z-index: 999995; background: #ffffff; color: #1e293b;
-            width: 290px; border-radius: 14px; border: 2px solid #03a7a4;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.15); padding: 22px;
-            transition: opacity 0.3s ease; display: none; opacity: 0;
-            font-size: 14px; text-align: left;
+        // --- IndexedDB helpers ---
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open('FiltroVehicularDB', 1);
+                req.onupgradeneeded = e => { e.target.result.createObjectStore('reports'); };
+                req.onsuccess = e => resolve(e.target.result);
+                req.onerror = e => reject(e.target.error);
+            });
         }
-        .tour-title { font-size: 15px; font-weight: 800; margin-bottom: 8px; color: #03a7a4; display: flex; align-items: center; gap: 8px; text-transform: uppercase;}
-        .tour-desc { font-size: 13px; color: #475569; line-height: 1.5; margin-bottom: 15px;}
-        .tour-desc strong { color: #d97706; font-weight: 800;}
-        .tour-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; }
-        .tour-dots { display: flex; gap: 4px; }
-        .tour-dot { width: 6px; height: 6px; border-radius: 50%; background: #e2e8f0; transition: 0.3s;}
-        .tour-dot.active { background: #03a7a4; width: 14px; border-radius: 4px; }
-        .btn-tour { background: #03a7a4; color: #ffffff; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 12px; transition: 0.2s;}
-        .btn-tour-close { color: #94a3b8; font-weight: 600; font-size: 12px; background: none; border: none; cursor: pointer; text-decoration: underline;}
+        async function getReportDB(key) {
+            try {
+                const db = await initDB();
+                return new Promise((resolve) => {
+                    const tx = db.transaction('reports', 'readonly');
+                    const store = tx.objectStore('reports');
+                    const req = store.get(key);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = () => resolve(null);
+                });
+            } catch { return null; }
+        }
+
+        // --- Descarga directa de PDF ---
+        async function descargarReporte(placa, btn) {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
+            btn.disabled = true;
+
+            try {
+                const pdfjs = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
+                if (!pdfjs || !window.jspdf) {
+                    alert("Error: Las librerías PDF no han cargado. Recarga la página.");
+                    return;
+                }
+                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+                const { jsPDF } = window.jspdf;
+
+                const norm = placa.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                let localData = await getReportDB('report_' + norm);
+                if (!localData) {
+                    const raw = localStorage.getItem('report_' + norm);
+                    if (raw) localData = JSON.parse(raw);
+                }
+
+                let itemsParaPDF = localData ? (localData.items || []) : [];
+                let vStatus = localData ? (localData.verdictStatus || 'ok') : 'ok';
+                let vText = localData ? (localData.verdictText || '') : '';
+                let isIndividualPrint = false;
+                let individualServiceName = '';
+
+                // Detectar consulta individual
+                if (window.sb) {
+                    try {
+                        const variantes = [...new Set([norm, placa.toUpperCase()].filter(Boolean))];
+                        const { data: solicitudes } = await window.sb.from('solicitudes').select('placa, datos').in('placa', variantes);
+                        const aprobada = (solicitudes || []).find(r => r && r.datos && r.datos.isIndividual && String(r.datos.status || '').toLowerCase() === 'approved');
+                        if (aprobada && aprobada.datos) {
+                            isIndividualPrint = true;
+                            individualServiceName = String(aprobada.datos.servicio || '').trim();
+                        }
+                    } catch(e) {}
+                }
+
+                // Mapeo de servicio individual
+                let individualItemMatched = false;
+                if (isIndividualPrint && individualServiceName && itemsParaPDF.length) {
+                    const sNorm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+                    const objetivo = sNorm(individualServiceName);
+                    const serviceToIdMap = {
+                        'propiedad vehicular sunarp':'sunarp','historial completo por placa':'historial',
+                        'cambio de caracteristicas':'caracteristicas','deudas y multas sat lima':'lima',
+                        'deudas y multas sat callao':'callao','deudas y multas por region':'regiones',
+                        'papeletas de transito atu':'atu','siniestralidad por placa':'siniestralidad',
+                        'estado de placa':'placa','foto pit lima':'foto_pit',
+                        'inspeccion tecnica vehicular citv':'citv','vigencia del soat':'soat',
+                        'papeletas sutran':'sutran','lunas oscurecidas':'lunas',
+                        'fise gnv subsidio gas':'fise','consulta deuda gnv':'gnv',
+                        'denuncias y ordenes de captura':'denuncias','boleta informativa':'boleta',
+                        'tarjeta de propiedad (tive)':'tive','historial de propietarios inscritos':'propietarios',
+                        'record de conductor (dni)':'record','otras afectaciones':'otros'
+                    };
+                    const mappedId = serviceToIdMap[objetivo] || '';
+                    const elegido = itemsParaPDF.find(it => sNorm(it.title) === objetivo)
+                        || (mappedId ? itemsParaPDF.find(it => String(it.id||'').toLowerCase() === mappedId) : null)
+                        || itemsParaPDF.find(it => sNorm(it.title).includes(objetivo) || objetivo.includes(sNorm(it.title)));
+                    if (elegido) {
+                        itemsParaPDF = [elegido];
+                        vStatus = elegido.st || vStatus;
+                        vText = elegido.text || vText;
+                        individualItemMatched = true;
+                    }
+                }
+
+                if (isIndividualPrint && !individualItemMatched) {
+                    if (!itemsParaPDF.length) {
+                        itemsParaPDF = [{ id:'individual_fallback', title: individualServiceName || 'Consulta Individual', st: vStatus, text: vText || 'Solicitud individual procesada.' }];
+                    }
+                }
+
+                // --- GENERAR CERTIFICADO PDF ELEGANTE ---
+                const pdf = new jsPDF('p','mm','a4');
+                const pw = pdf.internal.pageSize.getWidth();
+                const ph = pdf.internal.pageSize.getHeight();
+                const m = 20;
+                let y = 15;
+
+                const colorCfg = {
+                    'ok': { color: [139, 195, 74], label: 'CONFORME' },
+                    'wa': { color: [245, 158, 11], label: 'OBSERVADO' },
+                    'ko': { color: [239, 68, 68], label: 'NO CONFORME' }
+                };
+
+                const now = new Date();
+                const fechaEmi = now.toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric' });
+                const codigoCert = 'FVP-' + now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + norm;
+
+                // ===== HEADER CON LINEAS DECORATIVAS =====
+                pdf.setDrawColor(13, 37, 54); pdf.setLineWidth(0.8);
+                pdf.line(m + 15, y, pw - m - 15, y);
+                y += 12;
+
+                pdf.setFontSize(20); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                pdf.text("CERTIFICADO DE VERIFICACION", pw/2, y, {align:'center'});
+                y += 8;
+                pdf.text("TECNICA VEHICULAR", pw/2, y, {align:'center'});
+                y += 7;
+
+                pdf.setFontSize(9); pdf.setFont("helvetica","normal"); pdf.setTextColor(100, 116, 139);
+                pdf.text(isIndividualPrint ? "Reporte Tecnico de Consulta Individual" : "Analisis Pericial Integral de Antecedentes", pw/2, y, {align:'center'});
+                y += 8;
+
+                pdf.setDrawColor(13, 37, 54); pdf.setLineWidth(0.8);
+                pdf.line(m + 15, y, pw - m - 15, y);
+                y += 14;
+
+                // ===== INFORMACION DEL VEHICULO =====
+                pdf.setFillColor(250, 251, 252); pdf.setDrawColor(226, 232, 240); pdf.setLineWidth(0.4);
+                pdf.roundedRect(m, y, pw - m*2, 32, 2, 2, 'FD');
+                pdf.setFontSize(8); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                pdf.text("INFORMACION DEL VEHICULO", m + 8, y + 7);
+                pdf.setDrawColor(226, 232, 240); pdf.line(m + 8, y + 10, pw - m - 8, y + 10);
+                const iy = y + 16;
+                const labelX = m + 8, valX = m + 55;
+                pdf.setFontSize(8.5);
+                pdf.setFont("helvetica","normal"); pdf.setTextColor(100, 116, 139);
+                pdf.text("Placa de Rodaje:", labelX, iy);
+                pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                pdf.text(norm, valX, iy);
+                pdf.setFont("helvetica","normal"); pdf.setTextColor(100, 116, 139);
+                pdf.text("Fecha de Emision:", labelX, iy + 6);
+                pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                pdf.text(fechaEmi, valX, iy + 6);
+                pdf.setFont("helvetica","normal"); pdf.setTextColor(100, 116, 139);
+                pdf.text("Codigo de Certificado:", labelX, iy + 12);
+                pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                pdf.text(codigoCert, valX, iy + 12);
+                y += 40;
+
+                // ===== DICTAMEN TECNICO FINAL =====
+                const gCfg = colorCfg[vStatus] || colorCfg['ok'];
+                const vn = String(vText||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+                if ((vStatus==='wa'||vStatus==='ko') && (!vText || vn.includes('trayectoria limpia') || vn.includes('verificado y limpio') || vn.includes('sin alertas'))) {
+                    const dTexts = { 'wa': 'Alertas preventivas identificadas en la evaluacion pericial.', 'ko': 'Afectaciones criticas detectadas en la auditoria digital.' };
+                    vText = dTexts[vStatus] || vText;
+                }
+                pdf.setDrawColor(226, 232, 240); pdf.setLineWidth(0.4);
+                pdf.roundedRect(m, y, pw - m*2, 26, 2, 2, 'D');
+                pdf.setFillColor(gCfg.color[0], gCfg.color[1], gCfg.color[2]);
+                pdf.rect(m + 0.2, y + 0.5, 1.5, 25, 'F');
+                pdf.setFontSize(11); pdf.setFont("helvetica","bold"); pdf.setTextColor(gCfg.color[0], gCfg.color[1], gCfg.color[2]);
+                pdf.text("DICTAMEN TECNICO FINAL", m + 8, y + 7);
+                pdf.setFontSize(9); pdf.text(gCfg.label, m + 8, y + 13);
+                pdf.setFontSize(8.5); pdf.setFont("helvetica","normal"); pdf.setTextColor(51, 65, 85);
+                const vdLines = pdf.splitTextToSize(vText || 'Sin observaciones registradas.', pw - m*2 - 16);
+                pdf.text(vdLines.slice(0, 2), m + 8, y + 19);
+                y += 34;
+
+                // ===== SECCION I - MATRIZ DE EVALUACION =====
+                if (!isIndividualPrint) {
+                    pdf.setFontSize(10); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                    pdf.text("SECCION I", m, y);
+                    y += 5;
+                    pdf.setFontSize(8); pdf.setFont("helvetica","normal"); pdf.setTextColor(100, 116, 139);
+                    pdf.text("MATRIZ DE EVALUACION TECNICA", m, y);
+                    y += 2;
+                    pdf.setDrawColor(226, 232, 240); pdf.setLineWidth(0.3);
+                    pdf.line(m, y, pw - m, y);
+                    y += 6;
+                    pdf.setFillColor(248, 250, 252);
+                    pdf.rect(m, y - 3, pw - m*2, 7, 'F');
+                    pdf.setFontSize(7); pdf.setFont("helvetica","bold"); pdf.setTextColor(71, 85, 105);
+                    pdf.text("AREA DE EVALUACION", m + 4, y + 1);
+                    pdf.text("CALIFICACION", pw - m - 4, y + 1, {align:'right'});
+                    y += 7;
+
+                    itemsParaPDF.forEach(item => {
+                        const iCfg = colorCfg[item.st || 'ok'];
+                        pdf.setFillColor(iCfg.color[0], iCfg.color[1], iCfg.color[2]);
+                        pdf.circle(m + 6, y - 1, 1.2, 'F');
+                        pdf.setFontSize(8.5); pdf.setFont("helvetica","normal"); pdf.setTextColor(51, 65, 85);
+                        pdf.text(item.title || "---", m + 10, y);
+                        pdf.setFont("helvetica","bold"); pdf.setTextColor(iCfg.color[0], iCfg.color[1], iCfg.color[2]);
+                        pdf.text(iCfg.label, pw - m - 4, y, {align:'right'});
+                        pdf.setDrawColor(241, 245, 249); pdf.line(m + 4, y + 3, pw - m - 4, y + 3);
+                        y += 7;
+                    });
+                }
+
+                // ===== SECCION II - HALLAZGOS PERICIALES =====
+                const cleanMessages = {
+                    'sunarp':'El vehiculo no registra anotaciones de robo, embargos ni gravamenes vigentes.',
+                    'historial':'Historial de registros y transferencias validado.',
+                    'caracteristicas':'Caracteristicas tecnicas originales verificadas.',
+                    'lima':'No se registran deudas pendientes en Lima.',
+                    'callao':'No se registran deudas pendientes en Callao.',
+                    'region':'Sin registros de deudas regionales detectadas.',
+                    'atu':'Libre de infracciones ante la ATU.',
+                    'siniestralidad':'Sin registros de siniestros reportados.',
+                    'estado_placa':'Placa en estado activo y vigente.',
+                    'foto_pit':'Sin fotopapeletas pendientes.',
+                    'citv':'Inspeccion Tecnica aprobada y vigente.',
+                    'soat':'Poliza SOAT validada y vigente.',
+                    'sutran':'Sin infracciones SUTRAN.',
+                    'lunas':'Permiso de lunas oscurecidas vigente.',
+                    'fise':'Sin saldos pendientes por FISE GNV.',
+                    'gnv':'Sin deuda GNV pendiente.',
+                    'denuncias':'Sin denuncias ni requisitorias vigentes.',
+                    'boleta':'Sin afectaciones en partida registral.',
+                    'tive':'TIVE verificada correctamente.',
+                    'propietarios':'Historial de propietarios en regla.',
+                    'record':'Sin sanciones graves vigentes.',
+                    'otros':'Sin otras afectaciones detectadas.'
+                };
+
+                for (let idx = 0; idx < itemsParaPDF.length; idx++) {
+                    const item = itemsParaPDF[idx];
+                    const st = item.st || 'ok';
+                    const iCfg = colorCfg[st];
+                    const writeOnCurrent = isIndividualPrint && idx === 0;
+                    if (!writeOnCurrent) { pdf.addPage(); y = 18; } else { y = Math.max(y + 10, 92); }
+
+                    if (idx === 0 && !writeOnCurrent) {
+                        pdf.setFontSize(10); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                        pdf.text("SECCION II", m, y);
+                        y += 5;
+                        pdf.setFontSize(8); pdf.setFont("helvetica","normal"); pdf.setTextColor(100, 116, 139);
+                        pdf.text("HALLAZGOS PERICIALES DETALLADOS", m, y);
+                        y += 2;
+                        pdf.setDrawColor(226, 232, 240); pdf.setLineWidth(0.3);
+                        pdf.line(m, y, pw - m, y);
+                        y += 10;
+                    }
+
+                    // Category header box
+                    pdf.setFillColor(250, 251, 252); pdf.setDrawColor(226, 232, 240); pdf.setLineWidth(0.4);
+                    pdf.roundedRect(m, y, pw - m*2, 14, 2, 2, 'FD');
+                    pdf.setFillColor(iCfg.color[0], iCfg.color[1], iCfg.color[2]);
+                    pdf.rect(m + 0.2, y + 0.5, 1.5, 13, 'F');
+                    pdf.setFontSize(11); pdf.setFont("helvetica","bold"); pdf.setTextColor(iCfg.color[0], iCfg.color[1], iCfg.color[2]);
+                    pdf.text((item.title || "CATEGORIA").toUpperCase(), m + 8, y + 6);
+                    pdf.setFontSize(8);
+                    pdf.text("Calificacion: " + iCfg.label, pw - m - 6, y + 6, {align:'right'});
+                    y += 20;
+
+                    // Content
+                    pdf.setFont("helvetica","normal"); pdf.setFontSize(9.5); pdf.setTextColor(51, 65, 85);
+                    let ct = item.text || cleanMessages[item.id] || "No se detectan alertas ni afectaciones vigentes.";
+                    ct = ct.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]*>/g,'').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&')
+                        .replace(/[""]/g,'"').replace(/['']/g,"'").replace(/[–—]/g,'-').replace(/[•·➢▪]/g,'-')
+                        .replace(/[^\x20-\x7E\xA0-\xFF\n\r]/g,'').trim();
+                    const cLines = pdf.splitTextToSize(ct, pw - m*2 - 8);
+                    pdf.text(cLines, m + 4, y);
+                    y += (cLines.length * 4.8) + 8;
+
+                    // Evidencias
+                    const files = item.files || [];
+                    if (files.length > 0) {
+                        pdf.addPage(); y = 20;
+                        pdf.setFont("helvetica","bold"); pdf.setFontSize(12); pdf.setTextColor(iCfg.color[0], iCfg.color[1], iCfg.color[2]);
+                        pdf.text("EVIDENCIA DOCUMENTAL", m, y); y += 8;
+                        pdf.setDrawColor(226,232,240); pdf.line(m, y, pw-m, y); y += 8;
+                    }
+                    for (const f of files) {
+                        try {
+                            if (f.type === 'img') {
+                                const ip = pdf.getImageProperties(f.data);
+                                let iW = pw-(m*2), iH = (ip.height*iW)/ip.width;
+                                const av = ph-y-18;
+                                if (iH > av) { if (av > ph*0.4) { iH=av; iW=(ip.width*iH)/ip.height; } else { pdf.addPage(); y=20; } }
+                                pdf.addImage(f.data,'JPEG',(pw-iW)/2, y, iW, iH); y += iH+10;
+                            } else if (f.type === 'pdf') {
+                                const b64 = f.data.split(',')[1]; const bin = atob(b64);
+                                const u8 = new Uint8Array(bin.length); for(let j=0;j<bin.length;j++) u8[j]=bin.charCodeAt(j);
+                                const doc = await pdfjs.getDocument({data:u8}).promise;
+                                for(let pN=1;pN<=doc.numPages;pN++){
+                                    const pg = await doc.getPage(pN); const vp = pg.getViewport({scale:2.5});
+                                    const cnv = document.createElement('canvas'); const ctx = cnv.getContext('2d');
+                                    cnv.height=vp.height; cnv.width=vp.width;
+                                    await pg.render({canvasContext:ctx,viewport:vp}).promise;
+                                    const pImg = cnv.toDataURL('image/jpeg',0.95);
+                                    let iW=pw-(m*2), iH=(vp.height*iW)/vp.width;
+                                    if(iH>ph-y-18){pdf.addPage();y=20;}
+                                    pdf.addImage(pImg,'JPEG',m,y,iW,iH); y+=iH+10;
+                                }
+                            }
+                        } catch(e) { console.warn("Evidencia omitida"); }
+                    }
+                }
+
+                // Guia de interpretacion (solo expediente completo)
+                if (!isIndividualPrint) {
+                    pdf.addPage(); y = 35;
+                    pdf.setDrawColor(13, 37, 54); pdf.setLineWidth(0.8);
+                    pdf.line(m + 15, y - 5, pw - m - 15, y - 5);
+                    y += 5;
+                    pdf.setFontSize(14); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                    pdf.text("GUIA DE INTERPRETACION PERICIAL", pw/2, y, {align:'center'});
+                    y += 5;
+                    pdf.setFontSize(9); pdf.setFont("helvetica","normal"); pdf.setTextColor(100, 116, 139);
+                    pdf.text("Criterios utilizados para la determinacion del estado del vehiculo", pw/2, y, {align:'center'});
+                    y += 5;
+                    pdf.setDrawColor(13, 37, 54); pdf.setLineWidth(0.8);
+                    pdf.line(m + 15, y, pw - m - 15, y);
+                    y += 18;
+
+                    const risks = [
+                        {t:'NO CONFORME',c:[239,68,68],msg:'Se recomienda NO proceder con la compra-venta.\n\n- Multiples transferencias sospechosas o deudas cuantiosas.\n- Gravamenes activos, embargos u ordenes de captura.\n- Datos de motor/chasis no coincidentes.'},
+                        {t:'OBSERVADO',c:[245,158,11],msg:'Requiere validacion fisica minuciosa.\n\n- Historial de siniestros leves o papeletas pendientes.\n- Multas administrativas menores.\n- Documentacion en proceso de tramite.'},
+                        {t:'CONFORME',c:[139,195,74],msg:'Aprobacion tecnica. Listo para transferencia.\n\n- Registro de propiedad sin afectaciones.\n- Ausencia total de deudas o gravamenes.\n- Revisiones tecnicas constantes y aprobadas.'}
+                    ];
+                    risks.forEach(r => {
+                        pdf.setDrawColor(226, 232, 240); pdf.setLineWidth(0.4);
+                        pdf.roundedRect(m, y, pw-(m*2), 40, 2, 2, 'D');
+                        pdf.setFillColor(r.c[0], r.c[1], r.c[2]);
+                        pdf.rect(m + 0.2, y + 0.5, 1.5, 39, 'F');
+                        pdf.setTextColor(r.c[0], r.c[1], r.c[2]); pdf.setFontSize(12); pdf.setFont("helvetica","bold");
+                        pdf.text(r.t, m + 10, y + 10);
+                        pdf.setFont("helvetica","normal"); pdf.setFontSize(9); pdf.setTextColor(51, 65, 85);
+                        pdf.text(pdf.splitTextToSize(r.msg, pw - m - 28), m + 10, y + 17);
+                        y += 48;
+                    });
+                }
+
+                // Pie de pagina profesional
+                const pTotal = typeof pdf.internal.getNumberOfPages === 'function' ? pdf.internal.getNumberOfPages() : pdf.internal.pages.length - 1;
+                for (let i=1; i<=pTotal; i++) {
+                    pdf.setPage(i);
+                    pdf.setDrawColor(226, 232, 240); pdf.setLineWidth(0.3);
+                    pdf.line(m, ph - 16, pw - m, ph - 16);
+                    pdf.setFontSize(7); pdf.setTextColor(148, 163, 184); pdf.setFont("helvetica","normal");
+                    pdf.text('Certificado emitido por Filtro Vehicular Plus | www.filtrovehicularperu.com', pw/2, ph - 12, {align:'center'});
+                    pdf.text('Pagina ' + i + ' de ' + pTotal + ' | ' + codigoCert, pw/2, ph - 8, {align:'center'});
+                }
+
+                const prefix = isIndividualPrint ? 'Certificado_Individual' : 'Certificado_Vehicular';
+                pdf.save(prefix + '_' + norm + '.pdf');
+
+            } catch (error) {
+                console.error("Error PDF:", error);
+                alert("Error al generar el PDF. Intenta de nuevo.");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+    </script>
+
+    <!-- MODAL PLANES Y PRECIOS -->
+    <style>
+        #accessModal {
+            background: rgba(248, 250, 252, 0.98);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .plans-container {
+            background: transparent;
+            max-width: 880px;
+            width: 100%;
+            margin: auto;
+            text-align: center;
+            animation: modalPopUp 0.4s cubic-bezier(0.2, 1.2, 0.4, 1.1) forwards;
+            position: relative;
+            padding-top: 30px;
+        }
+        @keyframes modalPopUp {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .plans-main-title { font-size: 24px; font-weight: 900; color: #0d2536; margin-bottom: 6px; letter-spacing: -0.3px; }
+        .plans-subtitle { font-size: 13px; color: #64748b; margin-bottom: 10px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+        .plans-credit-note { display: inline-flex; align-items: center; gap: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-bottom: 22px; }
+        .plans-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+        @media (min-width: 768px) { .plans-grid { grid-template-columns: repeat(3, 1fr); align-items: stretch; } }
+        .plan-card { background: #ffffff; border-radius: 14px; padding: 22px 18px; text-align: left; position: relative; display: flex; flex-direction: column; border: 2px solid #e2e8f0; transition: border-color 0.3s, box-shadow 0.3s; }
+        .plan-card:hover { border-color: #8bc34a; box-shadow: 0 6px 24px rgba(139,195,74,0.15); }
+        .plan-card.destacado { border: 2px solid #8bc34a; box-shadow: 0 8px 30px rgba(139,195,74,0.2); }
+        @media (max-width: 767px) { .plans-container { padding-top: 10px; } .close-plans-btn { position: relative !important; float: right; top: 0 !important; margin-bottom: 10px; } }
+        .plan-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); padding: 3px 12px; border-radius: 16px; font-size: 9px; font-weight: 800; white-space: nowrap; letter-spacing: 0.5px; text-transform: uppercase; }
+        .plan-header { text-align: center; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
+        .plan-name { font-size: 16px; font-weight: 800; color: #0d2536; margin-bottom: 10px; }
+        .plan-price { font-size: 30px; font-weight: 900; color: #0d2536; line-height: 1; margin-bottom: 3px; }
+        .plan-price-sub { font-size: 11px; color: #94a3b8; font-weight: 500; }
+        .plan-bonus { display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 4px 10px; border-radius: 7px; font-size: 11px; font-weight: 700; margin-top: 8px; }
+        .plan-total { text-align: center; margin-bottom: 14px; padding: 8px; background: #f8fafc; border-radius: 9px; border: 1px solid #e2e8f0; }
+        .plan-total-label { font-size: 9px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .plan-total-value { font-size: 19px; font-weight: 900; color: #0d2536; }
+        .plan-total-value span { font-size: 11px; color: #8bc34a; font-weight: 700; }
+        .plan-features { list-style: none; padding: 0; margin-bottom: 16px; flex: 1; }
+        .plan-features li { font-size: 11px; color: #334155; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 7px; line-height: 1.4; }
+        .plan-features li i { color: #8bc34a; margin-top: 2px; flex-shrink: 0; font-size: 10px; }
+        .btn-plan-action { width: 100%; padding: 11px; border-radius: 10px; font-weight: 800; font-size: 12px; text-align: center; cursor: pointer; transition: all 0.25s; background: #0d2536; color: #ffffff; border: none; margin-top: auto; letter-spacing: 0.3px; }
+        .btn-plan-action:hover { background: #15324d; box-shadow: 0 4px 15px rgba(13,37,54,0.3); }
+        .btn-plan-action.btn-green { background: #8bc34a; }
+        .btn-plan-action.btn-green:hover { background: #7cb342; box-shadow: 0 4px 15px rgba(139,195,74,0.35); }
+        .close-plans-btn { position: absolute; top: 0; right: 0; font-size: 24px; color: #94a3b8; cursor: pointer; background: transparent; border: none; z-index: 1000; transition: 0.2s; }
+        .close-plans-btn:hover { color: #0d2536; }
     </style>
 
-    <div id="tourOverlay"></div>
-    <div id="tourSpotlight"></div>
-    <div id="tourTooltip">
-        <div id="trTitle" class="tour-title"></div>
-        <div id="trText" class="tour-desc"></div>
-        <div class="tour-footer">
-            <button class="btn-tour-close" onclick="endTour()">Cerrar</button>
-            <div id="trDots" class="tour-dots"></div>
-            <button class="btn-tour" id="btnTourNext" onclick="nextTourStep()">Siguiente ➔</button>
+    <div id="accessModal" onclick="closeAccess()">
+        <div class="plans-container" onclick="event.stopPropagation()">
+            <button class="close-plans-btn" onclick="closeAccess()"><i class="fa-solid fa-xmark"></i></button>
+            
+            <h2 class="plans-main-title">Recarga Créditos y Consulta lo que Necesites</h2>
+            <p class="plans-subtitle">Usa tus créditos en cualquier consulta: las 22 centrales de información, expedientes completos o consultas individuales.</p>
+            <div class="plans-credit-note"><i class="fa-solid fa-coins"></i> 1 crédito = S/ 1.00</div>
+
+            <div class="plans-grid">
+                <!-- Básico -->
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Básico</h3>
+                        <div class="plan-price">S/ 20</div>
+                        <div class="plan-price-sub">Recarga directa</div>
+                    </div>
+                    <div class="plan-total">
+                        <div class="plan-total-label">Recibes</div>
+                        <div class="plan-total-value">20 créditos</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> Recarga directa a tu saldo</li>
+                        <li><i class="fa-solid fa-check"></i> Usa en cualquiera de las 22 consultas</li>
+                        <li><i class="fa-solid fa-check"></i> Expediente completo o consultas individuales</li>
+                        <li><i class="fa-solid fa-check"></i> Historial permanente en tu panel</li>
+                    </ul>
+                    <button class="btn-plan-action" onclick="closeAccess(); window.location.href='index.html#recargar20';">Recargar 20 Créditos</button>
+                </div>
+
+                <!-- Estándar - DESTACADO -->
+                <div class="plan-card destacado">
+                    <div class="plan-badge" style="background:#8bc34a;color:#fff;">MÁS POPULAR</div>
+                    <div class="plan-header">
+                        <h3 class="plan-name" style="color:#8bc34a;">Estándar</h3>
+                        <div class="plan-price">S/ 60</div>
+                        <div class="plan-price-sub">Pagas 60 créditos</div>
+                        <div class="plan-bonus"><i class="fa-solid fa-gift"></i> +20 créditos gratis</div>
+                    </div>
+                    <div class="plan-total">
+                        <div class="plan-total-label">Recibes en total</div>
+                        <div class="plan-total-value">80 créditos <span>AHORRAS S/ 20</span></div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> Todo lo del plan Básico</li>
+                        <li><i class="fa-solid fa-check"></i> 20 créditos de bonificación gratis</li>
+                        <li><i class="fa-solid fa-check"></i> Consultas individuales o expedientes completos</li>
+                        <li><i class="fa-solid fa-check"></i> Soporte directo por chat</li>
+                    </ul>
+                    <button class="btn-plan-action btn-green" onclick="closeAccess(); window.location.href='index.html#recargar60';">Recargar 80 Créditos</button>
+                </div>
+
+                <!-- Premium -->
+                <div class="plan-card">
+                    <div class="plan-badge" style="background:#0d2536;color:#fff;">MAYOR AHORRO</div>
+                    <div class="plan-header">
+                        <h3 class="plan-name">Premium</h3>
+                        <div class="plan-price">S/ 100</div>
+                        <div class="plan-price-sub">Pagas 100 créditos</div>
+                        <div class="plan-bonus"><i class="fa-solid fa-gift"></i> +50 créditos gratis</div>
+                    </div>
+                    <div class="plan-total">
+                        <div class="plan-total-label">Recibes en total</div>
+                        <div class="plan-total-value">150 créditos <span>AHORRAS S/ 50</span></div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> Todo lo del plan Estándar</li>
+                        <li><i class="fa-solid fa-check"></i> 50 créditos de bonificación gratis</li>
+                        <li><i class="fa-solid fa-check"></i> Máxima flexibilidad para múltiples consultas</li>
+                        <li><i class="fa-solid fa-check"></i> Soporte prioritario vía WhatsApp</li>
+                    </ul>
+                    <button class="btn-plan-action" onclick="closeAccess(); window.location.href='index.html#recargar100';">Recargar 150 Créditos</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const tourDataObj = [
-            {
-                target: 'desktopNavAuth', 
-                title: '<i class="fa-solid fa-user-circle"></i> 1. Tu Perfil y Saldo',
-                text: 'Haciendo clic en la esquina de arriba podrás ver tu **saldo de créditos** disponible y cerrar sesión cuando lo desees.'
-            },
-            {
-                target: '.btn-nuevo', 
-                title: '<i class="fa-solid fa-magnifying-glass"></i> 2. Iniciar Búsqueda',
-                text: 'Toca aquí cuando necesites regresar al inicio para consultar el estado legal de un vehículo nuevo.'
-            },
-            {
-                target: '.dashboard-title', 
-                title: '<i class="fa-solid fa-folder-open"></i> 3. Tus Descargas',
-                text: 'Todo tu historial quedará guardado <strong>permanente y de forma segura</strong> aquí abajo, para que puedas abrir y descargar tus PDFs cuando quieras.'
-            }
-        ];
-
-        let curStepPanel = 0;
-
-        function getTargetEl(sel) { return document.getElementById(sel) || document.querySelector(sel); }
-
-        function showStepPanel(index) {
-            if(index >= tourDataObj.length) { endTour(); return; }
-            document.querySelectorAll('.tour-relative').forEach(e => e.classList.remove('tour-relative'));
-            const step = tourDataObj[index];
-            const el = getTargetEl(step.target);
-            if(!el) { showStepPanel(index + 1); return; }
-
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            setTimeout(() => {
-                el.classList.add('tour-relative');
-                const rect = el.getBoundingClientRect();
-                
-                const spot = document.getElementById('tourSpotlight');
-                spot.style.display = 'block';
-                spot.style.top = (rect.top + window.scrollY - 8) + 'px';
-                spot.style.left = (rect.left + window.scrollX - 8) + 'px';
-                spot.style.width = (rect.width + 16) + 'px';
-                spot.style.height = (rect.height + 16) + 'px';
-
-                const tip = document.getElementById('tourTooltip');
-                tip.style.display = 'block';
-                
-                document.getElementById('trTitle').innerHTML = step.title;
-                document.getElementById('trText').innerHTML = step.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                document.getElementById('trDots').innerHTML = tourDataObj.map((_, i) => `<div class="tour-dot ${i === index ? 'active' : ''}"></div>`).join('');
-                document.getElementById('btnTourNext').innerHTML = (index === tourDataObj.length - 1) ? 'Finalizar <i class="fa-solid fa-check"></i>' : 'Siguiente <i class="fa-solid fa-arrow-right"></i>';
-
-                let tipTop = rect.bottom + window.scrollY + 20;
-                if(tipTop + 220 > document.body.scrollHeight) tipTop = rect.top + window.scrollY - 240; 
-                let tipLeft = rect.left + window.scrollX - 40;
-                if(tipLeft + 340 > window.innerWidth) tipLeft = window.innerWidth - 350;
-                if(tipLeft < 10) tipLeft = 10;
-
-                tip.style.top = tipTop + 'px';
-                tip.style.left = tipLeft + 'px';
-                
-                setTimeout(() => { tip.style.opacity = 1; }, 50);
-            }, 300); 
-        }
-
-        function nextTourStep() {
-            document.getElementById('tourTooltip').style.opacity = 0;
-            curStepPanel++;
-            showStepPanel(curStepPanel);
-        }
-
-        function endTour() {
-            document.getElementById('tourOverlay').style.display = 'none';
-            document.getElementById('tourSpotlight').style.display = 'none';
-            document.getElementById('tourTooltip').style.display = 'none';
-            document.querySelectorAll('.tour-relative').forEach(e => e.classList.remove('tour-relative'));
-            localStorage.setItem('fv_tour_logged_v1', 'true');
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if(!localStorage.getItem('fv_tour_logged_v1')) {
-                setTimeout(() => {
-                    document.getElementById('tourOverlay').style.display = 'block';
-                    curStepPanel = 0;
-                    showStepPanel(0);
-                }, 1000);
-            }
-        });
+        function openAccess() { document.getElementById('accessModal').style.display = 'flex'; }
+        function closeAccess() { document.getElementById('accessModal').style.display = 'none'; }
     </script>
+
 </body>
 </html>
