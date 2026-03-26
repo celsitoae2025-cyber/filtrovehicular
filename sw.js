@@ -1,6 +1,7 @@
-const CACHE_NAME = 'filtrov2-cache-v2';
+const CACHE_NAME = 'filtrov2-cache-v3';
 const PRECACHE = [
     './index.html',
+    './logopestañaweb.png',
     './assets/js/supabase-config.js',
     './assets/js/session.js',
     './assets/js/auth.js',
@@ -8,7 +9,7 @@ const PRECACHE = [
     './assets/media/logo_circular.png',
     './assets/media/logo_circularAZUL.png',
     './assets/media/logonegro.png',
-    './assets/media/iconopestaña.png'
+    './assets/media/logopwa.png'
 ];
 
 self.addEventListener('install', (e) => {

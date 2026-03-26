@@ -18,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- MANIFEST PWA E ICONOS FORZADOS -->
     <link rel="manifest" href="./manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/media/iconopestaña.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="logopestañaweb.png">
 
     <link rel="apple-touch-icon" href="assets/media/logopwa.png">
 
@@ -2850,6 +2850,25 @@
             }
         }
 
+        // Función global para mostrar modal de Acceso Restringido
+        function showAccessRestrictedModal() {
+            const infoModal = document.getElementById('infoModal');
+            const infoContent = document.getElementById('infoContent');
+            if (!infoModal || !infoContent) return;
+            infoContent.innerHTML = `
+                <div style="text-align:center; padding: 20px 24px 28px;">
+                    <div style="width: 72px; height: 72px; margin: 0 auto 18px; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; border-radius: 50%; padding: 4px;">
+                        <img src="assets/media/logo_circularAZUL.png" style="width: 52px; height: 52px; object-fit: contain;">
+                    </div>
+                    <div style="font-size: 15px; font-weight: 700; color: #0d2536; margin-bottom: 6px;">Acceso Restringido</div>
+                    <p style="font-size: 12px; color: #94a3b8; margin-bottom: 22px; line-height: 1.5;">Para continuar, inicia sesión o crea una cuenta.</p>
+                    <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') openAuthModal();" style="background: #0d2536; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:600; cursor:pointer; width:100%; font-size:13px; letter-spacing:0.3px; margin-bottom: 10px;">Iniciar Sesión</button>
+                    <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') { openAuthModal(); setTimeout(() => toggleAuthMode(), 100); }" style="background: #f1f5f9; color:#0d2536; border:none; padding:12px; border-radius:8px; font-weight:600; cursor:pointer; width:100%; font-size:13px;">Crear Cuenta</button>
+                </div>
+            `;
+            infoModal.style.display = 'flex';
+        }
+
         // Función para mostrar modal de activación
         function mostrarModalActivacion(tipo) {
             const infoModal = document.getElementById('infoModal');
@@ -2858,19 +2877,8 @@
             if (!infoModal || !infoContent) return;
             
             if (tipo === 'login') {
-                infoContent.innerHTML = `
-                    <div style="text-align:center; padding: 24px 20px;">
-                        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; border: 2px solid rgba(239,68,68,0.2);">
-                            <i class="fa-solid fa-lock"></i>
-                        </div>
-                        <h3 style="font-size: 18px; font-weight: 800; color: #0d2536; margin-bottom: 8px; letter-spacing: -0.2px;">Acceso Restringido</h3>
-                        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 20px; font-weight: 500; line-height: 1.5;">Por favor, inicia sesión para acceder a la plataforma</p>
-                        <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') openAuthModal();" style="background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color:#fff; border:none; padding:13px 20px; border-radius:10px; font-weight:700; cursor:pointer; width:100%; box-shadow: 0 4px 14px rgba(139, 195, 74, 0.25); font-size:13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
-                            <i class="fa-solid fa-right-to-bracket" style="margin-right: 6px;"></i> Iniciar Sesión
-                        </button>
-                        <div style="margin-top: 12px; font-size: 12px; color: #64748b;">¿No tienes cuenta? <span onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') { openAuthModal(); setTimeout(() => toggleAuthMode(), 100); }" style="color: #8bc34a; font-weight: 700; cursor: pointer; text-decoration: none;">Regístrate aquí</span></div>
-                    </div>
-                `;
+                showAccessRestrictedModal();
+                return;
             } else if (tipo === 'dashboard') {
                 infoContent.innerHTML = `
                     <div style="text-align:center; padding: 24px 20px;">
@@ -3117,23 +3125,7 @@
             } else if (service.price) {
                 // Procesar pago del servicio
                 if (typeof currentUser === 'undefined' || !currentUser) {
-                    // Mostrar modal de login
-                    const infoModal = document.getElementById('infoModal');
-                    const infoContent = document.getElementById('infoContent');
-                    if (infoModal && infoContent) {
-                        infoContent.innerHTML = `
-                            <div style="text-align:center; padding: 10px;">
-                                <div style="width: 85px; height: 85px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; border: 2px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                                    <img src="assets/media/logo_circularAZUL.png" style="width: 60px; height: 60px; object-fit: contain; border-radius: 50%;">
-                                </div>
-                                <h3 style="font-size: 20px; font-weight: 900; color: #0d2536; margin-bottom: 10px;">Acceso Restringido</h3>
-                                <p style="font-size: 14px; color: #64748b; margin-bottom: 25px; line-height: 1.5;">Por favor, inicia sesión para consultar tu saldo disponible.</p>
-                                <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') openAuthModal();" style="background:#8bc34a; color:#fff; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%;">INICIAR SESIÓN</button>
-                                <div style="margin-top: 15px; font-size: 13px; color: #64748b;">¿No tienes cuenta? <span onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') { openAuthModal(); setTimeout(() => toggleAuthMode(), 100); }" style="color: #0d2536; font-weight: bold; cursor: pointer; text-decoration: none;">Regístrate aquí</span></div>
-                            </div>
-                        `;
-                        infoModal.style.display = 'flex';
-                    }
+                    showAccessRestrictedModal();
                     return;
                 }
                 
@@ -3179,23 +3171,7 @@
             } else if (service.price) {
                 // Procesar pago del servicio
                 if (typeof currentUser === 'undefined' || !currentUser) {
-                    // Mostrar modal de login
-                    const infoModal = document.getElementById('infoModal');
-                    const infoContent = document.getElementById('infoContent');
-                    if (infoModal && infoContent) {
-                        infoContent.innerHTML = `
-                            <div style="text-align:center; padding: 10px;">
-                                <div style="width: 85px; height: 85px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; border: 2px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                                    <img src="assets/media/logo_circularAZUL.png" style="width: 60px; height: 60px; object-fit: contain; border-radius: 50%;">
-                                </div>
-                                <h3 style="font-size: 20px; font-weight: 900; color: #0d2536; margin-bottom: 10px;">Acceso Restringido</h3>
-                                <p style="font-size: 14px; color: #64748b; margin-bottom: 25px; line-height: 1.5;">Por favor, inicia sesión para consultar tu saldo disponible.</p>
-                                <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') openAuthModal();" style="background:#8bc34a; color:#fff; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%;">INICIAR SESIÓN</button>
-                                <div style="margin-top: 15px; font-size: 13px; color: #64748b;">¿No tienes cuenta? <span onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') { openAuthModal(); setTimeout(() => toggleAuthMode(), 100); }" style="color: #0d2536; font-weight: bold; cursor: pointer; text-decoration: none;">Regístrate aquí</span></div>
-                            </div>
-                        `;
-                        infoModal.style.display = 'flex';
-                    }
+                    showAccessRestrictedModal();
                     return;
                 }
                 
@@ -3572,6 +3548,50 @@
             startLiveProof();
             checkPendingFlow();
 
+            // BLOQUEO GLOBAL: Si el usuario NO ha iniciado sesión, cualquier clic en elementos interactivos muestra "Acceso Restringido"
+            document.addEventListener('click', function(e) {
+                // Si ya hay sesión activa, no bloquear nada
+                if (typeof currentUser !== 'undefined' && currentUser) return;
+
+                // Elementos que SÍ deben funcionar sin login (header logo, login button, footer links, etc.)
+                var target = e.target;
+                var allowed = target.closest('#mainAuthBtn') || 
+                              target.closest('.header-logo') || 
+                              target.closest('.site-footer') ||
+                              target.closest('#infoModal') ||
+                              target.closest('#authModal') ||
+                              target.closest('.info-close') ||
+                              target.closest('[onclick*="openAuthModal"]') ||
+                              target.closest('[onclick*="toggleAuthMode"]') ||
+                              target.closest('#installPWA') ||
+                              target.closest('.flyer-close');
+
+                if (allowed) return;
+
+                // Elementos interactivos que DEBEN bloquearse
+                var blocked = target.closest('.hook-card') ||
+                              target.closest('.dash-card') ||
+                              target.closest('.services-tab') ||
+                              target.closest('.dash-tab') ||
+                              target.closest('[data-tab]') ||
+                              target.closest('.plan-card') ||
+                              target.closest('.category-card') ||
+                              target.closest('[onclick*="openSale"]') ||
+                              target.closest('[onclick*="submitInforme"]') ||
+                              target.closest('[onclick*="switchServicesTab"]') ||
+                              target.closest('[onclick*="handleServiceClick"]') ||
+                              target.closest('[onclick*="setDashTab"]') ||
+                              target.closest('[onclick*="showCategoryServices"]') ||
+                              target.closest('.btn-consultar') ||
+                              target.closest('.btn-primary-action');
+
+                if (blocked) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showAccessRestrictedModal();
+                }
+            }, true);
+
             window.addEventListener('storage', (e) => {
                 const pendingPlate = localStorage.getItem('last_pending_plate');
                 if (!pendingPlate) return;
@@ -3782,22 +3802,7 @@
 
         // Función auxiliar para mostrar modal de login reutilizable
         function showLoginModal() {
-            const infoModal = document.getElementById('infoModal');
-            const infoContent = document.getElementById('infoContent');
-            if (infoModal && infoContent) {
-                infoContent.innerHTML = `
-                    <div style="text-align:center; padding: 10px;">
-                        <div style="width: 85px; height: 85px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; border: 2px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                            <img src="assets/media/logo_circularAZUL.png" style="width: 60px; height: 60px; object-fit: contain; border-radius: 50%;">
-                        </div>
-                        <h3 style="font-size: 20px; font-weight: 900; color: #0d2536; margin-bottom: 10px;">Acceso Restringido</h3>
-                        <p style="font-size: 14px; color: #64748b; margin-bottom: 25px; line-height: 1.5;">Por favor, inicia sesión para consultar tu saldo disponible.</p>
-                        <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') openAuthModal();" style="background:#8bc34a; color:#fff; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%;">INICIAR SESIÓN</button>
-                        <div style="margin-top: 15px; font-size: 13px; color: #64748b;">¿No tienes cuenta? <span onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') { openAuthModal(); setTimeout(() => toggleAuthMode(), 100); }" style="color: #0d2536; font-weight: bold; cursor: pointer; text-decoration: none;">Regístrate aquí</span></div>
-                    </div>
-                `;
-                infoModal.style.display = 'flex';
-            }
+            showAccessRestrictedModal();
         }
 
         let isDeductingCredits = false; // Guard para evitar doble descuento
@@ -4927,16 +4932,8 @@
             let html = '';
 
             if (type === 'login') {
-                html = `
-                    <div style="text-align:center; padding: 10px;">
-                        <div style="width: 85px; height: 85px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; border: 2px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                            <img src="assets/media/logo_circularAZUL.png" style="width: 60px; height: 60px; object-fit: contain; border-radius: 50%;">
-                        </div>
-                        <h3 style="font-size: 20px; font-weight: 900; color: #0d2536; margin-bottom: 10px;">Acceso Restringido</h3>
-                        <p style="font-size: 14px; color: #64748b; margin-bottom: 25px; line-height: 1.5;">Por favor, inicia sesión para acceder al Dashboard.</p>
-                        <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') openAuthModal();" style="background:#8bc34a; color:#fff; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%;">INICIAR SESIÓN</button>
-                        <div style="margin-top: 15px; font-size: 13px; color: #64748b;">¿No tienes cuenta? <span onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') { openAuthModal(); setTimeout(() => toggleAuthMode(), 100); }" style="color: #0d2536; font-weight: bold; cursor: pointer; text-decoration: none;">Regístrate aquí</span></div>
-                    </div>`;
+                showAccessRestrictedModal();
+                return;
             } else if (type === 'activate') {
                 html = `
                     <div style="text-align:center; padding: 10px;">
