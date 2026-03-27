@@ -783,7 +783,7 @@
                 lista.style.display = 'flex';
 
                 // Filtrar las solicitudes del cliente (excluyendo recargas)
-                const myReqs = data.map(d => d.datos).filter(r => r && r.email === email && r.placa && !r.isRecharge && !r.isRegistro && !r.isActivacion && !r.isDashboard);
+                const myReqs = data.map(d => d.datos).filter(r => r && r.email && r.email.toLowerCase().trim() === email && r.placa && !r.isRecharge && !r.isRegistro && !r.isActivacion && !r.isDashboard);
 
                 if (!myReqs || myReqs.length === 0) {
                     lista.innerHTML = `

@@ -2626,15 +2626,26 @@ Link: https://filtrovehicularperu.com`;
             // Sincronizar pago en la Nube
             if (window.sb) {
                 try {
-                    const { data } = await window.sb.from('solicitudes').select('datos').eq('placa', placa).single();
-                    if (data && data.datos) {
-                        data.datos.status = 'approved';
-                        await window.sb.from('solicitudes').upsert({ placa: placa, datos: data.datos, updated_at: new Date() }, { onConflict: 'placa' });
+                    // Buscar por placa normalizada para no perder el email del cliente
+                    const { data: allRows } = await window.sb.from('solicitudes').select('placa, datos');
+                    const matchRow = (allRows || []).find(r => r && r.placa && normalize(String(r.placa)) === normalize(placa));
+
+                    if (matchRow && matchRow.datos) {
+                        const updatedDatos = Object.assign({}, matchRow.datos, {
+                            status: 'approved',
+                            placa: normalize(placa)
+                        });
+                        // Upsert con placa normalizada, preservando email y demás datos
+                        await window.sb.from('solicitudes').upsert({ placa: normalize(placa), datos: updatedDatos, updated_at: new Date() }, { onConflict: 'placa' });
+                        // Eliminar fila con formato anterior si era diferente
+                        if (String(matchRow.placa) !== normalize(placa)) {
+                            await window.sb.from('solicitudes').delete().eq('placa', matchRow.placa);
+                        }
                     } else {
-                        // Si no existe, crear registro aprobado basico
+                        // Sin solicitud previa: crear registro básico con email vacío marcado
                         const timestamp = Date.now();
-                        const basicData = { placa: placa, timestamp: timestamp, status: 'approved' };
-                        await window.sb.from('solicitudes').upsert({ placa: placa, datos: basicData, updated_at: new Date() }, { onConflict: 'placa' });
+                        const basicData = { placa: normalize(placa), timestamp, status: 'approved' };
+                        await window.sb.from('solicitudes').upsert({ placa: normalize(placa), datos: basicData, updated_at: new Date() }, { onConflict: 'placa' });
                     }
                 } catch (e) { console.error("Error sincronizando pago en nube:", e); }
             }
