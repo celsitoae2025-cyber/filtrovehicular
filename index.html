@@ -3789,14 +3789,31 @@
                             .eq('email', currentUser.email);
 
                         if (!error) {
-                            // Registrar como aprobado localmente para saltar el panel dependiente
                             localStorage.setItem('approved_request_' + placa, 'true');
                             localStorage.removeItem('has_pending_notification'); // Limpiar badge
                             
-                            // Crear la data del reporte en localStorage o mandar a crear
-                            alert("¡Desbloqueo Exitoso! Se han descontado 20 créditos de tu saldo. Generando tu expediente integral...");
+                            // Actualizar solicitud a "approved" en Supabase
+                            try {
+                                const { data: solicitudRow } = await window.sb
+                                    .from('solicitudes')
+                                    .select('datos')
+                                    .eq('placa', placa)
+                                    .single();
+                                
+                                if (solicitudRow && solicitudRow.datos) {
+                                    solicitudRow.datos.status = 'approved';
+                                    await window.sb.from('solicitudes').upsert(
+                                        { placa: placa, datos: solicitudRow.datos, updated_at: new Date() },
+                                        { onConflict: 'placa' }
+                                    );
+                                }
+                            } catch (e) {
+                                console.error("Error actualizando solicitud:", e);
+                            }
                             
-                            window.location.href = `reporte.html?placa=${placa}&approved=true`;
+                            alert("¡Desbloqueo Exitoso! Se han descontado 20 créditos. El administrador procesará tu solicitud.");
+                            
+                            window.location.href = `panel_cliente.html`;
                             isDeductingCredits = false;
                             return; // Frenar ejecución del modal restrictivo
                         }
@@ -5330,7 +5347,7 @@
             // 1. Ya fue aprobado anteriormente
             if (localStorage.getItem('approved_request_' + p)) {
                 localStorage.removeItem('last_pending_plate');
-                localStorage.removeItem('has_pending_notification'); // Limpiar badge
+                localStorage.removeItem('has_pending_notification');
                 window.location.href = 'reporte.html?placa=' + p + '&approved=true';
                 return;
             }
@@ -5342,8 +5359,22 @@
                 return;
             }
 
-            // 3. Iniciar flujo de pago / créditos (NO crear solicitud aún)
+            // 3. CREAR SOLICITUD INMEDIATAMENTE (antes de verificar créditos)
             localStorage.setItem('last_pending_plate', p);
+            const solicitudData = {
+                placa: p,
+                timestamp: Date.now(),
+                status: 'pending',
+                email: currentUser.email.toLowerCase().trim(),
+                servicio: 'Filtro Vehicular Completo'
+            };
+            localStorage.setItem('pending_request_' + p, JSON.stringify(solicitudData));
+            await syncSolicitudToNube(p, solicitudData);
+
+            // 4. MOSTRAR CONFIRMACIÓN VISUAL
+            showSolicitudConfirmation(p);
+
+            // 5. Continuar con flujo de créditos/pago
             startSmartScan(p);
         }
 
@@ -5368,6 +5399,23 @@
                 customAlertCallback();
                 customAlertCallback = null;
             }
+        }
+
+        function showSolicitudConfirmation(placa) {
+            const modal = document.getElementById('solicitudConfirmModal');
+            const placaDisplay = document.getElementById('solicitudPlacaDisplay');
+            
+            if (modal && placaDisplay) {
+                placaDisplay.textContent = placa.toUpperCase();
+                modal.style.display = 'flex';
+                
+                localStorage.setItem('has_pending_notification', 'true');
+            }
+        }
+
+        function closeSolicitudConfirm() {
+            const modal = document.getElementById('solicitudConfirmModal');
+            if (modal) modal.style.display = 'none';
         }
 
         function showPendingNotificationBadge() {
@@ -5618,6 +5666,40 @@
             }
         });
     </script>
+
+    <!-- Modal de Confirmación de Solicitud -->
+    <div id="solicitudConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(13,37,54,0.85); z-index:9999999; align-items:center; justify-content:center; backdrop-filter:blur(6px);">
+        <div style="background:#ffffff; width:90%; max-width:380px; border-radius:20px; padding:32px 28px; text-align:center; box-shadow:0 30px 60px rgba(0,0,0,0.3); border:2px solid #e2e8f0; animation:slideUp 0.3s ease-out;">
+            <div style="width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color:#0284c7; display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 18px; border:3px solid #e0f2fe;">
+                <i class="fa-solid fa-paper-plane"></i>
+            </div>
+            <h3 style="font-size:20px; color:#0d2536; margin:0 0 10px; font-weight:900; letter-spacing:-0.3px;">¡Solicitud Enviada!</h3>
+            <p style="color:#64748b; font-size:14px; line-height:1.6; margin:0 0 8px;">Tu solicitud de <strong style="color:#0d2536;">Filtro Vehicular Completo</strong> para la placa <strong style="color:#0d2536;" id="solicitudPlacaDisplay">---</strong> ha sido registrada exitosamente.</p>
+            <div style="background:#f8fafc; padding:14px; border-radius:12px; border-left:4px solid #0284c7; margin:16px 0 20px; text-align:left;">
+                <div style="font-size:11px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">
+                    <i class="fa-solid fa-info-circle" style="margin-right:4px;"></i> Próximos pasos
+                </div>
+                <p style="font-size:12.5px; color:#64748b; margin:0; line-height:1.5;">
+                    • Puedes ver el estado en <strong>"Mis Consultas"</strong><br>
+                    • El administrador procesará tu solicitud<br>
+                    • Recibirás notificación cuando esté listo
+                </p>
+            </div>
+            <button onclick="closeSolicitudConfirm()" style="width:100%; padding:14px; background:#0d2536; color:white; border:none; border-radius:12px; font-weight:800; font-size:14px; cursor:pointer; margin-bottom:8px; transition:0.2s;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
+                <i class="fa-solid fa-check"></i> ENTENDIDO
+            </button>
+            <a href="panel_cliente.html" style="display:block; padding:10px; color:#64748b; font-size:12px; font-weight:600; text-decoration:none; transition:0.2s;" onmouseover="this.style.color='#0d2536'" onmouseout="this.style.color='#64748b'">
+                <i class="fa-solid fa-arrow-right" style="margin-right:4px;"></i> Ir a Mis Consultas
+            </a>
+        </div>
+    </div>
+
+    <style>
+    @keyframes slideUp {
+        from { transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    </style>
 
 </body>
 </html>
