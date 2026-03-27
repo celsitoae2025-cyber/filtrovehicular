@@ -989,6 +989,9 @@
             <button onclick="testPushNotification()" style="width: 100%; padding: 10px; background: rgba(139,195,74,0.15); color: #8bc34a; border: 1px solid rgba(139,195,74,0.3); border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 6px;">
                 <i class="fa-solid fa-flask"></i> Probar Notificación (Sonido + Vibración)
             </button>
+            <button onclick="diagnosePush()" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <i class="fa-solid fa-stethoscope"></i> Diagnóstico Push
+            </button>
             <div style="font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 6px; line-height: 1.4;">Recibe alertas instantáneas incluso con la app cerrada</div>
             
         </div>
@@ -3181,6 +3184,55 @@ Link: https://filtrovehicularperu.com`;
                 if (typeof playAdminAlertSound === 'function') playAdminAlertSound();
             }
         });
+
+        // Diagnóstico completo del sistema push
+        window.diagnosePush = async function() {
+            let msg = '🔍 DIAGNÓSTICO PUSH\n\n';
+
+            // 1. Permisos
+            msg += `1. Permiso notificaciones: ${Notification.permission}\n`;
+
+            // 2. Service Worker
+            if ('serviceWorker' in navigator) {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                msg += `2. Service Workers activos: ${regs.length}\n`;
+                regs.forEach((r, i) => msg += `   SW${i+1}: ${r.scope}\n`);
+            } else {
+                msg += `2. Service Worker: NO SOPORTADO ❌\n`;
+            }
+
+            // 3. Token FCM local
+            const pushEnabled = localStorage.getItem('push_notifications_enabled');
+            msg += `3. Push activado (localStorage): ${pushEnabled || 'NO'}\n`;
+
+            // 4. Tokens en Supabase
+            if (window.sb) {
+                try {
+                    const { data, error } = await window.sb
+                        .from('admin_push_tokens')
+                        .select('token, device_type, updated_at');
+                    if (error) {
+                        msg += `4. Tokens en Supabase: ERROR - ${error.message}\n`;
+                    } else if (!data || data.length === 0) {
+                        msg += `4. Tokens en Supabase: NINGUNO ❌ (debes activar notificaciones desde el celular)\n`;
+                    } else {
+                        msg += `4. Tokens en Supabase: ${data.length} token(s) ✅\n`;
+                        data.forEach((t, i) => {
+                            msg += `   Token${i+1}: ...${t.token.slice(-12)} | ${t.device_type} | ${t.updated_at}\n`;
+                        });
+                    }
+                } catch(e) {
+                    msg += `4. Tokens en Supabase: ERROR - ${e.message}\n`;
+                }
+            } else {
+                msg += `4. Supabase: NO CONECTADO ❌\n`;
+            }
+
+            // 5. PushManager
+            msg += `5. PushManager soportado: ${'PushManager' in window ? 'SÍ ✅' : 'NO ❌'}\n`;
+
+            alert(msg);
+        };
 
         // Función de prueba de notificación local (sonido + vibración)
         window.testPushNotification = async function() {

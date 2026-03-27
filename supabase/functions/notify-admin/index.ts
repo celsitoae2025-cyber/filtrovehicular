@@ -13,20 +13,30 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 // Firebase Service Account (para FCM API V1)
 const FIREBASE_PROJECT_ID = 'filtro2026-d9530';
 const FIREBASE_CLIENT_EMAIL = 'firebase-adminsdk-fbsvc@filtro2026-d9530.iam.gserviceaccount.com';
-const FIREBASE_PRIVATE_KEY = (Deno.env.get('FIREBASE_PRIVATE_KEY') || '').replace(/\\n/g, '\n');
+const FIREBASE_PRIVATE_KEY = Deno.env.get('FIREBASE_PRIVATE_KEY') || '';
 
 // Obtener token de acceso OAuth2 para FCM API V1
 async function getFirebaseAccessToken(): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   
-  // Importar la clave privada RSA
-  const pemKey = FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
-  const keyData = pemKey
-    .replace('-----BEGIN PRIVATE KEY-----', '')
-    .replace('-----END PRIVATE KEY-----', '')
-    .replace(/\s/g, '');
+  // Limpiar y normalizar la clave privada (múltiples estrategias de limpieza)
+  let pemKey = FIREBASE_PRIVATE_KEY;
+  // Reemplazar literales \n por saltos de línea reales
+  pemKey = pemKey.replace(/\\n/g, '\n');
+  // Eliminar posibles comillas al inicio/fin
+  pemKey = pemKey.replace(/^["']|["']$/g, '');
   
-  const binaryKey = Uint8Array.from(atob(keyData), c => c.charCodeAt(0));
+  const keyData = pemKey
+    .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+    .replace(/-----END PRIVATE KEY-----/g, '')
+    .replace(/\s+/g, '');  // Eliminar TODOS los espacios/saltos
+  
+  // Decodificar base64 de forma segura
+  const binaryString = atob(keyData);
+  const binaryKey = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    binaryKey[i] = binaryString.charCodeAt(i);
+  }
   
   const cryptoKey = await crypto.subtle.importKey(
     'pkcs8',
@@ -222,13 +232,16 @@ serve(async (req: Request) => {
     let pushBody = '';
     let pushData: Record<string, string> = {};
 
+    // Los datos reales están en record.datos (JSON) para la tabla solicitudes
+    const d = record?.datos || record || {};
+
     // =============================================
     // EVENTO: Nuevo usuario registrado
     // =============================================
-    if (table === 'solicitudes' && record?.isRegistro === true && type === 'INSERT') {
-      const nombre = record.nombre || 'Sin nombre';
-      const email = record.email || 'Sin email';
-      const whatsapp = record.whatsapp || 'Sin número';
+    if (table === 'solicitudes' && (d.isRegistro === true || String(record?.placa || '').startsWith('REGISTRO_')) && type === 'INSERT') {
+      const nombre = d.nombre || 'Sin nombre';
+      const email = d.email || record?.email || 'Sin email';
+      const whatsapp = d.whatsapp || 'Sin número';
 
       pushTitle = '👤 Nuevo Usuario Registrado';
       pushBody = `${nombre} - ${email}`;
@@ -244,10 +257,10 @@ serve(async (req: Request) => {
     // =============================================
     // EVENTO: Nuevo comprobante de pago subido
     // =============================================
-    else if (table === 'solicitudes' && record?.comprobante_url && type === 'INSERT') {
-      const placa = record.placa || 'Sin placa';
-      const email = record.email || 'Sin email';
-      const tipo = record.tipo || 'filtro';
+    else if (table === 'solicitudes' && (d.comprobante_url || record?.comprobante_url) && type === 'INSERT') {
+      const placa = d.placa || record?.placa || 'Sin placa';
+      const email = d.email || record?.email || 'Sin email';
+      const tipo = d.tipo || record?.tipo || 'filtro';
 
       pushTitle = '💰 Nuevo Comprobante de Pago';
       pushBody = `Placa: ${placa}`;
@@ -263,8 +276,8 @@ serve(async (req: Request) => {
     // =============================================
     // EVENTO: Nueva solicitud de Dashboard
     // =============================================
-    else if (table === 'solicitudes' && record?.isDashboard === true && type === 'INSERT') {
-      const email = record.email || 'Sin email';
+    else if (table === 'solicitudes' && d.isDashboard === true && type === 'INSERT') {
+      const email = d.email || record?.email || 'Sin email';
 
       pushTitle = '🏢 Solicitud de Dashboard';
       pushBody = `Cliente: ${email}`;
@@ -279,8 +292,8 @@ serve(async (req: Request) => {
     // EVENTO: Nueva solicitud genérica
     // =============================================
     else if (table === 'solicitudes' && type === 'INSERT') {
-      const placa = record?.placa || 'Sin placa';
-      const email = record?.email || 'Sin email';
+      const placa = d.placa || record?.placa || 'Sin placa';
+      const email = d.email || record?.email || 'Sin email';
 
       pushTitle = '📋 Nueva Solicitud';
       pushBody = `Placa: ${placa}`;
