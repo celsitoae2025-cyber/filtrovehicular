@@ -2656,36 +2656,6 @@ Link: https://filtrovehicularperu.com`;
                         const key = d.placa + '_' + (d.timestamp || '');
                         if (!seenRequests.has(key)) {
                             seenRequests.add(key);
-                            
-                            // Construir mensaje detallado según el tipo de solicitud
-                            let msg = '';
-                            
-                            if (d.isRecharge) {
-                                msg = `🔔 *NUEVA SOLICITUD DE RECARGA*\n\n` +
-                                      `💳 *Tipo:* Recarga de Créditos\n` +
-                                      `👤 *Cliente:* ${d.email || 'No especificado'}\n` +
-                                      `💰 *Créditos:* ${d.credits || 'No especificado'}\n` +
-                                      `📋 *Estado:* Pendiente de validación\n` +
-                                      `⏰ *Fecha:* ${new Date().toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' })}\n\n` +
-                                      `🎯 *Acción requerida:* Validar comprobante de pago en el panel admin`;
-                            } else if (d.isRegistro) {
-                                msg = `🔔 *NUEVA SOLICITUD DE REGISTRO*\n\n` +
-                                      `👤 *Nombre:* ${d.nombre || 'No especificado'}\n` +
-                                      `📧 *Email:* ${d.email || 'No especificado'}\n` +
-                                      `📱 *WhatsApp:* ${d.whatsapp || 'No especificado'}\n` +
-                                      `📋 *Estado:* Pendiente de activación\n` +
-                                      `⏰ *Fecha:* ${new Date().toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' })}\n\n` +
-                                      `🎯 *Acción requerida:* Activar cuenta del usuario en el panel admin`;
-                            } else {
-                                msg = `🔔 *NUEVA SOLICITUD DE FILTRO*\n\n` +
-                                      `🚗 *Placa:* ${d.placa || 'No especificada'}\n` +
-                                      `👤 *Cliente:* ${d.email || 'No especificado'}\n` +
-                                      `📋 *Estado:* Pendiente de procesamiento\n` +
-                                      `⏰ *Fecha:* ${new Date().toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' })}\n\n` +
-                                      `🎯 *Acción requerida:* Procesar filtro vehicular en el panel admin`;
-                            }
-                            
-                            sendTelegramAlert(msg);
                         }
 
                         // Notificaciones flotantes deshabilitadas - solo usamos badge numérico
@@ -2879,20 +2849,6 @@ Link: https://filtrovehicularperu.com`;
             alert("✅ Mensaje de prueba enviado.\n\nRevisa tu WhatsApp en 5-10 segundos.\n\nSi no llega, verifica:\n• Tu número incluye + y código de país\n• Tu API Key es correcta\n• Ya activaste CallMeBot en WhatsApp");
         }
 
-        async function sendTelegramAlert(message) {
-            const token = localStorage.getItem('telegram_token');
-            const chatId = localStorage.getItem('telegram_chatid');
-            if (!token || !chatId) return;
-
-            try {
-                const url = `https://api.telegram.org/bot${token}/sendMessage`;
-                await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: chatId, text: message })
-                });
-            } catch (e) { console.error("Error Telegram Alert:", e); }
-        }
 
         function updateBadgesCount(n) {
             const badge = document.getElementById('requestsCount');
@@ -3061,7 +3017,7 @@ Link: https://filtrovehicularperu.com`;
     <script>
         // Registrar Service Worker principal
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
+            navigator.serviceWorker.register('./sw.js')
                 .then(registration => {
                     console.log('✅ Service Worker registrado:', registration.scope);
                 })
