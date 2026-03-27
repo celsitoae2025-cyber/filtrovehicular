@@ -538,13 +538,13 @@
 
         /* Imagen */
         .tutorial-image {
-            width: 100%;
-            max-width: 260px;
-            aspect-ratio: 9 / 16;
+            width: 220px;
+            height: 390px;
             background: #f1f5f9;
             border-radius: 14px;
             margin: 24px auto 0;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             color: #94a3b8;
@@ -552,12 +552,28 @@
             text-align: center;
             border: 2px solid #e2e8f0;
             overflow: hidden;
+            flex-shrink: 0;
         }
         .tutorial-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 12px;
+        }
+        /* Carrusel horizontal de imágenes (slide 3) */
+        .image-carousel-wrapper {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 12px;
+            padding: 0 0 8px;
+            margin-top: 24px;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        .image-carousel-wrapper .tutorial-image {
+            scroll-snap-align: center;
+            margin: 0;
         }
 
         /* Footer / Nav bar */
@@ -631,7 +647,8 @@
                 font-size: 13px;
             }
             .tutorial-image {
-                max-width: 200px;
+                width: 180px;
+                height: 320px;
             }
             .carousel-footer {
                 padding: 12px 16px;
@@ -1394,29 +1411,21 @@
                             <h3 class="slide-title">¿Qué incluye la plataforma?</h3>
                             <p class="slide-text">Con acceso <span class="highlight">Plus</span> tienes acceso ilimitado a: <strong>Filtro Vehicular Completo</strong>, <strong>SOAT Vigente</strong>, <strong>Historial SUNARP</strong>, <strong>Deudas SAT</strong>, <strong>Papeletas ATU/SUTRAN</strong>, <strong>CITV</strong>, <strong>Siniestralidad</strong> y <strong>Dashboard Permanente</strong>. Toda la información legal y administrativa del vehículo en un solo reporte.</p>
                             
-                            <div style="position: relative; max-width: 280px; margin: 24px auto 0;">
-                                <div id="imageCarousel3" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding: 8px 0 16px; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;">
-                                    <div style="flex-shrink: 0; scroll-snap-align: center; width: 100%; max-width: 260px; aspect-ratio: 9/16; background: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; overflow: hidden;">
-                                        <div style="text-align: center; color: #94a3b8;">
-                                            <i class="fa-solid fa-shield-halved" style="font-size: 40px; margin-bottom: 10px;"></i><br>
-                                            <span style="font-size: 12px;">Funcionalidades 1</span>
-                                        </div>
-                                    </div>
-                                    <div style="flex-shrink: 0; scroll-snap-align: center; width: 100%; max-width: 260px; aspect-ratio: 9/16; background: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; overflow: hidden;">
-                                        <div style="text-align: center; color: #94a3b8;">
-                                            <i class="fa-solid fa-file-lines" style="font-size: 40px; margin-bottom: 10px;"></i><br>
-                                            <span style="font-size: 12px;">Funcionalidades 2</span>
-                                        </div>
-                                    </div>
-                                    <div style="flex-shrink: 0; scroll-snap-align: center; width: 100%; max-width: 260px; aspect-ratio: 9/16; background: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; overflow: hidden;">
-                                        <div style="text-align: center; color: #94a3b8;">
-                                            <i class="fa-solid fa-chart-line" style="font-size: 40px; margin-bottom: 10px;"></i><br>
-                                            <span style="font-size: 12px;">Funcionalidades 3</span>
-                                        </div>
-                                    </div>
+                            <div class="image-carousel-wrapper" id="imageCarousel3">
+                                <div class="tutorial-image">
+                                    <i class="fa-solid fa-shield-halved" style="font-size: 36px;"></i><br>
+                                    Funcionalidades 1
                                 </div>
-                                <p style="font-size: 11px; color: #94a3b8; margin-top: 4px; text-align: center;">← Desliza horizontalmente para ver más →</p>
+                                <div class="tutorial-image">
+                                    <i class="fa-solid fa-file-lines" style="font-size: 36px;"></i><br>
+                                    Funcionalidades 2
+                                </div>
+                                <div class="tutorial-image">
+                                    <i class="fa-solid fa-chart-line" style="font-size: 36px;"></i><br>
+                                    Funcionalidades 3
+                                </div>
                             </div>
+                            <p style="font-size: 11px; color: #94a3b8; margin-top: 8px; text-align: center;">← Desliza para ver más →</p>
                         </div>
                     </div>
 
