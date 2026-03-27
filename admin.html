@@ -3055,184 +3055,104 @@ Link: https://filtrovehicularperu.com`;
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/supabase-config.js?v=2"></script>
 
-    <!-- FIREBASE CLOUD MESSAGING - Notificaciones Push -->
-    <script type="module">
-        // Importar Firebase SDK
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js';
+    <!-- WEB PUSH NATIVO (VAPID) - Sin Firebase -->
+    <script>
+        const VAPID_PUBLIC_KEY = 'BNHCC4Ay_g3Xdd4R8Uy0JQtSEU0GjbKAGhImObZQjorigY720bSVYqgAtgjTbE9BrspYbUOTJocXfQremW9ujF8';
 
-        // CONFIGURACIÓN DE FIREBASE
-        const firebaseConfig = {
-            apiKey: "AIzaSyBReBBPABzIAEneLzjjlGYKddRF7WyQxfw",
-            authDomain: "filtro2026-d9530.firebaseapp.com",
-            projectId: "filtro2026-d9530",
-            storageBucket: "filtro2026-d9530.firebasestorage.app",
-            messagingSenderId: "472315272675",
-            appId: "1:472315272675:web:3389b0bb4c03a4b4ae94d6"
-        };
+        function urlB64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const rawData = atob(base64);
+            return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+        }
 
-        // Inicializar Firebase
-        const app = initializeApp(firebaseConfig);
-        const messaging = getMessaging(app);
-
-        // Función para solicitar permiso y suscribirse a notificaciones push
+        // Suscribirse a Web Push nativo
         window.subscribeToPushNotifications = async function() {
             try {
-                // Verificar soporte
                 if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-                    alert('❌ Las notificaciones push no están soportadas en este navegador');
+                    alert('❌ Notificaciones push no soportadas en este navegador');
                     return;
                 }
 
-                // Registrar Service Worker de Firebase
-                const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-                console.log('✅ Firebase Service Worker registrado');
-
-                // Solicitar permiso
                 const permission = await Notification.requestPermission();
                 if (permission !== 'granted') {
-                    alert('⚠️ Debes permitir las notificaciones para recibir alertas en tiempo real');
+                    alert('⚠️ Debes permitir las notificaciones para recibir alertas');
                     return;
                 }
 
-                // Obtener token de FCM
-                const currentToken = await getToken(messaging, {
-                    vapidKey: 'BMKugK9-B_-lE2KFMip7uBFoaiDPT2SsRDbk9MKpB1qb4PISecRmveI6NgGfo2PBZRmMvXaHRhwgJCaYPSB5ve4',
-                    serviceWorkerRegistration: registration
+                const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+                console.log('[WebPush] SW registrado:', reg.scope);
+
+                const sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY)
                 });
 
-                if (currentToken) {
-                    console.log('✅ Token FCM obtenido:', currentToken);
-                    
-                    // Guardar token en Supabase para enviar notificaciones desde el backend
-                    if (window.sb) {
-                        const { error } = await window.sb
-                            .from('admin_push_tokens')
-                            .upsert([{
-                                token: currentToken,
-                                device_type: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-                                updated_at: new Date().toISOString()
-                            }], { onConflict: 'token' });
+                console.log('[WebPush] Suscripción obtenida:', JSON.stringify(sub));
 
-                        if (error) {
-                            console.error('Error guardando token:', error);
-                        } else {
-                            console.log('✅ Token guardado en Supabase');
-                        }
-                    }
+                if (window.sb) {
+                    const subJson = sub.toJSON();
+                    const { error } = await window.sb
+                        .from('admin_push_tokens')
+                        .upsert([{
+                            token: subJson.endpoint,
+                            subscription: subJson,
+                            device_type: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+                            updated_at: new Date().toISOString()
+                        }], { onConflict: 'token' });
 
-                    alert('✅ Notificaciones push activadas correctamente\n\nRecibirás alertas en tiempo real incluso cuando la app esté cerrada.');
-                    localStorage.setItem('push_notifications_enabled', 'true');
-                    
-                    // Actualizar UI del botón
-                    const btn = document.getElementById('btnEnablePush');
-                    if (btn) {
-                        btn.innerHTML = '<i class="fa-solid fa-bell"></i> Notificaciones Activadas';
-                        btn.style.background = '#8bc34a';
-                        btn.disabled = true;
+                    if (error) {
+                        console.error('[WebPush] Error guardando suscripción:', error);
+                        alert('❌ Error guardando suscripción: ' + error.message);
+                        return;
                     }
-                } else {
-                    console.warn('No se pudo obtener el token FCM');
-                    alert('⚠️ Error al obtener el token de notificaciones');
+                    console.log('[WebPush] ✅ Suscripción guardada en Supabase');
                 }
-            } catch (error) {
-                console.error('Error al suscribirse a push:', error);
-                alert('❌ Error al activar notificaciones: ' + error.message);
+
+                localStorage.setItem('push_notifications_enabled', 'true');
+                alert('✅ Notificaciones activadas correctamente.\n\nRecibirás alertas con sonido y vibración incluso con la app minimizada.');
+
+                const btn = document.getElementById('btnEnablePush');
+                if (btn) {
+                    btn.innerHTML = '<i class="fa-solid fa-bell"></i> Notificaciones Activadas ✅';
+                    btn.style.background = '#8bc34a';
+                    btn.disabled = true;
+                }
+
+            } catch (e) {
+                console.error('[WebPush] Error:', e);
+                alert('❌ Error al activar notificaciones: ' + e.message);
             }
         };
 
-        // Manejar notificaciones cuando la app está abierta (foreground)
-        onMessage(messaging, (payload) => {
-            console.log('[FCM] Notificación en foreground:', payload);
-
-            const title = payload.notification?.title || '🔔 Nueva Solicitud';
-            const body  = payload.notification?.body  || 'Revisa el panel de administración.';
-
-            // Reproducir MP3 de alerta
-            if (typeof playAdminAlertSound === 'function') playAdminAlertSound();
-
-            // Mostrar notificación nativa vía SW (con vibración ~3s)
-            if (Notification.permission === 'granted' && navigator.serviceWorker.controller) {
-                navigator.serviceWorker.ready.then(reg => {
-                    reg.showNotification(title, {
-                        body,
-                        icon: './assets/media/logopwa.png',
-                        badge: './logopestañaweb.png',
-                        tag: 'admin-foreground',
-                        renotify: true,
-                        requireInteraction: true,
-                        silent: false,
-                        vibrate: [400, 150, 400, 150, 400, 150, 400, 150, 400, 150, 400],
-                        data: { url: './admin.html#requests' },
-                        actions: [
-                            { action: 'open',  title: '👁 Ver panel' },
-                            { action: 'close', title: 'Cerrar'       }
-                        ]
-                    });
-                });
-            }
-
-            // Actualizar lista de solicitudes automáticamente
-            if (typeof renderRequestsList === 'function') {
-                setTimeout(renderRequestsList, 500);
-            }
-        });
-
-        // Escuchar mensaje del SW para reproducir sonido en background
+        // Escuchar mensaje del SW para reproducir sonido (push en background)
         navigator.serviceWorker.addEventListener('message', (event) => {
             if (event.data?.type === 'PLAY_ALERT_SOUND') {
                 if (typeof playAdminAlertSound === 'function') playAdminAlertSound();
             }
         });
 
-        // Diagnóstico completo del sistema push
-        window.diagnosePush = async function() {
-            let msg = '🔍 DIAGNÓSTICO PUSH\n\n';
-
-            // 1. Permisos
-            msg += `1. Permiso notificaciones: ${Notification.permission}\n`;
-
-            // 2. Service Worker
-            if ('serviceWorker' in navigator) {
-                const regs = await navigator.serviceWorker.getRegistrations();
-                msg += `2. Service Workers activos: ${regs.length}\n`;
-                regs.forEach((r, i) => msg += `   SW${i+1}: ${r.scope}\n`);
-            } else {
-                msg += `2. Service Worker: NO SOPORTADO ❌\n`;
-            }
-
-            // 3. Token FCM local
-            const pushEnabled = localStorage.getItem('push_notifications_enabled');
-            msg += `3. Push activado (localStorage): ${pushEnabled || 'NO'}\n`;
-
-            // 4. Tokens en Supabase
-            if (window.sb) {
+        // Auto-reconectar suscripción al cargar si ya tenía permiso
+        window.addEventListener('load', async () => {
+            if (Notification.permission === 'granted' && localStorage.getItem('push_notifications_enabled') === 'true') {
                 try {
-                    const { data, error } = await window.sb
-                        .from('admin_push_tokens')
-                        .select('token, device_type, updated_at');
-                    if (error) {
-                        msg += `4. Tokens en Supabase: ERROR - ${error.message}\n`;
-                    } else if (!data || data.length === 0) {
-                        msg += `4. Tokens en Supabase: NINGUNO ❌ (debes activar notificaciones desde el celular)\n`;
-                    } else {
-                        msg += `4. Tokens en Supabase: ${data.length} token(s) ✅\n`;
-                        data.forEach((t, i) => {
-                            msg += `   Token${i+1}: ...${t.token.slice(-12)} | ${t.device_type} | ${t.updated_at}\n`;
-                        });
+                    const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+                    const sub = await reg.pushManager.getSubscription();
+                    if (sub && window.sb) {
+                        const subJson = sub.toJSON();
+                        await window.sb.from('admin_push_tokens').upsert([{
+                            token: subJson.endpoint,
+                            subscription: subJson,
+                            device_type: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+                            updated_at: new Date().toISOString()
+                        }], { onConflict: 'token' });
+                        console.log('[WebPush] Reconexión silenciosa OK');
                     }
                 } catch(e) {
-                    msg += `4. Tokens en Supabase: ERROR - ${e.message}\n`;
+                    console.warn('[WebPush] Reconexión fallida:', e);
                 }
-            } else {
-                msg += `4. Supabase: NO CONECTADO ❌\n`;
             }
-
-            // 5. PushManager
-            msg += `5. PushManager soportado: ${'PushManager' in window ? 'SÍ ✅' : 'NO ❌'}\n`;
-
-            alert(msg);
-        };
+        });
 
         // Función de prueba de notificación local (sonido + vibración)
         window.testPushNotification = async function() {
@@ -3275,21 +3195,6 @@ Link: https://filtrovehicularperu.com`;
             }
         };
 
-        // Auto-reconectar silenciosamente si ya tenía permiso
-        window.addEventListener('load', async () => {
-            if (Notification.permission === 'granted' && localStorage.getItem('push_notifications_enabled') === 'true') {
-                try {
-                    const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-                    await getToken(messaging, {
-                        vapidKey: 'BMKugK9-B_-lE2KFMip7uBFoaiDPT2SsRDbk9MKpB1qb4PISecRmveI6NgGfo2PBZRmMvXaHRhwgJCaYPSB5ve4',
-                        serviceWorkerRegistration: reg
-                    });
-                    console.log('[FCM] Reconexión silenciosa OK');
-                } catch(e) {
-                    console.warn('[FCM] Reconexión silenciosa fallida:', e);
-                }
-            }
-        });
     </script>
 
     <!-- MANTENER SERVICE WORKER ACTIVO - Evita cierre automático de la PWA -->

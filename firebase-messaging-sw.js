@@ -1,55 +1,51 @@
-// Firebase Cloud Messaging Service Worker - Admin Panel
-// Maneja notificaciones push cuando la app está en segundo plano o cerrada
+// Service Worker - Web Push nativo (VAPID)
+// Maneja notificaciones push en background sin Firebase
 
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
-
-const firebaseConfig = {
-    apiKey: "AIzaSyBReBBPABzIAEneLzjjlGYKddRF7WyQxfw",
-    authDomain: "filtro2026-d9530.firebaseapp.com",
-    projectId: "filtro2026-d9530",
-    storageBucket: "filtro2026-d9530.firebasestorage.app",
-    messagingSenderId: "472315272675",
-    appId: "1:472315272675:web:3389b0bb4c03a4b4ae94d6"
-};
-
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
-
-// Patrón de vibración ~3 segundos
 const VIBRATE_PATTERN = [400, 150, 400, 150, 400, 150, 400, 150, 400, 150, 400];
 
-messaging.onBackgroundMessage((payload) => {
-    console.log('[FCM-SW] Notificación en background:', payload);
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
 
-    const title = payload.notification?.title || '🔔 Nueva Solicitud - Admin';
-    const body  = payload.notification?.body  || 'Hay una solicitud pendiente en el panel.';
+// Manejar push nativo
+self.addEventListener('push', (event) => {
+    console.log('[SW] Push recibido');
+
+    let data = {};
+    try {
+        data = event.data ? event.data.json() : {};
+    } catch(e) {
+        data = { title: '🔔 Nueva Solicitud', body: event.data ? event.data.text() : 'Revisa el panel de administración.' };
+    }
+
+    const title   = data.title   || '🔔 Nueva Solicitud - Admin';
+    const body    = data.body    || 'Hay una solicitud pendiente en el panel.';
+    const iconUrl = data.icon    || './assets/media/logopwa.png';
+    const pageUrl = (data.data && data.data.url) || './admin.html#requests';
 
     const options = {
         body,
-        icon:  './assets/media/logopwa.png',
+        icon:  iconUrl,
         badge: './logopestañaweb.png',
-        tag:   payload.data?.tag || 'admin-alert',
+        tag:   'admin-push',
         renotify: true,
         requireInteraction: true,
         silent: false,
         vibrate: VIBRATE_PATTERN,
-        data: {
-            url: payload.data?.url || './admin.html#requests',
-            ...payload.data
-        },
+        data: { url: pageUrl },
         actions: [
             { action: 'open',  title: '👁 Ver panel' },
             { action: 'close', title: 'Cerrar'       }
         ]
     };
 
-    // Notificar a la página para que reproduzca el sonido
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
-        list.forEach(client => client.postMessage({ type: 'PLAY_ALERT_SOUND' }));
-    });
-
-    return self.registration.showNotification(title, options);
+    event.waitUntil(
+        self.registration.showNotification(title, options).then(() => {
+            // Avisar a la página abierta para reproducir sonido
+            return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+                list.forEach(client => client.postMessage({ type: 'PLAY_ALERT_SOUND' }));
+            });
+        })
+    );
 });
 
 self.addEventListener('notificationclick', (event) => {
