@@ -58,6 +58,11 @@ async function renderLoggedInState() {
 
     var creditos = 0;
     var plataformaActiva = false;
+    
+    // Inicializar siempre en false por defecto
+    window.dashboardActivo = false;
+    window.plataformaActiva = false;
+    
     try {
         if (window.sb) {
             var res = await window.sb
@@ -66,7 +71,7 @@ async function renderLoggedInState() {
                 .eq('email', currentUser.email)
                 .single();
             if (res.data) {
-                creditos = res.data.creditos;
+                creditos = res.data.creditos || 0;
                 window.dashboardActivo = res.data.dashboard_activo || false;
                 plataformaActiva = res.data.plataforma_activa || false;
                 window.plataformaActiva = plataformaActiva;
@@ -74,6 +79,9 @@ async function renderLoggedInState() {
         }
     } catch (e) {
         console.error('Error obteniendo créditos:', e);
+        // Mantener valores por defecto en false si hay error
+        window.dashboardActivo = false;
+        window.plataformaActiva = false;
     }
 
     // Actualizar logo según estado de plataforma

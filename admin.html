@@ -4,7 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FILTRO VEHICULAR | Plataforma Integral</title>
+    <title>FILTRO VEHICULAR | Admin</title>
+    <link rel="manifest" href="./admin-manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FV Admin">
+    <meta name="theme-color" content="#0d2536">
+    <link rel="apple-touch-icon" href="./assets/media/logopwa.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -1057,6 +1064,9 @@
             <h2 style="margin-bottom: 5px;">Gestión de Usuarios</h2>
             <p style="color: #64748b; font-size: 13px; margin-bottom: 25px;">Lista de correos registrados y saldos de créditos en la base de datos de la nube.</p>
             <div style="display:flex; justify-content:flex-end; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+                <button onclick="exportUsersToExcel()" style="background:linear-gradient(135deg,#8bc34a 0%,#7cb342 100%); color:#fff; border:none; border-radius:10px; padding:10px 14px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-file-excel"></i> EXPORTAR CONTACTOS
+                </button>
                 <button onclick="deleteAllUsersCloud()" style="background:var(--petrol); color:#fff; border:none; border-radius:10px; padding:10px 14px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px;">
                     <i class="fa-solid fa-trash-can"></i> ELIMINAR TODAS LAS CUENTAS
                 </button>
@@ -1298,6 +1308,67 @@
                 navigationStack.push(view);
                 history.pushState({ view: view }, '', '#' + view);
                 console.log('📍 Navegación:', view, '| Stack:', navigationStack);
+            }
+        }
+
+        async function exportUsersToExcel() {
+            if (!window.sb) {
+                alert('❌ Supabase no conectado.');
+                return;
+            }
+            try {
+                const { data, error } = await window.sb
+                    .from('solicitudes')
+                    .select('datos')
+                    .like('placa', 'REGISTRO_%');
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    alert('⚠️ No hay usuarios registrados para exportar.');
+                    return;
+                }
+
+                const usuarios = data
+                    .map(row => row.datos)
+                    .filter(d => d && d.nombre && d.whatsapp);
+
+                if (usuarios.length === 0) {
+                    alert('⚠️ No se encontraron contactos con nombre y teléfono.');
+                    return;
+                }
+
+                let html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel">
+<head><meta charset="UTF-8"></head>
+<body><table border="1">
+<thead><tr style="background-color:#0d2536;color:white;font-weight:bold;">
+<th>Nombre</th><th>Número de WhatsApp</th>
+</tr></thead><tbody>`;
+
+                usuarios.forEach(u => {
+                    const nombre = (u.nombre || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    const wpp = (u.whatsapp || '').replace(/\D/g, '');
+                    html += `<tr><td>${nombre}</td><td>${wpp}</td></tr>`;
+                });
+
+                html += `</tbody></table></body></html>`;
+
+                const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                const fecha = new Date().toISOString().split('T')[0];
+                link.setAttribute('href', url);
+                link.setAttribute('download', `contactos_filtro_vehicular_${fecha}.xls`);
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                alert(`✅ ${usuarios.length} contactos exportados correctamente.`);
+            } catch (e) {
+                alert('❌ Error al exportar: ' + e.message);
+                console.error(e);
             }
         }
 
@@ -3059,33 +3130,55 @@ Link: https://filtrovehicularperu.com`;
             }
         };
 
-        // Manejar notificaciones cuando la app está abierta
+        // Manejar notificaciones cuando la app está abierta (foreground)
         onMessage(messaging, (payload) => {
-            console.log('📬 Notificación recibida (app abierta):', payload);
-            
-            // Mostrar notificación del navegador
-            if (Notification.permission === 'granted') {
-                new Notification(payload.notification.title, {
-                    body: payload.notification.body,
-                    icon: './assets/media/logopwa.png',
-                    badge: './assets/media/logopwa.png',
-                    tag: 'admin-notification',
-                    requireInteraction: true
+            console.log('[FCM] Notificación en foreground:', payload);
+
+            const title = payload.notification?.title || '🔔 Nueva Solicitud';
+            const body  = payload.notification?.body  || 'Revisa el panel de administración.';
+
+            // Usar Service Worker para mostrar notificación nativa (con sonido y vibración)
+            if (Notification.permission === 'granted' && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.ready.then(reg => {
+                    reg.showNotification(title, {
+                        body,
+                        icon: './assets/media/logopwa.png',
+                        badge: './logopestañaweb.png',
+                        tag: 'admin-foreground',
+                        renotify: true,
+                        requireInteraction: true,
+                        silent: false,
+                        vibrate: [300, 100, 300, 100, 600],
+                        data: { url: './admin.html#requests' },
+                        actions: [
+                            { action: 'open',  title: '👁 Ver panel' },
+                            { action: 'close', title: 'Cerrar'       }
+                        ]
+                    });
                 });
             }
 
-            // Opcional: Actualizar UI o recargar datos
-            if (payload.data?.type === 'new_user' || payload.data?.type === 'new_payment') {
-                console.log('🔄 Actualizando datos...');
-                // Aquí puedes recargar la tabla de usuarios o solicitudes
+            // Actualizar lista de solicitudes automáticamente
+            if (typeof renderRequestsList === 'function') {
+                setTimeout(renderRequestsList, 500);
             }
         });
 
-        // Auto-activar notificaciones si ya estaban habilitadas
-        if (localStorage.getItem('push_notifications_enabled') === 'true') {
-            console.log('🔔 Notificaciones ya activadas, reconectando...');
-            // No mostrar alert, solo reconectar en silencio
-        }
+        // Auto-reconectar silenciosamente si ya tenía permiso
+        window.addEventListener('load', async () => {
+            if (Notification.permission === 'granted' && localStorage.getItem('push_notifications_enabled') === 'true') {
+                try {
+                    const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+                    await getToken(messaging, {
+                        vapidKey: 'BMKugK9-B_-lE2KFMip7uBFoaiDPT2SsRDbk9MKpB1qb4PISecRmveI6NgGfo2PBZRmMvXaHRhwgJCaYPSB5ve4',
+                        serviceWorkerRegistration: reg
+                    });
+                    console.log('[FCM] Reconexión silenciosa OK');
+                } catch(e) {
+                    console.warn('[FCM] Reconexión silenciosa fallida:', e);
+                }
+            }
+        });
     </script>
 
     <!-- MANTENER SERVICE WORKER ACTIVO - Evita cierre automático de la PWA -->

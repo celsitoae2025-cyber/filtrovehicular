@@ -92,7 +92,7 @@
 
         @media (min-width: 1024px) {
             .app-container {
-                max-width: 1100px;
+                max-width: 1200px;
             }
         }
 
@@ -456,7 +456,8 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 10px;
-            margin: 20px 0;
+            margin: 20px auto;
+            max-width: 1200px;
         }
 
         @media (min-width: 768px) {
@@ -466,33 +467,52 @@
         }
 
         .risk-panel {
-            background: #f8fafc;
-            border-radius: 10px;
-            padding: 16px;
-            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
         }
-
-        .risk-critical { border-top-color: #ef4444; }
-        .risk-moderate  { border-top-color: #f97316; }
-        .risk-safe      { border-top-color: #10b981; }
+        
+        .risk-panel:hover {
+            border-color: #cbd5e1;
+        }
 
         .risk-panel-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 12px;
+            margin-bottom: 14px;
         }
 
-        .risk-panel-icon { font-size: 14px; }
-        .risk-critical .risk-panel-icon { color: #ef4444; }
-        .risk-moderate  .risk-panel-icon { color: #f97316; }
-        .risk-safe      .risk-panel-icon { color: #10b981; }
+        .risk-panel-icon { 
+            font-size: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .risk-critical .risk-panel-icon { 
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+        }
+        .risk-moderate .risk-panel-icon { 
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: #ffffff;
+        }
+        .risk-safe .risk-panel-icon { 
+            background: linear-gradient(135deg, #8bc34a 0%, #7ab83d 100%);
+            color: #ffffff;
+        }
 
         .risk-panel-tag {
             display: block;
             font-size: 9px;
-            font-weight: 500;
-            color: #94a3b8;
+            font-weight: 600;
+            color: #64748b;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             font-family: 'Roboto', sans-serif;
@@ -500,18 +520,19 @@
 
         .risk-panel-title {
             display: block;
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 800;
             color: #0d2536;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
             font-family: 'Roboto', sans-serif;
+            margin-top: 2px;
         }
 
         .risk-panel-divider {
-            height: 1px;
-            background: #e2e8f0;
-            margin-bottom: 10px;
+            height: 2px;
+            background: #f1f5f9;
+            margin-bottom: 12px;
         }
 
         .risk-panel-list {
@@ -525,17 +546,17 @@
 
         .risk-panel-list li {
             font-size: 11px;
-            color: #64748b;
-            font-weight: 400;
-            padding-left: 12px;
+            color: #475569;
+            font-weight: 500;
+            line-height: 1.6;
             position: relative;
-            line-height: 1.4;
+            padding-left: 14px;
             font-family: 'Roboto', sans-serif;
         }
 
-        .risk-critical .risk-panel-list li::before { content: '•'; color: #ef4444; position: absolute; left: 0; font-weight: 700; }
-        .risk-moderate  .risk-panel-list li::before { content: '•'; color: #f97316; position: absolute; left: 0; font-weight: 700; }
-        .risk-safe      .risk-panel-list li::before { content: '•'; color: #10b981; position: absolute; left: 0; font-weight: 700; }
+        .risk-critical .risk-panel-list li::before { content: '•'; color: #ef4444; position: absolute; left: 0; font-weight: 900; font-size: 14px; }
+        .risk-moderate  .risk-panel-list li::before { content: '•'; color: #f97316; position: absolute; left: 0; font-weight: 900; font-size: 14px; }
+        .risk-safe      .risk-panel-list li::before { content: '•'; color: #8bc34a; position: absolute; left: 0; font-weight: 900; font-size: 14px; }
 
 
         /* CUADRO CTA SOLICITA FILTRO REFINADO */
@@ -586,11 +607,12 @@
 
         /* SECCIÓN GANCHO (HOOKS) */
         .hook-section {
-            margin: 0;
+            margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr;
             gap: 12px;
-            padding-bottom: 15px;
+            padding: 0;
+            max-width: 1200px;
         }
 
         @media (min-width: 768px) {
@@ -607,62 +629,44 @@
 
         .hook-card {
             background: #ffffff;
-            border-radius: 10px;
-            padding: 12px 16px;
+            border-radius: 12px;
+            padding: 16px 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             cursor: pointer;
-            transition: background 0.2s ease, border-color 0.2s ease;
-            border: 1px solid #e2e8f0;
-            border-left: 3px solid #0d2536;
-        }
-
-        .hook-card.hook-free {
-            border-left-color: #0d2536;
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
         }
 
         .hook-card:hover {
-            background: #f8fafc;
-            border-color: #cbd5e1;
+            border-color: #8bc34a;
+            transform: translateX(4px);
         }
 
         .hook-icon {
-            width: 32px;
-            height: 32px;
-            background: rgba(13, 37, 54, 0.07);
-            color: #0d2536;
-            border-radius: 8px;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #8bc34a 0%, #7ab83d 100%);
+            color: #ffffff;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 15px;
+            font-size: 18px;
             flex-shrink: 0;
-            transition: all 0.2s;
-        }
-
-        .hook-card.hook-free .hook-icon {
-            background: rgba(13, 37, 54, 0.07);
-            color: #0d2536;
-        }
-
-        .hook-card:hover .hook-icon {
-            background: #0d2536;
-            color: #ffffff;
-        }
-
-        .hook-card.hook-free:hover .hook-icon {
-            background: #0d2536;
-            color: #ffffff;
+            transition: all 0.3s;
         }
 
         .hook-text {
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 700;
             color: #0d2536;
             flex: 1;
-            line-height: 1.3;
+            line-height: 1.4;
             font-family: 'Roboto', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .hook-badge {
@@ -1406,86 +1410,70 @@
             letter-spacing: 0.5px;
         }
 
-        /* FLOATING WHATSAPP */
-        /* FLOATING WHATSAPP INTERACTIVE */
-        .wa-float-container {
+        /* FLOATING WHATSAPP - ASISTENTE SARA */
+        .wa-assistant {
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 1000;
-            display: flex;
-            align-items: center;
         }
-
-        .wa-float {
-            display: flex;
+        .wa-assistant a {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            background-color: #25d366;
-            color: white;
-            padding: 12px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
+            gap: 10px;
+            background: #0d2536;
+            padding: 5px 12px 5px 5px;
+            border-radius: 50px;
             text-decoration: none;
-            box-shadow: none;
-            transition: all 0.3s ease;
-            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
         }
-
-        .wa-icon-box {
+        .wa-assistant a:hover {
+            transform: translateY(-2px);
+        }
+        .wa-assistant .wa-circle {
+            width: 38px;
+            height: 38px;
+            background: #25d366;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            margin-right: 0;
         }
-        
-        .wa-icon-box i {
-            font-size: 24px;
+        .wa-assistant .wa-circle i {
+            font-size: 20px;
+            color: #fff;
         }
-
-        .wa-text-box {
-            display: none;
+        .wa-assistant .wa-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.3;
         }
-
-        .wa-label {
-            font-size: 16px;
+        .wa-assistant .wa-title {
+            font-size: 13px;
             font-weight: 800;
-            line-height: 1.1;
+            color: #8bc34a;
+            font-family: 'Roboto', sans-serif;
         }
-
-        .wa-sub {
+        .wa-assistant .wa-desc {
             font-size: 11px;
-            font-weight: 500;
-            opacity: 0.9;
+            font-weight: 400;
+            color: rgba(255,255,255,0.6);
+            font-family: 'Roboto', sans-serif;
         }
-
-        /* Hover Effect (Desktop) */
-        @media (min-width: 769px) {
-            .wa-float:hover {
-                transform: scale(1.05) translateY(-2px);
-            }
+        .wa-assistant .wa-desc span {
+            color: #ffffff;
+            font-weight: 600;
+            text-decoration: underline;
         }
-
-        /* Mobile State (Keep as small circle on mobile to not block content) */
         @media (max-width: 768px) {
-            .wa-float-container {
-                bottom: 15px !important;
-                right: 15px !important;
-            }
-            .wa-float {
-                padding: 12px !important;
-                width: 48px !important;
-                height: 48px !important;
-                justify-content: center !important;
-            }
-            .wa-icon-box {
-                margin-right: 0 !important;
-            }
-            .wa-text-box {
-                display: none !important;
-            }
+            .wa-assistant { bottom: 15px; right: 15px; }
+            .wa-assistant a { padding: 5px 12px 5px 5px; }
+            .wa-assistant .wa-circle { width: 36px; height: 36px; }
+            .wa-assistant .wa-circle i { font-size: 19px; }
+            .wa-assistant .wa-title { font-size: 12px; }
+            .wa-assistant .wa-desc { font-size: 10px; }
         }
 
         /* SISTEMA DE PESTAÑAS DE SERVICIOS */
@@ -2078,92 +2066,7 @@
             margin: 8px 0;
         }
 
-        /* LIVE PROOF NOTIFICATIONS (SOFISTICADO) */
-        .live-proof {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: none;
-            z-index: 9999;
-            transform: translateX(120%);
-            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-            max-width: 320px;
-            border-left: 4px solid #0d2536;
-        }
-
-        .live-proof.active {
-            transform: translateX(0);
-        }
-
-        .proof-icon {
-            width: 35px;
-            height: 35px;
-            background: #f1f5f9;
-            color: #0d2536;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            flex-shrink: 0;
-            animation: heartBeat 2s infinite;
-        }
-
-        @keyframes heartBeat {
-            0% {
-                transform: scale(1);
-            }
-
-            10% {
-                transform: scale(1.1);
-            }
-
-            20% {
-                transform: scale(1);
-            }
-        }
-
-        .proof-content {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .proof-name {
-            font-size: 13px;
-            font-weight: 800;
-            color: #0d2536;
-            letter-spacing: -0.2px;
-        }
-
-        .proof-msg {
-            font-size: 12px;
-            color: #475569;
-            font-weight: 400;
-            line-height: 1.2;
-        }
-
-        .proof-time {
-            font-size: 10px;
-            color: #94a3b8;
-            margin-top: 4px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
         @media (max-width: 768px) {
-            .live-proof {
-                bottom: 20px;
-                right: 20px;
-                left: 20px;
-                max-width: none;
-            }
             .header-content {
                 flex-direction: row !important;
                 justify-content: space-between !important;
@@ -2360,27 +2263,27 @@
     <div class="app-container">
         <div class="app-body">
 
-            <div class="considerations-header" style="background: #0d2536; padding: 30px 24px 26px; border-radius: 16px; margin-bottom: 10px; margin-top: 20px;">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
-                    <h3 class="cons-title" style="text-transform: uppercase; color: #ffffff; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 1.5px; text-align: center; font-family: 'Roboto', sans-serif;">Plataforma Filtro Vehicular</h3>
-                    <p style="color: rgba(255,255,255,0.55); font-size: 12px; margin: 0; font-family: 'Roboto', sans-serif; font-weight: 400; text-align: center; line-height: 1.4;">Consulta integral de vehículos en tiempo real</p>
-                    <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin: 14px 0 10px;"></div>
-                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                        <button onclick="openInformeModal()" style="background: #f59e0b; color: #ffffff; padding: 9px 18px; border-radius: 20px; border: none; font-size: 12px; font-weight: 600; font-family: 'Roboto', sans-serif; letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">
-                            <i class="fa-solid fa-file-lines" style="font-size: 13px;"></i>
-                            FILTRO COMPLETO <i class="fa-solid fa-plus" style="font-size: 11px; margin-left: 2px;"></i>
-                        </button>
-                        <button onclick="openWAPlateModal()" style="background: #25D366; color: #ffffff; padding: 9px 18px; border-radius: 20px; border: none; font-size: 12px; font-weight: 600; font-family: 'Roboto', sans-serif; letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;">
-                            <i class="fa-brands fa-whatsapp" style="font-size: 13px;"></i>
-                            SOLICITA POR WHATSAPP
-                        </button>
-                    </div>
+            <div class="considerations-header" style="background: #0d2536; padding: 18px 20px; border-radius: 12px; margin-bottom: 8px; margin-top: 20px;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                    <h3 class="cons-title" style="text-transform: uppercase; color: #ffffff; margin: 0; font-size: 18px; font-weight: 900; letter-spacing: 1px; text-align: center; font-family: 'Roboto', sans-serif;">Plataforma Filtro Vehicular</h3>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0; font-family: 'Roboto', sans-serif; font-weight: 400; text-align: center; line-height: 1.3;">Consulta integral de vehículos en tiempo real</p>
                 </div>
             </div>
 
+            <!-- BOTONES DE ACCIÓN PRINCIPAL -->
+            <div style="display: flex; gap: 8px; justify-content: center; margin: 0 0 8px 0;">
+                <button onclick="openInformeModal()" style="background: #f59e0b; color: #ffffff; padding: 10px 16px; border-radius: 20px; border: none; font-size: 11px; font-weight: 700; font-family: 'Roboto', sans-serif; letter-spacing: 0.3px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; transition: 0.2s; white-space: nowrap;" onmouseover="this.style.background='#d97706';" onmouseout="this.style.background='#f59e0b';">
+                    <i class="fa-solid fa-file-lines" style="font-size: 12px;"></i>
+                    FILTRO COMPLETO <i class="fa-solid fa-plus" style="font-size: 10px; margin-left: 1px;"></i>
+                </button>
+                <button onclick="openWAPlateModal()" style="background: #25D366; color: #ffffff; padding: 10px 16px; border-radius: 20px; border: none; font-size: 11px; font-weight: 700; font-family: 'Roboto', sans-serif; letter-spacing: 0.3px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; transition: 0.2s; white-space: nowrap;" onmouseover="this.style.background='#1ea952';" onmouseout="this.style.background='#25D366';">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 12px;"></i>
+                    SOLICITA POR WHATSAPP
+                </button>
+            </div>
 
             <!-- SISTEMA DE PESTAÑAS: CATEGORÍAS VS DASHBOARD -->
-            <div class="services-tabs-container" style="margin-top: 6px;">
+            <div class="services-tabs-container" style="margin-top: 0;">
                 <div class="services-tabs-wrapper">
                     <button class="services-tab active" data-tab="categories" onclick="switchServicesTab('categories')">
                         <i class="fa-solid fa-th-large"></i>
@@ -2402,15 +2305,14 @@
             <!-- CONTENIDO PESTAÑA DASHBOARD -->
             <div id="tab-dashboard" class="services-tab-content">
                 <div class="dashboard-tab-content" style="position: relative; background: #f8fafc; border-radius: 16px; padding: 0; margin: 0;">
-                    <div class="dash-container" style="position: relative; background: #ffffff; border-radius: 16px; max-width: 1200px; margin: 0 auto; overflow: hidden;">
-                        <header class="dash-header" style="background: linear-gradient(135deg, #0d2536 0%, #15324d 100%); color: #ffffff; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center;">
-                            <div class="dash-header-left" style="display: flex; align-items: center; gap: 15px;">
-                                <img src="assets/media/logo_circular.png" style="width: 32px; height: 32px;" alt="Logo">
-                                <div class="dash-title" style="font-size: 18px; font-weight: 700; font-family: 'Roboto', sans-serif; color: #ffffff;">Consultas y Accesos</div>
+                    <div class="dash-container" style="position: relative; background: #ffffff; border-radius: 20px; max-width: 1200px; margin: 0 auto; overflow: hidden;">
+                        <header class="dash-header" style="background: linear-gradient(135deg, #0d2536 0%, #15324d 100%); color: #ffffff; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-radius: 20px 20px 0 0;">
+                            <div class="dash-header-left" style="display: flex; align-items: center;">
+                                <div class="dash-title" style="font-size: 17px; font-weight: 800; font-family: 'Roboto', sans-serif; color: #ffffff; letter-spacing: 0.3px;">CONSULTAS Y ACCESOS</div>
                             </div>
-                            <div class="dash-search-wrapper" style="position: relative; flex: 1; max-width: 400px; margin: 0 20px;">
-                                <i class="fa-solid fa-magnifying-glass dash-search-icon" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #64748b;"></i>
-                                <input type="text" id="dashSearch" placeholder="Buscar servicio..." onkeyup="filterDash()" style="width: 100%; padding: 12px 15px 12px 45px; border: none; border-radius: 8px; background: #f1f5f9; color: #0d2536; font-size: 14px; font-family: 'Roboto', sans-serif;">
+                            <div class="dash-search-wrapper" style="position: relative; flex: 1; max-width: 380px; margin: 0 20px;">
+                                <i class="fa-solid fa-magnifying-glass dash-search-icon" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 13px;"></i>
+                                <input type="text" id="dashSearch" placeholder="Buscar servicio..." onkeyup="filterDash()" style="width: 100%; padding: 11px 14px 11px 42px; border: none; border-radius: 10px; background: #f1f5f9; color: #0d2536; font-size: 13px; font-family: 'Roboto', sans-serif; font-weight: 500;">
                             </div>
                         </header>
 
@@ -2439,15 +2341,33 @@
                         <i class="fa-solid fa-xmark" style="font-size:16px;"></i>
                     </button>
 
-                    <!-- Usuario/Placa y Monto en línea -->
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:12px;">
+                    <!-- Header: Concepto + Monto -->
+                    <div id="saleConceptHeader" style="display:none; background:#0d2536; margin:-22px -22px 16px -22px; padding:16px 22px; border-radius:14px 14px 0 0;">
+                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                            <div style="display:flex; align-items:center; gap:10px; min-width:0; flex:1;">
+                                <div style="width:36px; height:36px; background:rgba(139,195,74,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <i id="saleConceptIcon" class="fa-solid fa-crown" style="font-size:16px; color:#8bc34a;"></i>
+                                </div>
+                                <div style="min-width:0;">
+                                    <p id="saleConcept" style="font-size:12px; color:#ffffff; font-weight:700; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Plataforma Premium</p>
+                                    <p id="saleUserEmail" style="font-size:10px; color:rgba(255,255,255,0.5); font-weight:500; margin:2px 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></p>
+                                </div>
+                            </div>
+                            <div style="text-align:right; flex-shrink:0; margin-left:12px;">
+                                <p id="saleAmountHeader" style="font-size:22px; font-weight:800; color:#8bc34a; margin:0; letter-spacing:-0.5px;">S/ 35</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Header Simple: Placa + Monto (para pagos normales) -->
+                    <div id="saleSimpleHeader" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:12px;">
                         <div style="min-width:0; flex:1;">
                             <p id="saleLabel" style="font-size:9px; color:#94a3b8; font-weight:700; margin:0 0 4px 0; text-transform:uppercase; letter-spacing:0.5px;">Placa</p>
-                            <p style="font-size:13px; color:#0d2536; font-weight:900; margin:0; letter-spacing:0px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="salePlate">---</p>
+                            <p style="font-size:13px; color:#0d2536; font-weight:800; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="salePlate">---</p>
                         </div>
                         <div style="text-align:right; flex-shrink:0;">
                             <p style="font-size:9px; color:#94a3b8; font-weight:700; margin:0 0 4px 0; text-transform:uppercase; letter-spacing:0.5px;">Total</p>
-                            <p id="saleAmount" style="font-size:20px; font-weight:900; color:#0d2536; margin:0; letter-spacing:-0.5px; white-space:nowrap;">S/ 20</p>
+                            <p id="saleAmount" style="font-size:20px; font-weight:800; color:#0d2536; margin:0; letter-spacing:-0.5px; white-space:nowrap;">S/ 20</p>
                         </div>
                     </div>
 
@@ -2465,35 +2385,35 @@
                     </div>
 
                     <!-- QR Code -->
-                    <div style="padding:12px; border:2px solid #e2e8f0; border-radius:12px; margin:0 auto 16px; max-width:200px;">
-                        <img src="assets/media/qrpago.png" id="checkoutQR" alt="QR Pago" style="width:100%; display:block; border-radius:6px;">
+                    <div style="padding:10px; border:2px solid #e2e8f0; border-radius:10px; margin:0 auto 16px; max-width:180px;">
+                        <img src="assets/media/qrpago.png" id="checkoutQR" alt="QR Pago" style="width:100%; display:block; border-radius:4px;">
                     </div>
 
                     <!-- Instrucciones -->
                     <div style="text-align:left; margin-bottom:16px;">
                         <div style="display:flex; align-items:flex-start; gap:8px; margin-bottom:6px;">
                             <div style="width:18px; height:18px; background:#0d2536; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">
-                                <span style="color:#8bc34a; font-size:10px; font-weight:900;">1</span>
+                                <span style="color:#8bc34a; font-size:10px; font-weight:800;">1</span>
                             </div>
-                            <p style="margin:0; font-size:12px; color:#64748b; line-height:1.5;"><strong style="color:#0d2536;">Escanea el QR</strong> desde tu app o banca móvil.</p>
+                            <p style="margin:0; font-size:11px; color:#64748b; line-height:1.5;"><strong style="color:#0d2536;">Escanea el QR</strong> desde tu app o banca m\u00f3vil.</p>
                         </div>
                         <div style="display:flex; align-items:flex-start; gap:8px;">
                             <div style="width:18px; height:18px; background:#0d2536; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;">
-                                <span style="color:#8bc34a; font-size:10px; font-weight:900;">2</span>
+                                <span style="color:#8bc34a; font-size:10px; font-weight:800;">2</span>
                             </div>
-                            <p style="margin:0; font-size:12px; color:#64748b; line-height:1.5;"><strong style="color:#0d2536;">Sube la captura</strong> de tu transferencia.</p>
+                            <p style="margin:0; font-size:11px; color:#64748b; line-height:1.5;"><strong style="color:#0d2536;">Sube la captura</strong> de tu transferencia.</p>
                         </div>
                     </div>
 
-                    <!-- Botón Subir Comprobante -->
+                    <!-- Bot\u00f3n Subir Comprobante -->
                     <input type="file" id="voucherUpload" accept="image/*" style="display:none;" onchange="handleVoucherUpload(event)">
-                    <button onclick="document.getElementById('voucherUpload').click()" id="btnVoucher" style="background:#0d2536; border:none; width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; border-radius:10px; font-weight:800; font-size:13px; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; transition:0.2s;" onmouseover="this.style.background='#15324d';" onmouseout="this.style.background='#0d2536';">
+                    <button onclick="document.getElementById('voucherUpload').click()" id="btnVoucher" style="background:#0d2536; border:none; width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; transition:0.2s;" onmouseover="this.style.background='#15324d';" onmouseout="this.style.background='#0d2536';">
                         <i class="fa-solid fa-cloud-arrow-up" style="font-size:15px;"></i>
                         <span>SUBIR COMPROBANTE</span>
                     </button>
                     
-                    <!-- Botón Volver -->
-                    <button onclick="closeSale()" style="width:100%; padding:8px; background:transparent; color:#94a3b8; border:none; font-size:12px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#64748b';" onmouseout="this.style.color='#94a3b8';">VOLVER ATRÁS</button>
+                    <!-- Bot\u00f3n Volver -->
+                    <button onclick="closeSale()" style="width:100%; padding:8px; background:transparent; color:#94a3b8; border:none; font-size:11px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#64748b';" onmouseout="this.style.color='#94a3b8';">VOLVER ATR\u00c1S</button>
                 </div>
             </div>
 
@@ -2501,15 +2421,12 @@
 
 
             
-            <div class="wa-float-container">
-                <a href="https://wa.me/51932465820?text=Hola,%20solicito%20mi%20filtro%20vehicular%20completo."
-                    class="wa-float" target="_blank">
-                    <div class="wa-icon-box">
-                        <i class="fa-brands fa-whatsapp"></i>
-                    </div>
-                    <div class="wa-text-box">
-                        <span class="wa-label">Solicitar Informe</span>
-                        <span class="wa-sub">Nuestro equipo crea el informe por ti</span>
+            <div class="wa-assistant">
+                <a href="https://wa.me/51932465820?text=Hola,%20necesito%20informaci%C3%B3n%20sobre%20el%20*Filtro%20Vehicular*.%20%C2%BFMe%20puedes%20ayudar?" target="_blank">
+                    <div class="wa-circle"><i class="fa-brands fa-whatsapp"></i></div>
+                    <div class="wa-info">
+                        <span class="wa-title">Sara, tu asistente virtual</span>
+                        <span class="wa-desc">Haz tu consulta <span>aquí</span></span>
                     </div>
                 </a>
             </div>
@@ -2644,38 +2561,34 @@
                 </div>
             </div>
 
-            <div id="liveProof" class="live-proof">
-                <div class="proof-icon">
-                    <i class="fa-solid fa-check"></i>
-                </div>
-                <div class="proof-content">
-                    <span class="proof-name" id="proofName">Usuario</span>
-                    <span class="proof-msg" id="proofMsg">Gracias, excelente atención</span>
-                    <span class="proof-time" id="proofTime">Hace un momento</span>
-                </div>
-            </div>
-
 
 
             <!-- STATS COUNTER -->
-            <div style="margin: 40px 0; padding: 0 10px;">
-                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; text-align: center; max-width: 600px; margin: 0 auto;">
+            <div style="margin: 20px 0 10px; padding: 0 10px;">
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; text-align: center; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #0d2536 0%, #15324d 100%); border-radius: 12px; padding: 14px 10px;">
                     <!-- Filtrados -->
-                    <div style="padding: 0 15px; border-right: 1px solid #e2e8f0;">
-                        <div class="stat-number" data-target="15000" style="font-size: 24px; font-weight: 700; color: #8bc34a; font-family: 'Roboto', sans-serif; margin-bottom: 5px;">0</div>
-                        <div class="stat-label" style="font-size: 10px; font-weight: 500; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Filtrados</div>
+                    <div style="padding: 0 12px; border-right: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <i class="fa-solid fa-car" style="font-size: 14px; color: #8bc34a;"></i>
+                        <div>
+                            <div class="stat-number" data-target="15000" style="font-size: 20px; font-weight: 900; color: #ffffff; font-family: 'Roboto', sans-serif; letter-spacing: -0.5px; line-height: 1.1;">0</div>
+                            <div class="stat-label" style="font-size: 8px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px;">Filtrados</div>
+                        </div>
                     </div>
-                    
                     <!-- Precisión -->
-                    <div style="padding: 0 15px; border-right: 1px solid #e2e8f0;">
-                        <div class="stat-number" data-target="99.8" data-decimal="true" style="font-size: 24px; font-weight: 700; color: #8bc34a; font-family: 'Roboto', sans-serif; margin-bottom: 5px;">0</div>
-                        <div class="stat-label" style="font-size: 10px; font-weight: 500; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Precisión</div>
+                    <div style="padding: 0 12px; border-right: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <i class="fa-solid fa-shield-halved" style="font-size: 14px; color: #8bc34a;"></i>
+                        <div>
+                            <div class="stat-number" data-target="99.8" data-decimal="true" style="font-size: 20px; font-weight: 900; color: #ffffff; font-family: 'Roboto', sans-serif; letter-spacing: -0.5px; line-height: 1.1;">0</div>
+                            <div class="stat-label" style="font-size: 8px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px;">Precisión</div>
+                        </div>
                     </div>
-                    
                     <!-- Soporte -->
-                    <div style="padding: 0 15px;">
-                        <div class="stat-number-text" style="font-size: 24px; font-weight: 700; color: #8bc34a; font-family: 'Roboto', sans-serif; margin-bottom: 5px;">24/7</div>
-                        <div class="stat-label" style="font-size: 10px; font-weight: 500; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Soporte</div>
+                    <div style="padding: 0 12px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <i class="fa-solid fa-headset" style="font-size: 14px; color: #8bc34a;"></i>
+                        <div>
+                            <div class="stat-number-text" style="font-size: 20px; font-weight: 900; color: #ffffff; font-family: 'Roboto', sans-serif; letter-spacing: -0.5px; line-height: 1.1;">24/7</div>
+                            <div class="stat-label" style="font-size: 8px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px;">Soporte</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2791,24 +2704,8 @@
                 return;
             }
             
-            // Validación según la pestaña
-            if (tabName === 'categories') {
-                // CATEGORÍAS: Requiere plataforma activa (pago de S/ 35)
-                if (typeof window.plataformaActiva === 'undefined' || !window.plataformaActiva) {
-                    mostrarModalActivacion('activar');
-                    return;
-                }
-            } else if (tabName === 'dashboard') {
-                // DASHBOARD: Requiere dashboard_activo O plataforma_activa
-                const tieneDashboard = window.dashboardActivo || false;
-                const tienePlataforma = window.plataformaActiva || false;
-                
-                if (!tieneDashboard && !tienePlataforma) {
-                    // No tiene ninguno de los dos accesos
-                    mostrarModalActivacion('dashboard');
-                    return;
-                }
-            }
+            // Usuarios demo pueden navegar libremente por todas las pestañas
+            // El bloqueo premium se aplica al momento de hacer una consulta real
             
             // Agregar al historial de navegación
             if (addToHistory) {
@@ -2856,17 +2753,77 @@
             const infoContent = document.getElementById('infoContent');
             if (!infoModal || !infoContent) return;
             infoContent.innerHTML = `
-                <div style="text-align:center; padding: 20px 24px 28px;">
-                    <div style="width: 72px; height: 72px; margin: 0 auto 18px; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; border-radius: 50%; padding: 4px;">
-                        <img src="assets/media/logo_circularAZUL.png" style="width: 52px; height: 52px; object-fit: contain;">
+                <div style="text-align:center; padding: 32px 28px 36px; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);">
+                    <div style="width: 96px; height: 96px; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); border-radius: 50%; box-shadow: 0 8px 24px rgba(13, 37, 54, 0.15); position: relative;">
+                        <div style="position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid #8bc34a; opacity: 0.3;"></div>
+                        <img src="assets/media/logo_circularAZUL.png" style="width: 64px; height: 64px; object-fit: contain; filter: brightness(0) invert(1);">
                     </div>
-                    <div style="font-size: 15px; font-weight: 700; color: #0d2536; margin-bottom: 6px;">Acceso Restringido</div>
-                    <p style="font-size: 12px; color: #94a3b8; margin-bottom: 22px; line-height: 1.5;">Para continuar, inicia sesión o crea una cuenta.</p>
-                    <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') openAuthModal();" style="background: #0d2536; color:#fff; border:none; padding:12px; border-radius:8px; font-weight:600; cursor:pointer; width:100%; font-size:13px; letter-spacing:0.3px; margin-bottom: 10px;">Iniciar Sesión</button>
-                    <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') { openAuthModal(); setTimeout(() => toggleAuthMode(), 100); }" style="background: #f1f5f9; color:#0d2536; border:none; padding:12px; border-radius:8px; font-weight:600; cursor:pointer; width:100%; font-size:13px;">Crear Cuenta</button>
+                    <div style="font-size: 20px; font-weight: 800; color: #0d2536; margin-bottom: 10px; letter-spacing: -0.3px;">Acceso Restringido</div>
+                    <p style="font-size: 13px; color: #64748b; margin-bottom: 28px; line-height: 1.6; max-width: 280px; margin-left: auto; margin-right: auto;">Para acceder a esta función, necesitas iniciar sesión o crear una cuenta.</p>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') openAuthModal();" style="background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); color:#fff; border:none; padding:14px 24px; border-radius:10px; font-weight:700; cursor:pointer; width:100%; font-size:14px; letter-spacing:0.3px; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(13, 37, 54, 0.2);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(13, 37, 54, 0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(13, 37, 54, 0.2)';"><i class="fa-solid fa-right-to-bracket" style="font-size: 13px;"></i> Iniciar Sesión</button>
+                        <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') { openAuthModal(); setTimeout(() => toggleAuthMode(), 100); }" style="background: #ffffff; color:#0d2536; border: 2px solid #e2e8f0; padding:14px 24px; border-radius:10px; font-weight:700; cursor:pointer; width:100%; font-size:14px; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.borderColor='#8bc34a'; this.style.background='#f8fafc';" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#ffffff';"><i class="fa-solid fa-user-plus" style="font-size: 13px;"></i> Crear Cuenta</button>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                        <p style="font-size: 11px; color: #94a3b8; margin: 0;">¿Necesitas ayuda? <a href="https://wa.me/51932465820?text=Hola%2C%20necesito%20ayuda%20para%20activar%20mi%20cuenta%20en%20Filtro%20Vehicular." target="_blank" style="color: #8bc34a; text-decoration: none; font-weight: 600;">Contáctanos</a></p>
+                    </div>
                 </div>
             `;
             infoModal.style.display = 'flex';
+        }
+
+        // Función para mostrar modal de Upgrade Premium (S/ 35)
+        function showUpgradePremiumModal() {
+            const infoModal = document.getElementById('infoModal');
+            const infoContent = document.getElementById('infoContent');
+            if (!infoModal || !infoContent) return;
+            infoContent.innerHTML = `
+                <div style="text-align:center; padding: 24px 22px 28px; background: #ffffff;">
+                    <div style="width: 56px; height: 56px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); border-radius: 50%; position: relative;">
+                        <div style="position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid #8bc34a; opacity: 0.3;"></div>
+                        <i class="fa-solid fa-crown" style="font-size: 22px; color: #f59e0b;"></i>
+                    </div>
+                    <div style="font-size: 17px; font-weight: 700; color: #0d2536; margin-bottom: 6px; letter-spacing: -0.3px;">Plataforma Premium</div>
+                    <p style="font-size: 12px; color: #64748b; margin-bottom: 18px; line-height: 1.5;">Acceso completo a <strong style="color: #0d2536;">+88 consultas</strong> por <strong style="color: #8bc34a;">S/ 35</strong></p>
+                    
+                    <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 18px; text-align: left;">
+                        <div style="display: grid; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-circle-check" style="font-size: 14px; color: #8bc34a; flex-shrink: 0;"></i>
+                                <span style="font-size: 11px; color: #334155; font-weight: 500;">Todos los servicios incluidos</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-circle-check" style="font-size: 14px; color: #8bc34a; flex-shrink: 0;"></i>
+                                <span style="font-size: 11px; color: #334155; font-weight: 500;">Consultas ilimitadas 24/7</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-circle-check" style="font-size: 14px; color: #8bc34a; flex-shrink: 0;"></i>
+                                <span style="font-size: 11px; color: #334155; font-weight: 500;">Soporte prioritario</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button onclick="document.getElementById('infoModal').style.display='none'; abrirPasarelaPremium();" style="background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); color:#fff; border:none; padding:13px 20px; border-radius:10px; font-weight:700; cursor:pointer; width:100%; font-size:13px; letter-spacing:0.3px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.opacity='0.9';" onmouseout="this.style.opacity='1';"><i class="fa-solid fa-cart-shopping" style="font-size: 12px;"></i> Comprar Ahora - S/ 35</button>
+                        <button onclick="document.getElementById('infoModal').style.display='none';" style="background: #ffffff; color:#64748b; border: 2px solid #e2e8f0; padding:12px 20px; border-radius:10px; font-weight:600; cursor:pointer; width:100%; font-size:12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#cbd5e1';" onmouseout="this.style.borderColor='#e2e8f0';">Cancelar</button>
+                    </div>
+                    
+                    <p style="font-size: 10px; color: #94a3b8; margin: 14px 0 0;">Pago \u00fanico \u2022 Acceso inmediato tras aprobaci\u00f3n</p>
+                </div>
+            `;
+            infoModal.style.display = 'flex';
+        }
+
+        // Función para abrir pasarela de pago premium (S/ 35)
+        function abrirPasarelaPremium() {
+            if (typeof currentUser === 'undefined' || !currentUser) {
+                showAccessRestrictedModal();
+                return;
+            }
+            // Abrir pasarela de pago: monto, concepto, créditos, tipo
+            if (typeof openSale === 'function') {
+                openSale('35.00', 'Plataforma Premium - Acceso Completo', 0, 'dashboard');
+            }
         }
 
         // Función para mostrar modal de activación
@@ -3119,15 +3076,27 @@
         }
 
         function handleServiceClick(service) {
+            // Verificar si el usuario está logueado
+            if (typeof currentUser === 'undefined' || !currentUser) {
+                showAccessRestrictedModal();
+                return;
+            }
+            
+            // Verificar si tiene acceso premium (plataforma_activa)
+            const tienePremium = window.plataformaActiva || false;
+            
+            if (!tienePremium) {
+                // Usuario registrado pero sin pago de S/ 35 → Mostrar modal de upgrade
+                showUpgradePremiumModal();
+                return;
+            }
+            
+            // Usuario con acceso premium → Permitir acceso al servicio
             if (service.link) {
                 // Abrir enlace externo
                 window.open(service.link, '_blank');
             } else if (service.price) {
-                // Procesar pago del servicio
-                if (typeof currentUser === 'undefined' || !currentUser) {
-                    showAccessRestrictedModal();
-                    return;
-                }
+                // Procesar pago del servicio individual
                 
                 // Pedir placa y procesar pago
                 const infoModal = document.getElementById('infoModal');
@@ -3157,6 +3126,18 @@
         }
 
         function handleDashboardService(icon, title, desc, link, price) {
+            // Verificar si el usuario está logueado
+            if (typeof currentUser === 'undefined' || !currentUser) {
+                showAccessRestrictedModal();
+                return;
+            }
+            
+            // Verificar si tiene acceso premium (plataforma_activa)
+            if (!window.plataformaActiva) {
+                showUpgradePremiumModal();
+                return;
+            }
+            
             const service = {
                 icon: icon,
                 title: title,
@@ -3169,11 +3150,6 @@
                 // Abrir enlace externo
                 window.open(service.link, '_blank');
             } else if (service.price) {
-                // Procesar pago del servicio
-                if (typeof currentUser === 'undefined' || !currentUser) {
-                    showAccessRestrictedModal();
-                    return;
-                }
                 
                 // Pedir placa y procesar pago
                 const infoModal = document.getElementById('infoModal');
@@ -3203,6 +3179,13 @@
         }
 
         function processServicePayment(serviceTitle, servicePrice, serviceIcon) {
+            // Verificar acceso premium antes de procesar pago
+            if (!window.plataformaActiva) {
+                document.getElementById('infoModal').style.display = 'none';
+                showUpgradePremiumModal();
+                return;
+            }
+            
             const plateInput = document.getElementById('servicePlateInput');
             const plate = plateInput ? plateInput.value.trim() : '';
             
@@ -3226,15 +3209,22 @@
                 const d = document.createElement('div');
                 d.className = 'hook-card';
                 d.onclick = async () => {
+                    // Verificar si el usuario está logueado
+                    if (typeof currentUser === 'undefined' || !currentUser) {
+                        showAccessRestrictedModal();
+                        return;
+                    }
+                    
+                    // Verificar si tiene acceso premium (plataforma_activa)
+                    if (!window.plataformaActiva) {
+                        showUpgradePremiumModal();
+                        return;
+                    }
+                    
                     if (c.link) {
                         // 1. Enlace Externo Directo
                         window.open(c.link, '_blank');
                     } else if (c.price) {
-                        // 2. Comprobación de Sesión antes de pedir placa
-                        if (typeof currentUser === 'undefined' || !currentUser) {
-                             showLoginModal();
-                             return;
-                        }
 
                         // USUARIO LOGUEADO -> Pedir Placa
                         const infoModal = document.getElementById('infoModal');
@@ -3419,15 +3409,18 @@
 
         function openSale(amount = '20.00', concept = 'Activa tu expediente integral con 2 créditos', credits = 0, type = 'regular') {
             // Verificar login para créditos o activación
-            if ((credits > 0 || type === 'activacion') && (typeof currentUser === 'undefined' || !currentUser)) {
-                alert("Para realizar esta acción, debes Iniciar Sesión o Registrarte primero.");
-                if (typeof openAuthModal === 'function') openAuthModal();
+            if ((credits > 0 || type === 'activacion' || type === 'dashboard') && (typeof currentUser === 'undefined' || !currentUser)) {
+                showAccessRestrictedModal();
                 return;
             }
             
             currentSaleCredits = credits;
             currentSaleAmount = amount;
-            currentSaleType = type; // Guardar tipo
+            currentSaleType = type;
+
+            // Referencias a los dos headers
+            var conceptHeader = document.getElementById('saleConceptHeader');
+            var simpleHeader = document.getElementById('saleSimpleHeader');
 
             // Obtener la placa/usuario correcto según el tipo
             let p = '';
@@ -3439,94 +3432,52 @@
                 p = currentUser.email;
                 isUserType = true;
             } else if (type === 'filtro') {
-                // Para filtro vehicular, obtener de temp_informe_placa
                 p = localStorage.getItem('temp_informe_placa') || '---';
             } else {
                 const plateInputEl = document.getElementById('plateInput');
                 p = plateInputEl ? normalize(plateInputEl.value) : '---';
             }
-            
-            // Actualizar ícono y label según el tipo
-            const saleIcon = document.getElementById('saleIcon');
-            const saleLabel = document.getElementById('saleLabel');
-            if (isUserType) {
-                // Para activación/dashboard: ícono de usuario
-                if (saleIcon) saleIcon.className = 'fa-solid fa-user';
-                if (saleLabel) saleLabel.textContent = 'Usuario';
-            } else {
-                // Para filtro vehicular: ícono de carro
-                if (saleIcon) saleIcon.className = 'fa-solid fa-car';
-                if (saleLabel) saleLabel.textContent = 'Placa';
-            }
-            
-            const plateDisplay = document.getElementById('salePlate');
-            if(plateDisplay) {
-                plateDisplay.textContent = p;
-            }
 
-            // Actualizar monto dinámicamente
-            const saleAmountDisplay = document.getElementById('saleAmount');
-            if(saleAmountDisplay) {
-                saleAmountDisplay.textContent = 'S/ ' + amount;
+            if (type === 'dashboard' || type === 'activacion' || credits > 0) {
+                // Mostrar header con concepto (premium/recarga)
+                if (conceptHeader) conceptHeader.style.display = 'block';
+                if (simpleHeader) simpleHeader.style.display = 'none';
+                
+                var conceptEl = document.getElementById('saleConcept');
+                var emailEl = document.getElementById('saleUserEmail');
+                var amountHeaderEl = document.getElementById('saleAmountHeader');
+                var conceptIconEl = document.getElementById('saleConceptIcon');
+                
+                if (conceptEl) conceptEl.textContent = concept;
+                if (emailEl) emailEl.textContent = currentUser.email;
+                if (amountHeaderEl) amountHeaderEl.textContent = 'S/ ' + amount;
+                
+                if (conceptIconEl) {
+                    if (type === 'dashboard') {
+                        conceptIconEl.className = 'fa-solid fa-crown';
+                    } else {
+                        conceptIconEl.className = 'fa-solid fa-coins';
+                    }
+                }
+            } else {
+                // Mostrar header simple (placa + monto)
+                if (conceptHeader) conceptHeader.style.display = 'none';
+                if (simpleHeader) simpleHeader.style.display = 'flex';
+                
+                var saleLabel = document.getElementById('saleLabel');
+                if (saleLabel) saleLabel.textContent = 'Placa';
+                
+                var plateDisplay = document.getElementById('salePlate');
+                if (plateDisplay) plateDisplay.textContent = p;
+
+                var saleAmountDisplay = document.getElementById('saleAmount');
+                if (saleAmountDisplay) saleAmountDisplay.textContent = 'S/ ' + amount;
             }
 
             document.getElementById('modalSale').style.display = 'flex';
         }
         function closeSale() { document.getElementById('modalSale').style.display = 'none'; }
         
-
-        // INPUT HANDLER
-        // SIMULADOR DE PRUEBA SOCIAL (CLIENTES SATISFECHOS)
-        const clients = [
-            { name: "Juan Quispe Mamani", msg: "Excelente atención, muy confiable." },
-            { name: "Carlos Huamán Perca", msg: "Obtuve mi reporte rápido, gracias." },
-            { name: "Ricardo Ccaza Choque", msg: "Todo conforme con la info de la placa." },
-            { name: "Fernando Yupanqui", msg: "Soporte A1 por WhatsApp, recomendado." },
-            { name: "Gustavo Condori L.", msg: "Por fin una plataforma veloz. Todo OK." },
-            { name: "Roberto Pari Apaza", msg: "Muy confiable, me evitó una estafa." },
-            { name: "Víctor Hugo Calsín", msg: "Atención rápida, súper recomendado." },
-            { name: "Luis Ángel Tajahuana", msg: "El reporte más completo de Huancavelica." },
-            { name: "Wilber Huanca Ccama", msg: "Confiable para comprar carros usados." }
-        ];
-
-        const times = ["Hace 2 min", "Hace 5 min", "Hace un momento", "Hace 8 min", "Hace 15 min"];
-
-        function showNotification() {
-            const proof = document.getElementById('liveProof');
-            const nameElem = document.getElementById('proofName');
-            const msgElem = document.getElementById('proofMsg');
-            const timeElem = document.getElementById('proofTime');
-
-            const client = clients[Math.floor(Math.random() * clients.length)];
-            const time = times[Math.floor(Math.random() * times.length)];
-
-            nameElem.textContent = client.name;
-            msgElem.textContent = client.msg;
-            timeElem.textContent = time;
-
-            proof.classList.add('active');
-
-            setTimeout(() => {
-                proof.classList.remove('active');
-            }, 6000); // 6 segundos visible
-        }
-
-        // Iniciar ciclo de notificaciones (Simulador de flujo real)
-        function startLiveProof() {
-            // Primera notificación después de 2 minutos para que no sea sospechoso
-            setTimeout(() => {
-                showNotification();
-                // Repetir cada 2 a 4 minutos de forma aleatoria
-                const repeatNotification = () => {
-                    const nextTime = Math.random() * (240000 - 120000) + 120000;
-                    setTimeout(() => {
-                        showNotification();
-                        repeatNotification();
-                    }, nextTime);
-                };
-                repeatNotification();
-            }, 120000);
-        }
 
         const normalize = (p) => p.toString().toUpperCase().replace(/[^A-Z0-9-]/g, '');
 
@@ -3545,16 +3496,13 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            startLiveProof();
             checkPendingFlow();
 
             // BLOQUEO GLOBAL: Si el usuario NO ha iniciado sesión, cualquier clic en elementos interactivos muestra "Acceso Restringido"
             document.addEventListener('click', function(e) {
-                // Si ya hay sesión activa, no bloquear nada
-                if (typeof currentUser !== 'undefined' && currentUser) return;
-
-                // Elementos que SÍ deben funcionar sin login (header logo, login button, footer links, etc.)
                 var target = e.target;
+                
+                // Elementos que SIEMPRE deben funcionar (header logo, login button, footer, modales, etc.)
                 var allowed = target.closest('#mainAuthBtn') || 
                               target.closest('.header-logo') || 
                               target.closest('.site-footer') ||
@@ -3564,12 +3512,14 @@
                               target.closest('[onclick*="openAuthModal"]') ||
                               target.closest('[onclick*="toggleAuthMode"]') ||
                               target.closest('#installPWA') ||
-                              target.closest('.flyer-close');
+                              target.closest('.flyer-close') ||
+                              target.closest('#modalSale') ||
+                              target.closest('[onclick*="closeAuthModal"]');
 
                 if (allowed) return;
 
-                // Elementos interactivos que DEBEN bloquearse
-                var blocked = target.closest('.hook-card') ||
+                // Elementos interactivos que requieren verificación
+                var isServiceElement = target.closest('.hook-card') ||
                               target.closest('.dash-card') ||
                               target.closest('.services-tab') ||
                               target.closest('.dash-tab') ||
@@ -3580,15 +3530,21 @@
                               target.closest('[onclick*="submitInforme"]') ||
                               target.closest('[onclick*="switchServicesTab"]') ||
                               target.closest('[onclick*="handleServiceClick"]') ||
+                              target.closest('[onclick*="handleDashboardService"]') ||
                               target.closest('[onclick*="setDashTab"]') ||
                               target.closest('[onclick*="showCategoryServices"]') ||
                               target.closest('.btn-consultar') ||
                               target.closest('.btn-primary-action');
 
-                if (blocked) {
+                if (!isServiceElement) return;
+
+                // BLOQUEO: Solo usuarios NO logueados → Acceso Restringido
+                // Usuarios logueados (incluso demo sin premium) pueden navegar libremente
+                if (typeof currentUser === 'undefined' || !currentUser) {
                     e.preventDefault();
                     e.stopPropagation();
                     showAccessRestrictedModal();
+                    return;
                 }
             }, true);
 
@@ -4497,46 +4453,47 @@
 
     <div class="auth-modal" id="authModal">
         <!-- Botón Cerrar (fuera del cuadro) -->
-        <button onclick="closeAuthModal()" aria-label="Cerrar" style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.95); border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.2s;" onmouseover="this.style.background='#ffffff'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(255,255,255,0.95)'; this.style.transform='scale(1)';">
+        <button onclick="closeAuthModal()" aria-label="Cerrar" style="position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; background: #ffffff; border: 2px solid #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: all 0.2s;" onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#0d2536';" onmouseout="this.style.background='#ffffff'; this.style.borderColor='#e2e8f0';">
             <i class="fa-solid fa-xmark" style="font-size: 20px; color: #64748b;"></i>
         </button>
         
         <div class="auth-card">
             <!-- Logo Institucional -->
-            <div style="width: 90px; height: 90px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 20px rgba(13,37,54,0.1); border: 3px solid #f1f5f9;">
-                <img src="assets/media/logo_circularAZUL.png" style="width: 70px; height: 70px; object-fit: contain; border-radius: 50%;">
+            <div style="width: 96px; height: 96px; background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; position: relative;">
+                <div style="position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid #8bc34a; opacity: 0.3;"></div>
+                <img src="assets/media/logo_circularAZUL.png" style="width: 64px; height: 64px; object-fit: contain; filter: brightness(0) invert(1);">
             </div>
 
             <!-- Título Dinámico -->
-            <h3 class="auth-title" id="authTitle" style="font-size: 24px; font-weight: 900; color: #0d2536; margin: 0 0 8px; text-align: center; letter-spacing: -0.5px;">Crear mi Cuenta</h3>
-            <p class="auth-subtitle" id="authSubtitle" style="font-size: 13px; color: #64748b; margin: 0 0 28px; text-align: center; font-weight: 500;">Solo necesitas tu correo para empezar</p>
+            <h3 class="auth-title" id="authTitle" style="font-size: 20px; font-weight: 700; color: #0d2536; margin: 0 0 10px; text-align: center; letter-spacing: -0.3px;">Crear mi Cuenta</h3>
+            <p class="auth-subtitle" id="authSubtitle" style="font-size: 13px; color: #64748b; margin: 0 0 28px; text-align: center; font-weight: 500; line-height: 1.6; max-width: 280px; margin-left: auto; margin-right: auto;">Solo necesitas tu correo para empezar</p>
 
             <!-- Formulario -->
             <form id="authForm" onsubmit="event.preventDefault(); handleAuthSubmit();">
                 <!-- Campos de Registro -->
-                <div class="auth-input-group" id="nameGroup" style="display:none; margin-bottom: 16px;">
+                <div class="auth-input-group" id="nameGroup" style="display:none; margin-bottom: 18px;">
                     <label style="display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">NOMBRE COMPLETO</label>
-                    <input type="text" id="authName" class="auth-input" placeholder="Ej. Juan Pérez" style="width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; color: #0d2536; font-weight: 500; transition: all 0.2s; background: #ffffff;" onfocus="this.style.borderColor='#8bc34a'; this.style.boxShadow='0 0 0 3px rgba(139,195,74,0.1)';" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';">
+                    <input type="text" id="authName" class="auth-input" placeholder="Ej. Juan Pérez" style="width: 100%; padding: 15px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; color: #0d2536; font-weight: 500; transition: all 0.2s; background: #ffffff;" onfocus="this.style.borderColor='#8bc34a'; this.style.background='#f8fafc';" onblur="this.style.borderColor='#e2e8f0'; this.style.background='#ffffff';">
                 </div>
                 
-                <div class="auth-input-group" id="wppGroup" style="display:none; margin-bottom: 16px;">
+                <div class="auth-input-group" id="wppGroup" style="display:none; margin-bottom: 18px;">
                     <label style="display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">NÚMERO DE WHATSAPP</label>
-                    <input type="tel" id="authWhatsapp" class="auth-input" placeholder="Ej. 932465820" style="width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; color: #0d2536; font-weight: 500; transition: all 0.2s; background: #ffffff;" onfocus="this.style.borderColor='#8bc34a'; this.style.boxShadow='0 0 0 3px rgba(139,195,74,0.1)';" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';">
+                    <input type="tel" id="authWhatsapp" class="auth-input" placeholder="Ej. 932465820" style="width: 100%; padding: 15px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; color: #0d2536; font-weight: 500; transition: all 0.2s; background: #ffffff;" onfocus="this.style.borderColor='#8bc34a'; this.style.background='#f8fafc';" onblur="this.style.borderColor='#e2e8f0'; this.style.background='#ffffff';">
                 </div>
                 
                 <!-- Email (siempre visible) -->
-                <div class="auth-input-group" style="margin-bottom: 16px;">
+                <div class="auth-input-group" style="margin-bottom: 18px;">
                     <label style="display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">CORREO ELECTRÓNICO</label>
-                    <input type="email" id="authEmail" class="auth-input" placeholder="correo@ejemplo.com" style="width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; color: #0d2536; font-weight: 500; transition: all 0.2s; background: #ffffff;" onfocus="this.style.borderColor='#8bc34a'; this.style.boxShadow='0 0 0 3px rgba(139,195,74,0.1)';" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';">
+                    <input type="email" id="authEmail" class="auth-input" placeholder="correo@ejemplo.com" style="width: 100%; padding: 15px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; color: #0d2536; font-weight: 500; transition: all 0.2s; background: #ffffff;" onfocus="this.style.borderColor='#8bc34a'; this.style.background='#f8fafc';" onblur="this.style.borderColor='#e2e8f0'; this.style.background='#ffffff';">
                 </div>
                 
                 <!-- Contraseña (oculta inicialmente en login) -->
-                <div class="auth-input-group" id="passwordGroup" style="margin-bottom: 20px;">
+                <div class="auth-input-group" id="passwordGroup" style="margin-bottom: 24px;">
                     <label style="display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">CONTRASEÑA</label>
                     <div style="position: relative;">
-                        <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" style="width: 100%; padding: 14px 45px 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; color: #0d2536; font-weight: 500; transition: all 0.2s; background: #ffffff;" onfocus="this.style.borderColor='#8bc34a'; this.style.boxShadow='0 0 0 3px rgba(139,195,74,0.1)';" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';">
-                        <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 8px; color: #94a3b8; transition: color 0.2s;" onmouseover="this.style.color='#64748b';" onmouseout="this.style.color='#94a3b8';" aria-label="Mostrar contraseña">
-                            <i class="fa-solid fa-eye" id="togglePasswordIcon" style="font-size: 16px;"></i>
+                        <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" style="width: 100%; padding: 15px 50px 15px 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; color: #0d2536; font-weight: 500; transition: all 0.2s; background: #ffffff;" onfocus="this.style.borderColor='#8bc34a'; this.style.background='#f8fafc';" onblur="this.style.borderColor='#e2e8f0'; this.style.background='#ffffff';">
+                        <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 8px; color: #94a3b8; transition: color 0.2s;" onmouseover="this.style.color='#8bc34a';" onmouseout="this.style.color='#94a3b8';" aria-label="Mostrar contraseña">
+                            <i class="fa-solid fa-eye" id="togglePasswordIcon" style="font-size: 17px;"></i>
                         </button>
                     </div>
                 </div>
@@ -4545,7 +4502,7 @@
                 <div id="authError" style="display: none; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 12px; border-radius: 10px; font-size: 12px; font-weight: 600; margin-bottom: 16px; text-align: center;"></div>
 
                 <!-- Botón Principal -->
-                <button type="submit" class="btn-auth-action" id="authButton" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: #ffffff; border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(139,195,74,0.3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 28px rgba(139,195,74,0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(139,195,74,0.3)';">REGISTRARME HOY</button>
+                <button type="submit" class="btn-auth-action" id="authButton" style="width: 100%; padding: 14px 24px; background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); color: #ffffff; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; letter-spacing: 0.3px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';"><i class="fa-solid fa-right-to-bracket" style="font-size: 13px;"></i> Registrarme Ahora</button>
             </form>
 
             <!-- Toggle entre Login/Registro -->
@@ -4993,6 +4950,15 @@
             renderDashGrid();
         }
 
+        // Función para abrir enlaces del dashboard con verificación premium
+        function abrirDashLink(url) {
+            if (!window.plataformaActiva) {
+                showUpgradePremiumModal();
+                return;
+            }
+            window.open(url, '_blank');
+        }
+
         function renderDashGrid() {
             const grid = document.getElementById('dashGrid');
             const tabs = document.getElementById('dashTabs');
@@ -5012,6 +4978,14 @@
             if (dashViewMode === 'categories') {
                 grid.style.gridTemplateColumns = '1fr';
                 grid.style.gap = '10px';
+                grid.style.padding = '0';
+                // Quitar fondo/borde del contenedor para alinear con el resto de la página
+                const dashContainer = document.querySelector('.dash-container');
+                if (dashContainer) {
+                    dashContainer.style.background = 'transparent';
+                    dashContainer.style.borderRadius = '0';
+                    dashContainer.style.overflow = 'visible';
+                }
                 
                 // Filtrar categorías por búsqueda
                 const filteredCats = cats.filter(c => 
@@ -5020,21 +4994,29 @@
                 );
                 
                 grid.innerHTML = filteredCats.map((c, i) => `
-                    <div class="dash-card" style="cursor: pointer; display: flex; flex-direction: row; align-items: center; padding: 14px 20px; gap: 16px; animation-delay: ${i * 0.04}s; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.3s ease;" onclick="dashViewMode = 'links'; currentDashTab = '${c.id}'; renderDashGrid();" onmouseover="this.style.borderColor='#8bc34a'; this.style.boxShadow='0 2px 8px rgba(139,195,74,0.12)';" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none';">
-                        <div style="background: #f1f5f9; color: #0d2536; width: 36px; height: 36px; min-width: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px;">
+                    <div class="dash-card" style="cursor: pointer; display: flex; flex-direction: row; align-items: center; padding: 16px 20px; gap: 14px; animation-delay: ${i * 0.04}s; background: #ffffff; border: 2px solid #e2e8f0; border-radius: 12px; transition: all 0.3s ease;" onclick="dashViewMode = 'links'; currentDashTab = '${c.id}'; renderDashGrid();" onmouseover="this.style.borderColor='#8bc34a'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='translateX(0)';">
+                        <div style="background: linear-gradient(135deg, #8bc34a 0%, #7ab83d 100%); color: #ffffff; width: 42px; height: 42px; min-width: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                             <i class="fa-solid ${c.icon}"></i>
                         </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 14px; font-weight: 600; color: #0d2536; font-family: 'Roboto', sans-serif; margin-bottom: 3px; text-transform: uppercase !important;">${c.title}</div>
-                            <div style="font-size: 11px; font-weight: 400; color: #64748b; font-family: 'Roboto', sans-serif; line-height: 1.3; text-transform: uppercase !important;">${c.desc}</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-size: 13px; font-weight: 700; color: #0d2536; font-family: 'Roboto', sans-serif; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px;">${c.title}</div>
+                            <div style="font-size: 10px; font-weight: 500; color: #64748b; font-family: 'Roboto', sans-serif; line-height: 1.4; text-transform: uppercase; letter-spacing: 0.2px;">${c.desc}</div>
                         </div>
-                        <div style="color: #8bc34a; font-size: 13px;"><i class="fa-solid fa-chevron-right"></i></div>
+                        <div style="color: #8bc34a; font-size: 16px; flex-shrink: 0;"><i class="fa-solid fa-chevron-right"></i></div>
                     </div>
                 `).join('');
                 return;
             }
 
             // MODO LINKS (Grilla Desplegada)
+            grid.style.padding = '25px';
+            // Restaurar fondo del contenedor
+            const dashContainerLinks = document.querySelector('.dash-container');
+            if (dashContainerLinks) {
+                dashContainerLinks.style.background = '#ffffff';
+                dashContainerLinks.style.borderRadius = '16px';
+                dashContainerLinks.style.overflow = 'hidden';
+            }
             grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(240px, 1fr))';
             
             const filtered = dashLinks.filter(item => {
@@ -5046,18 +5028,26 @@
             const currentCatTitle = cats.find(c => c.id === currentDashTab)?.title || 'Accesos';
 
             grid.innerHTML = `
-                <div style="grid-column: 1 / -1; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; animation: fadeInDash 0.3s ease; display: flex; align-items: center; gap: 15px;">
-                    <button onclick="dashViewMode = 'categories'; renderDashGrid();" style="border: none; background: #f1f5f9; color: #0d2536; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; flex-shrink: 0;" onmouseover="this.style.background='#8bc34a'; this.style.color='#ffffff';" onmouseout="this.style.background='#f1f5f9'; this.style.color='#0d2536';">
+                <div style="grid-column: 1 / -1; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 2px solid #f1f5f9; animation: fadeInDash 0.3s ease; display: flex; align-items: center; gap: 14px;">
+                    <button onclick="dashViewMode = 'categories'; renderDashGrid();" style="border: 2px solid #e2e8f0; background: #ffffff; color: #0d2536; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; flex-shrink: 0; font-size: 14px;" onmouseover="this.style.background='#8bc34a'; this.style.color='#ffffff'; this.style.borderColor='#8bc34a';" onmouseout="this.style.background='#ffffff'; this.style.color='#0d2536'; this.style.borderColor='#e2e8f0';">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
-                    <h2 style="font-size: 18px; font-weight: 700; color: #0d2536; margin: 0; font-family: 'Roboto', sans-serif;">${currentCatTitle}</h2>
+                    <div>
+                        <div style="font-size: 11px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Roboto', sans-serif; margin-bottom: 2px;">Dashboard</div>
+                        <h2 style="font-size: 16px; font-weight: 800; color: #0d2536; margin: 0; font-family: 'Roboto', sans-serif; text-transform: uppercase; letter-spacing: 0.3px;">${currentCatTitle}</h2>
+                    </div>
                 </div>
             ` + filtered.map((item, i) => `
-                <a href="${item.Enlace}" target="_blank" class="dash-card" style="animation-delay: ${i * 0.03}s; align-items: center; gap: 12px; padding: 12px 16px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'; this.style.borderColor='#cbd5e1';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.borderColor='#e2e8f0';">
-                    <img src="${item.Icono}" alt="${item.Titulo}" loading="lazy" onerror="this.src='assets/media/logo_circular.png'" style="width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; border-radius: 6px; background: #f8fafc; padding: 3px;">
-                    <div class="dash-card-title" style="flex: 1; text-align: left; font-size: 12px; font-weight: 600; color: #475569; text-transform: uppercase; line-height: 1.3; font-family: 'Roboto', sans-serif;">${item.Titulo}</div>
-                    <div style="color: #94a3b8; font-size: 12px;"><i class="fa-solid fa-chevron-right"></i></div>
-                </a>
+                <div class="dash-card" style="cursor:pointer; animation-delay: ${i * 0.03}s; align-items: center; gap: 14px; padding: 14px 18px; background: #ffffff; border: 2px solid #e2e8f0; border-radius: 12px; transition: all 0.3s ease; display:flex;" onclick="abrirDashLink('${item.Enlace.replace(/'/g, "\\'")}')" onmouseover="this.style.borderColor='#0d2536'; this.style.transform='translateX(3px)';" onmouseout="this.style.borderColor='#e2e8f0'; this.style.transform='translateX(0)';">
+                    <div style="width: 56px; height: 56px; min-width: 56px; border-radius: 12px; background: #ffffff; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="${item.Icono}" alt="${item.Titulo}" loading="lazy" onerror="this.src='assets/media/logo_circular.png'" style="width: 46px; height: 46px; object-fit: contain;">
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 12px; font-weight: 700; color: #0d2536; text-transform: uppercase; line-height: 1.4; font-family: 'Roboto', sans-serif; letter-spacing: 0.2px;">${item.Titulo}</div>
+                        <div style="font-size: 10px; font-weight: 500; color: #8bc34a; font-family: 'Roboto', sans-serif; margin-top: 3px; letter-spacing: 0.3px;">${item.cat === 'ACCEDE' ? 'Servicio de Publicidad' : item.cat === 'ACTIVOS' ? 'Servicio Activo MTC' : item.cat === 'PLUS' ? 'Herramienta Premium' : item.cat === 'REGIONES' ? 'Por Región' : item.cat === 'GRATUITOS' ? 'Servicio Gratuito' : 'Acceso General'}</div>
+                    </div>
+                    <div style="color: #0d2536; font-size: 14px; flex-shrink: 0;"><i class="fa-solid fa-chevron-right"></i></div>
+                </div>
             `).join('');
         }
     </script>
@@ -5311,6 +5301,17 @@
         }
 
         async function submitInformeRequest() {
+            // Verificar acceso premium antes de consultar
+            if (typeof currentUser === 'undefined' || !currentUser) {
+                showAccessRestrictedModal();
+                return;
+            }
+            if (!window.plataformaActiva) {
+                document.getElementById('informeModal').style.display = 'none';
+                showUpgradePremiumModal();
+                return;
+            }
+            
             const input = document.getElementById('informePlateInput');
             const p = normalize(input ? input.value : '');
 

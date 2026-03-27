@@ -1,10 +1,9 @@
-// Firebase Cloud Messaging Service Worker
-// Este archivo maneja las notificaciones push cuando la app está cerrada
+// Firebase Cloud Messaging Service Worker - Admin Panel
+// Maneja notificaciones push cuando la app está en segundo plano o cerrada
 
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
 
-// CONFIGURACIÓN DE FIREBASE
 const firebaseConfig = {
     apiKey: "AIzaSyBReBBPABzIAEneLzjjlGYKddRF7WyQxfw",
     authDomain: "filtro2026-d9530.firebaseapp.com",
@@ -14,61 +13,55 @@ const firebaseConfig = {
     appId: "1:472315272675:web:3389b0bb4c03a4b4ae94d6"
 };
 
-// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
-
-// Obtener instancia de Firebase Messaging
 const messaging = firebase.messaging();
 
-// Manejar notificaciones en segundo plano (cuando la app está cerrada)
+// Patrón de vibración largo para llamar la atención
+const VIBRATE_PATTERN = [300, 100, 300, 100, 300, 100, 600];
+
 messaging.onBackgroundMessage((payload) => {
-    console.log('[firebase-messaging-sw.js] Notificación recibida en segundo plano:', payload);
-    
-    const notificationTitle = payload.notification?.title || 'Filtro Vehicular Admin';
-    const notificationOptions = {
-        body: payload.notification?.body || 'Nueva notificación',
-        icon: './assets/media/logopwa.png',
-        badge: './assets/media/logopwa.png',
-        tag: payload.data?.tag || 'notification',
+    console.log('[FCM-SW] Notificación en background:', payload);
+
+    const title = payload.notification?.title || '🔔 Nueva Solicitud - Admin';
+    const body  = payload.notification?.body  || 'Hay una solicitud pendiente en el panel.';
+
+    const options = {
+        body,
+        icon:  './assets/media/logopwa.png',
+        badge: './logopestañaweb.png',
+        tag:   payload.data?.tag || 'admin-alert',
+        renotify: true,
+        requireInteraction: true,
+        silent: false,
+        vibrate: VIBRATE_PATTERN,
         data: {
-            url: payload.data?.url || './admin.html',
-            timestamp: Date.now(),
+            url: payload.data?.url || './admin.html#requests',
             ...payload.data
         },
-        requireInteraction: true,
-        vibrate: [200, 100, 200],
         actions: [
-            { action: 'open', title: 'Ver' },
-            { action: 'close', title: 'Cerrar' }
+            { action: 'open',  title: '👁 Ver panel' },
+            { action: 'close', title: 'Cerrar'       }
         ]
     };
 
-    return self.registration.showNotification(notificationTitle, notificationOptions);
+    return self.registration.showNotification(title, options);
 });
 
-// Manejar clicks en las notificaciones
 self.addEventListener('notificationclick', (event) => {
-    console.log('[firebase-messaging-sw.js] Notificación clickeada:', event.action);
     event.notification.close();
+    if (event.action === 'close') return;
 
-    if (event.action === 'close') {
-        return;
-    }
-
-    const urlToOpen = event.notification.data?.url || './admin.html';
+    const urlToOpen = event.notification.data?.url || './admin.html#requests';
 
     event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-            // Buscar si ya hay una ventana del panel admin abierta
-            for (const client of clientList) {
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+            for (const client of list) {
                 if (client.url.includes('admin.html') && 'focus' in client) {
+                    client.postMessage({ type: 'NOTIFICATION_CLICK', url: urlToOpen });
                     return client.focus();
                 }
             }
-            // Si no hay ventana abierta, abrir una nueva
-            if (clients.openWindow) {
-                return clients.openWindow(urlToOpen);
-            }
+            if (clients.openWindow) return clients.openWindow(urlToOpen);
         })
     );
 });
