@@ -1620,7 +1620,11 @@
             updateCarousel();
         }
 
-        function handleTouchStart(e) { touchStartX = e.touches[0].clientX; isDragging = true; }
+        function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            touchEndX = e.touches[0].clientX; // reset para evitar valores obsoletos
+            isDragging = true;
+        }
         function handleTouchMove(e) { if (isDragging) touchEndX = e.touches[0].clientX; }
         function handleTouchEnd() { if (isDragging) { isDragging = false; handleSwipe(); } }
         function handleMouseDown(e) { touchStartX = e.clientX; isDragging = true; e.preventDefault(); }
@@ -1683,18 +1687,18 @@
         document.addEventListener('DOMContentLoaded', function() {
             initCarousel();
             
-            // Bloquear propagación de touch en carruseles de imágenes
-            // para que el dedo deslice las imágenes y no el tutorial
+            // Bloquear propagación en wrappers de imagen (swipe horizontal)
             document.querySelectorAll('.image-carousel-wrapper').forEach(function(wrapper) {
-                wrapper.addEventListener('touchstart', function(e) {
-                    e.stopPropagation();
-                }, { passive: true });
-                wrapper.addEventListener('touchmove', function(e) {
-                    e.stopPropagation();
-                }, { passive: true });
-                wrapper.addEventListener('touchend', function(e) {
-                    e.stopPropagation();
-                }, { passive: true });
+                wrapper.addEventListener('touchstart', function(e) { e.stopPropagation(); }, { passive: true });
+                wrapper.addEventListener('touchmove', function(e) { e.stopPropagation(); }, { passive: true });
+                wrapper.addEventListener('touchend', function(e) { e.stopPropagation(); }, { passive: true });
+            });
+
+            // Bloquear propagación en los botones de flecha
+            // (sin esto, el tap en la flecha activa el swipe del tutorial)
+            document.querySelectorAll('.img-arrow').forEach(function(btn) {
+                btn.addEventListener('touchstart', function(e) { e.stopPropagation(); }, { passive: true });
+                btn.addEventListener('touchend', function(e) { e.stopPropagation(); }, { passive: true });
             });
         });
     </script>
