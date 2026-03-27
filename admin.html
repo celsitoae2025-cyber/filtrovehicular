@@ -982,17 +982,6 @@
             <input type="text" id="whatsappGroupLink" placeholder="https://chat.whatsapp.com/XXXXXX" style="width: 100%; padding: 8px; font-size: 11px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px; background: white;">
             <button onclick="saveWhatsAppGroupLink()" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-bottom: 15px;">Guardar Enlace</button>
             
-            <div style="font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.9); text-transform: uppercase; margin-bottom: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">🔔 Notificaciones Push</div>
-            <button id="btnEnablePush" onclick="subscribeToPushNotifications()" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <i class="fa-solid fa-bell"></i> Activar Notificaciones en Tiempo Real
-            </button>
-            <button onclick="testPushNotification()" style="width: 100%; padding: 10px; background: rgba(139,195,74,0.15); color: #8bc34a; border: 1px solid rgba(139,195,74,0.3); border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 6px;">
-                <i class="fa-solid fa-flask"></i> Probar Notificación (Sonido + Vibración)
-            </button>
-            <button onclick="diagnosePush()" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <i class="fa-solid fa-stethoscope"></i> Diagnóstico Push
-            </button>
-            <div style="font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 6px; line-height: 1.4;">Recibe alertas instantáneas incluso con la app cerrada</div>
             
         </div>
 
@@ -3055,185 +3044,8 @@ Link: https://filtrovehicularperu.com`;
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/supabase-config.js?v=2"></script>
 
-    <!-- WEB PUSH NATIVO (VAPID) - Sin Firebase -->
+    <!-- Badging API: actualiza el número en el ícono de la PWA -->
     <script>
-        const VAPID_PUBLIC_KEY = 'BNHCC4Ay_g3Xdd4R8Uy0JQtSEU0GjbKAGhImObZQjorigY720bSVYqgAtgjTbE9BrspYbUOTJocXfQremW9ujF8';
-
-        function urlB64ToUint8Array(base64String) {
-            const padding = '='.repeat((4 - base64String.length % 4) % 4);
-            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-            const rawData = atob(base64);
-            return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
-        }
-
-        // Suscribirse a Web Push nativo
-        window.subscribeToPushNotifications = async function() {
-            try {
-                if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-                    alert('❌ Notificaciones push no soportadas en este navegador');
-                    return;
-                }
-
-                const permission = await Notification.requestPermission();
-                if (permission !== 'granted') {
-                    alert('⚠️ Debes permitir las notificaciones para recibir alertas');
-                    return;
-                }
-
-                const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-                console.log('[WebPush] SW registrado:', reg.scope);
-
-                const sub = await reg.pushManager.subscribe({
-                    userVisibleOnly: true,
-                    applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY)
-                });
-
-                console.log('[WebPush] Suscripción obtenida:', JSON.stringify(sub));
-
-                if (window.sb) {
-                    const subJson = sub.toJSON();
-                    const { error } = await window.sb
-                        .from('admin_push_tokens')
-                        .upsert([{
-                            token: subJson.endpoint,
-                            subscription: subJson,
-                            device_type: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-                            updated_at: new Date().toISOString()
-                        }], { onConflict: 'token' });
-
-                    if (error) {
-                        console.error('[WebPush] Error guardando suscripción:', error);
-                        alert('❌ Error guardando suscripción: ' + error.message);
-                        return;
-                    }
-                    console.log('[WebPush] ✅ Suscripción guardada en Supabase');
-                }
-
-                localStorage.setItem('push_notifications_enabled', 'true');
-                alert('✅ Notificaciones activadas correctamente.\n\nRecibirás alertas con sonido y vibración incluso con la app minimizada.');
-
-                const btn = document.getElementById('btnEnablePush');
-                if (btn) {
-                    btn.innerHTML = '<i class="fa-solid fa-bell"></i> Notificaciones Activadas ✅';
-                    btn.style.background = '#8bc34a';
-                    btn.disabled = true;
-                }
-
-            } catch (e) {
-                console.error('[WebPush] Error:', e);
-                alert('❌ Error al activar notificaciones: ' + e.message);
-            }
-        };
-
-        // Escuchar mensaje del SW para reproducir sonido (push en background)
-        navigator.serviceWorker.addEventListener('message', (event) => {
-            if (event.data?.type === 'PLAY_ALERT_SOUND') {
-                if (typeof playAdminAlertSound === 'function') playAdminAlertSound();
-            }
-        });
-
-        // Auto-reconectar suscripción al cargar si ya tenía permiso
-        window.addEventListener('load', async () => {
-            if (Notification.permission === 'granted' && localStorage.getItem('push_notifications_enabled') === 'true') {
-                try {
-                    const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-                    const sub = await reg.pushManager.getSubscription();
-                    if (sub && window.sb) {
-                        const subJson = sub.toJSON();
-                        await window.sb.from('admin_push_tokens').upsert([{
-                            token: subJson.endpoint,
-                            subscription: subJson,
-                            device_type: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-                            updated_at: new Date().toISOString()
-                        }], { onConflict: 'token' });
-                        console.log('[WebPush] Reconexión silenciosa OK');
-                    }
-                } catch(e) {
-                    console.warn('[WebPush] Reconexión fallida:', e);
-                }
-            }
-        });
-
-        // Función de prueba de notificación local (sonido + vibración)
-        window.testPushNotification = async function() {
-            if (Notification.permission !== 'granted') {
-                alert('⚠️ Primero activa las notificaciones push con el botón amarillo.');
-                return;
-            }
-            try {
-                const reg = await navigator.serviceWorker.ready;
-                await reg.showNotification('🔔 Prueba de Notificación', {
-                    body: 'Sonido y vibración funcionando correctamente.',
-                    icon: './assets/media/logopwa.png',
-                    badge: './logopestañaweb.png',
-                    tag: 'test-' + Date.now(),
-                    renotify: true,
-                    requireInteraction: true,
-                    silent: false,
-                    vibrate: [400, 150, 400, 150, 400, 150, 400, 150, 400, 150, 400],
-                    data: { url: './admin.html#requests' },
-                    actions: [
-                        { action: 'open',  title: '👁 Ver panel' },
-                        { action: 'close', title: 'Cerrar'       }
-                    ]
-                });
-                // Reproducir sonido local
-                playAdminAlertSound();
-            } catch(e) {
-                alert('❌ Error al mostrar notificación: ' + e.message);
-            }
-        };
-
-        // Diagnóstico completo del sistema Web Push
-        window.diagnosePush = async function() {
-            let msg = '🔍 DIAGNÓSTICO WEB PUSH\n\n';
-            msg += `1. Permiso: ${Notification.permission}\n`;
-            msg += `2. PushManager: ${'PushManager' in window ? 'SÍ ✅' : 'NO ❌'}\n`;
-            msg += `3. localStorage push: ${localStorage.getItem('push_notifications_enabled') || 'NO'}\n`;
-
-            if ('serviceWorker' in navigator) {
-                const regs = await navigator.serviceWorker.getRegistrations();
-                msg += `4. Service Workers: ${regs.length}\n`;
-                for (const r of regs) {
-                    msg += `   - ${r.scope} [${r.active ? 'ACTIVO ✅' : 'INACTIVO ❌'}]\n`;
-                    const sub = await r.pushManager.getSubscription().catch(() => null);
-                    if (sub) {
-                        msg += `   - Suscripción: ✅ endpoint: ...${sub.endpoint.slice(-30)}\n`;
-                    } else {
-                        msg += `   - Suscripción: ❌ NINGUNA\n`;
-                    }
-                }
-            } else {
-                msg += `4. Service Worker: NO SOPORTADO ❌\n`;
-            }
-
-            if (window.sb) {
-                try {
-                    const { data, error } = await window.sb
-                        .from('admin_push_tokens')
-                        .select('token, subscription, device_type, updated_at');
-                    if (error) {
-                        msg += `5. Supabase: ERROR - ${error.message}\n`;
-                    } else if (!data || data.length === 0) {
-                        msg += `5. Supabase: NINGÚN TOKEN ❌\n`;
-                    } else {
-                        msg += `5. Supabase: ${data.length} registro(s) ✅\n`;
-                        data.forEach((t, i) => {
-                            const hasSub = t.subscription && t.subscription.endpoint ? '✅' : '❌ SIN subscription';
-                            msg += `   ${i+1}) ${t.device_type} | sub: ${hasSub} | ${t.updated_at?.slice(0,16)}\n`;
-                        });
-                    }
-                } catch(e) {
-                    msg += `5. Supabase: ERROR - ${e.message}\n`;
-                }
-            } else {
-                msg += `5. Supabase: NO CONECTADO ❌\n`;
-            }
-
-            alert(msg);
-        };
-
-        // Badging API: actualiza el número en el ícono de la PWA
         window.updateAppBadge = function(count) {
             if ('setAppBadge' in navigator) {
                 if (count && count > 0) {
@@ -3243,7 +3055,6 @@ Link: https://filtrovehicularperu.com`;
                 }
             }
         };
-
     </script>
 
     <!-- MANTENER SERVICE WORKER ACTIVO - Evita cierre automático de la PWA -->
