@@ -986,6 +986,9 @@
             <button id="btnEnablePush" onclick="subscribeToPushNotifications()" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <i class="fa-solid fa-bell"></i> Activar Notificaciones en Tiempo Real
             </button>
+            <button onclick="testPushNotification()" style="width: 100%; padding: 10px; background: rgba(139,195,74,0.15); color: #8bc34a; border: 1px solid rgba(139,195,74,0.3); border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 6px;">
+                <i class="fa-solid fa-flask"></i> Probar Notificación (Sonido + Vibración)
+            </button>
             <div style="font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 6px; line-height: 1.4;">Recibe alertas instantáneas incluso con la app cerrada</div>
             
         </div>
@@ -2910,6 +2913,11 @@ Link: https://filtrovehicularperu.com`;
             }
             lastRequestsCount = n;
 
+            // Badge en ícono de la PWA (Badging API)
+            if (typeof window.updateAppBadge === 'function') {
+                window.updateAppBadge(n);
+            }
+
             if (n > 0) {
                 if (badge) { 
                     badge.innerHTML = n; 
@@ -3163,6 +3171,45 @@ Link: https://filtrovehicularperu.com`;
                 setTimeout(renderRequestsList, 500);
             }
         });
+
+        // Función de prueba de notificación local (sonido + vibración)
+        window.testPushNotification = async function() {
+            if (Notification.permission !== 'granted') {
+                alert('⚠️ Primero activa las notificaciones push con el botón amarillo.');
+                return;
+            }
+            try {
+                const reg = await navigator.serviceWorker.ready;
+                await reg.showNotification('🔔 Prueba de Notificación', {
+                    body: 'Sonido y vibración funcionando correctamente.',
+                    icon: './assets/media/logopwa.png',
+                    badge: './logopestañaweb.png',
+                    tag: 'test-' + Date.now(),
+                    renotify: true,
+                    requireInteraction: true,
+                    silent: false,
+                    vibrate: [300, 100, 300, 100, 300, 100, 600],
+                    data: { url: './admin.html#requests' },
+                    actions: [
+                        { action: 'open',  title: '👁 Ver panel' },
+                        { action: 'close', title: 'Cerrar'       }
+                    ]
+                });
+            } catch(e) {
+                alert('❌ Error al mostrar notificación: ' + e.message);
+            }
+        };
+
+        // Badging API: actualiza el número en el ícono de la PWA
+        window.updateAppBadge = function(count) {
+            if ('setAppBadge' in navigator) {
+                if (count && count > 0) {
+                    navigator.setAppBadge(count).catch(() => {});
+                } else {
+                    navigator.clearAppBadge().catch(() => {});
+                }
+            }
+        };
 
         // Auto-reconectar silenciosamente si ya tenía permiso
         window.addEventListener('load', async () => {
