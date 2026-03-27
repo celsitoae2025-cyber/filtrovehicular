@@ -1,0 +1,12 @@
+Coloca aquí tus capturas de pantalla con estos nombres exactos:
+
+slide1.jpg   → Registro y Creación de Cuenta
+slide2.jpg   → Activación del Acceso Completo
+slide3a.jpg  → Plataforma - imagen 1 (Filtro y SOAT)
+slide3b.jpg  → Plataforma - imagen 2 (SUNARP y SAT)
+slide3c.jpg  → Plataforma - imagen 3 (Dashboard)
+slide4.jpg   → Cómo Realizar Consultas
+slide5.jpg   → Medios de Pago
+slide6.jpg   → Dashboard Permanente
+
+Formato recomendado: JPG o PNG, orientación vertical (celular).
