@@ -966,6 +966,9 @@
             <a href="javascript:void(0)" onclick="showView('users'); toggleSidebar(false)" class="nav-item" id="nav-users">
                 <i class="fa-solid fa-users"></i> Usuarios
             </a>
+            <a href="javascript:void(0)" onclick="showView('access'); toggleSidebar(false)" class="nav-item" id="nav-access">
+                <i class="fa-solid fa-unlock-keyhole"></i> Activar Acceso
+            </a>
         </nav>
         
         <!-- Configuración de Alertas Telegram y WhatsApp -->
@@ -1074,6 +1077,51 @@
             </div>
         </div>
         
+        <!-- VISTA ACTIVAR ACCESO MANUAL -->
+        <div id="accessView" class="requests-panel" style="display: none;">
+            <h2 style="margin-bottom: 5px;">Activar Acceso Manual</h2>
+            <p style="color: #64748b; font-size: 13px; margin-bottom: 25px;">Activa el acceso completo a la plataforma para un cliente usando su correo electrónico.</p>
+
+            <!-- Formulario de activación -->
+            <div class="admin-card" style="margin-bottom: 24px; padding: 24px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                    <div style="background: linear-gradient(135deg, #8bc34a, #7cb342); width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fa-solid fa-unlock-keyhole" style="color: white; font-size: 18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 15px; font-weight: 800; color: #0d2536;">Activar acceso completo</div>
+                        <div style="font-size: 12px; color: #64748b;">El cliente debe haber creado su cuenta previamente</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
+                    <div style="flex: 1; min-width: 220px;">
+                        <label style="display: block; font-size: 11px; font-weight: 800; color: #0d2536; text-transform: uppercase; margin-bottom: 6px;">Correo del cliente</label>
+                        <input type="email" id="accessEmail" placeholder="cliente@gmail.com"
+                            style="width: 100%; padding: 12px 14px; font-size: 14px; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; transition: border 0.2s;"
+                            onfocus="this.style.borderColor='#8bc34a'" onblur="this.style.borderColor='#e2e8f0'"
+                            onkeydown="if(event.key==='Enter') activarAccesoManual()">
+                    </div>
+                    <button onclick="activarAccesoManual()" style="padding: 12px 22px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 8px; transition: opacity 0.2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                        <i class="fa-solid fa-check"></i> Activar Acceso
+                    </button>
+                </div>
+
+                <div id="accessFeedback" style="display: none; margin-top: 14px; padding: 12px 16px; border-radius: 10px; font-size: 13px; font-weight: 700;"></div>
+            </div>
+
+            <!-- Lista de clientes con acceso activo -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                <div style="font-size: 14px; font-weight: 800; color: #0d2536;">Clientes con acceso activo</div>
+                <button onclick="renderAccessList()" style="background: rgba(139,195,74,0.12); color: #7cb342; border: 1px solid rgba(139,195,74,0.3); border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-rotate"></i> Actualizar
+                </button>
+            </div>
+            <div id="accessList" class="request-list">
+                <div class="empty-req">Cargando...</div>
+            </div>
+        </div>
+
         <!-- VISTA DEL EDITOR (EXISTENTE) -->
         <div id="editorView">
             <div class="header-admin" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
@@ -1290,6 +1338,7 @@
             document.getElementById('creditsView').style.display = view === 'credits' ? 'block' : 'none';
             if (document.getElementById('historyView')) document.getElementById('historyView').style.display = view === 'history' ? 'block' : 'none';
             if (document.getElementById('usersView')) document.getElementById('usersView').style.display = view === 'users' ? 'block' : 'none';
+            if (document.getElementById('accessView')) document.getElementById('accessView').style.display = view === 'access' ? 'block' : 'none';
             
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             if (document.getElementById('nav-' + view)) document.getElementById('nav-' + view).classList.add('active');
@@ -1297,6 +1346,7 @@
             if (view === 'history' && typeof renderHistoryList === 'function') renderHistoryList();
             if (view === 'users' && typeof renderUsersList === 'function') renderUsersList();
             if (view === 'requests' && typeof renderRequestsList === 'function') renderRequestsList();
+            if (view === 'access' && typeof renderAccessList === 'function') renderAccessList();
             
             // Agregar al historial de navegación
             if (addToHistory) {
@@ -1451,6 +1501,126 @@
                 alert("❌ Fallo crítico al borrar todas las cuentas: " + e.message);
             }
         }
+
+        // ── ACTIVAR ACCESO MANUAL ────────────────────────────────────────────────
+
+        async function activarAccesoManual() {
+            const emailInput = document.getElementById('accessEmail');
+            const feedback = document.getElementById('accessFeedback');
+            const email = emailInput.value.trim().toLowerCase();
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                feedback.style.display = 'block';
+                feedback.style.background = '#fef2f2';
+                feedback.style.color = '#b91c1c';
+                feedback.style.border = '1px solid #fecaca';
+                feedback.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Ingresa un correo electrónico válido.';
+                return;
+            }
+
+            if (!window.sb) {
+                feedback.style.display = 'block';
+                feedback.style.background = '#fef2f2';
+                feedback.style.color = '#b91c1c';
+                feedback.style.border = '1px solid #fecaca';
+                feedback.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Supabase no conectado.';
+                return;
+            }
+
+            feedback.style.display = 'block';
+            feedback.style.background = '#f0fdf4';
+            feedback.style.color = '#166534';
+            feedback.style.border = '1px solid #bbf7d0';
+            feedback.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Activando...';
+
+            try {
+                const { error } = await window.sb
+                    .from('saldos')
+                    .upsert([{
+                        email: email,
+                        plataforma_activa: true,
+                        updated_at: new Date().toISOString()
+                    }], { onConflict: 'email' });
+
+                if (error) throw error;
+
+                feedback.style.background = '#f0fdf4';
+                feedback.style.color = '#166534';
+                feedback.style.border = '1px solid #bbf7d0';
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> Acceso activado correctamente para <b>${email}</b>`;
+                emailInput.value = '';
+                renderAccessList();
+            } catch (e) {
+                feedback.style.background = '#fef2f2';
+                feedback.style.color = '#b91c1c';
+                feedback.style.border = '1px solid #fecaca';
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Error: ${e.message}`;
+            }
+        }
+
+        async function revocarAcceso(email) {
+            if (!confirm(`¿Revocar acceso a ${email}?`)) return;
+            if (!window.sb) return;
+            try {
+                await window.sb
+                    .from('saldos')
+                    .update({ plataforma_activa: false })
+                    .eq('email', email);
+                renderAccessList();
+            } catch (e) {
+                alert('❌ Error al revocar: ' + e.message);
+            }
+        }
+
+        async function renderAccessList() {
+            const container = document.getElementById('accessList');
+            if (!container) return;
+            if (!window.sb) {
+                container.innerHTML = '<div class="empty-req">Supabase no conectado.</div>';
+                return;
+            }
+            container.innerHTML = '<div class="empty-req">Cargando...</div>';
+            try {
+                const { data, error } = await window.sb
+                    .from('saldos')
+                    .select('email, plataforma_activa, creditos, updated_at')
+                    .eq('plataforma_activa', true)
+                    .order('updated_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-req">No hay clientes con acceso activo.</div>';
+                    return;
+                }
+
+                container.innerHTML = data.map(u => {
+                    const fecha = u.updated_at ? new Date(u.updated_at).toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' }) : '-';
+                    return `
+                    <div class="req-card" style="display:flex; align-items:center; gap:14px; padding:14px 18px; flex-wrap:wrap;">
+                        <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#8bc34a,#7cb342); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="fa-solid fa-user" style="color:white; font-size:15px;"></i>
+                        </div>
+                        <div style="flex:1; min-width:150px;">
+                            <div style="font-size:13px; font-weight:800; color:#0d2536;">${u.email}</div>
+                            <div style="font-size:11px; color:#64748b; margin-top:2px;">
+                                <span style="background:#f0fdf4; color:#166534; padding:2px 8px; border-radius:20px; font-weight:700; font-size:10px; border:1px solid #bbf7d0;">✅ ACTIVO</span>
+                                &nbsp;Créditos: <b>${u.creditos || 0}</b>
+                                &nbsp;· Activado: ${fecha}
+                            </div>
+                        </div>
+                        <button onclick="revocarAcceso('${u.email}')" style="padding:7px 14px; background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
+                            <i class="fa-solid fa-ban"></i> Revocar
+                        </button>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                container.innerHTML = `<div class="empty-req">Error: ${e.message}</div>`;
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────────────
 
         async function deleteAllCloudData() {
             if (!window.sb) {
