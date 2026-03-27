@@ -412,28 +412,29 @@
 
         /* Header */
         .tutorial-header {
-            background: #0d2536;
+            background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
             color: white;
-            padding: 14px 24px;
+            padding: 16px 28px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 2px solid #8bc34a;
+            border-bottom: 3px solid #8bc34a;
             flex-shrink: 0;
         }
         .tutorial-header-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .tutorial-header-left i {
             color: #8bc34a;
-            font-size: 18px;
+            font-size: 20px;
         }
         .tutorial-header-left span {
-            font-size: 16px;
-            font-weight: 800;
-            letter-spacing: 0.3px;
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         .tutorial-header-right {
             display: flex;
@@ -538,8 +539,8 @@
 
         /* Imagen */
         .tutorial-image {
-            width: 220px;
-            height: 390px;
+            width: 264px;
+            height: 468px;
             background: #f1f5f9;
             border-radius: 14px;
             margin: 24px auto 0;
@@ -672,8 +673,8 @@
                 font-size: 13px;
             }
             .tutorial-image {
-                width: 180px;
-                height: 320px;
+                width: 216px;
+                height: 384px;
             }
             .carousel-footer {
                 padding: 12px 16px;
@@ -1667,7 +1668,7 @@
 
         function scrollImgCarousel(btn, dir) {
             var wrapper = btn.parentElement.querySelector('.image-carousel-wrapper');
-            wrapper.scrollBy({ left: dir * 240, behavior: 'smooth' });
+            wrapper.scrollBy({ left: dir * 280, behavior: 'smooth' });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
