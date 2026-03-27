@@ -373,27 +373,32 @@
         /* Botón flotante de Tutorial */
         .tutorial-float-btn {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 24px;
+            right: 24px;
             background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
             color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 14px 20px;
-            font-size: 13px;
-            font-weight: 700;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            padding: 16px 24px;
+            font-size: 14px;
+            font-weight: 800;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 6px 24px rgba(13, 37, 54, 0.3);
+            gap: 10px;
+            box-shadow: 0 8px 32px rgba(13, 37, 54, 0.25);
             transition: all 0.3s ease;
             z-index: 1000;
             text-decoration: none;
+            backdrop-filter: blur(10px);
         }
         .tutorial-float-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(13, 37, 54, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(13, 37, 54, 0.35);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .tutorial-float-btn:active {
+            transform: translateY(-1px);
         }
         .tutorial-float-btn i {
             font-size: 16px;
@@ -404,98 +409,127 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(13, 37, 54, 0.8);
+            background: rgba(13, 37, 54, 0.85);
             z-index: 2000;
             padding: 20px;
             overflow-y: auto;
         }
         .tutorial-container {
-            background: white;
-            border-radius: 16px;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
             max-width: 800px;
             margin: 40px auto;
             width: 100%;
             max-height: calc(100vh - 80px);
             overflow-y: auto;
             position: relative;
+            box-shadow: 0 20px 60px rgba(13, 37, 54, 0.15);
         }
         .tutorial-header {
             background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
             color: white;
-            padding: 24px;
-            border-radius: 16px 16px 0 0;
+            padding: 28px 32px;
+            border-radius: 18px 18px 0 0;
             position: sticky;
             top: 0;
             z-index: 10;
+            border-bottom: 3px solid #8bc34a;
         }
         .tutorial-close {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
-            transition: background 0.2s;
+            font-size: 18px;
+            transition: all 0.3s ease;
         }
         .tutorial-close:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.25);
+            transform: rotate(90deg);
         }
         .tutorial-content {
-            padding: 32px;
+            padding: 40px 32px;
+            background: linear-gradient(to bottom, #ffffff, #f8fafc);
         }
         .tutorial-step {
-            margin-bottom: 40px;
-            padding: 24px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border-left: 4px solid #8bc34a;
+            margin-bottom: 48px;
+            padding: 28px;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .tutorial-step:hover {
+            border-color: #8bc34a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 195, 74, 0.1);
+        }
+        .tutorial-step::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #8bc34a, #7cb342);
+            border-radius: 4px 0 0 4px;
         }
         .tutorial-step h3 {
             color: #0d2536;
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 12px;
+            font-size: 20px;
+            font-weight: 900;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .tutorial-step p {
-            color: #64748b;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 12px;
+            color: #475569;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 16px;
         }
         .tutorial-step ul {
-            color: #64748b;
-            font-size: 14px;
-            line-height: 1.6;
-            padding-left: 20px;
+            color: #475569;
+            font-size: 15px;
+            line-height: 1.7;
+            padding-left: 24px;
+            margin-bottom: 16px;
         }
         .tutorial-step li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .tutorial-step li::marker {
+            color: #8bc34a;
+            font-weight: bold;
         }
         .highlight {
-            background: #f0fdf4;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
             color: #166534;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-weight: 700;
             border: 1px solid #bbf7d0;
+            display: inline-block;
         }
         .tutorial-image {
             width: 100%;
-            max-width: 300px;
-            height: 200px;
+            max-width: 200px;
+            height: 350px;
             background: #e2e8f0;
-            border-radius: 8px;
+            border-radius: 12px;
             margin: 16px auto;
             display: flex;
             align-items: center;
@@ -504,6 +538,13 @@
             font-size: 13px;
             text-align: center;
             border: 2px dashed #cbd5e1;
+            object-fit: cover;
+        }
+        .tutorial-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
         }
         @media (max-width: 767px) {
             .tutorial-container {
@@ -1400,17 +1441,24 @@
                 </div>
 
                 <!-- Resumen -->
-                <div style="background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); color: white; padding: 24px; border-radius: 12px; text-align: center; margin-top: 32px;">
-                    <h3 style="margin-bottom: 12px; font-size: 20px;">
-                        <i class="fa-solid fa-check-circle" style="margin-right: 8px;"></i>
-                        ¡Listo para usar Filtro Vehicular!
-                    </h3>
-                    <p style="margin-bottom: 20px; opacity: 0.9;">
-                        Ahora tienes todo el conocimiento para hacer consultas vehiculares profesionales
-                    </p>
-                    <button onclick="closeTutorial()" style="background: white; color: #0d2536; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer;">
-                        Empezar a usar la plataforma
-                    </button>
+                <div style="background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); color: white; padding: 40px; border-radius: 20px; text-align: center; margin-top: 48px; border: 2px solid rgba(139, 195, 74, 0.2); position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: rgba(139, 195, 74, 0.1); border-radius: 50%;"></div>
+                    <div style="position: absolute; bottom: -30px; left: -30px; width: 60px; height: 60px; background: rgba(139, 195, 74, 0.1); border-radius: 50%;"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="width: 64px; height: 64px; background: rgba(139, 195, 74, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; border: 2px solid rgba(139, 195, 74, 0.3);">
+                            <i class="fa-solid fa-check-circle" style="font-size: 28px; color: #8bc34a;"></i>
+                        </div>
+                        <h3 style="margin-bottom: 16px; font-size: 24px; font-weight: 900;">
+                            ¡Listo para usar Filtro Vehicular!
+                        </h3>
+                        <p style="margin-bottom: 28px; opacity: 0.9; font-size: 16px; line-height: 1.6;">
+                            Ahora tienes todo el conocimiento para hacer consultas vehiculares profesionales
+                        </p>
+                        <button onclick="closeTutorial()" style="background: #8bc34a; color: white; border: none; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(139, 195, 74, 0.3);" onmouseover="this.style.background='#7cb342'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#8bc34a'; this.style.transform='translateY(0)';">
+                            <i class="fa-solid fa-rocket" style="margin-right: 8px;"></i>
+                            Empezar a usar la plataforma
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
