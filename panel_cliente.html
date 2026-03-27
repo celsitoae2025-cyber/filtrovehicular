@@ -564,6 +564,7 @@
         .image-carousel-container {
             position: relative;
             margin: 24px auto 0;
+            max-width: 320px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -571,15 +572,20 @@
         .image-carousel-wrapper {
             display: flex;
             overflow-x: auto;
+            overflow-y: hidden;
             scroll-snap-type: x mandatory;
-            gap: 14px;
+            gap: 16px;
             padding: 0;
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
-            justify-content: center;
+            width: 100%;
+            scrollbar-width: none;
+        }
+        .image-carousel-wrapper::-webkit-scrollbar {
+            display: none;
         }
         .image-carousel-wrapper .tutorial-image {
-            scroll-snap-align: center;
+            scroll-snap-align: start;
         }
         .img-arrow {
             position: absolute;
@@ -1672,17 +1678,37 @@
 
         function scrollImgCarousel(btn, dir) {
             var wrapper = btn.parentElement.querySelector('.image-carousel-wrapper');
-            wrapper.scrollBy({ left: dir * 280, behavior: 'smooth' });
+            wrapper.scrollBy({ left: dir * 306, behavior: 'smooth' });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             initCarousel();
             
-            // Evitar conflicto entre carruseles de imágenes y swipe del tutorial
-            document.querySelectorAll('.image-carousel-wrapper').forEach(function(el) {
-                el.addEventListener('touchstart', function(e) { e.stopPropagation(); }, { passive: true });
-                el.addEventListener('touchmove', function(e) { e.stopPropagation(); }, { passive: true });
-                el.addEventListener('touchend', function(e) { e.stopPropagation(); });
+            // Habilitar swipe en carruseles de imágenes sin interferir con el tutorial
+            document.querySelectorAll('.image-carousel-wrapper').forEach(function(wrapper) {
+                var startX = 0;
+                var scrollLeft = 0;
+                var isDown = false;
+                
+                wrapper.addEventListener('touchstart', function(e) {
+                    isDown = true;
+                    startX = e.touches[0].pageX - wrapper.offsetLeft;
+                    scrollLeft = wrapper.scrollLeft;
+                    e.stopPropagation();
+                }, { passive: true });
+                
+                wrapper.addEventListener('touchmove', function(e) {
+                    if (!isDown) return;
+                    e.stopPropagation();
+                    var x = e.touches[0].pageX - wrapper.offsetLeft;
+                    var walk = (x - startX) * 1.5;
+                    wrapper.scrollLeft = scrollLeft - walk;
+                }, { passive: true });
+                
+                wrapper.addEventListener('touchend', function(e) {
+                    isDown = false;
+                    e.stopPropagation();
+                });
             });
         });
     </script>
