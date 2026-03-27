@@ -16,8 +16,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-// Patrón de vibración largo para llamar la atención
-const VIBRATE_PATTERN = [300, 100, 300, 100, 300, 100, 600];
+// Patrón de vibración ~3 segundos
+const VIBRATE_PATTERN = [400, 150, 400, 150, 400, 150, 400, 150, 400, 150, 400];
 
 messaging.onBackgroundMessage((payload) => {
     console.log('[FCM-SW] Notificación en background:', payload);
@@ -43,6 +43,11 @@ messaging.onBackgroundMessage((payload) => {
             { action: 'close', title: 'Cerrar'       }
         ]
     };
+
+    // Notificar a la página para que reproduzca el sonido
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+        list.forEach(client => client.postMessage({ type: 'PLAY_ALERT_SOUND' }));
+    });
 
     return self.registration.showNotification(title, options);
 });

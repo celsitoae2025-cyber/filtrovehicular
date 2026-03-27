@@ -3145,7 +3145,10 @@ Link: https://filtrovehicularperu.com`;
             const title = payload.notification?.title || '🔔 Nueva Solicitud';
             const body  = payload.notification?.body  || 'Revisa el panel de administración.';
 
-            // Usar Service Worker para mostrar notificación nativa (con sonido y vibración)
+            // Reproducir MP3 de alerta
+            if (typeof playAdminAlertSound === 'function') playAdminAlertSound();
+
+            // Mostrar notificación nativa vía SW (con vibración ~3s)
             if (Notification.permission === 'granted' && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.ready.then(reg => {
                     reg.showNotification(title, {
@@ -3156,7 +3159,7 @@ Link: https://filtrovehicularperu.com`;
                         renotify: true,
                         requireInteraction: true,
                         silent: false,
-                        vibrate: [300, 100, 300, 100, 600],
+                        vibrate: [400, 150, 400, 150, 400, 150, 400, 150, 400, 150, 400],
                         data: { url: './admin.html#requests' },
                         actions: [
                             { action: 'open',  title: '👁 Ver panel' },
@@ -3169,6 +3172,13 @@ Link: https://filtrovehicularperu.com`;
             // Actualizar lista de solicitudes automáticamente
             if (typeof renderRequestsList === 'function') {
                 setTimeout(renderRequestsList, 500);
+            }
+        });
+
+        // Escuchar mensaje del SW para reproducir sonido en background
+        navigator.serviceWorker.addEventListener('message', (event) => {
+            if (event.data?.type === 'PLAY_ALERT_SOUND') {
+                if (typeof playAdminAlertSound === 'function') playAdminAlertSound();
             }
         });
 
@@ -3188,13 +3198,15 @@ Link: https://filtrovehicularperu.com`;
                     renotify: true,
                     requireInteraction: true,
                     silent: false,
-                    vibrate: [300, 100, 300, 100, 300, 100, 600],
+                    vibrate: [400, 150, 400, 150, 400, 150, 400, 150, 400, 150, 400],
                     data: { url: './admin.html#requests' },
                     actions: [
                         { action: 'open',  title: '👁 Ver panel' },
                         { action: 'close', title: 'Cerrar'       }
                     ]
                 });
+                // Reproducir sonido local
+                playAdminAlertSound();
             } catch(e) {
                 alert('❌ Error al mostrar notificación: ' + e.message);
             }
