@@ -1394,22 +1394,28 @@
                             <h3 class="slide-title">¿Qué incluye la plataforma?</h3>
                             <p class="slide-text">Con acceso <span class="highlight">Plus</span> tienes acceso ilimitado a: <strong>Filtro Vehicular Completo</strong>, <strong>SOAT Vigente</strong>, <strong>Historial SUNARP</strong>, <strong>Deudas SAT</strong>, <strong>Papeletas ATU/SUTRAN</strong>, <strong>CITV</strong>, <strong>Siniestralidad</strong> y <strong>Dashboard Permanente</strong>. Toda la información legal y administrativa del vehículo en un solo reporte.</p>
                             
-                            <div style="position: relative; max-width: 320px; margin: 24px auto 0;">
-                                <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; padding-bottom: 12px; -webkit-overflow-scrolling: touch;">
-                                    <div class="tutorial-image" style="flex-shrink: 0; scroll-snap-align: center; margin: 0;">
-                                        <i class="fa-solid fa-shield-halved" style="font-size: 40px;"></i><br>
-                                        Funcionalidades 1
+                            <div style="position: relative; max-width: 420px; margin: 24px auto 0;">
+                                <div id="imageCarousel3" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 16px; padding: 8px 0 16px; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;">
+                                    <div style="flex-shrink: 0; scroll-snap-align: center; width: 100%; max-width: 380px; aspect-ratio: 9/16; background: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; overflow: hidden;">
+                                        <div style="text-align: center; color: #94a3b8;">
+                                            <i class="fa-solid fa-shield-halved" style="font-size: 48px; margin-bottom: 12px;"></i><br>
+                                            <span style="font-size: 13px;">Funcionalidades 1</span>
+                                        </div>
                                     </div>
-                                    <div class="tutorial-image" style="flex-shrink: 0; scroll-snap-align: center; margin: 0;">
-                                        <i class="fa-solid fa-file-lines" style="font-size: 40px;"></i><br>
-                                        Funcionalidades 2
+                                    <div style="flex-shrink: 0; scroll-snap-align: center; width: 100%; max-width: 380px; aspect-ratio: 9/16; background: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; overflow: hidden;">
+                                        <div style="text-align: center; color: #94a3b8;">
+                                            <i class="fa-solid fa-file-lines" style="font-size: 48px; margin-bottom: 12px;"></i><br>
+                                            <span style="font-size: 13px;">Funcionalidades 2</span>
+                                        </div>
                                     </div>
-                                    <div class="tutorial-image" style="flex-shrink: 0; scroll-snap-align: center; margin: 0;">
-                                        <i class="fa-solid fa-chart-line" style="font-size: 40px;"></i><br>
-                                        Funcionalidades 3
+                                    <div style="flex-shrink: 0; scroll-snap-align: center; width: 100%; max-width: 380px; aspect-ratio: 9/16; background: #f1f5f9; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0; overflow: hidden;">
+                                        <div style="text-align: center; color: #94a3b8;">
+                                            <i class="fa-solid fa-chart-line" style="font-size: 48px; margin-bottom: 12px;"></i><br>
+                                            <span style="font-size: 13px;">Funcionalidades 3</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <p style="font-size: 11px; color: #94a3b8; margin-top: 8px; text-align: center;">Desliza para ver más →</p>
+                                <p style="font-size: 11px; color: #94a3b8; margin-top: 4px; text-align: center;">← Desliza horizontalmente para ver más →</p>
                             </div>
                         </div>
                     </div>
@@ -1617,7 +1623,23 @@
             }
         });
 
-        document.addEventListener('DOMContentLoaded', initCarousel);
+        document.addEventListener('DOMContentLoaded', function() {
+            initCarousel();
+            
+            // Evitar conflicto entre carrusel de imágenes y swipe del tutorial
+            var imageCarousel = document.getElementById('imageCarousel3');
+            if (imageCarousel) {
+                imageCarousel.addEventListener('touchstart', function(e) {
+                    e.stopPropagation();
+                }, { passive: true });
+                imageCarousel.addEventListener('touchmove', function(e) {
+                    e.stopPropagation();
+                }, { passive: true });
+                imageCarousel.addEventListener('touchend', function(e) {
+                    e.stopPropagation();
+                });
+            }
+        });
     </script>
 
 </body>
