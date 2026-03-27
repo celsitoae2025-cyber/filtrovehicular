@@ -563,22 +563,18 @@
         /* Contenedor centrado de imágenes */
         .image-carousel-container {
             position: relative;
+            width: 290px;
             margin: 24px auto 0;
-            max-width: 320px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         .image-carousel-wrapper {
+            width: 290px;
             display: flex;
             overflow-x: auto;
             overflow-y: hidden;
             scroll-snap-type: x mandatory;
-            gap: 16px;
-            padding: 0;
+            gap: 0;
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
-            width: 100%;
             scrollbar-width: none;
         }
         .image-carousel-wrapper::-webkit-scrollbar {
@@ -586,13 +582,16 @@
         }
         .image-carousel-wrapper .tutorial-image {
             scroll-snap-align: start;
+            flex-shrink: 0;
+            width: 290px;
+            margin: 0;
         }
         .img-arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             background: #0d2536;
             color: #8bc34a;
             border: none;
@@ -605,8 +604,8 @@
             z-index: 5;
             transition: opacity 0.2s;
         }
-        .img-arrow.left { left: -18px; }
-        .img-arrow.right { right: -18px; }
+        .img-arrow.left { left: -46px; }
+        .img-arrow.right { right: -46px; }
         .img-arrow:hover { opacity: 0.8; }
 
         /* Footer / Nav bar */
@@ -1678,37 +1677,24 @@
 
         function scrollImgCarousel(btn, dir) {
             var wrapper = btn.parentElement.querySelector('.image-carousel-wrapper');
-            wrapper.scrollBy({ left: dir * 306, behavior: 'smooth' });
+            wrapper.scrollBy({ left: dir * 290, behavior: 'smooth' });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             initCarousel();
             
-            // Habilitar swipe en carruseles de imágenes sin interferir con el tutorial
+            // Bloquear propagación de touch en carruseles de imágenes
+            // para que el dedo deslice las imágenes y no el tutorial
             document.querySelectorAll('.image-carousel-wrapper').forEach(function(wrapper) {
-                var startX = 0;
-                var scrollLeft = 0;
-                var isDown = false;
-                
                 wrapper.addEventListener('touchstart', function(e) {
-                    isDown = true;
-                    startX = e.touches[0].pageX - wrapper.offsetLeft;
-                    scrollLeft = wrapper.scrollLeft;
                     e.stopPropagation();
                 }, { passive: true });
-                
                 wrapper.addEventListener('touchmove', function(e) {
-                    if (!isDown) return;
                     e.stopPropagation();
-                    var x = e.touches[0].pageX - wrapper.offsetLeft;
-                    var walk = (x - startX) * 1.5;
-                    wrapper.scrollLeft = scrollLeft - walk;
                 }, { passive: true });
-                
                 wrapper.addEventListener('touchend', function(e) {
-                    isDown = false;
                     e.stopPropagation();
-                });
+                }, { passive: true });
             });
         });
     </script>
