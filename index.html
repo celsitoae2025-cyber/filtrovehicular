@@ -3565,14 +3565,20 @@
         async function syncSolicitudToNube(placa, data) {
             if (typeof window.sb !== 'undefined' && window.sb) {
                 try {
-                    await window.sb
+                    // Intentar actualizar fila existente primero
+                    const { data: updated, error: updateErr } = await window.sb
                         .from('solicitudes')
-                        .upsert({ 
-                            placa: placa, 
-                            datos: data, 
-                            updated_at: new Date() 
-                        }, { onConflict: 'placa' });
-                } catch (e) { console.error("Error sincronizando solicitud:", e); }
+                        .update({ datos: data, updated_at: new Date() })
+                        .eq('placa', placa)
+                        .select('placa');
+
+                    // Si no existe fila (0 filas actualizadas), insertar nueva
+                    if (!updateErr && (!updated || updated.length === 0)) {
+                        await window.sb
+                            .from('solicitudes')
+                            .insert({ placa: placa, datos: data, updated_at: new Date() });
+                    }
+                } catch (e) { console.error('Error sincronizando solicitud:', e); }
             }
         }
 
@@ -3789,33 +3795,48 @@
                             .eq('email', currentUser.email);
 
                         if (!error) {
-                            localStorage.setItem('approved_request_' + placa, 'true');
-                            localStorage.removeItem('has_pending_notification'); // Limpiar badge
-                            
-                            // Actualizar solicitud a "approved" en Supabase
+                            // Solicitud queda como 'pending' para que el admin la procese
+                            localStorage.setItem('has_pending_notification', 'true');
+                            localStorage.setItem('last_pending_plate', placa);
+
+                            // Actualizar solicitud con créditos descontados (estado sigue pending)
                             try {
-                                const { data: solicitudRow } = await window.sb
+                                const { data: updated } = await window.sb
                                     .from('solicitudes')
-                                    .select('datos')
+                                    .update({ datos: Object.assign({}, {
+                                        placa: placa,
+                                        timestamp: Date.now(),
+                                        status: 'pending',
+                                        email: currentUser.email.toLowerCase().trim(),
+                                        servicio: 'Filtro Vehicular Completo',
+                                        pagoCon: 'creditos'
+                                    }), updated_at: new Date() })
                                     .eq('placa', placa)
-                                    .single();
-                                
-                                if (solicitudRow && solicitudRow.datos) {
-                                    solicitudRow.datos.status = 'approved';
-                                    await window.sb.from('solicitudes').upsert(
-                                        { placa: placa, datos: solicitudRow.datos, updated_at: new Date() },
-                                        { onConflict: 'placa' }
-                                    );
+                                    .select('placa');
+
+                                if (!updated || updated.length === 0) {
+                                    await window.sb.from('solicitudes').insert({
+                                        placa: placa,
+                                        datos: {
+                                            placa: placa,
+                                            timestamp: Date.now(),
+                                            status: 'pending',
+                                            email: currentUser.email.toLowerCase().trim(),
+                                            servicio: 'Filtro Vehicular Completo',
+                                            pagoCon: 'creditos'
+                                        },
+                                        updated_at: new Date()
+                                    });
                                 }
                             } catch (e) {
-                                console.error("Error actualizando solicitud:", e);
+                                console.error('Error actualizando solicitud con creditos:', e);
                             }
-                            
-                            alert("¡Desbloqueo Exitoso! Se han descontado 20 créditos. El administrador procesará tu solicitud.");
-                            
-                            window.location.href = `panel_cliente.html`;
+
+                            alert('Pago con créditos confirmado (S/ 20.00 descontados). El administrador procesará tu solicitud.');
+
+                            window.location.href = 'panel_cliente.html';
                             isDeductingCredits = false;
-                            return; // Frenar ejecución del modal restrictivo
+                            return;
                         }
                     } else {
                         // Validar y mostrar alerta según créditos disponibles
