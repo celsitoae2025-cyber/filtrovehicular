@@ -3184,6 +3184,55 @@ Link: https://filtrovehicularperu.com`;
             }
         };
 
+        // Diagnóstico completo del sistema Web Push
+        window.diagnosePush = async function() {
+            let msg = '🔍 DIAGNÓSTICO WEB PUSH\n\n';
+            msg += `1. Permiso: ${Notification.permission}\n`;
+            msg += `2. PushManager: ${'PushManager' in window ? 'SÍ ✅' : 'NO ❌'}\n`;
+            msg += `3. localStorage push: ${localStorage.getItem('push_notifications_enabled') || 'NO'}\n`;
+
+            if ('serviceWorker' in navigator) {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                msg += `4. Service Workers: ${regs.length}\n`;
+                for (const r of regs) {
+                    msg += `   - ${r.scope} [${r.active ? 'ACTIVO ✅' : 'INACTIVO ❌'}]\n`;
+                    const sub = await r.pushManager.getSubscription().catch(() => null);
+                    if (sub) {
+                        msg += `   - Suscripción: ✅ endpoint: ...${sub.endpoint.slice(-30)}\n`;
+                    } else {
+                        msg += `   - Suscripción: ❌ NINGUNA\n`;
+                    }
+                }
+            } else {
+                msg += `4. Service Worker: NO SOPORTADO ❌\n`;
+            }
+
+            if (window.sb) {
+                try {
+                    const { data, error } = await window.sb
+                        .from('admin_push_tokens')
+                        .select('token, subscription, device_type, updated_at');
+                    if (error) {
+                        msg += `5. Supabase: ERROR - ${error.message}\n`;
+                    } else if (!data || data.length === 0) {
+                        msg += `5. Supabase: NINGÚN TOKEN ❌\n`;
+                    } else {
+                        msg += `5. Supabase: ${data.length} registro(s) ✅\n`;
+                        data.forEach((t, i) => {
+                            const hasSub = t.subscription && t.subscription.endpoint ? '✅' : '❌ SIN subscription';
+                            msg += `   ${i+1}) ${t.device_type} | sub: ${hasSub} | ${t.updated_at?.slice(0,16)}\n`;
+                        });
+                    }
+                } catch(e) {
+                    msg += `5. Supabase: ERROR - ${e.message}\n`;
+                }
+            } else {
+                msg += `5. Supabase: NO CONECTADO ❌\n`;
+            }
+
+            alert(msg);
+        };
+
         // Badging API: actualiza el número en el ícono de la PWA
         window.updateAppBadge = function(count) {
             if ('setAppBadge' in navigator) {
