@@ -896,9 +896,26 @@
                     if (raw) localData = JSON.parse(raw);
                 }
 
-                let itemsParaPDF = localData ? (localData.items || []) : [];
-                let vStatus = localData ? (localData.verdictStatus || 'ok') : 'ok';
-                let vText = localData ? (localData.verdictText || '') : '';
+                // Si no hay datos locales, buscar en Supabase (reportMeta guardado por el admin)
+                if (!localData && window.sb) {
+                    try {
+                        const variantes = [...new Set([norm, placa.toUpperCase()])];
+                        const { data: rows } = await window.sb.from('solicitudes').select('datos').in('placa', variantes);
+                        const hit = (rows || []).find(r => r.datos && r.datos.reportMeta);
+                        if (hit) localData = hit.datos.reportMeta;
+                    } catch(e) { console.error('Error fetching reportMeta:', e); }
+                }
+
+                if (!localData) {
+                    alert('No se encontraron datos del reporte. Contacta al administrador.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                let itemsParaPDF = localData.items || [];
+                let vStatus = localData.verdictStatus || 'ok';
+                let vText = localData.verdictText || '';
                 let isIndividualPrint = false;
                 let individualServiceName = '';
 

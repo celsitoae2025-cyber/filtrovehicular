@@ -3571,7 +3571,7 @@
                             placa: placa, 
                             datos: data, 
                             updated_at: new Date() 
-                        });
+                        }, { onConflict: 'placa' });
                 } catch (e) { console.error("Error sincronizando solicitud:", e); }
             }
         }
@@ -3749,7 +3749,12 @@
 
             // INICIAR FLUJO DE ESCANEO INTELIGENTE
             localStorage.setItem('last_pending_plate', p);
-            const initialPending = { placa: p, timestamp: Date.now(), status: 'pending' };
+            const initialPending = {
+                placa: p,
+                timestamp: Date.now(),
+                status: 'pending',
+                email: (typeof currentUser !== 'undefined' && currentUser) ? currentUser.email.toLowerCase().trim() : 'Anónimo'
+            };
             localStorage.setItem('pending_request_' + p, JSON.stringify(initialPending));
             await syncSolicitudToNube(p, initialPending);
 
