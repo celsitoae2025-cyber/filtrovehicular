@@ -404,47 +404,169 @@
             font-size: 16px;
         }
 
-        /* Modal Tutorial */
+        /* Modal Tutorial Carrusel */
         .tutorial-modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(13, 37, 54, 0.85);
+            background: linear-gradient(135deg, #0d2536 0%, #0a1929 100%);
             z-index: 2000;
-            padding: 20px;
-            overflow-y: auto;
+            padding: 0;
+            overflow: hidden;
         }
         .tutorial-container {
-            background: #ffffff;
-            border: 2px solid #e2e8f0;
-            border-radius: 20px;
-            max-width: 800px;
-            margin: 40px auto;
-            width: 100%;
-            max-height: calc(100vh - 80px);
-            overflow-y: auto;
             position: relative;
-            box-shadow: 0 20px 60px rgba(13, 37, 54, 0.15);
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         .tutorial-header {
-            background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
+            background: rgba(13, 37, 54, 0.95);
+            backdrop-filter: blur(20px);
             color: white;
-            padding: 28px 32px;
-            border-radius: 18px 18px 0 0;
-            position: sticky;
-            top: 0;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(139, 195, 74, 0.3);
+            position: relative;
             z-index: 10;
-            border-bottom: 3px solid #8bc34a;
         }
         .tutorial-close {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.15);
+            top: 16px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .tutorial-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+        .tutorial-carousel {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #0d2536, #0a1929);
+        }
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .slide-content {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 32px;
+            color: white;
+            text-align: center;
+        }
+        .slide-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #8bc34a, #7cb342);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 900;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 24px rgba(139, 195, 74, 0.3);
+        }
+        .slide-title {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 16px;
+            color: white;
+        }
+        .slide-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 24px;
+        }
+        .slide-list {
+            text-align: left;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            line-height: 1.7;
+            padding-left: 0;
+            list-style: none;
+        }
+        .slide-list li {
+            margin-bottom: 12px;
+            padding-left: 24px;
+            position: relative;
+        }
+        .slide-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #8bc34a;
+            font-weight: bold;
+        }
+        .highlight {
+            background: rgba(139, 195, 74, 0.2);
+            color: #8bc34a;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            border: 1px solid rgba(139, 195, 74, 0.3);
+        }
+        .carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .carousel-dot.active {
+            width: 24px;
+            border-radius: 4px;
+            background: #8bc34a;
+        }
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -452,77 +574,59 @@
             justify-content: center;
             font-size: 18px;
             transition: all 0.3s ease;
+            z-index: 10;
         }
-        .tutorial-close:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: rotate(90deg);
+        .carousel-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
-        .tutorial-content {
-            padding: 40px 32px;
-            background: linear-gradient(to bottom, #ffffff, #f8fafc);
+        .carousel-nav.prev {
+            left: 20px;
         }
-        .tutorial-step {
-            margin-bottom: 48px;
-            padding: 28px;
-            background: #ffffff;
+        .carousel-nav.next {
+            right: 20px;
+        }
+        .tutorial-image {
+            width: 100%;
+            max-width: 240px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        .tutorial-step:hover {
-            border-color: #8bc34a;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(139, 195, 74, 0.1);
-        }
-        .tutorial-step::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(to bottom, #8bc34a, #7cb342);
-            border-radius: 4px 0 0 4px;
-        }
-        .tutorial-step h3 {
-            color: #0d2536;
-            font-size: 20px;
-            font-weight: 900;
-            margin-bottom: 16px;
+            margin: 20px auto;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            text-align: center;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            object-fit: cover;
         }
-        .tutorial-step p {
-            color: #475569;
-            font-size: 15px;
-            line-height: 1.7;
-            margin-bottom: 16px;
+        .tutorial-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 16px;
         }
-        .tutorial-step ul {
-            color: #475569;
-            font-size: 15px;
-            line-height: 1.7;
-            padding-left: 24px;
-            margin-bottom: 16px;
-        }
-        .tutorial-step li {
-            margin-bottom: 10px;
-            position: relative;
-        }
-        .tutorial-step li::marker {
-            color: #8bc34a;
-            font-weight: bold;
-        }
-        .highlight {
-            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-            color: #166534;
-            padding: 3px 10px;
-            border-radius: 8px;
-            font-weight: 700;
-            border: 1px solid #bbf7d0;
-            display: inline-block;
+        @media (max-width: 767px) {
+            .slide-content {
+                padding: 24px;
+                margin: 0 10px;
+            }
+            .carousel-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            .carousel-nav.prev {
+                left: 10px;
+            }
+            .carousel-nav.next {
+                right: 10px;
+            }
+            .tutorial-image {
+                max-width: 200px;
+                height: 350px;
+            }
         }
         .tutorial-image {
             width: 100%;
@@ -1271,203 +1375,303 @@
         function closeAccess() { document.getElementById('accessModal').style.display = 'none'; }
     </script>
 
-    <!-- Modal Tutorial Completo -->
-    <div class="tutorial-modal" id="tutorialModal" onclick="if(event.target===this) closeTutorial()">
-        <div class="tutorial-container" onclick="event.stopPropagation()">
-            <button class="tutorial-close" onclick="closeTutorial()" aria-label="Cerrar">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            
+    <!-- Modal Tutorial Carrusel -->
+    <div class="tutorial-modal" id="tutorialModal">
+        <div class="tutorial-container">
             <div class="tutorial-header">
-                <h2 style="margin: 0; font-size: 20px; font-weight: 900;">
-                    <i class="fa-solid fa-book-open" style="margin-right: 10px;"></i>
-                    Tutorial Completo: Guía de Uso
+                <h2 style="margin: 0; font-size: 18px; font-weight: 900;">
+                    <i class="fa-solid fa-book-open" style="margin-right: 8px;"></i>
+                    Tutorial Completo
                 </h2>
-                <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.9;">
-                    Aprende a usar Filtro Vehicular paso a paso
+                <p style="margin: 4px 0 0; font-size: 13px; opacity: 0.8;">
+                    Desliza para navegar
                 </p>
+                <button class="tutorial-close" onclick="closeTutorial()" aria-label="Cerrar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
             
-            <div class="tutorial-content">
-                <!-- Paso 1: Registro -->
-                <div class="tutorial-step">
-                    <h3>
-                        <span style="background: #8bc34a; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;">1</span>
-                        Crear tu cuenta
-                    </h3>
-                    <p>
-                        Para empezar a usar Filtro Vehicular, necesitas crear una cuenta gratuita:
-                    </p>
-                    <ul>
-                        <li>Ve a <span class="highlight">filtrovehicularperu.com</span></li>
-                        <li>Haz clic en <span class="highlight">"Ingresar"</span> y luego en <span class="highlight">"Registrarse"</span></li>
-                        <li>Completa tus datos: nombre, email y WhatsApp</li>
-                        <li>Recibirás un email para verificar tu cuenta</li>
-                        <li>Una vez verificada, ya puedes ingresar con tu email y contraseña</li>
-                    </ul>
-                    <div class="tutorial-image">
-                        <i class="fa-solid fa-user-plus" style="font-size: 48px; margin-bottom: 10px;"></i><br>
-                        Pantalla de registro
-                    </div>
-                </div>
-
-                <!-- Paso 2: Activación -->
-                <div class="tutorial-step">
-                    <h3>
-                        <span style="background: #8bc34a; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;">2</span>
-                        Activación de Acceso
-                    </h3>
-                    <p>
-                        Tu cuenta se crea en modo <span class="highlight">Demo</span>. Para acceso completo:
-                    </p>
-                    <ul>
-                        <li>Envía un mensaje a WhatsApp con tu email de registro</li>
-                        <li>El administrador activará tu acceso manualmente</li>
-                        <li>Recibirás confirmación cuando tu acceso esté activo</li>
-                        <li>Verás el logo cambiar de <span class="highlight">"Demo"</span> a <span class="highlight">"Plus"</span></li>
-                        <li>Podrás acceder a todas las funcionalidades sin restricciones</li>
-                    </ul>
-                    <div class="tutorial-image">
-                        <i class="fa-solid fa-unlock" style="font-size: 48px; margin-bottom: 10px;"></i><br>
-                        Acceso activado
-                    </div>
-                </div>
-
-                <!-- Paso 3: Plataforma Completa -->
-                <div class="tutorial-step">
-                    <h3>
-                        <span style="background: #8bc34a; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;">3</span>
-                        ¿Qué incluye la plataforma completa?
-                    </h3>
-                    <p>
-                        Con acceso completo (Plus) tienes acceso ilimitado a:
-                    </p>
-                    <ul>
-                        <li><span class="highlight">Filtro Vehicular Completo</span> — Todas las verificaciones legales</li>
-                        <li><span class="highlight">SOAT Vigente</span> — Estado de tu póliza de seguro</li>
-                        <li><span class="highlight">Historial SUNARP</span> — Propiedad y transferencias</li>
-                        <li><span class="highlight">Deudas SAT Lima/Callao</span> — Multas e impuestos</li>
-                        <li><span class="highlight">Papeletas ATU/SUTRAN</span> — Infracciones de tránsito</li>
-                        <li><span class="highlight">CITV</span> — Inspección técnica vehicular</li>
-                        <li><span class="highlight">Siniestralidad</span> — Historial de accidentes</li>
-                        <li><span class="highlight">Dashboard Permanente</span> — Acceso ilimitado</li>
-                    </ul>
-                </div>
-
-                <!-- Paso 4: Consultas -->
-                <div class="tutorial-step">
-                    <h3>
-                        <span style="background: #8bc34a; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;">4</span>
-                        Cómo hacer consultas
-                    </h3>
-                    <p>
-                        Realizar consultas es muy sencillo:
-                    </p>
-                    <ul>
-                        <li>Ingresa al panel con tu email y contraseña</li>
-                        <li>En el campo de búsqueda, escribe la <span class="highlight">placa del vehículo</span></li>
-                        <li>El sistema buscará automáticamente en todas las bases de datos</li>
-                        <li>Recibirás un reporte completo en PDF con todos los resultados</li>
-                        <li>Las consultas se guardan en tu historial para revisarlas después</li>
-                    </ul>
-                    <div class="tutorial-image">
-                        <i class="fa-solid fa-search" style="font-size: 48px; margin-bottom: 10px;"></i><br>
-                        Búsqueda por placa
-                    </div>
-                </div>
-
-                <!-- Paso 5: Medios de Pago -->
-                <div class="tutorial-step">
-                    <h3>
-                        <span style="background: #8bc34a; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;">5</span>
-                        Medios de Pago
-                    </h3>
-                    <p>
-                        Puedes recargar créditos de varias formas:
-                    </p>
-                    <ul>
-                        <li><span class="highlight">Yape</span> — Escanea el QR y paga con tu app Yape</li>
-                        <li><span class="highlight">Plin</span> — Pago instantáneo con Plin</li>
-                        <li><span class="highlight">Transferencia Bancaria</span> — Depósito o transferencia</li>
-                        <li><span class="highlight">Billeteras Digitales</span> — Otras apps de pago</li>
-                        <li>Los créditos se cargan automáticamente a tu cuenta</li>
-                        <li>Cada consulta consume 1 crédito</li>
-                    </ul>
-                    <div class="tutorial-image">
-                        <i class="fa-solid fa-credit-card" style="font-size: 48px; margin-bottom: 10px;"></i><br>
-                        Métodos de pago
-                    </div>
-                </div>
-
-                <!-- Paso 6: Dashboard Permanente -->
-                <div class="tutorial-step">
-                    <h3>
-                        <span style="background: #8bc34a; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;">6</span>
-                        Dashboard Permanente (Opcional)
-                    </h3>
-                    <p>
-                        Para uso intensivo, puedes activar el Dashboard Permanente:
-                    </p>
-                    <ul>
-                        <li>Acceso <span class="highlight">ilimitado</span> sin necesidad de créditos</li>
-                        <li>Ideal para empresas, concesionarios o uso frecuente</li>
-                        <li>Contacta al administrador para activar esta modalidad</li>
-                        <li>Puedes hacer todas las consultas que necesites</li>
-                        <li>Sin preocuparte por consumir créditos</li>
-                    </ul>
-                    <div class="tutorial-image">
-                        <i class="fa-solid fa-infinity" style="font-size: 48px; margin-bottom: 10px;"></i><br>
-                        Acceso ilimitado
-                    </div>
-                </div>
-
-                <!-- Paso 7: Tips y Recomendaciones -->
-                <div class="tutorial-step">
-                    <h3>
-                        <span style="background: #8bc34a; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;">7</span>
-                        Tips y Recomendaciones
-                    </h3>
-                    <p>
-                        Para aprovechar al máximo la plataforma:
-                    </p>
-                    <ul>
-                        <li>Guarda tus consultas importantes como PDF</li>
-                        <li>Revisa el historial antes de hacer consultas repetidas</li>
-                        <li>Mantén tus datos actualizados en tu perfil</li>
-                        <li>Usa el formato correcto de placa (ABC-123)</li>
-                        <li>Si tienes problemas, contacta soporte por WhatsApp</li>
-                        <li>Recarga créditos con anticipación para evitar interrupciones</li>
-                    </ul>
-                </div>
-
-                <!-- Resumen -->
-                <div style="background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); color: white; padding: 40px; border-radius: 20px; text-align: center; margin-top: 48px; border: 2px solid rgba(139, 195, 74, 0.2); position: relative; overflow: hidden;">
-                    <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: rgba(139, 195, 74, 0.1); border-radius: 50%;"></div>
-                    <div style="position: absolute; bottom: -30px; left: -30px; width: 60px; height: 60px; background: rgba(139, 195, 74, 0.1); border-radius: 50%;"></div>
-                    <div style="position: relative; z-index: 1;">
-                        <div style="width: 64px; height: 64px; background: rgba(139, 195, 74, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; border: 2px solid rgba(139, 195, 74, 0.3);">
-                            <i class="fa-solid fa-check-circle" style="font-size: 28px; color: #8bc34a;"></i>
+            <div class="tutorial-carousel">
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- Slide 1: Registro -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <div class="slide-number">1</div>
+                            <h3 class="slide-title">Crear tu cuenta</h3>
+                            <p class="slide-text">Para empezar a usar Filtro Vehicular, necesitas crear una cuenta gratuita:</p>
+                            <ul class="slide-list">
+                                <li>Ve a <span class="highlight">filtrovehicularperu.com</span></li>
+                                <li>Haz clic en <span class="highlight">"Ingresar"</span> y luego <span class="highlight">"Registrarse"</span></li>
+                                <li>Completa tus datos: nombre, email y WhatsApp</li>
+                                <li>Recibirás un email para verificar tu cuenta</li>
+                                <li>Una vez verificada, ya puedes ingresar</li>
+                            </ul>
+                            <div class="tutorial-image">
+                                <i class="fa-solid fa-user-plus" style="font-size: 48px; margin-bottom: 10px;"></i><br>
+                                Pantalla de registro
+                            </div>
                         </div>
-                        <h3 style="margin-bottom: 16px; font-size: 24px; font-weight: 900;">
-                            ¡Listo para usar Filtro Vehicular!
-                        </h3>
-                        <p style="margin-bottom: 28px; opacity: 0.9; font-size: 16px; line-height: 1.6;">
-                            Ahora tienes todo el conocimiento para hacer consultas vehiculares profesionales
-                        </p>
-                        <button onclick="closeTutorial()" style="background: #8bc34a; color: white; border: none; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(139, 195, 74, 0.3);" onmouseover="this.style.background='#7cb342'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#8bc34a'; this.style.transform='translateY(0)';">
-                            <i class="fa-solid fa-rocket" style="margin-right: 8px;"></i>
-                            Empezar a usar la plataforma
-                        </button>
+                    </div>
+
+                    <!-- Slide 2: Activación -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <div class="slide-number">2</div>
+                            <h3 class="slide-title">Activación de Acceso</h3>
+                            <p class="slide-text">Tu cuenta se crea en modo <span class="highlight">Demo</span>. Para acceso completo:</p>
+                            <ul class="slide-list">
+                                <li>Envía un mensaje a WhatsApp con tu email</li>
+                                <li>El administrador activará tu acceso manualmente</li>
+                                <li>Recibirás confirmación cuando esté activo</li>
+                                <li>Verás el logo cambiar de <span class="highlight">"Demo"</span> a <span class="highlight">"Plus"</span></li>
+                                <li>Podrás acceder a todas las funcionalidades</li>
+                            </ul>
+                            <div class="tutorial-image">
+                                <i class="fa-solid fa-unlock" style="font-size: 48px; margin-bottom: 10px;"></i><br>
+                                Acceso activado
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3: Plataforma Completa -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <div class="slide-number">3</div>
+                            <h3 class="slide-title">¿Qué incluye la plataforma?</h3>
+                            <p class="slide-text">Con acceso completo (Plus) tienes acceso ilimitado a:</p>
+                            <ul class="slide-list">
+                                <li><span class="highlight">Filtro Vehicular Completo</span> — Todas las verificaciones</li>
+                                <li><span class="highlight">SOAT Vigente</span> — Estado de tu póliza</li>
+                                <li><span class="highlight">Historial SUNARP</span> — Propiedad y transferencias</li>
+                                <li><span class="highlight">Deudas SAT</span> — Multas e impuestos</li>
+                                <li><span class="highlight">Papeletas ATU/SUTRAN</span> — Infracciones</li>
+                                <li><span class="highlight">CITV</span> — Inspección técnica</li>
+                                <li><span class="highlight">Siniestralidad</span> — Historial de accidentes</li>
+                                <li><span class="highlight">Dashboard Permanente</span> — Acceso ilimitado</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Slide 4: Consultas -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <div class="slide-number">4</div>
+                            <h3 class="slide-title">Cómo hacer consultas</h3>
+                            <p class="slide-text">Realizar consultas es muy sencillo:</p>
+                            <ul class="slide-list">
+                                <li>Ingresa al panel con tu email y contraseña</li>
+                                <li>En el campo de búsqueda, escribe la <span class="highlight">placa</span></li>
+                                <li>El sistema busca automáticamente en todas las bases</li>
+                                <li>Recibirás un reporte completo en PDF</li>
+                                <li>Las consultas se guardan en tu historial</li>
+                            </ul>
+                            <div class="tutorial-image">
+                                <i class="fa-solid fa-search" style="font-size: 48px; margin-bottom: 10px;"></i><br>
+                                Búsqueda por placa
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 5: Medios de Pago -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <div class="slide-number">5</div>
+                            <h3 class="slide-title">Medios de Pago</h3>
+                            <p class="slide-text">Puedes recargar créditos de varias formas:</p>
+                            <ul class="slide-list">
+                                <li><span class="highlight">Yape</span> — Escanea el QR y paga</li>
+                                <li><span class="highlight">Plin</span> — Pago instantáneo</li>
+                                <li><span class="highlight">Transferencia</span> — Depósito bancario</li>
+                                <li><span class="highlight">Billeteras Digitales</span> — Otras apps</li>
+                                <li>Los créditos se cargan automáticamente</li>
+                                <li>Cada consulta consume 1 crédito</li>
+                            </ul>
+                            <div class="tutorial-image">
+                                <i class="fa-solid fa-credit-card" style="font-size: 48px; margin-bottom: 10px;"></i><br>
+                                Métodos de pago
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 6: Dashboard Permanente -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <div class="slide-number">6</div>
+                            <h3 class="slide-title">Dashboard Permanente</h3>
+                            <p class="slide-text">Para uso intensivo, activa el Dashboard Permanente:</p>
+                            <ul class="slide-list">
+                                <li>Acceso <span class="highlight">ilimitado</span> sin créditos</li>
+                                <li>Ideal para empresas y concesionarios</li>
+                                <li>Contacta al administrador para activar</li>
+                                <li>Puedes hacer todas las consultas que necesites</li>
+                                <li>Sin preocuparte por consumir créditos</li>
+                            </ul>
+                            <div class="tutorial-image">
+                                <i class="fa-solid fa-infinity" style="font-size: 48px; margin-bottom: 10px;"></i><br>
+                                Acceso ilimitado
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 7: Tips -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <div class="slide-number">7</div>
+                            <h3 class="slide-title">Tips y Recomendaciones</h3>
+                            <p class="slide-text">Para aprovechar al máximo la plataforma:</p>
+                            <ul class="slide-list">
+                                <li>Guarda tus consultas importantes como PDF</li>
+                                <li>Revisa el historial antes de repetir</li>
+                                <li>Mantén tus datos actualizados</li>
+                                <li>Usa el formato correcto de placa (ABC-123)</li>
+                                <li>Si tienes problemas, contacta soporte</li>
+                                <li>Recarga créditos con anticipación</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Slide 8: Listo -->
+                    <div class="carousel-slide">
+                        <div class="slide-content" style="text-align: center;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8bc34a, #7cb342); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 12px 32px rgba(139, 195, 74, 0.4);">
+                                <i class="fa-solid fa-check" style="font-size: 36px; color: white;"></i>
+                            </div>
+                            <h3 class="slide-title">¡Listo para usar!</h3>
+                            <p class="slide-text">Ahora tienes todo el conocimiento para hacer consultas vehiculares profesionales</p>
+                            <button onclick="closeTutorial()" style="background: linear-gradient(135deg, #8bc34a, #7cb342); color: white; border: none; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 20px; box-shadow: 0 8px 24px rgba(139, 195, 74, 0.3); transition: all 0.3s ease;">
+                                <i class="fa-solid fa-rocket" style="margin-right: 8px;"></i>
+                                Empezar ahora
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Navegación -->
+                <button class="carousel-nav prev" onclick="goToSlide(currentSlide - 1)">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="carousel-nav next" onclick="goToSlide(currentSlide + 1)">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+                <!-- Dots indicadores -->
+                <div class="carousel-dots" id="carouselDots"></div>
             </div>
         </div>
     </div>
 
     <script>
+        let currentSlide = 0;
+        const totalSlides = 8;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let isDragging = false;
+
+        function initCarousel() {
+            const track = document.getElementById('carouselTrack');
+            const dotsContainer = document.getElementById('carouselDots');
+            
+            // Crear dots
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'carousel-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.onclick = () => goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+            
+            // Touch events para finger swipe
+            track.addEventListener('touchstart', handleTouchStart, { passive: true });
+            track.addEventListener('touchmove', handleTouchMove, { passive: true });
+            track.addEventListener('touchend', handleTouchEnd);
+            
+            // Mouse events para desktop drag
+            track.addEventListener('mousedown', handleMouseDown);
+            track.addEventListener('mousemove', handleMouseMove);
+            track.addEventListener('mouseup', handleMouseUp);
+            track.addEventListener('mouseleave', handleMouseUp);
+            
+            updateCarousel();
+        }
+
+        function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            isDragging = true;
+        }
+
+        function handleTouchMove(e) {
+            if (!isDragging) return;
+            touchEndX = e.touches[0].clientX;
+        }
+
+        function handleTouchEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            handleSwipe();
+        }
+
+        function handleMouseDown(e) {
+            touchStartX = e.clientX;
+            isDragging = true;
+            e.preventDefault();
+        }
+
+        function handleMouseMove(e) {
+            if (!isDragging) return;
+            touchEndX = e.clientX;
+        }
+
+        function handleMouseUp(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            handleSwipe();
+        }
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left - next slide
+                    goToSlide(currentSlide + 1);
+                } else {
+                    // Swipe right - previous slide
+                    goToSlide(currentSlide - 1);
+                }
+            }
+        }
+
+        function goToSlide(slideIndex) {
+            if (slideIndex < 0) slideIndex = 0;
+            if (slideIndex >= totalSlides) slideIndex = totalSlides - 1;
+            
+            currentSlide = slideIndex;
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const track = document.getElementById('carouselTrack');
+            const dots = document.querySelectorAll('.carousel-dot');
+            
+            // Mover track
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            // Actualizar dots
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+            
+            // Actualizar navegación
+            document.querySelector('.carousel-nav.prev').style.opacity = currentSlide === 0 ? '0.3' : '1';
+            document.querySelector('.carousel-nav.next').style.opacity = currentSlide === totalSlides - 1 ? '0.3' : '1';
+        }
+
         function openTutorial() {
             document.getElementById('tutorialModal').style.display = 'block';
             document.body.style.overflow = 'hidden';
+            currentSlide = 0;
+            updateCarousel();
         }
         
         function closeTutorial() {
@@ -1481,6 +1685,9 @@
                 closeTutorial();
             }
         });
+
+        // Inicializar carrusel cuando se carga la página
+        document.addEventListener('DOMContentLoaded', initCarousel);
     </script>
 
 </body>
