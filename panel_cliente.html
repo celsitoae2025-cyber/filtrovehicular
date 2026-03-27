@@ -404,12 +404,12 @@
             font-size: 16px;
         }
 
-        /* Modal Tutorial Carrusel */
+        /* Modal Tutorial Carrusel - Modo Claro */
         .tutorial-modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, #0d2536 0%, #0a1929 100%);
+            background: #f8fafc;
             z-index: 2000;
             padding: 0;
             overflow: hidden;
@@ -422,23 +422,22 @@
             flex-direction: column;
         }
         .tutorial-header {
-            background: rgba(13, 37, 54, 0.95);
-            backdrop-filter: blur(20px);
+            background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
             color: white;
-            padding: 20px 24px;
-            border-bottom: 1px solid rgba(139, 195, 74, 0.3);
+            padding: 16px 24px;
+            border-bottom: 3px solid #8bc34a;
             position: relative;
             z-index: 10;
         }
         .tutorial-close {
             position: absolute;
-            top: 16px;
+            top: 12px;
             right: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
             color: white;
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -448,14 +447,14 @@
             transition: all 0.3s ease;
         }
         .tutorial-close:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             transform: rotate(90deg);
         }
         .tutorial-carousel {
             flex: 1;
             position: relative;
             overflow: hidden;
-            background: linear-gradient(to bottom, #0d2536, #0a1929);
+            background: #ffffff;
         }
         .carousel-track {
             display: flex;
@@ -467,89 +466,99 @@
             min-width: 100%;
             height: 100%;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            padding: 20px;
+            padding: 0;
             box-sizing: border-box;
+            overflow-y: auto;
         }
         .slide-content {
-            max-width: 500px;
+            max-width: 700px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 32px;
-            color: white;
-            text-align: center;
+            background: #ffffff;
+            padding: 32px 40px;
+            color: #0d2536;
         }
         .slide-number {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, #8bc34a, #7cb342);
             border-radius: 50%;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 900;
-            margin: 0 auto 20px;
-            box-shadow: 0 8px 24px rgba(139, 195, 74, 0.3);
+            color: white;
+            margin-bottom: 16px;
         }
         .slide-title {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 900;
-            margin-bottom: 16px;
-            color: white;
+            margin-bottom: 12px;
+            color: #0d2536;
+            line-height: 1.2;
         }
         .slide-text {
-            font-size: 16px;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 24px;
-        }
-        .slide-list {
-            text-align: left;
-            color: rgba(255, 255, 255, 0.8);
             font-size: 15px;
             line-height: 1.7;
-            padding-left: 0;
-            list-style: none;
+            color: #475569;
+            margin-bottom: 0;
+            text-align: justify;
         }
-        .slide-list li {
-            margin-bottom: 12px;
-            padding-left: 24px;
-            position: relative;
+        .slide-text strong {
+            color: #0d2536;
+            font-weight: 700;
         }
-        .slide-list li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
+        .slide-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .slide-section:first-of-type {
+            border-top: none;
+            padding-top: 0;
+            margin-top: 16px;
+        }
+        .section-subtitle {
+            font-size: 17px;
+            font-weight: 800;
+            color: #0d2536;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-subtitle i {
             color: #8bc34a;
-            font-weight: bold;
+            font-size: 16px;
         }
         .highlight {
-            background: rgba(139, 195, 74, 0.2);
-            color: #8bc34a;
-            padding: 2px 8px;
-            border-radius: 6px;
+            background: #f0fdf4;
+            color: #166534;
+            padding: 2px 6px;
+            border-radius: 4px;
             font-weight: 600;
-            border: 1px solid rgba(139, 195, 74, 0.3);
+            border: 1px solid #bbf7d0;
         }
         .carousel-dots {
             position: absolute;
-            bottom: 20px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             gap: 8px;
             z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         .carousel-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
+            background: #cbd5e1;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -562,11 +571,11 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            width: 44px;
-            height: 44px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #0d2536;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -575,9 +584,12 @@
             font-size: 18px;
             transition: all 0.3s ease;
             z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         .carousel-nav:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: #8bc34a;
+            color: white;
+            border-color: #8bc34a;
         }
         .carousel-nav.prev {
             left: 20px;
@@ -587,18 +599,18 @@
         }
         .tutorial-image {
             width: 100%;
-            max-width: 240px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.05);
+            max-width: 220px;
+            height: 380px;
+            background: #f8fafc;
             border-radius: 16px;
-            margin: 20px auto;
+            margin: 20px auto 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(255, 255, 255, 0.6);
+            color: #94a3b8;
             font-size: 13px;
             text-align: center;
-            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border: 2px dashed #e2e8f0;
             object-fit: cover;
         }
         .tutorial-image img {
@@ -609,23 +621,28 @@
         }
         @media (max-width: 767px) {
             .slide-content {
-                padding: 24px;
-                margin: 0 10px;
+                padding: 24px 20px;
+            }
+            .slide-title {
+                font-size: 22px;
+            }
+            .slide-text {
+                font-size: 14px;
             }
             .carousel-nav {
-                width: 40px;
-                height: 40px;
+                width: 42px;
+                height: 42px;
                 font-size: 16px;
             }
             .carousel-nav.prev {
-                left: 10px;
+                left: 12px;
             }
             .carousel-nav.next {
-                right: 10px;
+                right: 12px;
             }
             .tutorial-image {
-                max-width: 200px;
-                height: 350px;
+                max-width: 180px;
+                height: 320px;
             }
         }
         .tutorial-image {
@@ -1397,15 +1414,17 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <div class="slide-number">1</div>
-                            <h3 class="slide-title">Crear tu cuenta</h3>
-                            <p class="slide-text">Para empezar a usar Filtro Vehicular, necesitas crear una cuenta gratuita:</p>
-                            <ul class="slide-list">
-                                <li>Ve a <span class="highlight">filtrovehicularperu.com</span></li>
-                                <li>Haz clic en <span class="highlight">"Ingresar"</span> y luego <span class="highlight">"Registrarse"</span></li>
-                                <li>Completa tus datos: nombre, email y WhatsApp</li>
-                                <li>Recibirás un email para verificar tu cuenta</li>
-                                <li>Una vez verificada, ya puedes ingresar</li>
-                            </ul>
+                            <h3 class="slide-title">Registro y Creación de Cuenta</h3>
+                            <p class="slide-text">El primer paso para utilizar Filtro Vehicular es crear una cuenta personal completamente gratuita. Para ello, debes ingresar a <strong>filtrovehicularperu.com</strong> y hacer clic en el botón <span class="highlight">Ingresar</span> ubicado en la esquina superior derecha de la página principal. Una vez allí, selecciona la opción <span class="highlight">Registrarse</span> que aparecerá en el formulario de inicio de sesión.</p>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">El formulario de registro te solicitará información básica pero importante: tu <strong>nombre completo</strong>, que será utilizado para personalizar tu experiencia en la plataforma; tu <strong>correo electrónico</strong>, que funcionará como tu nombre de usuario y medio de comunicación principal; y tu <strong>número de WhatsApp</strong>, necesario para recibir notificaciones importantes y soporte directo. Es fundamental que proporciones un correo electrónico válido y activo, ya que recibirás un mensaje de verificación que deberás confirmar para activar tu cuenta.</p>
+                            </div>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">Una vez completado el formulario y enviado, revisa tu bandeja de entrada (y también la carpeta de spam por precaución). El correo de verificación contiene un enlace que debes hacer clic para confirmar tu identidad y activar tu cuenta. Después de la verificación exitosa, ya podrás iniciar sesión en la plataforma utilizando tu correo electrónico y la contraseña que estableciste durante el registro. Tu cuenta estará creada y lista para comenzar a explorar las funcionalidades de Filtro Vehicular.</p>
+                            </div>
+                            
                             <div class="tutorial-image">
                                 <i class="fa-solid fa-user-plus" style="font-size: 48px; margin-bottom: 10px;"></i><br>
                                 Pantalla de registro
@@ -1417,15 +1436,17 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <div class="slide-number">2</div>
-                            <h3 class="slide-title">Activación de Acceso</h3>
-                            <p class="slide-text">Tu cuenta se crea en modo <span class="highlight">Demo</span>. Para acceso completo:</p>
-                            <ul class="slide-list">
-                                <li>Envía un mensaje a WhatsApp con tu email</li>
-                                <li>El administrador activará tu acceso manualmente</li>
-                                <li>Recibirás confirmación cuando esté activo</li>
-                                <li>Verás el logo cambiar de <span class="highlight">"Demo"</span> a <span class="highlight">"Plus"</span></li>
-                                <li>Podrás acceder a todas las funcionalidades</li>
-                            </ul>
+                            <h3 class="slide-title">Activación Manual del Acceso Completo</h3>
+                            <p class="slide-text">Cuando creas tu cuenta por primera vez, esta se genera automáticamente en modo <span class="highlight">Demo</span>, lo que significa que tendrás acceso limitado a las funcionalidades de la plataforma. Este modo demo te permite explorar la interfaz y entender cómo funciona el sistema, pero no podrás realizar consultas vehiculares completas ni acceder a todas las bases de datos disponibles. Para obtener el acceso completo y desbloquear todas las funcionalidades profesionales, necesitas que el administrador active manualmente tu cuenta.</p>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">El proceso de activación es muy sencillo y rápido. Simplemente envía un mensaje por <strong>WhatsApp</strong> al número de contacto del administrador (que encontrarás en la página principal o en tu panel de usuario) indicando tu <strong>correo electrónico registrado</strong> y solicitando la activación de tu acceso completo. El administrador verificará tu solicitud y procederá a activar tu cuenta de forma manual desde el panel administrativo. Este proceso de verificación manual garantiza la seguridad y autenticidad de todos los usuarios de la plataforma.</p>
+                            </div>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">Una vez que el administrador active tu acceso, recibirás una confirmación por WhatsApp o correo electrónico. Al ingresar nuevamente a la plataforma, notarás que el logo en tu panel ha cambiado de <span class="highlight">Demo</span> a <span class="highlight">Plus</span>, lo que indica que ahora cuentas con acceso completo. Desde ese momento, podrás realizar consultas vehiculares ilimitadas, acceder a todas las bases de datos integradas (SUNARP, SAT, SUTRAN, SOAT, CITV, etc.), generar reportes completos en PDF, y utilizar todas las herramientas profesionales que ofrece Filtro Vehicular sin ninguna restricción.</p>
+                            </div>
+                            
                             <div class="tutorial-image">
                                 <i class="fa-solid fa-unlock" style="font-size: 48px; margin-bottom: 10px;"></i><br>
                                 Acceso activado
@@ -1437,18 +1458,16 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <div class="slide-number">3</div>
-                            <h3 class="slide-title">¿Qué incluye la plataforma?</h3>
-                            <p class="slide-text">Con acceso completo (Plus) tienes acceso ilimitado a:</p>
-                            <ul class="slide-list">
-                                <li><span class="highlight">Filtro Vehicular Completo</span> — Todas las verificaciones</li>
-                                <li><span class="highlight">SOAT Vigente</span> — Estado de tu póliza</li>
-                                <li><span class="highlight">Historial SUNARP</span> — Propiedad y transferencias</li>
-                                <li><span class="highlight">Deudas SAT</span> — Multas e impuestos</li>
-                                <li><span class="highlight">Papeletas ATU/SUTRAN</span> — Infracciones</li>
-                                <li><span class="highlight">CITV</span> — Inspección técnica</li>
-                                <li><span class="highlight">Siniestralidad</span> — Historial de accidentes</li>
-                                <li><span class="highlight">Dashboard Permanente</span> — Acceso ilimitado</li>
-                            </ul>
+                            <h3 class="slide-title">Funcionalidades de la Plataforma Completa</h3>
+                            <p class="slide-text">Con tu acceso <span class="highlight">Plus</span> activado, tendrás a tu disposición un conjunto completo de herramientas profesionales para realizar verificaciones vehiculares exhaustivas. La plataforma integra múltiples bases de datos oficiales del Estado Peruano y entidades privadas, permitiéndote obtener información actualizada y confiable en cuestión de segundos. El <strong>Filtro Vehicular Completo</strong> es la funcionalidad principal, que realiza una búsqueda simultánea en todas las bases de datos disponibles y genera un reporte consolidado con toda la información legal y administrativa del vehículo consultado.</p>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">Entre las verificaciones específicas que puedes realizar se encuentra la consulta del <strong>SOAT Vigente</strong>, que te permite conocer el estado actual de la póliza de seguro obligatorio del vehículo, incluyendo la compañía aseguradora, fecha de vencimiento y cobertura. También puedes acceder al <strong>Historial SUNARP</strong>, que muestra el registro completo de propiedad del vehículo, incluyendo todos los propietarios anteriores, fechas de transferencia, gravámenes, embargos y cualquier anotación registral que pueda afectar la situación legal del vehículo. Esta información es crucial para verificar la legitimidad de una compra-venta.</p>
+                            </div>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">Adicionalmente, la plataforma te permite consultar las <strong>Deudas SAT Lima/Callao</strong>, mostrando todas las multas de tránsito impagas, impuestos vehiculares pendientes y cualquier obligación tributaria asociada al vehículo. Las <strong>Papeletas ATU/SUTRAN</strong> te proporcionan un detalle completo de todas las infracciones de tránsito registradas a nivel nacional, incluyendo el tipo de infracción, monto de la multa, fecha y lugar donde se cometió. La consulta de <strong>CITV (Certificado de Inspección Técnica Vehicular)</strong> verifica si el vehículo ha pasado la revisión técnica obligatoria y si está vigente. Por último, el módulo de <strong>Siniestralidad</strong> revela el historial de accidentes del vehículo, permitiéndote conocer si ha estado involucrado en siniestros graves que puedan afectar su valor o seguridad. Todas estas funcionalidades están disponibles de forma ilimitada con tu acceso Plus.</p>
+                            </div>
                         </div>
                     </div>
 
@@ -1456,15 +1475,17 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <div class="slide-number">4</div>
-                            <h3 class="slide-title">Cómo hacer consultas</h3>
-                            <p class="slide-text">Realizar consultas es muy sencillo:</p>
-                            <ul class="slide-list">
-                                <li>Ingresa al panel con tu email y contraseña</li>
-                                <li>En el campo de búsqueda, escribe la <span class="highlight">placa</span></li>
-                                <li>El sistema busca automáticamente en todas las bases</li>
-                                <li>Recibirás un reporte completo en PDF</li>
-                                <li>Las consultas se guardan en tu historial</li>
-                            </ul>
+                            <h3 class="slide-title">Cómo Realizar Consultas Vehiculares</h3>
+                            <p class="slide-text">Realizar una consulta vehicular en Filtro Vehicular es un proceso extremadamente sencillo y rápido, diseñado para que cualquier persona, incluso sin conocimientos técnicos, pueda obtener información completa en pocos pasos. Primero, debes <strong>iniciar sesión</strong> en tu cuenta utilizando tu correo electrónico y contraseña. Una vez dentro del panel principal, verás un campo de búsqueda destacado en la parte superior de la pantalla, diseñado específicamente para ingresar la placa del vehículo que deseas consultar.</p>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">En el campo de búsqueda, escribe la <span class="highlight">placa vehicular</span> en el formato estándar peruano (por ejemplo: ABC-123 o ABC123). El sistema acepta ambos formatos, con o sin guión, y automáticamente lo procesará correctamente. Una vez ingresada la placa, presiona el botón de búsqueda o simplemente presiona Enter. En ese momento, el sistema iniciará una búsqueda automática y simultánea en todas las bases de datos integradas: SUNARP, SAT, SUTRAN, SOAT, CITV, Siniestralidad y más. Este proceso toma solo unos segundos, durante los cuales verás un indicador de carga que te informará del progreso de la consulta.</p>
+                            </div>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">Una vez completada la búsqueda, recibirás un <strong>reporte completo en formato PDF</strong> que incluye toda la información recopilada de las diferentes bases de datos. Este reporte está diseñado de forma profesional, con secciones claramente organizadas, gráficos cuando sea necesario, y toda la información presentada de manera clara y comprensible. Puedes descargar este PDF a tu dispositivo, imprimirlo, o compartirlo con terceros según tus necesidades. Además, todas tus consultas se guardan automáticamente en tu <strong>historial personal</strong>, accesible desde el menú "Mis Consultas", donde podrás revisar reportes anteriores en cualquier momento sin necesidad de realizar una nueva búsqueda ni consumir créditos adicionales. Esto es especialmente útil cuando necesitas comparar información o hacer seguimiento a vehículos específicos a lo largo del tiempo.</p>
+                            </div>
+                            
                             <div class="tutorial-image">
                                 <i class="fa-solid fa-search" style="font-size: 48px; margin-bottom: 10px;"></i><br>
                                 Búsqueda por placa
@@ -1476,16 +1497,17 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <div class="slide-number">5</div>
-                            <h3 class="slide-title">Medios de Pago</h3>
-                            <p class="slide-text">Puedes recargar créditos de varias formas:</p>
-                            <ul class="slide-list">
-                                <li><span class="highlight">Yape</span> — Escanea el QR y paga</li>
-                                <li><span class="highlight">Plin</span> — Pago instantáneo</li>
-                                <li><span class="highlight">Transferencia</span> — Depósito bancario</li>
-                                <li><span class="highlight">Billeteras Digitales</span> — Otras apps</li>
-                                <li>Los créditos se cargan automáticamente</li>
-                                <li>Cada consulta consume 1 crédito</li>
-                            </ul>
+                            <h3 class="slide-title">Sistema de Créditos y Medios de Pago</h3>
+                            <p class="slide-text">Filtro Vehicular funciona con un sistema de créditos prepagados, donde cada consulta vehicular consume <strong>1 crédito</strong> de tu saldo disponible. Este sistema te permite tener control total sobre tus gastos y realizar solo las consultas que realmente necesitas. Para recargar créditos a tu cuenta, la plataforma ofrece múltiples medios de pago digitales y tradicionales, todos ellos seguros, rápidos y fáciles de usar. La recarga de créditos es instantánea en la mayoría de los casos, permitiéndote continuar con tus consultas sin interrupciones.</p>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">El método más popular y rápido es <span class="highlight">Yape</span>, la billetera digital del BCP. Para pagar con Yape, simplemente escanea el código QR que aparece en la pantalla de recarga utilizando tu aplicación Yape en tu celular, ingresa el monto que deseas recargar, confirma el pago, y toma una captura de pantalla del comprobante. Luego, sube este comprobante a través del botón correspondiente en la plataforma. El administrador verificará tu pago y cargará los créditos a tu cuenta en cuestión de minutos. De manera similar, puedes utilizar <span class="highlight">Plin</span>, la billetera digital interbancar ia, siguiendo el mismo proceso: escanea el QR, paga, captura el comprobante y súbelo para validación.</p>
+                            </div>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">Si prefieres métodos bancarios tradicionales, también puedes realizar una <strong>transferencia bancaria</strong> o <strong>depósito en cuenta</strong>. Los datos bancarios completos (banco, número de cuenta, CCI, titular) se muestran en la sección de recarga. Después de realizar la transferencia desde tu banca por internet o app bancaria, debes subir el comprobante de la operación a la plataforma para que el administrador pueda verificar y acreditar los créditos. Adicionalmente, aceptamos otras <strong>billeteras digitales</strong> como Tunki, Lukita, o cualquier otro medio de pago electrónico disponible en Perú. Los créditos se cargan automáticamente a tu cuenta una vez que el administrador valida tu comprobante de pago, lo cual suele ocurrir en un plazo máximo de 30 minutos durante horario laboral. Es recomendable recargar créditos con anticipación para evitar interrupciones en tu trabajo, especialmente si realizas consultas de forma frecuente o en horarios fuera de oficina.</p>
+                            </div>
+                            
                             <div class="tutorial-image">
                                 <i class="fa-solid fa-credit-card" style="font-size: 48px; margin-bottom: 10px;"></i><br>
                                 Métodos de pago
@@ -1497,15 +1519,17 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <div class="slide-number">6</div>
-                            <h3 class="slide-title">Dashboard Permanente</h3>
-                            <p class="slide-text">Para uso intensivo, activa el Dashboard Permanente:</p>
-                            <ul class="slide-list">
-                                <li>Acceso <span class="highlight">ilimitado</span> sin créditos</li>
-                                <li>Ideal para empresas y concesionarios</li>
-                                <li>Contacta al administrador para activar</li>
-                                <li>Puedes hacer todas las consultas que necesites</li>
-                                <li>Sin preocuparte por consumir créditos</li>
-                            </ul>
+                            <h3 class="slide-title">Dashboard Permanente - Acceso Ilimitado</h3>
+                            <p class="slide-text">Para usuarios que realizan un volumen alto de consultas vehiculares de forma regular, como concesionarios de autos, empresas de transporte, talleres mecánicos, peritos automotrices, o profesionales del sector automotriz, Filtro Vehicular ofrece una modalidad especial llamada <span class="highlight">Dashboard Permanente</span>. Esta modalidad te proporciona <strong>acceso completamente ilimitado</strong> a todas las funcionalidades de la plataforma sin necesidad de consumir créditos por cada consulta, lo que representa un ahorro significativo y una mayor comodidad operativa para tu negocio o actividad profesional.</p>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">Con el Dashboard Permanente activado, puedes realizar tantas consultas vehiculares como necesites durante todo el mes, sin preocuparte por quedarte sin créditos en momentos críticos o tener que estar recargando constantemente. Esta modalidad es ideal para empresas que evalúan múltiples vehículos diariamente, ya sea para compra, venta, tasación, o verificación de flotas vehiculares. También es perfecta para profesionales independientes que ofrecen servicios de asesoría en compra-venta de vehículos y necesitan realizar verificaciones exhaustivas para sus clientes de forma frecuente.</p>
+                            </div>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">Para activar el Dashboard Permanente en tu cuenta, debes <strong>contactar directamente al administrador</strong> a través de WhatsApp o correo electrónico. El administrador te proporcionará información sobre los planes disponibles, precios mensuales o anuales, y las condiciones del servicio. Una vez acordado el plan y realizado el pago correspondiente, tu cuenta será actualizada inmediatamente para reflejar el acceso ilimitado. Desde ese momento, podrás realizar todas las consultas que necesites sin ninguna restricción ni costo adicional por consulta, optimizando así tus operaciones y reduciendo significativamente tus costos operativos si eres un usuario frecuente de la plataforma.</p>
+                            </div>
+                            
                             <div class="tutorial-image">
                                 <i class="fa-solid fa-infinity" style="font-size: 48px; margin-bottom: 10px;"></i><br>
                                 Acceso ilimitado
@@ -1517,30 +1541,30 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <div class="slide-number">7</div>
-                            <h3 class="slide-title">Tips y Recomendaciones</h3>
-                            <p class="slide-text">Para aprovechar al máximo la plataforma:</p>
-                            <ul class="slide-list">
-                                <li>Guarda tus consultas importantes como PDF</li>
-                                <li>Revisa el historial antes de repetir</li>
-                                <li>Mantén tus datos actualizados</li>
-                                <li>Usa el formato correcto de placa (ABC-123)</li>
-                                <li>Si tienes problemas, contacta soporte</li>
-                                <li>Recarga créditos con anticipación</li>
-                            </ul>
+                            <h3 class="slide-title">Consejos y Mejores Prácticas</h3>
+                            <p class="slide-text">Para aprovechar al máximo todas las funcionalidades de Filtro Vehicular y optimizar tu experiencia de uso, es importante seguir algunas recomendaciones y mejores prácticas. Primero, siempre que realices una consulta importante o que necesites conservar para fines legales o comerciales, asegúrate de <strong>descargar y guardar el reporte en PDF</strong> en tu dispositivo o en la nube. Aunque la plataforma mantiene un historial de tus consultas, tener una copia local te garantiza acceso permanente a la información incluso si necesitas presentarla como evidencia o compartirla con terceros.</p>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">Antes de realizar una nueva consulta sobre un vehículo que ya has verificado anteriormente, <strong>revisa tu historial de consultas</strong> en la sección "Mis Consultas". Si la información que necesitas es reciente (de hace pocos días o semanas), probablemente no haya cambiado significativamente, por lo que puedes reutilizar el reporte anterior sin gastar un crédito adicional. Esto es especialmente útil cuando estás en proceso de negociación y necesitas revisar la información varias veces. Mantén tus <strong>datos de perfil actualizados</strong>, especialmente tu correo electrónico y número de WhatsApp, ya que estos son los canales principales de comunicación para notificaciones importantes, confirmaciones de pago, y soporte técnico.</p>
+                            </div>
+                            
+                            <div class="slide-section">
+                                <p class="slide-text">Al ingresar una placa vehicular, asegúrate de usar el <strong>formato correcto</strong> (ABC-123 o ABC123). Aunque el sistema es flexible y acepta ambos formatos, ingresar la placa correctamente desde el inicio evita errores y acelera el proceso de búsqueda. Si encuentras algún problema técnico, error en los reportes, o tienes dudas sobre cómo utilizar alguna funcionalidad, no dudes en <strong>contactar al soporte técnico</strong> a través de WhatsApp. El equipo de soporte está disponible para ayudarte a resolver cualquier inconveniente rápidamente. Finalmente, si eres un usuario frecuente que utiliza el sistema de créditos, te recomendamos <strong>recargar con anticipación</strong> para evitar quedarte sin saldo en momentos críticos, especialmente si trabajas en horarios nocturnos o fines de semana cuando la validación de pagos puede demorar más. Mantener un saldo de créditos disponible te garantiza poder realizar consultas en cualquier momento sin interrupciones.</p>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Slide 8: Listo -->
                     <div class="carousel-slide">
-                        <div class="slide-content" style="text-align: center;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8bc34a, #7cb342); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 12px 32px rgba(139, 195, 74, 0.4);">
+                        <div class="slide-content" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8bc34a, #7cb342); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
                                 <i class="fa-solid fa-check" style="font-size: 36px; color: white;"></i>
                             </div>
-                            <h3 class="slide-title">¡Listo para usar!</h3>
-                            <p class="slide-text">Ahora tienes todo el conocimiento para hacer consultas vehiculares profesionales</p>
-                            <button onclick="closeTutorial()" style="background: linear-gradient(135deg, #8bc34a, #7cb342); color: white; border: none; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 20px; box-shadow: 0 8px 24px rgba(139, 195, 74, 0.3); transition: all 0.3s ease;">
+                            <h3 class="slide-title">¡Listo para Comenzar!</h3>
+                            <p class="slide-text" style="text-align: center; max-width: 500px;">Ahora cuentas con todo el conocimiento necesario para utilizar Filtro Vehicular de manera profesional y eficiente. Puedes realizar consultas vehiculares completas, verificar la situación legal de cualquier vehículo, y tomar decisiones informadas basadas en información oficial y actualizada.</p>
+                            <button onclick="closeTutorial()" style="background: linear-gradient(135deg, #8bc34a, #7cb342); color: white; border: none; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 24px; transition: all 0.3s ease;">
                                 <i class="fa-solid fa-rocket" style="margin-right: 8px;"></i>
-                                Empezar ahora
+                                Empezar a usar la plataforma
                             </button>
                         </div>
                     </div>
