@@ -575,6 +575,31 @@
             scroll-snap-align: center;
             margin: 0;
         }
+        .image-carousel-container {
+            position: relative;
+            margin-top: 24px;
+        }
+        .img-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background: #0d2536;
+            color: #8bc34a;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            cursor: pointer;
+            z-index: 5;
+            transition: opacity 0.2s;
+        }
+        .img-arrow.left { left: -16px; }
+        .img-arrow.right { right: -16px; }
+        .img-arrow:hover { opacity: 0.8; }
 
         /* Footer / Nav bar */
         .carousel-footer {
@@ -1386,9 +1411,12 @@
                         <div class="slide-content">
                             <h3 class="slide-title">Registro y Creación de Cuenta</h3>
                             <p class="slide-text">Ingresa a <strong>filtrovehicularperu.com</strong> y haz clic en <span class="highlight">Ingresar</span> → <span class="highlight">Registrarse</span>. Completa el formulario con tu nombre, correo electrónico y WhatsApp. Recibirás un email de verificación que debes confirmar para activar tu cuenta.</p>
-                            <div class="tutorial-image">
-                                <i class="fa-solid fa-user-plus" style="font-size: 40px;"></i><br>
-                                Pantalla de registro
+                            <div class="image-carousel-container">
+                                <button class="img-arrow left" onclick="scrollImgCarousel(this,-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                                <div class="image-carousel-wrapper" data-imgcarousel>
+                                    <div class="tutorial-image"><i class="fa-solid fa-user-plus" style="font-size: 36px;"></i><br>Registro</div>
+                                </div>
+                                <button class="img-arrow right" onclick="scrollImgCarousel(this,1)"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1398,9 +1426,12 @@
                         <div class="slide-content">
                             <h3 class="slide-title">Activación del Acceso Completo</h3>
                             <p class="slide-text">Tu cuenta se crea en modo <span class="highlight">Demo</span> con acceso limitado. Envía un mensaje por <strong>WhatsApp</strong> al administrador con tu correo registrado. Una vez activado, tu logo cambiará de <span class="highlight">Demo</span> a <span class="highlight">Plus</span> y tendrás acceso ilimitado.</p>
-                            <div class="tutorial-image">
-                                <i class="fa-solid fa-unlock" style="font-size: 40px;"></i><br>
-                                Acceso activado
+                            <div class="image-carousel-container">
+                                <button class="img-arrow left" onclick="scrollImgCarousel(this,-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                                <div class="image-carousel-wrapper" data-imgcarousel>
+                                    <div class="tutorial-image"><i class="fa-solid fa-unlock" style="font-size: 36px;"></i><br>Acceso activado</div>
+                                </div>
+                                <button class="img-arrow right" onclick="scrollImgCarousel(this,1)"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1410,22 +1441,15 @@
                         <div class="slide-content">
                             <h3 class="slide-title">¿Qué incluye la plataforma?</h3>
                             <p class="slide-text">Con acceso <span class="highlight">Plus</span> tienes acceso ilimitado a: <strong>Filtro Vehicular Completo</strong>, <strong>SOAT Vigente</strong>, <strong>Historial SUNARP</strong>, <strong>Deudas SAT</strong>, <strong>Papeletas ATU/SUTRAN</strong>, <strong>CITV</strong>, <strong>Siniestralidad</strong> y <strong>Dashboard Permanente</strong>. Toda la información legal y administrativa del vehículo en un solo reporte.</p>
-                            
-                            <div class="image-carousel-wrapper" id="imageCarousel3">
-                                <div class="tutorial-image">
-                                    <i class="fa-solid fa-shield-halved" style="font-size: 36px;"></i><br>
-                                    Funcionalidades 1
+                            <div class="image-carousel-container">
+                                <button class="img-arrow left" onclick="scrollImgCarousel(this,-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                                <div class="image-carousel-wrapper" data-imgcarousel>
+                                    <div class="tutorial-image"><i class="fa-solid fa-shield-halved" style="font-size: 36px;"></i><br>Funcionalidades 1</div>
+                                    <div class="tutorial-image"><i class="fa-solid fa-file-lines" style="font-size: 36px;"></i><br>Funcionalidades 2</div>
+                                    <div class="tutorial-image"><i class="fa-solid fa-chart-line" style="font-size: 36px;"></i><br>Funcionalidades 3</div>
                                 </div>
-                                <div class="tutorial-image">
-                                    <i class="fa-solid fa-file-lines" style="font-size: 36px;"></i><br>
-                                    Funcionalidades 2
-                                </div>
-                                <div class="tutorial-image">
-                                    <i class="fa-solid fa-chart-line" style="font-size: 36px;"></i><br>
-                                    Funcionalidades 3
-                                </div>
+                                <button class="img-arrow right" onclick="scrollImgCarousel(this,1)"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
-                            <p style="font-size: 11px; color: #94a3b8; margin-top: 8px; text-align: center;">← Desliza para ver más →</p>
                         </div>
                     </div>
 
@@ -1434,9 +1458,12 @@
                         <div class="slide-content">
                             <h3 class="slide-title">Cómo Realizar Consultas</h3>
                             <p class="slide-text">Inicia sesión, ingresa la <span class="highlight">placa vehicular</span> (ABC-123 o ABC123) en el campo de búsqueda y presiona Enter. El sistema buscará en todas las bases de datos y generará un <strong>reporte completo en PDF</strong>. Tus consultas se guardan en el historial.</p>
-                            <div class="tutorial-image">
-                                <i class="fa-solid fa-magnifying-glass" style="font-size: 40px;"></i><br>
-                                Búsqueda por placa
+                            <div class="image-carousel-container">
+                                <button class="img-arrow left" onclick="scrollImgCarousel(this,-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                                <div class="image-carousel-wrapper" data-imgcarousel>
+                                    <div class="tutorial-image"><i class="fa-solid fa-magnifying-glass" style="font-size: 36px;"></i><br>Búsqueda por placa</div>
+                                </div>
+                                <button class="img-arrow right" onclick="scrollImgCarousel(this,1)"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1446,9 +1473,12 @@
                         <div class="slide-content">
                             <h3 class="slide-title">Medios de Pago</h3>
                             <p class="slide-text">Cada consulta consume <strong>1 crédito</strong>. Recarga con <span class="highlight">Yape</span>, <span class="highlight">Plin</span>, <strong>transferencia bancaria</strong> o <strong>billeteras digitales</strong>. Escanea el QR, paga, sube tu comprobante y el administrador cargará tus créditos.</p>
-                            <div class="tutorial-image">
-                                <i class="fa-solid fa-wallet" style="font-size: 40px;"></i><br>
-                                Métodos de pago
+                            <div class="image-carousel-container">
+                                <button class="img-arrow left" onclick="scrollImgCarousel(this,-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                                <div class="image-carousel-wrapper" data-imgcarousel>
+                                    <div class="tutorial-image"><i class="fa-solid fa-wallet" style="font-size: 36px;"></i><br>Métodos de pago</div>
+                                </div>
+                                <button class="img-arrow right" onclick="scrollImgCarousel(this,1)"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1458,9 +1488,12 @@
                         <div class="slide-content">
                             <h3 class="slide-title">Dashboard Permanente</h3>
                             <p class="slide-text">Para uso intensivo, activa el <span class="highlight">Dashboard Permanente</span> y obtén <strong>acceso ilimitado</strong> sin consumir créditos. Ideal para empresas, concesionarios y profesionales. Contacta al administrador por WhatsApp.</p>
-                            <div class="tutorial-image">
-                                <i class="fa-solid fa-infinity" style="font-size: 40px;"></i><br>
-                                Acceso ilimitado
+                            <div class="image-carousel-container">
+                                <button class="img-arrow left" onclick="scrollImgCarousel(this,-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                                <div class="image-carousel-wrapper" data-imgcarousel>
+                                    <div class="tutorial-image"><i class="fa-solid fa-infinity" style="font-size: 36px;"></i><br>Acceso ilimitado</div>
+                                </div>
+                                <button class="img-arrow right" onclick="scrollImgCarousel(this,1)"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1632,22 +1665,20 @@
             }
         });
 
+        function scrollImgCarousel(btn, dir) {
+            var wrapper = btn.parentElement.querySelector('.image-carousel-wrapper');
+            wrapper.scrollBy({ left: dir * 240, behavior: 'smooth' });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             initCarousel();
             
-            // Evitar conflicto entre carrusel de imágenes y swipe del tutorial
-            var imageCarousel = document.getElementById('imageCarousel3');
-            if (imageCarousel) {
-                imageCarousel.addEventListener('touchstart', function(e) {
-                    e.stopPropagation();
-                }, { passive: true });
-                imageCarousel.addEventListener('touchmove', function(e) {
-                    e.stopPropagation();
-                }, { passive: true });
-                imageCarousel.addEventListener('touchend', function(e) {
-                    e.stopPropagation();
-                });
-            }
+            // Evitar conflicto entre carruseles de imágenes y swipe del tutorial
+            document.querySelectorAll('.image-carousel-wrapper').forEach(function(el) {
+                el.addEventListener('touchstart', function(e) { e.stopPropagation(); }, { passive: true });
+                el.addEventListener('touchmove', function(e) { e.stopPropagation(); }, { passive: true });
+                el.addEventListener('touchend', function(e) { e.stopPropagation(); });
+            });
         });
     </script>
 
