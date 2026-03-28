@@ -1,6 +1,11 @@
 /**
  * Credenciales de acceso a la Intranet (panel admin).
- * Cambia estos valores si rotas las claves; el archivo no debe publicarse en repos abiertos sin cuidado.
+ *
+ * ⚠️  SEGURIDAD: Este archivo contiene credenciales sensibles.
+ *     NO debe publicarse en repositorios públicos.
+ *     Idealmente migrar a autenticación server-side (Supabase Auth).
+ *
+ * Cambia estos valores si rotas las claves.
  */
 window.FILTRO_INTRANET_ACCESS = {
     email: 'juandevillar80@gmail.com',

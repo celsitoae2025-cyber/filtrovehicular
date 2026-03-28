@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude whoami:*)",
+      "Bash(python3 -c \":*)",
+      "WebFetch(domain:www.reniec.gob.pe)",
+      "WebFetch(domain:portalactas.reniec.gob.pe)",
+      "WebFetch(domain:portales.reniec.gob.pe)",
+      "WebFetch(domain:tramitevirtual.reniec.gob.pe)",
+      "WebFetch(domain:certireniec.reniec.gob.pe)"
+    ]
+  }
+}
