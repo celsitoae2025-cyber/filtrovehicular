@@ -1,2 +1,11 @@
-# Credenciales sensibles - NO commitear
+# Credenciales sensibles
 assets/js/intranet-access.js
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de desarrollo
+*.psd
+*.ai

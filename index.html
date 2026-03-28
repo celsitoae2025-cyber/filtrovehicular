@@ -5256,32 +5256,217 @@
             `).join('');
         }
     </script>
-    <!-- MODAL FLYER SOAT -->
+    <!-- FLYER SOAT + GUIDE TOUR -->
     <style>
-        @keyframes flyerFadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes flyerSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes flyerFadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes flyerSlideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        #guideTour { position:fixed; inset:0; z-index:900000; display:none; }
+        #tourHighlight { position:fixed; z-index:900001; pointer-events:none; border-radius:12px; box-shadow:0 0 0 9999px rgba(13,37,54,0.82); transition:all 0.5s cubic-bezier(0.4,0,0.2,1); }
+        #tourTooltip { position:fixed; z-index:900002; width:310px; max-width:92vw; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 16px 50px rgba(13,37,54,0.22); font-family:'Roboto',sans-serif; opacity:0; transform:scale(0.96); transition:opacity 0.3s ease, transform 0.3s ease; }
+        #tourTooltip.show { opacity:1; transform:scale(1); }
+        .t-head { background:linear-gradient(135deg,#0d2536,#1a3a52); padding:16px 18px; display:flex; align-items:center; gap:12px; position:relative; }
+        .t-icon { width:36px; height:36px; min-width:36px; background:rgba(139,195,74,0.15); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#8bc34a; font-size:15px; }
+        .t-step { font-size:10px; color:rgba(255,255,255,0.4); font-weight:600; }
+        .t-title { font-size:15px; font-weight:800; color:#fff; line-height:1.2; margin-top:1px; }
+        .t-close { position:absolute; top:12px; right:14px; background:none; border:none; color:rgba(255,255,255,0.3); font-size:16px; cursor:pointer; padding:4px; line-height:1; } .t-close:hover { color:#fff; }
+        .t-body { padding:16px 18px 14px; }
+        .t-desc { font-size:13px; color:#475569; line-height:1.6; margin:0 0 14px; }
+        .t-bar { height:3px; background:#e2e8f0; border-radius:3px; margin-bottom:14px; overflow:hidden; }
+        .t-bar-fill { height:100%; background:#8bc34a; border-radius:3px; transition:width 0.4s ease; }
+        .t-btns { display:flex; justify-content:flex-end; gap:8px; }
+        .t-btn { padding:9px 16px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; border:none; display:flex; align-items:center; gap:5px; transition:0.15s; font-family:'Roboto',sans-serif; }
+        .t-skip { background:transparent; color:#94a3b8; } .t-skip:hover { color:#64748b; }
+        .t-next { background:#0d2536; color:#fff; } .t-next:hover { background:#15324d; }
+        .t-next.green { background:#8bc34a; } .t-next.green:hover { background:#7cb342; }
+        @media(max-width:380px) { #tourTooltip { width:280px; } .t-title { font-size:14px; } .t-desc { font-size:12px; } }
     </style>
-    <div id="flyerModal" style="position:fixed; inset:0; background:rgba(248,250,252,0.30); z-index:999999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:20px; animation:flyerFadeIn 0.3s ease forwards;" onclick="if(event.target===this) this.style.display='none'">
+
+    <!-- Flyer SOAT -->
+    <div id="flyerModal" style="position:fixed; inset:0; background:rgba(248,250,252,0.30); z-index:999999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:20px;" onclick="if(event.target===this) { this.style.display='none'; window._flyerClosed=true; window._tryStartTour && window._tryStartTour(); }">
         <div style="width:100%; max-width:380px; position:relative; animation:flyerSlideUp 0.3s ease forwards;">
-            <button onclick="event.stopPropagation(); document.getElementById('flyerModal').style.display='none'" style="position:absolute; top:-40px; right:0; background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer; padding:4px; transition:0.2s;" onmouseover="this.style.color='#0d2536'" onmouseout="this.style.color='#94a3b8'"><i class="fa-solid fa-xmark"></i></button>
-            <div onclick="document.getElementById('flyerModal').style.display='none'; document.getElementById('soatFormModal').style.display='flex';" style="cursor:pointer; border-radius:16px; overflow:hidden;">
+            <button onclick="event.stopPropagation(); document.getElementById('flyerModal').style.display='none'; window._flyerClosed=true; window._tryStartTour && window._tryStartTour();" style="position:absolute; top:-40px; right:0; background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer; padding:4px; transition:0.2s;" onmouseover="this.style.color='#0d2536'" onmouseout="this.style.color='#94a3b8'"><i class="fa-solid fa-xmark"></i></button>
+            <div onclick="document.getElementById('flyerModal').style.display='none'; document.getElementById('soatFormModal').style.display='flex'; window._flyerClosed=true;" style="cursor:pointer; border-radius:16px; overflow:hidden;">
                 <img src="assets/media/SOAT.jpg?v=1" style="width:100%; height:auto; display:block;">
             </div>
         </div>
     </div>
 
+    <!-- Guide Tour -->
+    <div id="guideTour">
+        <div id="tourHighlight"></div>
+        <div id="tourTooltip">
+            <div class="t-head">
+                <div class="t-icon" id="tIcon"><i class="fa-solid fa-shield-halved"></i></div>
+                <div style="flex:1;"><div class="t-step" id="tStep"></div><div class="t-title" id="tTitle"></div></div>
+                <button class="t-close" onclick="tourEnd()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="t-body">
+                <div class="t-desc" id="tDesc"></div>
+                <div class="t-bar"><div class="t-bar-fill" id="tBar"></div></div>
+                <div class="t-btns">
+                    <button class="t-btn t-skip" id="tSkip" onclick="tourSkip()">Omitir</button>
+                    <button class="t-btn t-next" id="tNext" onclick="tourNext()">Siguiente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const lastSeen = localStorage.getItem('flyer_soat_seen');
-            const oneDayMs = 86400000;
-            if (!lastSeen || (Date.now() - parseInt(lastSeen)) > oneDayMs) {
-                setTimeout(() => {
-                    const fModal = document.getElementById('flyerModal');
-                    if (fModal) fModal.style.display = 'flex';
+    (function() {
+        var _step = 0;
+        var _steps = [
+            { el:'.services-tabs-container', ic:'fa-shield-halved', t:'Bienvenido a Filtro Vehicular', d:'La plataforma integral para verificar vehículos en Perú. Consulta historial, propietarios, deudas y mucho más.', p:'bottom' },
+            { el:'#hookSection .hook-card:first-child', ic:'fa-crown', t:'Servicios Premium', d:'Los servicios con corona dorada son exclusivos. Historial completo, boleta informativa, denuncias y propietarios.', p:'bottom' },
+            { el:'.services-tab[data-tab="categories"]', ic:'fa-car', t:'Servicios Vehiculares', d:'22 consultas vehiculares: SUNARP, MTC, SAT, SUTRAN y más. Todo desde una sola plataforma.', p:'bottom', tab:'categories' },
+            { el:'.services-tab[data-tab="dashboard"]', ic:'fa-link', t:'Accesos Directos', d:'Más de 80 enlaces directos a entidades del Estado: SUNARP, MTC, Multas, Seguros y servicios gratuitos.', p:'bottom', tab:'dashboard' },
+            { el:'.services-tab:last-child', ic:'fa-id-card', t:'Consultas RENIEC', d:'Consulta DNI en tiempo real, valida registros civiles y accede a SUNAT, Poder Judicial y más.', p:'bottom', tab:'reniec' },
+            { el:'#desktopNavAuth', ic:'fa-mobile-screen', t:'Descarga la App', d:'Instala Filtro Vehicular en tu celular. Acceso directo desde tu pantalla de inicio, rápido y sin ocupar espacio.', p:'bottom' },
+            { el:null, ic:'fa-user-plus', t:'Crea tu Cuenta Gratis', d:'Para acceder a todos los servicios necesitas una cuenta. Es completamente gratis, solo usa tu correo electrónico.', reg:true },
+            { el:null, ic:'fa-bolt', t:'Activa tu Plataforma', d:'Acceso permanente por S/ 35: 22 servicios premium, dashboard con +80 accesos, historial de consultas y soporte.', fin:true }
+        ];
+        var _hl, _tt, _tourActive = false;
+
+        function _startTour() {
+            if (_tourActive || localStorage.getItem('guide_tour_done')) return;
+            _hl = document.getElementById('tourHighlight');
+            _tt = document.getElementById('tourTooltip');
+            if (!_hl || !_tt) return;
+            _tourActive = true;
+
+            // Ocultar interferencias
+            var h = document.querySelector('.hero-section'); if (h) h.style.display = 'none';
+            var p = document.getElementById('pwaBannerContainer'); if (p) p.style.display = 'none';
+            var w = document.querySelector('.wa-assistant'); if (w) w.style.display = 'none';
+
+            window.scrollTo({top:0, behavior:'smooth'});
+            setTimeout(function() {
+                document.getElementById('guideTour').style.display = 'block';
+                _step = 0;
+                _render();
+            }, 400);
+        }
+
+        function _render() {
+            var s = _steps[_step];
+            var total = _steps.length;
+            _tt.classList.remove('show');
+
+            // Hero: mostrar solo si el paso necesita botones del hero
+            var hero = document.querySelector('.hero-section');
+            if (hero) hero.style.display = (s.el && s.el.indexOf('hero') !== -1) ? '' : 'none';
+
+            // Activar tab
+            if (s.tab !== undefined) {
+                var tabs = document.querySelectorAll('.services-tab');
+                tabs.forEach(function(t) { t.classList.remove('active'); });
+                if (s.tab === 'reniec') {
+                    tabs[tabs.length - 1].classList.add('active');
+                } else {
+                    var t = document.querySelector('.services-tab[data-tab="' + s.tab + '"]');
+                    if (t) t.classList.add('active');
+                }
+            }
+
+            // Contenido
+            document.getElementById('tStep').textContent = (_step+1) + ' de ' + total;
+            document.getElementById('tTitle').textContent = s.t;
+            document.getElementById('tDesc').textContent = s.d;
+            document.getElementById('tIcon').innerHTML = '<i class="fa-solid ' + s.ic + '"></i>';
+            document.getElementById('tBar').style.width = (((_step+1)/total)*100) + '%';
+
+            // Botones
+            var nb = document.getElementById('tNext');
+            var sb = document.getElementById('tSkip');
+            if (s.fin) { nb.innerHTML = '<i class="fa-solid fa-bolt" style="font-size:10px;"></i> Activar S/ 35'; nb.className = 't-btn t-next green'; sb.textContent = 'Cerrar'; }
+            else if (s.reg) { nb.innerHTML = '<i class="fa-solid fa-user-plus" style="font-size:10px;"></i> Crear Cuenta'; nb.className = 't-btn t-next'; sb.textContent = 'Saltar'; }
+            else { nb.innerHTML = 'Siguiente <i class="fa-solid fa-chevron-right" style="font-size:9px;"></i>'; nb.className = 't-btn t-next'; sb.textContent = 'Omitir'; }
+
+            // Sin target → centrar
+            if (!s.el) {
+                _hl.style.display = 'none';
+                _tt.style.left = '50%'; _tt.style.top = '50%'; _tt.style.transform = 'translate(-50%,-50%)';
+                setTimeout(function() { _tt.classList.add('show'); }, 80);
+                return;
+            }
+
+            var el = document.querySelector(s.el);
+            if (!el) { _hl.style.display = 'none'; _tt.style.left = '50%'; _tt.style.top = '50%'; _tt.style.transform = 'translate(-50%,-50%)'; setTimeout(function() { _tt.classList.add('show'); }, 80); return; }
+
+            el.scrollIntoView({behavior:'smooth', block:'center'});
+
+            setTimeout(function() {
+                var r = el.getBoundingClientRect();
+                var pad = 8;
+                _hl.style.display = 'block';
+                _hl.style.left = (r.left-pad) + 'px'; _hl.style.top = (r.top-pad) + 'px';
+                _hl.style.width = (r.width+pad*2) + 'px'; _hl.style.height = (r.height+pad*2) + 'px';
+                _tt.style.transform = 'none';
+                var tw = 310;
+                var left = Math.max(10, Math.min(r.left + r.width/2 - tw/2, window.innerWidth - tw - 10));
+                var top = r.bottom + pad + 14;
+                if (top + 200 > window.innerHeight - 10) top = r.top - pad - 14 - 200;
+                if (top < 10) top = 10;
+                _tt.style.left = left + 'px'; _tt.style.top = top + 'px';
+                setTimeout(function() { _tt.classList.add('show'); }, 150);
+            }, 500);
+        }
+
+        window.tourNext = function() {
+            var s = _steps[_step];
+            if (s.reg) { tourEnd(); setTimeout(function() { if (typeof openAuthModal==='function') { openAuthModal(); setTimeout(function() { if (typeof toggleAuthMode==='function') toggleAuthMode(); }, 150); } }, 300); return; }
+            if (s.fin) { tourEnd(); setTimeout(function() { if (typeof mostrarModalActivacion==='function') mostrarModalActivacion('activar'); }, 300); return; }
+            _step++; _render();
+        };
+        window.tourSkip = function() { var s = _steps[_step]; if (s.reg) { _step++; _render(); return; } tourEnd(); };
+        window.tourEnd = function() {
+            localStorage.setItem('guide_tour_done', '1');
+            _tourActive = false;
+            _tt.classList.remove('show');
+            var h = document.querySelector('.hero-section'); if (h) h.style.display = '';
+            var w = document.querySelector('.wa-assistant'); if (w) w.style.display = '';
+            var tabs = document.querySelectorAll('.services-tab');
+            tabs.forEach(function(t) { t.classList.remove('active'); });
+            var c = document.querySelector('.services-tab[data-tab="categories"]'); if (c) c.classList.add('active');
+            setTimeout(function() { document.getElementById('guideTour').style.display = 'none'; window.scrollTo({top:0,behavior:'smooth'}); }, 300);
+        };
+
+        // Flujo: Splash → Flyer SOAT → Tour
+        window._tryStartTour = function() {
+            if (!localStorage.getItem('guide_tour_done')) {
+                setTimeout(_startTour, 800);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var isFirstVisit = !localStorage.getItem('guide_tour_done');
+            var lastSeen = localStorage.getItem('flyer_soat_seen');
+            var oneDayMs = 86400000;
+            var showFlyer = !lastSeen || (Date.now() - parseInt(lastSeen)) > oneDayMs;
+
+            if (showFlyer) {
+                // Mostrar flyer primero
+                setTimeout(function() {
+                    var f = document.getElementById('flyerModal');
+                    if (f) f.style.display = 'flex';
                     localStorage.setItem('flyer_soat_seen', Date.now().toString());
-                }, 1500);
+
+                    // Si es primera visita, auto-cerrar flyer después de 6s y arrancar tour
+                    if (isFirstVisit) {
+                        setTimeout(function() {
+                            if (!window._flyerClosed) {
+                                f.style.display = 'none';
+                                window._flyerClosed = true;
+                                _startTour();
+                            }
+                        }, 6000);
+                    }
+                }, 2000);
+            } else if (isFirstVisit) {
+                // Sin flyer, directo al tour
+                setTimeout(_startTour, 2500);
             }
         });
+    })();
     </script>
 
     <!-- MODAL PERSONALIZADO: ALERTA DE SALDO -->

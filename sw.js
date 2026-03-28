@@ -2,7 +2,7 @@ const CACHE_NAME = 'filtrov2-cache-v4';
 const PRECACHE = [
     './index.html',
     './admin.html',
-    './logopestañaweb.png',
+    './assets/media/logopwa.png',
     './assets/js/supabase-config.js',
     './assets/js/session.js',
     './assets/js/auth.js',
