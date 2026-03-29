@@ -14,6 +14,8 @@
     <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/components.css">
+    <!-- ALERT PERSONALIZADO -->
+    <script src="assets/js/app-alert.js?v=1"></script>
     <!-- SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- MANIFEST PWA E ICONOS FORZADOS -->
@@ -499,13 +501,22 @@
             <div class="auth-card-body">
                 <form id="authForm" onsubmit="event.preventDefault(); handleAuthSubmit();">
                     <div class="auth-input-group" id="nameGroup" style="display:none;">
-                        <label>Nombre completo</label>
-                        <input type="text" id="authName" class="auth-input" placeholder="Ej. Juan Pérez">
+                        <label>Nombres</label>
+                        <input type="text" id="authFirstName" class="auth-input" placeholder="Ej. Juan Carlos" autocomplete="given-name">
+                    </div>
+
+                    <div class="auth-input-group" id="lastNameGroup" style="display:none;">
+                        <label>Apellidos</label>
+                        <input type="text" id="authLastName" class="auth-input" placeholder="Ej. Pérez López" autocomplete="family-name">
                     </div>
 
                     <div class="auth-input-group" id="wppGroup" style="display:none;">
                         <label>Número de WhatsApp</label>
-                        <input type="tel" id="authWhatsapp" class="auth-input" placeholder="Ej. 932465820">
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <span style="background:#f1f5f9; border:1.5px solid #e2e8f0; border-radius:10px; padding:11px 10px; font-size:14px; font-weight:700; color:#64748b; flex-shrink:0;">+51</span>
+                            <input type="tel" id="authWhatsapp" class="auth-input" placeholder="987 654 321" maxlength="9" style="flex:1;" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        </div>
+                        <span id="wppHint" style="display:none; font-size:10px; color:#ef4444; margin-top:4px;"></span>
                     </div>
 
                     <div class="auth-input-group">

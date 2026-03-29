@@ -298,16 +298,14 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
         async function exportUsersToExcel() {
             if (!window.sb) { alert('Supabase no conectado.'); return; }
 
-            alert('Exportando usuarios... por favor espera.');
-
             try {
                 // 1. Traer TODOS los usuarios de saldos
                 var allSaldos = [];
-                var sRes = await window.sb.from('saldos').select('*').order('email', { ascending: true });
+                var sRes = await window.sb.from('saldos').select('*').order('updated_at', { ascending: false });
                 if (sRes.error) throw sRes.error;
                 if (sRes.data) allSaldos = sRes.data;
 
-                // 2. Traer TODAS las solicitudes
+                // 2. Traer TODAS las solicitudes para extraer nombre y WhatsApp
                 var regMap = {};
                 var solRes = await window.sb.from('solicitudes').select('datos');
                 if (solRes.data) {
@@ -316,8 +314,13 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                         if (!d || !d.email) continue;
                         var em = String(d.email).toLowerCase().trim();
                         if (!regMap[em]) regMap[em] = {};
-                        if (d.nombre) regMap[em].nombre = d.nombre;
-                        if (d.whatsapp) regMap[em].whatsapp = String(d.whatsapp);
+                        if (d.nombre && !regMap[em].nombre) regMap[em].nombre = d.nombre;
+                        if (d.whatsapp && !regMap[em].whatsapp) regMap[em].whatsapp = String(d.whatsapp);
+                        // Contar solicitudes
+                        regMap[em].solicitudes = (regMap[em].solicitudes || 0) + 1;
+                        // Última actividad
+                        var ts = d.timestamp || d.publishedAt || 0;
+                        if (ts > (regMap[em].ultimaActividad || 0)) regMap[em].ultimaActividad = ts;
                     }
                 }
 
@@ -326,40 +329,62 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                     return;
                 }
 
-                // 3. Generar Excel
-                var html = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body>';
-                html += '<table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse; font-family:Arial; font-size:12px;">';
-                html += '<tr style="background:#0d2536; color:#fff; font-weight:bold;">';
-                html += '<th>N</th><th>Nombre</th><th>Email</th><th>WhatsApp</th><th>Creditos</th><th>Estado</th></tr>';
+                // 3. Generar Excel con formato profesional
+                var fecha = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' });
+                var html = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8">' +
+                    '<style>td,th{mso-number-format:"\\@";}</style></head><body>';
+
+                // Título
+                html += '<table cellpadding="4" cellspacing="0" style="font-family:Arial;">';
+                html += '<tr><td colspan="8" style="font-size:18px; font-weight:bold; color:#0d2536; padding:10px 4px;">FILTRO VEHICULAR PLUS - Base de Datos de Clientes</td></tr>';
+                html += '<tr><td colspan="8" style="font-size:11px; color:#64748b; padding:2px 4px 10px;">Exportado: ' + fecha + ' | Total: ' + allSaldos.length + ' usuarios</td></tr>';
+
+                // Encabezados
+                html += '<tr style="background:#0d2536; color:#ffffff; font-weight:bold; font-size:11px;">';
+                html += '<th style="padding:8px; border:1px solid #1a3a52;">N°</th>';
+                html += '<th style="padding:8px; border:1px solid #1a3a52;">Nombre Completo</th>';
+                html += '<th style="padding:8px; border:1px solid #1a3a52;">Correo Electrónico</th>';
+                html += '<th style="padding:8px; border:1px solid #1a3a52;">WhatsApp</th>';
+                html += '<th style="padding:8px; border:1px solid #1a3a52;">Créditos</th>';
+                html += '<th style="padding:8px; border:1px solid #1a3a52;">Plataforma</th>';
+                html += '<th style="padding:8px; border:1px solid #1a3a52;">Solicitudes</th>';
+                html += '<th style="padding:8px; border:1px solid #1a3a52;">Última Actividad</th>';
+                html += '</tr>';
 
                 for (var j = 0; j < allSaldos.length; j++) {
                     var u = allSaldos[j];
                     var email = String(u.email || '').trim();
                     var reg = regMap[email.toLowerCase()] || {};
-                    var nombre = String(reg.nombre || '-');
-                    var wpp = String(reg.whatsapp || '-');
+                    var nombre = reg.nombre || '-';
+                    var wpp = reg.whatsapp || '-';
                     var creditos = u.creditos || 0;
                     var activa = u.plataforma_activa ? 'Activo' : 'Inactivo';
-                    var bg = j % 2 === 0 ? '#ffffff' : '#f0f0f0';
+                    var totalSol = reg.solicitudes || 0;
+                    var ultimaAct = reg.ultimaActividad ? new Date(reg.ultimaActividad).toLocaleDateString('es-PE') : '-';
+                    var bg = j % 2 === 0 ? '#ffffff' : '#f8fafc';
+                    var borderStyle = 'border:1px solid #e2e8f0; padding:6px 8px; font-size:11px;';
 
                     html += '<tr style="background:' + bg + ';">';
-                    html += '<td>' + (j + 1) + '</td>';
-                    html += '<td>' + nombre + '</td>';
-                    html += '<td>' + email + '</td>';
-                    html += '<td>' + wpp + '</td>';
-                    html += '<td>' + creditos + '</td>';
-                    html += '<td>' + activa + '</td>';
+                    html += '<td style="' + borderStyle + ' text-align:center; color:#94a3b8; font-weight:bold;">' + (j + 1) + '</td>';
+                    html += '<td style="' + borderStyle + ' font-weight:bold; color:#0d2536;">' + nombre + '</td>';
+                    html += '<td style="' + borderStyle + '">' + email + '</td>';
+                    html += '<td style="' + borderStyle + '">' + wpp + '</td>';
+                    html += '<td style="' + borderStyle + ' text-align:center; font-weight:bold; color:' + (creditos > 0 ? '#0d2536' : '#ef4444') + ';">' + creditos + '</td>';
+                    html += '<td style="' + borderStyle + ' text-align:center; color:' + (activa === 'Activo' ? '#8bc34a' : '#94a3b8') + '; font-weight:bold;">' + activa + '</td>';
+                    html += '<td style="' + borderStyle + ' text-align:center;">' + totalSol + '</td>';
+                    html += '<td style="' + borderStyle + ' text-align:center; color:#64748b;">' + ultimaAct + '</td>';
                     html += '</tr>';
                 }
 
                 html += '</table></body></html>';
 
                 // 4. Descargar
-                var blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+                var blob = new Blob(['\uFEFF' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
                 var url = URL.createObjectURL(blob);
                 var a = document.createElement('a');
                 a.href = url;
-                a.download = 'usuarios_filtro_vehicular.xls';
+                var fechaArchivo = new Date().toISOString().split('T')[0];
+                a.download = 'clientes_filtro_vehicular_' + fechaArchivo + '.xls';
                 a.style.display = 'none';
                 document.body.appendChild(a);
                 a.click();
@@ -368,7 +393,7 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                     URL.revokeObjectURL(url);
                 }, 1000);
 
-                alert(allSaldos.length + ' usuarios exportados.');
+                alert(allSaldos.length + ' clientes exportados exitosamente.');
             } catch (e) {
                 alert('Error al exportar: ' + e.message);
             }
@@ -384,6 +409,7 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
             }
 
             try {
+                // 1. Traer saldos
                 var allData = [];
                 var pg = 0;
                 var sz = 1000;
@@ -391,7 +417,7 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                     var { data: chunk, error } = await window.sb
                         .from('saldos')
                         .select('*')
-                        .order('email', { ascending: true })
+                        .order('updated_at', { ascending: false })
                         .range(pg * sz, (pg + 1) * sz - 1);
                     if (error) throw error;
                     if (!chunk || chunk.length === 0) break;
@@ -401,37 +427,56 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                 }
                 var data = allData;
 
+                // 2. Traer nombres y WhatsApp de solicitudes (registros)
+                var regMap = {};
+                var solRes = await window.sb.from('solicitudes').select('datos');
+                if (solRes.data) {
+                    for (var i = 0; i < solRes.data.length; i++) {
+                        var d = solRes.data[i].datos;
+                        if (!d || !d.email) continue;
+                        var em = String(d.email).toLowerCase().trim();
+                        if (!regMap[em]) regMap[em] = {};
+                        if (d.nombre) regMap[em].nombre = d.nombre;
+                        if (d.whatsapp) regMap[em].whatsapp = String(d.whatsapp);
+                    }
+                }
+
                 if (!data || data.length === 0) {
                     list.innerHTML = '<div class="empty-req">No se encontraron usuarios registrados aún.</div>';
                     return;
                 }
 
-                list.innerHTML = data.map(u => {
-                    const cred = u.creditos || 0;
-                    const hasCredits = cred > 0;
-                    return `
-                    <div class="request-item" style="padding:14px 16px; gap:6px; border-left:3px solid ${hasCredits ? '#8bc34a' : '#e2e8f0'};">
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="background:linear-gradient(135deg,#0d2536,#1a3a52); color:white; width:36px; height:36px; min-width:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:14px; flex-shrink:0;">
-                                <i class="fa-solid fa-user"></i>
-                            </div>
-                            <div style="flex:1; min-width:0;">
-                                <div style="font-size:13px; font-weight:600; color:#0d2536; margin-bottom:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(u.email)}</div>
-                                <div style="font-size:11px; color:${hasCredits ? '#8bc34a' : '#ef4444'}; font-weight:500;">
-                                    <i class="fa-solid fa-${hasCredits ? 'wallet' : 'circle-exclamation'}" style="font-size:9px; margin-right:3px;"></i>
-                                    S/ ${cred.toFixed(2)}
-                                </div>
-                            </div>
-                            <div style="flex-shrink:0; text-align:right;">
-                                <div style="font-size:15px; font-weight:700; color:${hasCredits ? '#0d2536' : '#ef4444'};">${cred}</div>
-                                <div style="font-size:8px; color:#94a3b8; font-weight:500; text-transform:uppercase;">créditos</div>
-                            </div>
-                        </div>
-                    </div>`;
+                list.innerHTML = data.map(function(u) {
+                    var cred = u.creditos || 0;
+                    var hasCredits = cred > 0;
+                    var email = String(u.email || '').trim();
+                    var reg = regMap[email.toLowerCase()] || {};
+                    var nombre = reg.nombre || '';
+                    var wpp = reg.whatsapp || '';
+
+                    return '<div class="request-item" style="padding:14px 16px; gap:6px; border-left:3px solid ' + (hasCredits ? '#8bc34a' : '#e2e8f0') + ';">' +
+                        '<div style="display:flex; align-items:center; gap:10px;">' +
+                            '<div style="background:linear-gradient(135deg,#0d2536,#1a3a52); color:white; width:40px; height:40px; min-width:40px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:15px; flex-shrink:0;">' +
+                                '<i class="fa-solid fa-user"></i>' +
+                            '</div>' +
+                            '<div style="flex:1; min-width:0;">' +
+                                (nombre ? '<div style="font-size:13px; font-weight:800; color:#0d2536; margin-bottom:1px;">' + esc(nombre) + '</div>' : '') +
+                                '<div style="font-size:12px; color:#475569; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(email) + '</div>' +
+                                (wpp ? '<div style="font-size:11px; color:#64748b; margin-top:2px;"><i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:11px; margin-right:3px;"></i>' + esc(wpp) + '</div>' : '') +
+                            '</div>' +
+                            '<div style="flex-shrink:0; text-align:right; display:flex; align-items:center; gap:10px;">' +
+                                '<div>' +
+                                    '<div style="font-size:16px; font-weight:800; color:' + (hasCredits ? '#0d2536' : '#94a3b8') + ';">' + cred + '</div>' +
+                                    '<div style="font-size:8px; color:#94a3b8; font-weight:600; text-transform:uppercase;">créditos</div>' +
+                                '</div>' +
+                                '<button onclick="event.stopPropagation(); deleteUser(\'' + escAttr(email) + '\')" style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:13px; flex-shrink:0;" onmouseover="this.style.background=\'#fee2e2\'" onmouseout="this.style.background=\'#fef2f2\'" title="Eliminar usuario"><i class="fa-solid fa-trash"></i></button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
                 }).join('');
 
             } catch (e) {
-                list.innerHTML = `<div class="empty-req">❌ Error descargando usuarios: ${esc(e.message)}</div>`;
+                list.innerHTML = '<div class="empty-req">Error descargando usuarios: ' + esc(e.message) + '</div>';
             }
         }
 
@@ -1173,38 +1218,38 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                 let dSubtitle = ``;
 
                 if (req.isActivacion) {
-                    dName = `Activación de Plataforma`;
+                    dName = `Activación de Plataforma Digital`;
                     dIcon = `fa-rocket`;
                     dType = `Activación`;
-                    dSubtitle = `${esc(req.email || '?')}`;
-                    if (req.whatsapp) dSubtitle += `<br>${esc(req.whatsapp)}`;
+                    dSubtitle = `<b>Servicio:</b> Activación de cuenta<br><b>Email:</b> ${esc(req.email || '?')}`;
+                    if (req.whatsapp) dSubtitle += `<br><b>WhatsApp:</b> ${esc(req.whatsapp)}`;
                 } else if (req.isRecharge) {
-                    dName = `Recarga +${req.credits || 0}`;
+                    dName = `Recarga de Créditos (+${req.credits || 0})`;
                     dIcon = `fa-wallet`;
                     dType = `Recarga`;
-                    dSubtitle = `${esc(req.email || '?')}`;
+                    dSubtitle = `<b>Servicio:</b> Recarga de créditos<br><b>Cantidad:</b> +${req.credits || 0} créditos<br><b>Email:</b> ${esc(req.email || '?')}`;
                 } else if (req.isDashboard) {
-                    dName = `Dashboard`;
+                    dName = `Acceso al Dashboard`;
                     dIcon = `fa-table-columns`;
                     dType = `Dashboard`;
-                    dSubtitle = `${esc(req.email || '?')}`;
-                    if (req.whatsapp) dSubtitle += `<br>${esc(req.whatsapp)}`;
+                    dSubtitle = `<b>Servicio:</b> Dashboard digital<br><b>Email:</b> ${esc(req.email || '?')}`;
+                    if (req.whatsapp) dSubtitle += `<br><b>WhatsApp:</b> ${esc(req.whatsapp)}`;
                 } else if (req.isIndividual) {
-                    dName = esc(req.servicio || `Consulta`);
+                    dName = esc(req.servicio || `Consulta Individual`);
                     dIcon = `fa-file-lines`;
-                    dType = `Reporte`;
-                    dSubtitle = `${esc(req.email || '?')}<br>Placa: ${esc(req.placa)}`;
+                    dType = `Individual`;
+                    dSubtitle = `<b>Servicio:</b> ${esc(req.servicio || 'Consulta')}<br><b>Placa:</b> ${esc(req.placa)}<br><b>Email:</b> ${esc(req.email || '?')}`;
                 } else if (req.isRegistro) {
                     dName = esc(req.nombre || 'Nuevo Usuario');
                     dIcon = `fa-user-plus`;
                     dType = `Registro`;
-                    dSubtitle = `${esc(req.email || '?')}`;
-                    if (req.whatsapp) dSubtitle += `<br>${esc(req.whatsapp)}`;
+                    dSubtitle = `<b>Servicio:</b> Registro de cuenta<br><b>Email:</b> ${esc(req.email || '?')}`;
+                    if (req.whatsapp) dSubtitle += `<br><b>WhatsApp:</b> ${esc(req.whatsapp)}`;
                 } else {
                     dName = esc(req.servicio || 'Filtro Vehicular Completo') + ` (${esc(req.placa)})`;
                     dIcon = `fa-car`;
                     dType = `Filtro`;
-                    dSubtitle = `${esc(req.email || 'Anónimo')}`;
+                    dSubtitle = `<b>Servicio:</b> ${esc(req.servicio || 'Filtro Vehicular Completo')}<br><b>Placa:</b> ${esc(req.placa)}<br><b>Email:</b> ${esc(req.email || 'Anónimo')}`;
                 }
 
                 let actionBtn = '';
@@ -1225,7 +1270,9 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                 } else if (req.isIndividual) {
                     actionBtn = `<button class="btn-req btn-confirm-pay" onclick="approveRequest('${escAttr(req.placa)}')"><i class="fa-solid fa-file-pen"></i> Redactar</button>`;
                 } else if (req.isRegistro) {
-                    const msgText = `*¡Bienvenido a Filtro Vehicular Plus!*\n\nHola *${req.nombre}*, tu cuenta ha sido *activada con éxito*.\n\nYa puedes ingresar a la plataforma para realizar tus consultas vehiculares.\n\n*Tus Credenciales:*\n• *Usuario:* ${req.email}\n• *Contraseña:* ****\n\n*Link de acceso:*\nhttps://filtrovehicularperu.com\n\n*¿Necesitas ayuda?* Estamos aquí para ti.`;
+                    var passRaw = String(req.pass || '');
+                    var passHint = passRaw.length > 4 ? '****' + passRaw.slice(-4) : '****';
+                    const msgText = `*¡Bienvenido a Filtro Vehicular Plus!*\n\nHola *${req.nombre}*, tu cuenta ha sido *activada con éxito*.\n\nYa puedes ingresar a la plataforma para realizar tus consultas vehiculares.\n\n*Tus Credenciales:*\n• *Usuario:* ${req.email}\n• *Contraseña:* ${passHint}\n\n*Link de acceso:*\nhttps://filtrovehicularperu.com\n\n*¿Necesitas ayuda?* Estamos aquí para ti.`;
                     const wppUrl = `https://wa.me/51${req.whatsapp}?text=${encodeURIComponent(msgText)}`;
                     actionBtn = `<a href="${escAttr(wppUrl)}" target="_blank" class="btn-req btn-confirm-pay" style="text-decoration:none;" onclick="setTimeout(() => confirmRegistro('${escAttr(req.placa)}'), 500)"><i class="fa-solid fa-check"></i> Aprobar</a>`;
                 } else {
@@ -1572,7 +1619,7 @@ Link: https://filtrovehicularperu.com`;
                         updated_at: new Date() 
                     }, { onConflict: 'email' });
 
-                    alert(`✅ Registro ${reqKey} aprobado en la Nube con éxito.`);
+                    alert('Usuario activado correctamente.\n\nLa cuenta ha sido aprobada y el cliente ya puede acceder a la plataforma.');
                 }
                 
                 renderRequestsList();

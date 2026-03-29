@@ -1,5 +1,5 @@
 // Supabase Edge Function: notify-admin
-// Envía notificaciones a Telegram
+// Envía notificaciones detalladas a Telegram
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -22,116 +22,108 @@ async function sendTelegram(message: string): Promise<void> {
   }
 }
 
+// Timestamp Lima
+function fechaLima(): string {
+  return new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' });
+}
+
 // Handler principal
 serve(async (req: Request) => {
-  // Verificar método
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
     const payload = await req.json();
-    console.log('Payload recibido:', JSON.stringify(payload).slice(0, 200));
+    const { type, table, record } = payload;
 
-    const { type, table, record, old_record } = payload;
-
-    // Ignorar DELETE
-    if (type === 'DELETE') {
+    if (type === 'DELETE' || table !== 'solicitudes' || type !== 'INSERT') {
       return new Response(JSON.stringify({ ok: true, skipped: true }), {
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
+    const d = record?.datos || record || {};
+    const placa = d.placa || record?.placa || 'Sin placa';
+    const email = d.email || record?.email || 'Sin email';
+    const nombre = d.nombre || '';
+    const whatsapp = d.whatsapp || '';
+    const servicio = d.servicio || '';
+    const credits = d.credits || 0;
+
     let telegramMsg = '';
 
-    // Los datos reales están en record.datos (JSON) para la tabla solicitudes
-    const d = record?.datos || record || {};
-
-    // =============================================
-    // EVENTO: Nuevo usuario registrado
-    // =============================================
-    if (table === 'solicitudes' && (d.isRegistro === true || String(record?.placa || '').startsWith('REGISTRO_')) && type === 'INSERT') {
-      const nombre = d.nombre || 'Sin nombre';
-      const email = d.email || record?.email || 'Sin email';
-      const whatsapp = d.whatsapp || 'Sin número';
-
-      telegramMsg = `👤 <b>NUEVO REGISTRO</b>\n\n` +
-        `📋 Nombre: <b>${nombre}</b>\n` +
+    // 1. REGISTRO DE NUEVO USUARIO
+    if (d.isRegistro === true || String(placa).startsWith('REGISTRO_')) {
+      telegramMsg = `👤 <b>NUEVO REGISTRO DE USUARIO</b>\n\n` +
+        `📁 Tipo: <b>Registro de cuenta</b>\n` +
+        `📋 Nombre: <b>${nombre || 'Sin nombre'}</b>\n` +
         `📧 Email: <b>${email}</b>\n` +
-        `📱 WhatsApp: <b>${whatsapp}</b>\n\n` +
-        `🕐 ${new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })}`;
+        (whatsapp ? `📱 WhatsApp: <b>${whatsapp}</b>\n` : '') +
+        `\n🕐 ${fechaLima()}`;
     }
 
-    // =============================================
-    // EVENTO: Nuevo comprobante de pago subido
-    // =============================================
-    else if (table === 'solicitudes' && (d.comprobante_url || record?.comprobante_url) && type === 'INSERT') {
-      const placa = d.placa || record?.placa || 'Sin placa';
-      const email = d.email || record?.email || 'Sin email';
-      const tipo = d.tipo || record?.tipo || 'filtro';
-
-      telegramMsg = `💰 <b>COMPROBANTE DE PAGO</b>\n\n` +
-        `🚗 Placa: <b>${placa}</b>\n` +
+    // 2. ACTIVACIÓN DE PLATAFORMA
+    else if (d.isActivacion === true || String(placa).startsWith('ACTIVACION_')) {
+      telegramMsg = `🚀 <b>SOLICITUD DE ACTIVACION</b>\n\n` +
+        `📁 Tipo: <b>Activación de Plataforma Digital</b>\n` +
         `📧 Email: <b>${email}</b>\n` +
-        `📁 Tipo: <b>${tipo}</b>\n\n` +
-        `🕐 ${new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })}`;
+        (whatsapp ? `📱 WhatsApp: <b>${whatsapp}</b>\n` : '') +
+        (d.voucher ? `🧾 Comprobante: <b>Adjunto</b>\n` : '') +
+        `\n🕐 ${fechaLima()}`;
     }
 
-    // =============================================
-    // EVENTO: Nueva solicitud de Dashboard
-    // =============================================
-    else if (table === 'solicitudes' && d.isDashboard === true && type === 'INSERT') {
-      const email = d.email || record?.email || 'Sin email';
+    // 3. RECARGA DE CRÉDITOS
+    else if (d.isRecharge === true || String(placa).startsWith('RECARGA_')) {
+      telegramMsg = `💰 <b>SOLICITUD DE RECARGA</b>\n\n` +
+        `📁 Tipo: <b>Recarga de Créditos</b>\n` +
+        `💳 Cantidad: <b>+${credits} créditos</b>\n` +
+        `📧 Email: <b>${email}</b>\n` +
+        (d.voucher ? `🧾 Comprobante: <b>Adjunto</b>\n` : '') +
+        `\n🕐 ${fechaLima()}`;
+    }
 
+    // 4. SOLICITUD DE DASHBOARD
+    else if (d.isDashboard === true || String(placa).startsWith('DASHBOARD_')) {
       telegramMsg = `🏢 <b>SOLICITUD DE DASHBOARD</b>\n\n` +
-        `📧 Email: <b>${email}</b>\n\n` +
-        `🕐 ${new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })}`;
+        `📁 Tipo: <b>Acceso al Dashboard</b>\n` +
+        `📧 Email: <b>${email}</b>\n` +
+        (whatsapp ? `📱 WhatsApp: <b>${whatsapp}</b>\n` : '') +
+        (d.voucher ? `🧾 Comprobante: <b>Adjunto</b>\n` : '') +
+        `\n🕐 ${fechaLima()}`;
     }
 
-    // =============================================
-    // EVENTO: Solicitud individual (servicio específico)
-    // =============================================
-    else if (table === 'solicitudes' && d.isIndividual === true && type === 'INSERT') {
-      const placa = d.placa || record?.placa || 'Sin placa';
-      const email = d.email || record?.email || 'Sin email';
-      const servicio = d.servicio || 'Consulta Individual';
+    // 5. COMPROBANTE DE PAGO
+    else if (d.comprobante_url || record?.comprobante_url) {
+      telegramMsg = `🧾 <b>COMPROBANTE DE PAGO</b>\n\n` +
+        `📁 Tipo: <b>Pago con comprobante</b>\n` +
+        `🚗 Placa: <b>${placa}</b>\n` +
+        `📧 Email: <b>${email}</b>\n` +
+        (servicio ? `📋 Servicio: <b>${servicio}</b>\n` : '') +
+        `\n🕐 ${fechaLima()}`;
+    }
 
+    // 6. CONSULTA INDIVIDUAL (servicio específico)
+    else if (d.isIndividual === true) {
       telegramMsg = `📄 <b>CONSULTA INDIVIDUAL</b>\n\n` +
-        `📁 Servicio: <b>${servicio}</b>\n` +
+        `📁 Servicio: <b>${servicio || 'Consulta Individual'}</b>\n` +
         `🚗 Placa: <b>${placa}</b>\n` +
-        `📧 Email: <b>${email}</b>\n\n` +
-        `🕐 ${new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })}`;
+        `📧 Email: <b>${email}</b>\n` +
+        (d.pagoCon ? `💳 Pago: <b>${d.pagoCon}</b>\n` : '') +
+        `\n🕐 ${fechaLima()}`;
     }
 
-    // =============================================
-    // EVENTO: Solicitud de Filtro Vehicular Completo
-    // =============================================
-    else if (table === 'solicitudes' && type === 'INSERT' && !String(record?.placa || '').startsWith('ACTIVACION_') && !String(record?.placa || '').startsWith('RECARGA_')) {
-      const placa = d.placa || record?.placa || 'Sin placa';
-      const email = d.email || record?.email || 'Sin email';
-      const servicio = d.servicio || 'Filtro Vehicular';
-
+    // 7. FILTRO VEHICULAR COMPLETO / SOLICITUD GENERAL
+    else {
       telegramMsg = `📋 <b>NUEVA SOLICITUD</b>\n\n` +
-        `📁 Servicio: <b>${servicio}</b>\n` +
+        `📁 Servicio: <b>${servicio || 'Filtro Vehicular Completo'}</b>\n` +
         `🚗 Placa: <b>${placa}</b>\n` +
-        `📧 Email: <b>${email}</b>\n\n` +
-        `🕐 ${new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })}`;
+        `📧 Email: <b>${email}</b>\n` +
+        (d.pagoCon ? `💳 Pago: <b>${d.pagoCon}</b>\n` : '') +
+        `\n🕐 ${fechaLima()}`;
     }
 
-    // =============================================
-    // EVENTO: Cualquier otra solicitud
-    // =============================================
-    else if (table === 'solicitudes' && type === 'INSERT') {
-      const placa = d.placa || record?.placa || 'Sin placa';
-      const email = d.email || record?.email || 'Sin email';
-
-      telegramMsg = `📋 <b>NUEVA SOLICITUD</b>\n\n` +
-        `🚗 Placa: <b>${placa}</b>\n` +
-        `📧 Email: <b>${email}</b>\n\n` +
-        `🕐 ${new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })}`;
-    }
-
-    // Enviar por Telegram
+    // Enviar
     if (telegramMsg) {
       await sendTelegram(telegramMsg);
     }

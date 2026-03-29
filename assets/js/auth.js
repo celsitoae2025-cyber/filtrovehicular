@@ -626,6 +626,8 @@ function updateAuthInterface() {
             if (passwordGroup) passwordGroup.style.display = 'block';
         }
         if (nameGroup) nameGroup.style.display = 'none';
+        var lastNameGroup = document.getElementById('lastNameGroup');
+        if (lastNameGroup) lastNameGroup.style.display = 'none';
         if (wppGroup) wppGroup.style.display = 'none';
         toggleLink.innerHTML = '¿No tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #0d2536; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#8bc34a\';" onmouseout="this.style.color=\'#0d2536\';"> Regístrate aquí</span>';
     } else {
@@ -634,6 +636,8 @@ function updateAuthInterface() {
         sub.innerText = 'Solo necesitas tu correo para empezar';
         btn.innerText = 'REGISTRARME HOY';
         if (nameGroup) nameGroup.style.display = 'block';
+        var lastNameGroup = document.getElementById('lastNameGroup');
+        if (lastNameGroup) lastNameGroup.style.display = 'block';
         if (wppGroup) wppGroup.style.display = 'block';
         if (passwordGroup) passwordGroup.style.display = 'block';
         toggleLink.innerHTML = '¿Ya tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #0d2536; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#8bc34a\';" onmouseout="this.style.color=\'#0d2536\';"> Inicia Sesión</span>';
@@ -748,12 +752,22 @@ async function handleAuthSubmit() {
             closeAuthModal();
             renderLoggedInState();
         } else {
-            var name = document.getElementById('authName').value.trim();
+            var firstNameEl = document.getElementById('authFirstName');
+            var lastNameEl = document.getElementById('authLastName');
+            var firstName = firstNameEl ? firstNameEl.value.trim() : '';
+            var lastName = lastNameEl ? lastNameEl.value.trim() : '';
+            var name = (firstName + ' ' + lastName).trim();
             var wppInput = document.getElementById('authWhatsapp');
-            var wpp = wppInput ? wppInput.value.trim() : '';
+            var wpp = wppInput ? wppInput.value.trim().replace(/\s/g, '') : '';
 
-            if (!name || !wpp) {
-                throw new Error('Por favor, ingresa tu Nombre Completo y WhatsApp.');
+            if (!firstName || !lastName) {
+                throw new Error('Por favor, ingresa tus nombres y apellidos.');
+            }
+
+            if (!wpp || wpp.length !== 9 || wpp[0] !== '9') {
+                var hint = document.getElementById('wppHint');
+                if (hint) { hint.textContent = 'Ingresa un número válido de 9 dígitos que empiece con 9'; hint.style.display = 'block'; }
+                throw new Error('El número de WhatsApp debe tener 9 dígitos y empezar con 9.');
             }
 
             var existRes = await window.sb.from('solicitudes')

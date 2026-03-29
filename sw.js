@@ -1,4 +1,4 @@
-const CACHE_NAME = 'filtrov2-cache-v5';
+const CACHE_NAME = 'filtrov2-cache-v6';
 const PRECACHE = [
     './index.html',
     './admin.html',
@@ -7,6 +7,7 @@ const PRECACHE = [
     './assets/js/supabase-config.js',
     './assets/js/session.js',
     './assets/js/auth.js',
+    './assets/js/app-alert.js',
     './assets/css/components.css',
     './assets/css/index.css',
     './assets/css/admin.css',
