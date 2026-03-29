@@ -1270,8 +1270,8 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                 } else if (req.isIndividual) {
                     actionBtn = `<button class="btn-req btn-confirm-pay" onclick="approveRequest('${escAttr(req.placa)}')"><i class="fa-solid fa-file-pen"></i> Redactar</button>`;
                 } else if (req.isRegistro) {
-                    var passRaw = String(req.pass || '');
-                    var passHint = passRaw.length > 4 ? '****' + passRaw.slice(-4) : '****';
+                    var passRaw = String(req.pass || req.password || '');
+                    var passHint = passRaw.length > 4 ? '••••' + passRaw.slice(-4) : (passRaw.length > 0 ? '••••' + passRaw.slice(-2) : 'No disponible');
                     const msgText = `*¡Bienvenido a Filtro Vehicular Plus!*\n\nHola *${req.nombre}*, tu cuenta ha sido *activada con éxito*.\n\nYa puedes ingresar a la plataforma para realizar tus consultas vehiculares.\n\n*Tus Credenciales:*\n• *Usuario:* ${req.email}\n• *Contraseña:* ${passHint}\n\n*Link de acceso:*\nhttps://filtrovehicularperu.com\n\n*¿Necesitas ayuda?* Estamos aquí para ti.`;
                     const wppUrl = `https://wa.me/51${req.whatsapp}?text=${encodeURIComponent(msgText)}`;
                     actionBtn = `<a href="${escAttr(wppUrl)}" target="_blank" class="btn-req btn-confirm-pay" style="text-decoration:none;" onclick="setTimeout(() => confirmRegistro('${escAttr(req.placa)}'), 500)"><i class="fa-solid fa-check"></i> Aprobar</a>`;

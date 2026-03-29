@@ -14,6 +14,14 @@
     <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/components.css">
+    <!-- CAPTURAR INSTALACION PWA LO ANTES POSIBLE -->
+    <script>
+        window.deferredInstallPrompt = null;
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            window.deferredInstallPrompt = e;
+        });
+    </script>
     <!-- ALERT PERSONALIZADO -->
     <script src="assets/js/app-alert.js?v=1"></script>
     <!-- SUPABASE -->

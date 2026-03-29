@@ -1662,13 +1662,12 @@ setTimeout(function() {
             });
         }
 
-        // 2. Gestionar la instalación PWA
-        let deferredPrompt = null;
-
-        // Capturar el evento nativo
+        // 2. Gestionar la instalación PWA (evento capturado en <head>)
+        var deferredPrompt = window.deferredInstallPrompt || null;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            window.deferredInstallPrompt = e;
         });
 
         // Mostrar banner tras cargar (si no fue descartado y no está instalada)
@@ -1703,10 +1702,12 @@ setTimeout(function() {
                 document.body.appendChild(pwaBanner);
 
                 document.getElementById('btnInstallApp').onclick = async () => {
-                    if (deferredPrompt) {
-                        await deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
+                    var prompt = deferredPrompt || window.deferredInstallPrompt;
+                    if (prompt) {
+                        await prompt.prompt();
+                        const { outcome } = await prompt.userChoice;
                         deferredPrompt = null;
+                        window.deferredInstallPrompt = null;
                     } else {
                         // Fallback: instrucciones manuales
                         var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
