@@ -89,7 +89,37 @@ serve(async (req: Request) => {
     }
 
     // =============================================
-    // EVENTO: Nueva solicitud genérica
+    // EVENTO: Solicitud individual (servicio específico)
+    // =============================================
+    else if (table === 'solicitudes' && d.isIndividual === true && type === 'INSERT') {
+      const placa = d.placa || record?.placa || 'Sin placa';
+      const email = d.email || record?.email || 'Sin email';
+      const servicio = d.servicio || 'Consulta Individual';
+
+      telegramMsg = `📄 <b>CONSULTA INDIVIDUAL</b>\n\n` +
+        `📁 Servicio: <b>${servicio}</b>\n` +
+        `🚗 Placa: <b>${placa}</b>\n` +
+        `📧 Email: <b>${email}</b>\n\n` +
+        `🕐 ${new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })}`;
+    }
+
+    // =============================================
+    // EVENTO: Solicitud de Filtro Vehicular Completo
+    // =============================================
+    else if (table === 'solicitudes' && type === 'INSERT' && !String(record?.placa || '').startsWith('ACTIVACION_') && !String(record?.placa || '').startsWith('RECARGA_')) {
+      const placa = d.placa || record?.placa || 'Sin placa';
+      const email = d.email || record?.email || 'Sin email';
+      const servicio = d.servicio || 'Filtro Vehicular';
+
+      telegramMsg = `📋 <b>NUEVA SOLICITUD</b>\n\n` +
+        `📁 Servicio: <b>${servicio}</b>\n` +
+        `🚗 Placa: <b>${placa}</b>\n` +
+        `📧 Email: <b>${email}</b>\n\n` +
+        `🕐 ${new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })}`;
+    }
+
+    // =============================================
+    // EVENTO: Cualquier otra solicitud
     // =============================================
     else if (table === 'solicitudes' && type === 'INSERT') {
       const placa = d.placa || record?.placa || 'Sin placa';

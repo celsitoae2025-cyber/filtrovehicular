@@ -1,0 +1,433 @@
+:root {
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --text-primary: #0d2536;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --brand-green: #8bc34a;
+            --brand-navy: #0d2536;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            position: relative;
+        }
+
+        /* HEADER (IGUAL AL INDEX.HTML) */
+        .site-header {
+            width: 100%;
+            padding: 20px 0;
+            background: #0d2536;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .logo-text-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .logo-main {
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin: 0;
+            padding: 0;
+            color: #ffffff;
+        }
+
+        .logo-plus {
+            font-size: 9px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin: 1px -4px 0 0;
+            padding: 0;
+        }
+
+        /* APP CONTAINER */
+        .app-container {
+            width: 100%;
+            max-width: 800px;
+            flex: 1;
+            padding: 0 14px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
+            margin: 0 -14px;
+            padding: 24px 24px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .dashboard-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .btn-nuevo {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 11px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-nuevo:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        /* CARDS DE CONSULTAS */
+        .consultas-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .consulta-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            gap: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        .consulta-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transform: translateY(-1px);
+        }
+
+        .c-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .c-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .c-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .c-placa {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--brand-navy);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .c-fecha {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .c-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .c-status .badge {
+            display: none;
+        }
+
+        .badge-pendiente {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-completado {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .btn-ver {
+            background: var(--brand-navy);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 11px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-ver:hover {
+            background: #15324d;
+            box-shadow: 0 3px 8px rgba(13, 37, 54, 0.2);
+        }
+
+        .btn-descargar {
+            background: #ef4444;
+            color: #ffffff;
+            padding: 8px 14px;
+            font-size: 11px;
+        }
+
+        .btn-descargar:hover {
+            background: #dc2626;
+            box-shadow: 0 3px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-ver-disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .btn-ver-disabled:hover {
+            box-shadow: none;
+        }
+
+        @media (max-width: 600px) {
+            .dashboard-header {
+                padding: 20px 18px 16px;
+            }
+            .dashboard-title {
+                font-size: 16px;
+            }
+            .btn-nuevo {
+                font-size: 11px;
+                padding: 8px 12px;
+            }
+            .consulta-card {
+                padding: 12px 14px;
+            }
+            .c-icon {
+                width: 34px;
+                height: 34px;
+                font-size: 13px;
+            }
+            .c-placa {
+                font-size: 13px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-header {
+                margin: 0 -14px;
+                padding: 28px 30px 22px;
+            }
+            .dashboard-title {
+                font-size: 20px;
+            }
+            .consulta-card {
+                padding: 16px 20px;
+            }
+        }
+
+        /* DROPDOWN HEREDADO DEL INDEX */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-trigger {
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 8px 12px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .dropdown-trigger:hover { background: rgba(255, 255, 255, 0.14); }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            min-width: 250px;
+            border-radius: 14px;
+            padding: 0;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            border: 1px solid #e2e8f0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(8px);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2000;
+            margin-top: 10px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .dropdown.open .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 20px;
+            color: #0d2536;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.15s ease;
+            font-family: 'Roboto', sans-serif;
+        }
+        .dropdown-item i { font-size: 14px; width: 18px; text-align: center; opacity: 0.6; }
+        .dropdown-item:hover { background: #f8fafc; }
+
+        #loadingSpinner {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-secondary);
+        }
+
+        #loadingSpinner i {
+            color: var(--brand-navy);
+        }
+
+/* ========================================= */
+
+#accessModal {
+            background: rgba(248, 250, 252, 0.98);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .plans-container {
+            background: transparent;
+            max-width: 880px;
+            width: 100%;
+            margin: auto;
+            text-align: center;
+            animation: modalPopUp 0.4s cubic-bezier(0.2, 1.2, 0.4, 1.1) forwards;
+            position: relative;
+            padding-top: 30px;
+        }
+        @keyframes modalPopUp {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .plans-main-title { font-size: 24px; font-weight: 900; color: #0d2536; margin-bottom: 6px; letter-spacing: -0.3px; }
+        .plans-subtitle { font-size: 13px; color: #64748b; margin-bottom: 10px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.5; }
+        .plans-credit-note { display: inline-flex; align-items: center; gap: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-bottom: 22px; }
+        .plans-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+        @media (min-width: 768px) { .plans-grid { grid-template-columns: repeat(3, 1fr); align-items: stretch; } }
+        .plan-card { background: #ffffff; border-radius: 14px; padding: 22px 18px; text-align: left; position: relative; display: flex; flex-direction: column; border: 2px solid #e2e8f0; transition: border-color 0.3s, box-shadow 0.3s; }
+        .plan-card:hover { border-color: #8bc34a; box-shadow: 0 6px 24px rgba(139,195,74,0.15); }
+        .plan-card.destacado { border: 2px solid #8bc34a; box-shadow: 0 8px 30px rgba(139,195,74,0.2); }
+        @media (max-width: 767px) { .plans-container { padding-top: 10px; } .close-plans-btn { position: relative !important; float: right; top: 0 !important; margin-bottom: 10px; } }
+        .plan-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); padding: 3px 12px; border-radius: 16px; font-size: 9px; font-weight: 800; white-space: nowrap; letter-spacing: 0.5px; text-transform: uppercase; }
+        .plan-header { text-align: center; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
+        .plan-name { font-size: 16px; font-weight: 800; color: #0d2536; margin-bottom: 10px; }
+        .plan-price { font-size: 30px; font-weight: 900; color: #0d2536; line-height: 1; margin-bottom: 3px; }
+        .plan-price-sub { font-size: 11px; color: #94a3b8; font-weight: 500; }
+        .plan-bonus { display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 4px 10px; border-radius: 7px; font-size: 11px; font-weight: 700; margin-top: 8px; }
+        .plan-total { text-align: center; margin-bottom: 14px; padding: 8px; background: #f8fafc; border-radius: 9px; border: 1px solid #e2e8f0; }
+        .plan-total-label { font-size: 9px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .plan-total-value { font-size: 19px; font-weight: 900; color: #0d2536; }
+        .plan-total-value span { font-size: 11px; color: #8bc34a; font-weight: 700; }
+        .plan-features { list-style: none; padding: 0; margin-bottom: 16px; flex: 1; }
+        .plan-features li { font-size: 11px; color: #334155; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 7px; line-height: 1.4; }
+        .plan-features li i { color: #8bc34a; margin-top: 2px; flex-shrink: 0; font-size: 10px; }
+        .btn-plan-action { width: 100%; padding: 11px; border-radius: 10px; font-weight: 800; font-size: 12px; text-align: center; cursor: pointer; transition: all 0.25s; background: #0d2536; color: #ffffff; border: none; margin-top: auto; letter-spacing: 0.3px; }
+        .btn-plan-action:hover { background: #15324d; box-shadow: 0 4px 15px rgba(13,37,54,0.3); }
+        .btn-plan-action.btn-green { background: #8bc34a; }
+        .btn-plan-action.btn-green:hover { background: #7cb342; box-shadow: 0 4px 15px rgba(139,195,74,0.35); }
+        .close-plans-btn { position: absolute; top: 0; right: 0; font-size: 24px; color: #94a3b8; cursor: pointer; background: transparent; border: none; z-index: 1000; transition: 0.2s; }
+        .close-plans-btn:hover { color: #0d2536; }

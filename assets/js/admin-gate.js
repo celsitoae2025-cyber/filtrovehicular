@@ -93,17 +93,15 @@
             return;
         }
         var passEl = document.getElementById('adminPassInput');
-        var pass = passEl ? String(passEl.value || '').trim() : '';
-        var expected = String(cfg().passphrase || '').trim();
-        if (!expected) {
-            showError('Falta configurar la clave en assets/js/admin-auth-config.js');
+        var input = passEl ? String(passEl.value || '').trim().toLowerCase() : '';
+        var allowedEmail = 'juandevillar80@gmail.com';
+
+        if (!input) {
+            showError('Ingresa tu correo autorizado.');
             return;
         }
-        if (expected === 'CambiaEstaClavePorUnaSegura_2026!') {
-            showError('Debes cambiar la clave por defecto en admin-auth-config.js antes de usar el panel.');
-            return;
-        }
-        if (pass !== expected) {
+
+        if (input !== allowedEmail) {
             var n = parseInt(sessionStorage.getItem(FAIL_KEY) || '0', 10) + 1;
             sessionStorage.setItem(FAIL_KEY, String(n));
             var maxA = Number(cfg().maxAttempts) || 5;
@@ -114,7 +112,7 @@
                 showError('Acceso bloqueado temporalmente por seguridad.');
                 return;
             }
-            showError('Clave incorrecta.');
+            showError('Correo no autorizado.');
             if (passEl) passEl.value = '';
             return;
         }
@@ -135,6 +133,18 @@
             applyUnlockedUI();
             return;
         }
+
+        // Auto-login: si el usuario ya está logueado con el correo autorizado
+        var allowedEmail = 'juandevillar80@gmail.com';
+        if (typeof window.FiltroSession !== 'undefined') {
+            var email = window.FiltroSession.getEmail();
+            if (email === allowedEmail) {
+                startNewSession();
+                return;
+            }
+        }
+
+        // Si no es el correo autorizado, redirigir al sitio
         applyLockedUI();
         var btn = document.getElementById('btnAdminLogin');
         if (btn) btn.addEventListener('click', tryLogin);

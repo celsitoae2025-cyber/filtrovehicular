@@ -318,11 +318,6 @@ async function renderLoggedInState() {
                         <a href="panel_cliente.html" onclick="closeUserDropdown()" class="dropdown-item" id="misConsultasLink">
                             <i class="fa-solid fa-file-invoice" style="color: #0d2536;"></i> Mis Consultas
                         </a>
-                        ${isAdminEmail ? `
-                        <a href="javascript:void(0)" onclick="openIntranetModal(event)" class="dropdown-item">
-                            <i class="fa-solid fa-building-shield" style="color: #0d2536;"></i> Acceso Intranet
-                        </a>
-                        ` : ''}
                         <a href="javascript:void(0)" onclick="closeUserDropdown(); openAccess();" class="dropdown-item">
                             <i class="fa-solid fa-coins" style="color: #0d2536;"></i> Mis Créditos
                         </a>

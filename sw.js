@@ -1,12 +1,19 @@
-const CACHE_NAME = 'filtrov2-cache-v4';
+const CACHE_NAME = 'filtrov2-cache-v5';
 const PRECACHE = [
     './index.html',
     './admin.html',
+    './panel_cliente.html',
     './assets/media/logopwa.png',
     './assets/js/supabase-config.js',
     './assets/js/session.js',
     './assets/js/auth.js',
     './assets/css/components.css',
+    './assets/css/index.css',
+    './assets/css/admin.css',
+    './assets/css/panel_cliente.css',
+    './assets/js/index.js',
+    './assets/js/admin.js',
+    './assets/js/panel_cliente.js',
     './assets/media/logo_circular.png',
     './assets/media/logo_circularAZUL.png',
     './assets/media/logonegro.png',
