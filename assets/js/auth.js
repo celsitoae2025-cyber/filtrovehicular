@@ -862,14 +862,15 @@ async function handleAuthSubmit() {
 }
 
 async function handleLogout() {
-    if (!confirm('¿Seguro que deseas salir de tu cuenta?')) return;
-    if (window.FiltroSession) window.FiltroSession.clear();
-    else localStorage.removeItem('filtro_user_session');
-    currentUser = null;
-    renderLoggedOutState();
-    if (/panel_cliente/i.test(window.location.pathname)) {
-        window.location.href = 'index.html';
-    }
+    showAppConfirm('¿Seguro que deseas salir de tu cuenta?', function () {
+        if (window.FiltroSession) window.FiltroSession.clear();
+        else localStorage.removeItem('filtro_user_session');
+        currentUser = null;
+        renderLoggedOutState();
+        if (/panel_cliente/i.test(window.location.pathname)) {
+            window.location.href = 'index.html';
+        }
+    });
 }
 
 function closeUserDropdown() {

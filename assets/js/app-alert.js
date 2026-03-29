@@ -94,4 +94,70 @@
             window._originalAlert(msg);
         }
     };
+
+    // Confirm personalizado — reemplaza confirm() nativo.
+    // Uso: showAppConfirm('¿Seguro?', function() { ... }, function() { ... });
+    window.showAppConfirm = function (msg, onAccept, onCancel) {
+        createModal();
+        var overlay = document.getElementById('appAlertOverlay');
+        var type = 'info';
+        var text = String(msg || '');
+        var lines = text.split('\n');
+        var title = lines[0].replace(/^[^\w\s¿]*\s*/, '').substring(0, 60);
+        var message = lines.length > 1 ? lines.slice(1).join('\n').trim() : '';
+
+        if (text.toLowerCase().includes('eliminar') || text.toLowerCase().includes('borrar') || text.toLowerCase().includes('limpiar')) type = 'warning';
+
+        var icons = {
+            success: { bg: '#ecfdf5', color: '#10b981', icon: 'fa-circle-check' },
+            error: { bg: '#fef2f2', color: '#ef4444', icon: 'fa-circle-xmark' },
+            warning: { bg: '#fffbeb', color: '#f59e0b', icon: 'fa-triangle-exclamation' },
+            info: { bg: '#eff6ff', color: '#3b82f6', icon: 'fa-circle-info' }
+        };
+        var cfg = icons[type];
+
+        var iconEl = document.getElementById('appAlertIcon');
+        iconEl.style.background = cfg.bg;
+        iconEl.innerHTML = '<i class="fa-solid ' + cfg.icon + '" style="color:' + cfg.color + ';"></i>';
+
+        document.getElementById('appAlertTitle').textContent = title;
+        document.getElementById('appAlertMsg').textContent = message;
+
+        // Reemplazar botón por dos botones
+        var btnEl = document.getElementById('appAlertBtn');
+        btnEl.style.display = 'none';
+        var card = document.getElementById('appAlertCard');
+        var existingBtns = document.getElementById('appConfirmBtns');
+        if (existingBtns) existingBtns.remove();
+
+        var btnsDiv = document.createElement('div');
+        btnsDiv.id = 'appConfirmBtns';
+        btnsDiv.style.cssText = 'display:flex;gap:10px;margin-top:4px;';
+        btnsDiv.innerHTML = '<button id="appConfirmNo" type="button" style="flex:1;padding:13px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:0.2s;">Cancelar</button>' +
+            '<button id="appConfirmYes" type="button" style="flex:1;padding:13px;background:#0d2536;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;transition:0.2s;">Aceptar</button>';
+        card.appendChild(btnsDiv);
+
+        overlay.style.display = 'flex';
+
+        function cleanup() {
+            overlay.style.display = 'none';
+            btnsDiv.remove();
+            btnEl.style.display = 'block';
+        }
+
+        document.getElementById('appConfirmYes').onclick = function () {
+            cleanup();
+            if (onAccept) onAccept();
+        };
+        document.getElementById('appConfirmNo').onclick = function () {
+            cleanup();
+            if (onCancel) onCancel();
+        };
+        overlay.onclick = function (e) {
+            if (e.target === overlay) {
+                cleanup();
+                if (onCancel) onCancel();
+            }
+        };
+    };
 })();
