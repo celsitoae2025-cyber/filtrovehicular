@@ -672,7 +672,7 @@
     
 
     <!-- Flyer SOAT -->
-    <div id="flyerModal" style="position:fixed; inset:0; background:rgba(248,250,252,0.30); z-index:999999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:20px;" onclick="if(event.target===this) { this.style.display='none'; window._flyerClosed=true; window._showWelcome && window._showWelcome(); }">
+    <div id="flyerModal" style="position:fixed; inset:0; background:rgba(248,250,252,0.30); z-index:9999999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:20px;" onclick="if(event.target===this) { this.style.display='none'; window._flyerClosed=true; window._showWelcome && window._showWelcome(); }">
         <div style="width:100%; max-width:380px; position:relative; animation:flyerSlideUp 0.3s ease forwards;">
             <button onclick="event.stopPropagation(); document.getElementById('flyerModal').style.display='none'; window._flyerClosed=true; window._showWelcome && window._showWelcome();" style="position:absolute; top:-40px; right:0; background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer; padding:4px; transition:0.2s;" onmouseover="this.style.color='#0d2536'" onmouseout="this.style.color='#94a3b8'"><i class="fa-solid fa-xmark"></i></button>
             <div onclick="document.getElementById('flyerModal').style.display='none'; document.getElementById('soatFormModal').style.display='flex'; window._flyerClosed=true;" style="cursor:pointer; border-radius:16px; overflow:hidden;">
@@ -787,7 +787,7 @@
     </div>
 
     <!-- FORMULARIO FLOTANTE SOAT -->
-    <div id="soatFormModal" style="position:fixed; inset:0; background:rgba(248,250,252,0.30); z-index:999999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:16px;" onclick="if(event.target===this) this.style.display='none'">
+    <div id="soatFormModal" style="position:fixed; inset:0; background:rgba(248,250,252,0.30); z-index:9999999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:16px;" onclick="if(event.target===this) this.style.display='none'">
         <div style="background:#ffffff; border-radius:20px; width:100%; max-width:420px; overflow:hidden; box-shadow:0 20px 60px rgba(13,37,54,0.15),0 0 0 1px rgba(13,37,54,0.06); position:relative; animation:flyerSlideUp 0.3s ease;">
 
             <!-- Header Navy -->
