@@ -43,21 +43,6 @@
 </head>
 <body>
 
-    <!-- SPLASH SCREEN INTRO -->
-    <div id="splashScreen" style="position:fixed; inset:0; z-index:9999999; background:linear-gradient(135deg,#0d2536 0%,#1a3a52 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.4s ease;">
-        
-        <img src="assets/media/logo_circular.png" alt="Filtro Vehicular" style="width:80px; height:80px; object-fit:contain; animation:splashLogoIn 0.6s ease forwards; margin-bottom:10px;">
-        <div style="animation:splashTextIn 0.5s ease 0.3s both;">
-            <div style="font-size:20px; font-weight:900; color:#ffffff; text-align:center; letter-spacing:1px; font-family:'Roboto',sans-serif; text-transform:uppercase;">Filtro Vehicular</div>
-            <div style="font-size:10px; font-weight:500; color:rgba(255,255,255,0.4); text-align:center; letter-spacing:3px; margin-top:4px; text-transform:uppercase;">Plus</div>
-        </div>
-        <div style="position:absolute; bottom:40px; display:flex; gap:6px; animation:splashTextIn 0.5s ease 0.5s both;">
-            <div style="width:6px; height:6px; border-radius:50%; background:#8bc34a; animation:splashPulse 1s ease infinite;"></div>
-            <div style="width:6px; height:6px; border-radius:50%; background:#8bc34a; animation:splashPulse 1s ease 0.2s infinite;"></div>
-            <div style="width:6px; height:6px; border-radius:50%; background:#8bc34a; animation:splashPulse 1s ease 0.4s infinite;"></div>
-        </div>
-    </div>
-
     <!-- LOGIN SCREEN (se oculta si hay sesión) -->
     <div id="loginScreen" class="login-screen">
         <div class="login-screen-bg">
@@ -143,6 +128,8 @@
         </div>
     </div>
 
+    <!-- Contenido principal: oculto hasta verificar sesión -->
+    <div id="mainAppContent" style="display:none;">
     <header class="site-header">
         <div class="header-content">
             <a href="index.html" class="header-logo">
@@ -944,6 +931,8 @@
     </div>
 
     
+
+    </div><!-- /mainAppContent -->
 
     <script src="assets/js/index.js?v=1"></script>
 </body>

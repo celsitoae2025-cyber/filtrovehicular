@@ -43,6 +43,9 @@ function hideLoginScreen() {
         ls.classList.add('hide');
         setTimeout(function() { ls.style.display = 'none'; }, 400);
     }
+    // Mostrar contenido principal
+    var main = document.getElementById('mainAppContent');
+    if (main) main.style.display = 'block';
 }
 
 // Login desde la pantalla de login

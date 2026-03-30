@@ -1,12 +1,3 @@
-setTimeout(function() {
-            var splash = document.getElementById('splashScreen');
-            if (splash) {
-                splash.style.opacity = '0';
-                setTimeout(function() { splash.remove(); }, 400);
-            }
-        }, 1800);
-    
-
 // =========================================
 
 
