@@ -1056,7 +1056,7 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                             }
                         });
 
-                        // Guardar metadata del reporte CON evidencias para que el cliente pueda imprimir
+                        // Guardar metadata del reporte (texto sin imágenes para no exceder límite)
                         datos.reportMeta = {
                             verdictStatus: globalStatus,
                             verdictText: document.getElementById('verdictText').value,
@@ -1064,10 +1064,32 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                             items: items.map(i => ({ id: i.id, title: i.title, text: i.text, st: i.st, icon: i.icon, files: i.files || [] }))
                         };
 
+                        // Si las evidencias son muy pesadas, guardar sin files en reportMeta
+                        var reportMetaStr = JSON.stringify(datos.reportMeta);
+                        if (reportMetaStr.length > 500000) {
+                            datos.reportMeta.items = items.map(i => ({ id: i.id, title: i.title, text: i.text, st: i.st, icon: i.icon }));
+                        }
+
                         await window.sb.from('solicitudes').upsert(
                             { placa: plate, datos, updated_at: new Date() },
                             { onConflict: 'placa' }
                         );
+
+                        // Guardar reporte completo con evidencias en tabla 'informes'
+                        try {
+                            await window.sb.from('informes').upsert({
+                                placa: plate,
+                                datos: {
+                                    placa: plate,
+                                    verdictStatus: globalStatus,
+                                    verdictText: document.getElementById('verdictText').value,
+                                    date: document.getElementById('reportDate').value,
+                                    publishedAt: publishedAt,
+                                    items: items
+                                },
+                                updated_at: new Date()
+                            }, { onConflict: 'placa' });
+                        } catch(eInf) {}
 
                         const placasBorrar = samePlate
                             .map((r) => r.placa)
