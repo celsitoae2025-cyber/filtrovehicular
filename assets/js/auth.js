@@ -668,11 +668,31 @@ function openAuthModal() {
         return;
     }
     modal.style.display = 'flex';
-    document.getElementById('authEmail').value = '';
-    document.getElementById('authPassword').value = '';
-    document.getElementById('authError').style.display = 'none';
+    var emailField = document.getElementById('authEmail');
+    var passField  = document.getElementById('authPassword');
+    var errBox     = document.getElementById('authError');
+    if (emailField) emailField.value = '';
+    if (passField)  passField.value  = '';
+    if (errBox)     errBox.style.display = 'none';
     isLoginMode = true;
-    loginStep = 1; // Reset to step 1
+    loginStep = 1;
+    updateAuthInterface();
+}
+
+function openRegisterModal() {
+    var loginScreen = document.getElementById('loginScreen');
+    if (loginScreen) loginScreen.style.display = 'none';
+    var modal = document.getElementById('authModal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    var emailField = document.getElementById('authEmail');
+    var passField  = document.getElementById('authPassword');
+    var errBox     = document.getElementById('authError');
+    if (emailField) emailField.value = '';
+    if (passField)  passField.value  = '';
+    if (errBox)     errBox.style.display = 'none';
+    isLoginMode = false;
+    loginStep = 1;
     updateAuthInterface();
 }
 

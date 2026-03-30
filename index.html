@@ -90,7 +90,7 @@
                     <span class="login-divider-text">o también</span>
                     <div class="login-divider-line"></div>
                 </div>
-                <button type="button" class="login-btn-register" onclick="document.getElementById('loginScreen').style.display='none'; openAuthModal(); toggleAuthMode();">
+                <button type="button" class="login-btn-register" onclick="openRegisterModal();">
                     <i class="fa-solid fa-user-plus" style="color:#8bc34a;"></i> Crear mi cuenta
                 </button>
             </div>
@@ -724,7 +724,7 @@
                 <button onclick="closeWelcome(); setTimeout(function(){ if(typeof mostrarModalActivacion==='function') mostrarModalActivacion('activar'); }, 300);" style="width:100%; padding:13px; background:#8bc34a; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;" onmouseover="this.style.background='#7cb342'" onmouseout="this.style.background='#8bc34a'">
                     <i class="fa-solid fa-bolt" style="font-size:12px;"></i> Activar ahora
                 </button>
-                <button onclick="closeWelcome(); setTimeout(function(){ if(typeof openAuthModal==='function') { openAuthModal(); setTimeout(function(){ if(typeof toggleAuthMode==='function') toggleAuthMode(); }, 150); } }, 300);" style="width:100%; padding:13px; background:#0d2536; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
+                <button onclick="closeWelcome(); setTimeout(function(){ openRegisterModal(); }, 300);" style="width:100%; padding:13px; background:#0d2536; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
                     <i class="fa-solid fa-user-plus" style="font-size:12px;"></i> Crear cuenta gratis
                 </button>
                 <button onclick="closeWelcome()" style="width:100%; padding:10px; background:transparent; color:#94a3b8; border:none; font-size:12px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">Seguir explorando</button>
