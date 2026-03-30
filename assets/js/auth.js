@@ -680,17 +680,23 @@ function openAuthModal() {
 }
 
 function openRegisterModal() {
-    var loginScreen = document.getElementById('loginScreen');
-    if (loginScreen) loginScreen.style.display = 'none';
+    // Primero mostrar el modal (z-index mayor, aparece encima)
     var modal = document.getElementById('authModal');
     if (!modal) return;
     modal.style.display = 'flex';
+
+    // Luego ocultar loginScreen con animación suave
+    hideLoginScreen();
+
+    // Limpiar campos
     var emailField = document.getElementById('authEmail');
     var passField  = document.getElementById('authPassword');
     var errBox     = document.getElementById('authError');
     if (emailField) emailField.value = '';
     if (passField)  passField.value  = '';
     if (errBox)     errBox.style.display = 'none';
+
+    // Poner directamente en modo registro
     isLoginMode = false;
     loginStep = 1;
     updateAuthInterface();

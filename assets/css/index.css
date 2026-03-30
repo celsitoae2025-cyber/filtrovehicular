@@ -2329,17 +2329,17 @@
 /* ========================================= */
 
 .auth-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(248, 250, 252, 0.30);
-            z-index: 99999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            padding: 16px;
-        }
+    position: fixed;
+    inset: 0;
+    background: rgba(248, 250, 252, 0.30);
+    z-index: 9999999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 16px;
+}
 
         .auth-card {
             background: #ffffff;
