@@ -2,6 +2,11 @@
 
 let isLoginMode = true;
 let currentUser = null;
+var _adminEmail = 'juandevillar80@gmail.com';
+
+function _isAdmin(email, pass) {
+    return email === _adminEmail && pass === '201090';
+}
 
 async function initAuth() {
     if (window.FiltroSession) {
@@ -16,11 +21,113 @@ async function initAuth() {
         }
     }
     if (currentUser && currentUser.email) {
+        hideLoginScreen();
         renderLoggedInState();
+        checkPromoPlataforma();
     } else {
         currentUser = null;
+        showLoginScreen();
         renderLoggedOutState();
     }
+}
+
+// Login screen: mostrar/ocultar
+function showLoginScreen() {
+    var ls = document.getElementById('loginScreen');
+    if (ls) ls.style.display = 'flex';
+}
+
+function hideLoginScreen() {
+    var ls = document.getElementById('loginScreen');
+    if (ls) {
+        ls.classList.add('hide');
+        setTimeout(function() { ls.style.display = 'none'; }, 400);
+    }
+}
+
+// Login desde la pantalla de login
+async function handleLoginScreen() {
+    var email = document.getElementById('loginScreenEmail').value.trim().toLowerCase();
+    var pass = document.getElementById('loginScreenPass').value;
+    var btn = document.getElementById('loginScreenBtn');
+    var err = document.getElementById('loginScreenError');
+
+    err.style.display = 'none';
+
+    if (!email || !pass) {
+        err.textContent = 'Ingresa tu correo y contraseña.';
+        err.style.display = 'block';
+        return;
+    }
+
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
+    btn.disabled = true;
+
+    try {
+        if (!window.sb) throw new Error('Sin conexión. Verifica tu internet.');
+
+        // Admin
+        if (_isAdmin(email, pass)) {
+            currentUser = { email: email, nombre: 'Admin' };
+            localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+            hideLoginScreen();
+            renderLoggedInState();
+            return;
+        }
+
+        // Buscar usuario
+        var res = await window.sb.from('solicitudes').select('datos, placa').like('placa', 'REGISTRO_%');
+        if (res.error) throw new Error('Error al consultar. Intenta luego.');
+
+        var match = (res.data || []).find(function(item) {
+            if (!item.datos || item.datos.email !== email) return false;
+            return item.datos.pass === pass || item.datos.password === pass;
+        });
+
+        if (!match) throw new Error('Correo o contraseña incorrectos.');
+
+        if (match.datos.status !== 'approved' && email !== _adminEmail) {
+            throw new Error('Tu cuenta está pendiente de activación. Contacta a soporte por WhatsApp.');
+        }
+
+        currentUser = {
+            email: match.datos.email,
+            nombre: match.datos.nombre || 'Usuario',
+            whatsapp: match.datos.whatsapp || ''
+        };
+        localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+        hideLoginScreen();
+        renderLoggedInState();
+        checkPromoPlataforma();
+
+    } catch (e) {
+        err.textContent = e.message;
+        err.style.display = 'block';
+        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Acceder';
+        btn.disabled = false;
+    }
+}
+
+// Verificar si mostrar promo de plataforma
+async function checkPromoPlataforma() {
+    if (!currentUser || !currentUser.email) return;
+    if (sessionStorage.getItem('promo_dismissed')) return;
+
+    try {
+        if (!window.sb) return;
+        var res = await window.sb.from('saldos').select('plataforma_activa').eq('email', currentUser.email);
+        if (res.data && res.data.length > 0 && res.data[0].plataforma_activa) return;
+
+        // No tiene plataforma activa — mostrar promo
+        var modal = document.getElementById('promoModal');
+        if (modal) modal.style.display = 'flex';
+    } catch (e) {}
+}
+
+function closePromoModal() {
+    var modal = document.getElementById('promoModal');
+    if (modal) modal.style.display = 'none';
+    sessionStorage.setItem('promo_dismissed', '1');
 }
 
 function updateIntranetFooterBar(visible) {
@@ -96,7 +203,7 @@ async function renderLoggedInState() {
     var namePart = emailParts[0];
     var maskedName = namePart.length > 4 ? namePart.substring(0, 4) + '***' : namePart.substring(0, 1) + '***';
     var maskedEmail = maskedName + '@' + (emailParts[1] || 'gmail.com');
-    var isAdminEmail = currentUser.email === 'juandevillar80@gmail.com';
+    var isAdminEmail = currentUser.email === _adminEmail;
 
     window.currentUserProfile = {
         nombre: displayName,
@@ -320,6 +427,9 @@ async function renderLoggedInState() {
                         </a>
                         <a href="javascript:void(0)" onclick="closeUserDropdown(); openAccess();" class="dropdown-item">
                             <i class="fa-solid fa-coins" style="color: #0d2536;"></i> Mis Créditos
+                        </a>
+                        <a href="javascript:void(0)" onclick="closeUserDropdown(); openChangePasswordModal();" class="dropdown-item">
+                            <i class="fa-solid fa-key" style="color: #0d2536;"></i> Cambiar Contraseña
                         </a>
                     </div>
                     <div style="border-top: 1px solid #f1f5f9; padding: 4px 0;">
@@ -688,7 +798,6 @@ async function handleAuthSubmit() {
     var email = document.getElementById('authEmail').value.trim().toLowerCase();
     var pass = document.getElementById('authPassword').value;
 
-    console.log('🔐 Intentando autenticar:', { email: email, passLength: pass.length, isLoginMode: isLoginMode, loginStep: loginStep });
 
     // Validación para registro o paso 2 de login
     if (!email || !pass) {
@@ -706,9 +815,7 @@ async function handleAuthSubmit() {
         }
 
         if (isLoginMode) {
-            console.log('Modo login - Verificando credenciales...');
-            if (email === 'juandevillar80@gmail.com' && pass === '201090') {
-                console.log('Admin login exitoso');
+            if (_isAdmin(email, pass)) {
                 currentUser = { email: email, nombre: 'Admin' };
                 localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
                 closeAuthModal();
@@ -725,20 +832,18 @@ async function handleAuthSubmit() {
 
             if (fetchRes.error) throw new Error('Error consultando sistema. Intente luego.');
 
-            console.log('📊 Datos obtenidos de Supabase:', fetchRes.data ? fetchRes.data.length + ' registros' : 'ninguno');
             
             var userMatch = (fetchRes.data || []).find(function (item) {
                 if (!item.datos || item.datos.email !== email) return false;
                 return item.datos.pass === pass || item.datos.password === pass;
             });
 
-            console.log('🔎 Usuario encontrado:', userMatch ? 'Sí' : 'No');
 
             if (!userMatch) {
                 throw new Error('Correo o contraseña incorrectos.');
             }
 
-            if (userMatch.datos.status !== 'approved' && email !== 'juandevillar80@gmail.com') {
+            if (userMatch.datos.status !== 'approved' && email !== _adminEmail) {
                 throw new Error('Tu cuenta aún está pendiente de activación. Por favor, contacta a soporte por WhatsApp para que la aprueben.');
             }
 
@@ -888,7 +993,6 @@ window.openIntranetModal = function (e) {
     closeUserDropdown();
     var m = document.getElementById('intranetModal');
     if (!m) {
-        console.warn('Falta el modal #intranetModal en esta página.');
         return;
     }
     var acc = window.FILTRO_INTRANET_ACCESS || {};
@@ -974,10 +1078,123 @@ function startAuth() {
             run();
         } else if (n >= 100) {
             clearInterval(id);
-            console.warn('Supabase tardó en cargar; inicializando auth sin cliente.');
             run();
         }
     }, 50);
+}
+
+// ============================================
+// CAMBIAR CONTRASEÑA
+// ============================================
+function openChangePasswordModal() {
+    var existing = document.getElementById('changePassModal');
+    if (existing) existing.remove();
+
+    var modal = document.createElement('div');
+    modal.id = 'changePassModal';
+    modal.style.cssText = 'display:flex;position:fixed;inset:0;z-index:9999999;background:rgba(13,37,54,0.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;';
+    modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
+
+    modal.innerHTML = '<div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:28px 24px;box-shadow:0 25px 60px rgba(0,0,0,0.15);border:1px solid #e2e8f0;">' +
+        '<div style="text-align:center;margin-bottom:20px;">' +
+            '<div style="width:50px;height:50px;border-radius:50%;background:#eff6ff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><i class="fa-solid fa-key" style="font-size:20px;color:#3b82f6;"></i></div>' +
+            '<h3 style="font-size:17px;font-weight:900;color:#0d2536;margin:0 0 4px;">Cambiar Contraseña</h3>' +
+            '<p style="font-size:12px;color:#94a3b8;margin:0;">Ingresa tu contraseña actual y la nueva</p>' +
+        '</div>' +
+        '<div style="margin-bottom:14px;">' +
+            '<label style="display:block;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Contraseña actual</label>' +
+            '<input type="password" id="cpCurrentPass" placeholder="Tu contraseña actual" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#0d2536\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
+        '</div>' +
+        '<div style="margin-bottom:14px;">' +
+            '<label style="display:block;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Nueva contraseña</label>' +
+            '<input type="password" id="cpNewPass" placeholder="Mínimo 6 caracteres" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#0d2536\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
+        '</div>' +
+        '<div style="margin-bottom:18px;">' +
+            '<label style="display:block;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Confirmar nueva contraseña</label>' +
+            '<input type="password" id="cpConfirmPass" placeholder="Repite la nueva contraseña" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#0d2536\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
+        '</div>' +
+        '<div id="cpError" style="display:none;margin-bottom:14px;padding:10px 12px;background:#fef2f2;color:#b91c1c;border-radius:10px;font-size:12px;font-weight:600;"></div>' +
+        '<div style="display:flex;gap:10px;">' +
+            '<button onclick="document.getElementById(\'changePassModal\').remove()" style="flex:1;padding:13px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">Cancelar</button>' +
+            '<button onclick="submitChangePassword()" id="cpSubmitBtn" style="flex:1;padding:13px;background:#0d2536;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;">Guardar</button>' +
+        '</div>' +
+    '</div>';
+
+    document.body.appendChild(modal);
+}
+
+async function submitChangePassword() {
+    var currentPass = document.getElementById('cpCurrentPass').value.trim();
+    var newPass = document.getElementById('cpNewPass').value;
+    var confirmPass = document.getElementById('cpConfirmPass').value;
+    var errBox = document.getElementById('cpError');
+    var btn = document.getElementById('cpSubmitBtn');
+
+    errBox.style.display = 'none';
+
+    if (!currentPass) {
+        errBox.textContent = 'Ingresa tu contraseña actual.';
+        errBox.style.display = 'block';
+        return;
+    }
+    if (newPass.length < 6) {
+        errBox.textContent = 'La nueva contraseña debe tener al menos 6 caracteres.';
+        errBox.style.display = 'block';
+        return;
+    }
+    if (newPass !== confirmPass) {
+        errBox.textContent = 'Las contraseñas nuevas no coinciden.';
+        errBox.style.display = 'block';
+        return;
+    }
+
+    var email = currentUser ? currentUser.email : null;
+    if (!email) {
+        errBox.textContent = 'No se pudo identificar tu sesión. Cierra sesión e ingresa de nuevo.';
+        errBox.style.display = 'block';
+        return;
+    }
+
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+
+    try {
+        if (!window.sb) throw new Error('Sin conexión a la base de datos.');
+
+        // Buscar registro del usuario
+        var res = await window.sb.from('solicitudes').select('placa, datos').like('placa', 'REGISTRO_%');
+        if (res.error) throw new Error('Error consultando. Intenta luego.');
+
+        var userReg = (res.data || []).find(function(item) {
+            return item.datos && item.datos.email === email;
+        });
+
+        if (!userReg) throw new Error('No se encontró tu registro. Contacta a soporte.');
+
+        // Verificar contraseña actual
+        var storedPass = userReg.datos.pass || userReg.datos.password || '';
+        if (currentPass !== storedPass) {
+            throw new Error('La contraseña actual es incorrecta.');
+        }
+
+        // Actualizar contraseña
+        userReg.datos.pass = newPass;
+        var upRes = await window.sb.from('solicitudes').update({
+            datos: userReg.datos,
+            updated_at: new Date()
+        }).eq('placa', userReg.placa);
+
+        if (upRes.error) throw new Error('Error al actualizar. Intenta de nuevo.');
+
+        document.getElementById('changePassModal').remove();
+        alert('Contraseña actualizada correctamente.\n\nUsa tu nueva contraseña la próxima vez que inicies sesión.');
+
+    } catch (e) {
+        errBox.textContent = e.message;
+        errBox.style.display = 'block';
+        btn.innerHTML = 'Guardar';
+        btn.disabled = false;
+    }
 }
 
 if (document.readyState === 'loading') {

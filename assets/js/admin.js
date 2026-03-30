@@ -291,7 +291,6 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
             if (addToHistory) {
                 navigationStack.push(view);
                 history.pushState({ view: view }, '', '#' + view);
-                console.log('📍 Navegación:', view, '| Stack:', navigationStack);
             }
         }
 
@@ -701,7 +700,6 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                             .single();
                         if (data) { currentData = data; currentBalance = data.creditos; }
                     } catch(cloudErr) { 
-                        console.warn("Nube inaccesible, leyendo Local..."); 
                     }
                 }
 
@@ -994,7 +992,6 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                 const plate = normalize(document.getElementById('targetPlate').value);
                 if (!plate) return alert("⚠️ Error: Ingresa un número de placa válido.");
 
-                console.log("Iniciando publicación de:", plate);
 
                 const items = Array.from(document.querySelectorAll('.admin-card[id^="card-"]')).map(card => {
                     const id = card.id.replace('card-', '');
@@ -1083,7 +1080,6 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                     }
                 }
 
-                console.log("Reporte guardado con éxito.");
                 alert(`🚀 ¡ÉXITO! El reporte de la placa ${plate} ha sido publicado y está disponible para el cliente.`);
                 if (typeof renderRequestsList === 'function') await renderRequestsList();
                 try {
@@ -1122,7 +1118,6 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
 
             localStorage.setItem('progress_' + plate, pct);
             // Pequeña notificación visual en el admin
-            console.log(`Progreso de ${plate}: ${pct}%`);
         }
 
         async function clearAllData() {
@@ -1588,7 +1583,6 @@ Link: https://filtrovehicularperu.com`;
 
         function initAuthAdmin() {
             // --- AUDITORÍA DE CONEXIÓN ---
-            console.log("🚀 Auditoria Admin - Supabase URL:", 'https://xojgpfbpomjxpyytmczg.supabase.co');
             
             try {
                 if (!window.supabase) throw new Error("Guard: CDN fallido.");
@@ -1916,7 +1910,6 @@ Link: https://filtrovehicularperu.com`;
                     localStorage.removeItem('approved_request_' + norm);
                 } catch (e) {}
                 var del = await window.sb.from('solicitudes').delete().eq('placa', rawPlaca);
-                if (del.error) console.warn('Error borrando placa', rawPlaca, del.error);
             }
 
             // Limpiar flags de notificación y placas pendientes
@@ -2001,7 +1994,10 @@ Link: https://filtrovehicularperu.com`;
                     a.volume = 1;
                     adminAudioUnlocked = true;
                     adminUnlockInProgress = false;
-                    console.log('Sonido de nuevas solicitudes activado.');
+                    // Cleanup: remover listeners ya innecesarios
+                    ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(function (ev) {
+                        document.removeEventListener(ev, tryUnlockAdminAudio, { capture: true });
+                    });
                 })
                 .catch(() => { adminUnlockInProgress = false; });
         }
@@ -2015,7 +2011,6 @@ Link: https://filtrovehicularperu.com`;
             try {
                 a.pause();
                 a.currentTime = 0;
-                a.play().catch(e => console.log('Alerta sonora:', e && e.message));
             } catch (e) {}
             try {
                 if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
@@ -2085,8 +2080,11 @@ Link: https://filtrovehicularperu.com`;
 
         // Función para guardar configuración de notificaciones WhatsApp personal
         function saveWhatsAppNotifications() {
-            let phone = document.getElementById('whatsappPersonalNumber').value.trim();
-            const apiKey = document.getElementById('whatsappApiKey').value.trim();
+            var phoneEl = document.getElementById('whatsappPersonalNumber');
+            var apiKeyEl = document.getElementById('whatsappApiKey');
+            if (!phoneEl || !apiKeyEl) return;
+            let phone = phoneEl.value.trim();
+            const apiKey = apiKeyEl.value.trim();
             
             if (!phone || !apiKey) {
                 return alert("❌ Ingresa tu número de WhatsApp y API Key.\n\nSigue las instrucciones en el enlace de abajo para obtener tu API Key.");
@@ -2121,8 +2119,6 @@ Link: https://filtrovehicularperu.com`;
                 // Usar Image tag para evitar CORS (método invisible)
                 const img = new Image();
                 img.src = url;
-                img.onload = function() { console.log('✅ Notificación WhatsApp enviada'); };
-                img.onerror = function() { console.log('⚠️ Notificación WhatsApp procesada'); };
             } catch (error) {
                 console.error('❌ Error enviando notificación WhatsApp:', error);
             }
@@ -2159,7 +2155,6 @@ Link: https://filtrovehicularperu.com`;
             const badge = document.getElementById('requestsCount');
             const mBadge = document.getElementById('mobileCount');
             
-            console.log("📊 Actualizando badges -> Pendientes:", n, "| Anterior:", lastRequestsCount);
 
             if (n > lastRequestsCount && lastRequestsCount >= 0) {
                 playAdminAlertSound();
@@ -2175,17 +2170,14 @@ Link: https://filtrovehicularperu.com`;
                 if (badge) { 
                     badge.innerHTML = n; 
                     badge.style.display = 'inline-block';
-                    console.log("✅ Badge sidebar actualizado:", n);
                 }
                 if (mBadge) { 
                     mBadge.innerHTML = n; 
                     mBadge.style.display = 'inline-block';
-                    console.log("✅ Badge móvil actualizado:", n);
                 }
             } else {
                 if (badge) badge.style.display = 'none';
                 if (mBadge) mBadge.style.display = 'none';
-                console.log("ℹ️ Badges ocultos (0 pendientes)");
             }
         }
 
@@ -2203,11 +2195,9 @@ Link: https://filtrovehicularperu.com`;
         //     document.getElementById('tgChatId').value = localStorage.getItem('telegram_chatid') || '';
         // }
 
-        renderAdminCards();
-        // initRequestScanner(); // This will be called inside DOMContentLoaded
-        document.addEventListener('input', syncLiveProgress);
-
         document.addEventListener('DOMContentLoaded', async () => {
+            renderAdminCards();
+            document.addEventListener('input', syncLiveProgress);
             initAuthAdmin();
             initRequestScanner();
 
@@ -2278,11 +2268,9 @@ Link: https://filtrovehicularperu.com`;
             if (navigationStack.length > 1) {
                 navigationStack.pop(); // Quitar vista actual
                 const previousView = navigationStack[navigationStack.length - 1];
-                console.log('⬅️ Botón Atrás presionado | Regresando a:', previousView);
                 showView(previousView, false); // Mostrar vista anterior sin agregar al historial
             } else {
                 // Si estamos en la vista inicial, permitir salir
-                console.log('⬅️ En vista inicial, permitiendo salir de la app');
             }
         });
 
@@ -2292,13 +2280,11 @@ Link: https://filtrovehicularperu.com`;
             const validViews = ['editor', 'requests', 'history', 'credits', 'users', 'access'];
             
             if (hash && validViews.includes(hash)) {
-                console.log('🔄 Restaurando vista desde URL:', hash);
                 navigationStack = ['editor', hash];
                 showView(hash, false);
             } else {
                 // Establecer estado inicial
                 history.replaceState({ view: 'editor' }, '', '#editor');
-                console.log('🏠 Vista inicial establecida: editor');
             }
         });
     
@@ -2324,7 +2310,6 @@ Link: https://filtrovehicularperu.com`;
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js')
                 .then(registration => {
-                    console.log('✅ Service Worker registrado:', registration.scope);
                 })
                 .catch(error => {
                     console.error('❌ Error registrando Service Worker:', error);
@@ -2343,14 +2328,11 @@ Link: https://filtrovehicularperu.com`;
                 try {
                     if ('wakeLock' in navigator) {
                         wakeLock = await navigator.wakeLock.request('screen');
-                        console.log('🔒 Wake Lock activado - La app permanecerá activa');
                         
                         wakeLock.addEventListener('release', () => {
-                            console.log('🔓 Wake Lock liberado');
                         });
                     }
                 } catch (err) {
-                    console.warn('Wake Lock no disponible:', err);
                 }
             }
 
@@ -2555,7 +2537,7 @@ Link: https://filtrovehicularperu.com`;
                             .from('solicitudes').select('datos').in('placa', variantes);
                         const hit = (rows || []).find(r => r.datos && r.datos.reportMeta);
                         if (hit) reportData = hit.datos.reportMeta;
-                    } catch(e) { console.warn('ReportMeta no encontrado:', e); }
+                    } catch(e) {}
                 }
 
                 // Fallback 3: si no hay reportMeta, construir reporte mínimo desde los datos de la solicitud
@@ -2578,7 +2560,7 @@ Link: https://filtrovehicularperu.com`;
                                 }]
                             };
                         }
-                    } catch(e) { console.warn('Fallback solicitud:', e); }
+                    } catch(e) {}
                 }
 
                 if (!reportData || !reportData.items) {
@@ -2887,7 +2869,7 @@ Link: https://filtrovehicularperu.com`;
                                         y = pdfY + fitH + 4;
                                     }
                                 }
-                            } catch(e) { console.warn("Evidencia omitida:", e); }
+                            } catch(e) {}
                         }
                     }
 

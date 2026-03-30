@@ -57,7 +57,92 @@
             <div style="width:6px; height:6px; border-radius:50%; background:#8bc34a; animation:splashPulse 1s ease 0.4s infinite;"></div>
         </div>
     </div>
-    
+
+    <!-- LOGIN SCREEN (se oculta si hay sesión) -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-screen-bg">
+            <div class="login-bg-circle login-bg-1"></div>
+            <div class="login-bg-circle login-bg-2"></div>
+            <div class="login-bg-dots"></div>
+        </div>
+        <div class="login-screen-content">
+            <div class="login-brand">
+                <div class="login-logo-box">
+                    <img src="assets/media/logo_circular.png" alt="Logo">
+                </div>
+                <div class="login-brand-name">Filtro Vehicular</div>
+                <div class="login-brand-sub">Plus</div>
+                <p class="login-brand-tag">Plataforma integral de verificación vehicular</p>
+            </div>
+            <div class="login-form-card">
+                <h2 class="login-form-title">Bienvenido</h2>
+                <p class="login-form-sub">Ingresa tus credenciales para continuar</p>
+                <div id="loginScreenError" class="login-form-error"></div>
+                <form onsubmit="event.preventDefault(); handleLoginScreen();">
+                    <div class="login-input-group">
+                        <label class="login-input-label">Correo electrónico</label>
+                        <div class="login-input-wrap">
+                            <input type="email" id="loginScreenEmail" class="login-input-field" placeholder="correo@ejemplo.com" autocomplete="email">
+                            <i class="fa-solid fa-envelope login-input-icon"></i>
+                        </div>
+                    </div>
+                    <div class="login-input-group">
+                        <label class="login-input-label">Contraseña</label>
+                        <div class="login-input-wrap">
+                            <input type="password" id="loginScreenPass" class="login-input-field" placeholder="Tu contraseña" autocomplete="current-password">
+                            <i class="fa-solid fa-lock login-input-icon"></i>
+                            <button type="button" class="login-toggle-pass" onclick="var i=document.getElementById('loginScreenPass');var e=document.getElementById('loginEyeIcon');if(i.type==='password'){i.type='text';e.classList.remove('fa-eye');e.classList.add('fa-eye-slash');}else{i.type='password';e.classList.remove('fa-eye-slash');e.classList.add('fa-eye');}">
+                                <i class="fa-solid fa-eye" id="loginEyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="login-btn-submit" id="loginScreenBtn">
+                        <i class="fa-solid fa-right-to-bracket"></i> Acceder
+                    </button>
+                </form>
+                <div class="login-divider">
+                    <div class="login-divider-line"></div>
+                    <span class="login-divider-text">o también</span>
+                    <div class="login-divider-line"></div>
+                </div>
+                <button type="button" class="login-btn-register" onclick="document.getElementById('loginScreen').style.display='none'; openAuthModal(); toggleAuthMode();">
+                    <i class="fa-solid fa-user-plus" style="color:#8bc34a;"></i> Crear mi cuenta
+                </button>
+            </div>
+            <div class="login-footer-badge">
+                <i class="fa-solid fa-shield-halved"></i>
+                Verificación segura y confiable
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PROMO PLATAFORMA S/35 -->
+    <div id="promoModal" class="promo-modal" style="display:none;" onclick="if(event.target===this)closePromoModal()">
+        <div class="promo-card">
+            <button class="promo-close" onclick="closePromoModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="promo-icon-box">
+                <i class="fa-solid fa-rocket"></i>
+            </div>
+            <h2 class="promo-title">Activa tu Plataforma Digital</h2>
+            <p class="promo-subtitle">Obtén acceso completo e ilimitado</p>
+            <div class="promo-features">
+                <div class="promo-feature"><i class="fa-solid fa-check"></i> Consultas vehiculares ilimitadas</div>
+                <div class="promo-feature"><i class="fa-solid fa-check"></i> Dashboard digital integrado</div>
+                <div class="promo-feature"><i class="fa-solid fa-check"></i> Descarga de reportes en PDF</div>
+                <div class="promo-feature"><i class="fa-solid fa-check"></i> Historial completo de consultas</div>
+                <div class="promo-feature"><i class="fa-solid fa-check"></i> Soporte prioritario</div>
+            </div>
+            <div class="promo-price-box">
+                <span class="promo-price-amount">S/ 35.00</span>
+                <span class="promo-price-label">pago único — sin mensualidades</span>
+            </div>
+            <button class="promo-btn-activate" onclick="closePromoModal(); mostrarModalActivacion('activar');">
+                <i class="fa-solid fa-bolt"></i> ACTIVAR AHORA
+            </button>
+            <button class="promo-btn-later" onclick="closePromoModal()">Quizás más tarde</button>
+        </div>
+    </div>
+
     <header class="site-header">
         <div class="header-content">
             <a href="index.html" class="header-logo">

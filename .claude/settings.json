@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"require\\(''fs''\\).readFileSync\\(''assets/js/admin.js'',''utf8''\\); console.log\\(''admin.js: OK''\\)\")",
+      "Bash(node -e \"require\\(''fs''\\).readFileSync\\(''assets/js/panel_cliente.js'',''utf8''\\); console.log\\(''panel_cliente.js: OK''\\)\")",
+      "Bash(node -e \"require\\(''fs''\\).readFileSync\\(''assets/js/admin.js'',''utf8''\\); console.log\\(''admin.js OK''\\)\")",
+      "Bash(node -e \"require\\(''fs''\\).readFileSync\\(''assets/js/panel_cliente.js'',''utf8''\\); console.log\\(''panel_cliente.js OK''\\)\")",
+      "Bash(node -c assets/js/admin.js)",
+      "Bash(node -c assets/js/panel_cliente.js)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Illusions\\Desktop\\bot-whatsapp-fv"
+    ]
+  }
+}

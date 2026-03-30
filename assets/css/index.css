@@ -2669,3 +2669,134 @@
         from { transform: translateY(30px); opacity: 0; }
         to { transform: translateY(0); opacity: 1; }
     }
+
+/* ============================================
+   LOGIN SCREEN
+   ============================================ */
+.login-screen {
+    position: fixed; inset: 0; z-index: 999999;
+    background: #f8fafc;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.4s ease;
+}
+.login-screen.hide { opacity: 0; pointer-events: none; }
+.login-screen-bg { position: absolute; inset: 0; overflow: hidden; }
+.login-bg-circle { position: absolute; border-radius: 50%; }
+.login-bg-1 { top: -60px; left: -40px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(139,195,74,0.08) 0%, transparent 70%); }
+.login-bg-2 { bottom: -80px; right: -60px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(13,37,54,0.06) 0%, transparent 70%); }
+.login-bg-dots { position: absolute; inset: 0; background-image: radial-gradient(rgba(13,37,54,0.03) 1px, transparent 1px); background-size: 24px 24px; }
+.login-screen-content {
+    position: relative; z-index: 1; width: 100%; max-width: 400px;
+    padding: 24px 20px; display: flex; flex-direction: column; align-items: center;
+}
+.login-brand { text-align: center; margin-bottom: 28px; animation: fadeInDown 0.6s ease; }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+.login-logo-box {
+    width: 76px; height: 76px; margin: 0 auto 14px;
+    background: linear-gradient(135deg, #0d2536, #1a3a52);
+    border-radius: 20px; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 30px rgba(13,37,54,0.2); position: relative;
+}
+.login-logo-box::after {
+    content: ''; position: absolute; inset: -3px; border-radius: 23px;
+    background: linear-gradient(135deg, #8bc34a, #0d2536, #8bc34a); z-index: -1; opacity: 0.3;
+}
+.login-logo-box img { width: 46px; height: 46px; object-fit: contain; filter: brightness(0) invert(1); }
+.login-brand-name { font-size: 22px; font-weight: 900; color: #0d2536; letter-spacing: 1px; text-transform: uppercase; }
+.login-brand-sub { font-size: 10px; font-weight: 600; color: #8bc34a; letter-spacing: 4px; text-transform: uppercase; margin-top: 2px; }
+.login-brand-tag { font-size: 11px; color: #94a3b8; margin-top: 6px; }
+.login-form-card {
+    width: 100%; background: #fff; border-radius: 22px; padding: 28px 24px;
+    box-shadow: 0 4px 24px rgba(13,37,54,0.06), 0 0 0 1px rgba(13,37,54,0.04);
+    animation: fadeInUp 0.6s ease 0.1s both;
+}
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.login-form-title { font-size: 17px; font-weight: 800; color: #0d2536; margin-bottom: 2px; }
+.login-form-sub { font-size: 12px; color: #94a3b8; margin-bottom: 20px; }
+.login-form-error { display: none; padding: 10px 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; font-size: 12px; font-weight: 600; color: #dc2626; margin-bottom: 14px; text-align: center; }
+.login-input-group { margin-bottom: 14px; }
+.login-input-label { display: block; font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.login-input-wrap { position: relative; display: flex; align-items: center; }
+.login-input-icon { position: absolute; left: 13px; font-size: 14px; color: #cbd5e1; transition: color 0.2s; z-index: 1; }
+.login-input-field {
+    width: 100%; padding: 13px 13px 13px 42px;
+    background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 11px;
+    font-size: 14px; font-family: 'Roboto', sans-serif; color: #0d2536; outline: none; transition: all 0.2s;
+}
+.login-input-field:focus { border-color: #0d2536; background: #fff; box-shadow: 0 0 0 3px rgba(13,37,54,0.06); }
+.login-input-field::placeholder { color: #cbd5e1; }
+.login-toggle-pass { position: absolute; right: 13px; background: none; border: none; font-size: 15px; color: #cbd5e1; cursor: pointer; padding: 4px; }
+.login-toggle-pass:hover { color: #0d2536; }
+.login-btn-submit {
+    width: 100%; padding: 14px; margin-top: 6px;
+    background: linear-gradient(135deg, #0d2536, #1a3a52); color: #fff;
+    border: none; border-radius: 12px; font-size: 14px; font-weight: 800; font-family: 'Roboto', sans-serif;
+    cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.login-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(13,37,54,0.25); }
+.login-divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; }
+.login-divider-line { flex: 1; height: 1px; background: #e2e8f0; }
+.login-divider-text { font-size: 10px; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.login-btn-register {
+    width: 100%; padding: 13px; background: #fff; color: #0d2536;
+    border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 13px; font-weight: 700; font-family: 'Roboto', sans-serif;
+    cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.login-btn-register:hover { border-color: #8bc34a; background: #f0fdf4; }
+.login-footer-badge {
+    margin-top: 24px; display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; background: rgba(13,37,54,0.04); border-radius: 50px;
+    font-size: 10px; font-weight: 600; color: #64748b; animation: fadeInUp 0.6s ease 0.3s both;
+}
+.login-footer-badge i { color: #8bc34a; font-size: 12px; }
+
+/* ============================================
+   PROMO MODAL S/35
+   ============================================ */
+.promo-modal {
+    position: fixed; inset: 0; z-index: 999998;
+    background: rgba(13,37,54,0.5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.promo-card {
+    background: #fff; border-radius: 24px; max-width: 380px; width: 100%;
+    padding: 32px 28px; text-align: center; position: relative;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.15); animation: fadeInUp 0.3s ease;
+}
+.promo-close {
+    position: absolute; top: 14px; right: 16px; background: none; border: none;
+    font-size: 18px; color: #cbd5e1; cursor: pointer; transition: color 0.2s; padding: 4px;
+}
+.promo-close:hover { color: #0d2536; }
+.promo-icon-box {
+    width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 16px;
+    background: linear-gradient(135deg, #0d2536, #1a3a52); display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: #8bc34a; box-shadow: 0 8px 24px rgba(13,37,54,0.2);
+}
+.promo-title { font-size: 20px; font-weight: 900; color: #0d2536; margin-bottom: 4px; }
+.promo-subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+.promo-features { text-align: left; margin-bottom: 20px; }
+.promo-feature {
+    display: flex; align-items: center; gap: 10px; padding: 8px 0;
+    font-size: 13px; color: #334155; font-weight: 500; border-bottom: 1px solid #f1f5f9;
+}
+.promo-feature:last-child { border-bottom: none; }
+.promo-feature i { color: #8bc34a; font-size: 13px; width: 20px; text-align: center; flex-shrink: 0; }
+.promo-price-box {
+    background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px;
+    padding: 16px; margin-bottom: 18px;
+}
+.promo-price-amount { display: block; font-size: 32px; font-weight: 900; color: #0d2536; line-height: 1; }
+.promo-price-label { display: block; font-size: 11px; color: #94a3b8; font-weight: 500; margin-top: 4px; }
+.promo-btn-activate {
+    width: 100%; padding: 14px; background: #8bc34a; color: #fff; border: none;
+    border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.promo-btn-activate:hover { background: #7cb342; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(139,195,74,0.3); }
+.promo-btn-later {
+    background: none; border: none; color: #94a3b8; font-size: 12px; font-weight: 500;
+    cursor: pointer; margin-top: 12px; padding: 6px; transition: color 0.2s;
+}
+.promo-btn-later:hover { color: #0d2536; }

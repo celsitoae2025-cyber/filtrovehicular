@@ -1,9 +1,10 @@
-const CACHE_NAME = 'filtrov2-cache-v6';
+const CACHE_NAME = 'filtrov2-cache-v7';
 const PRECACHE = [
     './index.html',
     './admin.html',
     './panel_cliente.html',
     './assets/media/logopwa.png',
+    './assets/media/logo_circular.png',
     './assets/js/supabase-config.js',
     './assets/js/session.js',
     './assets/js/auth.js',
@@ -14,27 +15,21 @@ const PRECACHE = [
     './assets/css/panel_cliente.css',
     './assets/js/index.js',
     './assets/js/admin.js',
-    './assets/js/panel_cliente.js',
-    './assets/media/logo_circular.png',
-    './assets/media/logo_circularAZUL.png',
-    './assets/media/logonegro.png',
-    './assets/media/logopwa.png'
+    './assets/js/panel_cliente.js'
 ];
 
 self.addEventListener('install', (e) => {
-    console.log('[SW] Installing...');
     self.skipWaiting();
     e.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(PRECACHE).catch((err) => {
-                console.warn('SW: algunos recursos no se pudieron cachear:', err);
-            });
+            return Promise.allSettled(
+                PRECACHE.map((url) => cache.add(url).catch(() => {}))
+            );
         })
     );
 });
 
 self.addEventListener('activate', (e) => {
-    console.log('[SW] Activating...');
     e.waitUntil(
         caches.keys().then((names) => {
             return Promise.all(
@@ -46,21 +41,17 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
     e.respondWith(
-        fetch(e.request).catch(() => {
+        fetch(e.request, { signal: AbortSignal.timeout(8000) }).catch(() => {
             return caches.match(e.request, { ignoreSearch: true });
         })
     );
 });
 
-// MANTENER SERVICE WORKER ACTIVO - Evita que la app se cierre
 self.addEventListener('message', (event) => {
     if (event.data === 'keepAlive') {
-        console.log('[SW] Keep alive ping received');
         event.waitUntil(Promise.resolve());
     }
-    
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
     }
 });
-

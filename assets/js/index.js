@@ -30,7 +30,6 @@ setTimeout(function() {
                         var resp = await fetch('https://apiperu.dev/api/dni/' + dni, {
                             method: 'GET',
                             headers: {
-                                'Authorization': 'Bearer 46c2c88ebdada4185058e818e63b5997813bbc6c67f322bc7dd2e84b96d97a0a',
                                 'Accept': 'application/json',
                                 'Content-Type': 'application/json'
                             }
@@ -153,7 +152,6 @@ setTimeout(function() {
         
         // --- SISTEMA DE PESTAÑAS DE SERVICIOS ---
         function switchServicesTab(tabName, addToHistory = true) {
-            console.log('Cambiando a pestaña:', tabName); // Debug
             
             // Verificar si el usuario está logueado
             if (typeof currentUser === 'undefined' || !currentUser) {
@@ -168,7 +166,6 @@ setTimeout(function() {
             if (addToHistory) {
                 navigationStack.push('tab-' + tabName);
                 history.pushState({ view: 'tab-' + tabName }, '', '#' + tabName);
-                console.log('📍 Navegación a pestaña:', tabName, '| Stack:', navigationStack);
             }
             
             // Actualizar pestañas visuales
@@ -198,7 +195,6 @@ setTimeout(function() {
                         renderDashGrid();
                     }, 100);
                 }
-                console.log('Pestaña activada:', tabName);
             } else {
                 console.error('No se encontró el contenido para:', tabName);
             }
@@ -687,16 +683,9 @@ setTimeout(function() {
                                     const creditosActuales = data.creditos;
 
                                     // Logging para debugging
-                                    console.log('=== VALIDACIÓN DE CRÉDITOS ===');
-                                    console.log('Usuario:', currentUser.email);
-                                    console.log('Servicio:', c.title);
-                                    console.log('Créditos actuales:', creditosActuales);
-                                    console.log('Créditos necesarios:', creditNeed);
-                                    console.log('¿Tiene suficientes?:', creditosActuales >= creditNeed);
 
                                     // VALIDACIÓN ESTRICTA: Verificar que tiene créditos suficientes
                                     if (creditosActuales < creditNeed) {
-                                        console.warn('CRÉDITOS INSUFICIENTES - Bloqueando consulta');
                                         alert(`Créditos insuficientes.\n\nTienes: ${creditosActuales.toFixed(2)} crédito(s)\nNecesitas: ${creditNeed.toFixed(2)} crédito(s)\n\nPor favor, recarga créditos para continuar.`);
                                         document.getElementById('infoModal').style.display = 'none';
                                         window.currentCardTitle = c.title;
@@ -719,7 +708,6 @@ setTimeout(function() {
                                         return;
                                     }
 
-                                    console.log('Nuevo saldo después del descuento:', nuevoSaldo);
 
                                     // Descontar créditos atómicamente (gte verifica saldo suficiente)
                                     const { data: updatedRows, error: updateError } = await window.sb
@@ -738,7 +726,6 @@ setTimeout(function() {
                                     }
 
                                     // Créditos descontados exitosamente - Procesar solicitud
-                                    console.log('Créditos descontados exitosamente');
                                     const timestamp = Date.now();
                                     const pendingData = {
                                         placa: p,
@@ -1251,7 +1238,6 @@ setTimeout(function() {
             // Usar qrpago.png como genérico o específico si existen logos separados
             qr.src = (method === 'yape') ? 'assets/media/qrpago.png' : 'assets/media/qrpago.png';
 
-            console.log("Método de pago: " + method);
         }
 
         async function handleWASend(type, isHelp = false) {
@@ -1279,7 +1265,6 @@ setTimeout(function() {
                         datos: reqData, 
                         updated_at: new Date() 
                     }, { onConflict: 'placa' });
-                    console.log("Solicitud enviada a la Nube.");
                 } catch (e) {
                     console.error("Fallo alertando nube:", e);
                 }
@@ -1657,7 +1642,6 @@ setTimeout(function() {
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker registrado:', reg))
                     .catch(err => console.error('Error registrando Service Worker:', err));
             });
         }
@@ -2338,7 +2322,6 @@ setTimeout(function() {
             // Restaurar estado de navegación al cargar
             const hash = window.location.hash.replace('#', '');
             if (hash === 'categories' || hash === 'dashboard') {
-                console.log('🔄 Restaurando pestaña desde URL:', hash);
                 navigationStack = ['home', 'tab-' + hash];
                 if (currentUser) {
                     switchServicesTab(hash, false);
@@ -2346,7 +2329,6 @@ setTimeout(function() {
             } else {
                 // Establecer estado inicial
                 history.replaceState({ view: 'home' }, '', '');
-                console.log('🏠 Vista inicial establecida: home');
             }
         });
 
@@ -2371,7 +2353,6 @@ setTimeout(function() {
             if (navigationStack.length > 1) {
                 navigationStack.pop(); // Quitar vista actual
                 const previousView = navigationStack[navigationStack.length - 1];
-                console.log('⬅️ Botón Atrás | Regresando a:', previousView);
                 
                 if (previousView === 'home') {
                     // Restaurar vista predeterminada: categorías activa
@@ -2397,6 +2378,5 @@ setTimeout(function() {
                     switchServicesTab(tabName, false);
                 }
             } else {
-                console.log('⬅️ En vista inicial, permitiendo salir de la app');
             }
         });

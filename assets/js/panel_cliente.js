@@ -271,7 +271,6 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                             });
                             if (withReport) {
                                 localData = withReport.datos.reportMeta;
-                                console.log('PDF: reportMeta encontrado con ' + localData.items.length + ' items');
                             }
 
                             // Prioridad 2: construir mínimo desde datos de solicitud
@@ -289,10 +288,9 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                                             : 'Solicitud procesada exitosamente.'
                                     }]
                                 };
-                                console.log('PDF: reporte mínimo construido para ' + norm);
                             }
                         }
-                    } catch(e) { console.warn('Error buscando en solicitudes:', e); }
+                    } catch(e) {}
                 }
 
                 if (!localData || !localData.items) {
@@ -302,7 +300,6 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                     return;
                 }
 
-                console.log('PDF: generando con ' + localData.items.length + ' items para placa ' + norm);
 
                 let itemsParaPDF = localData.items || [];
                 let vStatus = localData.verdictStatus || 'ok';
@@ -602,7 +599,7 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                                         y = pdfY + fitH + 4;
                                     }
                                 }
-                            } catch(e) { console.warn("Evidencia omitida"); }
+                            } catch(e) {}
                         }
                     }
                     y += 1;
