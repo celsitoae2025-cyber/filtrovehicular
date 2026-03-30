@@ -1056,12 +1056,12 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                             }
                         });
 
-                        // Guardar metadata del reporte (sin imágenes) para que el cliente pueda imprimir
+                        // Guardar metadata del reporte CON evidencias para que el cliente pueda imprimir
                         datos.reportMeta = {
                             verdictStatus: globalStatus,
                             verdictText: document.getElementById('verdictText').value,
                             date: document.getElementById('reportDate').value,
-                            items: items.map(i => ({ id: i.id, title: i.title, text: i.text, st: i.st, icon: i.icon }))
+                            items: items.map(i => ({ id: i.id, title: i.title, text: i.text, st: i.st, icon: i.icon, files: i.files || [] }))
                         };
 
                         await window.sb.from('solicitudes').upsert(
