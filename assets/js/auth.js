@@ -661,6 +661,22 @@ function closeNotification(type) {
     }
 }
 
+function hideFloatingElements() {
+    var wa = document.querySelector('.wa-assistant');
+    var wallet = document.getElementById('walletFloatingBtn');
+    if (wa) wa.style.display = 'none';
+    if (wallet) wallet.style.display = 'none';
+    document.body.style.overflow = 'hidden';
+}
+
+function showFloatingElements() {
+    var wa = document.querySelector('.wa-assistant');
+    var wallet = document.getElementById('walletFloatingBtn');
+    if (wa) wa.style.display = '';
+    if (wallet) wallet.style.display = '';
+    document.body.style.overflow = '';
+}
+
 function openAuthModal() {
     var modal = document.getElementById('authModal');
     if (!modal) {
@@ -668,6 +684,7 @@ function openAuthModal() {
         return;
     }
     modal.style.display = 'flex';
+    hideFloatingElements();
     var emailField = document.getElementById('authEmail');
     var passField  = document.getElementById('authPassword');
     var errBox     = document.getElementById('authError');
@@ -680,15 +697,12 @@ function openAuthModal() {
 }
 
 function openRegisterModal() {
-    // Primero mostrar el modal (z-index mayor, aparece encima)
     var modal = document.getElementById('authModal');
     if (!modal) return;
     modal.style.display = 'flex';
-
-    // Luego ocultar loginScreen con animación suave
+    hideFloatingElements();
     hideLoginScreen();
 
-    // Limpiar campos
     var emailField = document.getElementById('authEmail');
     var passField  = document.getElementById('authPassword');
     var errBox     = document.getElementById('authError');
@@ -696,7 +710,6 @@ function openRegisterModal() {
     if (passField)  passField.value  = '';
     if (errBox)     errBox.style.display = 'none';
 
-    // Poner directamente en modo registro
     isLoginMode = false;
     loginStep = 1;
     updateAuthInterface();
@@ -705,6 +718,7 @@ function openRegisterModal() {
 function closeAuthModal() {
     var modal = document.getElementById('authModal');
     if (modal) modal.style.display = 'none';
+    showFloatingElements();
 }
 
 function togglePasswordVisibility() {
