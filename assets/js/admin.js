@@ -2034,8 +2034,11 @@ Link: https://filtrovehicularperu.com`;
                 a.pause();
                 a.currentTime = 0;
             } catch (e) {}
+            a.play().catch(function (err) {
+                console.warn('No se pudo reproducir sonido de alerta:', err);
+            });
             try {
-                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
             } catch (e) {}
         }
 
@@ -2044,6 +2047,27 @@ Link: https://filtrovehicularperu.com`;
         });
 
         // Función showNotifPlaca eliminada - solo usamos badges numéricos en el menú
+
+        // Enviar alertas automáticas (Telegram + WhatsApp) cuando hay nuevas solicitudes
+        function sendNewRequestAlerts(count) {
+            var msg = '🔔 *Nueva solicitud recibida*\n\nTienes ' + count + ' solicitud(es) pendiente(s) en Filtro Vehicular Plus.\n\nRevisa tu panel de administración.';
+
+            // Telegram
+            var token = localStorage.getItem('telegram_token');
+            var chatId = localStorage.getItem('telegram_chatid');
+            if (token && chatId) {
+                fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text: msg, parse_mode: 'Markdown' })
+                }).catch(function (err) {
+                    console.warn('Error enviando alerta Telegram:', err);
+                });
+            }
+
+            // WhatsApp (CallMeBot)
+            sendWhatsAppNotification(msg);
+        }
 
         let lastRequestsCount = 0;
 
@@ -2057,7 +2081,7 @@ Link: https://filtrovehicularperu.com`;
             if (!token || !id) return alert("Ingresa tanto el Token como el Chat ID.");
             localStorage.setItem('telegram_token', token);
             localStorage.setItem('telegram_chatid', id);
-            alert("Configuracion de Telegram Guardada con exito.");
+            alert("Configuración de Telegram guardada con éxito.");
         }
 
         async function testTelegram() {
@@ -2176,10 +2200,10 @@ Link: https://filtrovehicularperu.com`;
         function updateBadgesCount(n) {
             const badge = document.getElementById('requestsCount');
             const mBadge = document.getElementById('mobileCount');
-            
 
-            if (n > lastRequestsCount && lastRequestsCount >= 0) {
+            if (n > lastRequestsCount && !window.isFirstScan) {
                 playAdminAlertSound();
+                sendNewRequestAlerts(n);
             }
             lastRequestsCount = n;
 
@@ -2328,13 +2352,145 @@ Link: https://filtrovehicularperu.com`;
 // =========================================
 
 
-        // Registrar Service Worker principal
+        // --- WEB PUSH NOTIFICATIONS (automático, funciona con app cerrada) ---
+        var VAPID_PUBLIC_KEY = 'BB9RR2pu2n7t0j6cLWbN-CcdiSrKDZ0pwF--IxLjAU_IFjd6cPd6GASa8lEyya_TksACxoL_Ll8zxs9sC6sb9kQ';
+
+        function urlBase64ToUint8Array(base64String) {
+            var padding = '='.repeat((4 - base64String.length % 4) % 4);
+            var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            var rawData = atob(base64);
+            var outputArray = new Uint8Array(rawData.length);
+            for (var i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        // Esperar SW con timeout (no colgarse para siempre)
+        function waitForSW(timeout) {
+            return new Promise(function (resolve, reject) {
+                var timer = setTimeout(function () {
+                    reject(new Error('Service Worker no respondió en ' + (timeout / 1000) + 's. Asegúrate de abrir la página desde https:// (no file://).'));
+                }, timeout);
+                navigator.serviceWorker.ready.then(function (reg) {
+                    clearTimeout(timer);
+                    resolve(reg);
+                }).catch(function (e) {
+                    clearTimeout(timer);
+                    reject(e);
+                });
+            });
+        }
+
+        window.togglePushSubscription = function () {
+            var btn = document.getElementById('btnPushToggle');
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="font-size:10px;"></i> Procesando...';
+
+            if (localStorage.getItem('push_subscribed') === 'true') {
+                doUnsubscribePush();
+            } else {
+                doSubscribePush();
+            }
+        };
+
+        async function doSubscribePush() {
+            try {
+                // Verificar soporte
+                if (!('serviceWorker' in navigator)) throw new Error('Tu navegador no soporta Service Workers.');
+                if (!('PushManager' in window)) throw new Error('Tu navegador no soporta Push. Usa Chrome o Edge.');
+                if (location.protocol !== 'https:' && location.hostname !== 'localhost') throw new Error('Push requiere HTTPS. Abre desde https://tudominio.com/admin.html');
+
+                // Esperar SW (máximo 5 segundos)
+                var reg = await waitForSW(5000);
+
+                // Si ya existe suscripción, renovar
+                var existing = await reg.pushManager.getSubscription();
+                if (existing) {
+                    await savePushSub(existing);
+                    localStorage.setItem('push_subscribed', 'true');
+                    updatePushButton(true);
+                    alert('Notificaciones ya estaban activas. Renovado.');
+                    return;
+                }
+
+                // Pedir permiso
+                var perm = Notification.permission;
+                if (perm === 'denied') throw new Error('Notificaciones bloqueadas.\n\nPara desbloquear:\n1. Clic en el candado al lado de la URL\n2. Busca "Notificaciones"\n3. Cámbialo a "Permitir"\n4. Recarga la página');
+
+                if (perm === 'default') {
+                    perm = await Notification.requestPermission();
+                }
+                if (perm !== 'granted') throw new Error('Debes aceptar el permiso de notificaciones.');
+
+                // Suscribir
+                var sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+                });
+
+                await savePushSub(sub);
+                localStorage.setItem('push_subscribed', 'true');
+                updatePushButton(true);
+                alert('Notificaciones activadas.\n\nRecibirás alertas incluso con la app cerrada.');
+
+            } catch (e) {
+                updatePushButton(false);
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function doUnsubscribePush() {
+            try {
+                var reg = await waitForSW(5000);
+                var sub = await reg.pushManager.getSubscription();
+                if (sub) {
+                    var ep = sub.endpoint;
+                    await sub.unsubscribe();
+                    if (window.sb) await window.sb.from('push_subscriptions').delete().eq('endpoint', ep);
+                }
+                localStorage.removeItem('push_subscribed');
+                updatePushButton(false);
+                alert('Notificaciones desactivadas.');
+            } catch (e) {
+                updatePushButton(localStorage.getItem('push_subscribed') === 'true');
+                alert('Error al desactivar: ' + e.message);
+            }
+        }
+
+        async function savePushSub(sub) {
+            if (!window.sb) return;
+            var j = sub.toJSON();
+            var res = await window.sb.from('push_subscriptions').upsert({
+                endpoint: j.endpoint,
+                keys: j.keys,
+                created_at: new Date().toISOString()
+            }, { onConflict: 'endpoint' });
+            if (res.error) console.warn('Error guardando push sub:', res.error);
+        }
+
+        function updatePushButton(subscribed) {
+            var btn = document.getElementById('btnPushToggle');
+            if (!btn) return;
+            if (subscribed) {
+                btn.innerHTML = '<i class="fa-solid fa-bell-slash" style="font-size:10px;"></i> Desactivar';
+                btn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-bell" style="font-size:10px;"></i> Activar Notificaciones';
+                btn.style.background = 'linear-gradient(135deg, #8bc34a 0%, #7cb342 100%)';
+            }
+        }
+
+        // Registrar Service Worker + auto-activar push silencioso
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js')
-                .then(registration => {
+                .then(function () {
+                    // Auto-renovar suscripción si el permiso ya fue concedido
+                    if (Notification.permission === 'granted') {
+                        doSubscribePush().catch(function () {});
+                    }
                 })
-                .catch(error => {
-                    console.error('❌ Error registrando Service Worker:', error);
+                .catch(function (error) {
+                    console.error('Error registrando Service Worker:', error);
                 });
 
             // Enviar ping cada 30 segundos para mantener el SW activo

@@ -1,10 +1,11 @@
-const CACHE_NAME = 'filtrov2-cache-v7';
+const CACHE_NAME = 'filtrov2-cache-v8';
 const PRECACHE = [
     './index.html',
     './admin.html',
     './panel_cliente.html',
     './assets/media/logopwa.png',
     './assets/media/logo_circular.png',
+    './assets/media/truecallerm_c3121f0d5280629.mp3',
     './assets/js/supabase-config.js',
     './assets/js/session.js',
     './assets/js/auth.js',
@@ -54,4 +55,46 @@ self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
     }
+});
+
+// --- WEB PUSH NOTIFICATIONS ---
+self.addEventListener('push', (event) => {
+    var data = {};
+    try { data = event.data ? event.data.json() : {}; } catch (e) { data = { body: event.data ? event.data.text() : '' }; }
+
+    var title = data.title || 'Filtro Vehicular Plus';
+    var options = {
+        body: data.body || 'Nueva solicitud pendiente',
+        icon: './assets/media/logopwa.png',
+        badge: './assets/media/logopwa.png',
+        vibrate: [300, 100, 300, 100, 300],
+        tag: 'nueva-solicitud',
+        renotify: true,
+        requireInteraction: true,
+        data: { url: './admin.html#requests' }
+    };
+
+    event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+
+    var url = (event.notification.data && event.notification.data.url) || './admin.html';
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
+            // Si ya hay una ventana admin abierta, enfocarla
+            for (var i = 0; i < clientList.length; i++) {
+                var c = clientList[i];
+                if (c.url.indexOf('admin.html') !== -1 && 'focus' in c) {
+                    return c.focus();
+                }
+            }
+            // Si no, abrir nueva ventana
+            if (clients.openWindow) {
+                return clients.openWindow(url);
+            }
+        })
+    );
 });

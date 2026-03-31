@@ -1251,10 +1251,10 @@
                 };
                 
                 try {
-                    await window.sb.from('solicitudes').upsert({ 
-                        placa: p, 
-                        datos: reqData, 
-                        updated_at: new Date() 
+                    await window.sb.from('solicitudes').upsert({
+                        placa: p,
+                        datos: reqData,
+                        updated_at: new Date()
                     }, { onConflict: 'placa' });
                 } catch (e) {
                     console.error("Fallo alertando nube:", e);

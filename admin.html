@@ -116,8 +116,12 @@
             <div style="font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.9); text-transform: uppercase; margin-bottom: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">Grupo WhatsApp Clientes</div>
             <input type="text" id="whatsappGroupLink" placeholder="https://chat.whatsapp.com/XXXXXX" style="width: 100%; padding: 8px; font-size: 11px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px; background: white;">
             <button onclick="saveWhatsAppGroupLink()" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-bottom: 15px;">Guardar Enlace</button>
-            
-            
+
+            <div style="padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.9); text-transform: uppercase; margin-bottom: 8px;">Notificaciones Push</div>
+                <p style="font-size: 10px; color: rgba(255,255,255,0.5); margin: 0 0 8px; line-height: 1.4;">Recibe alertas con sonido incluso con la app cerrada.</p>
+                <button id="btnPushToggle" onclick="togglePushSubscription()" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;"><i class="fa-solid fa-bell" style="font-size: 10px;"></i> Activar Notificaciones</button>
+            </div>
         </div>
 
         <a href="javascript:void(0)" onclick="if(typeof adminLogout==='function')adminLogout();" class="nav-item" style="color: rgba(255,255,255,0.7); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; margin-top: 20px;"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
