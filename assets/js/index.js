@@ -210,7 +210,7 @@
                         <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') openAuthModal();" style="background:#0d2536; color:#fff; border:none; padding:13px; border-radius:12px; font-weight:700; cursor:pointer; width:100%; font-size:13px; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'"><i class="fa-solid fa-right-to-bracket" style="font-size:13px;"></i> Iniciar Sesión</button>
                         <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') { openAuthModal(); setTimeout(() => toggleAuthMode(), 100); }" style="background:#f8fafc; color:#0d2536; border:1.5px solid #e2e8f0; padding:13px; border-radius:12px; font-weight:700; cursor:pointer; width:100%; font-size:13px; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'"><i class="fa-solid fa-user-plus" style="font-size:13px;"></i> Crear Cuenta</button>
                     </div>
-                    <p style="font-size:11px; color:#94a3b8; margin:0; text-align:center;">¿Necesitas ayuda? <a href="https://wa.me/51932465820?text=Hola%2C%20necesito%20ayuda%20para%20activar%20mi%20cuenta%20en%20Filtro%20Vehicular." target="_blank" style="color:#0d2536; text-decoration:none; font-weight:700;">Contáctanos</a></p>
+                    <p style="font-size:11px; color:#94a3b8; margin:0; text-align:center;">¿Necesitas ayuda? <a href="https://wa.me/51979334296?text=Hola%2C%20necesito%20ayuda%20para%20activar%20mi%20cuenta%20en%20Filtro%20Vehicular." target="_blank" style="color:#0d2536; text-decoration:none; font-weight:700;">Contáctanos</a></p>
                 </div>
             `;
             infoModal.style.display = 'flex';
@@ -514,7 +514,7 @@
                     <button id="btnModalAction" onclick="processServicePayment('${escAttr(service.title)}', '${escAttr(service.price)}', '${escAttr(service.icon)}')" style="background:#0d2536; color:#fff; border:none; width:100%; height:48px; border-radius:12px; font-weight:700; cursor:pointer; font-size:13px; transition:0.2s; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
                         <i class="fa-solid fa-bolt" style="font-size:13px;"></i> Consultar ahora
                     </button>
-                    <a href="https://wa.me/51932465820?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(service.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-size:12px; font-weight:700; color:#0d2536; cursor:pointer; transition:all 0.2s; margin-bottom:10px; box-sizing:border-box;" onmouseover="this.style.borderColor='#25D366'; this.style.background='#f0fdf4'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'">
+                    <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(service.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-size:12px; font-weight:700; color:#0d2536; cursor:pointer; transition:all 0.2s; margin-bottom:10px; box-sizing:border-box;" onmouseover="this.style.borderColor='#25D366'; this.style.background='#f0fdf4'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'">
                         <i class="fa-brands fa-whatsapp" style="font-size:16px; color:#25D366;"></i> Pagar por WhatsApp
                     </a>
                     <button onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:11px; background:transparent; color:#94a3b8; border:none; border-radius:12px; font-size:12px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">Cancelar</button>
@@ -621,7 +621,7 @@
                                     <button id="btnModalAction" style="background:#0d2536; color:#fff; border:none; width:100%; height:48px; border-radius:12px; font-weight:700; cursor:pointer; font-size:13px; transition:0.2s; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
                                         <i class="fa-solid fa-bolt" style="font-size:13px;"></i> Consultar ahora
                                     </button>
-                                    <a href="https://wa.me/51932465820?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(c.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-size:12px; font-weight:700; color:#0d2536; cursor:pointer; transition:all 0.2s; margin-bottom:10px; box-sizing:border-box;" onmouseover="this.style.borderColor='#25D366'; this.style.background='#f0fdf4'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'">
+                                    <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(c.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-size:12px; font-weight:700; color:#0d2536; cursor:pointer; transition:all 0.2s; margin-bottom:10px; box-sizing:border-box;" onmouseover="this.style.borderColor='#25D366'; this.style.background='#f0fdf4'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'">
                                         <i class="fa-brands fa-whatsapp" style="font-size:16px; color:#25D366;"></i> Pagar por WhatsApp
                                     </a>
                                     <button onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:11px; background:transparent; color:#94a3b8; border:none; border-radius:12px; font-size:12px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">Cancelar</button>
@@ -1261,7 +1261,7 @@
                 }
             }
 
-            const url = `https://wa.me/51932465820?text=${encodeURIComponent(msg)}`;
+            const url = `https://wa.me/51979334296?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
 
             // Registrar solicitud pendiente LOCALMENTE para que reporte.html la reconozca
@@ -1743,13 +1743,13 @@
             {"Titulo": "Pagalo.pe", "Enlace": "https://pagalo.pe/", "Icono": "img/pagalo.png", "cat": "MULTAS"},
             {"Titulo": "Geocatmin", "Enlace": "https://geocatmin.ingemmet.gob.pe/geocatmin/", "Icono": "img/Logo_Geocatmin.png", "cat": "MULTAS"},
             // ── SERVICIOS PREMIUM (vía WhatsApp) ──
-            {"Titulo": "Boleta Informativa", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Requiero%20la%20*Boleta%20Informativa%20Vehicular*.", "Icono": "img/logo-sunarp0.png", "cat": "SEGUROS"},
-            {"Titulo": "Reporte Crediticio", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Necesito%20mi%20*Reporte%20Crediticio*.", "Icono": "img/Experian-BM-TM-RGB.png", "cat": "SEGUROS"},
-            {"Titulo": "Reporte Migratorio", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Solicito%20un%20*Reporte%20Migratorio*.", "Icono": "img/Migraciones_Perú.jpg", "cat": "SEGUROS"},
-            {"Titulo": "Reconocimiento Facial", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Me%20interesa%20*Reconocimiento%20Facial*.", "Icono": "img/Logotipo RENIEC.png", "cat": "SEGUROS"},
-            {"Titulo": "Casos Fiscales", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Requiero%20consultar%20*Casos%20Fiscales*.", "Icono": "img/Logo_Ministerio_Público_Perú.png", "cat": "SEGUROS"},
-            {"Titulo": "MINEDU Online", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Necesito%20información%20de%20*MINEDU%20ONLINE*.", "Icono": "img/Logo_del_Ministerio_de_Educación_del_Perú_-_MINEDU.png", "cat": "SEGUROS"},
-            {"Titulo": "SUNEDU Grados y Títulos", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Deseo%20buscar%20*Grados%20y%20Títulos%20(SUNEDU)*.", "Icono": "img/SUNEDU.svg.png", "cat": "SEGUROS"},
+            {"Titulo": "Boleta Informativa", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Requiero%20la%20*Boleta%20Informativa%20Vehicular*.", "Icono": "img/logo-sunarp0.png", "cat": "SEGUROS"},
+            {"Titulo": "Reporte Crediticio", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Necesito%20mi%20*Reporte%20Crediticio*.", "Icono": "img/Experian-BM-TM-RGB.png", "cat": "SEGUROS"},
+            {"Titulo": "Reporte Migratorio", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Solicito%20un%20*Reporte%20Migratorio*.", "Icono": "img/Migraciones_Perú.jpg", "cat": "SEGUROS"},
+            {"Titulo": "Reconocimiento Facial", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Me%20interesa%20*Reconocimiento%20Facial*.", "Icono": "img/Logotipo RENIEC.png", "cat": "SEGUROS"},
+            {"Titulo": "Casos Fiscales", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Requiero%20consultar%20*Casos%20Fiscales*.", "Icono": "img/Logo_Ministerio_Público_Perú.png", "cat": "SEGUROS"},
+            {"Titulo": "MINEDU Online", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Necesito%20información%20de%20*MINEDU%20ONLINE*.", "Icono": "img/Logo_del_Ministerio_de_Educación_del_Perú_-_MINEDU.png", "cat": "SEGUROS"},
+            {"Titulo": "SUNEDU Grados y Títulos", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Deseo%20buscar%20*Grados%20y%20Títulos%20(SUNEDU)*.", "Icono": "img/SUNEDU.svg.png", "cat": "SEGUROS"},
             // ── MULTAS POR REGIONES ──
             {"Titulo": "Lima", "Enlace": "https://www.sat.gob.pe/WebSiteV9/TributosMultas/Papeletas/ConsultasPapeletas", "Icono": "img/Logo_Lima.png", "cat": "MULTAS"},
             {"Titulo": "Callao", "Enlace": "https://pagopapeletascallao.pe/", "Icono": "img/Logo_Callao.png", "cat": "MULTAS"},
@@ -2297,7 +2297,7 @@
             const h = new Date().getHours();
             const saludo = h < 12 ? 'Buenos días' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
             const msg = `${saludo}, solicito información del vehículo con placa *${placa}*. Quedo atento a su respuesta. Gracias.`;
-            window.open('https://wa.me/51932465820?text=' + encodeURIComponent(msg), '_blank');
+            window.open('https://wa.me/51979334296?text=' + encodeURIComponent(msg), '_blank');
             document.getElementById('waPlateModal').style.display = 'none';
         }
 
