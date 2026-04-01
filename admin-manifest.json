@@ -1,6 +1,6 @@
 {
-  "name": "Filtro Vehicular - Admin",
-  "short_name": "FV Admin",
+  "name": "Filtro Vehicular + Admin",
+  "short_name": "FV + Admin",
   "description": "Panel de administración - Filtro Vehicular Plus",
   "start_url": "./admin.html",
   "scope": "./",

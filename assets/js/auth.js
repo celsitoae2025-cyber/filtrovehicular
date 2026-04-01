@@ -27,7 +27,13 @@ async function initAuth() {
 
     if (currentUser && currentUser.email) {
         hideLoginScreen();
-        renderLoggedInState();
+
+        // Admin siempre premium
+        if (currentUser.email === _adminEmail) {
+            window.plataformaActiva = true;
+            window.dashboardActivo = true;
+        }
+
         // Verificar plataforma activa desde Supabase
         if (window.sb) {
             try {
@@ -38,6 +44,18 @@ async function initAuth() {
                 }
             } catch (e) {}
         }
+
+        // Admin override
+        if (currentUser.email === _adminEmail) {
+            window.plataformaActiva = true;
+            window.dashboardActivo = true;
+        }
+
+        renderLoggedInState();
+
+        // Actualizar logo
+        var logoStatus = document.getElementById('logoStatus');
+        if (logoStatus) logoStatus.textContent = window.plataformaActiva ? 'Premium' : 'Estándar';
     } else {
         currentUser = null;
         hideLoginScreen();

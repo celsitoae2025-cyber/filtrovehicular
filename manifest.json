@@ -1,6 +1,6 @@
 {
-  "name": "Filtro Vehicular Plus",
-  "short_name": "Filtro V.",
+  "name": "Filtro Vehicular +",
+  "short_name": "Filtro Vehicular +",
   "description": "Plataforma integral de verificación vehicular",
   "start_url": "./index.html",
   "scope": "./",
