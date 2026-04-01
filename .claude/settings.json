@@ -6,10 +6,26 @@
       "Bash(node -e \"require\\(''fs''\\).readFileSync\\(''assets/js/admin.js'',''utf8''\\); console.log\\(''admin.js OK''\\)\")",
       "Bash(node -e \"require\\(''fs''\\).readFileSync\\(''assets/js/panel_cliente.js'',''utf8''\\); console.log\\(''panel_cliente.js OK''\\)\")",
       "Bash(node -c assets/js/admin.js)",
-      "Bash(node -c assets/js/panel_cliente.js)"
+      "Bash(node -c assets/js/panel_cliente.js)",
+      "Read(//c/Users/Illusions/Desktop/**)",
+      "Bash(find /c/Users/Illusions/Desktop/filtro 2/supabase -type f -name *.js -o -name *.ts)",
+      "Bash(grep -n \"function activarPlataforma\\\\|plataforma_activa.*true\" /c/Users/Illusions/Desktop/filtro 2/assets/js/*.js)",
+      "WebSearch",
+      "Bash(npx tsc:*)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(timeout 20 npx ts-node -e \":*)",
+      "Bash(node -e \":*)",
+      "Bash(npx supabase:*)",
+      "Bash(export SUPABASE_ACCESS_TOKEN=\"sbp_4e6190d5575fecf3db1bc6c6ca276a696b895b51\")",
+      "Bash(node -c assets/js/index.js)",
+      "Bash(node -c assets/js/auth.js)"
     ],
     "additionalDirectories": [
-      "c:\\Users\\Illusions\\Desktop\\bot-whatsapp-fv"
+      "c:\\Users\\Illusions\\Desktop\\bot-whatsapp-fv",
+      "c:\\Users\\Illusions\\Desktop\\wa-group-manager\\backend\\src",
+      "c:\\Users\\Illusions\\Desktop\\wa-group-manager\\frontend\\src\\pages",
+      "C:\\Users\\Illusions\\Desktop\\wa-group-manager\\frontend\\src\\hooks",
+      "C:\\Users\\Illusions\\Desktop\\wa-group-manager\\frontend\\src"
     ]
   }
 }

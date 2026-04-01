@@ -199,7 +199,7 @@
             var m = document.getElementById('authFloatingModal');
             if (m) {
                 document.getElementById('authRegisterFields').style.display = 'block';
-                document.getElementById('authModalIcon').className = 'fa-solid fa-shield-halved';
+                document.getElementById('authModalIcon').className = 'fa-solid fa-user-pen';
                 document.getElementById('authModalTitle').textContent = 'Crear cuenta';
                 document.getElementById('authModalSubtitle').textContent = 'Regístrate para acceder a todos los servicios';
                 document.getElementById('authModalBtn').textContent = 'Crear cuenta';
@@ -212,7 +212,7 @@
         function toggleAuthFloatingMode() {
             _authFloatingMode = _authFloatingMode === 'register' ? 'login' : 'register';
             document.getElementById('authRegisterFields').style.display = _authFloatingMode === 'register' ? 'block' : 'none';
-            document.getElementById('authModalIcon').className = _authFloatingMode === 'register' ? 'fa-solid fa-shield-halved' : 'fa-solid fa-right-to-bracket';
+            document.getElementById('authModalIcon').className = _authFloatingMode === 'register' ? 'fa-solid fa-user-pen' : 'fa-solid fa-user-lock';
             document.getElementById('authModalTitle').textContent = _authFloatingMode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
             document.getElementById('authModalSubtitle').textContent = _authFloatingMode === 'register' ? 'Regístrate para acceder a todos los servicios' : 'Ingresa tus credenciales para continuar';
             document.getElementById('authModalBtn').textContent = _authFloatingMode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';

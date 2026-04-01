@@ -108,7 +108,7 @@
             <div style="padding:28px 20px 22px; text-align:center; position:relative;">
                 <button onclick="document.getElementById('authFloatingModal').style.display='none'" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#9ca3af; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
                 <div style="width:48px; height:48px; background:#25d366; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
-                    <i id="authModalIcon" class="fa-solid fa-shield-halved" style="font-size:20px; color:#fff;"></i>
+                    <i id="authModalIcon" class="fa-solid fa-user-pen" style="font-size:20px; color:#fff;"></i>
                 </div>
                 <div id="authModalTitle" style="font-size:16px; font-weight:600; color:#111b21; margin-bottom:2px;">Crear cuenta</div>
                 <div id="authModalSubtitle" style="font-size:11px; color:#6b7280;">Regístrate para acceder a todos los servicios</div>
@@ -134,7 +134,7 @@
                     <label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Contraseña</label>
                     <input type="password" id="authRegPass" placeholder="Mínimo 6 caracteres" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'" onkeydown="if(event.key==='Enter')handleAuthFloating()">
                 </div>
-                <button id="authModalBtn" onclick="handleAuthFloating()" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; margin-bottom:12px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">Crear cuenta</button>
+                <button id="authModalBtn" onclick="handleAuthFloating()" style="width:100%; padding:12px; background:#111b21; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; margin-bottom:12px;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">Crear cuenta</button>
                 <div style="text-align:center;">
                     <span id="authToggleText" style="font-size:11px; color:#6b7280; cursor:pointer;" onclick="toggleAuthFloatingMode()">¿Ya tienes cuenta? <b style="color:#111b21;">Inicia sesión</b></span>
                 </div>
@@ -169,7 +169,7 @@
                     <div style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-check" style="color:#25d366; font-size:11px;"></i><span style="font-size:12px; color:#111b21;">Dashboard completo</span></div>
                     <div style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-check" style="color:#25d366; font-size:11px;"></i><span style="font-size:12px; color:#111b21;">Acceso permanente</span></div>
                 </div>
-                <button onclick="document.getElementById('upgradeModal').style.display='none'; if(typeof openSale==='function') openSale('35.00', 'Acceso Completo - Plataforma Premium', 0, 'activacion');" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; margin-bottom:8px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                <button onclick="document.getElementById('upgradeModal').style.display='none'; if(typeof openSale==='function') openSale('35.00', 'Acceso Completo - Plataforma Premium', 0, 'activacion');" style="width:100%; padding:12px; background:#111b21; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; margin-bottom:8px;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                     <i class="fa-solid fa-bolt" style="margin-right:6px;"></i> Adquirir Acceso
                 </button>
                 <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20adquirir%20el%20acceso%20completo%20a%20Filtro%20Vehicular." target="_blank" style="display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; font-size:12px; font-weight:600; color:#111b21; text-decoration:none; cursor:pointer; transition:border-color 0.2s; box-sizing:border-box;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
