@@ -529,7 +529,7 @@
                     <button id="btnModalAction" onclick="processServicePayment('${escAttr(service.title)}', '${escAttr(service.price)}', '${escAttr(service.icon)}')" style="background:#25d366; color:#fff; border:none; width:100%; padding:12px; border-radius:10px; font-weight:600; cursor:pointer; font-size:13px; transition:background 0.2s; margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
                         <i class="fa-solid fa-magnifying-glass" style="font-size:12px;"></i> Consultar ahora
                     </button>
-                    <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(service.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; font-size:12px; font-weight:600; color:#111b21; cursor:pointer; transition:border-color 0.2s; margin-bottom:8px; box-sizing:border-box;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <a href="https://wa.me/51932465820?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(service.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; font-size:12px; font-weight:600; color:#111b21; cursor:pointer; transition:border-color 0.2s; margin-bottom:8px; box-sizing:border-box;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
                         <i class="fa-brands fa-whatsapp" style="font-size:15px; color:#25d366;"></i> Pagar por WhatsApp
                     </a>
                     <button onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:10px; background:transparent; color:#9ca3af; border:none; font-size:11px; font-weight:500; cursor:pointer;">Cancelar</button>
@@ -1236,7 +1236,7 @@
                 }
             }
 
-            const url = `https://wa.me/51979334296?text=${encodeURIComponent(msg)}`;
+            const url = `https://wa.me/51932465820?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
 
             // Registrar solicitud pendiente LOCALMENTE para que reporte.html la reconozca
@@ -1674,7 +1674,7 @@
                             <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">Reclamos y Sugerencias</div>
                             <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Valoramos tu opinión. Si tienes alguna sugerencia para mejorar nuestro servicio o deseas presentar un reclamo formal, no dudes en comunicarte con nosotros. Nos comprometemos a atender cada caso con la seriedad y rapidez que mereces.</p>
                         </div>
-                        <a href="https://wa.me/51979334296?text=Hola%2C%20necesito%20ayuda%20con%20mi%20cuenta%20en%20Filtro%20Vehicular." target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:13px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                        <a href="https://wa.me/51932465820?text=Hola%2C%20necesito%20ayuda%20con%20mi%20cuenta%20en%20Filtro%20Vehicular." target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:13px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
                             <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> Escribir por WhatsApp
                         </a>
                     </div>
@@ -1832,13 +1832,13 @@
             {"Titulo": "Pagalo.pe", "Enlace": "https://pagalo.pe/", "Icono": "img/pagalo.png", "cat": "MULTAS"},
             {"Titulo": "Geocatmin", "Enlace": "https://geocatmin.ingemmet.gob.pe/geocatmin/", "Icono": "img/Logo_Geocatmin.png", "cat": "MULTAS"},
             // ── SERVICIOS PREMIUM (vía WhatsApp) ──
-            {"Titulo": "Boleta Informativa", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Requiero%20la%20*Boleta%20Informativa%20Vehicular*.", "Icono": "img/logo-sunarp0.png", "cat": "SEGUROS"},
-            {"Titulo": "Reporte Crediticio", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Necesito%20mi%20*Reporte%20Crediticio*.", "Icono": "img/Experian-BM-TM-RGB.png", "cat": "SEGUROS"},
-            {"Titulo": "Reporte Migratorio", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Solicito%20un%20*Reporte%20Migratorio*.", "Icono": "img/Migraciones_Perú.jpg", "cat": "SEGUROS"},
-            {"Titulo": "Reconocimiento Facial", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Me%20interesa%20*Reconocimiento%20Facial*.", "Icono": "img/Logotipo RENIEC.png", "cat": "SEGUROS"},
-            {"Titulo": "Casos Fiscales", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Requiero%20consultar%20*Casos%20Fiscales*.", "Icono": "img/Logo_Ministerio_Público_Perú.png", "cat": "SEGUROS"},
-            {"Titulo": "MINEDU Online", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Necesito%20información%20de%20*MINEDU%20ONLINE*.", "Icono": "img/Logo_del_Ministerio_de_Educación_del_Perú_-_MINEDU.png", "cat": "SEGUROS"},
-            {"Titulo": "SUNEDU Grados y Títulos", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Deseo%20buscar%20*Grados%20y%20Títulos%20(SUNEDU)*.", "Icono": "img/SUNEDU.svg.png", "cat": "SEGUROS"},
+            {"Titulo": "Boleta Informativa", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Requiero%20la%20*Boleta%20Informativa%20Vehicular*.", "Icono": "img/logo-sunarp0.png", "cat": "SEGUROS"},
+            {"Titulo": "Reporte Crediticio", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Necesito%20mi%20*Reporte%20Crediticio*.", "Icono": "img/Experian-BM-TM-RGB.png", "cat": "SEGUROS"},
+            {"Titulo": "Reporte Migratorio", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Solicito%20un%20*Reporte%20Migratorio*.", "Icono": "img/Migraciones_Perú.jpg", "cat": "SEGUROS"},
+            {"Titulo": "Reconocimiento Facial", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Me%20interesa%20*Reconocimiento%20Facial*.", "Icono": "img/Logotipo RENIEC.png", "cat": "SEGUROS"},
+            {"Titulo": "Casos Fiscales", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Requiero%20consultar%20*Casos%20Fiscales*.", "Icono": "img/Logo_Ministerio_Público_Perú.png", "cat": "SEGUROS"},
+            {"Titulo": "MINEDU Online", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Necesito%20información%20de%20*MINEDU%20ONLINE*.", "Icono": "img/Logo_del_Ministerio_de_Educación_del_Perú_-_MINEDU.png", "cat": "SEGUROS"},
+            {"Titulo": "SUNEDU Grados y Títulos", "Enlace": "https://wa.me/51932465820?text=Hola%20Soporte.%20Deseo%20buscar%20*Grados%20y%20Títulos%20(SUNEDU)*.", "Icono": "img/SUNEDU.svg.png", "cat": "SEGUROS"},
             // ── MULTAS POR REGIONES ──
             {"Titulo": "Lima", "Enlace": "https://www.sat.gob.pe/WebSiteV9/TributosMultas/Papeletas/ConsultasPapeletas", "Icono": "img/Logo_Lima.png", "cat": "REGIONES"},
             {"Titulo": "Callao", "Enlace": "https://pagopapeletascallao.pe/", "Icono": "img/Logo_Callao.png", "cat": "REGIONES"},
@@ -2368,7 +2368,7 @@
             const h = new Date().getHours();
             const saludo = h < 12 ? 'Buenos días' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
             const msg = `${saludo}, solicito información del vehículo con placa *${placa}*. Quedo atento a su respuesta. Gracias.`;
-            window.open('https://wa.me/51979334296?text=' + encodeURIComponent(msg), '_blank');
+            window.open('https://wa.me/51932465820?text=' + encodeURIComponent(msg), '_blank');
             document.getElementById('waPlateModal').style.display = 'none';
         }
 
