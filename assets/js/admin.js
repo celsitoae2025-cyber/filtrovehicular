@@ -2372,7 +2372,7 @@ Link: https://filtrovehicularperu.com`;
 
 
         // --- WEB PUSH NOTIFICATIONS (automático, funciona con app cerrada) ---
-        var VAPID_PUBLIC_KEY = 'BB9RR2pu2n7t0j6cLWbN-CcdiSrKDZ0pwF--IxLjAU_IFjd6cPd6GASa8lEyya_TksACxoL_Ll8zxs9sC6sb9kQ';
+        var VAPID_PUBLIC_KEY = 'BP1nSnIG_xgWDAu0ZfSNlP3LPCWOlPAj3tiGubQXyrKu-JhQNnWb-qp7boWm_U_vXLnanxKQIj0g_RtF3aseTe8';
 
         function urlBase64ToUint8Array(base64String) {
             var padding = '='.repeat((4 - base64String.length % 4) % 4);
