@@ -624,19 +624,18 @@
         }
 
         .hook-card {
-            background: #1f2c34;
+            background: #ffffff;
             border-radius: 12px;
             padding: 14px 16px;
             display: flex;
             align-items: center;
             gap: 14px;
             cursor: pointer;
-            transition: background 0.2s ease;
-            border: 1px solid #2a3942;
+            transition: border-color 0.2s ease;
+            border: 1px solid #e5e7eb;
         }
 
         .hook-card:hover {
-            background: #243b48;
             border-color: #25d366;
         }
 
@@ -660,7 +659,7 @@
         .hook-text {
             font-size: 12px;
             font-weight: 700;
-            color: #e9edef;
+            color: #111b21;
             flex: 1;
             line-height: 1.4;
             font-family: 'Roboto', sans-serif;
