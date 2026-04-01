@@ -366,47 +366,43 @@ async function renderLoggedInState() {
     nav.innerHTML = `
         <div style="display: flex; align-items: center; gap: 6px;">
             <div class="auth-user-greeting">
-                Hola, <span style="color:rgba(255,255,255,0.7)">${displayName}</span>
+                Hola, <span style="color:#111b21; font-weight:600;">${displayName}</span>
             </div>
             <div class="dropdown" id="userDropdown">
-                <div class="dropdown-trigger" onclick="toggleDropdown(event)" style="position:relative;">
+                <div class="dropdown-trigger" onclick="toggleDropdown(event)" style="position:relative; background:#111b21; border:1px solid #2a3942;">
                     <span style="font-size:13px; font-weight:700; font-family:'Roboto',sans-serif; color:#ffffff;">S/ ${soles}</span>
-                    <div style="width:1px; height:16px; background:rgba(255,255,255,0.12);"></div>
-                    <i class="fa-solid fa-bars" style="font-size:15px; color:#ffffff;"></i>
-                    <span id="notificationBadge" style="position:absolute; top:-5px; right:-5px; background:#ef4444; color:white; font-size:9px; font-weight:800; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(239,68,68,0.4); border:2px solid #0d2536; display:none;"></span>
+                    <div style="width:1px; height:16px; background:rgba(255,255,255,0.15);"></div>
+                    <i class="fa-solid fa-bars" style="font-size:15px; color:#25d366;"></i>
+                    <span id="notificationBadge" style="position:absolute; top:-5px; right:-5px; background:#ef4444; color:white; font-size:9px; font-weight:800; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; border:2px solid #111b21; display:none;"></span>
                 </div>
-                <div class="dropdown-menu" id="userDropdownMenu">
-                    <div onclick="mostrarPerfilCliente()" style="cursor: pointer; padding: 18px 20px 14px; border-bottom: 1px solid #f1f5f9;">
+                <div class="dropdown-menu" id="userDropdownMenu" style="background:#111b21; border:1px solid #2a3942;">
+                    <div onclick="mostrarPerfilCliente()" style="cursor: pointer; padding: 18px 20px 14px; border-bottom: 1px solid #2a3942;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                            <span style="font-size: 14px; font-weight: 800; color: #0d2536;">Mi Perfil</span>
-                            ${plataformaActiva ?
-                                '<span style="background: #0d2536; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px;">PLUS</span>' :
-                                '<span style="background: #f59e0b; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px;">DEMO</span>'
-                            }
+                            <span style="font-size: 14px; font-weight: 800; color: #e9edef;">Mi Perfil</span>
+                            <span style="background: #25d366; color: #111b21; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px;">PREMIUM</span>
                         </div>
-                        <span style="font-size: 11px; color: #94a3b8; font-weight: 500;">${maskedEmail}</span>
+                        <span style="font-size: 11px; color: #8696a0; font-weight: 500;">${maskedEmail}</span>
                     </div>
-                    <div style="padding: 14px 20px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="padding: 14px 20px; border-bottom: 1px solid #2a3942; display: flex; align-items: center; justify-content: space-between;">
                         <div>
-                            <div style="font-size: 20px; font-weight: 900; color: #0d2536; letter-spacing: -0.5px; line-height: 1;">S/ ${soles}</div>
-                            <div style="font-size: 10px; color: #94a3b8; font-weight: 600; margin-top: 2px;">Saldo disponible</div>
+                            <div style="font-size: 20px; font-weight: 900; color: #25d366; letter-spacing: -0.5px; line-height: 1;">S/ ${soles}</div>
+                            <div style="font-size: 10px; color: #8696a0; font-weight: 600; margin-top: 2px;">Saldo disponible</div>
                         </div>
-                        ${!plataformaActiva ? '<a href="javascript:void(0)" onclick="event.stopPropagation(); closeUserDropdown(); mostrarModalActivacion(\'activar\');" style="font-size: 10px; font-weight: 700; color: #f59e0b; text-decoration: none; border: 1px solid #f59e0b; padding: 4px 10px; border-radius: 6px;">ACTIVAR</a>' : ''}
                     </div>
                     <div style="padding: 4px 0;">
-                        <a href="panel_cliente.html" onclick="closeUserDropdown()" class="dropdown-item" id="misConsultasLink">
-                            <i class="fa-solid fa-file-invoice" style="color: #0d2536;"></i> Mis Consultas
+                        <a href="panel_cliente.html" onclick="closeUserDropdown()" class="dropdown-item" id="misConsultasLink" style="color:#e9edef;">
+                            <i class="fa-solid fa-file-invoice" style="color: #25d366;"></i> Mis Consultas
                         </a>
-                        <a href="javascript:void(0)" onclick="closeUserDropdown(); openAccess();" class="dropdown-item">
-                            <i class="fa-solid fa-coins" style="color: #0d2536;"></i> Mis Créditos
+                        <a href="javascript:void(0)" onclick="closeUserDropdown(); openAccess();" class="dropdown-item" style="color:#e9edef;">
+                            <i class="fa-solid fa-coins" style="color: #25d366;"></i> Mis Créditos
                         </a>
-                        <a href="javascript:void(0)" onclick="closeUserDropdown(); openChangePasswordModal();" class="dropdown-item">
-                            <i class="fa-solid fa-key" style="color: #0d2536;"></i> Cambiar Contraseña
+                        <a href="javascript:void(0)" onclick="closeUserDropdown(); openChangePasswordModal();" class="dropdown-item" style="color:#e9edef;">
+                            <i class="fa-solid fa-key" style="color: #25d366;"></i> Cambiar Contraseña
                         </a>
                     </div>
-                    <div style="border-top: 1px solid #f1f5f9; padding: 4px 0;">
-                        <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item" style="color: #94a3b8; font-weight: 500;">
-                            <i class="fa-solid fa-right-from-bracket" style="color: #94a3b8;"></i> Cerrar Sesión
+                    <div style="border-top: 1px solid #2a3942; padding: 4px 0;">
+                        <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item" style="color: #8696a0; font-weight: 500;">
+                            <i class="fa-solid fa-right-from-bracket" style="color: #8696a0;"></i> Cerrar Sesión
                         </a>
                     </div>
                 </div>
