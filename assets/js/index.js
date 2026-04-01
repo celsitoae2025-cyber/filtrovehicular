@@ -1837,23 +1837,23 @@
             {"Titulo": "MINEDU Online", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Necesito%20información%20de%20*MINEDU%20ONLINE*.", "Icono": "img/Logo_del_Ministerio_de_Educación_del_Perú_-_MINEDU.png", "cat": "SEGUROS"},
             {"Titulo": "SUNEDU Grados y Títulos", "Enlace": "https://wa.me/51979334296?text=Hola%20Soporte.%20Deseo%20buscar%20*Grados%20y%20Títulos%20(SUNEDU)*.", "Icono": "img/SUNEDU.svg.png", "cat": "SEGUROS"},
             // ── MULTAS POR REGIONES ──
-            {"Titulo": "Lima", "Enlace": "https://www.sat.gob.pe/WebSiteV9/TributosMultas/Papeletas/ConsultasPapeletas", "Icono": "img/Logo_Lima.png", "cat": "MULTAS"},
-            {"Titulo": "Callao", "Enlace": "https://pagopapeletascallao.pe/", "Icono": "img/Logo_Callao.png", "cat": "MULTAS"},
-            {"Titulo": "Arequipa", "Enlace": "https://www.muniarequipa.gob.pe/oficina-virtual/c0nInfrPermisos/faltas/papeletas.php", "Icono": "img/Logo_Arequipa.png", "cat": "MULTAS"},
-            {"Titulo": "Trujillo", "Enlace": "https://www.satt.gob.pe/servicios/record-de-infracciones", "Icono": "img/Logo_LaLibertad.svg", "cat": "MULTAS"},
-            {"Titulo": "Piura", "Enlace": "http://www.munipiura.gob.pe/consulta-de-multas-administrativas#buscar-por-placa", "Icono": "img/Logo_Piura.png", "cat": "MULTAS"},
-            {"Titulo": "Cusco", "Enlace": "https://cusco.gob.pe/informatica/infracciones", "Icono": "img/Logo_Cusco.png", "cat": "MULTAS"},
-            {"Titulo": "Chiclayo", "Enlace": "https://virtualsatch.satch.gob.pe/virtualsatch/record_infracciones/buscar_placa_", "Icono": "img/Logo_Chiclayo.png", "cat": "MULTAS"},
-            {"Titulo": "Huancayo", "Enlace": "https://www.sath.gob.pe/tributos.html#multas-administrativas", "Icono": "img/Logo_Huancayo.png", "cat": "MULTAS"},
-            {"Titulo": "Puno", "Enlace": "https://papeletas.munipuno.gob.pe/", "Icono": "img/Logo_Puno.png", "cat": "MULTAS"},
-            {"Titulo": "Cajamarca", "Enlace": "https://www.satcajamarca.gob.pe/consultas", "Icono": "img/Logo_Cajamarca.png", "cat": "MULTAS"},
-            {"Titulo": "Ica", "Enlace": "https://m.satica.gob.pe/consultapapeletas_web.php", "Icono": "img/Logo_Ica.png", "cat": "MULTAS"},
-            {"Titulo": "Huánuco", "Enlace": "https://www.munihuanuco.gob.pe/gt_consultapapeletas_placa.php", "Icono": "img/Logo_Huanuco.png", "cat": "MULTAS"},
-            {"Titulo": "Tacna", "Enlace": "https://www.munitacna.gob.pe/pagina/sf/servicios/papeletas", "Icono": "img/Logo_Tacna.png", "cat": "MULTAS"},
-            {"Titulo": "Chachapoyas", "Enlace": "https://app.munichachapoyas.gob.pe/servicios/consulta_papeletas/app/papeletas.php", "Icono": "img/Logo_Amazonas.png", "cat": "MULTAS"},
-            {"Titulo": "Tarapoto", "Enlace": "https://www.sat-t.gob.pe/#consulta-papeletas", "Icono": "img/Logo_SanMartin.png", "cat": "MULTAS"},
-            {"Titulo": "Coronel Portillo", "Enlace": "http://consultas.municportillo.gob.pe:85/consultaVehiculo/consulta/", "Icono": "img/Logo_Ucayali.jpg", "cat": "MULTAS"},
-            {"Titulo": "Huarmey", "Enlace": "https://munihuarmey.gob.pe/consultar-papeletas/", "Icono": "img/Logo_Huarmey.png", "cat": "MULTAS"},
+            {"Titulo": "Lima", "Enlace": "https://www.sat.gob.pe/WebSiteV9/TributosMultas/Papeletas/ConsultasPapeletas", "Icono": "img/Logo_Lima.png", "cat": "REGIONES"},
+            {"Titulo": "Callao", "Enlace": "https://pagopapeletascallao.pe/", "Icono": "img/Logo_Callao.png", "cat": "REGIONES"},
+            {"Titulo": "Arequipa", "Enlace": "https://www.muniarequipa.gob.pe/oficina-virtual/c0nInfrPermisos/faltas/papeletas.php", "Icono": "img/Logo_Arequipa.png", "cat": "REGIONES"},
+            {"Titulo": "Trujillo", "Enlace": "https://www.satt.gob.pe/servicios/record-de-infracciones", "Icono": "img/Logo_LaLibertad.svg", "cat": "REGIONES"},
+            {"Titulo": "Piura", "Enlace": "http://www.munipiura.gob.pe/consulta-de-multas-administrativas#buscar-por-placa", "Icono": "img/Logo_Piura.png", "cat": "REGIONES"},
+            {"Titulo": "Cusco", "Enlace": "https://cusco.gob.pe/informatica/infracciones", "Icono": "img/Logo_Cusco.png", "cat": "REGIONES"},
+            {"Titulo": "Chiclayo", "Enlace": "https://virtualsatch.satch.gob.pe/virtualsatch/record_infracciones/buscar_placa_", "Icono": "img/Logo_Chiclayo.png", "cat": "REGIONES"},
+            {"Titulo": "Huancayo", "Enlace": "https://www.sath.gob.pe/tributos.html#multas-administrativas", "Icono": "img/Logo_Huancayo.png", "cat": "REGIONES"},
+            {"Titulo": "Puno", "Enlace": "https://papeletas.munipuno.gob.pe/", "Icono": "img/Logo_Puno.png", "cat": "REGIONES"},
+            {"Titulo": "Cajamarca", "Enlace": "https://www.satcajamarca.gob.pe/consultas", "Icono": "img/Logo_Cajamarca.png", "cat": "REGIONES"},
+            {"Titulo": "Ica", "Enlace": "https://m.satica.gob.pe/consultapapeletas_web.php", "Icono": "img/Logo_Ica.png", "cat": "REGIONES"},
+            {"Titulo": "Huánuco", "Enlace": "https://www.munihuanuco.gob.pe/gt_consultapapeletas_placa.php", "Icono": "img/Logo_Huanuco.png", "cat": "REGIONES"},
+            {"Titulo": "Tacna", "Enlace": "https://www.munitacna.gob.pe/pagina/sf/servicios/papeletas", "Icono": "img/Logo_Tacna.png", "cat": "REGIONES"},
+            {"Titulo": "Chachapoyas", "Enlace": "https://app.munichachapoyas.gob.pe/servicios/consulta_papeletas/app/papeletas.php", "Icono": "img/Logo_Amazonas.png", "cat": "REGIONES"},
+            {"Titulo": "Tarapoto", "Enlace": "https://www.sat-t.gob.pe/#consulta-papeletas", "Icono": "img/Logo_SanMartin.png", "cat": "REGIONES"},
+            {"Titulo": "Coronel Portillo", "Enlace": "http://consultas.municportillo.gob.pe:85/consultaVehiculo/consulta/", "Icono": "img/Logo_Ucayali.jpg", "cat": "REGIONES"},
+            {"Titulo": "Huarmey", "Enlace": "https://munihuarmey.gob.pe/consultar-papeletas/", "Icono": "img/Logo_Huarmey.png", "cat": "REGIONES"},
             // ── SERVICIOS GRATUITOS (25) ──
             {"Titulo": "SERVICIO DE LECTURA MULTILINGÜE", "Enlace": "https://sigueloplus.sunarp.gob.pe/siguelo/", "Icono": "img/btn-slm.png", "cat": "GRATUITOS"},
             {"Titulo": "ALERTA GARANTÍA MOBILIARIA VEHICULAR", "Enlace": "https://alertaregistral.sunarp.gob.pe/alerta/Inicio", "Icono": "img/btn-alerta-garantia.png", "cat": "GRATUITOS"},
@@ -2054,10 +2054,10 @@
             const cats = [
                 { id: 'SUNARP', title: 'SUNARP', icon: 'fa-building-columns', desc: 'REGISTROS PÚBLICOS, CONSULTAS Y TRÁMITES' },
                 { id: 'MTC', title: 'MTC', icon: 'fa-road', desc: 'BREVETES, CITV, RÉCORD Y TRÁMITES' },
-                { id: 'MULTAS', title: 'MULTAS Y DEUDAS', icon: 'fa-file-invoice-dollar', desc: 'PAPELETAS, SAT, SUTRAN Y REGIONES' },
+                { id: 'MULTAS', title: 'MULTAS Y DEUDAS', icon: 'fa-file-invoice-dollar', desc: 'PAPELETAS, SAT, SUTRAN Y ATU' },
+                { id: 'REGIONES', title: 'INFRACCIONES POR REGIONES', icon: 'fa-map-location-dot', desc: 'PAPELETAS E INFRACCIONES POR DEPARTAMENTO' },
                 { id: 'SEGUROS', title: 'SEGUROS Y REPORTES', icon: 'fa-shield-halved', desc: 'SOAT, SINIESTRALIDAD Y SERVICIOS PREMIUM' },
-                { id: 'GRATUITOS', title: 'GRATUITOS', icon: 'fa-gift', desc: 'SERVICIOS SIN COSTO DE SUNARP' },
-                { id: 'all', title: 'VER TODO', icon: 'fa-layer-group', desc: 'TODOS LOS ACCESOS DISPONIBLES' }
+                { id: 'GRATUITOS', title: 'GRATUITOS', icon: 'fa-gift', desc: 'SERVICIOS SIN COSTO DE SUNARP' }
             ];
 
             if (dashViewMode === 'categories') {
@@ -2089,25 +2089,25 @@
             const currentCatTitle = cats.find(c => c.id === currentDashTab)?.title || 'Accesos';
 
             grid.innerHTML = `
-                <div style="grid-column: 1 / -1; margin-bottom: 8px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px;">
-                    <button onclick="dashViewMode = 'categories'; renderDashGrid();" style="border: 1px solid #e2e8f0; background: #ffffff; color: #111b21; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; font-size: 13px;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='#ffffff';">
+                <div style="grid-column: 1 / -1; background:#111b21; border-radius:12px; padding:16px 18px; margin-bottom:8px; display:flex; align-items:center; gap:12px;">
+                    <button onclick="dashViewMode = 'categories'; renderDashGrid();" style="border:none; background:#25d366; color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:12px;">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                     <div>
-                        <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Roboto', sans-serif;">Dashboard</div>
-                        <div style="font-size: 14px; font-weight: 800; color: #111b21; font-family: 'Roboto', sans-serif; text-transform: uppercase; letter-spacing: 0.3px;">${esc(currentCatTitle)}</div>
+                        <div style="font-size:9px; font-weight:500; color:#8696a0; text-transform:uppercase; letter-spacing:0.5px;">Dashboard</div>
+                        <div style="font-size:14px; font-weight:600; color:#e9edef; text-transform:uppercase; letter-spacing:0.2px;">${esc(currentCatTitle)}</div>
                     </div>
                 </div>
             ` + filtered.map((item, i) => `
                 <div class="hook-card" style="cursor:pointer;" onclick="abrirDashLink('${escAttr(item.Enlace)}')">
-                    <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                        <img src="${escAttr(item.Icono)}" alt="${escAttr(item.Titulo)}" loading="lazy" onerror="this.src='assets/media/logo_circular.png'" style="width: 32px; height: 32px; object-fit: contain;">
+                    <div style="width:38px; height:38px; min-width:38px; border-radius:8px; background:#ffffff; border:1px solid #e5e7eb; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                        <img src="${escAttr(item.Icono)}" alt="${escAttr(item.Titulo)}" loading="lazy" onerror="this.src='assets/media/logo_circular.png'" style="width:26px; height:26px; object-fit:contain;">
                     </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <div class="hook-text" style="font-size: 12px;">${esc(item.Titulo)}</div>
-                        <div style="font-size: 10px; font-weight: 500; color: #94a3b8; font-family: 'Roboto', sans-serif; margin-top: 2px;">${item.cat === 'SUNARP' ? 'SUNARP' : item.cat === 'MTC' ? 'MTC' : item.cat === 'MULTAS' ? 'Multas' : item.cat === 'SEGUROS' ? 'Seguros' : item.cat === 'GRATUITOS' ? 'Gratuito' : 'General'}</div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:11px; font-weight:600; color:#111b21; text-transform:uppercase; letter-spacing:0.1px; line-height:1.3;">${esc(item.Titulo)}</div>
+                        <div style="font-size:9px; font-weight:400; color:#6b7280; margin-top:2px;">${item.cat === 'SUNARP' ? 'SUNARP' : item.cat === 'MTC' ? 'MTC' : item.cat === 'MULTAS' ? 'Multas y Deudas' : item.cat === 'SEGUROS' ? 'Seguros y Reportes' : item.cat === 'GRATUITOS' ? 'Servicio Gratuito' : item.cat === 'REGIONES' ? 'Multas por Región' : 'General'}</div>
                     </div>
-                    <div style="color: #94a3b8; font-size: 13px; flex-shrink: 0;"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+                    <div style="color:#25d366; font-size:12px; flex-shrink:0;"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
                 </div>
             `).join('');
         }
@@ -2163,8 +2163,6 @@
         }
 
         function openInformeModal() {
-            if (!currentUser) { showAuthFloatingModal(); return; }
-            if (!window.plataformaActiva) { showUpgradeModal(); return; }
             const modal = document.getElementById('informeModal');
             if (modal) {
                 document.getElementById('informePlateInput').value = '';
@@ -2174,16 +2172,28 @@
         }
 
         async function submitInformeRequest() {
-            // Verificar acceso premium antes de consultar
-            if (typeof currentUser === 'undefined' || !currentUser) {
-                showAccessRestrictedModal();
-                return;
-            }
             const input = document.getElementById('informePlateInput');
             const p = normalize(input ? input.value : '');
 
             if (!p || p.length < 5) {
                 alert('Por favor, ingresa una placa válida (mínimo 5 caracteres).');
+                return;
+            }
+
+            // Guardar placa temporalmente
+            window._pendingInformePlate = p;
+
+            // Verificar cuenta
+            if (!currentUser) {
+                document.getElementById('informeModal').style.display = 'none';
+                showAuthFloatingModal();
+                return;
+            }
+
+            // Verificar acceso S/35
+            if (!window.plataformaActiva) {
+                document.getElementById('informeModal').style.display = 'none';
+                showUpgradeModal();
                 return;
             }
 
