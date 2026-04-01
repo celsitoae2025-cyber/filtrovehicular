@@ -101,46 +101,42 @@
         </div>
     </div>
 
-    <!-- Modal Registro/Login -->
+    <!-- Modal Registro/Login unificado -->
     <div id="authFloatingModal" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:999999; align-items:center; justify-content:center; padding:16px;" onclick="if(event.target===this)this.style.display='none'">
         <div style="background:#ffffff; border-radius:12px; width:92%; max-width:380px; overflow:hidden;" onclick="event.stopPropagation()">
-            <div style="background:#111b21; padding:22px 20px 18px; position:relative;">
-                <button onclick="document.getElementById('authFloatingModal').style.display='none'" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#8696a0; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <div style="width:38px; height:38px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
-                        <i class="fa-solid fa-user-plus" style="font-size:16px; color:#fff;"></i>
-                    </div>
-                    <div>
-                        <div id="authModalTitle" style="font-size:14px; font-weight:600; color:#e9edef;">Crear cuenta</div>
-                        <div style="font-size:10px; color:#8696a0;">Regístrate para acceder a la plataforma</div>
-                    </div>
+            <!-- Header -->
+            <div style="padding:28px 20px 22px; text-align:center; position:relative;">
+                <button onclick="document.getElementById('authFloatingModal').style.display='none'" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#9ca3af; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                <div style="width:48px; height:48px; background:#25d366; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
+                    <i id="authModalIcon" class="fa-solid fa-shield-halved" style="font-size:20px; color:#fff;"></i>
                 </div>
+                <div id="authModalTitle" style="font-size:16px; font-weight:600; color:#111b21; margin-bottom:2px;">Crear cuenta</div>
+                <div id="authModalSubtitle" style="font-size:11px; color:#6b7280;">Regístrate para acceder a todos los servicios</div>
             </div>
-            <div style="padding:20px;">
-                <div id="authModalError" style="display:none; background:rgba(239,68,68,0.1); color:#ef4444; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:500; margin-bottom:12px;"></div>
-                <!-- Campos registro -->
+            <!-- Form -->
+            <div style="padding:0 20px 22px;">
+                <div id="authModalError" style="display:none; background:rgba(239,68,68,0.08); color:#ef4444; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:500; margin-bottom:12px;"></div>
                 <div id="authRegisterFields">
                     <div style="margin-bottom:10px;">
                         <label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Nombre completo</label>
-                        <input type="text" id="authRegName" placeholder="Juan Pérez" style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                        <input type="text" id="authRegName" placeholder="Tu nombre" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
                     </div>
                     <div style="margin-bottom:10px;">
                         <label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">WhatsApp</label>
-                        <input type="tel" id="authRegWhatsapp" placeholder="987654321" maxlength="9" style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                        <input type="tel" id="authRegWhatsapp" placeholder="9 dígitos" maxlength="9" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
                     </div>
                 </div>
-                <!-- Campos comunes -->
                 <div style="margin-bottom:10px;">
                     <label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Correo electrónico</label>
-                    <input type="email" id="authRegEmail" placeholder="correo@ejemplo.com" style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                    <input type="email" id="authRegEmail" placeholder="correo@ejemplo.com" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
                 </div>
-                <div style="margin-bottom:14px;">
+                <div style="margin-bottom:16px;">
                     <label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Contraseña</label>
-                    <input type="password" id="authRegPass" placeholder="Mínimo 6 caracteres" style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                    <input type="password" id="authRegPass" placeholder="Mínimo 6 caracteres" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'" onkeydown="if(event.key==='Enter')handleAuthFloating()">
                 </div>
-                <button id="authModalBtn" onclick="handleAuthFloating()" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; margin-bottom:10px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">Crear cuenta</button>
+                <button id="authModalBtn" onclick="handleAuthFloating()" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; margin-bottom:12px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">Crear cuenta</button>
                 <div style="text-align:center;">
-                    <span id="authToggleText" style="font-size:11px; color:#6b7280; cursor:pointer;" onclick="toggleAuthFloatingMode()">¿Ya tienes cuenta? <b style="color:#25d366;">Inicia sesión</b></span>
+                    <span id="authToggleText" style="font-size:11px; color:#6b7280; cursor:pointer;" onclick="toggleAuthFloatingMode()">¿Ya tienes cuenta? <b style="color:#111b21;">Inicia sesión</b></span>
                 </div>
             </div>
         </div>

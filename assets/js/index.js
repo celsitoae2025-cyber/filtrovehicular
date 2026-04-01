@@ -199,9 +199,11 @@
             var m = document.getElementById('authFloatingModal');
             if (m) {
                 document.getElementById('authRegisterFields').style.display = 'block';
+                document.getElementById('authModalIcon').className = 'fa-solid fa-shield-halved';
                 document.getElementById('authModalTitle').textContent = 'Crear cuenta';
+                document.getElementById('authModalSubtitle').textContent = 'Regístrate para acceder a todos los servicios';
                 document.getElementById('authModalBtn').textContent = 'Crear cuenta';
-                document.getElementById('authToggleText').innerHTML = '¿Ya tienes cuenta? <b style="color:#25d366;">Inicia sesión</b>';
+                document.getElementById('authToggleText').innerHTML = '¿Ya tienes cuenta? <b style="color:#111b21;">Inicia sesión</b>';
                 document.getElementById('authModalError').style.display = 'none';
                 m.style.display = 'flex';
             }
@@ -210,11 +212,13 @@
         function toggleAuthFloatingMode() {
             _authFloatingMode = _authFloatingMode === 'register' ? 'login' : 'register';
             document.getElementById('authRegisterFields').style.display = _authFloatingMode === 'register' ? 'block' : 'none';
+            document.getElementById('authModalIcon').className = _authFloatingMode === 'register' ? 'fa-solid fa-shield-halved' : 'fa-solid fa-right-to-bracket';
             document.getElementById('authModalTitle').textContent = _authFloatingMode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
+            document.getElementById('authModalSubtitle').textContent = _authFloatingMode === 'register' ? 'Regístrate para acceder a todos los servicios' : 'Ingresa tus credenciales para continuar';
             document.getElementById('authModalBtn').textContent = _authFloatingMode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
             document.getElementById('authToggleText').innerHTML = _authFloatingMode === 'register'
-                ? '¿Ya tienes cuenta? <b style="color:#25d366;">Inicia sesión</b>'
-                : '¿No tienes cuenta? <b style="color:#25d366;">Regístrate</b>';
+                ? '¿Ya tienes cuenta? <b style="color:#111b21;">Inicia sesión</b>'
+                : '¿No tienes cuenta? <b style="color:#111b21;">Regístrate</b>';
             document.getElementById('authModalError').style.display = 'none';
         }
 
