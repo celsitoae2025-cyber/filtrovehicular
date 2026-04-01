@@ -191,15 +191,142 @@
             }
         }
 
-        // Función global para mostrar modal de Acceso Restringido
-        // Modo premium: sin restricción de acceso
-        function showAccessRestrictedModal() { return; }
+        // Modal de registro flotante
+        var _authFloatingMode = 'register';
 
-        // Modo premium: modales de activación desactivados
-        function showUpgradePremiumModal() {}
-        function abrirPasarelaPremium() {}
-        function mostrarModalActivacion() {}
-        function activarPlataforma() {}
+        function showAuthFloatingModal() {
+            _authFloatingMode = 'register';
+            var m = document.getElementById('authFloatingModal');
+            if (m) {
+                document.getElementById('authRegisterFields').style.display = 'block';
+                document.getElementById('authModalTitle').textContent = 'Crear cuenta';
+                document.getElementById('authModalBtn').textContent = 'Crear cuenta';
+                document.getElementById('authToggleText').innerHTML = '¿Ya tienes cuenta? <b style="color:#25d366;">Inicia sesión</b>';
+                document.getElementById('authModalError').style.display = 'none';
+                m.style.display = 'flex';
+            }
+        }
+
+        function toggleAuthFloatingMode() {
+            _authFloatingMode = _authFloatingMode === 'register' ? 'login' : 'register';
+            document.getElementById('authRegisterFields').style.display = _authFloatingMode === 'register' ? 'block' : 'none';
+            document.getElementById('authModalTitle').textContent = _authFloatingMode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
+            document.getElementById('authModalBtn').textContent = _authFloatingMode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
+            document.getElementById('authToggleText').innerHTML = _authFloatingMode === 'register'
+                ? '¿Ya tienes cuenta? <b style="color:#25d366;">Inicia sesión</b>'
+                : '¿No tienes cuenta? <b style="color:#25d366;">Regístrate</b>';
+            document.getElementById('authModalError').style.display = 'none';
+        }
+
+        async function handleAuthFloating() {
+            var btn = document.getElementById('authModalBtn');
+            var err = document.getElementById('authModalError');
+            var email = document.getElementById('authRegEmail').value.trim().toLowerCase();
+            var pass = document.getElementById('authRegPass').value;
+            err.style.display = 'none';
+
+            if (!email || !pass) { err.textContent = 'Ingresa correo y contraseña.'; err.style.display = 'block'; return; }
+            if (pass.length < 6) { err.textContent = 'La contraseña debe tener al menos 6 caracteres.'; err.style.display = 'block'; return; }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+            btn.disabled = true;
+
+            try {
+                if (!window.sb) throw new Error('Sin conexión. Verifica tu internet.');
+
+                if (_authFloatingMode === 'register') {
+                    var name = document.getElementById('authRegName').value.trim();
+                    var wpp = document.getElementById('authRegWhatsapp').value.trim();
+                    if (!name) throw new Error('Ingresa tu nombre.');
+                    if (!wpp || wpp.length !== 9 || wpp[0] !== '9') throw new Error('WhatsApp debe tener 9 dígitos y empezar con 9.');
+
+                    // Verificar si ya existe
+                    var existRes = await window.sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%');
+                    if ((existRes.data || []).some(function(r) { return r.datos && r.datos.email === email; })) throw new Error('Ese correo ya está registrado. Inicia sesión.');
+
+                    // Crear registro
+                    var reqKey = 'REGISTRO_' + Date.now();
+                    var regData = { placa: reqKey, timestamp: Date.now(), status: 'pending', isRegistro: true, email: email, pass: pass, nombre: name, whatsapp: wpp };
+                    var up = await window.sb.from('solicitudes').upsert({ placa: reqKey, datos: regData, updated_at: new Date() });
+                    if (up.error) throw new Error('Error al crear cuenta.');
+
+                    // Crear saldo
+                    await window.sb.from('saldos').upsert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() }, { onConflict: 'email' });
+
+                    currentUser = { email: email, nombre: name, whatsapp: wpp };
+                    localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+                    document.getElementById('authFloatingModal').style.display = 'none';
+                    hideLoginScreen();
+                    renderLoggedInState();
+                    alert('Cuenta creada exitosamente.\n\nBienvenido a Filtro Vehicular Plus.');
+
+                } else {
+                    // Login
+                    if (_isAdmin(email, pass)) {
+                        currentUser = { email: email, nombre: 'Admin' };
+                        localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+                        window.plataformaActiva = true;
+                        document.getElementById('authFloatingModal').style.display = 'none';
+                        hideLoginScreen();
+                        renderLoggedInState();
+                        return;
+                    }
+
+                    var res = await window.sb.from('solicitudes').select('datos, placa').like('placa', 'REGISTRO_%');
+                    if (res.error) throw new Error('Error al consultar.');
+                    var match = (res.data || []).find(function(item) {
+                        if (!item.datos || item.datos.email !== email) return false;
+                        return item.datos.pass === pass || item.datos.password === pass;
+                    });
+                    if (!match) throw new Error('Correo o contraseña incorrectos.');
+
+                    currentUser = { email: match.datos.email, nombre: match.datos.nombre || 'Usuario', whatsapp: match.datos.whatsapp || '' };
+                    localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+
+                    // Leer plataforma
+                    try {
+                        var sRes = await window.sb.from('saldos').select('plataforma_activa').eq('email', email).single();
+                        if (sRes.data) window.plataformaActiva = sRes.data.plataforma_activa || false;
+                    } catch(e) {}
+
+                    document.getElementById('authFloatingModal').style.display = 'none';
+                    hideLoginScreen();
+                    renderLoggedInState();
+                }
+            } catch (e) {
+                err.textContent = e.message;
+                err.style.display = 'block';
+            }
+            btn.innerHTML = _authFloatingMode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
+            btn.disabled = false;
+        }
+
+        // Mostrar modal de upgrade S/35
+        function showUpgradeModal() {
+            var m = document.getElementById('upgradeModal');
+            if (m) m.style.display = 'flex';
+        }
+
+        // Verificar acceso antes de cualquier servicio
+        function checkAccessAndRun(callback) {
+            if (!currentUser) {
+                showAuthFloatingModal();
+                return;
+            }
+            if (!window.plataformaActiva) {
+                showUpgradeModal();
+                return;
+            }
+            callback();
+        }
+
+        // Funciones legacy redirigidas
+        function showAccessRestrictedModal() { showAuthFloatingModal(); }
+        function showUpgradePremiumModal() { showUpgradeModal(); }
+        function abrirPasarelaPremium() { showUpgradeModal(); }
+        function mostrarModalActivacion() { if (!currentUser) showAuthFloatingModal(); else showUpgradeModal(); }
+        function activarPlataforma() { showUpgradeModal(); }
+        function showLoginModal() { showAuthFloatingModal(); }
 
         // --- SISTEMA DE CATEGORÍAS DEL DASHBOARD ---
         const dashboardCategories = {
@@ -355,17 +482,18 @@
         }
 
         function handleServiceClick(service) {
-            // Modo premium: acceso directo a todos los servicios
-            if (service.link) {
-                window.open(service.link, '_blank');
-            } else if (service.price) {
-                const infoModal = document.getElementById('infoModal');
-                const infoContent = document.getElementById('infoContent');
-                if (infoModal && infoContent) {
-                    infoContent.innerHTML = renderServicePlateModal(service);
-                    infoModal.style.display = 'flex';
+            checkAccessAndRun(function() {
+                if (service.link) {
+                    window.open(service.link, '_blank');
+                } else if (service.price) {
+                    const infoModal = document.getElementById('infoModal');
+                    const infoContent = document.getElementById('infoContent');
+                    if (infoModal && infoContent) {
+                        infoContent.innerHTML = renderServicePlateModal(service);
+                        infoModal.style.display = 'flex';
+                    }
                 }
-            }
+            });
         }
 
         function renderServicePlateModal(service) {
@@ -402,6 +530,8 @@
         }
 
         function handleDashboardService(icon, title, desc, link, price) {
+            if (!currentUser) { showAuthFloatingModal(); return; }
+            if (!window.plataformaActiva) { showUpgradeModal(); return; }
             const service = { icon: icon, title: title, desc: desc, link: link, price: price };
             if (service.link) {
                 window.open(service.link, '_blank');
@@ -440,12 +570,12 @@
                 const d = document.createElement('div');
                 d.className = 'hook-card';
                 d.onclick = async () => {
+                    if (!currentUser) { showAuthFloatingModal(); return; }
+                    if (!window.plataformaActiva) { showUpgradeModal(); return; }
+
                     if (c.link) {
-                        // 1. Enlace Externo Directo
                         window.open(c.link, '_blank');
                     } else if (c.price) {
-
-                        // USUARIO LOGUEADO -> Pedir Placa
                         const infoModal = document.getElementById('infoModal');
                         const infoContent = document.getElementById('infoContent');
                         if (infoModal && infoContent) {
@@ -1890,6 +2020,8 @@
 
         // Función para abrir enlaces del dashboard con verificación premium
         function abrirDashLink(url) {
+            if (!currentUser) { showAuthFloatingModal(); return; }
+            if (!window.plataformaActiva) { showUpgradeModal(); return; }
             window.open(url, '_blank');
         }
 
@@ -2012,10 +2144,8 @@
         }
 
         function openInformeModal() {
-            if (typeof currentUser === 'undefined' || !currentUser) {
-                showLoginModal();
-                return;
-            }
+            if (!currentUser) { showAuthFloatingModal(); return; }
+            if (!window.plataformaActiva) { showUpgradeModal(); return; }
             const modal = document.getElementById('informeModal');
             if (modal) {
                 document.getElementById('informePlateInput').value = '';

@@ -9,14 +9,40 @@ function _isAdmin(email, pass) {
 }
 
 async function initAuth() {
-    // Modo premium: entrar directo con cuenta admin real
-    currentUser = { email: 'juandevillar80@gmail.com', nombre: 'Usuario Premium' };
-    localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
-    window.plataformaActiva = true;
-    window.dashboardActivo = true;
-    hideLoginScreen();
-    renderLoggedInState();
-    checkPromoPlataforma();
+    // Leer sesión real
+    if (window.FiltroSession) {
+        currentUser = window.FiltroSession.getUser();
+    } else {
+        try {
+            var raw = localStorage.getItem('filtro_user_session');
+            currentUser = raw ? JSON.parse(raw) : null;
+        } catch (e) {
+            currentUser = null;
+            localStorage.removeItem('filtro_user_session');
+        }
+    }
+
+    window.plataformaActiva = false;
+    window.dashboardActivo = false;
+
+    if (currentUser && currentUser.email) {
+        hideLoginScreen();
+        renderLoggedInState();
+        // Verificar plataforma activa desde Supabase
+        if (window.sb) {
+            try {
+                var res = await window.sb.from('saldos').select('plataforma_activa, dashboard_activo, creditos').eq('email', currentUser.email).single();
+                if (res.data) {
+                    window.plataformaActiva = res.data.plataforma_activa || false;
+                    window.dashboardActivo = res.data.dashboard_activo || false;
+                }
+            } catch (e) {}
+        }
+    } else {
+        currentUser = null;
+        hideLoginScreen();
+        renderLoggedOutState();
+    }
 }
 
 // Login screen: mostrar/ocultar

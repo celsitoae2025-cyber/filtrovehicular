@@ -101,6 +101,88 @@
         </div>
     </div>
 
+    <!-- Modal Registro/Login -->
+    <div id="authFloatingModal" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:999999; align-items:center; justify-content:center; padding:16px;" onclick="if(event.target===this)this.style.display='none'">
+        <div style="background:#ffffff; border-radius:12px; width:92%; max-width:380px; overflow:hidden;" onclick="event.stopPropagation()">
+            <div style="background:#111b21; padding:22px 20px 18px; position:relative;">
+                <button onclick="document.getElementById('authFloatingModal').style.display='none'" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#8696a0; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:38px; height:38px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                        <i class="fa-solid fa-user-plus" style="font-size:16px; color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div id="authModalTitle" style="font-size:14px; font-weight:600; color:#e9edef;">Crear cuenta</div>
+                        <div style="font-size:10px; color:#8696a0;">Regístrate para acceder a la plataforma</div>
+                    </div>
+                </div>
+            </div>
+            <div style="padding:20px;">
+                <div id="authModalError" style="display:none; background:rgba(239,68,68,0.1); color:#ef4444; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:500; margin-bottom:12px;"></div>
+                <!-- Campos registro -->
+                <div id="authRegisterFields">
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Nombre completo</label>
+                        <input type="text" id="authRegName" placeholder="Juan Pérez" style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">WhatsApp</label>
+                        <input type="tel" id="authRegWhatsapp" placeholder="987654321" maxlength="9" style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                    </div>
+                </div>
+                <!-- Campos comunes -->
+                <div style="margin-bottom:10px;">
+                    <label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Correo electrónico</label>
+                    <input type="email" id="authRegEmail" placeholder="correo@ejemplo.com" style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                </div>
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Contraseña</label>
+                    <input type="password" id="authRegPass" placeholder="Mínimo 6 caracteres" style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                </div>
+                <button id="authModalBtn" onclick="handleAuthFloating()" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; margin-bottom:10px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">Crear cuenta</button>
+                <div style="text-align:center;">
+                    <span id="authToggleText" style="font-size:11px; color:#6b7280; cursor:pointer;" onclick="toggleAuthFloatingMode()">¿Ya tienes cuenta? <b style="color:#25d366;">Inicia sesión</b></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Acceso Completo S/35 -->
+    <div id="upgradeModal" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:999999; align-items:center; justify-content:center; padding:16px;" onclick="if(event.target===this)this.style.display='none'">
+        <div style="background:#ffffff; border-radius:12px; width:92%; max-width:380px; overflow:hidden;" onclick="event.stopPropagation()">
+            <div style="background:#111b21; padding:22px 20px 18px; position:relative;">
+                <button onclick="document.getElementById('upgradeModal').style.display='none'" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#8696a0; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:38px; height:38px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                        <i class="fa-solid fa-rocket" style="font-size:16px; color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:14px; font-weight:600; color:#e9edef;">Acceso Completo</div>
+                        <div style="font-size:10px; color:#8696a0;">Desbloquea todos los servicios</div>
+                    </div>
+                </div>
+            </div>
+            <div style="padding:20px;">
+                <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:14px; text-align:center;">
+                    <div style="font-size:10px; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Pago único</div>
+                    <div style="font-size:28px; font-weight:600; color:#111b21; line-height:1;">S/ 35</div>
+                    <div style="font-size:11px; color:#6b7280; margin-top:4px;">Acceso permanente a toda la plataforma</div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+                    <div style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-check" style="color:#25d366; font-size:11px;"></i><span style="font-size:12px; color:#111b21;">22 servicios vehiculares</span></div>
+                    <div style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-check" style="color:#25d366; font-size:11px;"></i><span style="font-size:12px; color:#111b21;">Accesos directos a entidades</span></div>
+                    <div style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-check" style="color:#25d366; font-size:11px;"></i><span style="font-size:12px; color:#111b21;">Dashboard completo</span></div>
+                    <div style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-check" style="color:#25d366; font-size:11px;"></i><span style="font-size:12px; color:#111b21;">Acceso permanente</span></div>
+                </div>
+                <button onclick="document.getElementById('upgradeModal').style.display='none'; if(typeof openSale==='function') openSale('35.00', 'Acceso Completo - Plataforma Premium', 0, 'activacion');" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; margin-bottom:8px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                    <i class="fa-solid fa-bolt" style="margin-right:6px;"></i> Adquirir Acceso
+                </button>
+                <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20adquirir%20el%20acceso%20completo%20a%20Filtro%20Vehicular." target="_blank" style="display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; font-size:12px; font-weight:600; color:#111b21; text-decoration:none; cursor:pointer; transition:border-color 0.2s; box-sizing:border-box;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <i class="fa-brands fa-whatsapp" style="color:#25d366; font-size:15px;"></i> Consultar por WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Contenido principal -->
     <div id="mainAppContent" style="display:block;">
     <header class="site-header">
