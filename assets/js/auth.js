@@ -506,79 +506,59 @@ function showActivationNotification(plataformaActivada, dashboardActivado) {
 }
 
 function showWelcomeModal(plataformaActivada, dashboardActivado) {
-    const modalHtml = plataformaActivada ? `
-        <div id="welcomeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); animation: fadeIn 0.3s ease-out;">
-            <style>
-                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-                @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-                @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-            </style>
-            <div style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); width: 92%; max-width: 420px; border-radius: 24px; padding: 35px 25px; text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.3); animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards; border: 2px solid #f59e0b;">
-                <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: 0 15px 35px rgba(245, 158, 11, 0.25); animation: pulse 2s infinite;">
+    const modalHtml = `
+        <div id="welcomeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,27,33,0.5); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;" onclick="if(event.target===this){dismissNotification();}">
+            <div style="background: #ffffff; width: 92%; max-width: 400px; border-radius: 20px; padding: 35px 28px; text-align: center; border: 1px solid #e5e7eb; animation: scaleUp 0.3s ease forwards;">
+                <style>
+                    @keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+                </style>
+                <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(37,211,102,0.1); color: #25d366; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
                     <i class="fa-solid fa-rocket"></i>
                 </div>
-                <h2 style="font-size: 26px; color: #0d2536; margin: 0 0 12px; font-weight: 900; letter-spacing: -0.5px;">¡Plataforma Activada!</h2>
-                <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin: 0 0 25px; font-weight: 500;">Tu cuenta <span style="color: #f59e0b; font-weight: 700;">PLUS</span> está lista. Ahora tienes acceso completo a:</p>
-                
-                <div style="background: #f8fafc; border-radius: 16px; padding: 20px; margin-bottom: 25px; border: 1px solid #e2e8f0; text-align: left;">
-                    <div style="display: grid; gap: 12px;">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div style="width: 32px; height: 32px; background: #8bc34a; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-solid fa-check" style="color: white; font-size: 14px;"></i>
+                <h2 style="font-size: 22px; color: #111b21; margin: 0 0 8px; font-weight: 900;">¡Bienvenido!</h2>
+                <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 0 0 24px; font-weight: 500;">Tu cuenta <span style="color: #25d366; font-weight: 700;">PREMIUM</span> está activa. Tienes acceso completo a:</p>
+
+                <div style="background: #f9fafb; border-radius: 14px; padding: 18px 20px; margin-bottom: 24px; border: 1px solid #e5e7eb; text-align: left;">
+                    <div style="display: grid; gap: 14px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
-                            <span style="font-size: 13px; color: #334155; font-weight: 600;">22 Servicios en Categorías</span>
+                            <span style="font-size: 13px; color: #111b21; font-weight: 600;">22 Servicios Vehiculares</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div style="width: 32px; height: 32px; background: #8bc34a; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-solid fa-check" style="color: white; font-size: 14px;"></i>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
-                            <span style="font-size: 13px; color: #334155; font-weight: 600;">Dashboard Organizado</span>
+                            <span style="font-size: 13px; color: #111b21; font-weight: 600;">Dashboard Organizado</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div style="width: 32px; height: 32px; background: #8bc34a; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-solid fa-check" style="color: white; font-size: 14px;"></i>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
-                            <span style="font-size: 13px; color: #334155; font-weight: 600;">Historial de Consultas</span>
+                            <span style="font-size: 13px; color: #111b21; font-weight: 600;">Historial de Consultas</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div style="width: 32px; height: 32px; background: #8bc34a; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-solid fa-check" style="color: white; font-size: 14px;"></i>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
-                            <span style="font-size: 13px; color: #334155; font-weight: 600;">Acceso Permanente</span>
+                            <span style="font-size: 13px; color: #111b21; font-weight: 600;">Acceso Permanente</span>
                         </div>
                     </div>
                 </div>
 
-                <button onclick="dismissNotification();" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 8px 20px rgba(139, 195, 74, 0.3); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 28px rgba(139, 195, 74, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(139, 195, 74, 0.3)';">
-                    <i class="fa-solid fa-bolt" style="margin-right: 8px;"></i> ¡COMENZAR AHORA!
+                <button onclick="dismissNotification();" style="width: 100%; padding: 14px; background: #25d366; color: #ffffff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                    <i class="fa-solid fa-bolt" style="margin-right: 8px;"></i> COMENZAR
                 </button>
-                
-                <p style="margin-top: 15px; font-size: 11px; color: #94a3b8; line-height: 1.4;">
+
+                <p style="margin-top: 14px; font-size: 11px; color: #9ca3af; line-height: 1.4;">
                     <i class="fa-solid fa-info-circle" style="margin-right: 4px;"></i>
                     Recuerda recargar créditos para realizar consultas
                 </p>
             </div>
         </div>
-    ` : `
-        <div id="welcomeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); animation: fadeIn 0.3s ease-out;">
-            <style>
-                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-                @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-            </style>
-            <div style="background: #ffffff; width: 92%; max-width: 380px; border-radius: 24px; padding: 30px 25px; text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.3); animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards; border: 2px solid #3b82f6;">
-                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 18px; box-shadow: 0 12px 30px rgba(59, 130, 246, 0.2);">
-                    <i class="fa-solid fa-table-columns"></i>
-                </div>
-                <h2 style="font-size: 24px; color: #0d2536; margin: 0 0 10px; font-weight: 900;">¡Dashboard Activado!</h2>
-                <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 25px;">Ahora puedes acceder al Dashboard y revisar tus expedientes organizados.</p>
-                <button onclick="dismissNotification(); if(typeof switchServicesTab === 'function') switchServicesTab('dashboard');" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 6px 18px rgba(59, 130, 246, 0.3); margin-bottom: 10px;">
-                    <i class="fa-solid fa-table-columns" style="margin-right: 6px;"></i> IR AL DASHBOARD
-                </button>
-                <button onclick="dismissNotification();" style="width: 100%; padding: 12px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer;">Cerrar</button>
-            </div>
-        </div>
     `;
-    
+
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
