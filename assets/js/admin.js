@@ -2408,7 +2408,9 @@ Link: https://filtrovehicularperu.com`;
             if (localStorage.getItem('push_subscribed') === 'true') {
                 doUnsubscribePush();
             } else {
-                doSubscribePush();
+                doSubscribePush().then(function() {}).catch(function() {
+                    updatePushButton(false);
+                });
             }
         };
 
@@ -2454,7 +2456,7 @@ Link: https://filtrovehicularperu.com`;
 
             } catch (e) {
                 updatePushButton(false);
-                alert('Error: ' + e.message);
+                console.warn('Push subscription error:', e.message);
             }
         }
 
