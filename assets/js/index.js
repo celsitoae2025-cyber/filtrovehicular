@@ -230,6 +230,7 @@
             err.style.display = 'none';
 
             if (!email || !pass) { err.textContent = 'Ingresa correo y contraseña.'; err.style.display = 'block'; return; }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Ingresa un correo electrónico válido.'; err.style.display = 'block'; return; }
             if (pass.length < 6) { err.textContent = 'La contraseña debe tener al menos 6 caracteres.'; err.style.display = 'block'; return; }
 
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
@@ -680,6 +681,8 @@
                                         timestamp: timestamp,
                                         status: 'pending',
                                         email: currentUser.email,
+                                        nombre: currentUser.nombre || '',
+                                        whatsapp: currentUser.whatsapp || '',
                                         servicio: c.title,
                                         isIndividual: true
                                     };

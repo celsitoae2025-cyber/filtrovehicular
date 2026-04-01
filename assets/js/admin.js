@@ -1253,17 +1253,21 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                     dIcon = `fa-file-lines`;
                     dType = `Individual`;
                     dSubtitle = `<b>Servicio:</b> ${esc(req.servicio || 'Consulta')}<br><b>Placa:</b> ${esc(req.placa)}<br><b>Email:</b> ${esc(req.email || '?')}`;
+                    if (req.nombre) dSubtitle = `<b>Cliente:</b> ${esc(req.nombre)}<br>` + dSubtitle;
+                    if (req.whatsapp) dSubtitle += `<br><b>WhatsApp:</b> ${esc(req.whatsapp)}`;
                 } else if (req.isRegistro) {
                     dName = esc(req.nombre || 'Nuevo Usuario');
                     dIcon = `fa-user-plus`;
                     dType = `Registro`;
-                    dSubtitle = `<b>Servicio:</b> Registro de cuenta<br><b>Email:</b> ${esc(req.email || '?')}`;
+                    dSubtitle = `<b>Nombre:</b> ${esc(req.nombre || '?')}<br><b>Email:</b> ${esc(req.email || '?')}`;
                     if (req.whatsapp) dSubtitle += `<br><b>WhatsApp:</b> ${esc(req.whatsapp)}`;
                 } else {
                     dName = esc(req.servicio || 'Filtro Vehicular Completo') + ` (${esc(req.placa)})`;
                     dIcon = `fa-car`;
                     dType = `Filtro`;
                     dSubtitle = `<b>Servicio:</b> ${esc(req.servicio || 'Filtro Vehicular Completo')}<br><b>Placa:</b> ${esc(req.placa)}<br><b>Email:</b> ${esc(req.email || 'Anónimo')}`;
+                    if (req.nombre) dSubtitle = `<b>Cliente:</b> ${esc(req.nombre)}<br>` + dSubtitle;
+                    if (req.whatsapp) dSubtitle += `<br><b>WhatsApp:</b> ${esc(req.whatsapp)}`;
                 }
 
                 let actionBtn = '';
