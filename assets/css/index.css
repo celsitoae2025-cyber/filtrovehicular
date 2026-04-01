@@ -643,7 +643,7 @@
             width: 42px;
             height: 42px;
             background: #25d366;
-            color: #111b21;
+            color: #ffffff;
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -1951,7 +1951,8 @@
 
         /* HEADER */
         .site-header {
-            width: 100%;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
             padding: 14px 0;
             background: #1f2c34;
             border-bottom: 1px solid #2a3942;
@@ -2195,7 +2196,8 @@
 
         /* FOOTER */
         .site-footer {
-            width: 100%;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
             padding: 40px 20px 30px;
             background: #111b21;
             border-top: none;
