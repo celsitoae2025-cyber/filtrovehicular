@@ -403,14 +403,6 @@
         }
 
         function handleDashboardService(icon, title, desc, link, price) {
-            if (typeof currentUser === 'undefined' || !currentUser) {
-                showAccessRestrictedModal();
-                return;
-            }
-            if (!window.plataformaActiva) {
-                showUpgradePremiumModal();
-                return;
-            }
             const service = { icon: icon, title: title, desc: desc, link: link, price: price };
             if (service.link) {
                 window.open(service.link, '_blank');
@@ -425,12 +417,6 @@
         }
 
         function processServicePayment(serviceTitle, servicePrice, serviceIcon) {
-            // Verificar acceso premium antes de procesar pago
-            if (!window.plataformaActiva) {
-                document.getElementById('infoModal').style.display = 'none';
-                showUpgradePremiumModal();
-                return;
-            }
             
             const plateInput = document.getElementById('servicePlateInput');
             const plate = plateInput ? plateInput.value.trim() : '';
@@ -455,18 +441,6 @@
                 const d = document.createElement('div');
                 d.className = 'hook-card';
                 d.onclick = async () => {
-                    // Verificar si el usuario está logueado
-                    if (typeof currentUser === 'undefined' || !currentUser) {
-                        showAccessRestrictedModal();
-                        return;
-                    }
-                    
-                    // Verificar si tiene acceso premium (plataforma_activa)
-                    if (!window.plataformaActiva) {
-                        showUpgradePremiumModal();
-                        return;
-                    }
-                    
                     if (c.link) {
                         // 1. Enlace Externo Directo
                         window.open(c.link, '_blank');
@@ -1833,10 +1807,6 @@
 
         // Función para abrir enlaces del dashboard con verificación premium
         function abrirDashLink(url) {
-            if (!window.plataformaActiva) {
-                showUpgradePremiumModal();
-                return;
-            }
             window.open(url, '_blank');
         }
 
@@ -1995,12 +1965,6 @@
                 showAccessRestrictedModal();
                 return;
             }
-            if (!window.plataformaActiva) {
-                document.getElementById('informeModal').style.display = 'none';
-                showUpgradePremiumModal();
-                return;
-            }
-            
             const input = document.getElementById('informePlateInput');
             const p = normalize(input ? input.value : '');
 
