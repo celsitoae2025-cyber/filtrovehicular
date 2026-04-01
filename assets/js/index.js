@@ -112,30 +112,33 @@
         }
 
         const cats = [
-            // ── VIP (de pago) ──
-            { icon: 'fa-file-lines', title: 'Inscripción y Precio de Vehículo (PDF)', price: '10.00' },
-            { icon: 'fa-building-columns', title: 'Boleta Informativa', price: '10.00' },
-            { icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', price: '10.00' },
-            { icon: 'fa-handcuffs', title: 'Denuncias y Órdenes de Captura', price: '10.00' },
-            { icon: 'fa-users', title: 'Historial de Propietarios Inscritos', price: '5.00' },
-            { icon: 'fa-map-location-dot', title: 'Deudas y Multas por Región', price: '5.00' },
-            { icon: 'fa-list-check', title: 'Otras Afectaciones', price: '5.00' },
-            // ── Gratuitos (enlaces directos) ──
+            // 1. Registro y propiedad
             { icon: 'fa-id-card', title: 'Propiedad Vehicular SUNARP', link: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/' },
+            { icon: 'fa-file-lines', title: 'Inscripción y Precio de Vehículo (PDF)', price: '10.00' },
             { icon: 'fa-car-side', title: 'Cambio de Características', link: 'https://sprl.sunarp.gob.pe/sprl/ingreso' },
-            { icon: 'fa-address-card', title: 'Récord de Conductor (DNI)', link: 'https://recordconductor.mtc.gob.pe/' },
-            { icon: 'fa-screwdriver-wrench', title: 'Inspección Técnica Vehicular CITV', link: 'https://rec.mtc.gob.pe/Citv/ArConsultaCitv' },
-            { icon: 'fa-shield-halved', title: 'Vigencia del SOAT', link: 'https://www.apeseg.org.pe/consultas-soat/' },
-            { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Lima', link: 'https://www.sat.gob.pe/pagosenlinea/' },
-            { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Callao', link: 'https://pagopapeletascallao.pe/' },
-            { icon: 'fa-triangle-exclamation', title: 'Papeletas de Tránsito ATU', link: 'https://pasarela.atu.gob.pe/#' },
-            { icon: 'fa-truck', title: 'Papeletas SUTRAN', link: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/' },
+            { icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', price: '10.00' },
+            { icon: 'fa-users', title: 'Historial de Propietarios Inscritos', price: '5.00' },
+            { icon: 'fa-building-columns', title: 'Boleta Informativa', price: '10.00' },
+            // 2. Seguridad y denuncias
+            { icon: 'fa-handcuffs', title: 'Denuncias y Órdenes de Captura', price: '10.00' },
             { icon: 'fa-heart-pulse', title: 'Siniestralidad por Placa', link: 'https://servicios.sbs.gob.pe/reportesoat/' },
             { icon: 'fa-sheet-plastic', title: 'Estado de Placa', link: 'https://www.placas.pe/#/home/verificarEstadoPlaca' },
+            // 3. Multas y deudas
+            { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Lima', link: 'https://www.sat.gob.pe/pagosenlinea/' },
+            { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Callao', link: 'https://pagopapeletascallao.pe/' },
+            { icon: 'fa-map-location-dot', title: 'Deudas y Multas por Región', price: '5.00' },
+            { icon: 'fa-triangle-exclamation', title: 'Papeletas de Tránsito ATU', link: 'https://pasarela.atu.gob.pe/#' },
+            { icon: 'fa-truck', title: 'Papeletas SUTRAN', link: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/' },
             { icon: 'fa-camera', title: 'Foto Pit Lima', link: 'http://www.pit.gob.pe/pit2007/EstadoCuenta.aspx' },
+            // 4. Documentos y técnico
+            { icon: 'fa-screwdriver-wrench', title: 'Inspección Técnica Vehicular CITV', link: 'https://rec.mtc.gob.pe/Citv/ArConsultaCitv' },
+            { icon: 'fa-shield-halved', title: 'Vigencia del SOAT', link: 'https://www.apeseg.org.pe/consultas-soat/' },
+            { icon: 'fa-address-card', title: 'Récord de Conductor (DNI)', link: 'https://recordconductor.mtc.gob.pe/' },
             { icon: 'fa-circle-half-stroke', title: 'Lunas Oscurecidas', link: 'https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas' },
+            // 5. Servicios adicionales
             { icon: 'fa-gas-pump', title: 'FISE GNV Subsidio Gas', link: 'https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio' },
-            { icon: 'fa-coins', title: 'Consulta Deuda GNV', link: 'https://infogas.com.pe/consulta-placa/' }
+            { icon: 'fa-coins', title: 'Consulta Deuda GNV', link: 'https://infogas.com.pe/consulta-placa/' },
+            { icon: 'fa-list-check', title: 'Otras Afectaciones', price: '5.00' }
         ];
 
         // --- SISTEMA DE HISTORIAL DE NAVEGACIÓN ---
