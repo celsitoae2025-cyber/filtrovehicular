@@ -180,15 +180,9 @@
     </div>
 
     <script>
-    // Evitar que clics dentro de modales flotantes se propaguen al capture listener
-    ['authFloatingModal','upgradeModal'].forEach(function(id){
-        var el = document.getElementById(id);
-        if(el) el.addEventListener('click', function(e){ e.stopPropagation(); }, true);
-        if(el) el.addEventListener('mousedown', function(e){ if(e.target===el) return; e.stopPropagation(); }, true);
-    });
-    // Cerrar solo al hacer clic en el fondo
-    document.getElementById('authFloatingModal').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
-    document.getElementById('upgradeModal').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
+    // Cerrar modales solo al hacer clic en el fondo
+    document.getElementById('authFloatingModal').addEventListener('mousedown', function(e){ if(e.target===this) this.style.display='none'; });
+    document.getElementById('upgradeModal').addEventListener('mousedown', function(e){ if(e.target===this) this.style.display='none'; });
     </script>
 
     <!-- Contenido principal -->

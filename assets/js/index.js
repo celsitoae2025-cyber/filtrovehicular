@@ -836,10 +836,20 @@
             // BLOQUEO GLOBAL: Si el usuario NO ha iniciado sesión, cualquier clic en elementos interactivos muestra "Acceso Restringido"
             document.addEventListener('click', function(e) {
                 var target = e.target;
-                
-                // Elementos que SIEMPRE deben funcionar (header logo, login button, footer, modales, etc.)
-                var allowed = target.closest('#mainAuthBtn') || 
-                              target.closest('.header-logo') || 
+
+                // Si algún modal está abierto, no bloquear nada
+                var authModal = document.getElementById('authFloatingModal');
+                var upgradeModal = document.getElementById('upgradeModal');
+                var saleModal = document.getElementById('modalSale');
+                var infoModal = document.getElementById('infoModal');
+                if ((authModal && authModal.style.display === 'flex') ||
+                    (upgradeModal && upgradeModal.style.display === 'flex') ||
+                    (saleModal && saleModal.style.display === 'flex') ||
+                    (infoModal && infoModal.style.display === 'flex')) return;
+
+                // Elementos que SIEMPRE deben funcionar
+                var allowed = target.closest('#mainAuthBtn') ||
+                              target.closest('.header-logo') ||
                               target.closest('.site-footer') ||
                               target.closest('#infoModal') ||
                               target.closest('#authModal') ||
