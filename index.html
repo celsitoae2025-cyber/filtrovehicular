@@ -43,6 +43,26 @@
 </head>
 <body>
 
+    <!-- SPLASH SCREEN (intro de la app) -->
+    <div id="splashScreen" style="position:fixed; inset:0; background:#111b21; z-index:99999999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.4s ease;">
+        <img src="assets/media/logo_circular.png" alt="Logo" style="width:72px; height:72px; object-fit:contain; margin-bottom:18px; animation:splashPulse 1.5s ease infinite;">
+        <div style="font-size:18px; font-weight:700; color:#e9edef; letter-spacing:0.5px; font-family:'Roboto',sans-serif;">Filtro Vehicular</div>
+        <div style="font-size:11px; font-weight:600; color:#25d366; letter-spacing:4px; text-transform:uppercase; margin-top:4px;">+</div>
+        <div style="width:120px; height:3px; background:#1f2c34; border-radius:3px; margin-top:28px; overflow:hidden;">
+            <div style="width:0%; height:100%; background:#25d366; border-radius:3px; animation:splashLoad 1.8s ease forwards;"></div>
+        </div>
+    </div>
+    <style>
+        @keyframes splashPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+        @keyframes splashLoad { 0%{width:0%;} 100%{width:100%;} }
+    </style>
+    <script>
+        setTimeout(function(){
+            var s = document.getElementById('splashScreen');
+            if(s){ s.style.opacity='0'; setTimeout(function(){ s.remove(); }, 400); }
+        }, 2000);
+    </script>
+
     <!-- LOGIN SCREEN (se oculta si hay sesión) -->
     <div id="loginScreen" class="login-screen" style="display:none;">
         <div class="login-screen-bg">
