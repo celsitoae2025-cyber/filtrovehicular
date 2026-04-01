@@ -843,6 +843,8 @@
                               target.closest('.site-footer') ||
                               target.closest('#infoModal') ||
                               target.closest('#authModal') ||
+                              target.closest('#authFloatingModal') ||
+                              target.closest('#upgradeModal') ||
                               target.closest('.info-close') ||
                               target.closest('[onclick*="openAuthModal"]') ||
                               target.closest('[onclick*="toggleAuthMode"]') ||
