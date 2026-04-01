@@ -355,29 +355,10 @@
         }
 
         function handleServiceClick(service) {
-            // Verificar si el usuario está logueado
-            if (typeof currentUser === 'undefined' || !currentUser) {
-                showAccessRestrictedModal();
-                return;
-            }
-            
-            // Verificar si tiene acceso premium (plataforma_activa)
-            const tienePremium = window.plataformaActiva || false;
-            
-            if (!tienePremium) {
-                // Usuario registrado pero sin pago de S/ 35 → Mostrar modal de upgrade
-                showUpgradePremiumModal();
-                return;
-            }
-            
-            // Usuario con acceso premium → Permitir acceso al servicio
+            // Modo premium: acceso directo a todos los servicios
             if (service.link) {
-                // Abrir enlace externo
                 window.open(service.link, '_blank');
             } else if (service.price) {
-                // Procesar pago del servicio individual
-                
-                // Pedir placa y procesar pago
                 const infoModal = document.getElementById('infoModal');
                 const infoContent = document.getElementById('infoContent');
                 if (infoModal && infoContent) {

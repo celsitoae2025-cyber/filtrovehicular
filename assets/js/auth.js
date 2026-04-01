@@ -11,6 +11,8 @@ function _isAdmin(email, pass) {
 async function initAuth() {
     // Modo premium: entrar directo sin login
     currentUser = { email: 'premium@filtrovehicular.com', nombre: 'Usuario Premium' };
+    window.plataformaActiva = true;
+    window.dashboardActivo = true;
     hideLoginScreen();
     renderLoggedInState();
     checkPromoPlataforma();
