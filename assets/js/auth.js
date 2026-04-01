@@ -145,6 +145,9 @@ function renderLoggedOutState() {
     var nav = document.getElementById('desktopNavAuth');
     if (!nav) return;
 
+    var logoStatus = document.getElementById('logoStatus');
+    if (logoStatus) logoStatus.textContent = 'Demo';
+
     updateIntranetFooterBar(false);
 
     nav.innerHTML = `
@@ -193,7 +196,7 @@ async function renderLoggedInState() {
     // Actualizar logo según estado de plataforma
     var logoStatus = document.getElementById('logoStatus');
     if (logoStatus) {
-        logoStatus.textContent = plataformaActiva ? 'Plus' : 'Demo';
+        logoStatus.textContent = plataformaActiva ? 'Premium' : 'Estándar';
     }
 
     var soles = creditos.toFixed(2);
@@ -481,7 +484,7 @@ function startNotificationChecker() {
                 // Actualizar logo
                 const logoStatus = document.getElementById('logoStatus');
                 if (logoStatus) {
-                    logoStatus.textContent = newPlataformaActiva ? 'Plus' : 'Demo';
+                    logoStatus.textContent = newPlataformaActiva ? 'Premium' : 'Estándar';
                 }
                 
                 // Mostrar notificación
