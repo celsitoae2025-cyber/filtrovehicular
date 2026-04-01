@@ -2211,6 +2211,32 @@
             text-align: center;
         }
 
+        .footer-social {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .footer-social-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 16px;
+            text-decoration: none;
+            transition: border-color 0.2s;
+        }
+
+        .footer-social-icon:hover {
+            border-color: #25d366;
+            color: #25d366;
+        }
+
         .footer-disclaimer {
             font-size: 12px;
             color: var(--text-secondary);
