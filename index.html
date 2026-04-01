@@ -43,8 +43,8 @@
 </head>
 <body>
 
-    <!-- SPLASH SCREEN (intro de la app) -->
-    <div id="splashScreen" style="position:fixed; inset:0; background:#111b21; z-index:99999999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.4s ease;">
+    <!-- SPLASH SCREEN (solo en PWA instalada) -->
+    <div id="splashScreen" style="position:fixed; inset:0; background:#111b21; z-index:99999999; display:none; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.4s ease;">
         <img src="assets/media/logo_circular.png" alt="Logo" style="width:72px; height:72px; object-fit:contain; margin-bottom:18px; animation:splashPulse 1.5s ease infinite;">
         <div style="font-size:18px; font-weight:700; color:#e9edef; letter-spacing:0.5px; font-family:'Roboto',sans-serif;">Filtro Vehicular</div>
         <div style="font-size:11px; font-weight:600; color:#25d366; letter-spacing:4px; text-transform:uppercase; margin-top:4px;">+</div>
@@ -57,69 +57,20 @@
         @keyframes splashLoad { 0%{width:0%;} 100%{width:100%;} }
     </style>
     <script>
-        setTimeout(function(){
+        // Solo mostrar splash en PWA instalada
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
             var s = document.getElementById('splashScreen');
-            if(s){ s.style.opacity='0'; setTimeout(function(){ s.remove(); }, 400); }
-        }, 2000);
+            if (s) s.style.display = 'flex';
+            setTimeout(function(){
+                if(s){ s.style.opacity='0'; setTimeout(function(){ s.remove(); }, 400); }
+            }, 2000);
+        } else {
+            var s = document.getElementById('splashScreen');
+            if (s) s.remove();
+        }
     </script>
 
-    <!-- LOGIN SCREEN (se oculta si hay sesión) -->
-    <div id="loginScreen" class="login-screen" style="display:none;">
-        <div class="login-screen-bg">
-            <div class="login-bg-circle login-bg-1"></div>
-            <div class="login-bg-circle login-bg-2"></div>
-            <div class="login-bg-dots"></div>
-        </div>
-        <div class="login-screen-content">
-            <div class="login-brand">
-                <div class="login-logo-box">
-                    <img src="assets/media/logo_circular.png" alt="Logo">
-                </div>
-                <div class="login-brand-name">Filtro Vehicular</div>
-                <div class="login-brand-sub">Plus</div>
-                <p class="login-brand-tag">Plataforma integral de verificación vehicular</p>
-            </div>
-            <div class="login-form-card">
-                <h2 class="login-form-title">Bienvenido</h2>
-                <p class="login-form-sub">Ingresa tus credenciales para continuar</p>
-                <div id="loginScreenError" class="login-form-error"></div>
-                <form onsubmit="event.preventDefault(); handleLoginScreen();">
-                    <div class="login-input-group">
-                        <label class="login-input-label">Correo electrónico</label>
-                        <div class="login-input-wrap">
-                            <input type="email" id="loginScreenEmail" class="login-input-field" placeholder="correo@ejemplo.com" autocomplete="email">
-                            <i class="fa-solid fa-envelope login-input-icon"></i>
-                        </div>
-                    </div>
-                    <div class="login-input-group">
-                        <label class="login-input-label">Contraseña</label>
-                        <div class="login-input-wrap">
-                            <input type="password" id="loginScreenPass" class="login-input-field" placeholder="Tu contraseña" autocomplete="current-password">
-                            <i class="fa-solid fa-lock login-input-icon"></i>
-                            <button type="button" class="login-toggle-pass" onclick="var i=document.getElementById('loginScreenPass');var e=document.getElementById('loginEyeIcon');if(i.type==='password'){i.type='text';e.classList.remove('fa-eye');e.classList.add('fa-eye-slash');}else{i.type='password';e.classList.remove('fa-eye-slash');e.classList.add('fa-eye');}">
-                                <i class="fa-solid fa-eye" id="loginEyeIcon"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <button type="submit" class="login-btn-submit" id="loginScreenBtn">
-                        <i class="fa-solid fa-right-to-bracket"></i> Acceder
-                    </button>
-                </form>
-                <div class="login-divider">
-                    <div class="login-divider-line"></div>
-                    <span class="login-divider-text">o también</span>
-                    <div class="login-divider-line"></div>
-                </div>
-                <button type="button" class="login-btn-register" onclick="openRegisterModal();">
-                    <i class="fa-solid fa-user-plus" style="color:#25d366;"></i> Crear mi cuenta
-                </button>
-            </div>
-            <div class="login-footer-badge">
-                <i class="fa-solid fa-shield-halved"></i>
-                Verificación segura y confiable
-            </div>
-        </div>
-    </div>
+    <!-- Login screen eliminado - se usa modal flotante -->
 
     <!-- Modal Registro/Login unificado -->
     <div id="authFloatingModal" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:9999999; align-items:center; justify-content:center; padding:16px;">
