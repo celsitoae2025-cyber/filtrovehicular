@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="FV Admin">
-    <meta name="theme-color" content="#0d2536">
+    <meta name="theme-color" content="#111b21">
     <link rel="apple-touch-icon" href="./assets/media/logopwa.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -34,26 +34,26 @@
 
     <div id="loginOverlay" style="display:none;"></div>
 
-    <!-- Modal confirmación (Enter / Esc / clic fuera) -->
-    <div id="adminConfirmModal" onclick="if(event.target===this)closeAdminConfirmModal()" style="display:none; position:fixed; inset:0; z-index:400000; background:rgba(13,37,54,0.55); align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px);" role="dialog" aria-modal="true" aria-labelledby="adminConfirmTitle">
-        <div style="background:#fff; border-radius:16px; padding:22px 22px 18px; max-width:420px; width:100%; border:1px solid #e2e8f0;" onclick="event.stopPropagation()">
-            <h3 id="adminConfirmTitle" style="margin:0 0 10px; font-size:17px; font-weight:900; color:var(--petrol);">Confirmar</h3>
-            <p id="adminConfirmMsg" style="margin:0; font-size:13px; color:#64748b; line-height:1.5;"></p>
-            <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px; flex-wrap:wrap;">
-                <button type="button" id="adminConfirmCancel" style="padding:10px 16px; border-radius:10px; border:1px solid #e2e8f0; background:#f8fafc; color:#475569; font-weight:800; font-size:13px; cursor:pointer;">Cancelar</button>
-                <button type="button" id="adminConfirmOk" style="padding:10px 16px; border-radius:10px; border:none; background:#dc2626; color:#fff; font-weight:800; font-size:13px; cursor:pointer;">Aceptar</button>
+    <!-- Modal confirmación -->
+    <div id="adminConfirmModal" onclick="if(event.target===this)closeAdminConfirmModal()" style="display:none; position:fixed; inset:0; z-index:400000; background:rgba(0,0,0,0.4); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; padding:20px;" role="dialog" aria-modal="true" aria-labelledby="adminConfirmTitle">
+        <div style="background:#fff; border-radius:12px; padding:22px 20px 18px; max-width:380px; width:92%;" onclick="event.stopPropagation()">
+            <h3 id="adminConfirmTitle" style="margin:0 0 8px; font-size:15px; font-weight:600; color:#111b21;">Confirmar</h3>
+            <p id="adminConfirmMsg" style="margin:0; font-size:12px; color:#6b7280; line-height:1.5;"></p>
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:18px;">
+                <button type="button" id="adminConfirmCancel" style="padding:9px 14px; border-radius:8px; border:1px solid #e5e7eb; background:#f9fafb; color:#6b7280; font-weight:600; font-size:12px; cursor:pointer;">Cancelar</button>
+                <button type="button" id="adminConfirmOk" style="padding:9px 14px; border-radius:8px; border:none; background:#25d366; color:#fff; font-weight:600; font-size:12px; cursor:pointer;">Aceptar</button>
             </div>
         </div>
     </div>
 
     <div id="adminAppRoot">
 
-    <div class="mobile-header" style="justify-content: space-between;">
+    <div class="mobile-header" style="justify-content:space-between;">
         <a href="admin.html" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
-            <img src="assets/media/logo_circular.png" alt="Logo" style="width:34px; height:34px; object-fit:contain;">
+            <img src="assets/media/logo_circular.png" alt="Logo" style="width:32px; height:32px; object-fit:contain;">
             <div style="display:flex; flex-direction:column; line-height:1.1;">
-                <span style="font-size:14px; font-weight:800; letter-spacing:0.3px; color:#ffffff;">Filtro Vehicular</span>
-                <span style="font-size:9px; font-weight:600; color:#8bc34a; letter-spacing:3px; text-transform:uppercase; text-align:right;">Plus</span>
+                <span style="font-size:13px; font-weight:700; letter-spacing:0.3px; color:#e9edef;">Filtro Vehicular</span>
+                <span style="font-size:8px; font-weight:600; color:#25d366; letter-spacing:3px; text-transform:uppercase; text-align:right;">Plus</span>
             </div>
         </a>
 
@@ -61,12 +61,12 @@
             <button onclick="imprimirReporteAdmin()" title="Imprimir" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#ffffff; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
                 <i class="fa-solid fa-file-pdf"></i>
             </button>
-            <button onclick="saveReport()" title="Publicar" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#8bc34a; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+            <button onclick="saveReport()" title="Publicar" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#25d366; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
             <button onclick="toggleSidebar()" title="Menú" style="position:relative; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#ffffff; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
                 <i class="fa-solid fa-bars"></i>
-                <span id="mobileCount" style="display:none; position:absolute; top:-6px; right:-6px; background:#ef4444; color:white; font-size:9px; min-width:18px; height:18px; border-radius:50px; text-align:center; line-height:18px; font-weight:800; border:2px solid #0d2536; padding:0 4px;">0</span>
+                <span id="mobileCount" style="display:none; position:absolute; top:-6px; right:-6px; background:#ef4444; color:white; font-size:9px; min-width:18px; height:18px; border-radius:50px; text-align:center; line-height:18px; font-weight:800; border:2px solid #111b21; padding:0 4px;">0</span>
             </button>
         </div>
     </div>
@@ -74,11 +74,11 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
     <div class="sidebar" id="sidebar">
-        <a href="admin.html" class="side-logo" style="display: flex; align-items: center; gap: 12px; margin-bottom: 40px; text-decoration: none;">
-            <img src="assets/media/logo_circular.png" alt="Logo" style="width: 40px; height: 40px; object-fit: contain;">
-            <div style="display: flex; flex-direction: column; line-height: 1.1;">
-                <span style="font-size: 16px; font-weight: 900; letter-spacing: 0.5px; color: #ffffff;">Filtro Vehicular</span>
-                <span style="font-size: 9px; font-weight: 300; color: rgba(255,255,255,0.7); letter-spacing: 4px; text-transform: uppercase; text-align: right;">Plus</span>
+        <a href="admin.html" class="side-logo" style="display:flex; align-items:center; gap:10px; margin-bottom:32px; text-decoration:none;">
+            <img src="assets/media/logo_circular.png" alt="Logo" style="width:34px; height:34px; object-fit:contain;">
+            <div style="display:flex; flex-direction:column; line-height:1.1;">
+                <span style="font-size:14px; font-weight:700; letter-spacing:0.3px; color:#e9edef;">Filtro Vehicular</span>
+                <span style="font-size:9px; font-weight:600; color:#25d366; letter-spacing:3px; text-transform:uppercase; text-align:right;">Plus</span>
             </div>
         </a>
         <nav style="display: flex; flex-direction: column; gap: 4px;">
@@ -103,24 +103,23 @@
             </a>
         </nav>
         
-        <!-- Configuración de Alertas Telegram y WhatsApp -->
-        <div style="margin-top: auto; padding: 15px; border-top: 1px solid rgba(0,0,0,0.05); background: rgba(0,0,0,0.01);">
-            <div style="font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.9); text-transform: uppercase; margin-bottom: 8px;">Configuración Telegram</div>
-            <input type="text" id="tgToken" placeholder="Token del Bot" style="width: 100%; padding: 8px; font-size: 11px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 5px; background: white;">
-            <input type="text" id="tgChatId" placeholder="ID del Chat (Tu ID)" style="width: 100%; padding: 8px; font-size: 11px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px; background: white;">
-            <div style="display: flex; gap: 5px; margin-bottom: 15px;">
-                <button onclick="saveTelegramSettings()" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s;">Guardar</button>
-                <button onclick="testTelegram()" style="flex: 1; padding: 8px; background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;"><i class="fa-solid fa-paper-plane" style="font-size: 10px;"></i> Probar</button>
+        <!-- Configuración -->
+        <div style="margin-top:auto; padding:14px; border-top:1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:10px; font-weight:600; color:#8696a0; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Telegram</div>
+            <input type="text" id="tgToken" placeholder="Token del Bot" style="width:100%; padding:7px 10px; font-size:11px; border:1px solid #2a3942; border-radius:6px; margin-bottom:5px; background:#1f2c34; color:#e9edef; outline:none;">
+            <input type="text" id="tgChatId" placeholder="Chat ID" style="width:100%; padding:7px 10px; font-size:11px; border:1px solid #2a3942; border-radius:6px; margin-bottom:8px; background:#1f2c34; color:#e9edef; outline:none;">
+            <div style="display:flex; gap:5px; margin-bottom:12px;">
+                <button onclick="saveTelegramSettings()" style="flex:1; padding:7px; background:#25d366; color:#fff; border:none; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">Guardar</button>
+                <button onclick="testTelegram()" style="flex:1; padding:7px; background:#1f2c34; color:#e9edef; border:1px solid #2a3942; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;"><i class="fa-solid fa-paper-plane" style="font-size:9px;"></i> Probar</button>
             </div>
-            
-            <div style="font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.9); text-transform: uppercase; margin-bottom: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">Grupo WhatsApp Clientes</div>
-            <input type="text" id="whatsappGroupLink" placeholder="https://chat.whatsapp.com/XXXXXX" style="width: 100%; padding: 8px; font-size: 11px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px; background: white;">
-            <button onclick="saveWhatsAppGroupLink()" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-bottom: 15px;">Guardar Enlace</button>
 
-            <div style="padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
-                <div style="font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.9); text-transform: uppercase; margin-bottom: 8px;">Notificaciones Push</div>
-                <p style="font-size: 10px; color: rgba(255,255,255,0.5); margin: 0 0 8px; line-height: 1.4;">Recibe alertas con sonido incluso con la app cerrada.</p>
-                <button id="btnPushToggle" onclick="togglePushSubscription()" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;"><i class="fa-solid fa-bell" style="font-size: 10px;"></i> Activar Notificaciones</button>
+            <div style="font-size:10px; font-weight:600; color:#8696a0; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.06);">WhatsApp Grupo</div>
+            <input type="text" id="whatsappGroupLink" placeholder="https://chat.whatsapp.com/..." style="width:100%; padding:7px 10px; font-size:11px; border:1px solid #2a3942; border-radius:6px; margin-bottom:8px; background:#1f2c34; color:#e9edef; outline:none;">
+            <button onclick="saveWhatsAppGroupLink()" style="width:100%; padding:7px; background:#25d366; color:#fff; border:none; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer; margin-bottom:12px;">Guardar</button>
+
+            <div style="padding-top:10px; border-top:1px solid rgba(255,255,255,0.06);">
+                <div style="font-size:10px; font-weight:600; color:#8696a0; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Push</div>
+                <button id="btnPushToggle" onclick="togglePushSubscription()" style="width:100%; padding:7px; background:#25d366; color:#fff; border:none; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;"><i class="fa-solid fa-bell" style="font-size:9px;"></i> Activar</button>
             </div>
         </div>
 
@@ -131,39 +130,117 @@
     <div class="main-content">
         <!-- VISTA DE CRÉDITOS -->
         <div id="creditsView" style="display: none;">
-            <h2 style="margin:0 0 12px; font-size:16px; font-weight:800; color:#0d2536;">Créditos</h2>
-            <div class="admin-card" style="max-width: 520px;">
-                <div style="margin-bottom: 16px;">
-                    <label style="display:block; margin-bottom: 6px; font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.5px;">Correo del Cliente</label>
-                    <input type="email" id="creditEmail" placeholder="cliente@ejemplo.com">
+            <div style="max-width:500px;">
+                <!-- Header -->
+                <div style="background:#111b21; border-radius:12px; padding:20px 18px; margin-bottom:12px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                        <div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-coins" style="font-size:15px; color:#fff;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:14px; font-weight:600; color:#e9edef;">Recargar Créditos</div>
+                            <div style="font-size:10px; color:#8696a0; font-weight:400;">Asigna créditos a un cliente</div>
+                        </div>
+                    </div>
+                    <label style="display:block; margin-bottom:6px; font-size:9px; text-transform:uppercase; color:#8696a0; font-weight:500; letter-spacing:0.5px;">Correo del cliente</label>
+                    <input type="email" id="creditEmail" placeholder="cliente@ejemplo.com" style="width:100%; padding:10px 12px; border:1px solid #2a3942; border-radius:8px; font-size:13px; color:#e9edef; background:#1f2c34; outline:none; box-sizing:border-box; font-family:'Roboto',sans-serif; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#2a3942'">
                 </div>
 
-                <div style="margin-bottom: 18px;">
-                    <label style="display:block; margin-bottom: 6px; font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; letter-spacing: 0.5px;">Cantidad de Créditos</label>
-                    <select id="creditAmount">
-                        <option value="10">+ 10 Créditos (S/ 10)</option>
-                        <option value="20">+ 20 Créditos (S/ 20)</option>
-                        <option value="35">+ 35 Créditos (S/ 35)</option>
-                        <option value="50">+ 50 Créditos (S/ 50)</option>
-                        <option value="100">+ 100 Créditos (S/ 100)</option>
-                        <option value="150">+ 150 Créditos (S/ 150)</option>
-                        <option value="200">+ 200 Créditos (S/ 200)</option>
-                        <option value="300">+ 300 Créditos (S/ 300)</option>
+                <!-- Paquetes rápidos -->
+                <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px 18px; margin-bottom:12px;">
+                    <label style="display:block; margin-bottom:10px; font-size:9px; text-transform:uppercase; color:#6b7280; font-weight:500; letter-spacing:0.5px;">Selecciona el paquete</label>
+                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;" id="creditPackages">
+                        <div onclick="selectCreditPack(this, 5)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
+                            <div style="font-size:18px; font-weight:600; color:#111b21;">5</div>
+                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">S/ 5</div>
+                        </div>
+                        <div onclick="selectCreditPack(this, 10)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
+                            <div style="font-size:18px; font-weight:600; color:#111b21;">10</div>
+                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">S/ 10</div>
+                        </div>
+                        <div onclick="selectCreditPack(this, 20)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
+                            <div style="font-size:18px; font-weight:600; color:#111b21;">20</div>
+                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">S/ 20</div>
+                        </div>
+                        <div onclick="selectCreditPack(this, 35)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
+                            <div style="font-size:18px; font-weight:600; color:#111b21;">35</div>
+                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">S/ 35</div>
+                        </div>
+                        <div onclick="selectCreditPack(this, 50)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
+                            <div style="font-size:18px; font-weight:600; color:#111b21;">50</div>
+                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">S/ 50</div>
+                        </div>
+                        <div onclick="selectCreditPack(this, 100)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
+                            <div style="font-size:18px; font-weight:600; color:#111b21;">100</div>
+                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">S/ 100</div>
+                        </div>
+                    </div>
+                    <!-- Select oculto para compatibilidad -->
+                    <select id="creditAmount" style="display:none;">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="35">35</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
                     </select>
                 </div>
 
-                <button onclick="addCredits()" style="width:100%; padding:13px; background:#0d2536; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer; transition:0.2s; font-size:13px; display:flex; align-items:center; justify-content:center; gap:8px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
-                    <i class="fa-solid fa-circle-check"></i> Confirmar Recarga
+                <!-- Monto personalizado -->
+                <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px 18px; margin-bottom:16px;">
+                    <label style="display:block; margin-bottom:6px; font-size:9px; text-transform:uppercase; color:#6b7280; font-weight:500; letter-spacing:0.5px;">O ingresa monto personalizado</label>
+                    <input type="number" id="creditCustom" placeholder="Ej: 75" min="1" style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; font-family:'Roboto',sans-serif; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'; deselectAllPacks();" onblur="this.style.borderColor='#e5e7eb'">
+                </div>
+
+                <!-- Botón -->
+                <button onclick="processCredit()" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-weight:600; cursor:pointer; transition:background 0.2s; font-size:13px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                    <i class="fa-solid fa-circle-check" style="font-size:13px;"></i> Confirmar Recarga
                 </button>
             </div>
+
+            <script>
+                var selectedPack = 10;
+                function selectCreditPack(el, val) {
+                    selectedPack = val;
+                    document.getElementById('creditAmount').value = val;
+                    document.getElementById('creditCustom').value = '';
+                    document.querySelectorAll('.credit-pack').forEach(function(p) {
+                        p.style.borderColor = '#e5e7eb';
+                        p.style.background = 'transparent';
+                    });
+                    el.style.borderColor = '#25d366';
+                    el.style.background = 'rgba(37,211,102,0.06)';
+                }
+                function deselectAllPacks() {
+                    document.querySelectorAll('.credit-pack').forEach(function(p) {
+                        p.style.borderColor = '#e5e7eb';
+                        p.style.background = 'transparent';
+                    });
+                }
+                function processCredit() {
+                    var custom = document.getElementById('creditCustom').value;
+                    if (custom && parseInt(custom) > 0) {
+                        document.getElementById('creditAmount').value = custom;
+                        var sel = document.getElementById('creditAmount');
+                        var exists = false;
+                        for (var i = 0; i < sel.options.length; i++) {
+                            if (sel.options[i].value == custom) { exists = true; sel.selectedIndex = i; break; }
+                        }
+                        if (!exists) {
+                            sel.innerHTML += '<option value="' + custom + '" selected>' + custom + '</option>';
+                        }
+                    }
+                    addCredits();
+                }
+            </script>
         </div>
 
         <!-- VISTA DE SOLICITUDES -->
         <div id="requestsView" class="requests-panel">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-                <h2 style="margin:0; font-size:16px; font-weight:800; color:#0d2536;">Solicitudes</h2>
-                <button onclick="promptDeleteAllRequests()" style="display:flex; align-items:center; gap:4px; padding:5px 10px; font-size:10px; font-weight:700; border-radius:6px; border:1px solid #fecaca; background:#fef2f2; color:#b91c1c; cursor:pointer; transition:0.2s;" title="Eliminar todas">
-                    <i class="fa-solid fa-trash" style="font-size:9px;"></i> Limpiar
+                <h2 style="margin:0; font-size:16px; font-weight:600; color:#111b21;">Solicitudes</h2>
+                <button onclick="promptDeleteAllRequests()" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; border:1px solid #e5e7eb; background:#ffffff; color:#ef4444; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#ef4444'" onmouseout="this.style.borderColor='#e5e7eb'" title="Eliminar pendientes">
+                    <i class="fa-solid fa-trash" style="font-size:12px;"></i> Limpiar
                 </button>
             </div>
             <div id="requestsList" class="request-list">
@@ -174,9 +251,9 @@
         <!-- VISTA DE HISTORIAL -->
         <div id="historyView" class="requests-panel" style="display: none;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-                <h2 style="margin:0; font-size:16px; font-weight:800; color:#0d2536;">Historial</h2>
-                <button type="button" id="btnClearHistory" onclick="promptDeleteAllHistory()" style="display:flex; align-items:center; gap:4px; padding:5px 10px; font-size:10px; font-weight:700; border-radius:6px; border:1px solid #fecaca; background:#fef2f2; color:#b91c1c; cursor:pointer; transition:0.2s;" title="Eliminar todo el historial">
-                    <i class="fa-solid fa-trash" style="font-size:9px;"></i> Limpiar
+                <h2 style="margin:0; font-size:16px; font-weight:600; color:#111b21;">Historial</h2>
+                <button type="button" id="btnClearHistory" onclick="promptDeleteAllHistory()" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; border:1px solid #e5e7eb; background:#ffffff; color:#ef4444; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#ef4444'" onmouseout="this.style.borderColor='#e5e7eb'" title="Vaciar historial">
+                    <i class="fa-solid fa-trash" style="font-size:12px;"></i> Limpiar
                 </button>
             </div>
             <div id="historyList" class="request-list">
@@ -187,13 +264,13 @@
         <!-- VISTA DE USUARIOS -->
         <div id="usersView" class="requests-panel" style="display: none;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-                <h2 style="margin:0; font-size:16px; font-weight:800; color:#0d2536;">Usuarios</h2>
-                <div style="display:flex; gap:6px;">
-                    <button onclick="exportUsersToExcel()" style="display:flex; align-items:center; gap:4px; padding:5px 10px; font-size:10px; font-weight:700; border-radius:6px; border:1px solid #e2e8f0; background:#f8fafc; color:#0d2536; cursor:pointer; transition:0.2s;" title="Exportar contactos">
-                        <i class="fa-solid fa-download" style="font-size:9px;"></i> Exportar
+                <h2 style="margin:0; font-size:16px; font-weight:600; color:#111b21;">Usuarios</h2>
+                <div style="display:flex; gap:8px;">
+                    <button onclick="exportUsersToExcel()" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; border:1px solid #e5e7eb; background:#ffffff; color:#111b21; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'" title="Exportar contactos">
+                        <i class="fa-solid fa-download" style="font-size:12px; color:#25d366;"></i> Exportar
                     </button>
-                    <button onclick="deleteAllUsersCloud()" style="display:flex; align-items:center; gap:4px; padding:5px 10px; font-size:10px; font-weight:700; border-radius:6px; border:1px solid #fecaca; background:#fef2f2; color:#b91c1c; cursor:pointer; transition:0.2s;" title="Eliminar todos los usuarios">
-                        <i class="fa-solid fa-trash" style="font-size:9px;"></i> Limpiar
+                    <button onclick="deleteAllUsersCloud()" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; border:1px solid #e5e7eb; background:#ffffff; color:#ef4444; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#ef4444'" onmouseout="this.style.borderColor='#e5e7eb'" title="Eliminar todos">
+                        <i class="fa-solid fa-trash" style="font-size:12px;"></i> Limpiar
                     </button>
                 </div>
             </div>
@@ -204,7 +281,7 @@
         
         <!-- VISTA ACTIVAR ACCESO MANUAL -->
         <div id="accessView" class="requests-panel" style="display: none;">
-            <h2 style="margin:0 0 12px; font-size:16px; font-weight:800; color:#0d2536;">Activar Acceso</h2>
+            <h2 style="margin:0 0 12px; font-size:16px; font-weight:600; color:#111b21;">Activar Acceso</h2>
 
             <div class="admin-card" style="margin-bottom:16px; padding:18px;">
                 <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
@@ -212,10 +289,10 @@
                         <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Correo del cliente</label>
                         <input type="email" id="accessEmail" placeholder="cliente@gmail.com"
                             style="width:100%; padding:12px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none; transition:0.2s;"
-                            onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'"
+                            onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'"
                             onkeydown="if(event.key==='Enter') activarAccesoManual()">
                     </div>
-                    <button onclick="activarAccesoManual()" style="padding:12px 18px; background:#0d2536; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
+                    <button onclick="activarAccesoManual()" style="padding:12px 18px; background:#111b21; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                         <i class="fa-solid fa-check"></i> Activar
                     </button>
                 </div>
@@ -223,7 +300,7 @@
             </div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <div style="font-size:13px; font-weight:700; color:#0d2536;">Clientes activos</div>
+                <div style="font-size:13px; font-weight:700; color:#111b21;">Clientes activos</div>
                 <button onclick="renderAccessList()" style="background:#f8fafc; color:#64748b; border:1px solid #e2e8f0; border-radius:6px; padding:5px 10px; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
                     <i class="fa-solid fa-rotate" style="font-size:10px;"></i> Actualizar
                 </button>
@@ -238,47 +315,76 @@
             <!-- Header -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
                 <div>
-                    <h1 style="font-size:20px; font-weight:900; color:#0d2536; margin:0 0 2px;">Panel de Control</h1>
-                    <p style="font-size:11px; color:#94a3b8; margin:0; font-weight:500;">Auditoría y validación de solicitudes</p>
+                    <h1 style="font-size:16px; font-weight:600; color:#111b21; margin:0 0 2px;">Panel de Control</h1>
+                    <p style="font-size:11px; color:#6b7280; margin:0; font-weight:400;">Auditoría y validación de solicitudes</p>
                 </div>
                 <button class="btn-floating-save" onclick="saveReport()" title="Publicar">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                 </button>
             </div>
 
-            <!-- Bloque unificado: Placa + Fecha + Veredicto + Resumen -->
-            <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; margin-bottom:24px; overflow:hidden;">
-                <!-- Fila superior: Placa, Fecha -->
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0; border-bottom:1px solid #f1f5f9;">
-                    <!-- Placa -->
-                    <div style="padding:20px 24px; border-right:1px solid #f1f5f9;">
-                        <label style="display:block; font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px;">Placa</label>
-                        <input type="text" id="targetPlate" placeholder="ABC-123" style="width:100%; border:none; outline:none; font-size:24px; font-weight:900; text-transform:uppercase; color:#0d2536; letter-spacing:3px; background:transparent; padding:0;">
-                    </div>
-                    <!-- Fecha -->
-                    <div style="padding:20px 24px;">
-                        <label style="display:block; font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px;">Fecha</label>
-                        <input type="date" id="reportDate" style="width:100%; border:none; outline:none; font-size:14px; font-weight:600; color:#0d2536; background:transparent; padding:0; cursor:pointer;">
-                    </div>
+            <!-- Placa -->
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; margin-bottom:12px; padding:16px 20px;">
+                <div style="font-size:10px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Placa del vehículo</div>
+                <input type="text" id="targetPlate" placeholder="ABC-123" style="width:100%; border:none; outline:none; font-size:22px; font-weight:600; text-transform:uppercase; color:#111b21; letter-spacing:3px; background:transparent; padding:0; font-family:'Roboto',sans-serif;">
+            </div>
+
+            <!-- Fecha -->
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; margin-bottom:12px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                    <div style="font-size:10px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Fecha del reporte</div>
+                    <input type="text" id="reportDateDisplay" readonly style="border:none; outline:none; font-size:15px; font-weight:500; color:#111b21; background:transparent; padding:0; cursor:pointer; font-family:'Roboto',sans-serif;">
+                    <input type="date" id="reportDate" style="position:absolute; opacity:0; width:0; height:0;">
                 </div>
-                <!-- Semáforo oculto (usado internamente por loadVerdictTemplate) -->
-                <div id="globalStatus" style="display:none;">
-                    <div class="status-dot-btn active" data-status="ok"></div>
-                    <div class="status-dot-btn" data-status="wa"></div>
-                    <div class="status-dot-btn" data-status="ko"></div>
-                </div>
-                <!-- Fila inferior: Resumen Ejecutivo -->
-                <div style="padding:20px 24px;">
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-                        <label style="font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.8px; margin:0;">Resumen Ejecutivo</label>
-                        <div style="display:flex; gap:6px;">
-                            <button type="button" onclick="loadVerdictTemplate('ok')" style="background:#8bc34a; color:white; border:none; padding:5px 12px; border-radius:6px; font-size:10px; font-weight:800; cursor:pointer; text-transform:uppercase; transition:0.2s;">Verde</button>
-                            <button type="button" onclick="loadVerdictTemplate('wa')" style="background:#f59e0b; color:white; border:none; padding:5px 12px; border-radius:6px; font-size:10px; font-weight:800; cursor:pointer; text-transform:uppercase; transition:0.2s;">Ámbar</button>
-                            <button type="button" onclick="loadVerdictTemplate('ko')" style="background:#ef4444; color:white; border:none; padding:5px 12px; border-radius:6px; font-size:10px; font-weight:800; cursor:pointer; text-transform:uppercase; transition:0.2s;">Roja</button>
-                        </div>
+                <i class="fa-regular fa-calendar" style="font-size:16px; color:#25d366; cursor:pointer;" onclick="document.getElementById('reportDate').showPicker()"></i>
+            </div>
+            <script>
+                (function(){
+                    var d = new Date();
+                    var dd = String(d.getDate()).padStart(2,'0');
+                    var mm = String(d.getMonth()+1).padStart(2,'0');
+                    var yyyy = d.getFullYear();
+                    document.getElementById('reportDate').value = yyyy+'-'+mm+'-'+dd;
+                    document.getElementById('reportDateDisplay').value = dd+'/'+mm+'/'+yyyy;
+                    document.getElementById('reportDateDisplay').onclick = function(){ document.getElementById('reportDate').showPicker(); };
+                    document.getElementById('reportDate').onchange = function(){
+                        var v = this.value.split('-');
+                        document.getElementById('reportDateDisplay').value = v[2]+'/'+v[1]+'/'+v[0];
+                    };
+                })();
+            </script>
+
+            <!-- Resumen Ejecutivo -->
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; margin-bottom:20px; padding:16px 20px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                    <div style="font-size:10px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px;">Resumen Ejecutivo</div>
+                    <div id="verdictButtons" style="display:flex; gap:5px;">
+                        <button type="button" onclick="selectVerdict('ok')" id="btnVerdictOk" style="background:transparent; color:#25d366; border:2px solid #25d366; padding:5px 12px; border-radius:6px; font-size:9px; font-weight:600; cursor:pointer; transition:all 0.15s;">Verde</button>
+                        <button type="button" onclick="selectVerdict('wa')" id="btnVerdictWa" style="background:transparent; color:#f59e0b; border:2px solid #f59e0b; padding:5px 12px; border-radius:6px; font-size:9px; font-weight:600; cursor:pointer; transition:all 0.15s;">Ámbar</button>
+                        <button type="button" onclick="selectVerdict('ko')" id="btnVerdictKo" style="background:transparent; color:#ef4444; border:2px solid #ef4444; padding:5px 12px; border-radius:6px; font-size:9px; font-weight:600; cursor:pointer; transition:all 0.15s;">Roja</button>
                     </div>
-                    <textarea id="verdictText" rows="3" placeholder="Ej: Vehículo en excelentes condiciones legales. Sin deudas pendientes en Lima ni Callao..." style="width:100%; border:1px solid #e2e8f0; border-radius:10px; padding:12px 14px; font-size:13px; font-family:inherit; color:#334155; resize:vertical; outline:none; transition:border-color 0.2s; line-height:1.6;" onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'"></textarea>
+                    <script>
+                        function selectVerdict(type) {
+                            var btns = {ok: document.getElementById('btnVerdictOk'), wa: document.getElementById('btnVerdictWa'), ko: document.getElementById('btnVerdictKo')};
+                            var colors = {ok:'#25d366', wa:'#f59e0b', ko:'#ef4444'};
+                            for (var k in btns) {
+                                btns[k].style.background = 'transparent';
+                                btns[k].style.color = colors[k];
+                            }
+                            btns[type].style.background = colors[type];
+                            btns[type].style.color = '#ffffff';
+                            loadVerdictTemplate(type);
+                        }
+                    </script>
                 </div>
+                <textarea id="verdictText" rows="3" placeholder="Ej: Vehículo en excelentes condiciones legales. Sin deudas pendientes en Lima ni Callao..." style="width:100%; border:1px solid #e5e7eb; border-radius:8px; padding:10px 12px; font-size:12px; font-family:'Roboto',sans-serif; color:#111b21; background:#f9fafb; resize:vertical; outline:none; transition:border-color 0.2s; line-height:1.6; box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+            </div>
+
+            <!-- Semáforo oculto -->
+            <div id="globalStatus" style="display:none;">
+                <div class="status-dot-btn active" data-status="ok"></div>
+                <div class="status-dot-btn" data-status="wa"></div>
+                <div class="status-dot-btn" data-status="ko"></div>
             </div>
 
             <!-- Grid de categorías (acordeón) -->
@@ -310,8 +416,8 @@
     <div id="printModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 999999; align-items: center; justify-content: center; padding: 20px;">
         <div style="background: white; width: 100%; max-width: 950px; max-height: 90vh; overflow-y: auto; border-radius: 12px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
             <div style="padding: 22px 28px; border-bottom: 2px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 10;">
-                <h3 style="margin: 0; color: #0d2536; font-size: 18px; font-weight: 800; letter-spacing: 0.3px;">Vista Previa del Certificado</h3>
-                <button onclick="cerrarPrintModal()" style="background: transparent; border: none; font-size: 28px; color: #94a3b8; cursor: pointer; padding: 0; width: 38px; height: 38px; transition: all 0.2s;" onmouseover="this.style.color='#0d2536'; this.style.transform='scale(1.1)'" onmouseout="this.style.color='#94a3b8'; this.style.transform='scale(1)'">
+                <h3 style="margin: 0; color: #111b21; font-size: 18px; font-weight: 800; letter-spacing: 0.3px;">Vista Previa del Certificado</h3>
+                <button onclick="cerrarPrintModal()" style="background: transparent; border: none; font-size: 28px; color: #94a3b8; cursor: pointer; padding: 0; width: 38px; height: 38px; transition: all 0.2s;" onmouseover="this.style.color='#111b21'; this.style.transform='scale(1.1)'" onmouseout="this.style.color='#94a3b8'; this.style.transform='scale(1)'">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>

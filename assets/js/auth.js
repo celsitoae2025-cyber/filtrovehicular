@@ -9,8 +9,9 @@ function _isAdmin(email, pass) {
 }
 
 async function initAuth() {
-    // Modo premium: entrar directo sin login
-    currentUser = { email: 'premium@filtrovehicular.com', nombre: 'Usuario Premium' };
+    // Modo premium: entrar directo con cuenta admin real
+    currentUser = { email: 'juandevillar80@gmail.com', nombre: 'Usuario Premium' };
+    localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
     window.plataformaActiva = true;
     window.dashboardActivo = true;
     hideLoginScreen();
@@ -123,7 +124,7 @@ function renderLoggedOutState() {
     nav.innerHTML = `
         <div style="display:flex;align-items:center;gap:10px;">
             <button type="button" class="btn-header-login" id="mainAuthBtn" onclick="openAuthModal()" title="Entrar" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:#ffffff;border:none;cursor:pointer;">
-                <i class="fa-solid fa-user" aria-hidden="true" style="color:#0d2536;font-size:16px;"></i>
+                <i class="fa-solid fa-user" aria-hidden="true" style="color:#111b21;font-size:16px;"></i>
             </button>
         </div>
     `;
@@ -188,10 +189,10 @@ async function renderLoggedInState() {
                 <div style="background:#ffffff;width:100%;max-width:420px;border-radius:20px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(13,37,54,0.15),0 0 0 1px rgba(13,37,54,0.06);margin:auto;">
 
                     <!-- Header navy -->
-                    <div style="background:linear-gradient(135deg,#0d2536 0%,#1a3a52 100%);padding:30px 24px 24px;text-align:center;position:relative;">
+                    <div style="background:linear-gradient(135deg,#111b21 0%,#1f2c34 100%);padding:30px 24px 24px;text-align:center;position:relative;">
                         <button onclick="document.getElementById('profileClienteModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;color:rgba(255,255,255,0.35);cursor:pointer;transition:0.2s;padding:4px;line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.35)'"><i class="fa-solid fa-xmark"></i></button>
                         <div style="width:60px;height:60px;border-radius:50%;background:rgba(139,195,74,0.12);border:2px solid rgba(139,195,74,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
-                            <i class="fa-solid fa-user" style="font-size:22px;color:#8bc34a;"></i>
+                            <i class="fa-solid fa-user" style="font-size:22px;color:#25d366;"></i>
                         </div>
                         <h3 style="font-size:18px;color:#ffffff;margin:0 0 4px;font-weight:800;" id="profName">Nombre</h3>
                         <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:0;font-weight:500;" id="profEmail">correo@ejemplo.com</p>
@@ -206,20 +207,20 @@ async function renderLoggedInState() {
                             <div style="display:flex;flex-direction:column;gap:0;">
                                 <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;">
                                     <div style="width:32px;height:32px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                        <i class="fa-solid fa-user-tag" style="color:#0d2536;font-size:12px;"></i>
+                                        <i class="fa-solid fa-user-tag" style="color:#111b21;font-size:12px;"></i>
                                     </div>
                                     <div style="flex:1;min-width:0;">
                                         <div style="font-size:10px;color:#94a3b8;font-weight:500;">Nombre completo</div>
-                                        <div style="font-size:13px;color:#0d2536;font-weight:700;" id="profNameField">---</div>
+                                        <div style="font-size:13px;color:#111b21;font-weight:700;" id="profNameField">---</div>
                                     </div>
                                 </div>
                                 <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
                                     <div style="width:32px;height:32px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                        <i class="fa-solid fa-envelope" style="color:#0d2536;font-size:12px;"></i>
+                                        <i class="fa-solid fa-envelope" style="color:#111b21;font-size:12px;"></i>
                                     </div>
                                     <div style="flex:1;min-width:0;">
                                         <div style="font-size:10px;color:#94a3b8;font-weight:500;">Correo electrónico</div>
-                                        <div style="font-size:13px;color:#0d2536;font-weight:700;word-break:break-all;" id="profEmailField">---</div>
+                                        <div style="font-size:13px;color:#111b21;font-weight:700;word-break:break-all;" id="profEmailField">---</div>
                                     </div>
                                     <div style="width:22px;height:22px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Correo verificado">
                                         <i class="fa-solid fa-check" style="color:#22c55e;font-size:10px;"></i>
@@ -234,27 +235,27 @@ async function renderLoggedInState() {
                             <div id="profChangePassSection">
                                 <button onclick="toggleChangePassword()" id="btnTogglePass" style="width:100%;padding:12px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:0.2s;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
                                     <div style="width:32px;height:32px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                        <i class="fa-solid fa-lock" style="color:#0d2536;font-size:12px;"></i>
+                                        <i class="fa-solid fa-lock" style="color:#111b21;font-size:12px;"></i>
                                     </div>
-                                    <span style="font-size:13px;color:#0d2536;font-weight:600;flex:1;text-align:left;">Cambiar contraseña</span>
+                                    <span style="font-size:13px;color:#111b21;font-weight:600;flex:1;text-align:left;">Cambiar contraseña</span>
                                     <i class="fa-solid fa-chevron-right" style="color:#cbd5e1;font-size:11px;"></i>
                                 </button>
                                 <div id="changePassForm" style="display:none;margin-top:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
                                     <div style="margin-bottom:10px;">
                                         <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Contraseña actual</label>
-                                        <input type="password" id="profCurrentPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'">
+                                        <input type="password" id="profCurrentPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
                                     </div>
                                     <div style="margin-bottom:10px;">
                                         <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Nueva contraseña</label>
-                                        <input type="password" id="profNewPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'">
+                                        <input type="password" id="profNewPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
                                     </div>
                                     <div style="margin-bottom:12px;">
                                         <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Confirmar nueva contraseña</label>
-                                        <input type="password" id="profConfirmPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'">
+                                        <input type="password" id="profConfirmPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
                                     </div>
                                     <div id="profPassError" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#dc2626;font-weight:600;"></div>
                                     <div id="profPassSuccess" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#15803d;font-weight:600;"></div>
-                                    <button onclick="handleChangePassword()" style="width:100%;padding:10px;background:#0d2536;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
+                                    <button onclick="handleChangePassword()" style="width:100%;padding:10px;background:#111b21;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                                         Actualizar contraseña
                                     </button>
                                 </div>
@@ -264,12 +265,12 @@ async function renderLoggedInState() {
                         <!-- Panel Admin (solo para admin) -->
                         ${isAdminEmail ? `
                         <div style="margin-bottom:18px;">
-                            <button onclick="window.location.href='admin.html'" style="width:100%;padding:14px 16px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:0.2s;" onmouseover="this.style.borderColor='#0d2536';this.style.background='#ffffff'" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc'">
-                                <div style="width:32px;height:32px;background:linear-gradient(135deg,#0d2536,#1a3a52);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="fa-solid fa-shield-halved" style="color:#8bc34a;font-size:13px;"></i>
+                            <button onclick="window.location.href='admin.html'" style="width:100%;padding:14px 16px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:0.2s;" onmouseover="this.style.borderColor='#111b21';this.style.background='#ffffff'" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc'">
+                                <div style="width:32px;height:32px;background:linear-gradient(135deg,#111b21,#1f2c34);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="fa-solid fa-shield-halved" style="color:#25d366;font-size:13px;"></i>
                                 </div>
                                 <div style="flex:1;text-align:left;">
-                                    <div style="font-size:13px;color:#0d2536;font-weight:700;">Panel Administrador</div>
+                                    <div style="font-size:13px;color:#111b21;font-weight:700;">Panel Administrador</div>
                                     <div style="font-size:10px;color:#94a3b8;font-weight:500;">Acceso completo al sistema</div>
                                 </div>
                                 <i class="fa-solid fa-chevron-right" style="color:#cbd5e1;font-size:12px;"></i>
@@ -366,7 +367,7 @@ async function renderLoggedInState() {
     nav.innerHTML = `
         <div style="display: flex; align-items: center; gap: 6px;">
             <div class="auth-user-greeting">
-                Hola, <span style="color:#111b21; font-weight:600;">${displayName}</span>
+                Hola, <span style="color:#25d366; font-weight:600;">${displayName}</span>
             </div>
             <div class="dropdown" id="userDropdown">
                 <div class="dropdown-trigger" onclick="toggleDropdown(event)" style="position:relative; background:#ffffff; border:1px solid #e5e7eb;">
@@ -727,7 +728,7 @@ function updateAuthInterface() {
         var lastNameGroup = document.getElementById('lastNameGroup');
         if (lastNameGroup) lastNameGroup.style.display = 'none';
         if (wppGroup) wppGroup.style.display = 'none';
-        toggleLink.innerHTML = '¿No tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #0d2536; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#8bc34a\';" onmouseout="this.style.color=\'#0d2536\';"> Regístrate aquí</span>';
+        toggleLink.innerHTML = '¿No tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #111b21; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#25d366\';" onmouseout="this.style.color=\'#111b21\';"> Regístrate aquí</span>';
     } else {
         // Modo Registro
         title.innerText = 'Crear mi Cuenta';
@@ -738,7 +739,7 @@ function updateAuthInterface() {
         if (lastNameGroup) lastNameGroup.style.display = 'block';
         if (wppGroup) wppGroup.style.display = 'block';
         if (passwordGroup) passwordGroup.style.display = 'block';
-        toggleLink.innerHTML = '¿Ya tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #0d2536; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#8bc34a\';" onmouseout="this.style.color=\'#0d2536\';"> Inicia Sesión</span>';
+        toggleLink.innerHTML = '¿Ya tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #111b21; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#25d366\';" onmouseout="this.style.color=\'#111b21\';"> Inicia Sesión</span>';
     }
 }
 
@@ -902,7 +903,7 @@ async function handleAuthSubmit() {
             // Si hay enlace de grupo configurado, agregar botón de unirse al grupo
             if (whatsappGroupLink) {
                 groupButtonHtml = `
-                    <a href="${whatsappGroupLink}" target="_blank" id="joinGroupBtn" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+                    <a href="${whatsappGroupLink}" target="_blank" id="joinGroupBtn" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
                         <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Unirse al Grupo de Clientes
                     </a>`;
             }
@@ -914,13 +915,13 @@ async function handleAuthSubmit() {
                         @keyframes scaleUpAlert { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
                     </style>
                     <div style="background: #ffffff; width: 90%; max-width: 420px; border-radius: 20px; padding: 35px 30px; text-align: center; animation: scaleUpAlert 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;">
-                        <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
+                        <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #25d366 0%, #1ebe5d 100%); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
                             <i class="fa-solid fa-circle-check"></i>
                         </div>
-                        <h3 style="font-size: 22px; color: #0d2536; margin: 0 0 12px; font-weight: 900; letter-spacing: -0.5px;">¡Cuenta Creada Exitosamente!</h3>
-                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 28px; font-weight: 500;">Tu registro ha sido recibido correctamente.<br><br>Para <b style="color: #0d2536;">activar tu cuenta</b> y comenzar a usar la plataforma, contacta a nuestro equipo de soporte por WhatsApp.<br><br><span style="color: #8bc34a; font-weight: 700;">Te responderemos en minutos.</span></p>
+                        <h3 style="font-size: 22px; color: #111b21; margin: 0 0 12px; font-weight: 900; letter-spacing: -0.5px;">¡Cuenta Creada Exitosamente!</h3>
+                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 28px; font-weight: 500;">Tu registro ha sido recibido correctamente.<br><br>Para <b style="color: #111b21;">activar tu cuenta</b> y comenzar a usar la plataforma, contacta a nuestro equipo de soporte por WhatsApp.<br><br><span style="color: #25d366; font-weight: 700;">Te responderemos en minutos.</span></p>
                         <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <a href="https://wa.me/51979334296?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(135deg, #8bc34a 0%, #7cb342 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+                            <a href="https://wa.me/51979334296?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(135deg, #25d366 0%, #1ebe5d 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
                                 <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Contactar por WhatsApp
                             </a>
                             ${groupButtonHtml}
@@ -1086,25 +1087,25 @@ function openChangePasswordModal() {
     modal.innerHTML = '<div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:28px 24px;box-shadow:0 25px 60px rgba(0,0,0,0.15);border:1px solid #e2e8f0;">' +
         '<div style="text-align:center;margin-bottom:20px;">' +
             '<div style="width:50px;height:50px;border-radius:50%;background:#eff6ff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><i class="fa-solid fa-key" style="font-size:20px;color:#3b82f6;"></i></div>' +
-            '<h3 style="font-size:17px;font-weight:900;color:#0d2536;margin:0 0 4px;">Cambiar Contraseña</h3>' +
+            '<h3 style="font-size:17px;font-weight:900;color:#111b21;margin:0 0 4px;">Cambiar Contraseña</h3>' +
             '<p style="font-size:12px;color:#94a3b8;margin:0;">Ingresa tu contraseña actual y la nueva</p>' +
         '</div>' +
         '<div style="margin-bottom:14px;">' +
             '<label style="display:block;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Contraseña actual</label>' +
-            '<input type="password" id="cpCurrentPass" placeholder="Tu contraseña actual" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#0d2536\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
+            '<input type="password" id="cpCurrentPass" placeholder="Tu contraseña actual" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#111b21\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
         '</div>' +
         '<div style="margin-bottom:14px;">' +
             '<label style="display:block;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Nueva contraseña</label>' +
-            '<input type="password" id="cpNewPass" placeholder="Mínimo 6 caracteres" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#0d2536\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
+            '<input type="password" id="cpNewPass" placeholder="Mínimo 6 caracteres" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#111b21\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
         '</div>' +
         '<div style="margin-bottom:18px;">' +
             '<label style="display:block;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Confirmar nueva contraseña</label>' +
-            '<input type="password" id="cpConfirmPass" placeholder="Repite la nueva contraseña" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#0d2536\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
+            '<input type="password" id="cpConfirmPass" placeholder="Repite la nueva contraseña" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#111b21\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
         '</div>' +
         '<div id="cpError" style="display:none;margin-bottom:14px;padding:10px 12px;background:#fef2f2;color:#b91c1c;border-radius:10px;font-size:12px;font-weight:600;"></div>' +
         '<div style="display:flex;gap:10px;">' +
             '<button onclick="document.getElementById(\'changePassModal\').remove()" style="flex:1;padding:13px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">Cancelar</button>' +
-            '<button onclick="submitChangePassword()" id="cpSubmitBtn" style="flex:1;padding:13px;background:#0d2536;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;">Guardar</button>' +
+            '<button onclick="submitChangePassword()" id="cpSubmitBtn" style="flex:1;padding:13px;background:#111b21;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;">Guardar</button>' +
         '</div>' +
     '</div>';
 

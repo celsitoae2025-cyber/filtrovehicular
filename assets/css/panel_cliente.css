@@ -1,12 +1,12 @@
 :root {
-            --bg-light: #f8fafc;
+            --bg-light: #ffffff;
             --white: #ffffff;
-            --text-primary: #0d2536;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-            --brand-green: #8bc34a;
-            --brand-navy: #0d2536;
-            --success: #10b981;
+            --text-primary: #111b21;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --brand-green: #25d366;
+            --brand-navy: #111b21;
+            --success: #25d366;
             --warning: #f59e0b;
         }
 
@@ -23,7 +23,6 @@
             background-color: var(--bg-light);
             display: flex;
             flex-direction: column;
-            align-items: center;
             min-height: 100vh;
             margin: 0;
             position: relative;
@@ -32,18 +31,18 @@
         /* HEADER (IGUAL AL INDEX.HTML) */
         .site-header {
             width: 100%;
-            padding: 20px 0;
-            background: #0d2536;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 14px 0;
+            background: #1f2c34;
+            border-bottom: 1px solid #2a3942;
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
         .header-content {
-            max-width: 1100px;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -83,67 +82,68 @@
 
         .logo-plus {
             font-size: 9px;
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            color: #25d366;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            margin: 1px -4px 0 0;
+            letter-spacing: 3px;
+            margin: 2px -4px 0 0;
             padding: 0;
         }
 
         /* APP CONTAINER */
         .app-container {
             width: 100%;
-            max-width: 800px;
             flex: 1;
-            padding: 0 14px 20px;
+            padding: 0 0 40px;
             display: flex;
             flex-direction: column;
         }
 
         .dashboard-header {
-            background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
-            margin: 0 -14px;
-            padding: 24px 24px 20px;
+            background: #111b21;
+            width: 100%;
+            padding: 20px 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 18px;
+            margin-bottom: 0;
         }
 
         .dashboard-title {
-            font-size: 18px;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: -0.3px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #e9edef;
+            letter-spacing: 0.2px;
         }
 
         .btn-nuevo {
-            background: rgba(255, 255, 255, 0.1);
+            background: #25d366;
             color: #ffffff;
-            padding: 9px 16px;
-            border-radius: 10px;
-            font-weight: 700;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
             font-size: 11px;
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: background 0.2s ease;
+            border: none;
         }
 
         .btn-nuevo:hover {
-            background: rgba(255, 255, 255, 0.18);
+            background: #1ebe5d;
         }
 
         /* CARDS DE CONSULTAS */
         .consultas-grid {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
+            width: 100%;
+            padding: 24px 28px;
         }
 
         .consulta-card {
@@ -154,15 +154,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: all 0.2s ease;
+            transition: border-color 0.2s ease;
             gap: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
         }
 
         .consulta-card:hover {
-            border-color: #cbd5e1;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-            transform: translateY(-1px);
+            border-color: #25d366;
         }
 
         .c-info {
@@ -176,7 +173,7 @@
         .c-icon {
             width: 38px;
             height: 38px;
-            background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
+            background: #25d366;
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -195,8 +192,8 @@
         }
 
         .c-placa {
-            font-size: 14px;
-            font-weight: 800;
+            font-size: 13px;
+            font-weight: 700;
             color: var(--brand-navy);
             letter-spacing: 0.5px;
             text-transform: uppercase;
@@ -208,7 +205,7 @@
         .c-fecha {
             font-size: 11px;
             color: var(--text-secondary);
-            font-weight: 500;
+            font-weight: 400;
         }
 
         .c-status {
@@ -234,23 +231,22 @@
         .btn-ver {
             background: var(--brand-navy);
             color: white;
-            padding: 8px 14px;
+            padding: 7px 12px;
             border-radius: 8px;
-            font-weight: 700;
+            font-weight: 600;
             font-size: 11px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
+            gap: 5px;
+            transition: background 0.2s ease;
             border: none;
             cursor: pointer;
             white-space: nowrap;
         }
 
         .btn-ver:hover {
-            background: #15324d;
-            box-shadow: 0 3px 8px rgba(13, 37, 54, 0.2);
+            background: #1f2c34;
         }
 
         .btn-descargar {
@@ -262,7 +258,6 @@
 
         .btn-descargar:hover {
             background: #dc2626;
-            box-shadow: 0 3px 8px rgba(239, 68, 68, 0.3);
         }
 
         .btn-ver-disabled {
@@ -296,6 +291,12 @@
             }
             .c-placa {
                 font-size: 13px;
+            }
+            .consultas-grid {
+                padding: 18px 14px;
+            }
+            .dashboard-header {
+                padding: 20px 14px 16px;
             }
         }
 
@@ -337,7 +338,7 @@
             min-width: 250px;
             border-radius: 14px;
             padding: 0;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            box-shadow: none;
             border: 1px solid #e2e8f0;
             opacity: 0;
             visibility: hidden;
@@ -354,7 +355,7 @@
             align-items: center;
             gap: 10px;
             padding: 11px 20px;
-            color: #0d2536;
+            color: #111b21;
             text-decoration: none;
             font-size: 13px;
             font-weight: 600;
@@ -403,31 +404,31 @@
             from { opacity: 0; transform: scale(0.9) translateY(20px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
-        .plans-main-title { font-size: 24px; font-weight: 900; color: #0d2536; margin-bottom: 6px; letter-spacing: -0.3px; }
+        .plans-main-title { font-size: 24px; font-weight: 900; color: #111b21; margin-bottom: 6px; letter-spacing: -0.3px; }
         .plans-subtitle { font-size: 13px; color: #64748b; margin-bottom: 10px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.5; }
         .plans-credit-note { display: inline-flex; align-items: center; gap: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-bottom: 22px; }
         .plans-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
         @media (min-width: 768px) { .plans-grid { grid-template-columns: repeat(3, 1fr); align-items: stretch; } }
         .plan-card { background: #ffffff; border-radius: 14px; padding: 22px 18px; text-align: left; position: relative; display: flex; flex-direction: column; border: 2px solid #e2e8f0; transition: border-color 0.3s, box-shadow 0.3s; }
-        .plan-card:hover { border-color: #8bc34a; box-shadow: 0 6px 24px rgba(139,195,74,0.15); }
-        .plan-card.destacado { border: 2px solid #8bc34a; box-shadow: 0 8px 30px rgba(139,195,74,0.2); }
+        .plan-card:hover { border-color: #25d366; box-shadow: none; }
+        .plan-card.destacado { border: 2px solid #25d366; box-shadow: none; }
         @media (max-width: 767px) { .plans-container { padding-top: 10px; } .close-plans-btn { position: relative !important; float: right; top: 0 !important; margin-bottom: 10px; } }
         .plan-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); padding: 3px 12px; border-radius: 16px; font-size: 9px; font-weight: 800; white-space: nowrap; letter-spacing: 0.5px; text-transform: uppercase; }
         .plan-header { text-align: center; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
-        .plan-name { font-size: 16px; font-weight: 800; color: #0d2536; margin-bottom: 10px; }
-        .plan-price { font-size: 30px; font-weight: 900; color: #0d2536; line-height: 1; margin-bottom: 3px; }
+        .plan-name { font-size: 16px; font-weight: 800; color: #111b21; margin-bottom: 10px; }
+        .plan-price { font-size: 30px; font-weight: 900; color: #111b21; line-height: 1; margin-bottom: 3px; }
         .plan-price-sub { font-size: 11px; color: #94a3b8; font-weight: 500; }
         .plan-bonus { display: inline-flex; align-items: center; gap: 4px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 4px 10px; border-radius: 7px; font-size: 11px; font-weight: 700; margin-top: 8px; }
         .plan-total { text-align: center; margin-bottom: 14px; padding: 8px; background: #f8fafc; border-radius: 9px; border: 1px solid #e2e8f0; }
         .plan-total-label { font-size: 9px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-        .plan-total-value { font-size: 19px; font-weight: 900; color: #0d2536; }
-        .plan-total-value span { font-size: 11px; color: #8bc34a; font-weight: 700; }
+        .plan-total-value { font-size: 19px; font-weight: 900; color: #111b21; }
+        .plan-total-value span { font-size: 11px; color: #25d366; font-weight: 700; }
         .plan-features { list-style: none; padding: 0; margin-bottom: 16px; flex: 1; }
         .plan-features li { font-size: 11px; color: #334155; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 7px; line-height: 1.4; }
-        .plan-features li i { color: #8bc34a; margin-top: 2px; flex-shrink: 0; font-size: 10px; }
-        .btn-plan-action { width: 100%; padding: 11px; border-radius: 10px; font-weight: 800; font-size: 12px; text-align: center; cursor: pointer; transition: all 0.25s; background: #0d2536; color: #ffffff; border: none; margin-top: auto; letter-spacing: 0.3px; }
-        .btn-plan-action:hover { background: #15324d; box-shadow: 0 4px 15px rgba(13,37,54,0.3); }
-        .btn-plan-action.btn-green { background: #8bc34a; }
-        .btn-plan-action.btn-green:hover { background: #7cb342; box-shadow: 0 4px 15px rgba(139,195,74,0.35); }
+        .plan-features li i { color: #25d366; margin-top: 2px; flex-shrink: 0; font-size: 10px; }
+        .btn-plan-action { width: 100%; padding: 11px; border-radius: 10px; font-weight: 800; font-size: 12px; text-align: center; cursor: pointer; transition: all 0.25s; background: #111b21; color: #ffffff; border: none; margin-top: auto; letter-spacing: 0.3px; }
+        .btn-plan-action:hover { background: #1f2c34; box-shadow: none; }
+        .btn-plan-action.btn-green { background: #25d366; }
+        .btn-plan-action.btn-green:hover { background: #1ebe5d; box-shadow: none; }
         .close-plans-btn { position: absolute; top: 0; right: 0; font-size: 24px; color: #94a3b8; cursor: pointer; background: transparent; border: none; z-index: 1000; transition: 0.2s; }
-        .close-plans-btn:hover { color: #0d2536; }
+        .close-plans-btn:hover { color: #111b21; }

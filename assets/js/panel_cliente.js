@@ -130,14 +130,14 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
 
                 if (!myReqs || myReqs.length === 0) {
                     lista.innerHTML = `
-                        <div style="text-align:center; padding: 60px 20px; background: #ffffff; border-radius: 16px; border: 2px dashed #e2e8f0;">
-                            <div style="width:80px; height:80px; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
-                                <i class="fa-solid fa-folder-open" style="font-size: 32px; color: #94a3b8;"></i>
+                        <div style="text-align:center; padding: 50px 24px; background: #ffffff; border-radius: 14px; border: 1px solid #e5e7eb;">
+                            <div style="width:60px; height:60px; background:rgba(37,211,102,0.1); border-radius:14px; display:flex; align-items:center; justify-content:center; margin:0 auto 18px;">
+                                <i class="fa-solid fa-folder-open" style="font-size: 24px; color: #25d366;"></i>
                             </div>
-                            <h3 style="color: #0d2536; margin-bottom: 10px; font-size: 20px; font-weight: 800;">Aún no tienes consultas registradas</h3>
-                            <p style="color: #64748b; font-size: 14px; margin-bottom: 25px; max-width: 400px; margin-left: auto; margin-right: auto; line-height: 1.6;">Tus futuras verificaciones vehiculares aparecerán en este panel de forma segura.</p>
-                            <a href="index.html" class="btn-nuevo" style="display:inline-flex;">
-                                <i class="fa-solid fa-magnifying-glass"></i> Ir a consultar placa
+                            <h3 style="color: #111b21; margin-bottom: 8px; font-size: 16px; font-weight: 700;">Sin consultas registradas</h3>
+                            <p style="color: #6b7280; font-size: 13px; margin-bottom: 22px; max-width: 320px; margin-left: auto; margin-right: auto; line-height: 1.6; font-weight: 400;">Tus verificaciones vehiculares aparecerán aquí.</p>
+                            <a href="index.html" style="display:inline-flex; align-items:center; gap:6px; background:#25d366; color:#fff; padding:10px 20px; border-radius:10px; font-size:12px; font-weight:600; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                                <i class="fa-solid fa-magnifying-glass"></i> Nueva Consulta
                             </a>
                         </div>
                     `;
@@ -170,7 +170,7 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                     
                     const btnHtml = isCompletado 
                         ? `<button class="btn-ver btn-descargar" onclick="descargarReporte('${escAttr(item.placa)}', this)"><i class="fa-solid fa-file-arrow-down"></i> Descargar</button>`
-                        : `<button class="btn-ver btn-ver-disabled" disabled><i class="fa-solid fa-hourglass-half"></i> En Espera</button>`;
+                        : `<span style="display:inline-flex; align-items:center; gap:4px; padding:6px 12px; border-radius:8px; font-size:10px; font-weight:600; color:#6b7280; border:1px solid #e5e7eb;"><i class="fa-solid fa-hourglass-half" style="font-size:10px;"></i> En Espera</span>`;
 
                     return `
                         <div class="consulta-card">

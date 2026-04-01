@@ -32,24 +32,24 @@
                             var fullName = d.nombre_completo || ((d.nombres || '') + ' ' + (d.apellido_paterno || '') + ' ' + (d.apellido_materno || '')).trim();
                             result.innerHTML = `
                                 <div style="text-align:center; padding:6px 0 2px;">
-                                    <div style="font-size:16px; font-weight:800; color:#0d2536; margin-bottom:4px;">${esc(fullName)}</div>
+                                    <div style="font-size:16px; font-weight:800; color:#111b21; margin-bottom:4px;">${esc(fullName)}</div>
                                     <div style="font-size:12px; color:#94a3b8; font-weight:500; margin-bottom:12px;">DNI: ${esc(d.numero || dni)}${d.codigo_verificacion ? ' · Cód: ' + esc(d.codigo_verificacion) : ''}</div>
                                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                                         <div style="background:#f8fafc; border-radius:8px; padding:10px; text-align:left;">
                                             <div style="font-size:9px; color:#94a3b8; font-weight:600; text-transform:uppercase; margin-bottom:3px;">Nombres</div>
-                                            <div style="font-size:12px; color:#0d2536; font-weight:700;">${esc(d.nombres || '—')}</div>
+                                            <div style="font-size:12px; color:#111b21; font-weight:700;">${esc(d.nombres || '—')}</div>
                                         </div>
                                         <div style="background:#f8fafc; border-radius:8px; padding:10px; text-align:left;">
                                             <div style="font-size:9px; color:#94a3b8; font-weight:600; text-transform:uppercase; margin-bottom:3px;">Ap. Paterno</div>
-                                            <div style="font-size:12px; color:#0d2536; font-weight:700;">${esc(d.apellido_paterno || '—')}</div>
+                                            <div style="font-size:12px; color:#111b21; font-weight:700;">${esc(d.apellido_paterno || '—')}</div>
                                         </div>
                                         <div style="background:#f8fafc; border-radius:8px; padding:10px; text-align:left;">
                                             <div style="font-size:9px; color:#94a3b8; font-weight:600; text-transform:uppercase; margin-bottom:3px;">Ap. Materno</div>
-                                            <div style="font-size:12px; color:#0d2536; font-weight:700;">${esc(d.apellido_materno || '—')}</div>
+                                            <div style="font-size:12px; color:#111b21; font-weight:700;">${esc(d.apellido_materno || '—')}</div>
                                         </div>
                                         <div style="background:#f8fafc; border-radius:8px; padding:10px; text-align:left;">
                                             <div style="font-size:9px; color:#94a3b8; font-weight:600; text-transform:uppercase; margin-bottom:3px;">DNI</div>
-                                            <div style="font-size:12px; color:#0d2536; font-weight:700;">${esc(d.numero || dni)}</div>
+                                            <div style="font-size:12px; color:#111b21; font-weight:700;">${esc(d.numero || dni)}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
 
         const cats = [
             // ── VIP (de pago) ──
-            { icon: 'fa-file-lines', title: 'Historial Completo por Placa (PDF)', price: '10.00' },
+            { icon: 'fa-file-lines', title: 'Inscripción y Precio de Vehículo (PDF)', price: '10.00' },
             { icon: 'fa-building-columns', title: 'Boleta Informativa', price: '10.00' },
             { icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', price: '10.00' },
             { icon: 'fa-handcuffs', title: 'Denuncias y Órdenes de Captura', price: '10.00' },
@@ -227,7 +227,7 @@
                 title: 'SUNARP - Registros Públicos',
                 services: [
                     { icon: 'fa-id-card', title: 'Propiedad Vehicular SUNARP', desc: 'Consulta de titularidad del vehículo', link: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/' },
-                    { icon: 'fa-file-lines', title: 'Historial Completo por Placa', desc: 'Registro completo de transferencias', price: '10.00' },
+                    { icon: 'fa-file-lines', title: 'Inscripción y Precio de Vehículo', desc: 'Registro completo de transferencias', price: '10.00' },
                     { icon: 'fa-car-side', title: 'Cambio de Características', desc: 'Modificaciones al vehículo', price: '5.00' },
                     { icon: 'fa-users', title: 'Historial de Propietarios', desc: 'Lista completa de dueños', price: '5.00' },
                     { icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', desc: 'Tarjeta de identificación vehicular', price: '10.00' },
@@ -337,7 +337,7 @@
                 <div class="hook-card ${isFree ? 'hook-free' : 'hook-paid'}" onclick="handleServiceClick(${JSON.stringify(service).replace(/"/g, '&quot;')})">
                     <div class="hook-icon"><i class="fa-solid ${esc(service.icon)}"></i></div>
                     <div class="hook-text">${esc(service.title)}</div>
-                    ${isFree ? '' : '<div class="hook-vip"><i class="fa-solid fa-crown"></i></div>'}
+                    ${isFree ? '' : '<span class="hook-premium"></span>'}
                 </div>`;
             }).join('');
 
@@ -370,34 +370,33 @@
 
         function renderServicePlateModal(service) {
             return `
-                <div style="background:linear-gradient(135deg,#0d2536 0%,#1a3a52 100%); padding:28px 22px 22px; position:relative;">
-                    <button onclick="document.getElementById('infoModal').style.display='none';" style="position:absolute; top:14px; right:16px; background:none; border:none; font-size:18px; color:rgba(255,255,255,0.35); cursor:pointer; transition:0.2s; padding:4px; line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.35)'"><i class="fa-solid fa-xmark"></i></button>
-                    <div style="display:flex; align-items:center; gap:14px;">
-                        <div style="width:44px; height:44px; background:rgba(139,195,74,0.12); border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <i class="fa-solid ${esc(service.icon)}" style="font-size:18px; color:#8bc34a;"></i>
+                <div style="background:#111b21; padding:22px 22px 18px; position:relative;">
+                    <button onclick="document.getElementById('infoModal').style.display='none';" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#8696a0; cursor:pointer; padding:4px; line-height:1;"><i class="fa-solid fa-xmark"></i></button>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:40px; height:40px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="fa-solid ${esc(service.icon)}" style="font-size:17px; color:#fff;"></i>
                         </div>
                         <div style="flex:1; min-width:0;">
-                            <p style="font-size:15px; color:#ffffff; font-weight:800; margin:0; line-height:1.3;">${esc(service.title)}</p>
-                            ${service.desc ? `<p style="font-size:11px; color:rgba(255,255,255,0.4); font-weight:500; margin:3px 0 0; line-height:1.3;">${esc(service.desc)}</p>` : ''}
+                            <p style="font-size:14px; color:#e9edef; font-weight:700; margin:0; line-height:1.3;">${esc(service.title)}</p>
                         </div>
                     </div>
-                    <div style="margin-top:16px; background:rgba(255,255,255,0.06); border-radius:10px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between;">
-                        <div style="font-size:11px; color:rgba(255,255,255,0.5); font-weight:500;">Costo del servicio</div>
-                        <div style="font-size:24px; font-weight:900; color:#8bc34a;">S/ ${esc(service.price)}</div>
+                    <div style="margin-top:14px; background:rgba(255,255,255,0.06); border-radius:8px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between;">
+                        <span style="font-size:11px; color:#8696a0; font-weight:400;">Costo del servicio</span>
+                        <span style="font-size:20px; font-weight:700; color:#25d366;">S/ ${esc(service.price)}</span>
                     </div>
                 </div>
-                <div style="padding:24px 22px 22px;">
-                    <div style="margin-bottom:20px;">
-                        <label style="font-size:11px; color:#64748b; font-weight:600; display:block; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">Ingresa tu placa</label>
-                        <input type="text" id="servicePlateInput" placeholder="Ej: ABC-123" maxlength="10" style="width:100%; padding:14px 16px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:16px; font-weight:700; text-align:center; text-transform:uppercase; letter-spacing:2px; outline:none; transition:0.2s; box-sizing:border-box; font-family:'Roboto',sans-serif; color:#0d2536;" onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'">
+                <div style="padding:20px 22px 22px;">
+                    <div style="margin-bottom:16px;">
+                        <label style="font-size:9px; color:#6b7280; font-weight:600; display:block; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px;">Ingresa tu placa</label>
+                        <input type="text" id="servicePlateInput" placeholder="ABC-123" maxlength="10" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; text-align:center; text-transform:uppercase; letter-spacing:2px; outline:none; transition:border-color 0.2s; box-sizing:border-box; font-family:'Roboto',sans-serif; color:#111b21;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
                     </div>
-                    <button id="btnModalAction" onclick="processServicePayment('${escAttr(service.title)}', '${escAttr(service.price)}', '${escAttr(service.icon)}')" style="background:#0d2536; color:#fff; border:none; width:100%; height:48px; border-radius:12px; font-weight:700; cursor:pointer; font-size:13px; transition:0.2s; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
-                        <i class="fa-solid fa-bolt" style="font-size:13px;"></i> Consultar ahora
+                    <button id="btnModalAction" onclick="processServicePayment('${escAttr(service.title)}', '${escAttr(service.price)}', '${escAttr(service.icon)}')" style="background:#25d366; color:#fff; border:none; width:100%; padding:12px; border-radius:10px; font-weight:600; cursor:pointer; font-size:13px; transition:background 0.2s; margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                        <i class="fa-solid fa-magnifying-glass" style="font-size:12px;"></i> Consultar ahora
                     </button>
-                    <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(service.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-size:12px; font-weight:700; color:#0d2536; cursor:pointer; transition:all 0.2s; margin-bottom:10px; box-sizing:border-box;" onmouseover="this.style.borderColor='#25D366'; this.style.background='#f0fdf4'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'">
-                        <i class="fa-brands fa-whatsapp" style="font-size:16px; color:#25D366;"></i> Pagar por WhatsApp
+                    <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(service.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; font-size:12px; font-weight:600; color:#111b21; cursor:pointer; transition:border-color 0.2s; margin-bottom:8px; box-sizing:border-box;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
+                        <i class="fa-brands fa-whatsapp" style="font-size:15px; color:#25d366;"></i> Pagar por WhatsApp
                     </a>
-                    <button onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:11px; background:transparent; color:#94a3b8; border:none; border-radius:12px; font-size:12px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">Cancelar</button>
+                    <button onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:10px; background:transparent; color:#9ca3af; border:none; font-size:11px; font-weight:500; cursor:pointer;">Cancelar</button>
                 </div>
             `;
         }
@@ -450,43 +449,13 @@
                         const infoModal = document.getElementById('infoModal');
                         const infoContent = document.getElementById('infoContent');
                         if (infoModal && infoContent) {
-                            infoContent.innerHTML = `
-                                <div style="background:linear-gradient(135deg,#0d2536 0%,#1a3a52 100%); padding:28px 22px 22px; position:relative;">
-                                    <button onclick="document.getElementById('infoModal').style.display='none';" style="position:absolute; top:14px; right:16px; background:none; border:none; font-size:18px; color:rgba(255,255,255,0.35); cursor:pointer; transition:0.2s; padding:4px; line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.35)'"><i class="fa-solid fa-xmark"></i></button>
-                                    <div style="display:flex; align-items:center; gap:14px;">
-                                        <div style="width:44px; height:44px; background:rgba(139,195,74,0.12); border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                            <i class="fa-solid ${c.icon}" style="font-size:18px; color:#8bc34a;"></i>
-                                        </div>
-                                        <div style="flex:1; min-width:0;">
-                                            <p style="font-size:15px; color:#ffffff; font-weight:800; margin:0; line-height:1.3;">${c.title}</p>
-                                            ${c.desc ? `<p style="font-size:11px; color:rgba(255,255,255,0.4); font-weight:500; margin:3px 0 0; line-height:1.3;">${c.desc}</p>` : ''}
-                                        </div>
-                                    </div>
-                                    <div style="margin-top:16px; background:rgba(255,255,255,0.06); border-radius:10px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between;">
-                                        <div style="font-size:11px; color:rgba(255,255,255,0.5); font-weight:500;">Costo del servicio</div>
-                                        <div style="font-size:24px; font-weight:900; color:#8bc34a;">S/ ${c.price}</div>
-                                    </div>
-                                </div>
-                                <div style="padding:24px 22px 22px;">
-                                    <div style="margin-bottom:20px;">
-                                        <label style="font-size:11px; color:#64748b; font-weight:600; display:block; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">Ingresa tu placa</label>
-                                        <input type="text" id="modalPlateInput" placeholder="Ej: ABC-123" maxlength="10" style="width:100%; padding:14px 16px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:16px; font-weight:700; text-align:center; text-transform:uppercase; letter-spacing:2px; outline:none; transition:0.2s; box-sizing:border-box; font-family:'Roboto',sans-serif; color:#0d2536;" onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'">
-                                    </div>
-                                    <button id="btnModalAction" style="background:#0d2536; color:#fff; border:none; width:100%; height:48px; border-radius:12px; font-weight:700; cursor:pointer; font-size:13px; transition:0.2s; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:8px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
-                                        <i class="fa-solid fa-bolt" style="font-size:13px;"></i> Consultar ahora
-                                    </button>
-                                    <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(c.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-size:12px; font-weight:700; color:#0d2536; cursor:pointer; transition:all 0.2s; margin-bottom:10px; box-sizing:border-box;" onmouseover="this.style.borderColor='#25D366'; this.style.background='#f0fdf4'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'">
-                                        <i class="fa-brands fa-whatsapp" style="font-size:16px; color:#25D366;"></i> Pagar por WhatsApp
-                                    </a>
-                                    <button onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:11px; background:transparent; color:#94a3b8; border:none; border-radius:12px; font-size:12px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">Cancelar</button>
-                                </div>
-                            `;
+                            infoContent.innerHTML = renderServicePlateModal(c);
                             infoModal.style.display = 'flex';
 
-                            // Disparador del Botón dentro del modal
+                            // Reasignar botón para usar lógica de créditos
                             document.getElementById('btnModalAction').onclick = async () => {
-                                const plateIn = document.getElementById('modalPlateInput');
-                                if (!plateIn || plateIn.value.trim().length < 6) {
+                                const plateIn = document.getElementById('servicePlateInput');
+                                if (!plateIn || plateIn.value.trim().length < 5) {
                                     alert("Por favor, ingresa una placa válida.");
                                     return;
                                 }
@@ -602,7 +571,7 @@
                 };
                 
                 d.className = 'hook-card ' + (c.link ? 'hook-free' : 'hook-paid');
-                d.innerHTML = `<div class="hook-icon"><i class="fa-solid ${c.icon}"></i></div><div class="hook-text">${c.title}</div>${c.link ? '' : '<div class="hook-vip"><i class="fa-solid fa-crown"></i></div>'}`;
+                d.innerHTML = `<div class="hook-icon"><i class="fa-solid ${c.icon}"></i></div><div class="hook-text">${c.title}</div>${c.link ? '' : '<span class="hook-premium"></span>'}`;
                 hook.appendChild(d);
             });
         }
@@ -613,7 +582,7 @@
                     if(i.classList.contains('fa-lock')) {
                         i.classList.remove('fa-lock');
                         i.classList.add('fa-unlock');
-                        i.parentElement.style.color = '#8bc34a';
+                        i.parentElement.style.color = '#25d366';
                     }
                 });
             } else {
@@ -1074,7 +1043,7 @@
                 tab.classList.add('active');
                 tab.style.background = '#ffffff';
                 tab.style.boxShadow = '0 2px 8px rgba(13,37,54,0.08)';
-                tab.style.border = '2px solid #8bc34a';
+                tab.style.border = '2px solid #25d366';
                 tab.style.filter = 'grayscale(0)';
                 tab.style.opacity = '1';
             }
@@ -1185,9 +1154,9 @@
                                                 <div style="width: 50px; height: 50px; border-radius: 50%; background: #fef3c7; color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
                                                     <i class="fa-solid fa-rocket"></i>
                                                 </div>
-                                                <h3 style="font-size: 18px; color: #0d2536; margin: 0 0 6px; font-weight: 900;">¡Pago Enviado!</h3>
+                                                <h3 style="font-size: 18px; color: #111b21; margin: 0 0 6px; font-weight: 900;">¡Pago Enviado!</h3>
                                                 <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 20px;">El administrador validará tu pago de S/ 35 para activar tu plataforma completa en breve.</p>
-                                                <button onclick="document.getElementById('activacionAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #8bc34a; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
+                                                <button onclick="document.getElementById('activacionAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #25d366; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
                                             </div>
                                         </div>`;
                                     document.body.insertAdjacentHTML('beforeend', alertHtml);
@@ -1214,12 +1183,12 @@
                                     const alertHtml = `
                                         <div id="dashboardAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
                                             <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.25); border: 1px solid rgba(0,0,0,0.03);">
-                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #f1f8e9; color: #8bc34a; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
+                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(37,211,102,0.1); color: #25d366; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
                                                     <i class="fa-solid fa-circle-check"></i>
                                                 </div>
-                                                <h3 style="font-size: 18px; color: #0d2536; margin: 0 0 6px; font-weight: 900;">¡Comprobante Enviado!</h3>
+                                                <h3 style="font-size: 18px; color: #111b21; margin: 0 0 6px; font-weight: 900;">¡Comprobante Enviado!</h3>
                                                 <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 20px;">El administrador validará tu pago para activar tu Dashboard en breve.</p>
-                                                <button onclick="document.getElementById('dashboardAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #8bc34a; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
+                                                <button onclick="document.getElementById('dashboardAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #25d366; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
                                             </div>
                                         </div>`;
                                     document.body.insertAdjacentHTML('beforeend', alertHtml);
@@ -1244,7 +1213,7 @@
                                 
                                 if (btn) {
                                     btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> SUBIR COMPROBANTE';
-                                    btn.style.background = 'linear-gradient(135deg, #8bc34a 0%, #7cb342 100%)';
+                                    btn.style.background = 'linear-gradient(135deg, #25d366 0%, #1ebe5d 100%)';
                                 }
                                 const montoRecarga = currentSaleAmount;
                                 currentSaleCredits = 0;
@@ -1254,12 +1223,12 @@
                                     const alertHtml = `
                                         <div id="rechargeAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
                                             <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.25); border: 1px solid rgba(0,0,0,0.03);">
-                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #f1f8e9; color: #8bc34a; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
+                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(37,211,102,0.1); color: #25d366; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
                                                     <i class="fa-solid fa-circle-check"></i>
                                                 </div>
-                                                <h3 style="font-size: 18px; color: #0d2536; margin: 0 0 6px; font-weight: 900;">¡Formulario Enviado!</h3>
+                                                <h3 style="font-size: 18px; color: #111b21; margin: 0 0 6px; font-weight: 900;">¡Formulario Enviado!</h3>
                                                 <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 20px;">Tu recarga de <b>S/ ${montoRecarga}</b> está siendo verificada.</p>
-                                                <button onclick="document.getElementById('rechargeAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #8bc34a; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
+                                                <button onclick="document.getElementById('rechargeAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #25d366; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
                                             </div>
                                         </div>`;
                                     document.body.insertAdjacentHTML('beforeend', alertHtml);
@@ -1306,10 +1275,10 @@
                                             <div style="width: 56px; height: 56px; border-radius: 50%; background: #fff7ed; color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px;">
                                                 <i class="fa-solid fa-clock"></i>
                                             </div>
-                                            <h3 style="font-size: 19px; color: #0d2536; margin: 0 0 8px; font-weight: 900;">Comprobante en validación</h3>
-                                            <p style="color: #64748b; font-size: 13px; line-height: 1.6; margin: 0 0 6px;">Tu comprobante para la placa <strong style="color: #0d2536;">${p}</strong> ha sido recibido y está en proceso de validación.</p>
+                                            <h3 style="font-size: 19px; color: #111b21; margin: 0 0 8px; font-weight: 900;">Comprobante en validación</h3>
+                                            <p style="color: #64748b; font-size: 13px; line-height: 1.6; margin: 0 0 6px;">Tu comprobante para la placa <strong style="color: #111b21;">${p}</strong> ha sido recibido y está en proceso de validación.</p>
                                             <p style="color: #64748b; font-size: 12px; line-height: 1.5; margin: 0 0 22px; background: #f8fafc; padding: 12px; border-radius: 10px; border-left: 3px solid #f59e0b;">Nuestro equipo verificará tu pago en los próximos minutos. Podrás ver el estado en <strong>"Mis Consultas"</strong>.</p>
-                                            <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge(); window.location.href='panel_cliente.html';" style="width: 100%; padding: 13px; background: #8bc34a; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; margin-bottom: 8px;">VER MIS CONSULTAS</button>
+                                            <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge(); window.location.href='panel_cliente.html';" style="width: 100%; padding: 13px; background: #25d366; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; margin-bottom: 8px;">VER MIS CONSULTAS</button>
                                             <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge();" style="width: 100%; padding: 11px; background: transparent; color: #94a3b8; border: none; font-size: 12px; font-weight: 600; cursor: pointer;">CERRAR</button>
                                         </div>
                                     </div>`;
@@ -1421,7 +1390,7 @@
             var modal = document.getElementById('infoModal');
             var content = document.getElementById('infoContent');
             if (modal && content) {
-                content.innerHTML = '<div style="text-align:center;padding:20px;"><i class="fa-solid fa-user-circle" style="font-size:48px;color:#0d2536;margin-bottom:15px;"></i><h3 style="font-size:18px;font-weight:800;color:#0d2536;margin-bottom:8px;">Mi Perfil</h3><p style="font-size:13px;color:#64748b;">Gestiona tu cuenta desde el panel de cliente.</p><a href="panel_cliente.html" style="display:inline-block;margin-top:15px;background:#0d2536;color:#fff;padding:10px 25px;border-radius:10px;text-decoration:none;font-weight:700;font-size:13px;">IR AL PANEL</a></div>';
+                content.innerHTML = '<div style="text-align:center;padding:20px;"><i class="fa-solid fa-user-circle" style="font-size:48px;color:#111b21;margin-bottom:15px;"></i><h3 style="font-size:18px;font-weight:800;color:#111b21;margin-bottom:8px;">Mi Perfil</h3><p style="font-size:13px;color:#64748b;">Gestiona tu cuenta desde el panel de cliente.</p><a href="panel_cliente.html" style="display:inline-block;margin-top:15px;background:#111b21;color:#fff;padding:10px 25px;border-radius:10px;text-decoration:none;font-weight:700;font-size:13px;">IR AL PANEL</a></div>';
                 modal.style.display = 'flex';
             }
         }
@@ -1434,38 +1403,129 @@
         // --- LÓGICA DE MODALES INFORMATIVOS ---
         const infoContents = {
             terms: `
-                <h3 class="info-title">Términos de Servicio</h3>
-                <div class="info-text">
-                    <p>Al utilizar Filtro Vehicular Perú, usted acepta los siguientes términos:</p>
-                    <h4>1. Origen de Datos</h4>
-                    <p>La información es recopilada de fuentes públicas y oficiales (SUNARP, SAT, MTC, PNP, SBS). No somos los generadores de la data, sino facilitadores de su consolidación.</p>
-                    <h4>2. Uso de la Información</h4>
-                    <p>El reporte es para uso informativo. Recomendamos siempre realizar una inspección física del vehículo antes de cualquier transacción comercial.</p>
-                    <h4>3. Política de Entrega</h4>
-                    <p>Debido a la naturaleza digital e instantánea del reporte, una vez generado el acceso a los datos, no se realizan devoluciones.</p>
+                <div style="padding:24px 22px 20px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa-solid fa-file-contract" style="color:#fff; font-size:16px;"></i>
+                            </div>
+                            <span style="font-size:16px; font-weight:800; color:#111b21;">Términos de Servicio</span>
+                        </div>
+                        <button onclick="closeInfo()" style="background:none; border:none; color:#9ca3af; font-size:18px; cursor:pointer; padding:4px;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div style="border-top:1px solid #e5e7eb; padding-top:18px;">
+                        <p style="font-size:13px; color:#6b7280; line-height:1.6; margin:0 0 16px;">Al acceder y utilizar la plataforma Filtro Vehicular Plus, usted declara haber leído, comprendido y aceptado en su totalidad los siguientes términos y condiciones de uso:</p>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">1. Naturaleza del Servicio</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Filtro Vehicular Plus es una plataforma digital de consulta e integración de información vehicular. Los datos mostrados provienen de fuentes públicas y oficiales del Estado Peruano, incluyendo SUNARP, SAT Lima, SAT Callao, MTC, ATU, SUTRAN, PNP y SBS. Nuestra función es consolidar y presentar esta información de manera organizada para facilitar la toma de decisiones del usuario.</p>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">2. Uso de la Información</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Los reportes generados tienen carácter exclusivamente informativo y referencial. No constituyen documentos legales, certificaciones ni declaraciones juradas. Recomendamos encarecidamente complementar la información obtenida con una inspección física del vehículo y la verificación presencial de documentos originales antes de concretar cualquier transacción comercial.</p>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">3. Precisión de los Datos</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Si bien nos esforzamos por mantener la información actualizada y precisa, Filtro Vehicular Plus no garantiza la exactitud absoluta de los datos, ya que estos dependen directamente de las bases de datos de las instituciones gubernamentales consultadas. No nos responsabilizamos por errores, omisiones o desactualizaciones en los registros de origen.</p>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">4. Política de Pagos y Devoluciones</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Debido a la naturaleza digital e instantánea del servicio, una vez procesado el pago y generado el acceso a la información, no se realizan devoluciones ni reembolsos. El usuario acepta esta condición al momento de efectuar cualquier transacción dentro de la plataforma. Los créditos adquiridos no tienen fecha de vencimiento.</p>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">5. Propiedad Intelectual</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Todo el contenido de la plataforma, incluyendo diseño, logotipos, textos, estructura y código fuente, es propiedad exclusiva de Filtro Vehicular Plus. Queda prohibida su reproducción, distribución o modificación sin autorización previa por escrito.</p>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">6. Modificaciones</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Nos reservamos el derecho de modificar estos términos en cualquier momento sin previo aviso. El uso continuado de la plataforma después de cualquier cambio constituye la aceptación de los nuevos términos. Se recomienda revisar esta sección periódicamente.</p>
+                        </div>
+                    </div>
                 </div>
             `,
             privacy: `
-                <h3 class="info-title">Política de Privacidad</h3>
-                <div class="info-text">
-                    <p>En cumplimiento con la <strong>Ley N° 29733 (Ley de Protección de Datos Personales en Perú)</strong>:</p>
-                    <h4>1. Recopilación de Datos</h4>
-                    <p>Solo procesamos números de placa para la búsqueda de información pública. No almacenamos datos personales sensibles de los usuarios de consulta.</p>
-                    <h4>2. Seguridad</h4>
-                    <p>Implementamos protocolos SSL para asegurar que su navegación y transacciones sean privadas.</p>
-                    <h4>3. Finalidad</h4>
-                    <p>Los datos se utilizan exclusivamente para generar el reporte solicitado en tiempo real y mejorar la experiencia del usuario.</p>
+                <div style="padding:24px 22px 20px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa-solid fa-shield-halved" style="color:#fff; font-size:16px;"></i>
+                            </div>
+                            <span style="font-size:16px; font-weight:800; color:#111b21;">Política de Privacidad</span>
+                        </div>
+                        <button onclick="closeInfo()" style="background:none; border:none; color:#9ca3af; font-size:18px; cursor:pointer; padding:4px;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div style="border-top:1px solid #e5e7eb; padding-top:18px;">
+                        <p style="font-size:13px; color:#6b7280; line-height:1.6; margin:0 0 16px;">En cumplimiento con la <strong style="color:#111b21;">Ley N° 29733</strong> — Ley de Protección de Datos Personales del Perú y su Reglamento aprobado por Decreto Supremo N° 003-2013-JUS, informamos lo siguiente:</p>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">1. Datos que Recopilamos</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Para el funcionamiento del servicio, procesamos únicamente números de placa vehicular ingresados voluntariamente por el usuario. En caso de registro de cuenta, se solicita correo electrónico y número de WhatsApp para efectos de comunicación y soporte. No recopilamos datos biométricos, financieros ni información sensible de carácter personal.</p>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">2. Finalidad del Tratamiento</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Los datos proporcionados se utilizan exclusivamente para: (a) generar el reporte de verificación vehicular solicitado en tiempo real, (b) gestionar la cuenta del usuario y su historial de consultas, (c) brindar soporte técnico cuando sea requerido, y (d) enviar notificaciones relacionadas con el estado de sus solicitudes.</p>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">3. Seguridad de la Información</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Implementamos protocolos de cifrado SSL/TLS de 256 bits para proteger todas las comunicaciones entre su dispositivo y nuestros servidores. Los datos se almacenan en infraestructura cloud con certificaciones de seguridad internacionales. Realizamos auditorías periódicas para garantizar la integridad y confidencialidad de la información.</p>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">4. Compartición de Datos</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">No vendemos, alquilamos ni compartimos información personal de nuestros usuarios con terceros bajo ninguna circunstancia, salvo requerimiento expreso de autoridad judicial competente mediante orden debidamente fundamentada.</p>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">5. Derechos del Usuario</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Usted tiene derecho a acceder, rectificar, cancelar u oponerse al tratamiento de sus datos personales en cualquier momento. Para ejercer estos derechos, puede contactarnos a través de nuestro canal de soporte por WhatsApp o correo electrónico.</p>
+                        </div>
+                    </div>
                 </div>
             `,
             contact: `
-                <h3 class="info-title">Centro de Contacto</h3>
-                <div class="info-text">
-                    <p>¿Tienes dudas o necesitas asistencia con un pago?</p>
-                    <h4>Atención al Cliente</h4>
-                    <p><i class="fa-brands fa-whatsapp"></i> WhatsApp: +51 932 465 820</p>
-                    <p><i class="fa-solid fa-clock"></i> Horario: Lunes a Domingo (24/7)</p>
-                    <h4>Soporte Técnico</h4>
-                    <p>Si el reporte no cargó correctamente, escríbenos con tu número de placa para re-activar tu acceso de inmediato.</p>
+                <div style="padding:24px 22px 20px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa-solid fa-headset" style="color:#fff; font-size:16px;"></i>
+                            </div>
+                            <span style="font-size:16px; font-weight:800; color:#111b21;">Centro de Contacto</span>
+                        </div>
+                        <button onclick="closeInfo()" style="background:none; border:none; color:#9ca3af; font-size:18px; cursor:pointer; padding:4px;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div style="border-top:1px solid #e5e7eb; padding-top:18px;">
+                        <p style="font-size:13px; color:#6b7280; line-height:1.6; margin:0 0 16px;">Nuestro equipo de atención al cliente está disponible para ayudarte con cualquier consulta, incidencia técnica o duda sobre tu cuenta y servicios contratados.</p>
+                        <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:16px; margin-bottom:16px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                                <i class="fa-brands fa-whatsapp" style="color:#25d366; font-size:20px;"></i>
+                                <div>
+                                    <div style="font-size:14px; font-weight:700; color:#111b21;">+51 979 334 296</div>
+                                    <div style="font-size:11px; color:#6b7280;">Canal principal de atención</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                                <i class="fa-solid fa-clock" style="color:#25d366; font-size:16px;"></i>
+                                <div>
+                                    <div style="font-size:13px; font-weight:600; color:#111b21;">Lunes a Domingo</div>
+                                    <div style="font-size:11px; color:#6b7280;">Disponible las 24 horas del día</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <i class="fa-solid fa-bolt" style="color:#25d366; font-size:16px;"></i>
+                                <div>
+                                    <div style="font-size:13px; font-weight:600; color:#111b21;">Tiempo de respuesta</div>
+                                    <div style="font-size:11px; color:#6b7280;">Menos de 5 minutos en horario laboral</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">Soporte Técnico</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Si experimentas algún problema con la carga de reportes, errores en la plataforma o inconvenientes con tu saldo, escríbenos indicando tu correo registrado y el número de placa consultado. Nuestro equipo técnico resolverá tu caso de manera prioritaria.</p>
+                        </div>
+                        <div style="margin-bottom:18px;">
+                            <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">Reclamos y Sugerencias</div>
+                            <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Valoramos tu opinión. Si tienes alguna sugerencia para mejorar nuestro servicio o deseas presentar un reclamo formal, no dudes en comunicarte con nosotros. Nos comprometemos a atender cada caso con la seriedad y rapidez que mereces.</p>
+                        </div>
+                        <a href="https://wa.me/51979334296?text=Hola%2C%20necesito%20ayuda%20con%20mi%20cuenta%20en%20Filtro%20Vehicular." target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:13px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                            <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> Escribir por WhatsApp
+                        </a>
+                    </div>
                 </div>
             `
         };
@@ -1500,35 +1560,58 @@
         });
 
         // Mostrar banner tras cargar (si no fue descartado y no está instalada)
+        function showFloatingButtons() {
+            var w = document.getElementById('walletFloatingBtn');
+            var wa = document.querySelector('.wa-assistant');
+            if (w) w.style.display = '';
+            if (wa) wa.style.display = '';
+        }
+
+        function hideFloatingButtons() {
+            var w = document.getElementById('walletFloatingBtn');
+            var wa = document.querySelector('.wa-assistant');
+            if (w) w.style.display = 'none';
+            if (wa) wa.style.display = 'none';
+        }
+
         if (!window.matchMedia('(display-mode: standalone)').matches && !localStorage.getItem('pwa_banner_dismissed')) {
+            hideFloatingButtons();
             setTimeout(() => {
                 if (document.getElementById('pwaBannerContainer')) return;
                 const pwaBanner = document.createElement('div');
                 pwaBanner.id = "pwaBannerContainer";
                 pwaBanner.innerHTML = `
-                    <div style="position:fixed; top:76px; right:16px; background:#ffffff; border-radius:14px; padding:12px 14px; display:flex; align-items:center; gap:10px; z-index:99999; animation:slideInPwa 0.4s ease forwards; border:1px solid #e2e8f0; box-shadow:0 8px 24px rgba(13,37,54,0.1);">
-                        <div style="width:36px; height:36px; min-width:36px; border-radius:10px; background:linear-gradient(135deg,#0d2536,#1a3a52); display:flex; align-items:center; justify-content:center;">
-                            <i class="fa-solid fa-download" style="font-size:14px; color:#8bc34a;"></i>
+                    <div style="position:fixed; bottom:16px; left:12px; right:12px; max-width:460px; margin:0 auto; background:#111b21; border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px; z-index:99999; animation:slideInPwa 0.4s ease forwards; border:1px solid #2a3942;">
+                        <div style="width:40px; height:40px; min-width:40px; border-radius:10px; background:#25d366; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-download" style="font-size:16px; color:#fff;"></i>
                         </div>
-                        <div style="min-width:0;">
-                            <div style="font-weight:700; font-size:12px; color:#0d2536; margin-bottom:1px;">Instalar App</div>
-                            <div style="font-size:10px; color:#94a3b8; font-weight:500;">Acceso rápido</div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-weight:600; font-size:13px; color:#e9edef;">Instalar App</div>
+                            <div style="font-size:11px; color:#8696a0; font-weight:400;">Acceso rápido desde tu pantalla de inicio</div>
                         </div>
-                        <button id="btnInstallApp" style="background:#0d2536; color:#fff; border:none; padding:7px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:11px; transition:0.2s; flex-shrink:0;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
-                            <i class="fa-solid fa-plus" style="font-size:9px; margin-right:4px;"></i>Instalar
+                        <button id="btnInstallApp" style="background:#25d366; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:600; cursor:pointer; font-size:11px; transition:background 0.2s; flex-shrink:0; white-space:nowrap;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                            Instalar
                         </button>
-                        <button onclick="localStorage.setItem('pwa_banner_dismissed','1'); document.getElementById('pwaBannerContainer').remove()" style="background:none; border:none; color:#cbd5e1; font-size:14px; cursor:pointer; padding:2px; transition:0.2s; flex-shrink:0;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#cbd5e1'">
+                        <button id="btnDismissPwa" style="background:none; border:none; color:#8696a0; font-size:16px; cursor:pointer; padding:4px; flex-shrink:0;">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                     <style>
                         @keyframes slideInPwa {
-                            from { transform:translateX(100%); opacity:0; }
-                            to { transform:translateX(0); opacity:1; }
+                            from { transform:translateY(100%); opacity:0; }
+                            to { transform:translateY(0); opacity:1; }
                         }
                     </style>
                 `;
                 document.body.appendChild(pwaBanner);
+
+                function dismissPwaBanner() {
+                    localStorage.setItem('pwa_banner_dismissed', '1');
+                    pwaBanner.remove();
+                    showFloatingButtons();
+                }
+
+                document.getElementById('btnDismissPwa').onclick = dismissPwaBanner;
 
                 document.getElementById('btnInstallApp').onclick = async () => {
                     var prompt = deferredPrompt || window.deferredInstallPrompt;
@@ -1538,18 +1621,18 @@
                         deferredPrompt = null;
                         window.deferredInstallPrompt = null;
                     } else {
-                        // Fallback: instrucciones manuales
                         var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
                         if (isIOS) {
-                            alert('Para instalar: toca el botón Compartir (⬆) y luego "Agregar a pantalla de inicio"');
+                            alert('Para instalar: toca el botón Compartir y luego "Agregar a pantalla de inicio"');
                         } else {
-                            alert('Para instalar: abre el menú del navegador (⋮) y selecciona "Instalar aplicación" o "Agregar a pantalla de inicio"');
+                            alert('Para instalar: abre el menú del navegador y selecciona "Instalar aplicación"');
                         }
                     }
-                    localStorage.setItem('pwa_banner_dismissed', '1');
-                    pwaBanner.remove();
+                    dismissPwaBanner();
                 };
             }, 2000);
+        } else {
+            showFloatingButtons();
         }
 
         // Acceso al panel admin: solo vía admin.html + clave (ver admin-auth-config.js)
@@ -1752,41 +1835,41 @@
                         <div style="width: 60px; height: 60px; background: rgba(3,167,164,0.1); color: #03a7a4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 28px; border: 1px solid rgba(3,167,164,0.2);">
                             <i class="fa-solid fa-rocket"></i>
                         </div>
-                        <h3 style="font-size: 20px; font-weight: 900; color: #0d2536; margin-bottom: 10px;">Activa tu Dashboard</h3>
+                        <h3 style="font-size: 20px; font-weight: 900; color: #111b21; margin-bottom: 10px;">Activa tu Dashboard</h3>
                         <p style="font-size: 14px; color: #64748b; margin-bottom: 15px; line-height: 1.5;">Accede a <strong>81+ servicios gubernamentales</strong> organizados por categorías. Acceso <strong>de por vida</strong>.</p>
                         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px; margin-bottom: 15px;">
-                            <div style="font-size: 24px; font-weight: 900; color: #0d2536;">S/ 35.00</div>
+                            <div style="font-size: 24px; font-weight: 900; color: #111b21;">S/ 35.00</div>
                             <div style="font-size: 11px; color: #64748b;">Pago único · Acceso permanente</div>
                         </div>
                         <div style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Tu saldo actual: <strong style="color: #10b981;">S/ ${soles}</strong></div>
-                        <button onclick="activarDashboard()" style="background:#8bc34a; color:#fff; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%; font-size: 14px;">ACTIVAR POR S/ 35.00</button>
+                        <button onclick="activarDashboard()" style="background:#25d366; color:#fff; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%; font-size: 14px;">ACTIVAR POR S/ 35.00</button>
                         <button onclick="document.getElementById('infoModal').style.display='none';" style="background: none; border: none; color: #94a3b8; margin-top: 10px; cursor: pointer; font-size: 13px;">Cancelar</button>
                     </div>`;
             } else if (type === 'insufficient') {
                 html = `
                     <div style="text-align:center; padding: 15px 10px;">
                         <!-- Icono Institucional Sólido -->
-                        <div style="width: 65px; height: 65px; background: #0d2536; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px;">
+                        <div style="width: 65px; height: 65px; background: #111b21; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px;">
                             <i class="fa-solid fa-lock"></i>
                         </div>
 
-                        <h3 style="font-size: 20px; font-weight: 900; color: #0d2536; margin-bottom: 8px;">Acceso Bloqueado</h3>
+                        <h3 style="font-size: 20px; font-weight: 900; color: #111b21; margin-bottom: 8px;">Acceso Bloqueado</h3>
                         <p style="font-size: 13px; color: #64748b; margin-bottom: 25px; line-height: 1.4; padding: 0 15px;">Se requiere activar el acceso de por vida para visualizar el Dashboard.</p>
                         
                         <!-- Tarjetas de Saldo Sólidas -->
                         <div style="display: flex; gap: 12px; margin-bottom: 25px;">
-                            <div style="flex: 1; background: #fff; border: 2px solid #0d2536; border-radius: 10px; padding: 12px; text-align: left;">
-                                <div style="font-size: 11px; font-weight: 800; color: #0d2536; text-transform: uppercase;">Tu Saldo</div>
+                            <div style="flex: 1; background: #fff; border: 2px solid #111b21; border-radius: 10px; padding: 12px; text-align: left;">
+                                <div style="font-size: 11px; font-weight: 800; color: #111b21; text-transform: uppercase;">Tu Saldo</div>
                                 <div style="font-size: 18px; font-weight: 900; color: #ef4444; margin-top: 4px;">S/ ${soles}</div>
                             </div>
-                            <div style="flex: 1; background: #fff; border: 2px solid #0d2536; border-radius: 10px; padding: 12px; text-align: left;">
-                                <div style="font-size: 11px; font-weight: 800; color: #0d2536; text-transform: uppercase;">Costo Único</div>
-                                <div style="font-size: 18px; font-weight: 900; color: #0d2536; margin-top: 4px;">S/ 35.00</div>
+                            <div style="flex: 1; background: #fff; border: 2px solid #111b21; border-radius: 10px; padding: 12px; text-align: left;">
+                                <div style="font-size: 11px; font-weight: 800; color: #111b21; text-transform: uppercase;">Costo Único</div>
+                                <div style="font-size: 18px; font-weight: 900; color: #111b21; margin-top: 4px;">S/ 35.00</div>
                             </div>
                         </div>
 
                         <!-- Botón Principal Sólido -->
-                        <button onclick="document.getElementById('infoModal').style.display='none'; openSale('35.00', 'Acceso Dashboard Permanente', 0, 'dashboard')" style="background: #8bc34a; color:#fff; border:none; padding:15px; border-radius: 10px; font-weight:900; cursor:pointer; width:100%; font-size: 14px; margin-bottom:12px; text-transform: uppercase;">
+                        <button onclick="document.getElementById('infoModal').style.display='none'; openSale('35.00', 'Acceso Dashboard Permanente', 0, 'dashboard')" style="background: #25d366; color:#fff; border:none; padding:15px; border-radius: 10px; font-weight:900; cursor:pointer; width:100%; font-size: 14px; margin-bottom:12px; text-transform: uppercase;">
                             <i class="fa-solid fa-credit-card" style="margin-right: 8px;"></i> PAGAR AHORA
                         </button>
 
@@ -1856,12 +1939,12 @@
 
             grid.innerHTML = `
                 <div style="grid-column: 1 / -1; margin-bottom: 8px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px;">
-                    <button onclick="dashViewMode = 'categories'; renderDashGrid();" style="border: 1px solid #e2e8f0; background: #ffffff; color: #0d2536; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; font-size: 13px;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='#ffffff';">
+                    <button onclick="dashViewMode = 'categories'; renderDashGrid();" style="border: 1px solid #e2e8f0; background: #ffffff; color: #111b21; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; font-size: 13px;" onmouseover="this.style.background='#f1f5f9';" onmouseout="this.style.background='#ffffff';">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                     <div>
                         <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Roboto', sans-serif;">Dashboard</div>
-                        <div style="font-size: 14px; font-weight: 800; color: #0d2536; font-family: 'Roboto', sans-serif; text-transform: uppercase; letter-spacing: 0.3px;">${esc(currentCatTitle)}</div>
+                        <div style="font-size: 14px; font-weight: 800; color: #111b21; font-family: 'Roboto', sans-serif; text-transform: uppercase; letter-spacing: 0.3px;">${esc(currentCatTitle)}</div>
                     </div>
                 </div>
             ` + filtered.map((item, i) => `
@@ -1890,16 +1973,10 @@
         }
         window.closeWelcome = closeWelcome;
 
-        window._showWelcome = function() {
-            if (localStorage.getItem('welcome_shown')) return;
-            setTimeout(function() {
-                var m = document.getElementById('welcomeModal');
-                if (m) m.style.display = 'flex';
-            }, 600);
-        };
+        // Welcome modal desactivado (modo premium)
+        window._showWelcome = function() {};
 
         document.addEventListener('DOMContentLoaded', function() {
-            var isFirstVisit = !localStorage.getItem('welcome_shown');
             var lastSeen = localStorage.getItem('flyer_soat_seen');
             var oneDayMs = 86400000;
             var showFlyer = !lastSeen || (Date.now() - parseInt(lastSeen)) > oneDayMs;
@@ -1909,19 +1986,7 @@
                     var f = document.getElementById('flyerModal');
                     if (f) f.style.display = 'flex';
                     localStorage.setItem('flyer_soat_seen', Date.now().toString());
-
-                    if (isFirstVisit) {
-                        setTimeout(function() {
-                            if (!window._flyerClosed) {
-                                f.style.display = 'none';
-                                window._flyerClosed = true;
-                                window._showWelcome();
-                            }
-                        }, 6000);
-                    }
                 }, 2000);
-            } else if (isFirstVisit) {
-                setTimeout(function() { window._showWelcome(); }, 2500);
             }
         });
     })();

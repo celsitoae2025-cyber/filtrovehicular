@@ -1,41 +1,41 @@
-/* Modal Intranet (panel_cliente y páginas sin bloque de estilos .auth-modal de index) */
+/* Modal Intranet */
 #intranetModal {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.85);
+    background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
     z-index: 100000;
     display: none;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(10px);
     padding: 20px;
 }
 
 #intranetModal .auth-card {
     background: #ffffff;
-    width: 100%;
-    max-width: 420px;
-    border-radius: 24px;
-    padding: 36px 32px 40px;
-    color: #1e293b;
+    width: 92%;
+    max-width: 380px;
+    border-radius: 12px;
+    padding: 28px 24px 24px;
+    color: #111b21;
     position: relative;
-    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
     text-align: center;
     max-height: 92vh;
     overflow-y: auto;
 }
 
 #intranetModal .auth-title {
-    font-size: 22px;
-    font-weight: 900;
-    margin-bottom: 6px;
-    color: #0d2536;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #111b21;
 }
 
 #intranetModal .auth-subtitle {
-    font-size: 12px;
-    color: #64748b;
-    margin-bottom: 22px;
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 20px;
     line-height: 1.4;
 }
 
@@ -46,66 +46,60 @@
 
 #intranetModal .auth-input-group label {
     display: block;
-    font-size: 10px;
-    font-weight: 800;
-    color: #64748b;
+    font-size: 9px;
+    font-weight: 600;
+    color: #6b7280;
     margin-bottom: 4px;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.5px;
 }
 
 #intranetModal .auth-input {
     width: 100%;
-    padding: 11px 14px;
-    border-radius: 12px;
-    border: 2px solid #e2e8f0;
-    font-size: 15px;
-    transition: 0.3s;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    transition: border-color 0.2s;
     outline: none;
     box-sizing: border-box;
 }
 
 #intranetModal .auth-input:focus {
-    border-color: #0d2536;
+    border-color: #25d366;
 }
 
 #intranetModal .btn-auth-action {
     width: 100%;
-    padding: 14px;
-    background: #0d2536;
-    color: white;
+    padding: 12px;
+    background: #25d366;
+    color: #ffffff;
     border: none;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 800;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
+    transition: background 0.2s;
     margin-top: 8px;
 }
 
 #intranetModal .btn-auth-action:hover {
-    background: #15324d;
-    transform: translateY(-1px);
+    background: #1ebe5d;
 }
 
 #intranetModal .auth-close {
     position: absolute;
-    top: 16px;
-    right: 18px;
-    font-size: 22px;
-    color: #94a3b8;
+    top: 14px;
+    right: 16px;
+    font-size: 18px;
+    color: #9ca3af;
     cursor: pointer;
-    transition: 0.2s;
-}
-
-#intranetModal .auth-close:hover {
-    color: #dc2626;
 }
 
 #intranetModal #intranetError {
-    color: #dc2626;
-    font-size: 12px;
-    font-weight: 700;
-    margin-top: 12px;
+    color: #ef4444;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 10px;
     display: none;
 }

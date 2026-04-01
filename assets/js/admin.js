@@ -335,19 +335,19 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
 
                 // Título
                 html += '<table cellpadding="4" cellspacing="0" style="font-family:Arial;">';
-                html += '<tr><td colspan="8" style="font-size:18px; font-weight:bold; color:#0d2536; padding:10px 4px;">FILTRO VEHICULAR PLUS - Base de Datos de Clientes</td></tr>';
+                html += '<tr><td colspan="8" style="font-size:18px; font-weight:bold; color:#111b21; padding:10px 4px;">FILTRO VEHICULAR PLUS - Base de Datos de Clientes</td></tr>';
                 html += '<tr><td colspan="8" style="font-size:11px; color:#64748b; padding:2px 4px 10px;">Exportado: ' + fecha + ' | Total: ' + allSaldos.length + ' usuarios</td></tr>';
 
                 // Encabezados
-                html += '<tr style="background:#0d2536; color:#ffffff; font-weight:bold; font-size:11px;">';
-                html += '<th style="padding:8px; border:1px solid #1a3a52;">N°</th>';
-                html += '<th style="padding:8px; border:1px solid #1a3a52;">Nombre Completo</th>';
-                html += '<th style="padding:8px; border:1px solid #1a3a52;">Correo Electrónico</th>';
-                html += '<th style="padding:8px; border:1px solid #1a3a52;">WhatsApp</th>';
-                html += '<th style="padding:8px; border:1px solid #1a3a52;">Créditos</th>';
-                html += '<th style="padding:8px; border:1px solid #1a3a52;">Plataforma</th>';
-                html += '<th style="padding:8px; border:1px solid #1a3a52;">Solicitudes</th>';
-                html += '<th style="padding:8px; border:1px solid #1a3a52;">Última Actividad</th>';
+                html += '<tr style="background:#111b21; color:#ffffff; font-weight:bold; font-size:11px;">';
+                html += '<th style="padding:8px; border:1px solid #1f2c34;">N°</th>';
+                html += '<th style="padding:8px; border:1px solid #1f2c34;">Nombre Completo</th>';
+                html += '<th style="padding:8px; border:1px solid #1f2c34;">Correo Electrónico</th>';
+                html += '<th style="padding:8px; border:1px solid #1f2c34;">WhatsApp</th>';
+                html += '<th style="padding:8px; border:1px solid #1f2c34;">Créditos</th>';
+                html += '<th style="padding:8px; border:1px solid #1f2c34;">Plataforma</th>';
+                html += '<th style="padding:8px; border:1px solid #1f2c34;">Solicitudes</th>';
+                html += '<th style="padding:8px; border:1px solid #1f2c34;">Última Actividad</th>';
                 html += '</tr>';
 
                 for (var j = 0; j < allSaldos.length; j++) {
@@ -365,11 +365,11 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
 
                     html += '<tr style="background:' + bg + ';">';
                     html += '<td style="' + borderStyle + ' text-align:center; color:#94a3b8; font-weight:bold;">' + (j + 1) + '</td>';
-                    html += '<td style="' + borderStyle + ' font-weight:bold; color:#0d2536;">' + nombre + '</td>';
+                    html += '<td style="' + borderStyle + ' font-weight:bold; color:#111b21;">' + nombre + '</td>';
                     html += '<td style="' + borderStyle + '">' + email + '</td>';
                     html += '<td style="' + borderStyle + '">' + wpp + '</td>';
-                    html += '<td style="' + borderStyle + ' text-align:center; font-weight:bold; color:' + (creditos > 0 ? '#0d2536' : '#ef4444') + ';">' + creditos + '</td>';
-                    html += '<td style="' + borderStyle + ' text-align:center; color:' + (activa === 'Activo' ? '#8bc34a' : '#94a3b8') + '; font-weight:bold;">' + activa + '</td>';
+                    html += '<td style="' + borderStyle + ' text-align:center; font-weight:bold; color:' + (creditos > 0 ? '#111b21' : '#ef4444') + ';">' + creditos + '</td>';
+                    html += '<td style="' + borderStyle + ' text-align:center; color:' + (activa === 'Activo' ? '#25d366' : '#94a3b8') + '; font-weight:bold;">' + activa + '</td>';
                     html += '<td style="' + borderStyle + ' text-align:center;">' + totalSol + '</td>';
                     html += '<td style="' + borderStyle + ' text-align:center; color:#64748b;">' + ultimaAct + '</td>';
                     html += '</tr>';
@@ -445,32 +445,29 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                     return;
                 }
 
-                list.innerHTML = data.map(function(u) {
+                list.innerHTML = data.map(function(u, idx) {
                     var cred = u.creditos || 0;
                     var hasCredits = cred > 0;
+                    var plataforma = u.plataforma_activa || false;
                     var email = String(u.email || '').trim();
                     var reg = regMap[email.toLowerCase()] || {};
                     var nombre = reg.nombre || '';
                     var wpp = reg.whatsapp || '';
+                    var inicial = (nombre ? nombre.charAt(0) : email.charAt(0)).toUpperCase();
 
-                    return '<div class="request-item" style="padding:14px 16px; gap:6px; border-left:3px solid ' + (hasCredits ? '#8bc34a' : '#e2e8f0') + ';">' +
-                        '<div style="display:flex; align-items:center; gap:10px;">' +
-                            '<div style="background:linear-gradient(135deg,#0d2536,#1a3a52); color:white; width:40px; height:40px; min-width:40px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:15px; flex-shrink:0;">' +
-                                '<i class="fa-solid fa-user"></i>' +
-                            '</div>' +
-                            '<div style="flex:1; min-width:0;">' +
-                                (nombre ? '<div style="font-size:13px; font-weight:800; color:#0d2536; margin-bottom:1px;">' + esc(nombre) + '</div>' : '') +
-                                '<div style="font-size:12px; color:#475569; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(email) + '</div>' +
-                                (wpp ? '<div style="font-size:11px; color:#64748b; margin-top:2px;"><i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:11px; margin-right:3px;"></i>' + esc(wpp) + '</div>' : '') +
-                            '</div>' +
-                            '<div style="flex-shrink:0; text-align:right; display:flex; align-items:center; gap:10px;">' +
-                                '<div>' +
-                                    '<div style="font-size:16px; font-weight:800; color:' + (hasCredits ? '#0d2536' : '#94a3b8') + ';">' + cred + '</div>' +
-                                    '<div style="font-size:8px; color:#94a3b8; font-weight:600; text-transform:uppercase;">créditos</div>' +
-                                '</div>' +
-                                '<button onclick="event.stopPropagation(); deleteUser(\'' + escAttr(email) + '\')" style="background:#fef2f2; border:1px solid #fecaca; color:#ef4444; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:13px; flex-shrink:0;" onmouseover="this.style.background=\'#fee2e2\'" onmouseout="this.style.background=\'#fef2f2\'" title="Eliminar usuario"><i class="fa-solid fa-trash"></i></button>' +
-                            '</div>' +
+                    return '<div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px; margin-bottom:6px;">' +
+                        '<div style="width:36px; height:36px; min-width:36px; background:' + (plataforma ? '#25d366' : '#111b21') + '; color:#fff; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600;">' + inicial + '</div>' +
+                        '<div style="flex:1; min-width:0;">' +
+                            '<div style="font-size:12px; font-weight:600; color:#111b21; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(nombre || email.split('@')[0]) + '</div>' +
+                            '<div style="font-size:10px; color:#6b7280; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(email) + '</div>' +
                         '</div>' +
+                        (wpp ? '<a href="https://wa.me/51' + esc(wpp) + '" target="_blank" style="flex-shrink:0; width:28px; height:28px; display:flex; align-items:center; justify-content:center; color:#25d366; font-size:14px; text-decoration:none;"><i class="fa-brands fa-whatsapp"></i></a>' : '') +
+                        '<div style="flex-shrink:0; text-align:center; min-width:40px;">' +
+                            '<div style="font-size:14px; font-weight:600; color:' + (hasCredits ? '#25d366' : '#9ca3af') + '; line-height:1;">' + cred + '</div>' +
+                            '<div style="font-size:7px; color:#9ca3af; text-transform:uppercase; margin-top:1px;">créditos</div>' +
+                        '</div>' +
+                        (plataforma ? '<span style="font-size:7px; font-weight:600; color:#25d366; background:rgba(37,211,102,0.1); padding:2px 6px; border-radius:4px; flex-shrink:0;">PRO</span>' : '<span style="font-size:7px; font-weight:600; color:#f59e0b; background:rgba(245,158,11,0.1); padding:2px 6px; border-radius:4px; flex-shrink:0;">FREE</span>') +
+                        '<button onclick="event.stopPropagation(); deleteUser(\'' + escAttr(email) + '\')" style="background:transparent; border:none; color:#ef4444; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:11px; flex-shrink:0;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>' +
                     '</div>';
                 }).join('');
 
@@ -613,11 +610,11 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                     const fecha = u.updated_at ? new Date(u.updated_at).toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' }) : '-';
                     return `
                     <div class="req-card" style="display:flex; align-items:center; gap:14px; padding:14px 18px; flex-wrap:wrap;">
-                        <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#8bc34a,#7cb342); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#25d366,#1ebe5d); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                             <i class="fa-solid fa-user" style="color:white; font-size:15px;"></i>
                         </div>
                         <div style="flex:1; min-width:150px;">
-                            <div style="font-size:13px; font-weight:800; color:#0d2536;">${esc(u.email)}</div>
+                            <div style="font-size:13px; font-weight:800; color:#111b21;">${esc(u.email)}</div>
                             <div style="font-size:11px; color:#64748b; margin-top:2px;">
                                 <span style="background:#f0fdf4; color:#166534; padding:2px 8px; border-radius:20px; font-weight:700; font-size:10px; border:1px solid #bbf7d0;">✅ ACTIVO</span>
                                 &nbsp;Créditos: <b>${u.creditos || 0}</b>
@@ -797,7 +794,7 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                                         <div class="status-dot-btn" data-status="ko" onclick="toggleStatus(this, '${cat.id}')"></div>
                                     </div>
                                 </div>
-                                <button type="button" onclick="magicFormat(this)" style="background:#0d2536; color:#fff; border:none; padding:7px 14px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; transition:0.2s; white-space:nowrap;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'"><i class="fa-solid fa-wand-magic-sparkles" style="font-size:10px;"></i> Auto</button>
+                                <button type="button" onclick="magicFormat(this)" style="background:#111b21; color:#fff; border:none; padding:7px 14px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; transition:0.2s; white-space:nowrap;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'"><i class="fa-solid fa-wand-magic-sparkles" style="font-size:10px;"></i> Auto</button>
                             </div>
                             <div class="rich-editor" contenteditable="true" id="editor-${cat.id}" data-placeholder="Escribe aquí los hallazgos periciales...">${cat.def.replace(/\n/g, '<br>')}</div>
                             <div class="upload-area" onclick="triggerFileUpload('${cat.id}')" ondragover="handleDragOver(event, this)" ondragleave="handleDragLeave(event, this)" ondrop="handleDrop(event, '${cat.id}')">
@@ -1301,11 +1298,11 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                 return `
                 <div class="request-item" style="padding:14px 16px; gap:6px;">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <div style="background:linear-gradient(135deg,#0d2536,#1a3a52); color:white; width:36px; height:36px; min-width:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:14px; flex-shrink:0;">
+                        <div style="background:linear-gradient(135deg,#111b21,#1f2c34); color:white; width:36px; height:36px; min-width:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:14px; flex-shrink:0;">
                             <i class="fa-solid ${dIcon}"></i>
                         </div>
                         <div style="flex:1; min-width:0;">
-                            <div style="font-size:13px; font-weight:800; color:#0d2536; margin-bottom:2px;">${dName}</div>
+                            <div style="font-size:13px; font-weight:800; color:#111b21; margin-bottom:2px;">${dName}</div>
                             <div style="font-size:11px; color:#64748b; line-height:1.4;">${dSubtitle}</div>
                         </div>
                         <div style="display:flex; flex-shrink:0;">${actionBtn}</div>
@@ -1411,7 +1408,7 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                             <button onclick="event.stopPropagation(); imprimirDesdeHistorial('${escAttr(normP)}')" style="display:flex; align-items:center; gap:5px; padding:6px 12px; background:#ef4444; color:#fff; border:none; border-radius:7px; font-size:11px; font-weight:700; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
                                 <i class="fa-solid fa-file-pdf" style="font-size:12px; color:#fff;"></i> Descargar PDF
                             </button>
-                            <button onclick="event.stopPropagation(); openPlateEditor('${escAttr(normP)}')" style="display:flex; align-items:center; gap:5px; padding:6px 12px; background:#f8fafc; color:#0d2536; border:1px solid #e2e8f0; border-radius:7px; font-size:11px; font-weight:700; cursor:pointer; transition:0.2s;" onmouseover="this.style.borderColor='#0d2536'" onmouseout="this.style.borderColor='#e2e8f0'">
+                            <button onclick="event.stopPropagation(); openPlateEditor('${escAttr(normP)}')" style="display:flex; align-items:center; gap:5px; padding:6px 12px; background:#f8fafc; color:#111b21; border:1px solid #e2e8f0; border-radius:7px; font-size:11px; font-weight:700; cursor:pointer; transition:0.2s;" onmouseover="this.style.borderColor='#111b21'" onmouseout="this.style.borderColor='#e2e8f0'">
                                 <i class="fa-solid fa-pen-to-square" style="font-size:11px;"></i> Editar
                             </button>
                         </div>`;
@@ -1425,17 +1422,17 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                 return `
                 <div class="request-item" style="padding:14px 16px; gap:4px;">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <div style="background:linear-gradient(135deg,#0d2536,#1a3a52); color:white; width:38px; height:38px; min-width:38px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:15px; flex-shrink:0;">
+                        <div style="background:linear-gradient(135deg,#111b21,#1f2c34); color:white; width:38px; height:38px; min-width:38px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:15px; flex-shrink:0;">
                             <i class="fa-solid ${dIcon}"></i>
                         </div>
                         <div style="flex:1; min-width:0;">
                             <div style="display:flex; align-items:center; flex-wrap:wrap;">
-                                <span style="font-size:13px; font-weight:800; color:#0d2536;">${dName}</span>
+                                <span style="font-size:13px; font-weight:800; color:#111b21;">${dName}</span>
                                 ${reportBadge}
                             </div>
                             <div style="font-size:11px; color:#64748b; line-height:1.4; margin-top:2px;">${dSubtitle}</div>
                         </div>
-                        <span style="color:#8bc34a; font-size:16px; flex-shrink:0;" title="Aprobado"><i class="fa-solid fa-circle-check"></i></span>
+                        <span style="color:#25d366; font-size:16px; flex-shrink:0;" title="Aprobado"><i class="fa-solid fa-circle-check"></i></span>
                     </div>
                     ${actionsHTML}
                     <div style="font-size:9px; color:#94a3b8; display:flex; align-items:center; gap:3px; padding-left:48px; margin-top:4px;"><i class="fa-regular fa-clock" style="font-size:8px;"></i> ${timestamp}</div>
@@ -1865,19 +1862,29 @@ Link: https://filtrovehicularperu.com`;
 
         function promptDeleteAllRequests() {
             showAdminConfirmModal({
-                title: '¿Eliminar todas las solicitudes?',
-                message: 'Se eliminarán todas las solicitudes pendientes de la nube. Esta acción no se puede deshacer.',
-                confirmLabel: 'Sí, eliminar todo',
+                title: '¿Eliminar solicitudes pendientes?',
+                message: 'Solo se eliminarán las solicitudes pendientes. El historial, usuarios y registros no se verán afectados.',
+                confirmLabel: 'Sí, eliminar pendientes',
                 danger: true,
                 onConfirm: async function () {
                     if (!window.sb) { alert('Sin conexión a la nube.'); return; }
                     var listEl = document.getElementById('requestsList');
-                    if (listEl) listEl.innerHTML = '<div class="empty-req">Eliminando...</div>';
+                    if (listEl) listEl.innerHTML = '<div class="empty-req">Eliminando pendientes...</div>';
                     try {
-                        await window.sb.from('solicitudes').delete().neq('placa', '---');
+                        var res = await window.sb.from('solicitudes').select('placa, datos');
+                        if (res.error) throw res.error;
+                        var toDelete = [];
+                        (res.data || []).forEach(function (row) {
+                            if (!row.datos || !row.placa) return;
+                            if (solicitudEstadoAprobado(row.datos)) return;
+                            toDelete.push(row.placa);
+                        });
+                        for (var i = 0; i < toDelete.length; i++) {
+                            await window.sb.from('solicitudes').delete().eq('placa', toDelete[i]);
+                        }
                         if (typeof renderRequestsList === 'function') renderRequestsList();
-                        if (typeof renderHistoryList === 'function') renderHistoryList();
-                    } catch(e) { console.error(e); alert('Error al eliminar.'); }
+                        alert('Se eliminaron ' + toDelete.length + ' solicitud(es) pendiente(s).');
+                    } catch(e) { console.error(e); alert('Error al eliminar: ' + e.message); }
                 }
             });
         }
@@ -2476,7 +2483,7 @@ Link: https://filtrovehicularperu.com`;
                 btn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
             } else {
                 btn.innerHTML = '<i class="fa-solid fa-bell" style="font-size:10px;"></i> Activar Notificaciones';
-                btn.style.background = 'linear-gradient(135deg, #8bc34a 0%, #7cb342 100%)';
+                btn.style.background = 'linear-gradient(135deg, #25d366 0%, #1ebe5d 100%)';
             }
         }
 
@@ -2573,7 +2580,7 @@ Link: https://filtrovehicularperu.com`;
                 });
 
                 const colorConfig = {
-                    'ok': { color: '#8bc34a', symbol: '✓', label: 'CONFORME' },
+                    'ok': { color: '#25d366', symbol: '✓', label: 'CONFORME' },
                     'wa': { color: '#f59e0b', symbol: '⚠', label: 'OBSERVADO' },
                     'ko': { color: '#ef4444', symbol: '✗', label: 'NO CONFORME' }
                 };

@@ -1,14 +1,14 @@
 :root {
-            --bg-body: #f8fafc; /* Fondo claro institucional */
-            --bg-sidebar: #ffffff; /* Sidebar blanco limpio */
+            --bg-body: #ffffff;
+            --bg-sidebar: #111b21;
             --bg-card: #ffffff;
-            --petrol: #0d2536; /* Azul oscuro institucional */
-            --accent: #8bc34a; /* Verde institucional */
+            --petrol: #111b21;
+            --accent: #25d366;
             --white: #ffffff;
-            --text-dark: #0d2536;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --st-ok: #8bc34a;
+            --text-dark: #111b21;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --st-ok: #25d366;
             --st-wa: #f59e0b;
             --st-ko: #ef4444;
         }
@@ -76,17 +76,16 @@
             background: #ffffff;
             border: none;
             padding: 0;
-            border-radius: 20px;
+            border-radius: 12px;
             width: 100%;
             max-width: 400px;
             text-align: center;
             color: var(--text-dark);
-            box-shadow: 0 20px 60px rgba(13, 37, 54, 0.15);
             overflow: hidden;
         }
 
         .login-card-header {
-            background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
+            background: #111b21;
             padding: 28px 40px 24px;
             display: flex;
             flex-direction: column;
@@ -112,7 +111,7 @@
         }
 
         .login-input:focus {
-            border-color: #0d2536;
+            border-color: #111b21;
         }
 
         .login-input[type="password"] {
@@ -149,7 +148,7 @@
         /* SIDEBAR INSTITUCIONAL */
         .sidebar {
             width: 280px;
-            background: linear-gradient(180deg, #0d2536 0%, #1a3a52 100%);
+            background: #111b21;
             border-right: none;
             display: flex;
             flex-direction: column;
@@ -202,12 +201,12 @@
         }
 
         .nav-item.active {
-            background: rgba(255, 255, 255, 0.12);
-            color: #ffffff;
+            background: #25d366;
+            color: #111b21;
         }
 
         .nav-item.active i {
-            color: #8bc34a;
+            color: #25d366;
         }
 
         .nav-item i {
@@ -251,7 +250,7 @@
         }
 
         .btn-save {
-            background: #0d2536;
+            background: #111b21;
             color: white;
             padding: 12px 28px;
             border-radius: 10px;
@@ -268,7 +267,7 @@
         }
 
         .btn-save:hover {
-            background: #1a3a52;
+            background: #1f2c34;
         }
 
         /* BOTÓN FLOTANTE VERDE INSTITUCIONAL (FAB) */
@@ -277,7 +276,7 @@
             bottom: 30px;
             right: 30px;
             z-index: 1000000;
-            background: #0d2536;
+            background: #111b21;
             color: white;
             width: 60px;
             height: 60px;
@@ -288,7 +287,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 16px rgba(13, 37, 54, 0.3);
+            box-shadow: none;
         }
 
         .btn-floating-save i {
@@ -296,9 +295,9 @@
         }
 
         .btn-floating-save:hover {
-            background: #1a3a52;
+            background: #1f2c34;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(13, 37, 54, 0.35);
+            box-shadow: none;
         }
 
         @media (max-width: 992px) {
@@ -335,7 +334,7 @@
 
         .btn-magic {
             background: rgba(13, 37, 54, 0.06);
-            color: #0d2536;
+            color: #111b21;
             padding: 8px 14px;
             border-radius: 50px;
             font-size: 11px;
@@ -350,7 +349,7 @@
         }
 
         .btn-magic:hover {
-            background: #0d2536;
+            background: #111b21;
             color: #ffffff;
         }
 
@@ -413,17 +412,17 @@
                 padding: 18px 20px;
             }
         }
-        .rich-editor:focus { border-color: #0d2536; }
+        .rich-editor:focus { border-color: #111b21; }
         .rich-editor:empty:before {
             content: attr(data-placeholder);
             color: #94a3b8;
             font-style: italic;
         }
-        .rich-editor b, .rich-editor strong { font-weight: 800; color: #0d2536; }
+        .rich-editor b, .rich-editor strong { font-weight: 800; color: #111b21; }
         .rich-editor i, .rich-editor em { font-style: italic; color: #475569; }
         .rich-editor strike, .rich-editor s { text-decoration: line-through; color: #94a3b8; }
-        .rich-editor code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-family: monospace; font-size: 12px; color: #0d2536; }
-        .rich-editor blockquote { border-left: 3px solid #8bc34a; margin: 6px 0; padding: 4px 12px; color: #64748b; }
+        .rich-editor code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-family: monospace; font-size: 12px; color: #111b21; }
+        .rich-editor blockquote { border-left: 3px solid #25d366; margin: 6px 0; padding: 4px 12px; color: #64748b; }
         .rich-editor ul, .rich-editor ol { margin: 4px 0; padding-left: 20px; }
 
         input,
@@ -442,7 +441,7 @@
         }
 
         input:focus, select:focus, textarea:focus {
-            border-color: #0d2536;
+            border-color: #111b21;
         }
 
         .form-grid {
@@ -454,23 +453,23 @@
         .admin-card {
             background: #ffffff;
             color: var(--text-dark);
-            border: 1px solid #e2e8f0;
+            border: 1px solid #e5e7eb;
             border-bottom: none;
             transition: background 0.2s;
         }
 
         .admin-card:first-child {
-            border-radius: 14px 14px 0 0;
+            border-radius: 12px 12px 0 0;
         }
 
         .admin-card:last-child {
-            border-bottom: 1px solid #e2e8f0;
-            border-radius: 0 0 14px 14px;
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: 0 0 12px 12px;
         }
 
         .admin-card:first-child:last-child {
-            border-radius: 14px;
-            border-bottom: 1px solid #e2e8f0;
+            border-radius: 12px;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         /* --- FILA COLAPSADA (row header) --- */
@@ -489,11 +488,11 @@
         }
 
         .card-row-icon {
-            width: 34px;
-            height: 34px;
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            background: #f1f5f9;
-            color: #0d2536;
+            background: #25d366;
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -503,7 +502,7 @@
 
         .card-row-title {
             flex: 1;
-            font-weight: 700;
+            font-weight: 500;
             font-size: 13px;
             color: var(--text-dark);
             min-width: 0;
@@ -525,7 +524,7 @@
         .card-row-status[data-st="ko"] { background: var(--st-ko); }
 
         .card-row-badge {
-            background: #0d2536;
+            background: #111b21;
             color: white;
             padding: 2px 7px;
             border-radius: 20px;
@@ -595,31 +594,26 @@
 
         .status-picker {
             display: flex;
-            gap: 10px;
-            background: #f1f5f9;
-            padding: 6px 10px;
-            border-radius: 50px;
-            border: 1px solid var(--border);
+            gap: 6px;
         }
 
         .status-dot-btn {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             cursor: pointer;
-            border: 2px solid transparent;
-            transition: 0.2s;
+            background: transparent !important;
+            transition: 0.15s;
             position: relative;
         }
 
-        .status-dot-btn[data-status="ok"] { background-color: var(--st-ok); }
-        .status-dot-btn[data-status="wa"] { background-color: var(--st-wa); }
-        .status-dot-btn[data-status="ko"] { background-color: var(--st-ko); }
+        .status-dot-btn[data-status="ok"] { border: 2px solid #25d366; }
+        .status-dot-btn[data-status="wa"] { border: 2px solid #f59e0b; }
+        .status-dot-btn[data-status="ko"] { border: 2px solid #ef4444; }
 
-        .status-dot-btn.active {
-            border-color: #ffffff;
-            transform: scale(1.15);
-        }
+        .status-dot-btn.active[data-status="ok"] { background: #25d366 !important; }
+        .status-dot-btn.active[data-status="wa"] { background: #f59e0b !important; }
+        .status-dot-btn.active[data-status="ko"] { background: #ef4444 !important; }
 
         .upload-area.dragover {
             background: #f0f9ff;
@@ -627,7 +621,7 @@
         }
 
         .file-counter-badge {
-            background: #0d2536;
+            background: #111b21;
             color: white;
             padding: 3px 9px;
             border-radius: 20px;
@@ -707,7 +701,7 @@
 
         .upload-area:hover {
             background: rgba(13, 37, 54, 0.02);
-            border-color: #0d2536;
+            border-color: #111b21;
         }
 
         .upload-area i {
@@ -833,13 +827,13 @@
         }
 
         .req-plate-btn:hover {
-            background: #0d2536;
+            background: #111b21;
             color: white;
-            border-color: #0d2536;
+            border-color: #111b21;
         }
 
         .btn-confirm-pay {
-            background: #0d2536 !important;
+            background: #111b21 !important;
             color: white !important;
             font-weight: 700;
             border: none;
@@ -854,7 +848,7 @@
         }
 
         .btn-confirm-pay:hover {
-            background: #1a3a52 !important;
+            background: #1f2c34 !important;
         }
 
         .paid-badge {
@@ -877,7 +871,7 @@
         }
 
         .req-plate-box {
-            background: #0d2536;
+            background: #111b21;
             color: white;
             padding: 6px 12px;
             border-radius: 6px;
@@ -917,12 +911,12 @@
         }
 
         .btn-approve {
-            background: #0d2536;
+            background: #111b21;
             color: white;
         }
 
         .btn-approve:hover {
-            background: #1a3a52;
+            background: #1f2c34;
         }
 
         .btn-reject {
@@ -972,7 +966,7 @@
                 display: flex !important;
                 position: fixed;
                 top: 0; left: 0; right: 0; height: 64px;
-                background: linear-gradient(135deg, #0d2536 0%, #1a3a52 100%);
+                background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%);
                 border-bottom: none;
                 z-index: 10000;
                 align-items: center;
@@ -1062,14 +1056,14 @@
         .cert-line-top {
             width: 100%;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #0d2536 20%, #0d2536 80%, transparent);
+            background: linear-gradient(90deg, transparent, #111b21 20%, #111b21 80%, transparent);
             margin-bottom: 12px;
         }
 
         .cert-title {
             font-size: 18px;
             font-weight: 900;
-            color: #0d2536;
+            color: #111b21;
             margin: 0 0 4px 0;
             letter-spacing: 1px;
             line-height: 1.3;
@@ -1087,7 +1081,7 @@
         .cert-line-bottom {
             width: 100%;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #0d2536 20%, #0d2536 80%, transparent);
+            background: linear-gradient(90deg, transparent, #111b21 20%, #111b21 80%, transparent);
             margin-top: 12px;
         }
 
@@ -1102,7 +1096,7 @@
         .cert-info-title {
             font-size: 10px;
             font-weight: 800;
-            color: #0d2536;
+            color: #111b21;
             margin: 0 0 8px 0;
             letter-spacing: 1px;
             text-transform: uppercase;
@@ -1133,7 +1127,7 @@
 
         .cert-value {
             font-size: 11px;
-            color: #0d2536;
+            color: #111b21;
             font-weight: 700;
         }
 
@@ -1175,7 +1169,7 @@
         .cert-section-title {
             font-size: 12px;
             font-weight: 900;
-            color: #0d2536;
+            color: #111b21;
             margin: 0 0 10px 0;
             padding-bottom: 6px;
             border-bottom: 2px double #e2e8f0;
@@ -1320,7 +1314,7 @@
                 max-width: 100% !important;
                 max-height: none !important;
                 border-radius: 0 !important;
-                box-shadow: none !important;
+                box-shadow: none;
             }
 
             #printModal > div > div:first-child {

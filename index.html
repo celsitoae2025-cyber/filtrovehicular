@@ -33,7 +33,7 @@
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0d2536">
+    <meta name="theme-color" content="#111b21">
 
     <!-- 🚀 PRECARGAR IMAGEN DEL FLYER PARA CARGA INSTANTÁNEA -->
     <link rel="preload" href="assets/media/SOAT.jpg?v=1" as="image">
@@ -91,7 +91,7 @@
                     <div class="login-divider-line"></div>
                 </div>
                 <button type="button" class="login-btn-register" onclick="openRegisterModal();">
-                    <i class="fa-solid fa-user-plus" style="color:#8bc34a;"></i> Crear mi cuenta
+                    <i class="fa-solid fa-user-plus" style="color:#25d366;"></i> Crear mi cuenta
                 </button>
             </div>
             <div class="login-footer-badge">
@@ -158,9 +158,9 @@
             </div>
 
             <!-- Modal Reniec en construcción -->
-            <div id="reniecMantenimiento" onclick="if(event.target===this) this.style.display='none'" style="position:fixed; inset:0; background:rgba(248,250,252,0.30); z-index:99999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:16px;">
+            <div id="reniecMantenimiento" onclick="if(event.target===this) this.style.display='none'" style="position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); z-index:99999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); padding:16px;">
                 <div style="background:#ffffff; width:100%; max-width:380px; border-radius:20px; overflow:hidden; box-shadow:0 20px 60px rgba(13,37,54,0.15),0 0 0 1px rgba(13,37,54,0.06);">
-                    <div style="background:linear-gradient(135deg,#0d2536 0%,#1a3a52 100%); padding:30px 24px 24px; text-align:center; position:relative;">
+                    <div style="background:linear-gradient(135deg,#111b21 0%,#1f2c34 100%); padding:30px 24px 24px; text-align:center; position:relative;">
                         <button onclick="document.getElementById('reniecMantenimiento').style.display='none'" style="position:absolute; top:14px; right:16px; background:none; border:none; font-size:18px; color:rgba(255,255,255,0.35); cursor:pointer; transition:0.2s; padding:4px; line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.35)'"><i class="fa-solid fa-xmark"></i></button>
                         <div style="width:56px; height:56px; background:rgba(245,158,11,0.12); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
                             <i class="fa-solid fa-wrench" style="font-size:22px; color:#f59e0b;"></i>
@@ -170,7 +170,7 @@
                     </div>
                     <div style="padding:24px; text-align:center;">
                         <p style="font-size:13px; color:#64748b; line-height:1.6; margin:0 0 20px;">Este módulo se encuentra en proceso de desarrollo. Pronto podrás acceder a consultas de RENIEC directamente desde la plataforma.</p>
-                        <button onclick="document.getElementById('reniecMantenimiento').style.display='none'" style="width:100%; padding:13px; background:#0d2536; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:13px; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">Entendido</button>
+                        <button onclick="document.getElementById('reniecMantenimiento').style.display='none'" style="width:100%; padding:13px; background:#111b21; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:13px; cursor:pointer; transition:0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">Entendido</button>
                     </div>
                 </div>
             </div>
@@ -186,8 +186,8 @@
                 <!-- Buscador DNI -->
                 <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:14px; padding:20px; margin-bottom:14px;">
                     <div style="display:flex; gap:10px; margin-bottom:14px;">
-                        <input type="text" id="reniecDniInput" placeholder="Ingresa número de DNI" maxlength="8" style="flex:1; padding:13px 16px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:15px; font-weight:700; color:#0d2536; text-align:center; letter-spacing:2px; outline:none; transition:0.2s; box-sizing:border-box; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'">
-                        <button onclick="consultarDNI()" id="btnConsultaDni" style="background:#0d2536; color:#fff; border:none; padding:0 20px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px; transition:0.2s; display:flex; align-items:center; gap:6px; flex-shrink:0;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
+                        <input type="text" id="reniecDniInput" placeholder="Ingresa número de DNI" maxlength="8" style="flex:1; padding:13px 16px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:15px; font-weight:700; color:#111b21; text-align:center; letter-spacing:2px; outline:none; transition:0.2s; box-sizing:border-box; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
+                        <button onclick="consultarDNI()" id="btnConsultaDni" style="background:#111b21; color:#fff; border:none; padding:0 20px; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px; transition:0.2s; display:flex; align-items:center; gap:6px; flex-shrink:0;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                             <i class="fa-solid fa-magnifying-glass" style="font-size:13px;"></i> Buscar
                         </button>
                     </div>
@@ -291,91 +291,84 @@
                 <div class="sale-card" onclick="event.stopPropagation()">
 
                     <!-- Header Navy unificado -->
-                    <div id="saleHeaderNavy" style="background:linear-gradient(135deg,#0d2536 0%,#1a3a52 100%); padding:24px 22px 20px; position:relative;">
-                        <button onclick="closeSale()" style="position:absolute; top:14px; right:16px; background:none; border:none; font-size:18px; color:rgba(255,255,255,0.35); cursor:pointer; transition:0.2s; padding:4px; line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
+                    <div id="saleHeaderNavy" style="background:#111b21; padding:28px 20px 22px; position:relative;">
+                        <button onclick="closeSale()" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#8696a0; cursor:pointer; padding:4px; line-height:1;">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
 
                         <!-- Header Concepto (premium/recarga) -->
                         <div id="saleConceptHeader" style="display:none;">
-                            <div style="display:flex; align-items:center; justify-content:space-between;">
-                                <div style="display:flex; align-items:center; gap:12px; min-width:0; flex:1;">
-                                    <div style="width:40px; height:40px; background:rgba(139,195,74,0.12); border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                        <i id="saleConceptIcon" class="fa-solid fa-crown" style="font-size:16px; color:#8bc34a;"></i>
-                                    </div>
-                                    <div style="min-width:0;">
-                                        <p id="saleConcept" style="font-size:14px; color:#ffffff; font-weight:800; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Plataforma Premium</p>
-                                        <p id="saleUserEmail" style="font-size:11px; color:rgba(255,255,255,0.45); font-weight:500; margin:2px 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></p>
-                                    </div>
-                                </div>
-                                <div style="text-align:right; flex-shrink:0; margin-left:12px;">
-                                    <p id="saleAmountHeader" style="font-size:24px; font-weight:900; color:#8bc34a; margin:0;">S/ 35</p>
-                                </div>
+                            <p id="saleConcept" style="font-size:14px; color:#e9edef; font-weight:500; margin:0 0 3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Plataforma Premium</p>
+                            <p id="saleUserEmail" style="font-size:11px; color:#8696a0; font-weight:400; margin:0 0 14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></p>
+                            <div style="background:rgba(255,255,255,0.06); border-radius:8px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between;">
+                                <span style="font-size:11px; color:#8696a0; font-weight:400;">Total a pagar</span>
+                                <span id="saleAmountHeader" style="font-size:18px; font-weight:600; color:#25d366;">S/ 35</span>
                             </div>
                         </div>
 
                         <!-- Header Simple: Placa + Monto -->
-                        <div id="saleSimpleHeader" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-                            <div style="min-width:0; flex:1;">
-                                <p id="saleLabel" style="font-size:9px; color:rgba(255,255,255,0.45); font-weight:700; margin:0 0 4px 0; text-transform:uppercase; letter-spacing:0.5px;">Placa</p>
-                                <p style="font-size:15px; color:#ffffff; font-weight:800; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="salePlate">---</p>
+                        <div id="saleSimpleHeader" style="display:flex; flex-direction:column; gap:14px;">
+                            <div style="display:flex; align-items:center; justify-content:space-between;">
+                                <div>
+                                    <p id="saleLabel" style="font-size:10px; color:#8696a0; font-weight:400; margin:0 0 2px; text-transform:uppercase; letter-spacing:0.5px;">Placa</p>
+                                    <p style="font-size:16px; color:#e9edef; font-weight:500; margin:0;" id="salePlate">---</p>
+                                </div>
                             </div>
-                            <div style="text-align:right; flex-shrink:0;">
-                                <p style="font-size:9px; color:rgba(255,255,255,0.45); font-weight:700; margin:0 0 4px 0; text-transform:uppercase; letter-spacing:0.5px;">Total</p>
-                                <p id="saleAmount" style="font-size:24px; font-weight:900; color:#8bc34a; margin:0; white-space:nowrap;">S/ 20</p>
+                            <div style="background:rgba(255,255,255,0.06); border-radius:8px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between;">
+                                <span style="font-size:11px; color:#8696a0; font-weight:400;">Total a pagar</span>
+                                <span id="saleAmount" style="font-size:18px; font-weight:600; color:#25d366;">S/ 20</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Contenido blanco -->
-                    <div style="padding:24px 24px 24px;">
+                    <!-- Contenido -->
+                    <div style="padding:20px 20px 18px;">
 
                         <!-- Tabs Yape/Plin -->
-                        <div style="display:flex; gap:10px; margin-bottom:20px;">
-                            <div class="checkout-tab active" id="tabYape" onclick="setPayMethod('yape')" style="flex:1; padding:12px; text-align:center; cursor:pointer; border-radius:10px; transition:all 0.2s; background:#fff; border:1.5px solid #0d2536;">
-                                <img src="assets/media/yape.png" alt="Yape" style="max-height:24px; width:auto; object-fit:contain;">
+                        <div style="display:flex; gap:8px; margin-bottom:16px;">
+                            <div class="checkout-tab active" id="tabYape" onclick="setPayMethod('yape')" style="flex:1; padding:10px; text-align:center; cursor:pointer; border-radius:10px; transition:all 0.2s; background:#fff; border:1px solid #25d366;">
+                                <img src="assets/media/yape.png" alt="Yape" style="max-height:22px; width:auto; object-fit:contain;">
                             </div>
-                            <div class="checkout-tab" id="tabPlin" onclick="setPayMethod('plin')" style="flex:1; padding:12px; text-align:center; cursor:pointer; border-radius:10px; transition:all 0.2s; background:#f8fafc; border:1.5px solid #e2e8f0; filter:grayscale(1); opacity:0.4;">
-                                <img src="assets/media/plin_logo.svg" alt="Plin" style="max-height:24px; width:auto; object-fit:contain;">
+                            <div class="checkout-tab" id="tabPlin" onclick="setPayMethod('plin')" style="flex:1; padding:10px; text-align:center; cursor:pointer; border-radius:10px; transition:all 0.2s; background:#f9fafb; border:1px solid #e5e7eb; filter:grayscale(1); opacity:0.4;">
+                                <img src="assets/media/plin_logo.svg" alt="Plin" style="max-height:22px; width:auto; object-fit:contain;">
                             </div>
                         </div>
 
                         <!-- QR Code -->
-                        <div style="padding:14px; border:1.5px solid #e2e8f0; border-radius:14px; margin:0 auto 20px; max-width:190px; background:#f8fafc;">
-                            <img src="assets/media/qrpago.png" id="checkoutQR" alt="QR Pago" style="width:100%; display:block; border-radius:8px;">
+                        <div style="padding:12px; border:1px solid #e5e7eb; border-radius:12px; margin:0 auto 16px; max-width:170px; background:#f9fafb;">
+                            <img src="assets/media/qrpago.png" id="checkoutQR" alt="QR Pago" style="width:100%; display:block; border-radius:6px;">
                         </div>
 
                         <!-- Instrucciones -->
-                        <div style="text-align:left; margin-bottom:22px; background:#f8fafc; border-radius:12px; padding:16px;">
-                            <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #e2e8f0;">
-                                <div style="width:24px; height:24px; background:#0d2536; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                    <span style="color:#ffffff; font-size:11px; font-weight:800;">1</span>
+                        <div style="text-align:left; margin-bottom:18px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:14px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid #e5e7eb;">
+                                <div style="width:22px; height:22px; background:#25d366; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <span style="color:#fff; font-size:10px; font-weight:700;">1</span>
                                 </div>
-                                <p style="margin:0; font-size:13px; color:#64748b; line-height:1.5;"><strong style="color:#0d2536;">Escanea el QR</strong> desde tu app o banca móvil</p>
+                                <p style="margin:0; font-size:12px; color:#6b7280; line-height:1.4;"><span style="color:#111b21; font-weight:600;">Escanea el QR</span> desde tu app o banca móvil</p>
                             </div>
-                            <div style="display:flex; align-items:flex-start; gap:12px;">
-                                <div style="width:24px; height:24px; background:#0d2536; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                    <span style="color:#ffffff; font-size:11px; font-weight:800;">2</span>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="width:22px; height:22px; background:#25d366; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <span style="color:#fff; font-size:10px; font-weight:700;">2</span>
                                 </div>
-                                <p style="margin:0; font-size:13px; color:#64748b; line-height:1.5;"><strong style="color:#0d2536;">Sube la captura</strong> de tu transferencia</p>
+                                <p style="margin:0; font-size:12px; color:#6b7280; line-height:1.4;"><span style="color:#111b21; font-weight:600;">Sube la captura</span> de tu transferencia</p>
                             </div>
                         </div>
 
                         <!-- Botón Subir Comprobante -->
                         <input type="file" id="voucherUpload" accept="image/*" style="display:none;" onchange="handleVoucherUpload(event)">
-                        <button onclick="document.getElementById('voucherUpload').click()" id="btnVoucher" style="background:#0d2536; border:none; width:100%; height:48px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; border-radius:12px; font-weight:700; font-size:13px; cursor:pointer; text-transform:uppercase; letter-spacing:0.3px; margin-bottom:10px; transition:0.2s;" onmouseover="this.style.background='#15324d';" onmouseout="this.style.background='#0d2536';">
-                            <i class="fa-solid fa-cloud-arrow-up" style="font-size:15px;"></i>
-                            <span>Subir comprobante</span>
+                        <button onclick="document.getElementById('voucherUpload').click()" id="btnVoucher" style="background:#25d366; border:none; width:100%; padding:12px; display:flex; align-items:center; justify-content:center; gap:6px; color:#fff; border-radius:10px; font-weight:600; font-size:13px; cursor:pointer; margin-bottom:8px; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size:14px;"></i>
+                            <span>Subir Comprobante</span>
                         </button>
 
                         <!-- Paga por WhatsApp -->
-                        <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20realizar%20un%20pago%20en%20Filtro%20Vehicular." target="_blank" onclick="closeSale();" style="width:100%; padding:12px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; font-size:12px; font-weight:700; color:#0d2536; cursor:pointer; transition:all 0.2s; margin-bottom:10px;" onmouseover="this.style.borderColor='#25D366'; this.style.background='#f0fdf4'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc'">
-                            <i class="fa-brands fa-whatsapp" style="font-size:16px; color:#25D366;"></i>
+                        <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20realizar%20un%20pago%20en%20Filtro%20Vehicular." target="_blank" onclick="closeSale();" style="width:100%; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; font-size:12px; font-weight:600; color:#111b21; cursor:pointer; transition:border-color 0.2s; margin-bottom:8px; box-sizing:border-box;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
+                            <i class="fa-brands fa-whatsapp" style="font-size:15px; color:#25d366;"></i>
                             Pagar por WhatsApp
                         </a>
 
-                        <!-- Botón Volver -->
-                        <button onclick="closeSale()" style="width:100%; padding:11px; background:transparent; color:#94a3b8; border:none; border-radius:12px; font-size:12px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">Volver</button>
+                        <button onclick="closeSale()" style="width:100%; padding:10px; background:transparent; color:#9ca3af; border:none; font-size:11px; font-weight:500; cursor:pointer;">Volver</button>
                     </div>
                 </div>
             </div>
@@ -392,82 +385,76 @@
             </div>
 
             <!-- MODAL PLANES Y PRECIOS -->
-            <div id="accessModal" class="modal-overlay" onclick="closeAccess()">
-                <div class="plans-container" onclick="event.stopPropagation()">
-                    <!-- Header navy -->
-                    <div class="plans-header">
-                        <button class="close-plans-btn" onclick="closeAccess()"><i class="fa-solid fa-xmark"></i></button>
-                        <div class="plans-header-label">Recarga de créditos</div>
-                        <h2 class="plans-main-title">Elige tu paquete ideal</h2>
-                        <p class="plans-subtitle">Usa tus créditos en cualquiera de las 22 consultas disponibles</p>
+            <div id="accessModal" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:99999; align-items:center; justify-content:center; padding:16px;" onclick="if(event.target===this)closeAccess()">
+                <div onclick="event.stopPropagation()" style="background:#ffffff; border-radius:16px; width:92%; max-width:400px; overflow:hidden; border:1px solid #e5e7eb;">
+                    <!-- Header -->
+                    <div style="background:#111b21; padding:22px 22px 18px; position:relative;">
+                        <button onclick="closeAccess()" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#8696a0; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="width:40px; height:40px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa-solid fa-coins" style="font-size:18px; color:#fff;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:15px; font-weight:700; color:#e9edef;">Recargar Créditos</div>
+                                <div style="font-size:11px; color:#8696a0; font-weight:400;">Usa tus créditos en las 22 consultas</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Cards -->
-                    <div class="plans-body">
-                        <div class="plans-grid">
-                            <!-- Básico -->
-                            <div class="plan-card" onclick="closeAccess(); openSale('20.00', 'Recarga Básica: 20 Créditos', 20)">
-                                <div class="plan-left">
-                                    <div class="plan-name">Básico</div>
-                                    <div class="plan-credits-row">
-                                        <span class="plan-credits-number">20</span>
-                                        <span class="plan-credits-label">créditos</span>
-                                    </div>
-                                </div>
-                                <div class="plan-right">
-                                    <div class="plan-price">S/ 20</div>
-                                </div>
+                    <!-- Planes -->
+                    <div style="padding:18px 18px 14px; display:flex; flex-direction:column; gap:10px;">
+                        <!-- Básico -->
+                        <div onclick="closeAccess(); openSale('20.00', 'Recarga Básica: 20 Créditos', 20)" style="border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
+                            <div>
+                                <div style="font-size:13px; font-weight:600; color:#111b21;">Básico</div>
+                                <div style="font-size:11px; color:#6b7280; font-weight:400;">20 créditos</div>
                             </div>
+                            <div style="font-size:18px; font-weight:700; color:#111b21;">S/ 20</div>
+                        </div>
 
-                            <!-- Estándar - DESTACADO -->
-                            <div class="plan-card destacado" onclick="closeAccess(); openSale('60.00', 'Recarga Estándar: 60 + 20 bonus = 80 Créditos', 80)">
-                                <div class="plan-badge">Más popular</div>
-                                <div class="plan-left">
-                                    <div class="plan-name">Estándar</div>
-                                    <div class="plan-credits-row">
-                                        <span class="plan-credits-number">80</span>
-                                        <span class="plan-credits-label">créditos</span>
-                                    </div>
-                                    <span class="plan-bonus">+20 gratis</span>
-                                </div>
-                                <div class="plan-right">
-                                    <div class="plan-price">S/ 60</div>
-                                    <div class="plan-save">Ahorras S/ 20</div>
-                                </div>
+                        <!-- Estándar -->
+                        <div onclick="closeAccess(); openSale('60.00', 'Recarga Estándar: 60 + 20 bonus = 80 Créditos', 80)" style="border:2px solid #25d366; border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; position:relative;">
+                            <span style="position:absolute; top:-8px; left:14px; background:#25d366; color:#fff; font-size:9px; font-weight:700; padding:2px 8px; border-radius:4px; text-transform:uppercase; letter-spacing:0.3px;">Popular</span>
+                            <div>
+                                <div style="font-size:13px; font-weight:600; color:#111b21;">Estándar</div>
+                                <div style="font-size:11px; color:#6b7280; font-weight:400;">80 créditos</div>
+                                <span style="font-size:10px; color:#25d366; font-weight:600;">+20 gratis</span>
                             </div>
-
-                            <!-- Premium -->
-                            <div class="plan-card" onclick="closeAccess(); openSale('100.00', 'Recarga Premium: 100 + 50 bonus = 150 Créditos', 150)">
-                                <div class="plan-badge badge-navy">Mayor ahorro</div>
-                                <div class="plan-left">
-                                    <div class="plan-name">Premium</div>
-                                    <div class="plan-credits-row">
-                                        <span class="plan-credits-number">150</span>
-                                        <span class="plan-credits-label">créditos</span>
-                                    </div>
-                                    <span class="plan-bonus">+50 gratis</span>
-                                </div>
-                                <div class="plan-right">
-                                    <div class="plan-price">S/ 100</div>
-                                    <div class="plan-save">Ahorras S/ 50</div>
-                                </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:18px; font-weight:700; color:#111b21;">S/ 60</div>
+                                <div style="font-size:10px; color:#25d366; font-weight:600;">Ahorras S/ 20</div>
                             </div>
                         </div>
 
-                        <div class="plans-footer-note">
-                            <i class="fa-solid fa-lock"></i> 1 crédito = S/ 1.00 · Pago seguro verificado
+                        <!-- Premium -->
+                        <div onclick="closeAccess(); openSale('100.00', 'Recarga Premium: 100 + 50 bonus = 150 Créditos', 150)" style="border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; position:relative; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
+                            <span style="position:absolute; top:-8px; left:14px; background:#111b21; color:#fff; font-size:9px; font-weight:700; padding:2px 8px; border-radius:4px; text-transform:uppercase; letter-spacing:0.3px;">Mayor ahorro</span>
+                            <div>
+                                <div style="font-size:13px; font-weight:600; color:#111b21;">Premium</div>
+                                <div style="font-size:11px; color:#6b7280; font-weight:400;">150 créditos</div>
+                                <span style="font-size:10px; color:#25d366; font-weight:600;">+50 gratis</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:18px; font-weight:700; color:#111b21;">S/ 100</div>
+                                <div style="font-size:10px; color:#25d366; font-weight:600;">Ahorras S/ 50</div>
+                            </div>
                         </div>
+                    </div>
 
-                        <!-- Recarga por WhatsApp -->
-                        <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20recargar%20cr%C3%A9ditos%20en%20Filtro%20Vehicular." target="_blank" class="plans-wa-btn" onclick="closeAccess();">
-                            <div class="plans-wa-left">
-                                <i class="fa-brands fa-whatsapp"></i>
+                    <!-- Footer -->
+                    <div style="padding:0 18px 18px;">
+                        <div style="text-align:center; font-size:10px; color:#6b7280; margin-bottom:12px;">
+                            <i class="fa-solid fa-lock" style="color:#25d366; margin-right:4px;"></i> 1 crédito = S/ 1.00 · Pago seguro
+                        </div>
+                        <a href="https://wa.me/51979334296?text=Hola%2C%20quiero%20recargar%20cr%C3%A9ditos%20en%20Filtro%20Vehicular." target="_blank" onclick="closeAccess();" style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; text-decoration:none; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <i class="fa-brands fa-whatsapp" style="font-size:20px; color:#25d366;"></i>
                                 <div>
-                                    <div class="plans-wa-title">Recarga por WhatsApp</div>
-                                    <div class="plans-wa-desc">Escríbenos y recarga al instante</div>
+                                    <div style="font-size:12px; font-weight:600; color:#111b21;">Recarga por WhatsApp</div>
+                                    <div style="font-size:10px; color:#6b7280; font-weight:400;">Escríbenos y recarga al instante</div>
                                 </div>
                             </div>
-                            <i class="fa-solid fa-chevron-right" style="color: #94a3b8; font-size: 12px;"></i>
+                            <i class="fa-solid fa-chevron-right" style="color:#9ca3af; font-size:11px;"></i>
                         </a>
                     </div>
                 </div>
@@ -475,23 +462,6 @@
 
             <!-- RISK PANELS -->
 
-            <!-- STATS COUNTER -->
-            <div class="stats-bar">
-                <div class="stats-grid">
-                    <div class="stats-item">
-                        <i class="fa-solid fa-car"></i>
-                        <span><span class="stat-number">15K</span>+ filtrados</span>
-                    </div>
-                    <div class="stats-item">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span><span class="stat-number">99.8</span>% precisión</span>
-                    </div>
-                    <div class="stats-item">
-                        <i class="fa-solid fa-headset"></i>
-                        <span><span class="stat-number-text">24/7</span></span>
-                    </div>
-                </div>
-            </div>
             <!-- Intranet: acceso alternativo antes del pie (visible solo cuenta autorizada) -->
             <div id="intranetFooterBar" class="intranet-footer-bar" style="display: none;" hidden>
                 <div class="intranet-footer-inner">
@@ -507,26 +477,45 @@
     </div>
 
     <footer class="site-footer">
-        <div class="footer-content">
-            <div class="footer-disclaimer">
-                Información obtenida de fuentes oficiales (SUNARP, SAT, MTC, SBS). Filtro Vehicular Perú no se
-                responsabiliza por la exactitud de los registros externos.
-            </div>
-            <div class="footer-social">
-                <a href="https://tiktok.com" target="_blank" class="footer-social-icon"><i class="fa-brands fa-tiktok"></i></a>
-                <a href="https://youtube.com" target="_blank" class="footer-social-icon"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://instagram.com" target="_blank" class="footer-social-icon"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://facebook.com" target="_blank" class="footer-social-icon"><i class="fa-brands fa-facebook-f"></i></a>
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <img src="assets/media/logo_circular.png" alt="Logo">
+                        <div class="footer-logo-text">
+                            <span class="footer-logo-name">Filtro Vehicular</span>
+                            <span class="footer-logo-sub">Plus</span>
+                        </div>
+                    </div>
+                    <p class="footer-desc">Plataforma integral de verificación vehicular en tiempo real. Datos obtenidos de fuentes oficiales: SUNARP, SAT, MTC y SBS.</p>
+                    <div class="footer-social">
+                        <a href="https://tiktok.com" target="_blank" class="footer-social-icon"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="https://youtube.com" target="_blank" class="footer-social-icon"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="https://instagram.com" target="_blank" class="footer-social-icon"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://facebook.com" target="_blank" class="footer-social-icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links-group">
+                    <div class="footer-col">
+                        <div class="footer-col-title">Plataforma</div>
+                        <span style="font-size:13px; color:#8696a0; cursor:pointer;" onclick="if(typeof switchServicesTab==='function')switchServicesTab('categories')">Servicios</span>
+                        <span style="font-size:13px; color:#8696a0; cursor:pointer;" onclick="if(typeof switchServicesTab==='function')switchServicesTab('dashboard')">Accesos Directos</span>
+                        <span style="font-size:13px; color:#8696a0; cursor:pointer;" onclick="location.href='panel_cliente.html'">Mis Consultas</span>
+                    </div>
+                    <div class="footer-col">
+                        <div class="footer-col-title">Legal</div>
+                        <span style="font-size:13px; color:#8696a0; cursor:pointer;" onclick="openInfo('terms')">Términos de Uso</span>
+                        <span style="font-size:13px; color:#8696a0; cursor:pointer;" onclick="openInfo('privacy')">Política de Privacidad</span>
+                        <span style="font-size:13px; color:#8696a0; cursor:pointer;" onclick="openInfo('contact')">Contacto</span>
+                    </div>
+                </div>
             </div>
             <div class="footer-bottom">
-                <div class="footer-copy">
-                    &copy; 2026 Filtro Vehicular Perú. Todos los derechos reservados.
-                </div>
-                <div class="footer-links">
-                    <a href="javascript:void(0)" onclick="openInfo('terms')" class="footer-link">Términos</a>
-                    <a href="javascript:void(0)" onclick="openInfo('privacy')" class="footer-link">Privacidad</a>
-                    <a href="javascript:void(0)" onclick="openInfo('contact')" class="footer-link">Contacto</a>
-                </div>
+                <span>&copy; 2026 Filtro Vehicular Perú. Todos los derechos reservados.</span>
+                <span class="footer-bottom-links">
+                    <span style="font-size:12px; color:#6b7280; cursor:pointer;" onclick="openInfo('terms')">Términos</span>
+                    <span style="font-size:12px; color:#6b7280; cursor:pointer;" onclick="openInfo('privacy')">Privacidad</span>
+                </span>
             </div>
         </div>
     </footer>
@@ -587,7 +576,7 @@
                         <label>Contraseña</label>
                         <div style="position:relative;">
                             <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" style="padding-right:48px;">
-                            <button type="button" onclick="togglePasswordVisibility()" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; padding:4px; color:#94a3b8; transition:0.2s;" onmouseover="this.style.color='#0d2536'" onmouseout="this.style.color='#94a3b8'" aria-label="Mostrar contraseña">
+                            <button type="button" onclick="togglePasswordVisibility()" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; padding:4px; color:#94a3b8; transition:0.2s;" onmouseover="this.style.color='#111b21'" onmouseout="this.style.color='#94a3b8'" aria-label="Mostrar contraseña">
                                 <i class="fa-solid fa-eye" id="togglePasswordIcon" style="font-size:16px;"></i>
                             </button>
                         </div>
@@ -651,144 +640,102 @@
     
 
     <!-- Flyer SOAT -->
-    <div id="flyerModal" style="position:fixed; inset:0; background:rgba(248,250,252,0.30); z-index:9999999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:20px;" onclick="if(event.target===this) { this.style.display='none'; window._flyerClosed=true; window._showWelcome && window._showWelcome(); }">
-        <div style="width:100%; max-width:380px; position:relative; animation:flyerSlideUp 0.3s ease forwards;">
-            <button onclick="event.stopPropagation(); document.getElementById('flyerModal').style.display='none'; window._flyerClosed=true; window._showWelcome && window._showWelcome();" style="position:absolute; top:-40px; right:0; background:none; border:none; color:#94a3b8; font-size:20px; cursor:pointer; padding:4px; transition:0.2s;" onmouseover="this.style.color='#0d2536'" onmouseout="this.style.color='#94a3b8'"><i class="fa-solid fa-xmark"></i></button>
-            <div onclick="document.getElementById('flyerModal').style.display='none'; document.getElementById('soatFormModal').style.display='flex'; window._flyerClosed=true;" style="cursor:pointer; border-radius:16px; overflow:hidden;">
+    <div id="flyerModal" style="position:fixed; inset:0; background:rgba(17,27,33,0.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); z-index:9999999; display:none; align-items:center; justify-content:center; padding:16px;" onclick="if(event.target===this) { this.style.display='none'; window._flyerClosed=true; }">
+        <div style="width:100%; max-width:360px; position:relative; animation:flyerSlideUp 0.3s ease forwards;">
+            <button onclick="event.stopPropagation(); document.getElementById('flyerModal').style.display='none'; window._flyerClosed=true;" style="position:absolute; top:-36px; right:0; width:30px; height:30px; background:#111b21; border:1px solid #2a3942; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#8696a0; font-size:14px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            <div onclick="document.getElementById('flyerModal').style.display='none'; document.getElementById('soatFormModal').style.display='flex'; window._flyerClosed=true;" style="cursor:pointer; border-radius:14px; overflow:hidden;">
                 <img src="assets/media/SOAT.jpg?v=1" style="width:100%; height:auto; display:block;">
+            </div>
+            <div style="text-align:center; margin-top:12px;">
+                <span style="font-size:11px; color:#8696a0;">Toca la imagen para cotizar tu SOAT</span>
             </div>
         </div>
     </div>
 
     <!-- Modal Bienvenida (primera visita) -->
-    <div id="welcomeModal" style="position:fixed; inset:0; background:rgba(248,250,252,0.30); z-index:900000; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:16px; font-family:'Roboto',sans-serif;">
-        <div style="background:#fff; width:100%; max-width:400px; border-radius:20px; overflow:hidden; box-shadow:0 20px 60px rgba(13,37,54,0.18); animation:flyerSlideUp 0.35s ease forwards;">
-            <!-- Header navy -->
-            <div style="background:linear-gradient(135deg,#0d2536,#1a3a52); padding:28px 24px 22px; text-align:center; position:relative;">
-                <button onclick="closeWelcome()" style="position:absolute; top:14px; right:16px; background:none; border:none; color:rgba(255,255,255,0.3); font-size:18px; cursor:pointer; padding:4px; line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.3)'"><i class="fa-solid fa-xmark"></i></button>
-                <div style="width:56px; height:56px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
-                    <img src="assets/media/logo_circular.png" style="width:40px; height:40px; object-fit:contain;">
-                </div>
-                <h2 style="font-size:20px; font-weight:900; color:#fff; margin:0 0 4px;">Filtro Vehicular Plus</h2>
-                <p style="font-size:12px; color:rgba(255,255,255,0.45); margin:0;">Tu plataforma de verificación vehicular</p>
-            </div>
-            <!-- Body -->
-            <div style="padding:22px 24px 20px;">
-                <div style="font-size:14px; font-weight:800; color:#0d2536; margin-bottom:14px; text-align:center;">Accede a la plataforma completa</div>
-                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:18px;">
-                    <div style="display:flex; align-items:center; gap:10px; padding:8px 0;">
-                        <i class="fa-solid fa-circle-check" style="color:#8bc34a; font-size:14px; flex-shrink:0;"></i>
-                        <span style="font-size:13px; color:#475569;">22 servicios vehiculares exclusivos</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:10px; padding:8px 0;">
-                        <i class="fa-solid fa-circle-check" style="color:#8bc34a; font-size:14px; flex-shrink:0;"></i>
-                        <span style="font-size:13px; color:#475569;">+80 accesos directos a entidades del Estado</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:10px; padding:8px 0;">
-                        <i class="fa-solid fa-circle-check" style="color:#8bc34a; font-size:14px; flex-shrink:0;"></i>
-                        <span style="font-size:13px; color:#475569;">Dashboard completo e historial permanente</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:10px; padding:8px 0;">
-                        <i class="fa-solid fa-circle-check" style="color:#8bc34a; font-size:14px; flex-shrink:0;"></i>
-                        <span style="font-size:13px; color:#475569;">Soporte prioritario por WhatsApp</span>
-                    </div>
-                </div>
-                <!-- Precio -->
-                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px; text-align:center; margin-bottom:18px;">
-                    <div style="font-size:10px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">Pago único</div>
-                    <div style="font-size:28px; font-weight:900; color:#0d2536; line-height:1;">S/ 35</div>
-                    <div style="font-size:11px; color:#64748b; margin-top:4px;">Acceso permanente a toda la plataforma</div>
-                </div>
-                <!-- Botones -->
-                <button onclick="closeWelcome(); setTimeout(function(){ if(typeof mostrarModalActivacion==='function') mostrarModalActivacion('activar'); }, 300);" style="width:100%; padding:13px; background:#8bc34a; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;" onmouseover="this.style.background='#7cb342'" onmouseout="this.style.background='#8bc34a'">
-                    <i class="fa-solid fa-bolt" style="font-size:12px;"></i> Activar ahora
-                </button>
-                <button onclick="closeWelcome(); setTimeout(function(){ openRegisterModal(); }, 300);" style="width:100%; padding:13px; background:#0d2536; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:8px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
-                    <i class="fa-solid fa-user-plus" style="font-size:12px;"></i> Crear cuenta gratis
-                </button>
-                <button onclick="closeWelcome()" style="width:100%; padding:10px; background:transparent; color:#94a3b8; border:none; font-size:12px; font-weight:600; cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">Seguir explorando</button>
-            </div>
-        </div>
-    </div>
-
-    
-
     <!-- MODAL PERSONALIZADO: ALERTA DE SALDO -->
-    <div id="customAlertModal" onclick="if(event.target===this)closeCustomAlert()" style="display:none; position:fixed; inset:0; background:rgba(13,37,54,0.65); z-index:999999; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px);">
-        <div style="background:#ffffff; border-radius:18px; width:92%; max-width:320px; padding:28px 24px 24px; position:relative;">
+    <div id="customAlertModal" onclick="if(event.target===this)closeCustomAlert()" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:999999; align-items:center; justify-content:center; padding:20px;">
+        <div style="background:#ffffff; border-radius:16px; width:92%; max-width:340px; padding:28px 24px 24px; position:relative; border:1px solid #e5e7eb;">
             <div style="text-align:center; margin-bottom:18px;">
-                <div style="width:50px; height:50px; background:#0d2536; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
-                    <i class="fa-solid fa-wallet" style="font-size:22px; color:#8bc34a;"></i>
+                <div style="width:42px; height:42px; background:rgba(37,211,102,0.1); border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+                    <i class="fa-solid fa-wallet" style="font-size:18px; color:#25d366;"></i>
                 </div>
-                <h3 id="customAlertTitle" style="margin:0 0 8px; font-size:17px; font-weight:900; color:#0d2536; letter-spacing:0.2px;">Saldo Insuficiente</h3>
-                <p id="customAlertMessage" style="margin:0; font-size:13px; color:#64748b; line-height:1.6;"></p>
+                <h3 id="customAlertTitle" style="margin:0 0 6px; font-size:15px; font-weight:700; color:#111b21;">Saldo Insuficiente</h3>
+                <p id="customAlertMessage" style="margin:0; font-size:12px; color:#6b7280; line-height:1.6; font-weight:400;"></p>
             </div>
-            <button onclick="closeCustomAlert()" style="width:100%; padding:13px; background:#0d2536; color:#fff; border:none; border-radius:12px; font-size:13px; font-weight:800; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px;">ENTENDIDO</button>
+            <button onclick="closeCustomAlert()" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">Entendido</button>
         </div>
     </div>
 
     <!-- MODAL FLOTANTE: OBTENER MI INFORME -->
-    <div id="informeModal" onclick="if(event.target===this)this.style.display='none'" style="display:none; position:fixed; inset:0; background:rgba(13,37,54,0.5); z-index:999999; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px);">
-        <div style="background:#ffffff; border-radius:18px; width:92%; max-width:360px; padding:28px 24px 24px; position:relative;">
-            <button onclick="document.getElementById('informeModal').style.display='none'" style="position:absolute; top:12px; right:14px; background:none; border:none; font-size:22px; color:#94a3b8; cursor:pointer; line-height:1;">&times;</button>
+    <div id="informeModal" onclick="if(event.target===this)this.style.display='none'" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:999999; align-items:center; justify-content:center; padding:20px;">
+        <div style="background:#ffffff; border-radius:16px; width:92%; max-width:380px; padding:28px 24px 24px; position:relative; border:1px solid #e5e7eb;">
+            <button onclick="document.getElementById('informeModal').style.display='none'" style="position:absolute; top:12px; right:14px; background:none; border:none; font-size:18px; color:#9ca3af; cursor:pointer; line-height:1;"><i class="fa-solid fa-xmark"></i></button>
             <div style="text-align:center; margin-bottom:20px;">
-                <div style="width:48px; height:48px; background:#f59e0b; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
-                    <i class="fa-solid fa-file-lines" style="font-size:22px; color:#fff;"></i>
+                <div style="width:42px; height:42px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+                    <i class="fa-solid fa-file-lines" style="font-size:18px; color:#fff;"></i>
                 </div>
-                <h3 style="margin:0 0 4px; font-size:17px; font-weight:900; color:#0d2536;">Filtro Completo <i class="fa-solid fa-plus" style="font-size: 14px; color: #0d2536;"></i></h3>
-                <p style="margin:0; font-size:12px; color:#64748b;">Ingresa la placa del vehículo a consultar</p>
+                <h3 style="margin:0 0 4px; font-size:15px; font-weight:700; color:#111b21;">Filtro Completo</h3>
+                <p style="margin:0; font-size:11px; color:#6b7280; font-weight:400;">Ingresa la placa del vehículo a consultar</p>
             </div>
-            <label style="font-size:10px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.6px; display:block; margin-bottom:6px;">Número de placa</label>
-            <input type="text" id="informePlateInput" placeholder="Ej: ABC-123" maxlength="8" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')" style="width:100%; padding:12px 14px; border:2px solid #e2e8f0; border-radius:10px; font-size:16px; font-weight:800; color:#0d2536; text-align:center; outline:none; box-sizing:border-box; margin-bottom:16px;" onkeydown="if(event.key==='Enter') submitInformeRequest()">
-            <button onclick="submitInformeRequest()" style="width:100%; padding:13px; background:#0d2536; color:#fff; border:none; border-radius:12px; font-size:14px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <i class="fa-solid fa-file-lines" style="font-size:16px;"></i> FILTRO COMPLETO <i class="fa-solid fa-plus" style="font-size: 13px; margin-left: 4px;"></i>
+            <label style="font-size:9px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Número de placa</label>
+            <input type="text" id="informePlateInput" placeholder="ABC-123" maxlength="8" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; color:#111b21; text-align:center; outline:none; box-sizing:border-box; margin-bottom:14px; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'" onkeydown="if(event.key==='Enter') submitInformeRequest()">
+            <button onclick="submitInformeRequest()" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                <i class="fa-solid fa-magnifying-glass" style="font-size:13px;"></i> Consultar Placa
             </button>
         </div>
     </div>
 
     <!-- MODAL FLOTANTE: SOLICITA POR WHATSAPP -->
-    <div id="waPlateModal" onclick="if(event.target===this)this.style.display='none'" style="display:none; position:fixed; inset:0; background:rgba(13,37,54,0.5); z-index:999999; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px);">
-        <div style="background:#ffffff; border-radius:18px; width:92%; max-width:360px; padding:28px 24px 24px; position:relative;">
-            <button onclick="document.getElementById('waPlateModal').style.display='none'" style="position:absolute; top:12px; right:14px; background:none; border:none; font-size:22px; color:#94a3b8; cursor:pointer; line-height:1;">&times;</button>
+    <div id="waPlateModal" onclick="if(event.target===this)this.style.display='none'" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:999999; align-items:center; justify-content:center; padding:20px;">
+        <div style="background:#ffffff; border-radius:16px; width:92%; max-width:380px; padding:28px 24px 24px; position:relative; border:1px solid #e5e7eb;">
+            <button onclick="document.getElementById('waPlateModal').style.display='none'" style="position:absolute; top:12px; right:14px; background:none; border:none; font-size:18px; color:#9ca3af; cursor:pointer; line-height:1;"><i class="fa-solid fa-xmark"></i></button>
             <div style="text-align:center; margin-bottom:20px;">
-                <div style="width:48px; height:48px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
-                    <i class="fa-brands fa-whatsapp" style="font-size:24px; color:#fff;"></i>
+                <div style="width:42px; height:42px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+                    <i class="fa-brands fa-whatsapp" style="font-size:20px; color:#fff;"></i>
                 </div>
-                <h3 style="margin:0 0 4px; font-size:17px; font-weight:900; color:#0d2536;">Solicitar por WhatsApp</h3>
-                <p style="margin:0; font-size:12px; color:#64748b;">Ingresa la placa del vehículo a consultar</p>
+                <h3 style="margin:0 0 4px; font-size:15px; font-weight:700; color:#111b21;">Solicitar por WhatsApp</h3>
+                <p style="margin:0; font-size:11px; color:#6b7280; font-weight:400;">Ingresa la placa del vehículo a consultar</p>
             </div>
-            <label style="font-size:10px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.6px; display:block; margin-bottom:6px;">Número de placa</label>
-            <input type="text" id="waPlateInput" placeholder="Ej: ABC-123" maxlength="8" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')" style="width:100%; padding:12px 14px; border:2px solid #e2e8f0; border-radius:10px; font-size:16px; font-weight:800; color:#0d2536; text-align:center; text-transform:uppercase; outline:none; box-sizing:border-box; margin-bottom:16px;" onkeydown="if(event.key==='Enter') enviarWAPlaca()">
-            <button onclick="enviarWAPlaca()" style="width:100%; padding:13px; background:#25D366; color:#fff; border:none; border-radius:12px; font-size:14px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> ENVIAR POR WHATSAPP
+            <label style="font-size:9px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Número de placa</label>
+            <input type="text" id="waPlateInput" placeholder="ABC-123" maxlength="8" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; color:#111b21; text-align:center; text-transform:uppercase; outline:none; box-sizing:border-box; margin-bottom:14px; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'" onkeydown="if(event.key==='Enter') enviarWAPlaca()">
+            <button onclick="enviarWAPlaca()" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                <i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> Enviar por WhatsApp
             </button>
         </div>
     </div>
 
     <!-- FORMULARIO FLOTANTE SOAT -->
-    <div id="soatFormModal" style="position:fixed; inset:0; background:rgba(248,250,252,0.30); z-index:9999999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding:16px;" onclick="if(event.target===this) this.style.display='none'">
-        <div style="background:#ffffff; border-radius:20px; width:100%; max-width:420px; overflow:hidden; box-shadow:0 20px 60px rgba(13,37,54,0.15),0 0 0 1px rgba(13,37,54,0.06); position:relative; animation:flyerSlideUp 0.3s ease;">
+    <div id="soatFormModal" style="position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); z-index:9999999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); padding:16px;" onclick="if(event.target===this) this.style.display='none'">
+        <div style="background:#ffffff; border-radius:16px; width:100%; max-width:400px; overflow:hidden; border:1px solid #e5e7eb; position:relative; animation:flyerSlideUp 0.3s ease;">
 
-            <!-- Header Navy -->
-            <div style="background:linear-gradient(135deg,#0d2536 0%,#1a3a52 100%); padding:26px 22px 22px; position:relative; text-align:center;">
-                <button onclick="document.getElementById('soatFormModal').style.display='none'" style="position:absolute; top:14px; right:16px; background:none; border:none; font-size:18px; color:rgba(255,255,255,0.35); cursor:pointer; transition:0.2s; padding:4px; line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.35)'"><i class="fa-solid fa-xmark"></i></button>
-                <div style="margin-bottom:12px; display:flex; justify-content:center;">
-                    <img src="img/logo-protecta.png" alt="Protecta" style="height:28px; width:auto; object-fit:contain;">
+            <!-- Header -->
+            <div style="background:#111b21; padding:24px 22px 20px; position:relative;">
+                <button onclick="document.getElementById('soatFormModal').style.display='none'" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#8696a0; cursor:pointer; padding:4px; line-height:1;"><i class="fa-solid fa-xmark"></i></button>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:40px; height:40px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <i class="fa-solid fa-car" style="font-size:18px; color:#fff;"></i>
+                    </div>
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
+                            <span style="font-size:15px; font-weight:700; color:#e9edef;">Cotizar SOAT</span>
+                            <img src="img/logo-protecta.svg" alt="Protecta" style="height:14px; width:auto; object-fit:contain;">
+                        </div>
+                        <p style="margin:0; font-size:11px; color:#8696a0; font-weight:400;">Completa los datos para recibir tu cotización</p>
+                    </div>
                 </div>
-                <h3 style="margin:0 0 4px; font-size:18px; font-weight:900; color:#ffffff;">Cotizar SOAT</h3>
-                <p style="margin:0; font-size:12px; color:rgba(255,255,255,0.45);">Completa los datos para recibir tu cotización</p>
             </div>
 
             <!-- Formulario -->
-            <div style="padding:24px 22px 22px;">
-                <div style="margin-bottom:16px;">
-                    <label style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Placa del vehículo</label>
-                    <input type="text" id="soatPlaca" placeholder="Ej: ABC-123" maxlength="7" style="width:100%; padding:13px 16px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:15px; font-weight:700; color:#0d2536; text-transform:uppercase; text-align:center; letter-spacing:2px; box-sizing:border-box; outline:none; transition:0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'">
+            <div style="padding:20px 22px 22px;">
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:9px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Placa del vehículo</label>
+                    <input type="text" id="soatPlaca" placeholder="ABC-123" maxlength="7" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; color:#111b21; text-transform:uppercase; text-align:center; letter-spacing:2px; box-sizing:border-box; outline:none; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
                 </div>
 
-                <div style="margin-bottom:16px;">
-                    <label style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Tipo de uso</label>
-                    <select id="soatUso" style="width:100%; padding:13px 16px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:14px; font-weight:600; color:#0d2536; box-sizing:border-box; background:#fff; outline:none; transition:0.2s; font-family:'Roboto',sans-serif; -webkit-appearance:none; appearance:none; background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2394a3b8%22 stroke-width=%222%22><path d=%22M6 9l6 6 6-6%22/></svg>'); background-repeat:no-repeat; background-position:right 14px center;" onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'">
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:9px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Tipo de uso</label>
+                    <select id="soatUso" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:13px; font-weight:500; color:#111b21; box-sizing:border-box; background:#fff; outline:none; transition:border-color 0.2s; font-family:'Roboto',sans-serif; -webkit-appearance:none; appearance:none; background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2394a3b8%22 stroke-width=%222%22><path d=%22M6 9l6 6 6-6%22/></svg>'); background-repeat:no-repeat; background-position:right 14px center;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
                         <option value="">Seleccione...</option>
                         <option value="Particular">Particular</option>
                         <option value="Taxi">Taxi</option>
@@ -799,9 +746,9 @@
                     </select>
                 </div>
 
-                <div style="margin-bottom:20px;">
-                    <label style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Zona de circulación</label>
-                    <select id="soatZona" style="width:100%; padding:13px 16px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:14px; font-weight:600; color:#0d2536; box-sizing:border-box; background:#fff; outline:none; transition:0.2s; font-family:'Roboto',sans-serif; -webkit-appearance:none; appearance:none; background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2394a3b8%22 stroke-width=%222%22><path d=%22M6 9l6 6 6-6%22/></svg>'); background-repeat:no-repeat; background-position:right 14px center;" onfocus="this.style.borderColor='#0d2536'" onblur="this.style.borderColor='#e2e8f0'">
+                <div style="margin-bottom:16px;">
+                    <label style="font-size:9px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Zona de circulación</label>
+                    <select id="soatZona" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:13px; font-weight:500; color:#111b21; box-sizing:border-box; background:#fff; outline:none; transition:border-color 0.2s; font-family:'Roboto',sans-serif; -webkit-appearance:none; appearance:none; background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2394a3b8%22 stroke-width=%222%22><path d=%22M6 9l6 6 6-6%22/></svg>'); background-repeat:no-repeat; background-position:right 14px center;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
                         <option value="">Seleccione departamento...</option>
                         <option value="Amazonas">Amazonas</option>
                         <option value="Áncash">Áncash</option>
@@ -841,10 +788,10 @@
                     var msg = saludo + ', solicito una cotización de *SOAT* con los siguientes datos:\n\n*Placa:* ' + placa.toUpperCase() + '\n*Tipo de Uso:* ' + uso + '\n*Zona de Circulación:* ' + zona + '\n\nQuedo atento a su respuesta. Gracias.';
                     window.open('https://wa.me/51979334296?text=' + encodeURIComponent(msg), '_blank');
                     document.getElementById('soatFormModal').style.display='none';
-                " style="width:100%; height:48px; background:#0d2536; color:#fff; border:none; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:0.2s;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
-                    <i class="fa-brands fa-whatsapp" style="font-size:16px; color:#25D366;"></i> Enviar Cotización
+                " style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                    <i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> Enviar Cotización
                 </button>
-                <button onclick="document.getElementById('soatFormModal').style.display='none'" style="width:100%; padding:11px; background:transparent; color:#94a3b8; border:none; border-radius:12px; font-size:12px; font-weight:600; cursor:pointer; transition:0.2s; margin-top:8px;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">Cancelar</button>
+                <button onclick="document.getElementById('soatFormModal').style.display='none'" style="width:100%; padding:10px; background:transparent; color:#9ca3af; border:none; font-size:11px; font-weight:500; cursor:pointer; margin-top:6px;">Cancelar</button>
             </div>
         </div>
     </div>
@@ -888,8 +835,8 @@
             <div style="width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color:#0284c7; display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 18px; border:3px solid #e0f2fe;">
                 <i class="fa-solid fa-paper-plane"></i>
             </div>
-            <h3 style="font-size:20px; color:#0d2536; margin:0 0 10px; font-weight:900; letter-spacing:-0.3px;">¡Solicitud Enviada!</h3>
-            <p style="color:#64748b; font-size:14px; line-height:1.6; margin:0 0 8px;">Tu solicitud de <strong style="color:#0d2536;">Filtro Vehicular Completo</strong> para la placa <strong style="color:#0d2536;" id="solicitudPlacaDisplay">---</strong> ha sido registrada exitosamente.</p>
+            <h3 style="font-size:20px; color:#111b21; margin:0 0 10px; font-weight:900; letter-spacing:-0.3px;">¡Solicitud Enviada!</h3>
+            <p style="color:#64748b; font-size:14px; line-height:1.6; margin:0 0 8px;">Tu solicitud de <strong style="color:#111b21;">Filtro Vehicular Completo</strong> para la placa <strong style="color:#111b21;" id="solicitudPlacaDisplay">---</strong> ha sido registrada exitosamente.</p>
             <div style="background:#f8fafc; padding:14px; border-radius:12px; border-left:4px solid #0284c7; margin:16px 0 20px; text-align:left;">
                 <div style="font-size:11px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">
                     <i class="fa-solid fa-info-circle" style="margin-right:4px;"></i> Próximos pasos
@@ -900,10 +847,10 @@
                     • Recibirás notificación cuando esté listo
                 </p>
             </div>
-            <button onclick="closeSolicitudConfirm()" style="width:100%; padding:14px; background:#0d2536; color:white; border:none; border-radius:12px; font-weight:800; font-size:14px; cursor:pointer; margin-bottom:8px; transition:0.2s;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'">
+            <button onclick="closeSolicitudConfirm()" style="width:100%; padding:14px; background:#111b21; color:white; border:none; border-radius:12px; font-weight:800; font-size:14px; cursor:pointer; margin-bottom:8px; transition:0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                 <i class="fa-solid fa-check"></i> ENTENDIDO
             </button>
-            <a href="panel_cliente.html" style="display:block; padding:10px; color:#64748b; font-size:12px; font-weight:600; text-decoration:none; transition:0.2s;" onmouseover="this.style.color='#0d2536'" onmouseout="this.style.color='#64748b'">
+            <a href="panel_cliente.html" style="display:block; padding:10px; color:#64748b; font-size:12px; font-weight:600; text-decoration:none; transition:0.2s;" onmouseover="this.style.color='#111b21'" onmouseout="this.style.color='#64748b'">
                 <i class="fa-solid fa-arrow-right" style="margin-right:4px;"></i> Ir a Mis Consultas
             </a>
         </div>
