@@ -1864,10 +1864,16 @@ Link: https://filtrovehicularperu.com`;
             setTimeout(function () { if (okBtn) okBtn.focus(); }, 80);
         }
 
+        // Verificar si una fila es protegida (no se debe borrar al limpiar pendientes/historial)
+        function esFilaProtegida(datos) {
+            if (!datos) return false;
+            return datos.isRegistro || datos.isRecharge || datos.isActivacion || datos.isDashboard;
+        }
+
         function promptDeleteAllRequests() {
             showAdminConfirmModal({
                 title: '¿Eliminar solicitudes pendientes?',
-                message: 'Solo se eliminarán las solicitudes pendientes. El historial, usuarios y registros no se verán afectados.',
+                message: 'Solo se eliminarán las solicitudes de consultas pendientes. Los registros de usuarios, recargas y activaciones no se verán afectados.',
                 confirmLabel: 'Sí, eliminar pendientes',
                 danger: true,
                 onConfirm: async function () {
@@ -1881,6 +1887,7 @@ Link: https://filtrovehicularperu.com`;
                         (res.data || []).forEach(function (row) {
                             if (!row.datos || !row.placa) return;
                             if (solicitudEstadoAprobado(row.datos)) return;
+                            if (esFilaProtegida(row.datos)) return;
                             toDelete.push(row.placa);
                         });
                         for (var i = 0; i < toDelete.length; i++) {
@@ -1922,6 +1929,7 @@ Link: https://filtrovehicularperu.com`;
                 var d = row.datos;
                 if (!d || !row.placa) return;
                 if (!solicitudEstadoAprobado(d)) return;
+                if (esFilaProtegida(d)) return;
                 if (seen.has(row.placa)) return;
                 seen.add(row.placa);
                 toDelete.push(row.placa);
