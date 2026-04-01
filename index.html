@@ -44,7 +44,7 @@
 <body>
 
     <!-- LOGIN SCREEN (se oculta si hay sesión) -->
-    <div id="loginScreen" class="login-screen">
+    <div id="loginScreen" class="login-screen" style="display:none;">
         <div class="login-screen-bg">
             <div class="login-bg-circle login-bg-1"></div>
             <div class="login-bg-circle login-bg-2"></div>
@@ -101,35 +101,8 @@
         </div>
     </div>
 
-    <!-- MODAL PROMO PLATAFORMA S/35 -->
-    <div id="promoModal" class="promo-modal" style="display:none;" onclick="if(event.target===this)closePromoModal()">
-        <div class="promo-card">
-            <button class="promo-close" onclick="closePromoModal()"><i class="fa-solid fa-xmark"></i></button>
-            <div class="promo-icon-box">
-                <i class="fa-solid fa-rocket"></i>
-            </div>
-            <h2 class="promo-title">Activa tu Plataforma Digital</h2>
-            <p class="promo-subtitle">Obtén acceso completo e ilimitado</p>
-            <div class="promo-features">
-                <div class="promo-feature"><i class="fa-solid fa-check"></i> Consultas vehiculares ilimitadas</div>
-                <div class="promo-feature"><i class="fa-solid fa-check"></i> Dashboard digital integrado</div>
-                <div class="promo-feature"><i class="fa-solid fa-check"></i> Descarga de reportes en PDF</div>
-                <div class="promo-feature"><i class="fa-solid fa-check"></i> Historial completo de consultas</div>
-                <div class="promo-feature"><i class="fa-solid fa-check"></i> Soporte prioritario</div>
-            </div>
-            <div class="promo-price-box">
-                <span class="promo-price-amount">S/ 35.00</span>
-                <span class="promo-price-label">pago único — sin mensualidades</span>
-            </div>
-            <button class="promo-btn-activate" onclick="closePromoModal(); mostrarModalActivacion('activar');">
-                <i class="fa-solid fa-bolt"></i> ACTIVAR AHORA
-            </button>
-            <button class="promo-btn-later" onclick="closePromoModal()">Quizás más tarde</button>
-        </div>
-    </div>
-
-    <!-- Contenido principal: oculto hasta verificar sesión -->
-    <div id="mainAppContent" style="display:none;">
+    <!-- Contenido principal -->
+    <div id="mainAppContent" style="display:block;">
     <header class="site-header">
         <div class="header-content">
             <a href="index.html" class="header-logo">

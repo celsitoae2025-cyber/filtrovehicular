@@ -9,26 +9,11 @@ function _isAdmin(email, pass) {
 }
 
 async function initAuth() {
-    if (window.FiltroSession) {
-        currentUser = window.FiltroSession.getUser();
-    } else {
-        try {
-            var raw = localStorage.getItem('filtro_user_session');
-            currentUser = raw ? JSON.parse(raw) : null;
-        } catch (e) {
-            currentUser = null;
-            localStorage.removeItem('filtro_user_session');
-        }
-    }
-    if (currentUser && currentUser.email) {
-        hideLoginScreen();
-        renderLoggedInState();
-        checkPromoPlataforma();
-    } else {
-        currentUser = null;
-        showLoginScreen();
-        renderLoggedOutState();
-    }
+    // Modo premium: entrar directo sin login
+    currentUser = { email: 'premium@filtrovehicular.com', nombre: 'Usuario Premium' };
+    hideLoginScreen();
+    renderLoggedInState();
+    checkPromoPlataforma();
 }
 
 // Login screen: mostrar/ocultar
@@ -111,27 +96,9 @@ async function handleLoginScreen() {
     }
 }
 
-// Verificar si mostrar promo de plataforma
-async function checkPromoPlataforma() {
-    if (!currentUser || !currentUser.email) return;
-    if (sessionStorage.getItem('promo_dismissed')) return;
-
-    try {
-        if (!window.sb) return;
-        var res = await window.sb.from('saldos').select('plataforma_activa').eq('email', currentUser.email);
-        if (res.data && res.data.length > 0 && res.data[0].plataforma_activa) return;
-
-        // No tiene plataforma activa — mostrar promo
-        var modal = document.getElementById('promoModal');
-        if (modal) modal.style.display = 'flex';
-    } catch (e) {}
-}
-
-function closePromoModal() {
-    var modal = document.getElementById('promoModal');
-    if (modal) modal.style.display = 'none';
-    sessionStorage.setItem('promo_dismissed', '1');
-}
+// Promo plataforma desactivada (modo premium)
+function checkPromoPlataforma() {}
+function closePromoModal() {}
 
 function updateIntranetFooterBar(visible) {
     var fb = document.getElementById('intranetFooterBar');

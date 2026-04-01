@@ -192,115 +192,14 @@
         }
 
         // Función global para mostrar modal de Acceso Restringido
-        function showAccessRestrictedModal() {
-            const infoModal = document.getElementById('infoModal');
-            const infoContent = document.getElementById('infoContent');
-            if (!infoModal || !infoContent) return;
-            infoContent.innerHTML = `
-                <div style="background:linear-gradient(135deg,#0d2536 0%,#1a3a52 100%); padding:28px 24px 22px; text-align:center; position:relative;">
-                    <button onclick="document.getElementById('infoModal').style.display='none';" style="position:absolute; top:14px; right:16px; background:none; border:none; font-size:18px; color:rgba(255,255,255,0.35); cursor:pointer; transition:0.2s; padding:4px; line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.35)'"><i class="fa-solid fa-xmark"></i></button>
-                    <div style="width:56px; height:56px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
-                        <img src="assets/media/logo_circular.png" style="width:40px; height:40px; object-fit:contain;">
-                    </div>
-                    <div style="font-size:18px; font-weight:900; color:#ffffff; margin-bottom:4px;">Acceso Restringido</div>
-                    <p style="font-size:12px; color:rgba(255,255,255,0.45); margin:0;">Inicia sesión o crea una cuenta para continuar</p>
-                </div>
-                <div style="padding:24px 24px 22px;">
-                    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px;">
-                        <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') openAuthModal();" style="background:#0d2536; color:#fff; border:none; padding:13px; border-radius:12px; font-weight:700; cursor:pointer; width:100%; font-size:13px; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px;" onmouseover="this.style.background='#15324d'" onmouseout="this.style.background='#0d2536'"><i class="fa-solid fa-right-to-bracket" style="font-size:13px;"></i> Iniciar Sesión</button>
-                        <button onclick="document.getElementById('infoModal').style.display='none'; if(typeof openAuthModal === 'function') { openAuthModal(); setTimeout(() => toggleAuthMode(), 100); }" style="background:#f8fafc; color:#0d2536; border:1.5px solid #e2e8f0; padding:13px; border-radius:12px; font-weight:700; cursor:pointer; width:100%; font-size:13px; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'"><i class="fa-solid fa-user-plus" style="font-size:13px;"></i> Crear Cuenta</button>
-                    </div>
-                    <p style="font-size:11px; color:#94a3b8; margin:0; text-align:center;">¿Necesitas ayuda? <a href="https://wa.me/51979334296?text=Hola%2C%20necesito%20ayuda%20para%20activar%20mi%20cuenta%20en%20Filtro%20Vehicular." target="_blank" style="color:#0d2536; text-decoration:none; font-weight:700;">Contáctanos</a></p>
-                </div>
-            `;
-            infoModal.style.display = 'flex';
-        }
+        // Modo premium: sin restricción de acceso
+        function showAccessRestrictedModal() { return; }
 
-        // Función para mostrar modal de Upgrade Premium con planes
-        function showUpgradePremiumModal() {
-            mostrarModalActivacion('activar');
-        }
-
-        function abrirPasarelaPremium() {
-            if (typeof currentUser === 'undefined' || !currentUser) {
-                showAccessRestrictedModal();
-                return;
-            }
-            if (typeof openSale === 'function') {
-                openSale('35.00', 'Plataforma Premium - Acceso Completo', 0, 'dashboard');
-            }
-        }
-
-        function mostrarModalActivacion(tipo) {
-            const infoModal = document.getElementById('infoModal');
-            const infoContent = document.getElementById('infoContent');
-            if (!infoModal || !infoContent) return;
-
-            if (tipo === 'login') {
-                showAccessRestrictedModal();
-                return;
-            }
-
-            // Vista unificada de planes para 'activar' y 'dashboard'
-            infoContent.innerHTML = `
-                <div style="padding: 0; background: #ffffff; border-radius: 16px; overflow: hidden;">
-                    <!-- Header navy -->
-                    <div style="background: linear-gradient(135deg, #0d2536 0%, #15324d 100%); padding: 28px 24px 22px; text-align: center; position: relative;">
-                        <button onclick="document.getElementById('infoModal').style.display='none';" style="position: absolute; top: 14px; right: 16px; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; padding: 4px; transition: 0.2s;" onmouseover="this.style.color='#fff';" onmouseout="this.style.color='rgba(255,255,255,0.4)';"><i class="fa-solid fa-xmark"></i></button>
-                        <div style="font-size: 18px; font-weight: 900; color: #ffffff; margin-bottom: 4px; letter-spacing: -0.2px;">Elige tu plan</div>
-                        <p style="font-size: 12px; color: rgba(255,255,255,0.5); margin: 0; font-weight: 500;">Verifica vehículos sin complicaciones</p>
-                    </div>
-
-                    <!-- Planes -->
-                    <div style="padding: 20px 20px 24px; display: flex; flex-direction: column; gap: 12px;">
-
-                        <!-- Plan Gratuito -->
-                        <div style="border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px 16px; display: flex; align-items: center; gap: 14px; position: relative; cursor: default;">
-                            <div style="width: 40px; height: 40px; min-width: 40px; background: #f1f5f9; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #64748b;"><i class="fa-solid fa-eye"></i></div>
-                            <div style="flex: 1; min-width: 0;">
-                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
-                                    <span style="font-size: 14px; font-weight: 800; color: #0d2536;">Explorador</span>
-                                    <span style="font-size: 9px; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 4px;">GRATIS</span>
-                                </div>
-                                <div style="font-size: 11px; color: #94a3b8; font-weight: 500; line-height: 1.4;">Navega los enlaces públicos y conoce la plataforma</div>
-                            </div>
-                            <div style="text-align: right; flex-shrink: 0;">
-                                <div style="font-size: 18px; font-weight: 900; color: #94a3b8;">S/ 0</div>
-                            </div>
-                        </div>
-
-                        <!-- Plan Plus (S/ 35) - DESTACADO -->
-                        <div onclick="document.getElementById('infoModal').style.display='none'; activarPlataforma();" style="border: 2px solid #8bc34a; border-radius: 14px; padding: 22px 16px; display: flex; align-items: center; gap: 14px; position: relative; cursor: pointer; background: #fafff5; transition: all 0.25s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(139,195,74,0.15)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)';">
-                            <div style="position: absolute; top: -9px; left: 18px; background: #8bc34a; color: #fff; font-size: 9px; font-weight: 800; padding: 3px 10px; border-radius: 5px; letter-spacing: 0.5px;"><i class="fa-solid fa-star" style="margin-right: 3px; font-size: 8px;"></i> MÁS POPULAR</div>
-                            <div style="width: 40px; height: 40px; min-width: 40px; background: linear-gradient(135deg, #0d2536, #1a3a52); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #8bc34a;"><i class="fa-solid fa-shield-halved"></i></div>
-                            <div style="flex: 1; min-width: 0;">
-                                <div style="font-size: 14px; font-weight: 800; color: #0d2536; margin-bottom: 2px;">Plus</div>
-                                <div style="font-size: 11px; color: #64748b; font-weight: 500; line-height: 1.4;">22 servicios, dashboard completo, historial permanente</div>
-                            </div>
-                            <div style="text-align: right; flex-shrink: 0;">
-                                <div style="font-size: 22px; font-weight: 900; color: #0d2536;">S/ 35</div>
-                                <div style="font-size: 9px; color: #8bc34a; font-weight: 700;">PAGO ÚNICO</div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- Footer -->
-                    <div style="padding: 0 20px 20px; text-align: center;">
-                        <p style="font-size: 10px; color: #94a3b8; margin: 0; line-height: 1.5;"><i class="fa-solid fa-lock" style="margin-right: 4px; color: #8bc34a;"></i> Pago seguro — Los créditos para consultas se recargan por separado</p>
-                    </div>
-                </div>
-            `;
-            infoModal.style.display = 'flex';
-        }
-
-        // Función para activar plataforma
-        function activarPlataforma() {
-            document.getElementById('infoModal').style.display = 'none';
-            if (typeof openSale === 'function') {
-                openSale('35.00', 'Activación de Plataforma Completa', 0, 'activacion');
-            }
-        }
+        // Modo premium: modales de activación desactivados
+        function showUpgradePremiumModal() {}
+        function abrirPasarelaPremium() {}
+        function mostrarModalActivacion() {}
+        function activarPlataforma() {}
 
         // --- SISTEMA DE CATEGORÍAS DEL DASHBOARD ---
         const dashboardCategories = {
