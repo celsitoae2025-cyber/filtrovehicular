@@ -102,8 +102,8 @@
     </div>
 
     <!-- Modal Registro/Login unificado -->
-    <div id="authFloatingModal" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:999999; align-items:center; justify-content:center; padding:16px;" onclick="if(event.target===this)this.style.display='none'">
-        <div style="background:#ffffff; border-radius:12px; width:92%; max-width:380px; overflow:hidden;" onclick="event.stopPropagation()">
+    <div id="authFloatingModal" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:9999999; align-items:center; justify-content:center; padding:16px;">
+        <div style="background:#ffffff; border-radius:12px; width:92%; max-width:380px; overflow:hidden;" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()">
             <!-- Header -->
             <div style="padding:28px 20px 22px; text-align:center; position:relative;">
                 <button onclick="document.getElementById('authFloatingModal').style.display='none'" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#9ca3af; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
@@ -178,6 +178,18 @@
             </div>
         </div>
     </div>
+
+    <script>
+    // Evitar que clics dentro de modales flotantes se propaguen al capture listener
+    ['authFloatingModal','upgradeModal'].forEach(function(id){
+        var el = document.getElementById(id);
+        if(el) el.addEventListener('click', function(e){ e.stopPropagation(); }, true);
+        if(el) el.addEventListener('mousedown', function(e){ if(e.target===el) return; e.stopPropagation(); }, true);
+    });
+    // Cerrar solo al hacer clic en el fondo
+    document.getElementById('authFloatingModal').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
+    document.getElementById('upgradeModal').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
+    </script>
 
     <!-- Contenido principal -->
     <div id="mainAppContent" style="display:block;">
