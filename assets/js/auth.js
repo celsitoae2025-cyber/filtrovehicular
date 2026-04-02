@@ -447,6 +447,9 @@ async function renderLoggedInState() {
                         <a href="javascript:void(0)" onclick="closeUserDropdown(); openChangePasswordModal();" class="dropdown-item" style="color:#111b21;">
                             <i class="fa-solid fa-key" style="color: #25d366;"></i> Cambiar Contraseña
                         </a>
+                        <a href="tutorial.html" onclick="closeUserDropdown();" class="dropdown-item" style="color:#111b21;">
+                            <i class="fa-solid fa-book-open" style="color: #25d366;"></i> Tutorial
+                        </a>
                     </div>
                     <div style="border-top: 1px solid #f1f5f9; padding: 4px 0;">
                         <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item" style="color: #6b7280; font-weight: 500;">

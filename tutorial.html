@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial | Filtro Vehicular +</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Roboto',sans-serif; background:#ffffff; color:#111b21; }
+
+        /* Header */
+        .header { background:#111b21; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+        .header-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+        .header-logo-text { font-size:14px; font-weight:700; color:#e9edef; }
+        .header-logo-sub { font-size:9px; font-weight:600; color:#25d366; letter-spacing:3px; text-transform:uppercase; }
+        .header-back { color:#25d366; text-decoration:none; font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px; }
+
+        /* Hero */
+        .hero { background:#111b21; padding:40px 24px 50px; text-align:center; }
+        .hero-icon { width:60px; height:60px; background:#25d366; border-radius:14px; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; }
+        .hero-icon i { font-size:26px; color:#fff; }
+        .hero h1 { font-size:22px; font-weight:700; color:#e9edef; margin-bottom:8px; }
+        .hero p { font-size:13px; color:#8696a0; max-width:400px; margin:0 auto; line-height:1.6; }
+
+        /* Container */
+        .container { max-width:700px; margin:0 auto; padding:0 20px; }
+
+        /* Section */
+        .section { padding:40px 0; border-bottom:1px solid #e5e7eb; }
+        .section:last-child { border-bottom:none; }
+        .section-number { width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:#fff; margin-bottom:14px; }
+        .section h2 { font-size:17px; font-weight:700; color:#111b21; margin-bottom:8px; }
+        .section p { font-size:13px; color:#6b7280; line-height:1.7; margin-bottom:14px; }
+
+        /* Steps */
+        .steps { display:flex; flex-direction:column; gap:12px; }
+        .step { display:flex; align-items:flex-start; gap:12px; padding:14px 16px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; }
+        .step-icon { width:32px; height:32px; min-width:32px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+        .step-icon i { font-size:13px; color:#25d366; }
+        .step-text { font-size:12px; color:#111b21; line-height:1.5; }
+        .step-text b { font-weight:600; }
+
+        /* Tip */
+        .tip { display:flex; align-items:flex-start; gap:10px; padding:14px 16px; background:rgba(37,211,102,0.06); border:1px solid rgba(37,211,102,0.15); border-radius:10px; margin-top:14px; }
+        .tip i { color:#25d366; font-size:14px; margin-top:2px; flex-shrink:0; }
+        .tip p { font-size:12px; color:#111b21; line-height:1.5; margin:0; }
+
+        /* Footer */
+        .footer { background:#111b21; padding:30px 24px; text-align:center; margin-top:20px; }
+        .footer p { font-size:12px; color:#8696a0; margin-bottom:8px; }
+        .footer a { color:#25d366; text-decoration:none; font-weight:600; }
+
+        /* Responsive */
+        @media (max-width:480px) {
+            .hero h1 { font-size:19px; }
+            .section h2 { font-size:15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-logo">
+            <div>
+                <div class="header-logo-text">Filtro Vehicular</div>
+                <div class="header-logo-sub">+</div>
+            </div>
+        </div>
+        <a href="javascript:history.back()" class="header-back"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="hero-icon"><i class="fa-solid fa-book-open"></i></div>
+        <h1>Manual de Usuario</h1>
+        <p>Aprende a usar la plataforma de verificación vehicular más completa del Perú</p>
+    </div>
+
+    <div class="container">
+
+        <!-- 1. Qué es -->
+        <div class="section">
+            <div class="section-number">1</div>
+            <h2>¿Qué es Filtro Vehicular +?</h2>
+            <p>Filtro Vehicular + es una plataforma digital que te permite verificar cualquier vehículo en el Perú consultando 22 fuentes oficiales como SUNARP, SAT Lima, SAT Callao, MTC, ATU, SUTRAN, PNP y SBS. Todo desde tu celular o computadora, en tiempo real.</p>
+            <div class="tip">
+                <i class="fa-solid fa-lightbulb"></i>
+                <p>Ideal para compradores de autos usados que quieren verificar que el vehículo no tenga deudas, multas, denuncias o gravámenes antes de comprar.</p>
+            </div>
+        </div>
+
+        <!-- 2. Registrarse -->
+        <div class="section">
+            <div class="section-number">2</div>
+            <h2>Cómo crear tu cuenta</h2>
+            <p>Para usar los servicios de la plataforma necesitas una cuenta. El registro es gratuito y toma menos de 1 minuto.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-hand-pointer"></i></div>
+                    <div class="step-text">Haz clic en cualquier servicio de la plataforma. Aparecerá un formulario de registro.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-user-pen"></i></div>
+                    <div class="step-text">Completa tus datos: <b>nombre completo</b>, <b>número de WhatsApp</b>, <b>correo electrónico</b> y <b>contraseña</b>.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="step-text">Haz clic en <b>"Crear cuenta"</b>. Tu cuenta será activada por nuestro equipo en minutos.</div>
+                </div>
+            </div>
+            <div class="tip">
+                <i class="fa-solid fa-lightbulb"></i>
+                <p>Si ya tienes cuenta, haz clic en "Inicia sesión" en la parte inferior del formulario.</p>
+            </div>
+        </div>
+
+        <!-- 3. Acceso completo -->
+        <div class="section">
+            <div class="section-number">3</div>
+            <h2>Cómo adquirir el acceso completo</h2>
+            <p>Para acceder a todos los servicios necesitas el acceso completo por un pago único de <b>S/ 35</b>. Este acceso es permanente y no tiene fecha de vencimiento.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-hand-pointer"></i></div>
+                    <div class="step-text">Haz clic en cualquier servicio. Si aún no tienes acceso, aparecerá el modal <b>"Acceso Completo"</b>.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-qrcode"></i></div>
+                    <div class="step-text">Haz clic en <b>"Adquirir Acceso"</b>. Se abrirá la pasarela de pago con código QR de Yape o Plin.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-camera"></i></div>
+                    <div class="step-text">Escanea el QR, realiza el pago y <b>sube la captura</b> de tu transferencia.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-clock"></i></div>
+                    <div class="step-text">Nuestro equipo validará tu pago y activará tu acceso. Recibirás confirmación por WhatsApp.</div>
+                </div>
+            </div>
+            <div class="tip">
+                <i class="fa-solid fa-lightbulb"></i>
+                <p>También puedes pagar directamente por WhatsApp haciendo clic en "Consultar por WhatsApp".</p>
+            </div>
+        </div>
+
+        <!-- 4. Consultar placa -->
+        <div class="section">
+            <div class="section-number">4</div>
+            <h2>Cómo consultar una placa</h2>
+            <p>Una vez que tienes el acceso completo, puedes consultar cualquier vehículo.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-car"></i></div>
+                    <div class="step-text">Haz clic en el botón <b>"Filtro Vehicular"</b> en la parte superior de la plataforma.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-keyboard"></i></div>
+                    <div class="step-text">Ingresa el <b>número de placa</b> del vehículo (ejemplo: ABC-123).</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div class="step-text">Haz clic en <b>"Solicitar"</b>. Tu consulta será procesada por nuestro equipo.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="step-text">Cuando esté listo, recibirás una notificación y podrás <b>descargar el reporte en PDF</b> desde "Mis Consultas".</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Mis consultas -->
+        <div class="section">
+            <div class="section-number">5</div>
+            <h2>Cómo ver mis consultas</h2>
+            <p>Todas tus consultas se guardan en tu historial personal.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-bars"></i></div>
+                    <div class="step-text">Haz clic en el menú de tu perfil (esquina superior derecha) y selecciona <b>"Mis Consultas"</b>.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-list"></i></div>
+                    <div class="step-text">Verás todas tus consultas con su estado: <b>En Espera</b> o <b>Completado</b>.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-download"></i></div>
+                    <div class="step-text">En las consultas completadas, haz clic en <b>"Descargar PDF"</b> para obtener tu reporte.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Recargar créditos -->
+        <div class="section">
+            <div class="section-number">6</div>
+            <h2>Cómo recargar créditos</h2>
+            <p>Algunos servicios individuales requieren créditos. 1 crédito = S/ 1.00.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="step-text">Haz clic en el botón <b>"Recargar"</b> que aparece en la parte inferior de la pantalla.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-coins"></i></div>
+                    <div class="step-text">Elige el paquete de créditos que necesitas (desde S/ 5 hasta S/ 100).</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-qrcode"></i></div>
+                    <div class="step-text">Realiza el pago por QR o WhatsApp y sube tu comprobante.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Instalar app -->
+        <div class="section">
+            <div class="section-number">7</div>
+            <h2>Cómo instalar la app en tu celular</h2>
+            <p>Filtro Vehicular + se puede instalar como una aplicación en tu celular para acceso rápido.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon"><i class="fa-brands fa-android"></i></div>
+                    <div class="step-text"><b>Android (Chrome):</b> Abre la plataforma en Chrome. Aparecerá un banner en la parte inferior con el botón <b>"Instalar"</b>. Haz clic y confirma.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-brands fa-apple"></i></div>
+                    <div class="step-text"><b>iPhone (Safari):</b> Abre la plataforma en Safari. Toca el botón de <b>compartir</b> (⬆) y selecciona <b>"Agregar a pantalla de inicio"</b>.</div>
+                </div>
+            </div>
+            <div class="tip">
+                <i class="fa-solid fa-lightbulb"></i>
+                <p>La app instalada funciona más rápido y puedes recibir notificaciones directamente en tu celular.</p>
+            </div>
+        </div>
+
+        <!-- 8. Soporte -->
+        <div class="section">
+            <div class="section-number">8</div>
+            <h2>Contacto y soporte</h2>
+            <p>Si tienes alguna duda o problema, nuestro equipo está disponible 24/7.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon"><i class="fa-brands fa-whatsapp"></i></div>
+                    <div class="step-text"><b>WhatsApp:</b> +51 932 465 820 — Escríbenos y te responderemos en minutos.</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon"><i class="fa-solid fa-headset"></i></div>
+                    <div class="step-text"><b>Horario:</b> Lunes a Domingo, las 24 horas del día.</div>
+                </div>
+            </div>
+            <a href="https://wa.me/51932465820?text=Hola%2C%20necesito%20ayuda%20con%20Filtro%20Vehicular%20Plus." target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:13px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; margin-top:16px;">
+                <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> Contactar Soporte
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Filtro Vehicular + | Manual de Usuario</p>
+        <p>&copy; 2026 Filtro Vehicular Perú. Todos los derechos reservados.</p>
+        <a href="https://filtrovehicularperu.com">Ir a la plataforma</a>
+    </div>
+
+</body>
+</html>
