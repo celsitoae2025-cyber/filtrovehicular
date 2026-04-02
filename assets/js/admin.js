@@ -23,7 +23,14 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
             // Convertir <br> a saltos de línea, <li> a bullets
             text = text.replace(/<br\s*\/?>/gi, '\n');
             text = text.replace(/<li[^>]*>/gi, '\n\u2022 ').replace(/<\/li>/gi, '');
-            text = text.replace(/<\/?(ul|ol|p|div|blockquote|code|strike|s|em)[^>]*>/gi, '\n');
+            // Reemplazar tags de bloque por saltos de línea
+            text = text.replace(/<\/?(ul|ol|p|div|blockquote|code|strike|s|span|h[1-6]|pre|section|article|header|footer|nav|main|aside|figure|figcaption|table|tr|td|th|thead|tbody)[^>]*>/gi, '\n');
+
+            // Convertir <em> a <i> para que el parser lo reconozca
+            text = text.replace(/<em[^>]*>/gi, '<i>').replace(/<\/em>/gi, '</i>');
+
+            // Limpiar cualquier tag HTML restante que no sea <b>, <strong>, <i>
+            text = text.replace(/<(?!\/?(?:b|strong|i)\b)[^>]+>/gi, '');
 
             // Parsear segmentos bold/normal
             // Dividir por tags <b>, </b>, <strong>, </strong>, <i>, </i>
@@ -787,6 +794,11 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                                         <i class="fa-solid fa-list-ol" style="cursor:pointer; font-size:12px; color:#475569; padding:4px;" onclick="formatText('${cat.id}', 'insertOrderedList')" title="Lista numerada"></i>
                                         <i class="fa-solid fa-list-ul" style="cursor:pointer; font-size:12px; color:#475569; padding:4px;" onclick="formatText('${cat.id}', 'insertUnorderedList')" title="Viñeta"></i>
                                         <i class="fa-solid fa-quote-left" style="cursor:pointer; font-size:12px; color:#475569; padding:4px;" onclick="formatText('${cat.id}', 'blockquote')" title="Cita"></i>
+                                        <div style="width:1px; height:14px; background:#e2e8f0;"></div>
+                                        <i class="fa-solid fa-align-left" style="cursor:pointer; font-size:12px; color:#475569; padding:4px;" onclick="formatText('${cat.id}', 'justifyLeft')" title="Izquierda"></i>
+                                        <i class="fa-solid fa-align-center" style="cursor:pointer; font-size:12px; color:#475569; padding:4px;" onclick="formatText('${cat.id}', 'justifyCenter')" title="Centro"></i>
+                                        <i class="fa-solid fa-align-right" style="cursor:pointer; font-size:12px; color:#475569; padding:4px;" onclick="formatText('${cat.id}', 'justifyRight')" title="Derecha"></i>
+                                        <i class="fa-solid fa-align-justify" style="cursor:pointer; font-size:12px; color:#475569; padding:4px;" onclick="formatText('${cat.id}', 'justifyFull')" title="Justificado"></i>
                                     </div>
                                     <div class="status-picker">
                                         <div class="status-dot-btn active" data-status="ok" onclick="toggleStatus(this, '${cat.id}')"></div>
@@ -2822,6 +2834,13 @@ Link: https://filtrovehicularperu.com`;
                     itemsParaPDF = [{ id:'individual_fallback', title: individualServiceName || 'Consulta Individual', st: vStatus, text: vText || 'Solicitud individual procesada.' }];
                 }
 
+                // Helper: limpiar HTML a texto plano (solo para textos simples como veredicto)
+                function stripHTML(html) {
+                    return String(html || '').replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '').replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>').replace(/\n{3,}/g, '\n\n').trim();
+                }
+
+                vText = stripHTML(vText);
+
                 const pdf = new jsPDF('p','mm','a4');
                 const pw = pdf.internal.pageSize.getWidth();
                 const ph = pdf.internal.pageSize.getHeight();
@@ -2831,7 +2850,7 @@ Link: https://filtrovehicularperu.com`;
                 const topMargin = 14; // margen superior consistente en todas las páginas
 
                 const colorCfg = {
-                    'ok': { color: [139, 195, 74], label: 'CONFORME' },
+                    'ok': { color: [37, 211, 102], label: 'CONFORME' },
                     'wa': { color: [245, 158, 11], label: 'OBSERVADO' },
                     'ko': { color: [239, 68, 68], label: 'NO CONFORME' }
                 };
@@ -2843,8 +2862,8 @@ Link: https://filtrovehicularperu.com`;
 
                 // Helper: dibuja encabezado de página (barra + mini info)
                 function drawPageHeader(showFull) {
-                    pdf.setFillColor(13, 37, 54); pdf.rect(0, 0, pw, 4, 'F');
-                    pdf.setFillColor(139, 195, 74); pdf.rect(0, 4, pw, 0.8, 'F');
+                    pdf.setFillColor(17, 27, 33); pdf.rect(0, 0, pw, 4, 'F');
+                    pdf.setFillColor(37, 211, 102); pdf.rect(0, 4, pw, 0.8, 'F');
                 }
 
                 function newPage() {
@@ -2860,11 +2879,11 @@ Link: https://filtrovehicularperu.com`;
 
                 // TITULO
                 y = 18;
-                pdf.setFontSize(16); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                pdf.setFontSize(16); pdf.setFont("helvetica","bold"); pdf.setTextColor(17, 27, 33);
                 pdf.text("CERTIFICADO DE VERIFICACION", pw/2, y, {align:'center'}); y += 6;
                 pdf.setFontSize(13);
                 pdf.text("TECNICA VEHICULAR", pw/2, y, {align:'center'}); y += 5;
-                pdf.setDrawColor(139, 195, 74); pdf.setLineWidth(0.8);
+                pdf.setDrawColor(37, 211, 102); pdf.setLineWidth(0.8);
                 pdf.line(pw/2 - 35, y, pw/2 + 35, y); y += 5;
                 pdf.setFontSize(8); pdf.setFont("helvetica","normal"); pdf.setTextColor(100, 116, 139);
                 pdf.text(isIndividualPrint ? "Reporte Tecnico de Consulta Individual" : "Analisis Pericial Integral de Antecedentes", pw/2, y, {align:'center'}); y += 8;
@@ -2875,7 +2894,7 @@ Link: https://filtrovehicularperu.com`;
                 pdf.setFillColor(255, 255, 255); pdf.setDrawColor(203, 213, 225); pdf.setLineWidth(0.4);
                 pdf.roundedRect(m, y, cardW, cardH, 3, 3, 'FD');
                 // Barra lateral azul
-                pdf.setFillColor(13, 37, 54); pdf.rect(m, y, 4, cardH, 'F');
+                pdf.setFillColor(17, 27, 33); pdf.rect(m, y, 4, cardH, 'F');
                 // Línea divisoria horizontal
                 pdf.setDrawColor(226, 232, 240); pdf.setLineWidth(0.2);
                 pdf.line(m + 12, y + cardH/2, m + cardW - 8, y + cardH/2);
@@ -2886,7 +2905,7 @@ Link: https://filtrovehicularperu.com`;
                 let iy = y + 7;
                 pdf.setFontSize(5.5); pdf.setFont("helvetica","bold"); pdf.setTextColor(148, 163, 184);
                 pdf.text("PLACA DE RODAJE", c1, iy); pdf.text("FECHA DE EMISION", c2, iy); iy += 6;
-                pdf.setFontSize(16); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                pdf.setFontSize(16); pdf.setFont("helvetica","bold"); pdf.setTextColor(17, 27, 33);
                 pdf.text(norm, c1, iy);
                 pdf.setFontSize(10); pdf.setFont("helvetica","normal"); pdf.setTextColor(51, 65, 85);
                 pdf.text(fechaEmi, c2, iy);
@@ -2894,7 +2913,7 @@ Link: https://filtrovehicularperu.com`;
                 iy = y + cardH/2 + 5;
                 pdf.setFontSize(5.5); pdf.setFont("helvetica","bold"); pdf.setTextColor(148, 163, 184);
                 pdf.text("CODIGO CERTIFICADO", c1, iy); pdf.text("TIPO DE ANALISIS", c2, iy); iy += 6;
-                pdf.setFontSize(8); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                pdf.setFontSize(8); pdf.setFont("helvetica","bold"); pdf.setTextColor(17, 27, 33);
                 pdf.text(codigoCert, c1, iy);
                 pdf.setFontSize(8); pdf.setFont("helvetica","normal"); pdf.setTextColor(51, 65, 85);
                 pdf.text(isIndividualPrint ? "Consulta Individual" : "Expediente Integral", c2, iy);
@@ -2902,15 +2921,21 @@ Link: https://filtrovehicularperu.com`;
 
                 // DICTAMEN (con estructura interna)
                 const gCfg = colorCfg[vStatus] || colorCfg['ok'];
-                const vn = String(vText||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-                if ((vStatus==='wa'||vStatus==='ko') && (!vText || vn.includes('trayectoria limpia') || vn.includes('verificado y limpio'))) {
-                    vText = vStatus==='wa' ? 'Alertas preventivas identificadas en la evaluacion pericial.' : 'Afectaciones criticas detectadas en la auditoria digital.';
+                var defaultVerdicts = {
+                    'ok': 'Vehiculo en excelentes condiciones legales. Sin afectaciones criticas detectadas en la auditoria digital. Riesgo minimo para la transferencia.',
+                    'wa': 'Se identificaron alertas preventivas que requieren validacion fisica. Vehiculo apto para transferencia con observaciones.',
+                    'ko': 'Riesgo critico detectado. Se identificaron afectaciones legales vigentes que comprometen la legalidad de la unidad.'
+                };
+                if (!vText || vText.length < 10) {
+                    vText = defaultVerdicts[vStatus] || defaultVerdicts['ok'];
                 }
-                const vdText = vText || 'Sin observaciones registradas en el analisis pericial.';
+                // Si el texto es muy largo (más de 200 chars), truncar a 200
+                if (vText.length > 200) vText = vText.substring(0, 197) + '...';
+                const vdText = vText;
                 const vdLines = pdf.splitTextToSize(vdText, pw - m*2 - 28);
-                const vdTextH = Math.min(vdLines.length, 3) * 4;
+                const vdTextH = vdLines.length * 3.5;
                 const bannerH = 26 + vdTextH;
-                // Fondo con gradiente simulado (rectángulo oscuro + principal)
+                // Fondo con gradiente simulado
                 pdf.setFillColor(Math.max(0, gCfg.color[0]-15), Math.max(0, gCfg.color[1]-15), Math.max(0, gCfg.color[2]-15));
                 pdf.roundedRect(m, y, cardW, bannerH, 3, 3, 'F');
                 pdf.setFillColor(gCfg.color[0], gCfg.color[1], gCfg.color[2]);
@@ -2924,22 +2949,21 @@ Link: https://filtrovehicularperu.com`;
                 // Resultado
                 pdf.setFontSize(16); pdf.setFont("helvetica","bold");
                 pdf.text(gCfg.label, m + 12, y + 17);
-                // Texto justificado (simulado con splitTextToSize)
+                // Texto completo
                 pdf.setFontSize(7.5); pdf.setFont("helvetica","normal"); pdf.setTextColor(255, 255, 255);
-                const maxVdLines = vdLines.slice(0, 3);
-                for (let vl = 0; vl < maxVdLines.length; vl++) {
-                    pdf.text(maxVdLines[vl], m + 12, y + 22 + (vl * 4));
+                for (let vl = 0; vl < vdLines.length; vl++) {
+                    pdf.text(vdLines[vl], m + 12, y + 22 + (vl * 3.5));
                 }
                 y += bannerH + 6;
 
                 // MATRIZ
                 if (!isIndividualPrint && itemsParaPDF.length > 0) {
-                    pdf.setFontSize(10); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                    pdf.setFontSize(10); pdf.setFont("helvetica","bold"); pdf.setTextColor(17, 27, 33);
                     pdf.text("MATRIZ DE EVALUACION TECNICA", m, y); y += 3;
-                    pdf.setDrawColor(13, 37, 54); pdf.setLineWidth(0.5); pdf.line(m, y, m + 50, y); y += 4;
+                    pdf.setDrawColor(17, 27, 33); pdf.setLineWidth(0.5); pdf.line(m, y, m + 50, y); y += 4;
                     const matrizAvail = ph - y - footerH - 2;
                     const rowH = Math.max(5.5, Math.floor((matrizAvail / (itemsParaPDF.length + 1)) * 10) / 10);
-                    pdf.setFillColor(13, 37, 54); pdf.rect(m, y, pw - m*2, rowH, 'F');
+                    pdf.setFillColor(17, 27, 33); pdf.rect(m, y, pw - m*2, rowH, 'F');
                     pdf.setFontSize(5.5); pdf.setFont("helvetica","bold"); pdf.setTextColor(255, 255, 255);
                     pdf.text("N", m + 5, y + rowH*0.65, {align:'center'}); pdf.text("AREA DE EVALUACION", m + 13, y + rowH*0.65);
                     pdf.text("RESULTADO", pw - m - 18, y + rowH*0.65, {align:'center'}); y += rowH;
@@ -2976,9 +3000,9 @@ Link: https://filtrovehicularperu.com`;
                     y = Math.max(y + 8, 100);
                 } else {
                     y = newPage();
-                    pdf.setFontSize(10); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                    pdf.setFontSize(10); pdf.setFont("helvetica","bold"); pdf.setTextColor(17, 27, 33);
                     pdf.text("HALLAZGOS PERICIALES DETALLADOS", m, y); y += 3;
-                    pdf.setDrawColor(13, 37, 54); pdf.setLineWidth(0.5); pdf.line(m, y, m + 52, y); y += 7;
+                    pdf.setDrawColor(17, 27, 33); pdf.setLineWidth(0.5); pdf.line(m, y, m + 52, y); y += 7;
                 }
 
                 for (let idx = 0; idx < itemsParaPDF.length; idx++) {
@@ -2995,7 +3019,7 @@ Link: https://filtrovehicularperu.com`;
                     pdf.setFillColor(248, 250, 252); pdf.setDrawColor(226, 232, 240); pdf.setLineWidth(0.3);
                     pdf.roundedRect(m, y, pw - m*2, catHeaderH, 2, 2, 'FD');
                     pdf.setFillColor(iCfg.color[0], iCfg.color[1], iCfg.color[2]); pdf.rect(m, y, 3, catHeaderH, 'F');
-                    pdf.setFontSize(8.5); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                    pdf.setFontSize(8.5); pdf.setFont("helvetica","bold"); pdf.setTextColor(17, 27, 33);
                     pdf.text(String(idx + 1).padStart(2, '0') + '.  ' + (item.title || "CATEGORIA").toUpperCase(), m + 8, y + catHeaderH*0.6);
                     const bTxt = iCfg.label; const bW = pdf.getTextWidth(bTxt) + 5;
                     pdf.setFillColor(iCfg.color[0], iCfg.color[1], iCfg.color[2]);
@@ -3081,9 +3105,9 @@ Link: https://filtrovehicularperu.com`;
                 // ============================================
                 if (!isIndividualPrint) {
                 y = newPage() + 10;
-                pdf.setFontSize(12); pdf.setFont("helvetica","bold"); pdf.setTextColor(13, 37, 54);
+                pdf.setFontSize(12); pdf.setFont("helvetica","bold"); pdf.setTextColor(17, 27, 33);
                 pdf.text("GUIA DE INTERPRETACION PERICIAL", pw/2, y, {align:'center'}); y += 5;
-                pdf.setDrawColor(139, 195, 74); pdf.setLineWidth(0.8); pdf.line(pw/2 - 30, y, pw/2 + 30, y); y += 4;
+                pdf.setDrawColor(37, 211, 102); pdf.setLineWidth(0.8); pdf.line(pw/2 - 30, y, pw/2 + 30, y); y += 4;
                 pdf.setFontSize(8); pdf.setFont("helvetica","normal"); pdf.setTextColor(100, 116, 139);
                 pdf.text("Criterios utilizados para la determinacion del estado del vehiculo", pw/2, y, {align:'center'}); y += 12;
                 const guiaItems = [
@@ -3125,8 +3149,8 @@ Link: https://filtrovehicularperu.com`;
                 const pTotal = typeof pdf.internal.getNumberOfPages === 'function' ? pdf.internal.getNumberOfPages() : pdf.internal.pages.length - 1;
                 for (let i=1; i<=pTotal; i++) {
                     pdf.setPage(i);
-                    pdf.setFillColor(13, 37, 54); pdf.rect(0, ph - 10, pw, 10, 'F');
-                    pdf.setFillColor(139, 195, 74); pdf.rect(0, ph - 10, pw, 1, 'F');
+                    pdf.setFillColor(17, 27, 33); pdf.rect(0, ph - 10, pw, 10, 'F');
+                    pdf.setFillColor(37, 211, 102); pdf.rect(0, ph - 10, pw, 1, 'F');
                     pdf.setFontSize(6.5); pdf.setFont("helvetica","normal"); pdf.setTextColor(200, 210, 220);
                     pdf.text('Filtro Vehicular Plus  |  www.filtrovehicularperu.com', m, ph - 4.5);
                     pdf.text(codigoCert + '  |  Pag. ' + i + '/' + pTotal, pw - m, ph - 4.5, {align:'right'});
