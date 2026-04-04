@@ -2090,7 +2090,7 @@
 
             if (data.creditosRestantes !== undefined) {
                 var logoStatus = document.getElementById('logoStatus');
-                if (logoStatus) logoStatus.textContent = Math.floor(data.creditosRestantes) + ' créditos';
+                if (logoStatus) logoStatus.textContent = Math.floor(data.creditosRestantes) + ' Créditos';
             }
         }
 
@@ -2307,7 +2307,7 @@
 
                     if (data.creditosRestantes !== undefined) {
                         var logoStatus = document.getElementById('logoStatus');
-                        if (logoStatus) logoStatus.textContent = Math.floor(data.creditosRestantes) + ' créditos';
+                        if (logoStatus) logoStatus.textContent = Math.floor(data.creditosRestantes) + ' Créditos';
                     }
                 }
             } catch(e) {
