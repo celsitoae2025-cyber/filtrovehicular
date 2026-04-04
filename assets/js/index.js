@@ -1713,7 +1713,7 @@
 
         var BRIDGE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:3500'
-            : 'https://gabriel-parameter-circle-academy.trycloudflare.com';
+            : 'https://compiled-implies-nickname-context.trycloudflare.com';
 
         // Helper para fetch con header ngrok
         function bridgeFetch(url, options) {
@@ -2127,9 +2127,29 @@
                     }
                 }
             } catch(e) {
-                alert('Error de conexión: ' + e.message);
-                btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar';
-                btn.disabled = false;
+                // Mostrar error en el resultado, no alert bloqueante
+                var resEl2 = document.getElementById('consultasResultado');
+                if (resEl2) {
+                    document.getElementById('infoModal').style.display = 'none';
+                    var catsEl2 = document.getElementById('consultasCategorias');
+                    var cmdsEl2 = document.getElementById('consultasComandos');
+                    if (catsEl2) catsEl2.style.display = 'none';
+                    if (cmdsEl2) cmdsEl2.style.display = 'none';
+                    resEl2.style.display = 'block';
+                    resEl2.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
+                        '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<div style="font-size:13px; font-weight:600; color:#e9edef;">Error</div>' +
+                    '</div>' +
+                    '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; text-align:center;">' +
+                        '<i class="fa-solid fa-wifi" style="font-size:28px; color:#ef4444; margin-bottom:10px; display:block;"></i>' +
+                        '<div style="font-size:13px; font-weight:600; color:#111b21; margin-bottom:4px;">Error de conexión</div>' +
+                        '<div style="font-size:11px; color:#6b7280;">El servidor no respondió. Intenta de nuevo en unos segundos.</div>' +
+                        '<button onclick="renderConsultasCategorias()" style="margin-top:14px; padding:10px 24px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">Volver</button>' +
+                    '</div>';
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar';
+                    btn.disabled = false;
+                }
             }
         }
 
@@ -2233,7 +2253,25 @@
                     }
                 }
             } catch(e) {
-                alert('Error: ' + e.message);
+                document.getElementById('infoModal').style.display = 'none';
+                var resEl3 = document.getElementById('consultasResultado');
+                if (resEl3) {
+                    var catsEl3 = document.getElementById('consultasCategorias');
+                    var cmdsEl3 = document.getElementById('consultasComandos');
+                    if (catsEl3) catsEl3.style.display = 'none';
+                    if (cmdsEl3) cmdsEl3.style.display = 'none';
+                    resEl3.style.display = 'block';
+                    resEl3.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
+                        '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<div style="font-size:13px; font-weight:600; color:#e9edef;">Error</div>' +
+                    '</div>' +
+                    '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; text-align:center;">' +
+                        '<i class="fa-solid fa-wifi" style="font-size:28px; color:#ef4444; margin-bottom:10px; display:block;"></i>' +
+                        '<div style="font-size:13px; font-weight:600; color:#111b21; margin-bottom:4px;">Error de conexión</div>' +
+                        '<div style="font-size:11px; color:#6b7280;">El servidor no respondió. Intenta de nuevo en unos segundos.</div>' +
+                        '<button onclick="renderConsultasCategorias()" style="margin-top:14px; padding:10px 24px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">Volver</button>' +
+                    '</div>';
+                }
                 if (btn) { btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar'; btn.disabled = false; }
             }
         }
