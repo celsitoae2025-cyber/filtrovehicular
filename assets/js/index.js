@@ -1793,6 +1793,13 @@
                   '</div>';
         }
 
+        window.renderConsultasCategorias = renderConsultasCategorias;
+        window.renderConsultasModulo = renderConsultasModulo;
+        window.renderConsultasComandos = renderConsultasComandos;
+        window.abrirConsultaModal = abrirConsultaModal;
+        window.ejecutarConsulta = ejecutarConsulta;
+        window.ejecutarConsultaFoto = ejecutarConsultaFoto;
+
         function renderConsultasCategorias() {
             var container = document.getElementById('consultasCategorias');
             var cmdsEl = document.getElementById('consultasComandos');
