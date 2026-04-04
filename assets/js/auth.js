@@ -39,7 +39,9 @@ async function initAuth() {
             try {
                 var res = await window.sb.from('saldos').select('plataforma_activa, dashboard_activo, creditos').eq('email', currentUser.email).single();
                 if (res.data) {
-                    window.plataformaActiva = res.data.plataforma_activa || false;
+                    // Si tiene créditos > 0, la plataforma se activa automáticamente
+                    var tieneCreditos = (res.data.creditos || 0) > 0;
+                    window.plataformaActiva = res.data.plataforma_activa || tieneCreditos;
                     window.dashboardActivo = res.data.dashboard_activo || false;
                 }
             } catch (e) {}

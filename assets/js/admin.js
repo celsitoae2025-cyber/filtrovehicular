@@ -731,7 +731,7 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
 
                 // 5. RESPUESTA TRANSPARENTE 📢
                 if (cloudSaved) {
-                    alert(`✅ ¡Transacción a la Nube Exitosa!\n\nSe recargaron ${amount} créditos a: ${email}.\n(Saldo Actualizado: ${newBalance} Reportes)`);
+                    alert(`✅ ¡Transacción a la Nube Exitosa!\n\nSe recargaron ${amount} créditos a: ${email}.\n(Saldo Actualizado: ${newBalance} Créditos)`);
                 } else {
                     alert(`📥 ¡Guardado Localmente!\n\nSe recargaron ${amount} créditos a: ${email}.\n(Nota: La nube está desconectada. El saldo se usará en esta PC)`);
                 }
