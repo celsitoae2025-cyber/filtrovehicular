@@ -1793,13 +1793,6 @@
                   '</div>';
         }
 
-        window.renderConsultasCategorias = renderConsultasCategorias;
-        window.renderConsultasModulo = renderConsultasModulo;
-        window.renderConsultasComandos = renderConsultasComandos;
-        window.abrirConsultaModal = abrirConsultaModal;
-        window.ejecutarConsulta = ejecutarConsulta;
-        window.ejecutarConsultaFoto = ejecutarConsultaFoto;
-
         function renderConsultasCategorias() {
             var container = document.getElementById('consultasCategorias');
             var cmdsEl = document.getElementById('consultasComandos');
@@ -2334,6 +2327,14 @@
 
 // =========================================
 
+        // Exponer funciones de consultas al scope global (para onclick inline)
+        window.renderConsultasCategorias = renderConsultasCategorias;
+        window.renderConsultasModulo = renderConsultasModulo;
+        window.renderConsultasComandos = renderConsultasComandos;
+        window.abrirConsultaModal = abrirConsultaModal;
+        window.ejecutarConsulta = ejecutarConsulta;
+        window.ejecutarConsultaFoto = ejecutarConsultaFoto;
+        window.filtrarConsultas = filtrarConsultas;
 
         // 1. Registrar el Service Worker
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
