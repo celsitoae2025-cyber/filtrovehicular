@@ -202,7 +202,7 @@ async function renderLoggedInState() {
             if (res.data) {
                 creditos = res.data.creditos || 0;
                 window.dashboardActivo = res.data.dashboard_activo || false;
-                plataformaActiva = res.data.plataforma_activa || false;
+                plataformaActiva = res.data.plataforma_activa || creditos > 0;
                 window.plataformaActiva = plataformaActiva;
             }
         }
