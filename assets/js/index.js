@@ -1738,6 +1738,7 @@
 
         var consultasComandosData = [];
         var consultasTodosComandos = [];
+        var consultasCategoriasCache = {}; // Cache de categorías por módulo
 
         // Navegación inteligente: vuelve al paso anterior
         function volverConsultas() {
@@ -1845,17 +1846,26 @@
         async function renderConsultasModulo(moduloId) {
             var container = document.getElementById('consultasCategorias');
             var cmdsEl = document.getElementById('consultasComandos');
+            var resEl = document.getElementById('consultasResultado');
             if (!container) return;
+            container.style.display = 'block';
+            if (cmdsEl) cmdsEl.style.display = 'none';
+            if (resEl) resEl.style.display = 'none';
             consultasModuloActual = moduloId;
 
             var modInfo = consultasModulos.find(function(m) { return m.id === moduloId; });
 
-            // Cargar categorías del módulo
+            // Cargar categorías del módulo (con cache)
             var categorias = [];
-            try {
-                var res = await bridgeFetch(BRIDGE_URL + '/api/modulos/' + moduloId + '/categorias');
-                categorias = await res.json();
-            } catch(e) { categorias = []; }
+            if (consultasCategoriasCache[moduloId]) {
+                categorias = consultasCategoriasCache[moduloId];
+            } else {
+                try {
+                    var res = await bridgeFetch(BRIDGE_URL + '/api/modulos/' + moduloId + '/categorias');
+                    categorias = await res.json();
+                    consultasCategoriasCache[moduloId] = categorias;
+                } catch(e) { categorias = []; }
+            }
 
             var iconosCategoria = {
                 'RENIEC': 'fa-id-card', 'VEHICULOS': 'fa-car', 'SUNARP': 'fa-building-columns',
