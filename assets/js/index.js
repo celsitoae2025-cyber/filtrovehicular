@@ -145,16 +145,26 @@
         let navigationStack = ['home'];
         
         // --- SISTEMA DE PESTAÑAS DE SERVICIOS ---
-        function switchServicesTab(tabName, addToHistory = true) {
+        async function switchServicesTab(tabName, addToHistory = true) {
             
             // Verificar si el usuario está logueado
             if (typeof currentUser === 'undefined' || !currentUser) {
                 mostrarModalActivacion('login');
                 return;
             }
-            
-            // Usuarios demo pueden navegar libremente por todas las pestañas
-            // El bloqueo premium se aplica al momento de hacer una consulta real
+
+            // Consultas requiere créditos (comprar un plan)
+            if (tabName === 'consultas') {
+                try {
+                    if (window.sb && currentUser.email) {
+                        var saldoRes = await window.sb.from('saldos').select('creditos').eq('email', currentUser.email).single();
+                        if (!saldoRes.data || saldoRes.data.creditos <= 0) {
+                            openAccess();
+                            return;
+                        }
+                    }
+                } catch(e) {}
+            }
             
             // Agregar al historial de navegación
             if (addToHistory) {
@@ -180,6 +190,11 @@
                 targetContent.classList.add('active');
                 targetContent.removeAttribute('style');
                 
+                // Si es la pestaña Consultas, renderizar categorías
+                if (tabName === 'consultas') {
+                    setTimeout(() => renderConsultasCategorias(), 100);
+                }
+
                 // Si es la pestaña Dashboard, renderizar el contenido
                 if (tabName === 'dashboard') {
                     setTimeout(() => {
@@ -864,7 +879,10 @@
                               target.closest('#installPWA') ||
                               target.closest('.flyer-close') ||
                               target.closest('#modalSale') ||
-                              target.closest('[onclick*="closeAuthModal"]');
+                              target.closest('[onclick*="closeAuthModal"]') ||
+                              target.closest('#consultasResultado') ||
+                              target.closest('#consultasCategorias') ||
+                              target.closest('#consultasComandos');
 
                 if (allowed) return;
 
@@ -1690,7 +1708,523 @@
         function closeInfo() {
             document.getElementById('infoModal').style.display = 'none';
         }
-    
+
+// ─── SISTEMA DE CONSULTAS (Bridge Telegram) ────────────────────────────
+
+        var BRIDGE_URL = 'http://localhost:3500';
+
+        var consultasModulos = [
+            { id: 'orion', nombre: 'Orión', icono: 'fa-satellite', servicios: 121 },
+            { id: 'atlas', nombre: 'Atlas', icono: 'fa-globe', servicios: 89 },
+            { id: 'fenix', nombre: 'Fénix', icono: 'fa-fire', servicios: 65 },
+            { id: 'titan', nombre: 'Titán', icono: 'fa-bolt', servicios: 56 },
+            { id: 'nova', nombre: 'Nova', icono: 'fa-star', servicios: 42 },
+        ];
+
+        var consultasModuloActual = null;
+
+        var consultasComandosData = [];
+        var consultasTodosComandos = [];
+
+        // Cargar todos los comandos para búsqueda
+        async function cargarTodosComandos() {
+            try {
+                var res = await fetch(BRIDGE_URL + '/api/comandos');
+                consultasTodosComandos = await res.json();
+            } catch(e) { consultasTodosComandos = []; }
+        }
+        cargarTodosComandos();
+
+        function filtrarConsultas(texto) {
+            var busqEl = document.getElementById('consultasBusquedaResultados');
+            var catsEl = document.getElementById('consultasCategorias');
+            var cmdsEl = document.getElementById('consultasComandos');
+            var resEl = document.getElementById('consultasResultado');
+
+            if (!texto || texto.length < 2) {
+                if (busqEl) busqEl.style.display = 'none';
+                if (catsEl) catsEl.style.display = 'block';
+                return;
+            }
+
+            if (catsEl) catsEl.style.display = 'none';
+            if (cmdsEl) cmdsEl.style.display = 'none';
+            if (resEl) resEl.style.display = 'none';
+            if (busqEl) busqEl.style.display = 'block';
+
+            var term = texto.toLowerCase();
+            var resultados = consultasTodosComandos.filter(function(cmd) {
+                return cmd.nombre.toLowerCase().includes(term) ||
+                       cmd.descripcion.toLowerCase().includes(term) ||
+                       cmd.categoria.toLowerCase().includes(term) ||
+                       cmd.comando.toLowerCase().includes(term);
+            });
+
+            var moduloNombres = { orion: 'Orión', atlas: 'Atlas', fenix: 'Fénix', titan: 'Titán', nova: 'Nova' };
+
+            busqEl.innerHTML = resultados.length === 0
+                ? '<div style="text-align:center; padding:20px; color:#6b7280; font-size:12px;">No se encontraron servicios</div>'
+                : '<div style="font-size:10px; color:#6b7280; margin-bottom:8px;">' + resultados.length + ' resultado(s)</div>' +
+                  '<div style="display:flex; flex-direction:column; gap:6px;">' +
+                  resultados.map(function(cmd) {
+                      return '<div onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                          '<div style="width:30px; height:30px; min-width:30px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
+                              '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:12px; color:#fff;"></i>' +
+                          '</div>' +
+                          '<div style="flex:1; min-width:0;">' +
+                              '<div style="font-size:11px; font-weight:600; color:#111b21;">' + cmd.nombre + '</div>' +
+                              '<div style="font-size:8px; color:#6b7280;">' + (moduloNombres[cmd.modulo] || cmd.modulo) + ' · ' + cmd.categoria + '</div>' +
+                          '</div>' +
+                          '<div style="font-size:9px; color:' + (cmd.creditos === 0 ? '#25d366' : '#111b21') + '; font-weight:600;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' cr.') + '</div>' +
+                      '</div>';
+                  }).join('') +
+                  '</div>';
+        }
+
+        function renderConsultasCategorias() {
+            var container = document.getElementById('consultasCategorias');
+            var cmdsEl = document.getElementById('consultasComandos');
+            var resEl = document.getElementById('consultasResultado');
+            if (!container) return;
+            container.style.display = 'block';
+            if (cmdsEl) cmdsEl.style.display = 'none';
+            if (resEl) resEl.style.display = 'none';
+            consultasModuloActual = null;
+
+            container.innerHTML = '<div style="display:flex; flex-direction:column; gap:8px;">' +
+                consultasModulos.map(function(mod) {
+                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                        '<div style="width:40px; height:40px; min-width:40px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
+                            '<i class="fa-solid ' + mod.icono + '" style="font-size:16px; color:#fff;"></i>' +
+                        '</div>' +
+                        '<div style="flex:1;">' +
+                            '<div style="font-size:13px; font-weight:600; color:#111b21;">' + mod.nombre + '</div>' +
+                            '<div style="font-size:10px; color:#6b7280;">' + mod.servicios + ' servicios</div>' +
+                        '</div>' +
+                        '<i class="fa-solid fa-chevron-right" style="font-size:11px; color:#8696a0;"></i>' +
+                    '</div>';
+                }).join('') +
+            '</div>';
+        }
+
+        async function renderConsultasModulo(moduloId) {
+            var container = document.getElementById('consultasCategorias');
+            var cmdsEl = document.getElementById('consultasComandos');
+            if (!container) return;
+            consultasModuloActual = moduloId;
+
+            var modInfo = consultasModulos.find(function(m) { return m.id === moduloId; });
+
+            // Cargar categorías del módulo
+            var categorias = [];
+            try {
+                var res = await fetch(BRIDGE_URL + '/api/modulos/' + moduloId + '/categorias');
+                categorias = await res.json();
+            } catch(e) { categorias = []; }
+
+            var iconosCategoria = {
+                'RENIEC': 'fa-id-card', 'VEHICULOS': 'fa-car', 'SUNARP': 'fa-building-columns',
+                'TELEFONIA': 'fa-phone', 'DELITOS': 'fa-handcuffs', 'CERTIFICADOS': 'fa-file-shield',
+                'FAMILIARES': 'fa-users', 'FAMILIA': 'fa-users', 'FINANCIERO': 'fa-chart-line',
+                'VIP': 'fa-crown', 'GENERADOR': 'fa-wand-magic-sparkles', 'EXTRAS': 'fa-puzzle-piece',
+                'FACIAL': 'fa-camera', 'JUSTICIA': 'fa-scale-balanced', 'SUNAT': 'fa-building',
+                'ACTAS': 'fa-file-lines', 'MIGRACIONES': 'fa-plane', 'LABORAL': 'fa-briefcase',
+                'METADATA': 'fa-magnifying-glass', 'POLICIAL': 'fa-shield-halved', 'VARIADO': 'fa-puzzle-piece',
+                'VOUCHERS': 'fa-receipt', 'EXTRANJEROS': 'fa-passport', 'SALUD': 'fa-heart-pulse',
+                'SIN COSTO': 'fa-gift', 'EXTRAS 2': 'fa-plus'
+            };
+
+            container.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
+                '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + (modInfo ? modInfo.nombre : moduloId) + '</div>' +
+                '<div style="font-size:10px; color:#8696a0; margin-left:auto;">' + categorias.length + ' categorías</div>' +
+            '</div>' +
+            '<div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px;">' +
+                categorias.map(function(cat) {
+                    return '<div onclick="renderConsultasComandos(\'' + cat + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:10px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                        '<div style="width:30px; height:30px; min-width:30px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
+                            '<i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '" style="font-size:12px; color:#fff;"></i>' +
+                        '</div>' +
+                        '<div style="font-size:11px; font-weight:600; color:#111b21;">' + cat + '</div>' +
+                    '</div>';
+                }).join('') +
+            '</div>';
+        }
+
+        async function renderConsultasComandos(catId) {
+            var container = document.getElementById('consultasCategorias');
+            var cmdsEl = document.getElementById('consultasComandos');
+            if (!cmdsEl) return;
+            if (container) container.style.display = 'none';
+            cmdsEl.style.display = 'block';
+
+            try {
+                var url = consultasModuloActual
+                    ? BRIDGE_URL + '/api/modulos/' + consultasModuloActual + '/categorias/' + catId
+                    : BRIDGE_URL + '/api/categorias/' + catId;
+                var res = await fetch(url);
+                consultasComandosData = await res.json();
+            } catch(e) { consultasComandosData = []; }
+
+            var catInfo = null;
+
+            var volverFn = consultasModuloActual ? 'renderConsultasModulo(\'' + consultasModuloActual + '\')' : 'renderConsultasCategorias()';
+
+            cmdsEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
+                '<button onclick="' + volverFn + '" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + catId + '</div>' +
+                '<div style="font-size:10px; color:#8696a0; margin-left:auto;">' + consultasComandosData.length + ' servicios</div>' +
+            '</div>' +
+            '<div style="display:flex; flex-direction:column; gap:6px;">' +
+                consultasComandosData.map(function(cmd) {
+                    return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                        '<div style="width:32px; height:32px; min-width:32px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
+                            '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:13px; color:#fff;"></i>' +
+                        '</div>' +
+                        '<div style="flex:1; min-width:0;">' +
+                            '<div style="font-size:11px; font-weight:600; color:#111b21;">' + cmd.nombre + '</div>' +
+                            '<div style="font-size:9px; color:#6b7280;">' + cmd.descripcion + '</div>' +
+                        '</div>' +
+                        '<div style="flex-shrink:0; text-align:right;">' +
+                            '<div style="font-size:10px; font-weight:600; color:' + (cmd.creditos === 0 ? '#25d366' : '#111b21') + ';">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' cr.') + '</div>' +
+                            '<div style="font-size:8px; color:#6b7280;">' + cmd.tipo.toUpperCase() + '</div>' +
+                        '</div>' +
+                    '</div>';
+                }).join('') +
+            '</div>';
+        }
+
+        function abrirConsultaModal(cmdId) {
+            var cmd = consultasComandosData.find(function(c) { return c.id === cmdId; });
+            if (!cmd) return;
+
+            var placeholder = 'Ingresa el valor';
+            if (cmd.parametro === 'dni') placeholder = 'Número de DNI (8 dígitos)';
+            else if (cmd.parametro === 'placa') placeholder = 'Placa del vehículo (ABC123)';
+            else if (cmd.parametro === 'telefono') placeholder = 'Número de celular (9 dígitos)';
+            else if (cmd.parametro === 'ruc') placeholder = 'Número de RUC';
+            else if (cmd.parametro === 'ce') placeholder = 'Carné de extranjería';
+            else if (cmd.parametro === 'nombre') placeholder = 'NOMBRE|APELLIDO1|APELLIDO2';
+            else if (cmd.parametro === 'correo') placeholder = 'correo@ejemplo.com';
+            else if (cmd.parametro === 'nro_partida') placeholder = 'Número de partida SUNARP';
+            else if (cmd.parametro === 'custom') placeholder = 'DNI o número de celular';
+
+            var esFoto = cmd.parametro === 'foto';
+
+            var infoModal = document.getElementById('infoModal');
+            var infoContent = document.getElementById('infoContent');
+            if (!infoModal || !infoContent) return;
+
+            var inputHtml = esFoto
+                ? '<label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Selecciona una foto</label>' +
+                  '<input type="file" id="consultaFoto" accept="image/*" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-size:12px; color:#111b21; box-sizing:border-box; cursor:pointer;">'
+                : '<label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Dato a consultar</label>' +
+                  '<input type="text" id="consultaInput" placeholder="' + placeholder + '" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; color:#111b21; outline:none; box-sizing:border-box; text-align:center; font-family:\'Roboto\',sans-serif; transition:border-color 0.2s;" onfocus="this.style.borderColor=\'#25d366\'" onblur="this.style.borderColor=\'#e5e7eb\'" onkeydown="if(event.key===\'Enter\')ejecutarConsulta(\'' + cmdId + '\')">';
+
+            infoContent.innerHTML = '<div style="background:#111b21; padding:20px 18px 16px; position:relative;">' +
+                '<button onclick="document.getElementById(\'infoModal\').style.display=\'none\'" style="position:absolute; top:12px; right:12px; background:none; border:none; color:#8696a0; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>' +
+                '<div style="display:flex; align-items:center; gap:10px;">' +
+                    '<div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
+                        '<i class="fa-solid ' + (esFoto ? 'fa-camera' : cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:15px; color:#fff;"></i>' +
+                    '</div>' +
+                    '<div>' +
+                        '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + cmd.nombre + '</div>' +
+                        '<div style="font-size:10px; color:#8696a0;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' créditos') + ' · ' + cmd.tipo.toUpperCase() + '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div style="padding:18px;">' +
+                inputHtml +
+                '<button id="btnConsulta" onclick="ejecutarConsulta(\'' + cmdId + '\')" style="width:100%; padding:12px; background:#111b21; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; margin-top:12px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background=\'#1f2c34\'" onmouseout="this.style.background=\'#111b21\'">' +
+                    '<i class="fa-solid fa-magnifying-glass" style="font-size:12px;"></i> Consultar' +
+                '</button>' +
+            '</div>';
+
+            infoModal.style.display = 'flex';
+            setTimeout(function() { var inp = document.getElementById('consultaInput'); if(inp) inp.focus(); }, 100);
+        }
+
+        function formatearResultado(texto) {
+            if (!texto || !texto.trim()) return '<span style="color:#9ca3af;">Sin respuesta</span>';
+            // Convertir negritas markdown
+            var html = texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            // Detectar líneas tipo "CAMPO : VALOR" y formatear como filas
+            var lineas = html.split('\n');
+            var filas = [];
+            var otrasLineas = [];
+            lineas.forEach(function(linea) {
+                var limpia = linea.trim();
+                if (!limpia) return;
+                // Detectar patrón CAMPO : VALOR
+                var match = limpia.match(/^([A-ZÁÉÍÓÚÑ\s\.\/_-]{2,}?)\s*:\s*(.+)$/i);
+                if (match && match[1].trim().length > 1 && match[2].trim().length > 0) {
+                    filas.push({ campo: match[1].trim(), valor: match[2].trim() });
+                } else {
+                    // Si había filas acumuladas, renderizar tabla primero
+                    if (filas.length > 0) {
+                        otrasLineas.push(renderTablaResultado(filas));
+                        filas = [];
+                    }
+                    otrasLineas.push('<div style="padding:2px 0;">' + limpia + '</div>');
+                }
+            });
+            if (filas.length > 0) {
+                otrasLineas.push(renderTablaResultado(filas));
+            }
+            return otrasLineas.join('');
+        }
+
+        function renderTablaResultado(filas) {
+            var html = '<table style="width:100%; border-collapse:collapse; margin:8px 0;">';
+            filas.forEach(function(f) {
+                html += '<tr>' +
+                    '<td style="padding:6px 10px 6px 0; font-weight:600; color:#6b7280; white-space:nowrap; vertical-align:top; font-size:11px; text-transform:uppercase; border-bottom:1px solid #f3f4f6;">' + f.campo + '</td>' +
+                    '<td style="padding:6px 0; color:#111b21; font-weight:500; border-bottom:1px solid #f3f4f6;">' + f.valor + '</td>' +
+                '</tr>';
+            });
+            html += '</table>';
+            return html;
+        }
+
+        async function ejecutarConsulta(cmdId) {
+            var btn = document.getElementById('btnConsulta');
+            if (!btn) return;
+
+            // Verificar si es consulta con foto
+            var fotoInput = document.getElementById('consultaFoto');
+            if (fotoInput && fotoInput.files && fotoInput.files.length > 0) {
+                ejecutarConsultaFoto(cmdId, fotoInput.files[0]);
+                return;
+            }
+
+            var input = document.getElementById('consultaInput');
+            var valor = input ? input.value.trim() : '';
+            if (!valor) { alert('Ingresa un valor para consultar.'); return; }
+
+            // Verificar usuario logueado
+            if (!currentUser || !currentUser.email) {
+                alert('Debes iniciar sesión para hacer consultas.');
+                return;
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Consultando...';
+            btn.disabled = true;
+
+            try {
+                var res = await fetch(BRIDGE_URL + '/api/consulta', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ comandoId: cmdId, valor: valor, email: currentUser.email })
+                });
+                var data = await res.json();
+
+                // Manejar errores de créditos
+                if (!data.ok && data.error) {
+                    btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar';
+                    btn.disabled = false;
+                    if (res.status === 402) {
+                        document.getElementById('infoModal').style.display = 'none';
+                        if (typeof openAccess === 'function') openAccess();
+                    } else if (res.status === 403) {
+                        document.getElementById('infoModal').style.display = 'none';
+                        if (typeof openAccess === 'function') openAccess();
+                    } else {
+                        alert(data.error);
+                    }
+                    return;
+                }
+
+                document.getElementById('infoModal').style.display = 'none';
+
+                var resEl = document.getElementById('consultasResultado');
+                var catsEl = document.getElementById('consultasCategorias');
+                var cmdsEl = document.getElementById('consultasComandos');
+                if (catsEl) catsEl.style.display = 'none';
+                if (cmdsEl) cmdsEl.style.display = 'none';
+                if (resEl) {
+                    resEl.style.display = 'block';
+                    var imagenesHtml = '';
+                    var archivosHtml = '';
+                    if (data.resultado && data.resultado.archivos && data.resultado.archivos.length > 0) {
+                        var imagenes = data.resultado.archivos.filter(function(f) { return f.tipo === 'imagen'; });
+                        var docs = data.resultado.archivos.filter(function(f) { return f.tipo !== 'imagen'; });
+
+                        if (imagenes.length > 0) {
+                            imagenesHtml = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:8px; margin-bottom:14px;">' +
+                                imagenes.map(function(f) {
+                                    return '<a href="' + BRIDGE_URL + f.url + '" target="_blank" download style="display:block; position:relative; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden; aspect-ratio:3/4;">' +
+                                        '<img src="' + BRIDGE_URL + f.url + '" style="width:100%; height:100%; object-fit:cover; display:block;">' +
+                                        '<div style="position:absolute; bottom:4px; right:4px; background:rgba(0,0,0,0.6); color:#fff; width:22px; height:22px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:9px;"><i class="fa-solid fa-download"></i></div>' +
+                                    '</a>';
+                                }).join('') +
+                            '</div>';
+                        }
+
+                        docs.forEach(function(f) {
+                            if (f.tipo === 'pdf') {
+                                archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
+                                    '<div style="width:36px; height:36px; min-width:36px; background:#ef4444; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-file-pdf" style="color:#fff; font-size:16px;"></i></div>' +
+                                    '<div><div style="font-size:12px; font-weight:600;">Descargar PDF</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para abrir el documento</div></div>' +
+                                    '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
+                                '</a>';
+                            } else {
+                                archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
+                                    '<div style="width:36px; height:36px; min-width:36px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
+                                    '<div><div style="font-size:12px; font-weight:600;">Descargar archivo</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para descargar</div></div>' +
+                                    '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
+                                '</a>';
+                            }
+                        });
+                    }
+
+                    var textoFormateado = formatearResultado((data.resultado && data.resultado.texto) || '');
+
+                    // Info de créditos
+                    var creditoHtml = '';
+                    if (data.cobrado) {
+                        creditoHtml = '<div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:#dcfce7; border:1px solid #bbf7d0; border-radius:8px; margin-top:12px; font-size:11px; color:#15803d;">' +
+                            '<i class="fa-solid fa-coins"></i> Se descontaron <b>' + data.creditosUsados + '</b> crédito(s) &nbsp;|&nbsp; Saldo: <b>' + (data.creditosRestantes !== undefined ? data.creditosRestantes : '?') + '</b> créditos' +
+                        '</div>';
+                    } else if (data.ok && !data.cobrado) {
+                        creditoHtml = '<div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:#fef3c7; border:1px solid #fde68a; border-radius:8px; margin-top:12px; font-size:11px; color:#92400e;">' +
+                            '<i class="fa-solid fa-info-circle"></i> No se cobraron créditos (sin resultados útiles)' +
+                        '</div>';
+                    }
+
+                    var moduloNombres2 = { orion: 'Orión', atlas: 'Atlas', fenix: 'Fénix', titan: 'Titán', nova: 'Nova' };
+                    var moduloLabel = data.modulo ? (moduloNombres2[data.modulo] || data.modulo) : '';
+                    var cmdLabel = data.comando ? data.comando.nombre : '';
+
+                    resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
+                        '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<div style="flex:1;"><div style="font-size:13px; font-weight:600; color:#e9edef;">Resultado</div>' +
+                        (moduloLabel ? '<div style="font-size:9px; color:#8696a0;">' + moduloLabel + ' · ' + cmdLabel + '</div>' : '') +
+                        '</div>' +
+                    '</div>' +
+                    '<div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; font-size:12px; color:#111b21; line-height:1.7; word-break:break-word;">' +
+                        imagenesHtml +
+                        textoFormateado +
+                        archivosHtml +
+                        creditoHtml +
+                    '</div>';
+
+                    // Actualizar saldo visual en header
+                    if (data.creditosRestantes !== undefined) {
+                        var logoStatus = document.getElementById('logoStatus');
+                        if (logoStatus) logoStatus.textContent = 'Premium (' + data.creditosRestantes + ' cr.)';
+                    }
+                }
+            } catch(e) {
+                alert('Error de conexión: ' + e.message);
+                btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar';
+                btn.disabled = false;
+            }
+        }
+
+        async function ejecutarConsultaFoto(cmdId, file) {
+            var btn = document.getElementById('btnConsulta');
+            if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando foto...'; btn.disabled = true; }
+
+            if (!currentUser || !currentUser.email) {
+                alert('Debes iniciar sesión para hacer consultas.');
+                if (btn) { btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar'; btn.disabled = false; }
+                return;
+            }
+
+            try {
+                var formData = new FormData();
+                formData.append('comandoId', cmdId);
+                formData.append('email', currentUser.email);
+                formData.append('foto', file);
+
+                var res = await fetch(BRIDGE_URL + '/api/consulta/foto', { method: 'POST', body: formData });
+                var data = await res.json();
+
+                // Manejar errores de créditos
+                if (!data.ok && data.error) {
+                    if (btn) { btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar'; btn.disabled = false; }
+                    if (res.status === 402) {
+                        document.getElementById('infoModal').style.display = 'none';
+                        if (typeof openAccess === 'function') openAccess();
+                    } else {
+                        alert(data.error);
+                    }
+                    return;
+                }
+
+                document.getElementById('infoModal').style.display = 'none';
+
+                var resEl = document.getElementById('consultasResultado');
+                if (document.getElementById('consultasCategorias')) document.getElementById('consultasCategorias').style.display = 'none';
+                if (document.getElementById('consultasComandos')) document.getElementById('consultasComandos').style.display = 'none';
+                if (resEl) {
+                    resEl.style.display = 'block';
+                    var textoFormateado = formatearResultado((data.resultado && data.resultado.texto) || '');
+
+                    // Renderizar archivos (imágenes y PDFs)
+                    var imagenesHtml = '';
+                    var archivosHtml = '';
+                    if (data.resultado && data.resultado.archivos && data.resultado.archivos.length > 0) {
+                        var imagenes = data.resultado.archivos.filter(function(f) { return f.tipo === 'imagen'; });
+                        var docs = data.resultado.archivos.filter(function(f) { return f.tipo !== 'imagen'; });
+
+                        if (imagenes.length > 0) {
+                            imagenesHtml = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:8px; margin-bottom:14px;">' +
+                                imagenes.map(function(f) {
+                                    return '<a href="' + BRIDGE_URL + f.url + '" target="_blank" download style="display:block; position:relative; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden; aspect-ratio:3/4;">' +
+                                        '<img src="' + BRIDGE_URL + f.url + '" style="width:100%; height:100%; object-fit:cover; display:block;">' +
+                                        '<div style="position:absolute; bottom:4px; right:4px; background:rgba(0,0,0,0.6); color:#fff; width:22px; height:22px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:9px;"><i class="fa-solid fa-download"></i></div>' +
+                                    '</a>';
+                                }).join('') +
+                            '</div>';
+                        }
+
+                        docs.forEach(function(f) {
+                            if (f.tipo === 'pdf') {
+                                archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
+                                    '<div style="width:36px; height:36px; min-width:36px; background:#ef4444; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-file-pdf" style="color:#fff; font-size:16px;"></i></div>' +
+                                    '<div><div style="font-size:12px; font-weight:600;">Descargar PDF</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para abrir el documento</div></div>' +
+                                    '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
+                                '</a>';
+                            } else {
+                                archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
+                                    '<div style="width:36px; height:36px; min-width:36px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
+                                    '<div><div style="font-size:12px; font-weight:600;">Descargar archivo</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para descargar</div></div>' +
+                                    '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
+                                '</a>';
+                            }
+                        });
+                    }
+
+                    var creditoHtml = '';
+                    if (data.cobrado) {
+                        creditoHtml = '<div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:#dcfce7; border:1px solid #bbf7d0; border-radius:8px; margin-top:12px; font-size:11px; color:#15803d;">' +
+                            '<i class="fa-solid fa-coins"></i> Se descontaron <b>' + data.creditosUsados + '</b> crédito(s) &nbsp;|&nbsp; Saldo: <b>' + (data.creditosRestantes !== undefined ? data.creditosRestantes : '?') + '</b> créditos' +
+                        '</div>';
+                    } else if (data.ok && !data.cobrado) {
+                        creditoHtml = '<div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:#fef3c7; border:1px solid #fde68a; border-radius:8px; margin-top:12px; font-size:11px; color:#92400e;">' +
+                            '<i class="fa-solid fa-info-circle"></i> No se cobraron créditos (sin resultados útiles)' +
+                        '</div>';
+                    }
+
+                    resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
+                        '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<div style="font-size:13px; font-weight:600; color:#e9edef;">Resultado</div>' +
+                    '</div>' +
+                    '<div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; font-size:12px; color:#111b21; line-height:1.7; word-break:break-word;">' +
+                        imagenesHtml + textoFormateado + archivosHtml + creditoHtml +
+                    '</div>';
+
+                    if (data.creditosRestantes !== undefined) {
+                        var logoStatus = document.getElementById('logoStatus');
+                        if (logoStatus) logoStatus.textContent = 'Premium (' + data.creditosRestantes + ' cr.)';
+                    }
+                }
+            } catch(e) {
+                alert('Error: ' + e.message);
+                if (btn) { btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar'; btn.disabled = false; }
+            }
+        }
 
 // =========================================
 
@@ -2104,7 +2638,7 @@
             ` + filtered.map((item, i) => `
                 <div class="hook-card" style="cursor:pointer;" onclick="abrirDashLink('${escAttr(item.Enlace)}')">
                     <div style="width:38px; height:38px; min-width:38px; border-radius:8px; background:#ffffff; border:1px solid #e5e7eb; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                        <img src="${escAttr(item.Icono)}" alt="${escAttr(item.Titulo)}" loading="lazy" onerror="this.src='assets/media/logo_circular.png'" style="width:26px; height:26px; object-fit:contain;">
+                        <img src="${escAttr(item.Icono)}" alt="${escAttr(item.Titulo)}" loading="lazy" onerror="this.src='assets/media/logopwa.png'" style="width:26px; height:26px; object-fit:contain;">
                     </div>
                     <div style="flex:1; min-width:0;">
                         <div style="font-size:11px; font-weight:600; color:#111b21; text-transform:uppercase; letter-spacing:0.1px; line-height:1.3;">${esc(item.Titulo)}</div>

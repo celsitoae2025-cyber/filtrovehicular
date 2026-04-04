@@ -4,7 +4,6 @@ const PRECACHE = [
     './admin.html',
     './panel_cliente.html',
     './assets/media/logopwa.png',
-    './assets/media/logo_circular.png',
     './assets/media/truecallerm_c3121f0d5280629.mp3',
     './assets/js/supabase-config.js',
     './assets/js/session.js',
@@ -16,7 +15,8 @@ const PRECACHE = [
     './assets/css/panel_cliente.css',
     './assets/js/index.js',
     './assets/js/admin.js',
-    './assets/js/panel_cliente.js'
+    './assets/js/panel_cliente.js',
+    './assets/css/intranet-modal.css'
 ];
 
 self.addEventListener('install', (e) => {

@@ -48,7 +48,7 @@
 
     <!-- SPLASH SCREEN (solo en PWA instalada) -->
     <div id="splashScreen" style="position:fixed; inset:0; background:#111b21; z-index:99999999; display:none; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.4s ease;">
-        <img src="assets/media/logo_circular.png" alt="Logo" style="width:72px; height:72px; object-fit:contain; margin-bottom:18px; animation:splashPulse 1.5s ease infinite;">
+        <img src="assets/media/logopwa.png" alt="Logo" style="width:72px; height:72px; object-fit:contain; margin-bottom:18px; animation:splashPulse 1.5s ease infinite;">
         <div style="font-size:18px; font-weight:700; color:#e9edef; letter-spacing:0.5px; font-family:'Roboto',sans-serif;">Filtro Vehicular</div>
         <div style="font-size:11px; font-weight:600; color:#25d366; letter-spacing:4px; text-transform:uppercase; margin-top:4px;">+</div>
         <div style="width:120px; height:3px; background:#1f2c34; border-radius:3px; margin-top:28px; overflow:hidden;">
@@ -164,7 +164,7 @@
     <header class="site-header">
         <div class="header-content">
             <a href="index.html" class="header-logo">
-                <img src="assets/media/logo_circular.png" class="logo-img" alt="Logo">
+                <img src="assets/media/logopwa.png" class="logo-img" alt="Logo">
                 <div class="logo-text-group">
                     <span class="logo-main">Filtro Vehicular</span>
                     <span class="logo-plus" id="logoStatus">Demo</span>
@@ -208,9 +208,9 @@
                         <i class="fa-solid fa-link"></i>
                         <span>Accesos</span>
                     </button>
-                    <button class="services-tab" onclick="document.getElementById('reniecMantenimiento').style.display='flex'">
-                        <i class="fa-solid fa-wrench"></i>
-                        <span>Reniec</span>
+                    <button class="services-tab" data-tab="consultas" onclick="switchServicesTab('consultas')">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Consultas</span>
                     </button>
                 </div>
             </div>
@@ -237,6 +237,17 @@
             <div id="tab-categories" class="services-tab-content active">
                 <!-- GANCHO VISUAL (LISTA DE CATEGORIAS) -->
                 <div class="hook-section" id="hookSection"></div>
+            </div>
+
+            <!-- CONTENIDO PESTAÑA CONSULTAS -->
+            <div id="tab-consultas" class="services-tab-content">
+                <div style="margin-bottom:10px;">
+                    <input type="text" id="consultasBuscador" placeholder="Buscar servicio... (DNI, C4, placa, SOAT...)" oninput="filtrarConsultas(this.value)" style="width:100%; padding:10px 14px; border:1px solid #e5e7eb; border-radius:10px; font-size:12px; color:#111b21; outline:none; box-sizing:border-box; font-family:'Roboto',sans-serif; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                </div>
+                <div id="consultasBusquedaResultados" style="display:none;"></div>
+                <div id="consultasCategorias"></div>
+                <div id="consultasComandos" style="display:none;"></div>
+                <div id="consultasResultado" style="display:none;"></div>
             </div>
 
             <!-- CONTENIDO PESTAÑA RENIEC -->
@@ -443,77 +454,84 @@
             </div>
 
             <!-- MODAL PLANES Y PRECIOS -->
-            <div id="accessModal" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:99999; align-items:center; justify-content:center; padding:16px;" onclick="if(event.target===this)closeAccess()">
-                <div onclick="event.stopPropagation()" style="background:#ffffff; border-radius:16px; width:92%; max-width:400px; overflow:hidden; border:1px solid #e5e7eb;">
-                    <!-- Header -->
-                    <div style="background:#111b21; padding:22px 22px 18px; position:relative;">
-                        <button onclick="closeAccess()" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#8696a0; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <div style="width:40px; height:40px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
-                                <i class="fa-solid fa-coins" style="font-size:18px; color:#fff;"></i>
-                            </div>
-                            <div>
-                                <div style="font-size:15px; font-weight:700; color:#e9edef;">Recargar Créditos</div>
-                                <div style="font-size:11px; color:#8696a0; font-weight:400;">Usa tus créditos en las 22 consultas</div>
-                            </div>
-                        </div>
+            <div id="accessModal" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:99999; align-items:center; justify-content:center; padding:12px;" onclick="if(event.target===this)closeAccess()">
+                <div onclick="event.stopPropagation()" style="width:95%; max-width:480px;">
+                    <!-- Close -->
+                    <div style="text-align:right; margin-bottom:8px;">
+                        <button onclick="closeAccess()" style="background:rgba(0,0,0,0.4); border:none; color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:14px;"><i class="fa-solid fa-xmark"></i></button>
                     </div>
 
-                    <!-- Planes -->
-                    <div style="padding:18px 18px 14px; display:flex; flex-direction:column; gap:10px;">
-                        <!-- Básico -->
-                        <div onclick="closeAccess(); openSale('20.00', 'Recarga Básica: 20 Créditos', 20)" style="border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
-                            <div>
-                                <div style="font-size:13px; font-weight:600; color:#111b21;">Básico</div>
-                                <div style="font-size:11px; color:#6b7280; font-weight:400;">20 créditos</div>
+                    <!-- Título -->
+                    <div style="text-align:center; margin-bottom:16px;">
+                        <div style="font-size:18px; font-weight:700; color:#fff;">Elige tu Plan</div>
+                        <div style="font-size:11px; color:rgba(255,255,255,0.7);">Accede a más de 370 consultas en 5 módulos</div>
+                    </div>
+
+                    <!-- Cards grid -->
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+
+                        <!-- PLAN AVANZADO -->
+                        <div onclick="closeAccess(); openSale('42.00', 'Plan Avanzado: 850 Créditos', 850)" style="background:#fff; border-radius:14px; padding:16px; cursor:pointer; border:1px solid #e5e7eb; display:flex; align-items:center; gap:14px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.01)'" onmouseout="this.style.transform='scale(1)'">
+                            <div style="min-width:70px; text-align:center;">
+                                <div style="font-size:28px; font-weight:800; color:#111b21; line-height:1;">S/42</div>
                             </div>
-                            <div style="font-size:18px; font-weight:700; color:#111b21;">S/ 20</div>
+                            <div style="flex:1; border-left:2px solid #e5e7eb; padding-left:14px;">
+                                <div style="font-size:13px; font-weight:700; color:#111b21;">PLAN AVANZADO</div>
+                                <div style="font-size:11px; font-weight:600; color:#25d366;">850 créditos</div>
+                                <div style="font-size:9px; color:#6b7280; margin-top:4px; line-height:1.4;">
+                                    <i class="fa-solid fa-check" style="color:#25d366; font-size:7px; margin-right:3px;"></i>RENIEC, C4, Telefonía, SUNAT<br>
+                                    <i class="fa-solid fa-check" style="color:#25d366; font-size:7px; margin-right:3px;"></i>SUNARP, partida registral, placas<br>
+                                    <i class="fa-solid fa-check" style="color:#25d366; font-size:7px; margin-right:3px;"></i>Seeker, licencias, sueldos
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color:#9ca3af; font-size:12px;"></i>
                         </div>
 
-                        <!-- Estándar -->
-                        <div onclick="closeAccess(); openSale('60.00', 'Recarga Estándar: 60 + 20 bonus = 80 Créditos', 80)" style="border:2px solid #25d366; border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; position:relative;">
-                            <span style="position:absolute; top:-8px; left:14px; background:#25d366; color:#fff; font-size:9px; font-weight:700; padding:2px 8px; border-radius:4px; text-transform:uppercase; letter-spacing:0.3px;">Popular</span>
-                            <div>
-                                <div style="font-size:13px; font-weight:600; color:#111b21;">Estándar</div>
-                                <div style="font-size:11px; color:#6b7280; font-weight:400;">80 créditos</div>
-                                <span style="font-size:10px; color:#25d366; font-weight:600;">+20 gratis</span>
+                        <!-- PLAN PROFESIONAL (Recomendado) -->
+                        <div onclick="closeAccess(); openSale('140.00', 'Plan Profesional: 4000 Créditos', 4000)" style="background:#111b21; border-radius:14px; padding:16px; cursor:pointer; border:2px solid #25d366; display:flex; align-items:center; gap:14px; position:relative; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.01)'" onmouseout="this.style.transform='scale(1)'">
+                            <span style="position:absolute; top:-9px; left:50%; transform:translateX(-50%); background:#25d366; color:#fff; font-size:9px; font-weight:700; padding:2px 12px; border-radius:4px; text-transform:uppercase; letter-spacing:0.5px;">Recomendado</span>
+                            <div style="min-width:70px; text-align:center;">
+                                <div style="font-size:28px; font-weight:800; color:#25d366; line-height:1;">S/140</div>
                             </div>
-                            <div style="text-align:right;">
-                                <div style="font-size:18px; font-weight:700; color:#111b21;">S/ 60</div>
-                                <div style="font-size:10px; color:#25d366; font-weight:600;">Ahorras S/ 20</div>
+                            <div style="flex:1; border-left:2px solid #2a3942; padding-left:14px;">
+                                <div style="font-size:13px; font-weight:700; color:#e9edef;">PLAN PROFESIONAL</div>
+                                <div style="font-size:11px; font-weight:600; color:#25d366;">4,000 créditos</div>
+                                <div style="font-size:9px; color:#8696a0; margin-top:4px; line-height:1.4;">
+                                    <i class="fa-solid fa-check" style="color:#25d366; font-size:7px; margin-right:3px;"></i>Reconocimiento Facial avanzado<br>
+                                    <i class="fa-solid fa-check" style="color:#25d366; font-size:7px; margin-right:3px;"></i>+60 módulos, APIs de desarrollador<br>
+                                    <i class="fa-solid fa-check" style="color:#25d366; font-size:7px; margin-right:3px;"></i>Búsquedas masivas (Empresas)
+                                </div>
                             </div>
+                            <i class="fa-solid fa-chevron-right" style="color:#25d366; font-size:12px;"></i>
                         </div>
 
-                        <!-- Premium -->
-                        <div onclick="closeAccess(); openSale('100.00', 'Recarga Premium: 100 + 50 bonus = 150 Créditos', 150)" style="border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; position:relative; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
-                            <span style="position:absolute; top:-8px; left:14px; background:#111b21; color:#fff; font-size:9px; font-weight:700; padding:2px 8px; border-radius:4px; text-transform:uppercase; letter-spacing:0.3px;">Mayor ahorro</span>
-                            <div>
-                                <div style="font-size:13px; font-weight:600; color:#111b21;">Premium</div>
-                                <div style="font-size:11px; color:#6b7280; font-weight:400;">150 créditos</div>
-                                <span style="font-size:10px; color:#25d366; font-weight:600;">+50 gratis</span>
+                        <!-- PLAN BUSINESS -->
+                        <div onclick="closeAccess(); openSale('84.00', 'Plan Business: 2000 Créditos', 2000)" style="background:#fff; border-radius:14px; padding:16px; cursor:pointer; border:1px solid #e5e7eb; display:flex; align-items:center; gap:14px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.01)'" onmouseout="this.style.transform='scale(1)'">
+                            <div style="min-width:70px; text-align:center;">
+                                <div style="font-size:28px; font-weight:800; color:#dc2626; line-height:1;">S/84</div>
                             </div>
-                            <div style="text-align:right;">
-                                <div style="font-size:18px; font-weight:700; color:#111b21;">S/ 100</div>
-                                <div style="font-size:10px; color:#25d366; font-weight:600;">Ahorras S/ 50</div>
+                            <div style="flex:1; border-left:2px solid #e5e7eb; padding-left:14px;">
+                                <div style="font-size:13px; font-weight:700; color:#111b21;">PLAN BUSINESS</div>
+                                <div style="font-size:11px; font-weight:600; color:#25d366;">2,000 créditos</div>
+                                <div style="font-size:9px; color:#6b7280; margin-top:4px; line-height:1.4;">
+                                    <i class="fa-solid fa-check" style="color:#25d366; font-size:7px; margin-right:3px;"></i>Sentinel, SBS, Migraciones<br>
+                                    <i class="fa-solid fa-check" style="color:#25d366; font-size:7px; margin-right:3px;"></i>TIVE, constancia estudios, delitos<br>
+                                    <i class="fa-solid fa-check" style="color:#25d366; font-size:7px; margin-right:3px;"></i>Consumos SUNAT, hoteles y restaurantes
+                                </div>
                             </div>
+                            <i class="fa-solid fa-chevron-right" style="color:#9ca3af; font-size:12px;"></i>
                         </div>
                     </div>
 
                     <!-- Footer -->
-                    <div style="padding:0 18px 18px;">
-                        <div style="text-align:center; font-size:10px; color:#6b7280; margin-bottom:12px;">
-                            <i class="fa-solid fa-lock" style="color:#25d366; margin-right:4px;"></i> 1 crédito = S/ 1.00 · Pago seguro
-                        </div>
-                        <a href="https://wa.me/51932465820?text=Hola%2C%20quiero%20recargar%20cr%C3%A9ditos%20en%20Filtro%20Vehicular." target="_blank" onclick="closeAccess();" style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; text-decoration:none; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <i class="fa-brands fa-whatsapp" style="font-size:20px; color:#25d366;"></i>
-                                <div>
-                                    <div style="font-size:12px; font-weight:600; color:#111b21;">Recarga por WhatsApp</div>
-                                    <div style="font-size:10px; color:#6b7280; font-weight:400;">Escríbenos y recarga al instante</div>
-                                </div>
-                            </div>
-                            <i class="fa-solid fa-chevron-right" style="color:#9ca3af; font-size:11px;"></i>
+                    <div style="margin-top:14px; text-align:center;">
+                        <a href="https://wa.me/51932465820?text=Hola%2C%20quiero%20recargar%20cr%C3%A9ditos%20en%20Filtro%20Vehicular." target="_blank" onclick="closeAccess();" style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); border-radius:10px; text-decoration:none; color:#fff; font-size:12px; font-weight:600; backdrop-filter:blur(8px);">
+                            <i class="fa-brands fa-whatsapp" style="font-size:16px; color:#25d366;"></i>
+                            Recargar por WhatsApp
                         </a>
+                        <div style="font-size:9px; color:rgba(255,255,255,0.5); margin-top:8px;">
+                            <i class="fa-solid fa-shield-halved" style="margin-right:3px;"></i> Pago seguro · Créditos al instante · Soporte 24/7
+                        </div>
                     </div>
                 </div>
             </div>
@@ -539,7 +557,7 @@
             <div class="footer-top">
                 <div class="footer-brand">
                     <div class="footer-logo">
-                        <img src="assets/media/logo_circular.png" alt="Logo">
+                        <img src="assets/media/logopwa.png" alt="Logo">
                         <div class="footer-logo-text">
                             <span class="footer-logo-name">Filtro Vehicular</span>
                             <span class="footer-logo-sub">Plus</span>
@@ -598,7 +616,7 @@
             <div class="auth-card-header">
                 <button onclick="closeAuthModal()" class="auth-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>
                 <div style="width:56px; height:56px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
-                    <img src="assets/media/logo_circular.png" style="width:40px; height:40px; object-fit:contain;">
+                    <img src="assets/media/logopwa.png" style="width:40px; height:40px; object-fit:contain;">
                 </div>
                 <h3 class="auth-title" id="authTitle">Crear mi Cuenta</h3>
                 <p class="auth-subtitle" id="authSubtitle">Solo necesitas tu correo para empezar</p>
