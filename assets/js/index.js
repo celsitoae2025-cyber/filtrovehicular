@@ -1711,7 +1711,9 @@
 
 // ─── SISTEMA DE CONSULTAS (Bridge Telegram) ────────────────────────────
 
-        var BRIDGE_URL = 'http://localhost:3500';
+        var BRIDGE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3500'
+            : 'http://192.168.100.71:3500';
 
         var consultasModulos = [
             { id: 'orion', nombre: 'Orión', icono: 'fa-satellite', servicios: 121 },
