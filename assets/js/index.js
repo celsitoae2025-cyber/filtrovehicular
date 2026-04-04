@@ -1734,9 +1734,32 @@
         ];
 
         var consultasModuloActual = null;
+        var consultasCatActual = null;
 
         var consultasComandosData = [];
         var consultasTodosComandos = [];
+
+        // Navegación inteligente: vuelve al paso anterior
+        function volverConsultas() {
+            var resEl = document.getElementById('consultasResultado');
+            if (resEl && resEl.style.display === 'block') {
+                // Estamos en resultado → volver a comandos de la categoría
+                if (consultasCatActual && consultasModuloActual) {
+                    renderConsultasComandos(consultasCatActual);
+                } else if (consultasModuloActual) {
+                    renderConsultasModulo(consultasModuloActual);
+                } else {
+                    renderConsultasCategorias();
+                }
+                return;
+            }
+            // Default
+            if (consultasModuloActual) {
+                renderConsultasModulo(consultasModuloActual);
+            } else {
+                renderConsultasCategorias();
+            }
+        }
 
         // Cargar todos los comandos para búsqueda
         async function cargarTodosComandos() {
@@ -1864,6 +1887,7 @@
         }
 
         async function renderConsultasComandos(catId) {
+            consultasCatActual = catId;
             var container = document.getElementById('consultasCategorias');
             var cmdsEl = document.getElementById('consultasComandos');
             if (!cmdsEl) return;
@@ -2055,7 +2079,7 @@
                     if (resEl) {
                         resEl.style.display = 'block';
                         resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                            '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                            '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                             '<div style="font-size:13px; font-weight:600; color:#e9edef;">Procesando...</div>' +
                         '</div>' +
                         '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:30px; text-align:center;">' +
@@ -2073,12 +2097,12 @@
                             if (maxPolls <= 0) {
                                 clearInterval(pollInterval);
                                 if (resEl) resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                                    '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                                    '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                                     '<div style="font-size:13px; font-weight:600; color:#e9edef;">Timeout</div>' +
                                 '</div>' +
                                 '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; text-align:center;">' +
                                     '<div style="font-size:13px; color:#6b7280;">La consulta tardó demasiado. Intenta de nuevo.</div>' +
-                                    '<button onclick="renderConsultasCategorias()" style="margin-top:14px; padding:10px 24px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">Volver</button>' +
+                                    '<button onclick="volverConsultas()" style="margin-top:14px; padding:10px 24px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">Volver</button>' +
                                 '</div>';
                                 return;
                             }
@@ -2152,7 +2176,7 @@
                     var cmdLabel = data.comando ? data.comando.nombre : '';
 
                     resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                        '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                         '<div style="flex:1;"><div style="font-size:13px; font-weight:600; color:#e9edef;">Resultado</div>' +
                         (moduloLabel ? '<div style="font-size:9px; color:#8696a0;">' + moduloLabel + ' · ' + cmdLabel + '</div>' : '') +
                         '</div>' +
@@ -2186,14 +2210,14 @@
                     if (cmdsEl2) cmdsEl2.style.display = 'none';
                     resEl2.style.display = 'block';
                     resEl2.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                        '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                         '<div style="font-size:13px; font-weight:600; color:#e9edef;">Error</div>' +
                     '</div>' +
                     '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; text-align:center;">' +
                         '<i class="fa-solid fa-wifi" style="font-size:28px; color:#ef4444; margin-bottom:10px; display:block;"></i>' +
                         '<div style="font-size:13px; font-weight:600; color:#111b21; margin-bottom:4px;">Error de conexión</div>' +
                         '<div style="font-size:11px; color:#6b7280;">El servidor no respondió. Intenta de nuevo en unos segundos.</div>' +
-                        '<button onclick="renderConsultasCategorias()" style="margin-top:14px; padding:10px 24px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">Volver</button>' +
+                        '<button onclick="volverConsultas()" style="margin-top:14px; padding:10px 24px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">Volver</button>' +
                     '</div>';
                 } else {
                     btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar';
@@ -2289,7 +2313,7 @@
                     }
 
                     resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                        '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                         '<div style="font-size:13px; font-weight:600; color:#e9edef;">Resultado</div>' +
                     '</div>' +
                     '<div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; font-size:12px; color:#111b21; line-height:1.7; word-break:break-word;">' +
@@ -2311,14 +2335,14 @@
                     if (cmdsEl3) cmdsEl3.style.display = 'none';
                     resEl3.style.display = 'block';
                     resEl3.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                        '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                         '<div style="font-size:13px; font-weight:600; color:#e9edef;">Error</div>' +
                     '</div>' +
                     '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; text-align:center;">' +
                         '<i class="fa-solid fa-wifi" style="font-size:28px; color:#ef4444; margin-bottom:10px; display:block;"></i>' +
                         '<div style="font-size:13px; font-weight:600; color:#111b21; margin-bottom:4px;">Error de conexión</div>' +
                         '<div style="font-size:11px; color:#6b7280;">El servidor no respondió. Intenta de nuevo en unos segundos.</div>' +
-                        '<button onclick="renderConsultasCategorias()" style="margin-top:14px; padding:10px 24px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">Volver</button>' +
+                        '<button onclick="volverConsultas()" style="margin-top:14px; padding:10px 24px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">Volver</button>' +
                     '</div>';
                 }
                 if (btn) { btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar'; btn.disabled = false; }
@@ -2335,6 +2359,7 @@
         window.ejecutarConsulta = ejecutarConsulta;
         window.ejecutarConsultaFoto = ejecutarConsultaFoto;
         window.filtrarConsultas = filtrarConsultas;
+        window.volverConsultas = volverConsultas;
 
         // 1. Registrar el Service Worker
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
