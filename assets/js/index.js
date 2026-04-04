@@ -1713,7 +1713,7 @@
 
         var BRIDGE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:3500'
-            : 'https://compiled-implies-nickname-context.trycloudflare.com';
+            : 'https://transcripts-plain-are-ranch.trycloudflare.com';
 
         // Helper para fetch con header ngrok
         function bridgeFetch(url, options) {
@@ -2023,6 +2023,7 @@
             btn.disabled = true;
 
             try {
+                // Paso 1: Enviar consulta (respuesta inmediata con jobId)
                 var res = await bridgeFetch(BRIDGE_URL + '/api/consulta', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -2034,10 +2035,7 @@
                 if (!data.ok && data.error) {
                     btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar';
                     btn.disabled = false;
-                    if (res.status === 402) {
-                        document.getElementById('infoModal').style.display = 'none';
-                        if (typeof openAccess === 'function') openAccess();
-                    } else if (res.status === 403) {
+                    if (res.status === 402 || res.status === 403) {
                         document.getElementById('infoModal').style.display = 'none';
                         if (typeof openAccess === 'function') openAccess();
                     } else {
@@ -2046,7 +2044,53 @@
                     return;
                 }
 
-                document.getElementById('infoModal').style.display = 'none';
+                // Paso 2: Polling — esperar resultado
+                if (data.status === 'processing' && data.jobId) {
+                    document.getElementById('infoModal').style.display = 'none';
+                    var resEl = document.getElementById('consultasResultado');
+                    var catsEl = document.getElementById('consultasCategorias');
+                    var cmdsEl = document.getElementById('consultasComandos');
+                    if (catsEl) catsEl.style.display = 'none';
+                    if (cmdsEl) cmdsEl.style.display = 'none';
+                    if (resEl) {
+                        resEl.style.display = 'block';
+                        resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
+                            '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                            '<div style="font-size:13px; font-weight:600; color:#e9edef;">Procesando...</div>' +
+                        '</div>' +
+                        '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:30px; text-align:center;">' +
+                            '<i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:#25d366; margin-bottom:12px; display:block;"></i>' +
+                            '<div style="font-size:13px; font-weight:600; color:#111b21;">Consultando al sistema...</div>' +
+                            '<div style="font-size:11px; color:#6b7280; margin-top:4px;">Esto puede tardar unos segundos</div>' +
+                        '</div>';
+                    }
+
+                    // Polling cada 2 segundos
+                    var maxPolls = 60; // máximo 2 min
+                    var pollInterval = setInterval(async function() {
+                        try {
+                            maxPolls--;
+                            if (maxPolls <= 0) {
+                                clearInterval(pollInterval);
+                                if (resEl) resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
+                                    '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                                    '<div style="font-size:13px; font-weight:600; color:#e9edef;">Timeout</div>' +
+                                '</div>' +
+                                '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; text-align:center;">' +
+                                    '<div style="font-size:13px; color:#6b7280;">La consulta tardó demasiado. Intenta de nuevo.</div>' +
+                                    '<button onclick="renderConsultasCategorias()" style="margin-top:14px; padding:10px 24px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;">Volver</button>' +
+                                '</div>';
+                                return;
+                            }
+                            var pollRes = await bridgeFetch(BRIDGE_URL + '/api/consulta/' + data.jobId);
+                            var pollData = await pollRes.json();
+                            if (pollData.status === 'processing') return; // Seguir esperando
+
+                            clearInterval(pollInterval);
+                            data = pollData; // Resultado final
+                        } catch(pe) { return; } // Error de red, seguir intentando
+
+                        // Paso 3: Mostrar resultado (mismo código de antes)
 
                 var resEl = document.getElementById('consultasResultado');
                 var catsEl = document.getElementById('consultasCategorias');
@@ -2126,6 +2170,11 @@
                         if (logoStatus) logoStatus.textContent = 'Premium (' + data.creditosRestantes + ' cr.)';
                     }
                 }
+                    }, 2000); // fin pollInterval
+                    return; // salir del try, el polling maneja el resto
+                }
+                // Si no es async (respuesta directa), mostrar resultado aquí
+                document.getElementById('infoModal').style.display = 'none';
             } catch(e) {
                 // Mostrar error en el resultado, no alert bloqueante
                 var resEl2 = document.getElementById('consultasResultado');
