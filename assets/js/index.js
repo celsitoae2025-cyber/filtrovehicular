@@ -1713,7 +1713,17 @@
 
         var BRIDGE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:3500'
-            : 'http://192.168.100.71:3500';
+            : 'https://schizogenous-delmar-tabularly.ngrok-free.dev';
+
+        // Helper para fetch con header ngrok
+        function bridgeFetch(url, options) {
+            options = options || {};
+            options.headers = options.headers || {};
+            if (typeof options.headers === 'object' && !(options.headers instanceof Headers)) {
+                options.headers['ngrok-skip-browser-warning'] = 'true';
+            }
+            return fetch(url, options);
+        }
 
         var consultasModulos = [
             { id: 'orion', nombre: 'Orión', icono: 'fa-satellite', servicios: 121 },
@@ -1731,7 +1741,7 @@
         // Cargar todos los comandos para búsqueda
         async function cargarTodosComandos() {
             try {
-                var res = await fetch(BRIDGE_URL + '/api/comandos');
+                var res = await bridgeFetch(BRIDGE_URL + '/api/comandos');
                 consultasTodosComandos = await res.json();
             } catch(e) { consultasTodosComandos = []; }
         }
@@ -1820,7 +1830,7 @@
             // Cargar categorías del módulo
             var categorias = [];
             try {
-                var res = await fetch(BRIDGE_URL + '/api/modulos/' + moduloId + '/categorias');
+                var res = await bridgeFetch(BRIDGE_URL + '/api/modulos/' + moduloId + '/categorias');
                 categorias = await res.json();
             } catch(e) { categorias = []; }
 
@@ -2013,7 +2023,7 @@
             btn.disabled = true;
 
             try {
-                var res = await fetch(BRIDGE_URL + '/api/consulta', {
+                var res = await bridgeFetch(BRIDGE_URL + '/api/consulta', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ comandoId: cmdId, valor: valor, email: currentUser.email })
@@ -2139,7 +2149,7 @@
                 formData.append('email', currentUser.email);
                 formData.append('foto', file);
 
-                var res = await fetch(BRIDGE_URL + '/api/consulta/foto', { method: 'POST', body: formData });
+                var res = await bridgeFetch(BRIDGE_URL + '/api/consulta/foto', { method: 'POST', body: formData });
                 var data = await res.json();
 
                 // Manejar errores de créditos
