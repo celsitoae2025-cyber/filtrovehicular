@@ -1810,7 +1810,7 @@
                               '<div style="font-size:11px; font-weight:600; color:#111b21;">' + cmd.nombre + '</div>' +
                               '<div style="font-size:8px; color:#6b7280;">' + (moduloNombres[cmd.modulo] || cmd.modulo) + ' · ' + cmd.categoria + '</div>' +
                           '</div>' +
-                          '<div style="font-size:9px; color:' + (cmd.creditos === 0 ? '#25d366' : '#111b21') + '; font-weight:600;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' cr.') + '</div>' +
+                          '<div style="font-size:9px; color:' + (cmd.creditos === 0 ? '#25d366' : '#111b21') + '; font-weight:600;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
                       '</div>';
                   }).join('') +
                   '</div>';
@@ -1922,7 +1922,7 @@
                             '<div style="font-size:9px; color:#6b7280;">' + cmd.descripcion + '</div>' +
                         '</div>' +
                         '<div style="flex-shrink:0; text-align:right;">' +
-                            '<div style="font-size:10px; font-weight:600; color:' + (cmd.creditos === 0 ? '#25d366' : '#111b21') + ';">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' cr.') + '</div>' +
+                            '<div style="font-size:10px; font-weight:600; color:' + (cmd.creditos === 0 ? '#25d366' : '#111b21') + ';">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
                             '<div style="font-size:8px; color:#6b7280;">' + cmd.tipo.toUpperCase() + '</div>' +
                         '</div>' +
                     '</div>';
@@ -1965,7 +1965,7 @@
                     '</div>' +
                     '<div>' +
                         '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + cmd.nombre + '</div>' +
-                        '<div style="font-size:10px; color:#8696a0;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' créditos') + ' · ' + cmd.tipo.toUpperCase() + '</div>' +
+                        '<div style="font-size:10px; color:#8696a0;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + ' · ' + cmd.tipo.toUpperCase() + '</div>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
