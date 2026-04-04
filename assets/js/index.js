@@ -1874,7 +1874,7 @@
                 var url = consultasModuloActual
                     ? BRIDGE_URL + '/api/modulos/' + consultasModuloActual + '/categorias/' + catId
                     : BRIDGE_URL + '/api/categorias/' + catId;
-                var res = await fetch(url);
+                var res = await bridgeFetch(url);
                 consultasComandosData = await res.json();
             } catch(e) { consultasComandosData = []; }
 
