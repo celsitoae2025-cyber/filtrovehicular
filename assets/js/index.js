@@ -1873,13 +1873,14 @@
                 '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + (modInfo ? modInfo.nombre : moduloId) + '</div>' +
                 '<div style="font-size:10px; color:#8696a0; margin-left:auto;">' + categorias.length + ' categorías</div>' +
             '</div>' +
-            '<div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px;">' +
+            '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:8px;">' +
                 categorias.map(function(cat) {
-                    return '<div onclick="renderConsultasComandos(\'' + cat + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:10px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
-                        '<div style="width:30px; height:30px; min-width:30px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
-                            '<i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '" style="font-size:12px; color:#fff;"></i>' +
+                    return '<div onclick="renderConsultasComandos(\'' + cat + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                        '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
+                            '<i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '" style="font-size:13px; color:#fff;"></i>' +
                         '</div>' +
-                        '<div style="font-size:11px; font-weight:600; color:#111b21;">' + cat + '</div>' +
+                        '<div style="font-size:12px; font-weight:600; color:#111b21;">' + cat + '</div>' +
+                        '<i class="fa-solid fa-chevron-right" style="font-size:10px; color:#9ca3af; margin-left:auto;"></i>' +
                     '</div>';
                 }).join('') +
             '</div>';
@@ -1912,8 +1913,8 @@
             '</div>' +
             '<div style="display:flex; flex-direction:column; gap:6px;">' +
                 consultasComandosData.map(function(cmd) {
-                    return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
-                        '<div style="width:32px; height:32px; min-width:32px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
+                    return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                        '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:13px; color:#fff;"></i>' +
                         '</div>' +
                         '<div style="flex:1; min-width:0;">' +
