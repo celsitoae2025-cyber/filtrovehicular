@@ -2386,17 +2386,17 @@
                 pwaBanner.id = "pwaBannerContainer";
                 pwaBanner.innerHTML = `
                     <div style="position:fixed; bottom:16px; left:12px; right:12px; max-width:460px; margin:0 auto; background:#111b21; border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px; z-index:99999; animation:slideInPwa 0.4s ease forwards; border:1px solid #2a3942;">
-                        <div style="width:40px; height:40px; min-width:40px; border-radius:10px; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center;">
-                            <i class="fa-solid fa-download" style="font-size:16px; color:#fff;"></i>
+                        <div style="width:42px; height:42px; min-width:42px; border-radius:10px; background:#25d366; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-download" style="font-size:17px; color:#fff;"></i>
                         </div>
                         <div style="flex:1; min-width:0;">
-                            <div style="font-weight:600; font-size:13px; color:#e9edef;">Instalar App</div>
-                            <div style="font-size:11px; color:#8696a0; font-weight:400;">Acceso rápido desde tu pantalla de inicio</div>
+                            <div style="font-weight:700; font-size:13px; color:#ffffff;">Instalar App</div>
+                            <div style="font-size:10px; color:#8696a0; font-weight:400;">Acceso rápido desde tu pantalla de inicio</div>
                         </div>
-                        <button id="btnInstallApp" style="background:#ffffff; color:#111b21; border:none; padding:8px 14px; border-radius:8px; font-weight:600; cursor:pointer; font-size:11px; transition:background 0.2s; flex-shrink:0; white-space:nowrap;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#ffffff'">
+                        <button id="btnInstallApp" style="background:#25d366; color:#ffffff; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-size:11px; transition:background 0.2s; flex-shrink:0; white-space:nowrap;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
                             Instalar
                         </button>
-                        <button id="btnDismissPwa" style="background:none; border:none; color:#8696a0; font-size:16px; cursor:pointer; padding:4px; flex-shrink:0;">
+                        <button id="btnDismissPwa" style="background:none; border:none; color:rgba(255,255,255,0.4); font-size:16px; cursor:pointer; padding:4px; flex-shrink:0;">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
