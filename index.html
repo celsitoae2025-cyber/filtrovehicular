@@ -241,8 +241,9 @@
 
             <!-- CONTENIDO PESTAÑA CONSULTAS -->
             <div id="tab-consultas" class="services-tab-content">
-                <div style="margin-bottom:10px;">
-                    <input type="text" id="consultasBuscador" placeholder="Buscar servicio... (DNI, C4, placa, SOAT...)" oninput="filtrarConsultas(this.value)" style="width:100%; padding:14px 16px; border:0.5px solid #9ca3af; border-radius:12px; font-size:12px; color:#111b21; outline:none; box-sizing:border-box; font-family:'Roboto',sans-serif; transition:all 0.25s ease;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#9ca3af'">
+                <div class="dash-search-bar" style="margin-bottom:10px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="consultasBuscador" placeholder="Buscar servicio... (DNI, C4, placa, SOAT...)" oninput="filtrarConsultas(this.value)">
                 </div>
                 <div id="consultasBusquedaResultados" style="display:none;"></div>
                 <div id="consultasCategorias"></div>
