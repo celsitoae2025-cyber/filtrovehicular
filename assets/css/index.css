@@ -7,7 +7,7 @@
             --brand-gold: #d97706;
             --brand-navy: #111b21;
             --bg-main: #111b21;
-            --brand-green: #25d366;
+            --brand-green: #111b21;
         }
 
         * {
@@ -146,7 +146,7 @@
         .btn-unlock-final {
             width: 100%;
             min-height: 52px;
-            background: #25d366;
+            background: #111b21;
             color: white;
             border: none;
             border-radius: 12px;
@@ -307,14 +307,14 @@
         }
 
         .hero-btn-primary {
-            background: #25d366;
-            color: #111b21;
+            background: #111b21;
+            color: #ffffff;
             border: none;
             font-weight: 800;
         }
 
         .hero-btn-primary:hover {
-            background: #1ebe5d;
+            background: #1f2c34;
         }
 
         .hero-btn-secondary {
@@ -455,7 +455,7 @@
         }
         .risk-safe .risk-panel-icon {
             background: #f0fdf4;
-            color: #25d366;
+            color: #111b21;
         }
 
         .risk-panel-tag {
@@ -504,7 +504,7 @@
 
         .risk-critical .risk-panel-list li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #ef4444; position: absolute; left: 0; top: 6px; }
         .risk-moderate  .risk-panel-list li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #f97316; position: absolute; left: 0; top: 6px; }
-        .risk-safe      .risk-panel-list li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #25d366; position: absolute; left: 0; top: 6px; }
+        .risk-safe      .risk-panel-list li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #111b21; position: absolute; left: 0; top: 6px; }
 
 
         /* CUADRO CTA SOLICITA FILTRO REFINADO */
@@ -701,7 +701,7 @@
         .sale-card {
             background: #ffffff;
             border-radius: 16px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #6b7280;
             color: #1e293b;
             max-width: 360px;
             width: 92%;
@@ -752,7 +752,7 @@
         .plans-header-label {
             font-size: 10px;
             font-weight: 700;
-            color: #25d366;
+            color: #ffffff;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 8px;
@@ -808,7 +808,7 @@
         }
 
         .plan-card.destacado {
-            border: 2px solid #25d366;
+            border: 2px solid #111b21;
             background: #ffffff;
             padding: 24px 22px;
             box-shadow: none;
@@ -839,7 +839,7 @@
             white-space: nowrap;
             letter-spacing: 0.5px;
             text-transform: uppercase;
-            background: #25d366;
+            background: #111b21;
             color: #ffffff;
         }
 
@@ -894,7 +894,7 @@
         .plan-save {
             font-size: 10px;
             font-weight: 700;
-            color: #25d366;
+            color: #111b21;
             margin-top: 4px;
         }
 
@@ -910,7 +910,7 @@
         }
 
         .plans-footer-note i {
-            color: #25d366;
+            color: #111b21;
             font-size: 12px;
         }
 
@@ -1057,7 +1057,7 @@
             background: #ffffff;
             filter: grayscale(0);
             opacity: 1;
-            border: 2px solid #25d366; /* Color Institucional Verde */
+            border: 2px solid #111b21; /* Color Institucional */
         }
 
         .payment-qr-container {
@@ -1197,7 +1197,7 @@
             gap: 10px;
             width: 100%;
             height: 50px;
-            background: #25d366;
+            background: #111b21;
             color: white;
             text-decoration: none;
             border-radius: 14px;
@@ -1257,7 +1257,7 @@
         }
 
         .source-tag {
-            background: #25d366;
+            background: #111b21;
             border: none;
             color: #ffffff;
             padding: 6px 14px;
@@ -1408,7 +1408,7 @@
         .stats-section {
             display: flex;
             justify-content: space-around;
-            background: #25d366;
+            background: #111b21;
             border-radius: 16px;
             padding: 20px 10px;
             margin: 15px 0;
@@ -1457,7 +1457,7 @@
         .wa-assistant .wa-circle {
             width: 38px;
             height: 38px;
-            background: #25d366;
+            background: #111b21;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1476,7 +1476,7 @@
         .wa-assistant .wa-title {
             font-size: 13px;
             font-weight: 800;
-            color: #25d366;
+            color: #ffffff;
             font-family: 'Roboto', sans-serif;
         }
         .wa-assistant .wa-desc {
@@ -1546,8 +1546,8 @@
         }
 
         .services-tab.active {
-            background: #25d366;
-            color: #111b21;
+            background: #111b21;
+            color: #ffffff;
         }
 
         .services-tab.active i {
@@ -1629,7 +1629,7 @@
         }
 
         .service-section-title i {
-            color: #25d366;
+            color: #111b21;
             font-size: 20px;
         }
 
@@ -1703,8 +1703,8 @@
 
         .category-count {
             display: inline-block;
-            background: rgba(37, 211, 102, 0.15);
-            color: #25d366;
+            background: rgba(17, 27, 33, 0.15);
+            color: #111b21;
             font-size: 10px;
             font-weight: 700;
             padding: 4px 8px;
@@ -1780,7 +1780,7 @@
         }
 
         .service-item:hover {
-            border-color: #25d366;
+            border-color: #111b21;
         }
 
         .service-item-icon {
@@ -1914,6 +1914,7 @@
             max-height: 90vh;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            border: 2px solid #6b7280;
         }
 
         .info-close {
@@ -1993,7 +1994,7 @@
         .logo-plus {
             font-size: 9px;
             font-weight: 600;
-            color: #25d366;
+            color: #ffffff;
             text-transform: uppercase;
             letter-spacing: 3px;
             margin: 2px -4px 0 0;
@@ -2242,7 +2243,7 @@
         .footer-logo-sub {
             font-size: 9px;
             font-weight: 600;
-            color: #25d366;
+            color: #ffffff;
             letter-spacing: 3px;
             text-transform: uppercase;
             text-align: right;
@@ -2275,8 +2276,8 @@
         }
 
         .footer-social-icon:hover {
-            border-color: #25d366;
-            color: #25d366;
+            border-color: #ffffff;
+            color: #ffffff;
         }
 
         .footer-links-group {
@@ -2826,11 +2827,11 @@
 }
 .login-logo-box::after {
     content: ''; position: absolute; inset: -3px; border-radius: 23px;
-    background: linear-gradient(135deg, #25d366, #111b21, #25d366); z-index: -1; opacity: 0.3;
+    background: linear-gradient(135deg, #6b7280, #111b21, #6b7280); z-index: -1; opacity: 0.3;
 }
 .login-logo-box img { width: 46px; height: 46px; object-fit: contain; filter: brightness(0) invert(1); }
 .login-brand-name { font-size: 22px; font-weight: 900; color: #111b21; letter-spacing: 1px; text-transform: uppercase; }
-.login-brand-sub { font-size: 10px; font-weight: 600; color: #25d366; letter-spacing: 4px; text-transform: uppercase; margin-top: 2px; }
+.login-brand-sub { font-size: 10px; font-weight: 600; color: #6b7280; letter-spacing: 4px; text-transform: uppercase; margin-top: 2px; }
 .login-brand-tag { font-size: 11px; color: #94a3b8; margin-top: 6px; }
 .login-form-card {
     width: 100%; background: #fff; border-radius: 22px; padding: 28px 24px;
@@ -2870,13 +2871,13 @@
     border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 13px; font-weight: 700; font-family: 'Roboto', sans-serif;
     cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.login-btn-register:hover { border-color: #25d366; background: #f0fdf4; }
+.login-btn-register:hover { border-color: #111b21; background: #f8fafc; }
 .login-footer-badge {
     margin-top: 24px; display: inline-flex; align-items: center; gap: 6px;
     padding: 8px 16px; background: rgba(13,37,54,0.04); border-radius: 50px;
     font-size: 10px; font-weight: 600; color: #64748b; animation: fadeInUp 0.6s ease 0.3s both;
 }
-.login-footer-badge i { color: #25d366; font-size: 12px; }
+.login-footer-badge i { color: #111b21; font-size: 12px; }
 
 /* ============================================
    PROMO MODAL S/35
@@ -2899,7 +2900,7 @@
 .promo-icon-box {
     width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 16px;
     background: linear-gradient(135deg, #111b21, #1f2c34); display: flex; align-items: center; justify-content: center;
-    font-size: 24px; color: #25d366; box-shadow: none;
+    font-size: 24px; color: #ffffff; box-shadow: none;
 }
 .promo-title { font-size: 20px; font-weight: 900; color: #111b21; margin-bottom: 4px; }
 .promo-subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
@@ -2909,7 +2910,7 @@
     font-size: 13px; color: #334155; font-weight: 500; border-bottom: 1px solid #f1f5f9;
 }
 .promo-feature:last-child { border-bottom: none; }
-.promo-feature i { color: #25d366; font-size: 13px; width: 20px; text-align: center; flex-shrink: 0; }
+.promo-feature i { color: #111b21; font-size: 13px; width: 20px; text-align: center; flex-shrink: 0; }
 .promo-price-box {
     background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px;
     padding: 16px; margin-bottom: 18px;
@@ -2917,11 +2918,11 @@
 .promo-price-amount { display: block; font-size: 32px; font-weight: 900; color: #111b21; line-height: 1; }
 .promo-price-label { display: block; font-size: 11px; color: #94a3b8; font-weight: 500; margin-top: 4px; }
 .promo-btn-activate {
-    width: 100%; padding: 14px; background: #25d366; color: #fff; border: none;
+    width: 100%; padding: 14px; background: #111b21; color: #fff; border: none;
     border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.2s;
     display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px;
 }
-.promo-btn-activate:hover { background: #1ebe5d; transform: translateY(-2px); box-shadow: none; }
+.promo-btn-activate:hover { background: #1f2c34; transform: translateY(-2px); box-shadow: none; }
 .promo-btn-later {
     background: none; border: none; color: #94a3b8; font-size: 12px; font-weight: 500;
     cursor: pointer; margin-top: 12px; padding: 6px; transition: color 0.2s;
