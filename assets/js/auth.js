@@ -22,27 +22,24 @@ async function initAuth() {
         }
     }
 
+    // Estado global — se carga UNA sola vez desde Supabase
     window.plataformaActiva = false;
     window.dashboardActivo = false;
     window.tieneCreditos = false;
+    window.creditosUsuario = 0;
 
     if (currentUser && currentUser.email) {
         hideLoginScreen();
 
-        // Admin siempre premium
-        if (currentUser.email === _adminEmail) {
-            window.plataformaActiva = true;
-            window.dashboardActivo = true;
-        }
-
-        // Verificar plataforma activa desde Supabase
+        // Cargar datos de Supabase UNA sola vez
         if (window.sb) {
             try {
                 var res = await window.sb.from('saldos').select('plataforma_activa, dashboard_activo, creditos').eq('email', currentUser.email).single();
                 if (res.data) {
                     window.plataformaActiva = res.data.plataforma_activa || false;
                     window.dashboardActivo = res.data.dashboard_activo || false;
-                    window.tieneCreditos = (res.data.creditos || 0) > 0;
+                    window.creditosUsuario = res.data.creditos || 0;
+                    window.tieneCreditos = window.creditosUsuario > 0;
                 }
             } catch (e) {}
         }
@@ -51,13 +48,11 @@ async function initAuth() {
         if (currentUser.email === _adminEmail) {
             window.plataformaActiva = true;
             window.dashboardActivo = true;
+            window.tieneCreditos = true;
         }
 
+        // Renderizar UI con los datos ya cargados (sin segundo fetch)
         renderLoggedInState();
-
-        // Actualizar logo
-        var logoStatus = document.getElementById('logoStatus');
-        if (logoStatus) logoStatus.textContent = window.plataformaActiva ? 'Premium' : 'Estándar';
     } else {
         currentUser = null;
         hideLoginScreen();
@@ -179,33 +174,15 @@ function renderLoggedOutState() {
     `;
 }
 
-async function renderLoggedInState() {
+function renderLoggedInState() {
     var nav = document.getElementById('desktopNavAuth');
     if (!nav) return;
 
     var displayName = currentUser.nombre || currentUser.email.split('@')[0];
 
-    var creditos = 0;
-    var plataformaActiva = false;
-
-    try {
-        if (window.sb) {
-            var res = await window.sb
-                .from('saldos')
-                .select('creditos, dashboard_activo, plataforma_activa')
-                .eq('email', currentUser.email)
-                .single();
-            if (res.data) {
-                creditos = res.data.creditos || 0;
-                window.dashboardActivo = res.data.dashboard_activo || false;
-                plataformaActiva = res.data.plataforma_activa || false;
-                window.plataformaActiva = plataformaActiva;
-                window.tieneCreditos = creditos > 0;
-            }
-        }
-    } catch (e) {
-        console.error('Error obteniendo créditos:', e);
-    }
+    // Usar datos globales ya cargados en initAuth (sin fetch adicional)
+    var creditos = window.creditosUsuario || 0;
+    var plataformaActiva = window.plataformaActiva || false;
 
     // Actualizar logo según estado de plataforma
     var logoStatus = document.getElementById('logoStatus');
