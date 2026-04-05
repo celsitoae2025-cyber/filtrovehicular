@@ -114,19 +114,19 @@
         const cats = [
             // 1. Registro y propiedad
             { icon: 'fa-id-card', title: 'Propiedad Vehicular SUNARP', link: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/' },
-            { icon: 'fa-file-lines', title: 'Inscripción y Precio de Vehículo (PDF)', price: '10.00' },
+            { icon: 'fa-file-lines', title: 'Inscripción y Precio de Vehículo (PDF)', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces' },
             { icon: 'fa-car-side', title: 'Cambio de Características', link: 'https://sprl.sunarp.gob.pe/sprl/ingreso' },
-            { icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', price: '10.00' },
-            { icon: 'fa-users', title: 'Historial de Propietarios Inscritos', price: '5.00' },
-            { icon: 'fa-building-columns', title: 'Boleta Informativa', price: '10.00' },
+            { icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces' },
+            { icon: 'fa-users', title: 'Historial de Propietarios Inscritos', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces' },
+            { icon: 'fa-building-columns', title: 'Boleta Informativa', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces' },
             // 2. Seguridad y denuncias
-            { icon: 'fa-handcuffs', title: 'Denuncias y Órdenes de Captura', price: '10.00' },
+            { icon: 'fa-handcuffs', title: 'Denuncias y Órdenes de Captura', link: 'https://serviciopolicias.policia.gob.pe:8090/Denuncias/verificar' },
             { icon: 'fa-heart-pulse', title: 'Siniestralidad por Placa', link: 'https://servicios.sbs.gob.pe/reportesoat/' },
             { icon: 'fa-sheet-plastic', title: 'Estado de Placa', link: 'https://www.placas.pe/#/home/verificarEstadoPlaca' },
             // 3. Multas y deudas
             { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Lima', link: 'https://www.sat.gob.pe/pagosenlinea/' },
             { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Callao', link: 'https://pagopapeletascallao.pe/' },
-            { icon: 'fa-map-location-dot', title: 'Deudas y Multas por Región', price: '5.00' },
+            { icon: 'fa-map-location-dot', title: 'Deudas y Multas por Región', link: 'https://www.sat.gob.pe/pagosenlinea/' },
             { icon: 'fa-triangle-exclamation', title: 'Papeletas de Tránsito ATU', link: 'https://pasarela.atu.gob.pe/#' },
             { icon: 'fa-truck', title: 'Papeletas SUTRAN', link: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/' },
             { icon: 'fa-camera', title: 'Foto Pit Lima', link: 'http://www.pit.gob.pe/pit2007/EstadoCuenta.aspx' },
@@ -138,7 +138,7 @@
             // 5. Servicios adicionales
             { icon: 'fa-gas-pump', title: 'FISE GNV Subsidio Gas', link: 'https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio' },
             { icon: 'fa-coins', title: 'Consulta Deuda GNV', link: 'https://infogas.com.pe/consulta-placa/' },
-            { icon: 'fa-list-check', title: 'Otras Afectaciones', price: '5.00' }
+            { icon: 'fa-list-check', title: 'Otras Afectaciones', link: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/' }
         ];
 
         // --- SISTEMA DE HISTORIAL DE NAVEGACIÓN ---
@@ -354,102 +354,102 @@
                 title: 'Servicios MTC',
                 services: [
                     { icon: 'fa-id-card', title: 'Récord de Conductor', desc: 'Consulta tu historial de conductor DNI', link: 'https://recordconductor.mtc.gob.pe/' },
-                    { icon: 'fa-car-side', title: 'Verificación Vehicular', desc: 'Estado de verificación del vehículo', price: '5.00' },
-                    { icon: 'fa-file-lines', title: 'Papeletas de Tránsito', desc: 'Consultar papeletas y multas MTC', price: '5.00' },
-                    { icon: 'fa-truck', title: 'Papeletas SUTRAN', desc: 'Infracciones de transporte pesado', price: '5.00' },
-                    { icon: 'fa-camera', title: 'Foto PIT Lima', desc: 'Fotografía del vehículo en Lima', price: '5.00' },
-                    { icon: 'fa-screwdriver-wrench', title: 'Inspección Técnica Vehicular', desc: 'Estado del CITV del vehículo', price: '5.00' },
-                    { icon: 'fa-shield-halved', title: 'Vigencia del SOAT', desc: 'Verificar estado del SOAT', price: '5.00' },
+                    { icon: 'fa-car-side', title: 'Verificación Vehicular', desc: 'Estado de verificación del vehículo', link: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/' },
+                    { icon: 'fa-file-lines', title: 'Papeletas de Tránsito', desc: 'Consultar papeletas y multas MTC', link: 'https://pasarela.atu.gob.pe/#' },
+                    { icon: 'fa-truck', title: 'Papeletas SUTRAN', desc: 'Infracciones de transporte pesado', link: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/' },
+                    { icon: 'fa-camera', title: 'Foto PIT Lima', desc: 'Fotografía del vehículo en Lima', link: 'http://www.pit.gob.pe/pit2007/EstadoCuenta.aspx' },
+                    { icon: 'fa-screwdriver-wrench', title: 'Inspección Técnica Vehicular', desc: 'Estado del CITV del vehículo', link: 'https://rec.mtc.gob.pe/Citv/ArConsultaCitv' },
+                    { icon: 'fa-shield-halved', title: 'Vigencia del SOAT', desc: 'Verificar estado del SOAT', link: 'https://www.apeseg.org.pe/consultas-soat/' },
                     { icon: 'fa-circle-half-stroke', title: 'Lunas Oscurecidas', desc: 'Verificación de lunas polarizadas', link: 'https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas' },
                     { icon: 'fa-gas-pump', title: 'FISE GNV Subsidio', desc: 'Consulta subsidio GNV', link: 'https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio' },
                     { icon: 'fa-coins', title: 'Consulta Deuda GNV', desc: 'Deuda de conversión a GNV', link: 'https://infogas.com.pe/consulta-placa/' },
-                    { icon: 'fa-road', title: 'Restricciones Vehiculares', desc: 'Limitaciones de circulación', price: '5.00' },
-                    { icon: 'fa-certificate', title: 'Certificado de Antecedentes', desc: 'Antecedentes del propietario', price: '10.00' },
-                    { icon: 'fa-file-contract', title: 'Contrato de Compraventa', desc: 'Plantilla de contrato vehicular', price: '5.00' },
-                    { icon: 'fa-calculator', title: 'Calculadora de Impuestos', desc: 'Cálculo de tributos vehiculares', price: '5.00' },
-                    { icon: 'fa-gavel', title: 'Resolución de Multas', desc: 'Trámites para resolver multas', price: '10.00' }
+                    { icon: 'fa-road', title: 'Restricciones Vehiculares', desc: 'Limitaciones de circulación', link: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/' },
+                    { icon: 'fa-certificate', title: 'Certificado de Antecedentes', desc: 'Antecedentes del propietario', link: 'https://antecedentes.pj.gob.pe/' },
+                    { icon: 'fa-file-contract', title: 'Contrato de Compraventa', desc: 'Plantilla de contrato vehicular', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces' },
+                    { icon: 'fa-calculator', title: 'Calculadora de Impuestos', desc: 'Cálculo de tributos vehiculares', link: 'https://www.sat.gob.pe/pagosenlinea/' },
+                    { icon: 'fa-gavel', title: 'Resolución de Multas', desc: 'Trámites para resolver multas', link: 'https://www.sat.gob.pe/pagosenlinea/' }
                 ]
             },
             sunarp: {
                 title: 'SUNARP - Registros Públicos',
                 services: [
                     { icon: 'fa-id-card', title: 'Propiedad Vehicular SUNARP', desc: 'Consulta de titularidad del vehículo', link: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/' },
-                    { icon: 'fa-file-lines', title: 'Inscripción y Precio de Vehículo', desc: 'Registro completo de transferencias', price: '10.00' },
-                    { icon: 'fa-car-side', title: 'Cambio de Características', desc: 'Modificaciones al vehículo', price: '5.00' },
-                    { icon: 'fa-users', title: 'Historial de Propietarios', desc: 'Lista completa de dueños', price: '5.00' },
-                    { icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', desc: 'Tarjeta de identificación vehicular', price: '10.00' },
-                    { icon: 'fa-building-columns', title: 'Boleta Informativa', desc: 'Resumen de datos del vehículo', price: '10.00' },
-                    { icon: 'fa-search', title: 'Búsqueda de Gravámenes', desc: 'Verificar cargas y embargos', price: '5.00' },
-                    { icon: 'fa-file-shield', title: 'Partida Registral', desc: 'Documento oficial del registro', price: '15.00' },
-                    { icon: 'fa-magnifying-glass', title: 'Búsqueda por DNI', desc: 'Vehículos asociados a persona', price: '10.00' },
-                    { icon: 'fa-file-invoice', title: 'Constancia de No Propiedad', desc: 'Certificado de no tener vehículos', price: '8.00' },
-                    { icon: 'fa-copy', title: 'Certificado de Copia Literal', desc: 'Copia certificada del registro', price: '12.00' },
-                    { icon: 'fa-clock', title: 'Estado de Trámite', desc: 'Seguimiento de solicitudes', price: '5.00' }
+                    { icon: 'fa-file-lines', title: 'Inscripción y Precio de Vehículo', desc: 'Registro completo de transferencias', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-car-side', title: 'Cambio de Características', desc: 'Modificaciones al vehículo', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-users', title: 'Historial de Propietarios', desc: 'Lista completa de dueños', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', desc: 'Tarjeta de identificación vehicular', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-building-columns', title: 'Boleta Informativa', desc: 'Resumen de datos del vehículo', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-search', title: 'Búsqueda de Gravámenes', desc: 'Verificar cargas y embargos', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-file-shield', title: 'Partida Registral', desc: 'Documento oficial del registro', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-magnifying-glass', title: 'Búsqueda por DNI', desc: 'Vehículos asociados a persona', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-file-invoice', title: 'Constancia de No Propiedad', desc: 'Certificado de no tener vehículos', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-copy', title: 'Certificado de Copia Literal', desc: 'Copia certificada del registro', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-clock', title: 'Estado de Trámite', desc: 'Seguimiento de solicitudes', link: 'https://filtrovehicularperu.com/' }
                 ]
             },
             sat: {
                 title: 'SAT y Municipalidades',
                 services: [
-                    { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Lima', desc: 'Tributos municipales de Lima', price: '5.00' },
-                    { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Callao', desc: 'Tributos municipales del Callao', price: '5.00' },
-                    { icon: 'fa-map-location-dot', title: 'Deudas por Región', desc: 'Consultar por departamento', price: '5.00' },
-                    { icon: 'fa-triangle-exclamation', title: 'Papeletas de Tránsito ATU', desc: 'Infracciones de tránsito', price: '5.00' },
-                    { icon: 'fa-money-bill', title: 'Arbitrios Municipales', desc: 'Impuestos municipales', price: '5.00' },
-                    { icon: 'fa-home', title: 'Predio del Propietario', desc: 'Bienes inmuebles asociados', price: '8.00' },
-                    { icon: 'fa-file-invoice-dollar', title: 'Deuda Coactiva', desc: 'Procesos de cobranza', price: '10.00' },
-                    { icon: 'fa-receipt', title: 'Recibos de Pago', desc: 'Historial de pagos', price: '5.00' },
-                    { icon: 'fa-calculator', title: 'Calculadora de Tributos', desc: 'Simulador de impuestos', price: '5.00' },
-                    { icon: 'fa-file-contract', title: 'Fraccionamiento Tributario', desc: 'Planes de pago', price: '10.00' },
-                    { icon: 'fa-gavel', title: 'Reclamos y Recursos', desc: 'Impugnaciones de multas', price: '15.00' },
-                    { icon: 'fa-building', title: 'Licencia de Funcionamiento', desc: 'Permisos comerciales', price: '8.00' },
-                    { icon: 'fa-map', title: 'Zonificación y Uso de Suelo', desc: 'Regulación territorial', price: '10.00' },
-                    { icon: 'fa-hard-hat', title: 'Certificado de Construcción', desc: 'Permisos de obra', price: '12.00' },
-                    { icon: 'fa-tree', title: 'Impuesto Predial', desc: 'Impuesto sobre inmuebles', price: '5.00' },
-                    { icon: 'fa-car', title: 'Impuesto Vehicular', desc: 'Impuesto anual al vehículo', price: '5.00' },
-                    { icon: 'fa-industry', title: 'Impuesto a la Renta', desc: 'Declaraciones anuales', price: '15.00' },
-                    { icon: 'fa-chart-line', title: 'Estado de Cuenta', desc: 'Resumen de deudas', price: '8.00' },
-                    { icon: 'fa-file-alt', title: 'Declaraciones Juradas', desc: 'Documentos tributarios', price: '10.00' },
-                    { icon: 'fa-credit-card', title: 'Medios de Pago', desc: 'Opciones de pago', price: '5.00' },
-                    { icon: 'fa-bell', title: 'Notificaciones Tributarias', desc: 'Alertas y avisos', price: '5.00' },
-                    { icon: 'fa-user-shield', title: 'Representante Legal', desc: 'Poderes y representaciones', price: '8.00' },
-                    { icon: 'fa-file-signature', title: 'Power Attorney', desc: 'Documentos de representación', price: '10.00' },
-                    { icon: 'fa-handshake', title: 'Convenios de Pago', desc: 'Acuerdos con la administración', price: '12.00' },
-                    { icon: 'fa-exclamation-triangle', title: 'Alertas de Deuda', desc: 'Notificaciones de vencimiento', price: '5.00' },
-                    { icon: 'fa-sync', title: 'Actualización de Datos', desc: 'Modificar información tributaria', price: '8.00' },
-                    { icon: 'fa-lock', title: 'Levantamiento de Medidas', desc: 'Desbloquear cuentas', price: '15.00' },
-                    { icon: 'fa-file-medical', title: 'Dictamen Fiscal', desc: 'Opinión de la autoridad', price: '20.00' },
-                    { icon: 'fa-balance-scale', title: 'Tribunal Fiscal', desc: 'Instancia de apelación', price: '25.00' }
+                    { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Lima', desc: 'Tributos municipales de Lima', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Callao', desc: 'Tributos municipales del Callao', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-map-location-dot', title: 'Deudas por Región', desc: 'Consultar por departamento', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-triangle-exclamation', title: 'Papeletas de Tránsito ATU', desc: 'Infracciones de tránsito', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-money-bill', title: 'Arbitrios Municipales', desc: 'Impuestos municipales', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-home', title: 'Predio del Propietario', desc: 'Bienes inmuebles asociados', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-file-invoice-dollar', title: 'Deuda Coactiva', desc: 'Procesos de cobranza', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-receipt', title: 'Recibos de Pago', desc: 'Historial de pagos', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-calculator', title: 'Calculadora de Tributos', desc: 'Simulador de impuestos', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-file-contract', title: 'Fraccionamiento Tributario', desc: 'Planes de pago', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-gavel', title: 'Reclamos y Recursos', desc: 'Impugnaciones de multas', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-building', title: 'Licencia de Funcionamiento', desc: 'Permisos comerciales', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-map', title: 'Zonificación y Uso de Suelo', desc: 'Regulación territorial', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-hard-hat', title: 'Certificado de Construcción', desc: 'Permisos de obra', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-tree', title: 'Impuesto Predial', desc: 'Impuesto sobre inmuebles', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-car', title: 'Impuesto Vehicular', desc: 'Impuesto anual al vehículo', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-industry', title: 'Impuesto a la Renta', desc: 'Declaraciones anuales', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-chart-line', title: 'Estado de Cuenta', desc: 'Resumen de deudas', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-file-alt', title: 'Declaraciones Juradas', desc: 'Documentos tributarios', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-credit-card', title: 'Medios de Pago', desc: 'Opciones de pago', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-bell', title: 'Notificaciones Tributarias', desc: 'Alertas y avisos', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-user-shield', title: 'Representante Legal', desc: 'Poderes y representaciones', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-file-signature', title: 'Power Attorney', desc: 'Documentos de representación', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-handshake', title: 'Convenios de Pago', desc: 'Acuerdos con la administración', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-exclamation-triangle', title: 'Alertas de Deuda', desc: 'Notificaciones de vencimiento', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-sync', title: 'Actualización de Datos', desc: 'Modificar información tributaria', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-lock', title: 'Levantamiento de Medidas', desc: 'Desbloquear cuentas', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-file-medical', title: 'Dictamen Fiscal', desc: 'Opinión de la autoridad', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-balance-scale', title: 'Tribunal Fiscal', desc: 'Instancia de apelación', link: 'https://filtrovehicularperu.com/' }
                 ]
             },
             otros: {
                 title: 'Otros Servicios',
                 services: [
-                    { icon: 'fa-heart-pulse', title: 'Siniestralidad por Placa', desc: 'Historial de siniestros aseguradoras', price: '5.00' },
+                    { icon: 'fa-heart-pulse', title: 'Siniestralidad por Placa', desc: 'Historial de siniestros aseguradoras', link: 'https://filtrovehicularperu.com/' },
                     { icon: 'fa-sheet-plastic', title: 'Estado de Placa', desc: 'Verificación de placa vehicular', link: 'https://www.placas.pe/#/home/verificarEstadoPlaca' },
-                    { icon: 'fa-handcuffs', title: 'Denuncias y Capturas', desc: 'Órdenes judiciales vigentes', price: '10.00' },
-                    { icon: 'fa-shield-alt', title: 'Seguro Obligatorio', desc: 'Información de pólizas', price: '5.00' },
-                    { icon: 'fa-car-crash', title: 'Historial de Accidentes', desc: 'Registro de colisiones', price: '8.00' },
-                    { icon: 'fa-gavel', title: 'Procesos Judiciales', desc: 'Casos en el sistema judicial', price: '15.00' },
-                    { icon: 'fa-file-contract', title: 'Contratos de Arrendamiento', desc: 'Acuerdos de alquiler', price: '10.00' },
-                    { icon: 'fa-key', title: 'Cambio de Titularidad', desc: 'Proceso de transferencia', price: '20.00' },
-                    { icon: 'fa-tools', title: 'Mantenimiento Vehicular', desc: 'Historial de servicios', price: '5.00' },
-                    { icon: 'fa-gas-pump', title: 'Consumo de Combustible', desc: 'Registro de consumo', price: '5.00' },
-                    { icon: 'fa-route', title: 'Kilometraje Registrado', desc: 'Historial de odómetro', price: '8.00' },
-                    { icon: 'fa-parking', title: 'Multas de Estacionamiento', desc: 'Infracciones de estacionamiento', price: '5.00' },
-                    { icon: 'fa-tachometer-alt', title: 'Inspección Técnica', desc: 'Resultados de inspección', price: '10.00' },
-                    { icon: 'fa-id-card-alt', title: 'Identificación del Conductor', desc: 'Verificación de licencia', price: '5.00' },
-                    { icon: 'fa-file-medical-alt', title: 'Certificado Médico', desc: 'Aptitud para conducir', price: '8.00' },
-                    { icon: 'fa-graduation-cap', title: 'Capacitación Vial', desc: 'Cursos de conducción', price: '15.00' },
-                    { icon: 'fa-phone', title: 'Contacto de Emergencia', desc: 'Datos de contacto', price: '5.00' },
-                    { icon: 'fa-map-marked-alt', title: 'Geolocalización', desc: 'Ubicación actual del vehículo', price: '10.00' },
-                    { icon: 'fa-wifi', title: 'Telemática Vehicular', desc: 'Sistemas de monitoreo', price: '12.00' },
-                    { icon: 'fa-battery-half', title: 'Estado de Batería', desc: 'Diagnóstico eléctrico', price: '8.00' },
-                    { icon: 'fa-oil-can', title: 'Cambios de Aceite', desc: 'Historial de lubricación', price: '5.00' },
-                    { icon: 'fa-tire', title: 'Rotación de Neumáticos', desc: 'Mantenimiento de llantas', price: '6.00' },
-                    { icon: 'fa-car-battery', title: 'Sistema Eléctrico', desc: 'Diagnóstico eléctrico', price: '10.00' },
-                    { icon: 'fa-thermometer-half', title: 'Sistema de Refrigeración', desc: 'Estado del sistema de enfriamiento', price: '8.00' },
-                    { icon: 'fa-cogs', title: 'Transmisión', desc: 'Estado de caja de cambios', price: '12.00' },
-                    { icon: 'fa-brake', title: 'Sistema de Frenos', desc: 'Inspección de frenos', price: '10.00' }
+                    { icon: 'fa-handcuffs', title: 'Denuncias y Capturas', desc: 'Órdenes judiciales vigentes', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-shield-alt', title: 'Seguro Obligatorio', desc: 'Información de pólizas', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-car-crash', title: 'Historial de Accidentes', desc: 'Registro de colisiones', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-gavel', title: 'Procesos Judiciales', desc: 'Casos en el sistema judicial', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-file-contract', title: 'Contratos de Arrendamiento', desc: 'Acuerdos de alquiler', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-key', title: 'Cambio de Titularidad', desc: 'Proceso de transferencia', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-tools', title: 'Mantenimiento Vehicular', desc: 'Historial de servicios', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-gas-pump', title: 'Consumo de Combustible', desc: 'Registro de consumo', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-route', title: 'Kilometraje Registrado', desc: 'Historial de odómetro', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-parking', title: 'Multas de Estacionamiento', desc: 'Infracciones de estacionamiento', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-tachometer-alt', title: 'Inspección Técnica', desc: 'Resultados de inspección', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-id-card-alt', title: 'Identificación del Conductor', desc: 'Verificación de licencia', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-file-medical-alt', title: 'Certificado Médico', desc: 'Aptitud para conducir', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-graduation-cap', title: 'Capacitación Vial', desc: 'Cursos de conducción', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-phone', title: 'Contacto de Emergencia', desc: 'Datos de contacto', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-map-marked-alt', title: 'Geolocalización', desc: 'Ubicación actual del vehículo', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-wifi', title: 'Telemática Vehicular', desc: 'Sistemas de monitoreo', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-battery-half', title: 'Estado de Batería', desc: 'Diagnóstico eléctrico', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-oil-can', title: 'Cambios de Aceite', desc: 'Historial de lubricación', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-tire', title: 'Rotación de Neumáticos', desc: 'Mantenimiento de llantas', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-car-battery', title: 'Sistema Eléctrico', desc: 'Diagnóstico eléctrico', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-thermometer-half', title: 'Sistema de Refrigeración', desc: 'Estado del sistema de enfriamiento', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-cogs', title: 'Transmisión', desc: 'Estado de caja de cambios', link: 'https://filtrovehicularperu.com/' },
+                    { icon: 'fa-brake', title: 'Sistema de Frenos', desc: 'Inspección de frenos', link: 'https://filtrovehicularperu.com/' }
                 ]
             }
         };
@@ -484,8 +484,7 @@
                 <div class="hook-card ${isFree ? 'hook-free' : 'hook-paid'}" onclick="handleServiceClick(${JSON.stringify(service).replace(/"/g, '&quot;')})">
                     <div class="hook-icon"><i class="fa-solid ${esc(service.icon)}"></i></div>
                     <div class="hook-text">${esc(service.title)}</div>
-                    ${isFree ? '' : '<span class="hook-premium"></span>'}
-                </div>`;
+                                    </div>`;
             }).join('');
 
             categoryContent.style.display = 'block';
@@ -505,13 +504,6 @@
             checkAccessAndRun(function() {
                 if (service.link) {
                     window.open(service.link, '_blank');
-                } else if (service.price) {
-                    const infoModal = document.getElementById('infoModal');
-                    const infoContent = document.getElementById('infoContent');
-                    if (infoModal && infoContent) {
-                        infoContent.innerHTML = renderServicePlateModal(service);
-                        infoModal.style.display = 'flex';
-                    }
                 }
             });
         }
