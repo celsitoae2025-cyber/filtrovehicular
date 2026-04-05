@@ -627,6 +627,7 @@
             background: #ffffff;
             border-radius: 12px;
             padding: 14px 16px;
+            min-height: 56px;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -1999,7 +2000,7 @@
         .logo-plus {
             font-size: 9px;
             font-weight: 600;
-            color: #ffffff;
+            color: #25d366;
             text-transform: uppercase;
             letter-spacing: 3px;
             margin: 2px -4px 0 0;
