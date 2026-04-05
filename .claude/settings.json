@@ -18,14 +18,36 @@
       "Bash(npx supabase:*)",
       "Bash(export SUPABASE_ACCESS_TOKEN=\"sbp_4e6190d5575fecf3db1bc6c6ca276a696b895b51\")",
       "Bash(node -c assets/js/index.js)",
-      "Bash(node -c assets/js/auth.js)"
+      "Bash(node -c assets/js/auth.js)",
+      "Bash(node -c assets/js/admin-gate.js)",
+      "Bash(printf \"VAPID_PUBLIC_KEY=BP1nSnIG_xgWDAu0ZfSNlP3LPCWOlPAj3tiGubQXyrKu-JhQNnWb-qp7boWm_U_vXLnanxKQIj0g_RtF3aseTe8\\\\nVAPID_PRIVATE_KEY=xofS42SJd-cUlF0s1Ot0NHM9YXl4OdPUQ7PO-sYE-K8\\\\n\")",
+      "Bash(export SUPABASE_ACCESS_TOKEN=\"sbp_becf2d210ac9c22d504ef89763d637dfcd0ceb32\")",
+      "WebFetch(domain:docs.apiperu.dev)",
+      "WebFetch(domain:docs.migo.pe)",
+      "WebFetch(domain:apirest.pe)",
+      "WebFetch(domain:www.placaapi.pe)",
+      "WebFetch(domain:apis.net.pe)",
+      "WebFetch(domain:apidni.com)",
+      "WebFetch(domain:www.apirestperu.com)",
+      "WebFetch(domain:apiplacas.com)",
+      "WebFetch(domain:miapi.cloud)",
+      "WebFetch(domain:www.json.pe)",
+      "WebFetch(domain:docs.consultasperu.com)",
+      "WebFetch(domain:apiperu.dev)",
+      "WebFetch(domain:www.peruapis.com)",
+      "WebFetch(domain:factiliza.com)",
+      "WebFetch(domain:facturaperu.com.pe)",
+      "Bash(where ngrok:*)",
+      "Bash(powershell -Command \"Get-Command ngrok -ErrorAction SilentlyContinue | Select-Object Source\")",
+      "WebFetch(domain:apuidentificacionvehicular.com)"
     ],
     "additionalDirectories": [
       "c:\\Users\\Illusions\\Desktop\\bot-whatsapp-fv",
       "c:\\Users\\Illusions\\Desktop\\wa-group-manager\\backend\\src",
       "c:\\Users\\Illusions\\Desktop\\wa-group-manager\\frontend\\src\\pages",
       "C:\\Users\\Illusions\\Desktop\\wa-group-manager\\frontend\\src\\hooks",
-      "C:\\Users\\Illusions\\Desktop\\wa-group-manager\\frontend\\src"
+      "C:\\Users\\Illusions\\Desktop\\wa-group-manager\\frontend\\src",
+      "c:\\Users\\Illusions\\Desktop\\filtro-bridge"
     ]
   }
 }

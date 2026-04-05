@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtro Vehicular Plus | Consulta Vehicular Peru</title>
+    <meta name="description" content="Obten en linea el historial completo de un vehiculo por placa, numero de chasis (VIN) o numero de motor. 23 servicios de consulta vehicular en tiempo real.">
+    <meta property="og:title" content="Filtro Vehicular Plus | Consulta Vehicular Peru">
+    <meta property="og:description" content="Consulta vehicular por placa, VIN o motor. 23 servicios de verificacion con datos oficiales en tiempo real.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/media/logonegro.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --navy: #111b21;
+            --navy-light: #1f2c34;
+            --green: #25d366;
+            --green-hover: #1ebe5d;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --text-dark: #111b21;
+            --text-muted: #6b7280;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-dark);
+            background: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── NAV ── */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--navy);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.3s;
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .nav-logo-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: -0.3px;
+        }
+
+        .nav-logo-badge {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--white); }
+
+        .nav-cta {
+            background: var(--green);
+            color: var(--white) !important;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 600 !important;
+            transition: background 0.2s !important;
+        }
+
+        .nav-cta:hover { background: var(--green-hover); }
+
+        .nav-mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            padding: 140px 24px 80px;
+            background: var(--navy);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(37,211,102,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-inner {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(37,211,102,0.12);
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 44px;
+            font-weight: 900;
+            color: var(--white);
+            line-height: 1.15;
+            margin-bottom: 18px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero h1 span { color: var(--green); }
+
+        .hero-desc {
+            font-size: 17px;
+            color: rgba(255,255,255,0.6);
+            max-width: 560px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        /* Search box */
+        .hero-search {
+            max-width: 520px;
+            margin: 0 auto 32px;
+            display: flex;
+            gap: 0;
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .hero-search select {
+            padding: 16px;
+            border: none;
+            background: var(--gray-50);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-dark);
+            outline: none;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            border-right: 1px solid var(--gray-200);
+            min-width: 120px;
+        }
+
+        .hero-search input {
+            flex: 1;
+            padding: 16px 18px;
+            border: none;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-dark);
+            outline: none;
+            font-family: 'Roboto', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .hero-search input::placeholder {
+            color: var(--gray-400);
+            letter-spacing: 0;
+        }
+
+        .hero-search button {
+            padding: 16px 28px;
+            background: var(--green);
+            color: var(--white);
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .hero-search button:hover { background: var(--green-hover); }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 16px;
+        }
+
+        .hero-stat { text-align: center; }
+
+        .hero-stat-number {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--white);
+        }
+
+        .hero-stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* ── SECCIONES GENERALES ── */
+        .section { padding: 80px 24px; }
+        .section-dark { background: var(--gray-50); }
+        .section-navy { background: var(--navy); }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 48px;
+        }
+
+        .section-header .overline {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        .section-header h2 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .section-navy .section-header h2 { color: var(--white); }
+
+        .section-header p {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        .section-navy .section-header p { color: rgba(255,255,255,0.5); }
+
+        /* ── CONSULTAS GRATUITAS ── */
+        .free-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .free-card {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .free-card:hover { border-color: var(--green); }
+
+        .free-card-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(37,211,102,0.08);
+            color: var(--green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .free-card-info { flex: 1; }
+
+        .free-card-info h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .free-card-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .free-card-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .free-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--green);
+            text-decoration: none;
+            padding: 5px 12px;
+            border: 1px solid rgba(37,211,102,0.2);
+            border-radius: 6px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .free-link:hover {
+            background: rgba(37,211,102,0.06);
+            border-color: var(--green);
+        }
+
+        /* ── METODOS DE BUSQUEDA ── */
+        .methods-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .method-card {
+            text-align: center;
+            padding: 28px 20px;
+            border: 1px solid var(--gray-200);
+            border-radius: 14px;
+            background: var(--white);
+        }
+
+        .method-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(37,211,102,0.08);
+            color: var(--green);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin: 0 auto 16px;
+        }
+
+        .method-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .method-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ── FUENTES DE DATOS ── */
+        .sources-bar {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .source-tag {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-400);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+        }
+
+        /* ── CATEGORIAS POR GRUPO ── */
+        .category-group {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+        }
+
+        .category-group:last-child { margin-bottom: 0; }
+
+        .category-group-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+            padding-left: 4px;
+        }
+
+        .category-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 8px;
+        }
+
+        .category-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 18px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            transition: border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .category-card:hover { border-color: var(--green); }
+
+        .category-card .cat-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--navy);
+            color: var(--green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .category-card .cat-info { flex: 1; }
+
+        .category-card .cat-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .category-card .cat-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .category-card .cat-arrow {
+            color: var(--gray-300);
+            font-size: 11px;
+            transition: color 0.2s;
+        }
+
+        .category-card:hover .cat-arrow { color: var(--green); }
+
+        /* ── COMO FUNCIONA ── */
+        .steps-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 32px 24px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 14px;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--navy);
+            color: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 900;
+            margin: 0 auto 18px;
+        }
+
+        .step-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .step-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ── PLATAFORMA PREVIEW ── */
+        .platform-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .platform-info h3 {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .platform-info h3 span { color: var(--green); }
+
+        .platform-info p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.55);
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .platform-features {
+            list-style: none;
+            margin-bottom: 28px;
+        }
+
+        .platform-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            padding: 7px 0;
+        }
+
+        .platform-features li i {
+            color: var(--green);
+            font-size: 11px;
+            width: 16px;
+        }
+
+        .platform-price {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .platform-price-amount {
+            font-size: 40px;
+            font-weight: 900;
+            color: var(--green);
+        }
+
+        .platform-price-label {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .platform-btns {
+            display: flex;
+            gap: 12px;
+        }
+
+        .platform-img {
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .platform-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ── INFORME LEGAL ── */
+        .legal-report {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 32px;
+            align-items: center;
+            padding: 32px;
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            background: var(--white);
+        }
+
+        .legal-report-img {
+            width: 200px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .legal-report-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .legal-report-info h3 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .legal-report-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .legal-report-price {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--green);
+            margin-bottom: 16px;
+        }
+
+        .legal-report-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .legal-report-features li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 4px 0;
+        }
+
+        .legal-report-features li i {
+            color: var(--green);
+            font-size: 10px;
+        }
+
+        /* ── PRICING ── */
+        .pricing-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            align-items: start;
+        }
+
+        .price-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 28px 24px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .price-card:hover { transform: translateY(-2px); }
+
+        .price-card.featured {
+            border-color: var(--green);
+            position: relative;
+        }
+
+        .price-card.featured::before {
+            content: 'Recomendado';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--green);
+            color: var(--white);
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 14px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .price-card-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .price-card-amount {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .price-card.featured .price-card-amount { color: var(--green); }
+
+        .price-card-credits {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 20px;
+        }
+
+        .price-features {
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        .price-features li {
+            list-style: none;
+            font-size: 12px;
+            color: rgba(255,255,255,0.65);
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-features li i {
+            color: var(--green);
+            font-size: 10px;
+        }
+
+        .price-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .price-btn-primary {
+            background: var(--green);
+            color: var(--white);
+        }
+
+        .price-btn-primary:hover { background: var(--green-hover); }
+
+        .price-btn-outline {
+            background: transparent;
+            color: var(--white);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .price-btn-outline:hover { border-color: rgba(255,255,255,0.4); }
+
+        /* ── CTA BANNER ── */
+        .cta-banner {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--navy);
+            border-radius: 16px;
+            padding: 48px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 32px;
+        }
+
+        .cta-banner h3 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .cta-banner p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .cta-banner-btns {
+            display: flex;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .btn-green {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: var(--green);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .btn-green:hover { background: var(--green-hover); }
+
+        .btn-outline-white {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: transparent;
+            color: var(--white);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: border-color 0.2s;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .btn-outline-white:hover { border-color: rgba(255,255,255,0.5); }
+
+        .btn-green-sm {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            background: var(--green);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .btn-green-sm:hover { background: var(--green-hover); }
+
+        .btn-outline-green {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            background: transparent;
+            color: var(--green);
+            border: 1px solid rgba(37,211,102,0.3);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: border-color 0.2s, background 0.2s;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .btn-outline-green:hover {
+            border-color: var(--green);
+            background: rgba(37,211,102,0.06);
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            background: var(--navy);
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding: 60px 24px 24px;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 12px;
+        }
+
+        .footer-brand-desc {
+            font-size: 13px;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 10px;
+        }
+
+        .footer-social a {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            transition: border-color 0.2s, color 0.2s;
+            font-size: 14px;
+        }
+
+        .footer-social a:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .footer-col-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .footer-col a {
+            display: block;
+            font-size: 13px;
+            color: rgba(255,255,255,0.55);
+            text-decoration: none;
+            padding: 5px 0;
+            transition: color 0.2s;
+        }
+
+        .footer-col a:hover { color: var(--white); }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-bottom span {
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-mobile-toggle { display: block; }
+
+            .hero { padding: 110px 20px 60px; }
+            .hero h1 { font-size: 28px; }
+            .hero-desc { font-size: 15px; }
+
+            .hero-search {
+                flex-direction: column;
+                border-radius: 12px;
+            }
+            .hero-search select { border-right: none; border-bottom: 1px solid var(--gray-200); min-width: auto; }
+            .hero-search button { justify-content: center; }
+
+            .hero-stats { gap: 28px; }
+            .hero-stat-number { font-size: 22px; }
+
+            .section { padding: 48px 16px; }
+            .section-header h2 { font-size: 24px; }
+
+            .free-grid,
+            .category-list { grid-template-columns: 1fr; }
+
+            .steps-grid,
+            .methods-grid { grid-template-columns: 1fr; gap: 16px; }
+
+            .pricing-grid { grid-template-columns: 1fr; gap: 12px; }
+
+            .platform-section {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .platform-section .platform-img { order: -1; }
+
+            .legal-report {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .legal-report-img { width: 160px; }
+            .legal-report-features { text-align: left; }
+
+            .cta-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 32px 24px;
+            }
+            .cta-banner-btns { flex-direction: column; width: 100%; }
+            .cta-banner-btns a, .cta-banner-btns button { width: 100%; justify-content: center; }
+
+            .platform-btns { flex-direction: column; }
+            .platform-btns a { text-align: center; justify-content: center; }
+
+            .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+            .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+        }
+
+        /* ── MOBILE NAV MENU ── */
+        .nav-mobile-menu {
+            display: none;
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            background: var(--navy);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 16px 24px;
+            z-index: 999;
+        }
+
+        .nav-mobile-menu.active { display: block; }
+
+        .nav-mobile-menu a {
+            display: block;
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .nav-mobile-menu a:last-child { border-bottom: none; }
+
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <img src="assets/media/logopwa.png" alt="Logo">
+                <div>
+                    <div class="nav-logo-text">Filtro Vehicular</div>
+                    <div class="nav-logo-badge">Plus</div>
+                </div>
+            </a>
+            <div class="nav-links">
+                <a href="#consultas-gratis">Consultas Gratis</a>
+                <a href="#servicios">Servicios</a>
+                <a href="#como-funciona">Como Funciona</a>
+                <a href="#plataforma">Plataforma</a>
+                <a href="#planes">Planes</a>
+                <a href="index.html" class="nav-cta">Acceder</a>
+            </div>
+            <button class="nav-mobile-toggle" onclick="toggleMobileMenu()">
+                <i class="fa-solid fa-bars" id="mobileMenuIcon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="nav-mobile-menu" id="mobileMenu">
+        <a href="#consultas-gratis" onclick="closeMobileMenu()">Consultas Gratis</a>
+        <a href="#servicios" onclick="closeMobileMenu()">Servicios</a>
+        <a href="#como-funciona" onclick="closeMobileMenu()">Como Funciona</a>
+        <a href="#plataforma" onclick="closeMobileMenu()">Plataforma</a>
+        <a href="#planes" onclick="closeMobileMenu()">Planes</a>
+        <a href="index.html" onclick="closeMobileMenu()">Acceder a la Plataforma</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-badge">Plataforma de Consulta Vehicular Peru</div>
+            <h1>Historial completo de cualquier <span>vehiculo</span> en segundos</h1>
+            <p class="hero-desc">Consulta por placa, numero de chasis (VIN) o numero de motor. Accede a 23 servicios de verificacion vehicular con datos oficiales en tiempo real.</p>
+
+            <div class="hero-search">
+                <select>
+                    <option value="placa">Placa</option>
+                    <option value="vin">Chasis (VIN)</option>
+                    <option value="motor">N. Motor</option>
+                </select>
+                <input type="text" placeholder="Ingresa placa, VIN o motor" maxlength="20" style="text-transform:uppercase;">
+                <button onclick="window.location.href='index.html'">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Consultar</span>
+                </button>
+            </div>
+
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-number">23</div>
+                    <div class="hero-stat-label">Servicios</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">8+</div>
+                    <div class="hero-stat-label">Fuentes Oficiales</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">24/7</div>
+                    <div class="hero-stat-label">Disponibilidad</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- METODOS DE BUSQUEDA -->
+    <section class="section" id="servicios">
+        <div class="section-header">
+            <div class="overline">Metodos de Busqueda</div>
+            <h2>Tres formas de identificar un vehiculo</h2>
+            <p>Para consultar los datos de un vehiculo y conocer sus antecedentes, el sistema integral de identificacion vehicular esta compuesto por la placa, el numero de serie (VIN) y el numero de motor.</p>
+        </div>
+
+        <div class="methods-grid">
+            <div class="method-card">
+                <div class="method-icon">
+                    <i class="fa-solid fa-rectangle-list"></i>
+                </div>
+                <h3>Por Placa</h3>
+                <p>Ingresa la placa del vehiculo y obtiene acceso inmediato a todo su historial registrado en entidades oficiales.</p>
+            </div>
+            <div class="method-card">
+                <div class="method-icon">
+                    <i class="fa-solid fa-barcode"></i>
+                </div>
+                <h3>Por Chasis (VIN)</h3>
+                <p>El numero de chasis o VIN permite identificar el vehiculo a nivel internacional con datos de fabrica y registro.</p>
+            </div>
+            <div class="method-card">
+                <div class="method-icon">
+                    <i class="fa-solid fa-gears"></i>
+                </div>
+                <h3>Por Numero de Motor</h3>
+                <p>Busca por numero de motor para verificar si el motor registrado coincide con el vehiculo inspeccionado.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONSULTAS GRATUITAS -->
+    <section class="section section-dark" id="consultas-gratis">
+        <div class="section-header">
+            <div class="overline">Consultas Gratuitas</div>
+            <h2>Verifica tu vehiculo en portales oficiales</h2>
+            <p>Accede directamente a los portales oficiales del estado peruano para consultas basicas de verificacion vehicular.</p>
+        </div>
+
+        <div class="free-grid">
+            <!-- Inscripcion de Placa -->
+            <div class="free-card">
+                <div class="free-card-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div class="free-card-info">
+                    <h4>Sede de Inscripcion de Placa</h4>
+                    <p>Conoce el nombre del propietario actual y la ciudad donde fue inscrita la placa del vehiculo.</p>
+                    <div class="free-card-links">
+                        <a href="https://www2.sunarp.gob.pe/consulta-vehicular/inicio" target="_blank" rel="noopener" class="free-link">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> SUNARP
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Papeletas -->
+            <div class="free-card">
+                <div class="free-card-icon">
+                    <i class="fa-solid fa-file-circle-exclamation"></i>
+                </div>
+                <div class="free-card-info">
+                    <h4>Papeletas Vigentes</h4>
+                    <p>Valida la existencia de infracciones y papeletas realizando una busqueda en las ciudades disponibles.</p>
+                    <div class="free-card-links">
+                        <a href="https://www.sat.gob.pe/pagosenlinea/" target="_blank" rel="noopener" class="free-link">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> SAT Lima
+                        </a>
+                        <a href="https://pagopapeletascallao.pe/public/" target="_blank" rel="noopener" class="free-link">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Callao
+                        </a>
+                        <a href="https://cusco.gob.pe/informatica/infracciones" target="_blank" rel="noopener" class="free-link">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Cusco
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ATU y SUTRAN -->
+            <div class="free-card">
+                <div class="free-card-icon">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <div class="free-card-info">
+                    <h4>Papeletas ATU y SUTRAN</h4>
+                    <p>Consulta infracciones registradas en la ATU y SUTRAN a nivel nacional.</p>
+                    <div class="free-card-links">
+                        <a href="https://pasarela.atu.gob.pe/" target="_blank" rel="noopener" class="free-link">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> ATU
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOAT -->
+            <div class="free-card">
+                <div class="free-card-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="free-card-info">
+                    <h4>Vigencia del SOAT</h4>
+                    <p>Para una transferencia vehicular es obligatorio verificar que el SOAT se encuentre activo.</p>
+                    <div class="free-card-links">
+                        <a href="https://www.apeseg.org.pe/consultas-soat/" target="_blank" rel="noopener" class="free-link">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> APESEG
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revision Tecnica -->
+            <div class="free-card">
+                <div class="free-card-icon">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                </div>
+                <div class="free-card-info">
+                    <h4>Inspeccion Tecnica Vehicular</h4>
+                    <p>Verifica que la revision tecnica se encuentre vigente consultando el numero de placa.</p>
+                    <div class="free-card-links">
+                        <a href="https://rec.mtc.gob.pe/Citv/ArConsultaCitv" target="_blank" rel="noopener" class="free-link">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> MTC
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multas Electorales -->
+            <div class="free-card">
+                <div class="free-card-icon">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <div class="free-card-info">
+                    <h4>Multas Electorales</h4>
+                    <p>Multas electorales a nombre del vendedor o comprador pueden impedir la transferencia del vehiculo.</p>
+                    <div class="free-card-links">
+                        <a href="https://multas.jne.gob.pe/login" target="_blank" rel="noopener" class="free-link">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> JNE
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FUENTES OFICIALES -->
+    <section class="section">
+        <div class="section-header">
+            <div class="overline">Fuentes de Datos</div>
+            <h2>Informacion de entidades oficiales</h2>
+            <p>Toda la informacion es obtenida directamente de los portales y bases de datos de las principales entidades del estado peruano.</p>
+        </div>
+
+        <div class="sources-bar">
+            <div class="source-tag">SUNARP</div>
+            <div class="source-tag">SAT Lima</div>
+            <div class="source-tag">MTC</div>
+            <div class="source-tag">SBS</div>
+            <div class="source-tag">PNP</div>
+            <div class="source-tag">SUTRAN</div>
+            <div class="source-tag">ATU</div>
+            <div class="source-tag">APESEG</div>
+        </div>
+    </section>
+
+    <!-- 23 SERVICIOS COMPLETOS -->
+    <section class="section section-dark" id="consultas">
+        <div class="section-header">
+            <div class="overline">23 Servicios de Consulta</div>
+            <h2>Todo lo que necesitas saber de un vehiculo</h2>
+            <p>Cada consulta esta diseñada para darte informacion precisa, actualizada y verificable de multiples fuentes oficiales.</p>
+        </div>
+
+        <!-- GRUPO: Informacion General -->
+        <div class="category-group">
+            <div class="category-group-title">Informacion General</div>
+            <div class="category-list">
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <div class="cat-info">
+                        <h4>1. Ciudad de Inscripcion de la Placa</h4>
+                        <p>Zona registral y ciudad donde fue inscrito el vehiculo</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                    <div class="cat-info">
+                        <h4>14. Historial Completo</h4>
+                        <p>Registro integral de movimientos, propietarios y cambios</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-tags"></i></div>
+                    <div class="cat-info">
+                        <h4>13. Consultar Precio de Mercado</h4>
+                        <p>Valor referencial del vehiculo segun el mercado actual</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRUPO: Papeletas y Multas -->
+        <div class="category-group">
+            <div class="category-group-title">Papeletas y Multas</div>
+            <div class="category-list">
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-file-circle-exclamation"></i></div>
+                    <div class="cat-info">
+                        <h4>2. Papeletas Vigentes</h4>
+                        <p>Multas de transito pendientes de pago asociadas a la placa</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-building-columns"></i></div>
+                    <div class="cat-info">
+                        <h4>3. Papeletas ATU y SUTRAN</h4>
+                        <p>Infracciones registradas en la ATU y SUTRAN a nivel nacional</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-id-card"></i></div>
+                    <div class="cat-info">
+                        <h4>4. Papeletas Impagas con DNI</h4>
+                        <p>Multas pendientes vinculadas al documento de identidad del propietario</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRUPO: Seguros e Inspecciones -->
+        <div class="category-group">
+            <div class="category-group-title">Seguros e Inspecciones</div>
+            <div class="category-list">
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="cat-info">
+                        <h4>5. Vigencia del SOAT</h4>
+                        <p>Estado actual del Seguro Obligatorio contra Accidentes de Transito</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+                    <div class="cat-info">
+                        <h4>6. Inspeccion Tecnica Vehicular</h4>
+                        <p>Resultado y vigencia de la ultima revision tecnica del vehiculo</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-car-burst"></i></div>
+                    <div class="cat-info">
+                        <h4>7. Siniestralidad por Placa</h4>
+                        <p>Historial de accidentes y siniestros reportados a aseguradoras</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRUPO: Deudas y Obligaciones -->
+        <div class="category-group">
+            <div class="category-group-title">Deudas y Obligaciones</div>
+            <div class="category-list">
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-gas-pump"></i></div>
+                    <div class="cat-info">
+                        <h4>8. Deudas por Sistema GNV</h4>
+                        <p>Deudas pendientes por conversion o mantenimiento del sistema a gas</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                    <div class="cat-info">
+                        <h4>11. Deudas por Impuesto Vehicular</h4>
+                        <p>Estado de pagos del impuesto al patrimonio vehicular ante el SAT</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRUPO: Seguridad y Alertas -->
+        <div class="category-group">
+            <div class="category-group-title">Seguridad y Alertas</div>
+            <div class="category-list">
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-handcuffs"></i></div>
+                    <div class="cat-info">
+                        <h4>9. Ordenes de Captura Vigentes</h4>
+                        <p>Verificar si el vehiculo tiene ordenes de captura activas en el sistema</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-copy"></i></div>
+                    <div class="cat-info">
+                        <h4>10. Registro de Placas Duplicadas</h4>
+                        <p>Detectar si existe otra placa identica registrada en el sistema</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="cat-info">
+                        <h4>22. Vehiculos Reportados como Robados por la PNP</h4>
+                        <p>Base de datos de vehiculos con denuncia de robo activa en la policia</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRUPO: Situacion Legal -->
+        <div class="category-group">
+            <div class="category-group-title">Situacion Legal</div>
+            <div class="category-list">
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <div class="cat-info">
+                        <h4>12. Verificar Limitaciones Legales</h4>
+                        <p>Cargas, gravamenes y restricciones legales sobre el vehiculo</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-lock"></i></div>
+                    <div class="cat-info">
+                        <h4>19. Vehiculos Prendados en Garantia</h4>
+                        <p>Verificar si el vehiculo se encuentra como garantia de un credito</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-gavel"></i></div>
+                    <div class="cat-info">
+                        <h4>20. Vehiculos con Medidas Cautelares</h4>
+                        <p>Embargos, inmovilizaciones u ordenes judiciales sobre el vehiculo</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-file-circle-question"></i></div>
+                    <div class="cat-info">
+                        <h4>21. Titulos Pendientes de Inscripcion</h4>
+                        <p>Titulos de propiedad en tramite que aun no han sido inscritos en SUNARP</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRUPO: Cambios y Modificaciones -->
+        <div class="category-group">
+            <div class="category-group-title">Cambios y Modificaciones</div>
+            <div class="category-list">
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-taxi"></i></div>
+                    <div class="cat-info">
+                        <h4>15. Cambio de Uso (De taxi a Particular)</h4>
+                        <p>Historial de cambio de categoria de servicio del vehiculo</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-wrench"></i></div>
+                    <div class="cat-info">
+                        <h4>16. Cambio de Motor</h4>
+                        <p>Registro de reemplazo de motor inscrito ante las autoridades</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-palette"></i></div>
+                    <div class="cat-info">
+                        <h4>17. Cambio de Color</h4>
+                        <p>Historial de cambios de color registrados oficialmente</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-sliders"></i></div>
+                    <div class="cat-info">
+                        <h4>18. Cambio de Caracteristicas</h4>
+                        <p>Modificaciones estructurales o tecnicas registradas en SUNARP</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRUPO: Busqueda Avanzada -->
+        <div class="category-group">
+            <div class="category-group-title">Busqueda Avanzada</div>
+            <div class="category-list">
+                <div class="category-card">
+                    <div class="cat-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div class="cat-info">
+                        <h4>23. Buscar Placa por Numero de Serie (VIN)</h4>
+                        <p>Encuentra la placa de un vehiculo a partir de su numero de serie o chasis</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-right cat-arrow"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMO FUNCIONA -->
+    <section class="section" id="como-funciona">
+        <div class="section-header">
+            <div class="overline">Como Funciona</div>
+            <h2>Resultado en 3 pasos simples</h2>
+            <p>Sin complicaciones. Ingresa el dato, consulta y recibe tu reporte vehicular completo al instante.</p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Ingresa el dato</h3>
+                <p>Escribe la placa, numero de chasis (VIN) o numero de motor del vehiculo que deseas consultar.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Selecciona el servicio</h3>
+                <p>Elige entre 23 tipos de consulta disponibles segun la informacion que necesitas verificar.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Recibe tu reporte</h3>
+                <p>Obtiene el resultado al instante con datos verificados de fuentes oficiales del estado peruano.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PLATAFORMA COMPLETA -->
+    <section class="section section-navy" id="plataforma">
+        <div class="platform-section">
+            <div class="platform-info">
+                <div class="overline" style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;">Plataforma Completa</div>
+                <h3>Accede a los <span>23 filtros</span> de consulta vehicular</h3>
+                <p>Obten tu usuario y desbloquea todos los servicios de verificacion vehicular. Plataforma libre de anuncios, disponible 24/7 desde tu celular o cualquier dispositivo.</p>
+                <ul class="platform-features">
+                    <li><i class="fa-solid fa-check"></i> 23 filtros de consulta vehicular</li>
+                    <li><i class="fa-solid fa-check"></i> Consultas ilimitadas por placa</li>
+                    <li><i class="fa-solid fa-check"></i> Libre de anuncios</li>
+                    <li><i class="fa-solid fa-check"></i> Datos de SUNARP, SAT, MTC, SBS, PNP</li>
+                    <li><i class="fa-solid fa-check"></i> Disponible 24/7 en cualquier dispositivo</li>
+                    <li><i class="fa-solid fa-check"></i> Soporte por WhatsApp</li>
+                </ul>
+                <div class="platform-price">
+                    <span class="platform-price-amount">S/35</span>
+                    <span class="platform-price-label">pago unico</span>
+                </div>
+                <div class="platform-btns">
+                    <a href="index.html" class="btn-green-sm">
+                        <i class="fa-solid fa-bolt"></i> Acceder a la Plataforma
+                    </a>
+                    <a href="https://api.whatsapp.com/send?phone=51962245720&text=Buen%20d%C3%ADa,%20deseo%20obtener%20mi%20Usuario%20de%20Consultas%20Ilimitadas.%20Me%20indica%20el%20costo%20y%20medios%20de%20pago.%20Gracias." target="_blank" rel="noopener" class="btn-outline-white" style="padding:10px 22px;font-size:13px;">
+                        <i class="fa-brands fa-whatsapp"></i> Solicitar por WhatsApp
+                    </a>
+                </div>
+            </div>
+            <div class="platform-img">
+                <img src="wp-content/uploads/2025/06/Plataforma-Filtro-Vehicular-Completa-APU.png" alt="Plataforma Filtro Vehicular Completa">
+            </div>
+        </div>
+    </section>
+
+    <!-- INFORME LEGAL -->
+    <section class="section">
+        <div class="section-header">
+            <div class="overline">Servicio Premium</div>
+            <h2>Informe Legal Completo</h2>
+            <p>Si vas a comprar un vehiculo usado, nuestro equipo legal verifica el historial y los detalles legales de cualquier vehiculo de tu interes.</p>
+        </div>
+
+        <div class="legal-report">
+            <div class="legal-report-img">
+                <img src="wp-content/uploads/2025/01/consulta-vehicular-ok-final-2026-390x200.jpg" alt="Informe Legal Vehicular">
+            </div>
+            <div class="legal-report-info">
+                <h3>Verificacion legal firmada por abogados</h3>
+                <p>Una decision informada vale mucho mas que un riesgo innecesario. Nuestro informe incluye la validacion completa del historial del vehiculo.</p>
+                <div class="legal-report-price">S/59</div>
+                <ul class="legal-report-features">
+                    <li><i class="fa-solid fa-check"></i> Historial completo del vehiculo</li>
+                    <li><i class="fa-solid fa-check"></i> Verificacion de limitaciones legales</li>
+                    <li><i class="fa-solid fa-check"></i> Firma y validacion de abogados</li>
+                    <li><i class="fa-solid fa-check"></i> Entrega digital en 24 horas</li>
+                </ul>
+                <a href="https://api.whatsapp.com/send?phone=51962245720&text=Buen%20d%C3%ADa,%20deseo%20obtener%20el%20Informe%20Legal%20de%20un%20veh%C3%ADculo.%20Me%20indica%20el%20costo%20y%20medios%20de%20pago.%20Gracias." target="_blank" rel="noopener" class="btn-green-sm">
+                    <i class="fa-brands fa-whatsapp"></i> Solicitar Informe Legal
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- PLANES Y PRECIOS -->
+    <section class="section section-navy" id="planes">
+        <div class="section-header">
+            <div class="overline">Planes y Precios</div>
+            <h2>Elige el plan que se ajuste a ti</h2>
+            <p>Accede a mas de 370 consultas en 5 modulos. Pago unico, creditos al instante.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Plan Avanzado -->
+            <div class="price-card">
+                <div class="price-card-name">Avanzado</div>
+                <div class="price-card-amount">S/42</div>
+                <div class="price-card-credits">850 creditos</div>
+                <ul class="price-features">
+                    <li><i class="fa-solid fa-check"></i> Acceso a RENIEC, C4</li>
+                    <li><i class="fa-solid fa-check"></i> Telefonia, SUNAT, sueldos</li>
+                    <li><i class="fa-solid fa-check"></i> SUNARP, partida registral</li>
+                    <li><i class="fa-solid fa-check"></i> Licencias, placas</li>
+                    <li><i class="fa-solid fa-check"></i> Soporte 24/7</li>
+                </ul>
+                <button class="price-btn price-btn-outline" onclick="window.location.href='index.html'">Seleccionar</button>
+            </div>
+
+            <!-- Plan Profesional -->
+            <div class="price-card featured">
+                <div class="price-card-name">Profesional</div>
+                <div class="price-card-amount">S/140</div>
+                <div class="price-card-credits">4,000 creditos</div>
+                <ul class="price-features">
+                    <li><i class="fa-solid fa-check"></i> Reconocimiento Facial</li>
+                    <li><i class="fa-solid fa-check"></i> Modulos de desarrollador (APIs)</li>
+                    <li><i class="fa-solid fa-check"></i> +60 modulos de busqueda</li>
+                    <li><i class="fa-solid fa-check"></i> Busquedas masivas (Empresas)</li>
+                    <li><i class="fa-solid fa-check"></i> Soporte 24/7</li>
+                </ul>
+                <button class="price-btn price-btn-primary" onclick="window.location.href='index.html'">Seleccionar</button>
+            </div>
+
+            <!-- Plan Business -->
+            <div class="price-card">
+                <div class="price-card-name">Business</div>
+                <div class="price-card-amount">S/84</div>
+                <div class="price-card-credits">2,000 creditos</div>
+                <ul class="price-features">
+                    <li><i class="fa-solid fa-check"></i> Sentinel, Experian, SBS</li>
+                    <li><i class="fa-solid fa-check"></i> Migraciones, TIVE vehicular</li>
+                    <li><i class="fa-solid fa-check"></i> Delitos, denuncias, requisitorias</li>
+                    <li><i class="fa-solid fa-check"></i> Consumos SUNAT</li>
+                    <li><i class="fa-solid fa-check"></i> Soporte 24/7</li>
+                </ul>
+                <button class="price-btn price-btn-outline" onclick="window.location.href='index.html'">Seleccionar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="section">
+        <div class="cta-banner">
+            <div>
+                <h3>Consulta tu vehiculo ahora</h3>
+                <p>Accede a la plataforma y verifica cualquier vehiculo en segundos con datos oficiales.</p>
+            </div>
+            <div class="cta-banner-btns">
+                <a href="index.html" class="btn-green">
+                    <i class="fa-solid fa-bolt"></i>
+                    Acceder
+                </a>
+                <a href="https://wa.me/51932465820?text=Hola%2C%20quiero%20informacion%20sobre%20Filtro%20Vehicular." target="_blank" rel="noopener" class="btn-outline-white">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand-text">Filtro Vehicular Plus</div>
+                    <p class="footer-brand-desc">Plataforma integral de verificacion e identificacion vehicular en tiempo real. Datos obtenidos de fuentes oficiales: SUNARP, SAT, MTC, SBS, PNP, SUTRAN, ATU y APESEG.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <div class="footer-col-title">Plataforma</div>
+                    <a href="#servicios">Servicios</a>
+                    <a href="#consultas">Consultas</a>
+                    <a href="#planes">Planes</a>
+                    <a href="index.html">Acceder</a>
+                </div>
+                <div class="footer-col">
+                    <div class="footer-col-title">Soporte</div>
+                    <a href="https://wa.me/51932465820" target="_blank" rel="noopener">WhatsApp</a>
+                    <a href="tutorial.html">Tutorial</a>
+                    <a href="#">Preguntas Frecuentes</a>
+                </div>
+                <div class="footer-col">
+                    <div class="footer-col-title">Legal</div>
+                    <a href="#">Terminos de Uso</a>
+                    <a href="#">Politica de Privacidad</a>
+                    <a href="#">Aviso Legal</a>
+                    <a href="#">Politica de Cookies</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>2026 Filtro Vehicular Peru. Todos los derechos reservados.</span>
+                <span>Datos de fuentes oficiales del estado peruano</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            var menu = document.getElementById('mobileMenu');
+            var icon = document.getElementById('mobileMenuIcon');
+            menu.classList.toggle('active');
+            icon.className = menu.classList.contains('active') ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('mobileMenu').classList.remove('active');
+            document.getElementById('mobileMenuIcon').className = 'fa-solid fa-bars';
+        }
+
+        window.addEventListener('scroll', function() {
+            var nav = document.querySelector('.nav');
+            if (window.scrollY > 20) {
+                nav.style.background = 'rgba(17,27,33,0.98)';
+                nav.style.backdropFilter = 'blur(12px)';
+            } else {
+                nav.style.background = '#111b21';
+                nav.style.backdropFilter = 'none';
+            }
+        });
+    </script>
+
+</body>
+</html>

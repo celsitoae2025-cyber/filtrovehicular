@@ -2449,7 +2449,7 @@
             showFloatingButtons();
         }
 
-        // Acceso al panel admin: solo vía admin.html + clave (ver admin-auth-config.js)
+        // Acceso al panel admin: solo vía admin.html + clave
     
 
 // =========================================
