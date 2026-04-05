@@ -145,7 +145,7 @@
         let navigationStack = ['home'];
         
         // --- SISTEMA DE PESTAÑAS DE SERVICIOS ---
-        async function switchServicesTab(tabName, addToHistory = true) {
+        function switchServicesTab(tabName, addToHistory = true) {
             
             // Verificar si el usuario está logueado
             if (typeof currentUser === 'undefined' || !currentUser) {
@@ -154,16 +154,9 @@
             }
 
             // Consultas requiere créditos (comprar un plan)
-            if (tabName === 'consultas') {
-                try {
-                    if (window.sb && currentUser.email) {
-                        var saldoRes = await window.sb.from('saldos').select('creditos').eq('email', currentUser.email).single();
-                        if (!saldoRes.data || saldoRes.data.creditos <= 0) {
-                            openAccess();
-                            return;
-                        }
-                    }
-                } catch(e) {}
+            if (tabName === 'consultas' && !window.tieneCreditos) {
+                openAccess();
+                return;
             }
             
             // Agregar al historial de navegación
