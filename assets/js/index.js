@@ -2062,11 +2062,14 @@
                 }
                 docs.forEach(function(f) {
                     if (f.tipo === 'pdf') {
-                        archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
-                            '<div style="width:36px; height:36px; min-width:36px; background:#ef4444; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-file-pdf" style="color:#fff; font-size:16px;"></i></div>' +
-                            '<div><div style="font-size:12px; font-weight:600;">Descargar PDF</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para abrir el documento</div></div>' +
-                            '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
-                        '</a>';
+                        archivosHtml += '<div style="margin-top:12px; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden;">' +
+                            '<iframe src="' + BRIDGE_URL + f.url + '" style="width:100%; height:350px; border:none;"></iframe>' +
+                            '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600;">' +
+                                '<div style="width:36px; height:36px; min-width:36px; background:#ef4444; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-file-pdf" style="color:#fff; font-size:16px;"></i></div>' +
+                                '<div><div style="font-size:12px; font-weight:600;">Descargar PDF</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para abrir el documento</div></div>' +
+                                '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
+                            '</a>' +
+                        '</div>';
                     } else {
                         archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
                             '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
@@ -2286,11 +2289,13 @@
 
                         docs.forEach(function(f) {
                             if (f.tipo === 'pdf') {
-                                archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
+                                archivosHtml += '<div style="margin-top:12px; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden;">' +
+                                    '<iframe src="' + BRIDGE_URL + f.url + '" style="width:100%; height:350px; border:none;"></iframe>' +
+                                    '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600;">' +
                                     '<div style="width:36px; height:36px; min-width:36px; background:#ef4444; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-file-pdf" style="color:#fff; font-size:16px;"></i></div>' +
                                     '<div><div style="font-size:12px; font-weight:600;">Descargar PDF</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para abrir el documento</div></div>' +
                                     '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
-                                '</a>';
+                                '</a></div>';
                             } else {
                                 archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
                                     '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
