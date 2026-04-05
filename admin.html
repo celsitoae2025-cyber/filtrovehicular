@@ -146,51 +146,41 @@
                     <input type="email" id="creditEmail" placeholder="cliente@ejemplo.com" style="width:100%; padding:10px 12px; border:1px solid #2a3942; border-radius:8px; font-size:13px; color:#e9edef; background:#1f2c34; outline:none; box-sizing:border-box; font-family:'Roboto',sans-serif; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#2a3942'">
                 </div>
 
-                <!-- Paquetes rápidos -->
+                <!-- Paquetes de créditos -->
                 <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px 18px; margin-bottom:12px;">
                     <label style="display:block; margin-bottom:10px; font-size:9px; text-transform:uppercase; color:#6b7280; font-weight:500; letter-spacing:0.5px;">Selecciona el paquete</label>
                     <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;" id="creditPackages">
-                        <div onclick="selectCreditPack(this, 5)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
-                            <div style="font-size:18px; font-weight:600; color:#111b21;">5</div>
-                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">5 Créditos</div>
+                        <div onclick="selectCreditPack(this, 850)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
+                            <div style="font-size:16px; font-weight:700; color:#111b21;">850</div>
+                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">Avanzado</div>
+                            <div style="font-size:8px; color:#25d366; font-weight:600;">S/ 42</div>
                         </div>
-                        <div onclick="selectCreditPack(this, 10)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
-                            <div style="font-size:18px; font-weight:600; color:#111b21;">10</div>
-                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">10 Créditos</div>
+                        <div onclick="selectCreditPack(this, 2000)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
+                            <div style="font-size:16px; font-weight:700; color:#111b21;">2,000</div>
+                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">Business</div>
+                            <div style="font-size:8px; color:#25d366; font-weight:600;">S/ 84</div>
                         </div>
-                        <div onclick="selectCreditPack(this, 20)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
-                            <div style="font-size:18px; font-weight:600; color:#111b21;">20</div>
-                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">20 Créditos</div>
+                        <div onclick="selectCreditPack(this, 4000)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
+                            <div style="font-size:16px; font-weight:700; color:#111b21;">4,000</div>
+                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">Profesional</div>
+                            <div style="font-size:8px; color:#25d366; font-weight:600;">S/ 140</div>
                         </div>
-                        <div onclick="selectCreditPack(this, 35)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
-                            <div style="font-size:18px; font-weight:600; color:#111b21;">35</div>
-                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">35 Créditos</div>
-                        </div>
-                        <div onclick="selectCreditPack(this, 50)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
-                            <div style="font-size:18px; font-weight:600; color:#111b21;">50</div>
-                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">50 Créditos</div>
-                        </div>
-                        <div onclick="selectCreditPack(this, 100)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
-                            <div style="font-size:18px; font-weight:600; color:#111b21;">100</div>
-                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">100 Créditos</div>
-                        </div>
+                    </div>
+                    <!-- Monto personalizado -->
+                    <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+                        <input type="number" id="customCreditAmount" placeholder="Monto personalizado" min="1" style="flex:1; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                        <button onclick="var v=document.getElementById('customCreditAmount').value; if(v && parseInt(v)>0){selectCreditPack(null, parseInt(v));}" style="padding:10px 14px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer;">Aplicar</button>
                     </div>
                     <!-- Select oculto para compatibilidad -->
                     <select id="creditAmount" style="display:none;">
-                        <option value="5">5</option>
-                        <option value="10" selected>10</option>
-                        <option value="20">20</option>
-                        <option value="35">35</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
+                        <option value="850">850</option>
+                        <option value="2000" selected>2000</option>
+                        <option value="4000">4000</option>
                     </select>
                 </div>
 
-                <!-- Monto personalizado -->
-                <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px 18px; margin-bottom:16px;">
-                    <label style="display:block; margin-bottom:6px; font-size:9px; text-transform:uppercase; color:#6b7280; font-weight:500; letter-spacing:0.5px;">O ingresa monto personalizado</label>
-                    <input type="number" id="creditCustom" placeholder="Ej: 75" min="1" style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none; box-sizing:border-box; font-family:'Roboto',sans-serif; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'; deselectAllPacks();" onblur="this.style.borderColor='#e5e7eb'">
-                </div>
+                <!-- creditCustom hidden para compatibilidad -->
+                <input type="hidden" id="creditCustom" value="">
 
                 <!-- Botón -->
                 <button onclick="processCredit()" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-weight:600; cursor:pointer; transition:background 0.2s; font-size:13px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
@@ -199,17 +189,26 @@
             </div>
 
             <script>
-                var selectedPack = 10;
+                var selectedPack = 850;
                 function selectCreditPack(el, val) {
                     selectedPack = val;
-                    document.getElementById('creditAmount').value = val;
-                    document.getElementById('creditCustom').value = '';
+                    var sel = document.getElementById('creditAmount');
+                    // Verificar si el valor existe en el select, si no, agregarlo
+                    var found = false;
+                    for (var i = 0; i < sel.options.length; i++) {
+                        if (sel.options[i].value == val) { sel.selectedIndex = i; found = true; break; }
+                    }
+                    if (!found) sel.innerHTML += '<option value="' + val + '" selected>' + val + '</option>';
+                    sel.value = val;
+                    // Deseleccionar todos los packs
                     document.querySelectorAll('.credit-pack').forEach(function(p) {
                         p.style.borderColor = '#e5e7eb';
                         p.style.background = 'transparent';
                     });
-                    el.style.borderColor = '#25d366';
-                    el.style.background = 'rgba(37,211,102,0.06)';
+                    if (el) {
+                        el.style.borderColor = '#25d366';
+                        el.style.background = 'rgba(37,211,102,0.06)';
+                    }
                 }
                 function deselectAllPacks() {
                     document.querySelectorAll('.credit-pack').forEach(function(p) {
