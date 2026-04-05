@@ -407,7 +407,7 @@ function renderLoggedInState() {
                     </div>
                     <div style="padding: 14px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
                         <div>
-                            <div style="font-size: 20px; font-weight: 700; color: #111b21; letter-spacing: -0.5px; line-height: 1; text-transform:uppercase;">${creditosDisplay} Créditos</div>
+                            <div style="font-size: 14px; font-weight: 700; color: #111b21; line-height: 1; text-transform:uppercase;">${creditosDisplay} Créditos</div>
                             <div style="font-size: 10px; color: #6b7280; font-weight: 400; margin-top: 2px; text-transform:uppercase;">Créditos Disponibles</div>
                         </div>
                     </div>
