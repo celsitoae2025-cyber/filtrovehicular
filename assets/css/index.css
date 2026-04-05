@@ -2687,20 +2687,21 @@
 
         .dash-search-bar input {
             width: 100%;
-            padding: 12px 14px 12px 40px;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
+            padding: 14px 16px 14px 40px;
+            border: 0.5px solid #9ca3af;
+            border-radius: 12px;
             background: #ffffff;
             color: #111b21;
-            font-size: 13px;
+            font-size: 12px;
             font-family: 'Roboto', sans-serif;
             font-weight: 500;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.25s ease;
+            box-sizing: border-box;
         }
 
         .dash-search-bar input:focus {
-            border-color: #cbd5e1;
+            border-color: #111b21;
             box-shadow: none;
         }
 
