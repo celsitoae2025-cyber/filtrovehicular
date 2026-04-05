@@ -35,19 +35,13 @@ async function initAuth() {
         if (window.sb) {
             try {
                 var res = await window.sb.from('saldos').select('plataforma_activa, dashboard_activo, creditos').eq('email', currentUser.email).single();
-                console.log('[AUTH] Supabase response:', JSON.stringify(res.data), 'error:', res.error);
                 if (res.data) {
                     window.plataformaActiva = res.data.plataforma_activa || false;
                     window.dashboardActivo = res.data.dashboard_activo || false;
                     window.creditosUsuario = res.data.creditos || 0;
                     window.tieneCreditos = window.creditosUsuario > 0;
-                    console.log('[AUTH] tieneCreditos:', window.tieneCreditos, 'creditos:', window.creditosUsuario);
-                } else {
-                    console.log('[AUTH] No data returned from Supabase');
                 }
-            } catch (e) { console.error('[AUTH] Error fetching saldos:', e); }
-        } else {
-            console.log('[AUTH] window.sb is not defined');
+            } catch (e) {}
         }
 
         // Admin override
