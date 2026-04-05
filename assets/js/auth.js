@@ -39,10 +39,9 @@ async function initAuth() {
             try {
                 var res = await window.sb.from('saldos').select('plataforma_activa, dashboard_activo, creditos').eq('email', currentUser.email).single();
                 if (res.data) {
-                    // Si tiene créditos > 0, la plataforma se activa automáticamente
-                    var tieneCreditos = (res.data.creditos || 0) > 0;
-                    window.plataformaActiva = res.data.plataforma_activa || tieneCreditos;
+                    window.plataformaActiva = res.data.plataforma_activa || false;
                     window.dashboardActivo = res.data.dashboard_activo || false;
+                    window.tieneCreditos = (res.data.creditos || 0) > 0;
                 }
             } catch (e) {}
         }
@@ -202,8 +201,9 @@ async function renderLoggedInState() {
             if (res.data) {
                 creditos = res.data.creditos || 0;
                 window.dashboardActivo = res.data.dashboard_activo || false;
-                plataformaActiva = res.data.plataforma_activa || creditos > 0;
+                plataformaActiva = res.data.plataforma_activa || false;
                 window.plataformaActiva = plataformaActiva;
+                window.tieneCreditos = creditos > 0;
             }
         }
     } catch (e) {
