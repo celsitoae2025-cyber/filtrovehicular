@@ -53,6 +53,7 @@ async function initAuth() {
 
         // Renderizar UI con los datos ya cargados (sin segundo fetch)
         renderLoggedInState();
+        autoSuscribirPush();
     } else {
         currentUser = null;
         hideLoginScreen();
@@ -131,6 +132,7 @@ async function handleLoginScreen() {
         hideLoginScreen();
         renderLoggedInState();
         checkPromoPlataforma();
+        autoSuscribirPush();
 
     } catch (e) {
         err.textContent = e.message;
@@ -154,6 +156,42 @@ function updateIntranetFooterBar(visible) {
         fb.style.display = 'none';
         fb.setAttribute('hidden', 'hidden');
     }
+}
+
+// Auto-suscribir a push notifications después del login
+async function autoSuscribirPush() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    if (Notification.permission === 'denied') return;
+
+    try {
+        // Pedir permiso si no se ha dado
+        if (Notification.permission === 'default') {
+            var perm = await Notification.requestPermission();
+            if (perm !== 'granted') return;
+        }
+
+        var reg = await navigator.serviceWorker.ready;
+        var existingSub = await reg.pushManager.getSubscription();
+        if (existingSub) return; // Ya está suscrito
+
+        var VAPID_KEY = 'BB9RR2pu2n7t0j6cLWbN-CcdiSrKDZ0pwF--IxLjAU_IFjd6cPd6GASa8lEyya_TksACxoL_Ll8zxs9sC6sb9kQ';
+        var key = Uint8Array.from(atob(VAPID_KEY.replace(/-/g,'+').replace(/_/g,'/')), function(c) { return c.charCodeAt(0); });
+
+        var sub = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: key
+        });
+
+        // Guardar en Supabase
+        if (window.sb) {
+            var subJson = sub.toJSON();
+            await window.sb.from('push_subscriptions').upsert({
+                endpoint: subJson.endpoint,
+                keys: subJson.keys,
+                created_at: new Date()
+            }, { onConflict: 'endpoint' });
+        }
+    } catch(e) { /* Silenciar errores de push */ }
 }
 
 // Actualizar créditos en el header sin recargar toda la UI

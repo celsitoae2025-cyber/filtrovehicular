@@ -74,13 +74,20 @@ self.addEventListener('push', (event) => {
         data: { url: './admin.html#requests' }
     };
 
-    event.waitUntil(self.registration.showNotification(title, options));
+    event.waitUntil(
+        self.registration.showNotification(title, options).then(() => {
+            // Badge en el icono de la app
+            if (navigator.setAppBadge) navigator.setAppBadge(1);
+        })
+    );
 });
 
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
+    // Limpiar badge al hacer clic en la notificación
+    if (navigator.clearAppBadge) navigator.clearAppBadge();
 
-    var url = (event.notification.data && event.notification.data.url) || './admin.html';
+    var url = (event.notification.data && event.notification.data.url) || './index.html';
 
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {

@@ -2366,6 +2366,9 @@
         window.volverConsultas = volverConsultas;
         window.mostrarResultadoConsulta = mostrarResultadoConsulta;
 
+        // Limpiar badge al abrir la app
+        if (navigator.clearAppBadge) navigator.clearAppBadge();
+
         // 1. Registrar el Service Worker + forzar actualización
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             window.addEventListener('load', () => {
