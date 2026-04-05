@@ -2802,7 +2802,19 @@
         // Welcome modal desactivado (modo premium)
         window._showWelcome = function() {};
 
-        // Flyer SOAT eliminado
+        document.addEventListener('DOMContentLoaded', function() {
+            var lastSeen = localStorage.getItem('flyer_soat_seen');
+            var oneDayMs = 86400000;
+            var showFlyer = !lastSeen || (Date.now() - parseInt(lastSeen)) > oneDayMs;
+
+            if (showFlyer) {
+                setTimeout(function() {
+                    var f = document.getElementById('flyerModal');
+                    if (f) f.style.display = 'flex';
+                    localStorage.setItem('flyer_soat_seen', Date.now().toString());
+                }, 2000);
+            }
+        });
     })();
     
 
