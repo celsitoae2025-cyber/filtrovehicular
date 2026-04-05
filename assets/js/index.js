@@ -503,9 +503,8 @@
         function handleServiceClick(service) {
             checkAccessAndRun(function() {
                 if (service.action === 'regiones') {
-                    currentDashTab = 'REGIONES';
                     switchServicesTab('dashboard', true);
-                    setTimeout(function() { renderDashGrid(); }, 300);
+                    setTimeout(function() { setDashTab('REGIONES', null); }, 300);
                 } else if (service.link) {
                     window.open(service.link, '_blank');
                 }
