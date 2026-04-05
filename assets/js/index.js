@@ -2012,7 +2012,7 @@
                         otrasLineas.push(renderTablaResultado(filas));
                         filas = [];
                     }
-                    otrasLineas.push('<div style="padding:2px 0;">' + limpia + '</div>');
+                    otrasLineas.push('<div style="padding:1px 0; font-size:11px; line-height:1.4;">' + limpia + '</div>');
                 }
             });
             if (filas.length > 0) {
@@ -2022,11 +2022,11 @@
         }
 
         function renderTablaResultado(filas) {
-            var html = '<table style="width:100%; border-collapse:collapse; margin:8px 0;">';
+            var html = '<table style="width:100%; border-collapse:collapse; margin:4px 0;">';
             filas.forEach(function(f) {
                 html += '<tr>' +
-                    '<td style="padding:6px 10px 6px 0; font-weight:600; color:#6b7280; white-space:nowrap; vertical-align:top; font-size:11px; text-transform:uppercase; border-bottom:1px solid #f3f4f6;">' + f.campo + '</td>' +
-                    '<td style="padding:6px 0; color:#111b21; font-weight:500; border-bottom:1px solid #f3f4f6;">' + f.valor + '</td>' +
+                    '<td style="padding:3px 8px 3px 0; font-weight:600; color:#6b7280; white-space:nowrap; vertical-align:top; font-size:10px; text-transform:uppercase;">' + f.campo + '</td>' +
+                    '<td style="padding:3px 0; color:#111b21; font-weight:500; font-size:11px;">' + f.valor + '</td>' +
                 '</tr>';
             });
             html += '</table>';
@@ -2062,12 +2062,10 @@
                 }
                 docs.forEach(function(f) {
                     if (f.tipo === 'pdf') {
-                        archivosHtml += '<div style="margin-top:12px; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden;">' +
-                            '<iframe src="' + BRIDGE_URL + f.url + '" style="width:100%; height:350px; border:none;"></iframe>' +
-                            '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600;">' +
-                                '<div style="width:36px; height:36px; min-width:36px; background:#ef4444; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-file-pdf" style="color:#fff; font-size:16px;"></i></div>' +
-                                '<div><div style="font-size:12px; font-weight:600;">Descargar PDF</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para abrir el documento</div></div>' +
-                                '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
+                        archivosHtml += '<div style="margin-top:10px; border-radius:10px; overflow:hidden; background:#f9fafb;">' +
+                            '<iframe src="' + BRIDGE_URL + f.url + '" style="width:100%; height:400px; border:none; display:block;"></iframe>' +
+                            '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:8px; padding:8px 12px; text-decoration:none; color:#ef4444; font-size:11px; font-weight:600; border-top:1px solid #e5e7eb;">' +
+                                '<i class="fa-solid fa-file-pdf" style="font-size:13px;"></i> Descargar PDF' +
                             '</a>' +
                         '</div>';
                     } else {
@@ -2289,13 +2287,11 @@
 
                         docs.forEach(function(f) {
                             if (f.tipo === 'pdf') {
-                                archivosHtml += '<div style="margin-top:12px; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden;">' +
-                                    '<iframe src="' + BRIDGE_URL + f.url + '" style="width:100%; height:350px; border:none;"></iframe>' +
-                                    '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600;">' +
-                                    '<div style="width:36px; height:36px; min-width:36px; background:#ef4444; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-file-pdf" style="color:#fff; font-size:16px;"></i></div>' +
-                                    '<div><div style="font-size:12px; font-weight:600;">Descargar PDF</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para abrir el documento</div></div>' +
-                                    '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
-                                '</a></div>';
+                                archivosHtml += '<div style="margin-top:10px; border-radius:10px; overflow:hidden; background:#f9fafb;">' +
+                                    '<iframe src="' + BRIDGE_URL + f.url + '" style="width:100%; height:400px; border:none; display:block;"></iframe>' +
+                                    '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:8px; padding:8px 12px; text-decoration:none; color:#ef4444; font-size:11px; font-weight:600; border-top:1px solid #e5e7eb;">' +
+                                        '<i class="fa-solid fa-file-pdf" style="font-size:13px;"></i> Descargar PDF' +
+                                    '</a></div>';
                             } else {
                                 archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
                                     '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
