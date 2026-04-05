@@ -1815,20 +1815,18 @@
             if (resEl) resEl.style.display = 'none';
             consultasModuloActual = null;
 
-            var colores = { orion: '#6366f1', atlas: '#3b82f6', fenix: '#ef4444', titan: '#f59e0b', nova: '#10b981' };
             container.innerHTML = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px;">' +
                 consultasModulos.map(function(mod) {
-                    var color = colores[mod.id] || '#25d366';
-                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#111b21; border:1px solid #2a3942; border-radius:14px; padding:16px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:14px;" onmouseover="this.style.borderColor=\'' + color + '\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#2a3942\';this.style.transform=\'none\'">' +
-                        '<div style="width:46px; height:46px; min-width:46px; background:' + color + '; border-radius:12px; display:flex; align-items:center; justify-content:center;">' +
-                            '<i class="fa-solid ' + mod.icono + '" style="font-size:20px; color:#fff;"></i>' +
+                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:14px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                        '<div style="width:42px; height:42px; min-width:42px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
+                            '<i class="fa-solid ' + mod.icono + '" style="font-size:17px; color:#fff;"></i>' +
                         '</div>' +
                         '<div style="flex:1;">' +
-                            '<div style="font-size:14px; font-weight:700; color:#e9edef;">' + mod.nombre + '</div>' +
-                            '<div style="font-size:9px; color:#8696a0; margin-top:2px;">' + mod.desc + '</div>' +
-                            '<div style="font-size:10px; color:' + color + '; font-weight:600; margin-top:3px;">' + mod.servicios + ' servicios</div>' +
+                            '<div style="font-size:13px; font-weight:700; color:#111b21;">' + mod.nombre + '</div>' +
+                            '<div style="font-size:9px; color:#6b7280; margin-top:2px;">' + mod.desc + '</div>' +
+                            '<div style="font-size:10px; color:#6b7280; margin-top:3px;">' + mod.servicios + ' servicios</div>' +
                         '</div>' +
-                        '<i class="fa-solid fa-chevron-right" style="font-size:12px; color:#8696a0;"></i>' +
+                        '<i class="fa-solid fa-chevron-right" style="font-size:11px; color:#9ca3af;"></i>' +
                     '</div>';
                 }).join('') +
             '</div>';
