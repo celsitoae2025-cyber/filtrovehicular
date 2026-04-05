@@ -156,6 +156,25 @@ function updateIntranetFooterBar(visible) {
     }
 }
 
+// Actualizar créditos en el header sin recargar toda la UI
+async function actualizarCreditosHeader() {
+    if (!currentUser || !currentUser.email || !window.sb) return;
+    try {
+        var res = await window.sb.from('saldos').select('creditos').eq('email', currentUser.email).single();
+        if (res.data) {
+            window.creditosUsuario = res.data.creditos || 0;
+            window.tieneCreditos = window.creditosUsuario > 0;
+            // Actualizar el texto en el header
+            var creditSpan = document.querySelector('.dropdown-trigger span');
+            if (creditSpan) creditSpan.textContent = Math.floor(window.creditosUsuario) + ' Créditos';
+            // Actualizar en el dropdown
+            var dropdownCreditos = document.querySelector('#userDropdownMenu [style*="text-transform:uppercase"]');
+            if (dropdownCreditos) dropdownCreditos.textContent = Math.floor(window.creditosUsuario) + ' Créditos';
+        }
+    } catch(e) {}
+}
+window.actualizarCreditosHeader = actualizarCreditosHeader;
+
 function renderLoggedOutState() {
     var nav = document.getElementById('desktopNavAuth');
     if (!nav) return;
@@ -174,13 +193,24 @@ function renderLoggedOutState() {
     `;
 }
 
-function renderLoggedInState() {
+async function renderLoggedInState() {
     var nav = document.getElementById('desktopNavAuth');
     if (!nav) return;
 
     var displayName = currentUser.nombre || currentUser.email.split('@')[0];
 
-    // Usar datos globales ya cargados en initAuth (sin fetch adicional)
+    // Cargar créditos frescos de Supabase
+    if (window.sb && currentUser.email) {
+        try {
+            var saldoRes = await window.sb.from('saldos').select('creditos, plataforma_activa, dashboard_activo').eq('email', currentUser.email).single();
+            if (saldoRes.data) {
+                window.creditosUsuario = saldoRes.data.creditos || 0;
+                window.plataformaActiva = saldoRes.data.plataforma_activa || false;
+                window.dashboardActivo = saldoRes.data.dashboard_activo || false;
+                window.tieneCreditos = window.creditosUsuario > 0;
+            }
+        } catch(e) {}
+    }
     var creditos = window.creditosUsuario || 0;
     var plataformaActiva = window.plataformaActiva || false;
 

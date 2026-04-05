@@ -2102,6 +2102,10 @@
             if (data.creditosRestantes !== undefined) {
                 var logoStatus = document.getElementById('logoStatus');
                 if (logoStatus) logoStatus.textContent = Math.floor(data.creditosRestantes) + ' Créditos';
+                    window.creditosUsuario = data.creditosRestantes;
+                    window.tieneCreditos = data.creditosRestantes > 0;
+                    var creditSpan = document.querySelector('.dropdown-trigger span');
+                    if (creditSpan) creditSpan.textContent = Math.floor(data.creditosRestantes) + ' Créditos';
             }
         }
 
@@ -2319,6 +2323,10 @@
                     if (data.creditosRestantes !== undefined) {
                         var logoStatus = document.getElementById('logoStatus');
                         if (logoStatus) logoStatus.textContent = Math.floor(data.creditosRestantes) + ' Créditos';
+                    window.creditosUsuario = data.creditosRestantes;
+                    window.tieneCreditos = data.creditosRestantes > 0;
+                    var creditSpan = document.querySelector('.dropdown-trigger span');
+                    if (creditSpan) creditSpan.textContent = Math.floor(data.creditosRestantes) + ' Créditos';
                     }
                 }
             } catch(e) {
