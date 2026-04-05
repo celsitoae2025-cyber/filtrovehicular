@@ -46,9 +46,32 @@
 </head>
 <body>
 
+    <!-- SPLASH SCREEN (solo en PWA instalada) -->
+    <div id="splashScreen" style="position:fixed; inset:0; background:linear-gradient(180deg, #111b21 0%, #0a1014 100%); z-index:99999999; display:none; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.4s ease;">
+        <img src="assets/media/logopwa.png" alt="Logo" style="width:72px; height:72px; object-fit:contain; margin-bottom:20px; animation:splashPulse 1.5s ease infinite;">
+        <div style="font-size:18px; font-weight:800; color:#ffffff; letter-spacing:0.5px; font-family:'Roboto',sans-serif;">Filtro Vehicular</div>
+        <div style="font-size:10px; font-weight:700; color:#25d366; letter-spacing:5px; text-transform:uppercase; margin-top:4px;">PLUS</div>
+        <div style="width:120px; height:3px; background:#1f2c34; border-radius:3px; margin-top:28px; overflow:hidden;">
+            <div style="width:0%; height:100%; background:#25d366; border-radius:3px; animation:splashLoad 1.8s ease forwards;"></div>
+        </div>
+    </div>
     <style>
+        @keyframes splashPulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+        @keyframes splashLoad { 0%{width:0%;} 100%{width:100%;} }
         #authFloatingModal input::placeholder { color: #d1d5db; }
     </style>
+    <script>
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+            var s = document.getElementById('splashScreen');
+            if (s) s.style.display = 'flex';
+            setTimeout(function(){
+                if(s){ s.style.opacity='0'; setTimeout(function(){ s.remove(); }, 400); }
+            }, 2500);
+        } else {
+            var s = document.getElementById('splashScreen');
+            if (s) s.remove();
+        }
+    </script>
 
     <!-- Login screen eliminado - se usa modal flotante -->
 
