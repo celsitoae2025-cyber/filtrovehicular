@@ -1791,13 +1791,13 @@
                 : '<div style="font-size:10px; color:#6b7280; margin-bottom:8px;">' + resultados.length + ' resultado(s)</div>' +
                   '<div style="display:flex; flex-direction:column; gap:6px;">' +
                   resultados.map(function(cmd) {
-                      return '<div onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:0.5px solid #9ca3af; border-radius:12px; padding:14px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:all 0.25s ease;" onmouseover="this.style.borderColor=\'#111b21\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#9ca3af\';this.style.transform=\'none\'">' +
-                          '<div style="width:30px; height:30px; min-width:30px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
-                              '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:12px; color:#fff;"></i>' +
+                      return '<div class="hook-card" onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')">' +
+                          '<div class="hook-icon">' +
+                              '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '"></i>' +
                           '</div>' +
                           '<div style="flex:1; min-width:0;">' +
-                              '<div style="font-size:11px; font-weight:600; color:#111b21;">' + cmd.nombre + '</div>' +
-                              '<div style="font-size:8px; color:#6b7280;">' + (moduloNombres[cmd.modulo] || cmd.modulo) + ' · ' + cmd.categoria + '</div>' +
+                              '<div class="hook-text" style="margin-bottom:2px;">' + cmd.nombre + '</div>' +
+                              '<div style="font-size:8px; color:#6b7280; text-transform:uppercase;">' + (moduloNombres[cmd.modulo] || cmd.modulo) + ' · ' + cmd.categoria + '</div>' +
                           '</div>' +
                           '<div style="font-size:9px; color:' + (cmd.creditos === 0 ? '#111b21' : '#111b21') + '; font-weight:600;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
                       '</div>';
@@ -1815,21 +1815,17 @@
             if (resEl) resEl.style.display = 'none';
             consultasModuloActual = null;
 
-            container.innerHTML = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px;">' +
-                consultasModulos.map(function(mod) {
-                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#ffffff; border:0.5px solid #9ca3af; border-radius:12px; padding:14px 16px; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; gap:14px;" onmouseover="this.style.borderColor=\'#111b21\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#9ca3af\';this.style.transform=\'none\'">' +
-                        '<div style="width:42px; height:42px; min-width:42px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
-                            '<i class="fa-solid ' + mod.icono + '" style="font-size:17px; color:#fff;"></i>' +
+            container.innerHTML = consultasModulos.map(function(mod) {
+                    return '<div class="hook-card" onclick="renderConsultasModulo(\'' + mod.id + '\')">' +
+                        '<div class="hook-icon"><i class="fa-solid ' + mod.icono + '"></i></div>' +
+                        '<div style="flex:1; min-width:0;">' +
+                            '<div class="hook-text" style="margin-bottom:2px;">' + mod.nombre + '</div>' +
+                            '<div style="font-size:9px; color:#6b7280; line-height:1.3;">' + mod.desc + '</div>' +
+                            '<div style="font-size:10px; color:#6b7280; margin-top:2px;">' + mod.servicios + ' servicios</div>' +
                         '</div>' +
-                        '<div style="flex:1;">' +
-                            '<div style="font-size:13px; font-weight:700; color:#111b21;">' + mod.nombre + '</div>' +
-                            '<div style="font-size:9px; color:#6b7280; margin-top:2px;">' + mod.desc + '</div>' +
-                            '<div style="font-size:10px; color:#6b7280; margin-top:3px;">' + mod.servicios + ' servicios</div>' +
-                        '</div>' +
-                        '<i class="fa-solid fa-chevron-right" style="font-size:11px; color:#9ca3af;"></i>' +
+                        '<div style="color:#94a3b8; font-size:14px; flex-shrink:0;"><i class="fa-solid fa-chevron-right"></i></div>' +
                     '</div>';
-                }).join('') +
-            '</div>';
+                }).join('');
         }
 
         async function renderConsultasModulo(moduloId) {
@@ -1873,17 +1869,13 @@
                 '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + (modInfo ? modInfo.nombre : moduloId) + '</div>' +
                 '<div style="font-size:10px; color:#8696a0; margin-left:auto;">' + categorias.length + ' categorías</div>' +
             '</div>' +
-            '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:8px;">' +
-                categorias.map(function(cat) {
-                    return '<div onclick="renderConsultasComandos(\'' + cat + '\')" style="background:#ffffff; border:0.5px solid #9ca3af; border-radius:12px; padding:14px 16px; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#111b21\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#9ca3af\';this.style.transform=\'none\'">' +
-                        '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
-                            '<i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '" style="font-size:13px; color:#fff;"></i>' +
-                        '</div>' +
-                        '<div style="font-size:12px; font-weight:600; color:#111b21;">' + cat + '</div>' +
-                        '<i class="fa-solid fa-chevron-right" style="font-size:10px; color:#9ca3af; margin-left:auto;"></i>' +
+            categorias.map(function(cat) {
+                    return '<div class="hook-card" onclick="renderConsultasComandos(\'' + cat + '\')">' +
+                        '<div class="hook-icon"><i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '"></i></div>' +
+                        '<div class="hook-text">' + cat + '</div>' +
+                        '<div style="color:#94a3b8; font-size:14px; flex-shrink:0;"><i class="fa-solid fa-chevron-right"></i></div>' +
                     '</div>';
-                }).join('') +
-            '</div>';
+                }).join('');
         }
 
         async function renderConsultasComandos(catId) {
@@ -1913,16 +1905,14 @@
             '</div>' +
             '<div style="display:flex; flex-direction:column; gap:6px;">' +
                 consultasComandosData.map(function(cmd) {
-                    return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:0.5px solid #9ca3af; border-radius:12px; padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.25s ease;" onmouseover="this.style.borderColor=\'#111b21\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#9ca3af\';this.style.transform=\'none\'">' +
-                        '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
-                            '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:13px; color:#fff;"></i>' +
-                        '</div>' +
+                    return '<div class="hook-card" onclick="abrirConsultaModal(\'' + cmd.id + '\')">' +
+                        '<div class="hook-icon"><i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '"></i></div>' +
                         '<div style="flex:1; min-width:0;">' +
-                            '<div style="font-size:11px; font-weight:600; color:#111b21;">' + cmd.nombre + '</div>' +
-                            '<div style="font-size:9px; color:#6b7280;">' + cmd.descripcion + '</div>' +
+                            '<div class="hook-text" style="margin-bottom:2px;">' + cmd.nombre + '</div>' +
+                            '<div style="font-size:9px; color:#6b7280; text-transform:uppercase;">' + cmd.descripcion + '</div>' +
                         '</div>' +
                         '<div style="flex-shrink:0; text-align:right;">' +
-                            '<div style="font-size:10px; font-weight:600; color:' + (cmd.creditos === 0 ? '#111b21' : '#111b21') + ';">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
+                            '<div style="font-size:10px; font-weight:600; color:#111b21;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
                             '<div style="font-size:8px; color:#6b7280;">' + cmd.tipo.toUpperCase() + '</div>' +
                         '</div>' +
                     '</div>';
