@@ -47,12 +47,14 @@
 <body>
 
     <!-- SPLASH SCREEN (solo en PWA instalada) -->
-    <div id="splashScreen" style="position:fixed; inset:0; background:#111b21; z-index:99999999; display:none; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.4s ease;">
-        <img src="assets/media/logopwa.png" alt="Logo" style="width:72px; height:72px; object-fit:contain; margin-bottom:18px; animation:splashPulse 1.5s ease infinite;">
-        <div style="font-size:18px; font-weight:700; color:#e9edef; letter-spacing:0.5px; font-family:'Roboto',sans-serif;">Filtro Vehicular</div>
-        <div style="font-size:11px; font-weight:600; color:#ffffff; letter-spacing:4px; text-transform:uppercase; margin-top:4px;">+</div>
+    <div id="splashScreen" style="position:fixed; inset:0; background:linear-gradient(180deg, #111b21 0%, #0a1014 100%); z-index:99999999; display:none; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.4s ease;">
+        <div style="width:80px; height:80px; background:#1f2c34; border-radius:18px; display:flex; align-items:center; justify-content:center; margin-bottom:20px; animation:splashPulse 1.5s ease infinite; border:1px solid #2a3942;">
+            <img src="assets/media/logopwa.png" alt="Logo" style="width:50px; height:50px; object-fit:contain; filter:brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(100deg);">
+        </div>
+        <div style="font-size:18px; font-weight:800; color:#ffffff; letter-spacing:0.5px; font-family:'Roboto',sans-serif;">Filtro Vehicular</div>
+        <div style="font-size:10px; font-weight:700; color:#25d366; letter-spacing:5px; text-transform:uppercase; margin-top:4px;">PLUS</div>
         <div style="width:120px; height:3px; background:#1f2c34; border-radius:3px; margin-top:28px; overflow:hidden;">
-            <div style="width:0%; height:100%; background:#ffffff; border-radius:3px; animation:splashLoad 1.8s ease forwards;"></div>
+            <div style="width:0%; height:100%; background:#25d366; border-radius:3px; animation:splashLoad 1.8s ease forwards;"></div>
         </div>
     </div>
     <style>
