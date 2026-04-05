@@ -1714,11 +1714,11 @@
         }
 
         var consultasModulos = [
-            { id: 'orion', nombre: 'Orión', icono: 'fa-satellite', servicios: 121 },
-            { id: 'atlas', nombre: 'Atlas', icono: 'fa-globe', servicios: 89 },
-            { id: 'fenix', nombre: 'Fénix', icono: 'fa-fire', servicios: 65 },
-            { id: 'titan', nombre: 'Titán', icono: 'fa-bolt', servicios: 56 },
-            { id: 'nova', nombre: 'Nova', icono: 'fa-star', servicios: 42 },
+            { id: 'orion', nombre: 'Orión', icono: 'fa-ghost', servicios: 121, desc: 'RENIEC, Vehículos, Delitos, SUNAT, Financiero' },
+            { id: 'atlas', nombre: 'Atlas', icono: 'fa-atlas', servicios: 89, desc: 'RENIEC, Justicia, Actas, Migraciones, Facial' },
+            { id: 'fenix', nombre: 'Fénix', icono: 'fa-fire-flame-curved', servicios: 65, desc: 'RENIEC, SUNARP, Generador, Telefonía' },
+            { id: 'titan', nombre: 'Titán', icono: 'fa-shield-halved', servicios: 56, desc: 'RENIEC, Telefonía, SUNARP, Metadata' },
+            { id: 'nova', nombre: 'Nova', icono: 'fa-rocket', servicios: 42, desc: 'RENIEC, Generador, Telefonía, SUNARP' },
         ];
 
         var consultasModuloActual = null;
@@ -1815,17 +1815,20 @@
             if (resEl) resEl.style.display = 'none';
             consultasModuloActual = null;
 
+            var colores = { orion: '#6366f1', atlas: '#3b82f6', fenix: '#ef4444', titan: '#f59e0b', nova: '#10b981' };
             container.innerHTML = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px;">' +
                 consultasModulos.map(function(mod) {
-                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#111b21; border:1px solid #2a3942; border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#2a3942\'">' +
-                        '<div style="width:42px; height:42px; min-width:42px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
-                            '<i class="fa-solid ' + mod.icono + '" style="font-size:17px; color:#fff;"></i>' +
+                    var color = colores[mod.id] || '#25d366';
+                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#111b21; border:1px solid #2a3942; border-radius:14px; padding:16px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:14px;" onmouseover="this.style.borderColor=\'' + color + '\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#2a3942\';this.style.transform=\'none\'">' +
+                        '<div style="width:46px; height:46px; min-width:46px; background:' + color + '; border-radius:12px; display:flex; align-items:center; justify-content:center;">' +
+                            '<i class="fa-solid ' + mod.icono + '" style="font-size:20px; color:#fff;"></i>' +
                         '</div>' +
                         '<div style="flex:1;">' +
-                            '<div style="font-size:14px; font-weight:600; color:#e9edef;">' + mod.nombre + '</div>' +
-                            '<div style="font-size:10px; color:#8696a0;">' + mod.servicios + ' servicios</div>' +
+                            '<div style="font-size:14px; font-weight:700; color:#e9edef;">' + mod.nombre + '</div>' +
+                            '<div style="font-size:9px; color:#8696a0; margin-top:2px;">' + mod.desc + '</div>' +
+                            '<div style="font-size:10px; color:' + color + '; font-weight:600; margin-top:3px;">' + mod.servicios + ' servicios</div>' +
                         '</div>' +
-                        '<i class="fa-solid fa-chevron-right" style="font-size:11px; color:#8696a0;"></i>' +
+                        '<i class="fa-solid fa-chevron-right" style="font-size:12px; color:#8696a0;"></i>' +
                     '</div>';
                 }).join('') +
             '</div>';
