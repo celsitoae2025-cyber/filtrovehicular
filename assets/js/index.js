@@ -1791,7 +1791,7 @@
                 : '<div style="font-size:10px; color:#6b7280; margin-bottom:8px;">' + resultados.length + ' resultado(s)</div>' +
                   '<div style="display:flex; flex-direction:column; gap:6px;">' +
                   resultados.map(function(cmd) {
-                      return '<div onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                      return '<div onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#6b7280\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
                           '<div style="width:30px; height:30px; min-width:30px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                               '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:12px; color:#fff;"></i>' +
                           '</div>' +
@@ -1817,7 +1817,7 @@
 
             container.innerHTML = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px;">' +
                 consultasModulos.map(function(mod) {
-                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:14px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:14px;" onmouseover="this.style.borderColor=\'#6b7280\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
                         '<div style="width:42px; height:42px; min-width:42px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + mod.icono + '" style="font-size:17px; color:#fff;"></i>' +
                         '</div>' +
@@ -1875,7 +1875,7 @@
             '</div>' +
             '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:8px;">' +
                 categorias.map(function(cat) {
-                    return '<div onclick="renderConsultasComandos(\'' + cat + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                    return '<div onclick="renderConsultasComandos(\'' + cat + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#6b7280\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
                         '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '" style="font-size:13px; color:#fff;"></i>' +
                         '</div>' +
@@ -1913,7 +1913,7 @@
             '</div>' +
             '<div style="display:flex; flex-direction:column; gap:6px;">' +
                 consultasComandosData.map(function(cmd) {
-                    return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                    return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#6b7280\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
                         '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:13px; color:#fff;"></i>' +
                         '</div>' +
