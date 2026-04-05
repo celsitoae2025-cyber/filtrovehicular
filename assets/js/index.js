@@ -1815,7 +1815,7 @@
             if (resEl) resEl.style.display = 'none';
             consultasModuloActual = null;
 
-            container.innerHTML = consultasModulos.map(function(mod) {
+            container.innerHTML = '<div class="hook-section">' + consultasModulos.map(function(mod) {
                     return '<div class="hook-card" onclick="renderConsultasModulo(\'' + mod.id + '\')">' +
                         '<div class="hook-icon"><i class="fa-solid ' + mod.icono + '"></i></div>' +
                         '<div style="flex:1; min-width:0;">' +
@@ -1825,7 +1825,7 @@
                         '</div>' +
                         '<div style="color:#94a3b8; font-size:14px; flex-shrink:0;"><i class="fa-solid fa-chevron-right"></i></div>' +
                     '</div>';
-                }).join('');
+                }).join('') + '</div>';
         }
 
         async function renderConsultasModulo(moduloId) {
@@ -1869,13 +1869,14 @@
                 '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + (modInfo ? modInfo.nombre : moduloId) + '</div>' +
                 '<div style="font-size:10px; color:#8696a0; margin-left:auto;">' + categorias.length + ' categorías</div>' +
             '</div>' +
+            '<div class="hook-section">' +
             categorias.map(function(cat) {
                     return '<div class="hook-card" onclick="renderConsultasComandos(\'' + cat + '\')">' +
                         '<div class="hook-icon"><i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '"></i></div>' +
                         '<div class="hook-text">' + cat + '</div>' +
                         '<div style="color:#94a3b8; font-size:14px; flex-shrink:0;"><i class="fa-solid fa-chevron-right"></i></div>' +
                     '</div>';
-                }).join('');
+                }).join('') + '</div>';
         }
 
         async function renderConsultasComandos(catId) {
@@ -1903,7 +1904,7 @@
                 '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + catId + '</div>' +
                 '<div style="font-size:10px; color:#8696a0; margin-left:auto;">' + consultasComandosData.length + ' servicios</div>' +
             '</div>' +
-            '<div style="display:flex; flex-direction:column; gap:6px;">' +
+            '<div class="hook-section">' +
                 consultasComandosData.map(function(cmd) {
                     return '<div class="hook-card" onclick="abrirConsultaModal(\'' + cmd.id + '\')">' +
                         '<div class="hook-icon"><i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '"></i></div>' +

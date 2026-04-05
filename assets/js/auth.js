@@ -206,13 +206,13 @@ function renderLoggedInState() {
     if (!document.getElementById('profileClienteModal')) {
         var modalHtml = `
             <div id="profileClienteModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(248,250,252,0.30);z-index:999999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-family:'Roboto',sans-serif;padding:16px;overflow-y:auto;">
-                <div style="background:#ffffff;width:100%;max-width:420px;border-radius:20px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(13,37,54,0.15),0 0 0 1px rgba(13,37,54,0.06);margin:auto;">
+                <div style="background:#ffffff;width:100%;max-width:420px;border-radius:20px;overflow:hidden;position:relative;border:2px solid #6b7280;margin:auto;">
 
                     <!-- Header navy -->
                     <div style="background:linear-gradient(135deg,#111b21 0%,#1f2c34 100%);padding:30px 24px 24px;text-align:center;position:relative;">
                         <button onclick="document.getElementById('profileClienteModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;color:rgba(255,255,255,0.35);cursor:pointer;transition:0.2s;padding:4px;line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.35)'"><i class="fa-solid fa-xmark"></i></button>
                         <div style="width:60px;height:60px;border-radius:50%;background:rgba(139,195,74,0.12);border:2px solid rgba(139,195,74,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
-                            <i class="fa-solid fa-user" style="font-size:22px;color:#25d366;"></i>
+                            <i class="fa-solid fa-user" style="font-size:22px;color:#ffffff;"></i>
                         </div>
                         <h3 style="font-size:18px;color:#ffffff;margin:0 0 4px;font-weight:800;" id="profName">Nombre</h3>
                         <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:0;font-weight:500;" id="profEmail">correo@ejemplo.com</p>
@@ -287,7 +287,7 @@ function renderLoggedInState() {
                         <div style="margin-bottom:18px;">
                             <button onclick="window.location.href='admin.html'" style="width:100%;padding:14px 16px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:0.2s;" onmouseover="this.style.borderColor='#111b21';this.style.background='#ffffff'" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc'">
                                 <div style="width:32px;height:32px;background:linear-gradient(135deg,#111b21,#1f2c34);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="fa-solid fa-shield-halved" style="color:#25d366;font-size:13px;"></i>
+                                    <i class="fa-solid fa-shield-halved" style="color:#ffffff;font-size:13px;"></i>
                                 </div>
                                 <div style="flex:1;text-align:left;">
                                     <div style="font-size:13px;color:#111b21;font-weight:700;">Panel Administrador</div>
@@ -533,38 +533,38 @@ function showActivationNotification(plataformaActivada, dashboardActivado) {
 function showWelcomeModal(plataformaActivada, dashboardActivado) {
     const modalHtml = `
         <div id="welcomeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,27,33,0.5); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;" onclick="if(event.target===this){dismissNotification();}">
-            <div style="background: #ffffff; width: 92%; max-width: 400px; border-radius: 20px; padding: 35px 28px; text-align: center; border: 1px solid #e5e7eb; animation: scaleUp 0.3s ease forwards;">
+            <div style="background: #ffffff; width: 92%; max-width: 400px; border-radius: 20px; padding: 35px 28px; text-align: center; border: 2px solid #6b7280; animation: scaleUp 0.3s ease forwards;">
                 <style>
                     @keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
                 </style>
-                <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(37,211,102,0.1); color: #25d366; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
+                <div style="width: 72px; height: 72px; border-radius: 50%; background: #111b21; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
                     <i class="fa-solid fa-rocket"></i>
                 </div>
                 <h2 style="font-size: 22px; color: #111b21; margin: 0 0 8px; font-weight: 900;">¡Bienvenido!</h2>
-                <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 0 0 24px; font-weight: 500;">Tu cuenta <span style="color: #25d366; font-weight: 700;">PREMIUM</span> está activa. Tienes acceso completo a:</p>
+                <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 0 0 24px; font-weight: 500;">Tu cuenta <span style="color: #111b21; font-weight: 700;">PREMIUM</span> está activa. Tienes acceso completo a:</p>
 
                 <div style="background: #f9fafb; border-radius: 14px; padding: 18px 20px; margin-bottom: 24px; border: 1px solid #e5e7eb; text-align: left;">
                     <div style="display: grid; gap: 14px;">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <div style="width: 30px; height: 30px; background: #111b21; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
                             <span style="font-size: 13px; color: #111b21; font-weight: 600;">22 Servicios Vehiculares</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <div style="width: 30px; height: 30px; background: #111b21; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
                             <span style="font-size: 13px; color: #111b21; font-weight: 600;">Dashboard Organizado</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <div style="width: 30px; height: 30px; background: #111b21; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
                             <span style="font-size: 13px; color: #111b21; font-weight: 600;">Historial de Consultas</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <div style="width: 30px; height: 30px; background: #111b21; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
                             <span style="font-size: 13px; color: #111b21; font-weight: 600;">Acceso Permanente</span>
@@ -572,7 +572,7 @@ function showWelcomeModal(plataformaActivada, dashboardActivado) {
                     </div>
                 </div>
 
-                <button onclick="dismissNotification();" style="width: 100%; padding: 14px; background: #25d366; color: #ffffff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                <button onclick="dismissNotification();" style="width: 100%; padding: 14px; background: #111b21; color: #ffffff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                     <i class="fa-solid fa-bolt" style="margin-right: 8px;"></i> COMENZAR
                 </button>
 
@@ -727,7 +727,7 @@ function updateAuthInterface() {
         var lastNameGroup = document.getElementById('lastNameGroup');
         if (lastNameGroup) lastNameGroup.style.display = 'none';
         if (wppGroup) wppGroup.style.display = 'none';
-        toggleLink.innerHTML = '¿No tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #111b21; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#25d366\';" onmouseout="this.style.color=\'#111b21\';"> Regístrate aquí</span>';
+        toggleLink.innerHTML = '¿No tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #111b21; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#111b21\';" onmouseout="this.style.color=\'#111b21\';"> Regístrate aquí</span>';
     } else {
         // Modo Registro
         title.innerText = 'Crear mi Cuenta';
@@ -738,7 +738,7 @@ function updateAuthInterface() {
         if (lastNameGroup) lastNameGroup.style.display = 'block';
         if (wppGroup) wppGroup.style.display = 'block';
         if (passwordGroup) passwordGroup.style.display = 'block';
-        toggleLink.innerHTML = '¿Ya tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #111b21; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#25d366\';" onmouseout="this.style.color=\'#111b21\';"> Inicia Sesión</span>';
+        toggleLink.innerHTML = '¿Ya tienes cuenta? <span class="auth-toggle-link" onclick="toggleAuthMode()" style="color: #111b21; font-weight: 700; cursor: pointer; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#111b21\';" onmouseout="this.style.color=\'#111b21\';"> Inicia Sesión</span>';
     }
 }
 
@@ -913,14 +913,14 @@ async function handleAuthSubmit() {
                         @keyframes fadeInAlert { from { opacity: 0; } to { opacity: 1; } }
                         @keyframes scaleUpAlert { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
                     </style>
-                    <div style="background: #ffffff; width: 90%; max-width: 420px; border-radius: 20px; padding: 35px 30px; text-align: center; animation: scaleUpAlert 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;">
-                        <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #25d366 0%, #1ebe5d 100%); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
+                    <div style="background: #ffffff; width: 90%; max-width: 420px; border-radius: 20px; padding: 35px 30px; text-align: center; border: 2px solid #6b7280; animation: scaleUpAlert 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;">
+                        <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
                             <i class="fa-solid fa-circle-check"></i>
                         </div>
                         <h3 style="font-size: 22px; color: #111b21; margin: 0 0 12px; font-weight: 900; letter-spacing: -0.5px;">¡Cuenta Creada Exitosamente!</h3>
-                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 28px; font-weight: 500;">Tu registro ha sido recibido correctamente.<br><br>Para <b style="color: #111b21;">activar tu cuenta</b> y comenzar a usar la plataforma, contacta a nuestro equipo de soporte por WhatsApp.<br><br><span style="color: #25d366; font-weight: 700;">Te responderemos en minutos.</span></p>
+                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 28px; font-weight: 500;">Tu registro ha sido recibido correctamente.<br><br>Para <b style="color: #111b21;">activar tu cuenta</b> y comenzar a usar la plataforma, contacta a nuestro equipo de soporte por WhatsApp.<br><br><span style="color: #111b21; font-weight: 700;">Te responderemos en minutos.</span></p>
                         <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <a href="https://wa.me/51932465820?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(135deg, #25d366 0%, #1ebe5d 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
+                            <a href="https://wa.me/51932465820?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
                                 <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Contactar por WhatsApp
                             </a>
                             ${groupButtonHtml}
