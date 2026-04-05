@@ -512,7 +512,7 @@
                 <div style="background:#111b21; padding:22px 22px 18px; position:relative;">
                     <button onclick="document.getElementById('infoModal').style.display='none';" style="position:absolute; top:14px; right:14px; background:none; border:none; font-size:16px; color:#8696a0; cursor:pointer; padding:4px; line-height:1;"><i class="fa-solid fa-xmark"></i></button>
                     <div style="display:flex; align-items:center; gap:12px;">
-                        <div style="width:40px; height:40px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <div style="width:40px; height:40px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                             <i class="fa-solid ${esc(service.icon)}" style="font-size:17px; color:#fff;"></i>
                         </div>
                         <div style="flex:1; min-width:0;">
@@ -521,19 +521,19 @@
                     </div>
                     <div style="margin-top:14px; background:rgba(255,255,255,0.06); border-radius:8px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between;">
                         <span style="font-size:11px; color:#8696a0; font-weight:400;">Costo del servicio</span>
-                        <span style="font-size:20px; font-weight:700; color:#25d366;">S/ ${esc(service.price)}</span>
+                        <span style="font-size:20px; font-weight:700; color:#ffffff;">S/ ${esc(service.price)}</span>
                     </div>
                 </div>
                 <div style="padding:20px 22px 22px;">
                     <div style="margin-bottom:16px;">
                         <label style="font-size:9px; color:#6b7280; font-weight:600; display:block; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px;">Ingresa tu placa</label>
-                        <input type="text" id="servicePlateInput" placeholder="ABC-123" maxlength="10" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; text-align:center; text-transform:uppercase; letter-spacing:2px; outline:none; transition:border-color 0.2s; box-sizing:border-box; font-family:'Roboto',sans-serif; color:#111b21;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
+                        <input type="text" id="servicePlateInput" placeholder="ABC-123" maxlength="10" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; text-align:center; text-transform:uppercase; letter-spacing:2px; outline:none; transition:border-color 0.2s; box-sizing:border-box; font-family:'Roboto',sans-serif; color:#111b21;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e5e7eb'">
                     </div>
-                    <button id="btnModalAction" onclick="processServicePayment('${escAttr(service.title)}', '${escAttr(service.price)}', '${escAttr(service.icon)}')" style="background:#25d366; color:#fff; border:none; width:100%; padding:12px; border-radius:10px; font-weight:600; cursor:pointer; font-size:13px; transition:background 0.2s; margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                    <button id="btnModalAction" onclick="processServicePayment('${escAttr(service.title)}', '${escAttr(service.price)}', '${escAttr(service.icon)}')" style="background:#111b21; color:#fff; border:none; width:100%; padding:12px; border-radius:10px; font-weight:600; cursor:pointer; font-size:13px; transition:background 0.2s; margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                         <i class="fa-solid fa-magnifying-glass" style="font-size:12px;"></i> Consultar ahora
                     </button>
                     <a href="https://wa.me/51932465820?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(service.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; font-size:12px; font-weight:600; color:#111b21; cursor:pointer; transition:border-color 0.2s; margin-bottom:8px; box-sizing:border-box;" onmouseover="this.style.borderColor='#6b7280'" onmouseout="this.style.borderColor='#e5e7eb'">
-                        <i class="fa-brands fa-whatsapp" style="font-size:15px; color:#25d366;"></i> Pagar por WhatsApp
+                        <i class="fa-brands fa-whatsapp" style="font-size:15px; color:#111b21;"></i> Pagar por WhatsApp
                     </a>
                     <button onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:10px; background:transparent; color:#9ca3af; border:none; font-size:11px; font-weight:500; cursor:pointer;">Cancelar</button>
                 </div>
@@ -725,7 +725,7 @@
                     if(i.classList.contains('fa-lock')) {
                         i.classList.remove('fa-lock');
                         i.classList.add('fa-unlock');
-                        i.parentElement.style.color = '#25d366';
+                        i.parentElement.style.color = '#111b21';
                     }
                 });
             } else {
@@ -1201,7 +1201,7 @@
                 tab.classList.add('active');
                 tab.style.background = '#ffffff';
                 tab.style.boxShadow = '0 2px 8px rgba(13,37,54,0.08)';
-                tab.style.border = '2px solid #25d366';
+                tab.style.border = '2px solid #111b21';
                 tab.style.filter = 'grayscale(0)';
                 tab.style.opacity = '1';
             }
@@ -1308,13 +1308,13 @@
                                 setTimeout(() => {
                                     const alertHtml = `
                                         <div id="activacionAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-                                            <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.25); border: 1px solid rgba(0,0,0,0.03);">
+                                            <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; border: 2px solid #6b7280;">
                                                 <div style="width: 50px; height: 50px; border-radius: 50%; background: #fef3c7; color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
                                                     <i class="fa-solid fa-rocket"></i>
                                                 </div>
                                                 <h3 style="font-size: 18px; color: #111b21; margin: 0 0 6px; font-weight: 900;">¡Pago Enviado!</h3>
                                                 <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 20px;">El administrador validará tu pago de S/ 35 para activar tu plataforma completa en breve.</p>
-                                                <button onclick="document.getElementById('activacionAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #25d366; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
+                                                <button onclick="document.getElementById('activacionAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #111b21; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
                                             </div>
                                         </div>`;
                                     document.body.insertAdjacentHTML('beforeend', alertHtml);
@@ -1340,13 +1340,13 @@
                                 setTimeout(() => {
                                     const alertHtml = `
                                         <div id="dashboardAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-                                            <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.25); border: 1px solid rgba(0,0,0,0.03);">
-                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(37,211,102,0.1); color: #25d366; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
+                                            <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; border: 2px solid #6b7280;">
+                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #111b21; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
                                                     <i class="fa-solid fa-circle-check"></i>
                                                 </div>
                                                 <h3 style="font-size: 18px; color: #111b21; margin: 0 0 6px; font-weight: 900;">¡Comprobante Enviado!</h3>
                                                 <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 20px;">El administrador validará tu pago para activar tu Dashboard en breve.</p>
-                                                <button onclick="document.getElementById('dashboardAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #25d366; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
+                                                <button onclick="document.getElementById('dashboardAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #111b21; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
                                             </div>
                                         </div>`;
                                     document.body.insertAdjacentHTML('beforeend', alertHtml);
@@ -1371,7 +1371,7 @@
                                 
                                 if (btn) {
                                     btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> SUBIR COMPROBANTE';
-                                    btn.style.background = 'linear-gradient(135deg, #25d366 0%, #1ebe5d 100%)';
+                                    btn.style.background = 'linear-gradient(135deg, #111b21 0%, #1f2c34 100%)';
                                 }
                                 const montoRecarga = currentSaleAmount;
                                 currentSaleCredits = 0;
@@ -1380,13 +1380,13 @@
                                 setTimeout(() => {
                                     const alertHtml = `
                                         <div id="rechargeAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-                                            <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.25); border: 1px solid rgba(0,0,0,0.03);">
-                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(37,211,102,0.1); color: #25d366; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
+                                            <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; border: 2px solid #6b7280;">
+                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #111b21; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
                                                     <i class="fa-solid fa-circle-check"></i>
                                                 </div>
                                                 <h3 style="font-size: 18px; color: #111b21; margin: 0 0 6px; font-weight: 900;">¡Formulario Enviado!</h3>
                                                 <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 20px;">Tu recarga de <b>S/ ${montoRecarga}</b> está siendo verificada.</p>
-                                                <button onclick="document.getElementById('rechargeAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #25d366; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
+                                                <button onclick="document.getElementById('rechargeAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #111b21; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
                                             </div>
                                         </div>`;
                                     document.body.insertAdjacentHTML('beforeend', alertHtml);
@@ -1429,14 +1429,14 @@
                             setTimeout(() => {
                                 const alertHtml = `
                                     <div id="informeAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-                                        <div style="background: #ffffff; width: 90%; max-width: 360px; border-radius: 20px; padding: 28px 24px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.25); border: 1px solid rgba(0,0,0,0.03);">
+                                        <div style="background: #ffffff; width: 90%; max-width: 360px; border-radius: 20px; padding: 28px 24px; text-align: center; border: 2px solid #6b7280;">
                                             <div style="width: 56px; height: 56px; border-radius: 50%; background: #fff7ed; color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px;">
                                                 <i class="fa-solid fa-clock"></i>
                                             </div>
                                             <h3 style="font-size: 19px; color: #111b21; margin: 0 0 8px; font-weight: 900;">Comprobante en validación</h3>
                                             <p style="color: #64748b; font-size: 13px; line-height: 1.6; margin: 0 0 6px;">Tu comprobante para la placa <strong style="color: #111b21;">${p}</strong> ha sido recibido y está en proceso de validación.</p>
                                             <p style="color: #64748b; font-size: 12px; line-height: 1.5; margin: 0 0 22px; background: #f8fafc; padding: 12px; border-radius: 10px; border-left: 3px solid #f59e0b;">Nuestro equipo verificará tu pago en los próximos minutos. Podrás ver el estado en <strong>"Mis Consultas"</strong>.</p>
-                                            <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge(); window.location.href='panel_cliente.html';" style="width: 100%; padding: 13px; background: #25d366; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; margin-bottom: 8px;">VER MIS CONSULTAS</button>
+                                            <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge(); window.location.href='panel_cliente.html';" style="width: 100%; padding: 13px; background: #111b21; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; margin-bottom: 8px;">VER MIS CONSULTAS</button>
                                             <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge();" style="width: 100%; padding: 11px; background: transparent; color: #94a3b8; border: none; font-size: 12px; font-weight: 600; cursor: pointer;">CERRAR</button>
                                         </div>
                                     </div>`;
@@ -1564,7 +1564,7 @@
                 <div style="padding:24px 22px 20px;">
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                            <div style="width:36px; height:36px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">
                                 <i class="fa-solid fa-file-contract" style="color:#fff; font-size:16px;"></i>
                             </div>
                             <span style="font-size:16px; font-weight:800; color:#111b21;">Términos de Servicio</span>
@@ -1604,7 +1604,7 @@
                 <div style="padding:24px 22px 20px;">
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                            <div style="width:36px; height:36px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">
                                 <i class="fa-solid fa-shield-halved" style="color:#fff; font-size:16px;"></i>
                             </div>
                             <span style="font-size:16px; font-weight:800; color:#111b21;">Política de Privacidad</span>
@@ -1640,7 +1640,7 @@
                 <div style="padding:24px 22px 20px;">
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                            <div style="width:36px; height:36px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">
                                 <i class="fa-solid fa-headset" style="color:#fff; font-size:16px;"></i>
                             </div>
                             <span style="font-size:16px; font-weight:800; color:#111b21;">Centro de Contacto</span>
@@ -1651,21 +1651,21 @@
                         <p style="font-size:13px; color:#6b7280; line-height:1.6; margin:0 0 16px;">Nuestro equipo de atención al cliente está disponible para ayudarte con cualquier consulta, incidencia técnica o duda sobre tu cuenta y servicios contratados.</p>
                         <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:16px; margin-bottom:16px;">
                             <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                                <i class="fa-brands fa-whatsapp" style="color:#25d366; font-size:20px;"></i>
+                                <i class="fa-brands fa-whatsapp" style="color:#111b21; font-size:20px;"></i>
                                 <div>
                                     <div style="font-size:14px; font-weight:700; color:#111b21;">+51 979 334 296</div>
                                     <div style="font-size:11px; color:#6b7280;">Canal principal de atención</div>
                                 </div>
                             </div>
                             <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                                <i class="fa-solid fa-clock" style="color:#25d366; font-size:16px;"></i>
+                                <i class="fa-solid fa-clock" style="color:#111b21; font-size:16px;"></i>
                                 <div>
                                     <div style="font-size:13px; font-weight:600; color:#111b21;">Lunes a Domingo</div>
                                     <div style="font-size:11px; color:#6b7280;">Disponible las 24 horas del día</div>
                                 </div>
                             </div>
                             <div style="display:flex; align-items:center; gap:10px;">
-                                <i class="fa-solid fa-bolt" style="color:#25d366; font-size:16px;"></i>
+                                <i class="fa-solid fa-bolt" style="color:#111b21; font-size:16px;"></i>
                                 <div>
                                     <div style="font-size:13px; font-weight:600; color:#111b21;">Tiempo de respuesta</div>
                                     <div style="font-size:11px; color:#6b7280;">Menos de 5 minutos en horario laboral</div>
@@ -1680,7 +1680,7 @@
                             <div style="font-size:13px; font-weight:700; color:#111b21; margin-bottom:6px;">Reclamos y Sugerencias</div>
                             <p style="font-size:13px; color:#6b7280; line-height:1.7; margin:0;">Valoramos tu opinión. Si tienes alguna sugerencia para mejorar nuestro servicio o deseas presentar un reclamo formal, no dudes en comunicarte con nosotros. Nos comprometemos a atender cada caso con la seriedad y rapidez que mereces.</p>
                         </div>
-                        <a href="https://wa.me/51932465820?text=Hola%2C%20necesito%20ayuda%20con%20mi%20cuenta%20en%20Filtro%20Vehicular." target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:13px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                        <a href="https://wa.me/51932465820?text=Hola%2C%20necesito%20ayuda%20con%20mi%20cuenta%20en%20Filtro%20Vehicular." target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:13px; background:#111b21; color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; transition:background 0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                             <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> Escribir por WhatsApp
                         </a>
                     </div>
@@ -1791,15 +1791,15 @@
                 : '<div style="font-size:10px; color:#6b7280; margin-bottom:8px;">' + resultados.length + ' resultado(s)</div>' +
                   '<div style="display:flex; flex-direction:column; gap:6px;">' +
                   resultados.map(function(cmd) {
-                      return '<div onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#6b7280\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
-                          '<div style="width:30px; height:30px; min-width:30px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
+                      return '<div onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                          '<div style="width:30px; height:30px; min-width:30px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                               '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:12px; color:#fff;"></i>' +
                           '</div>' +
                           '<div style="flex:1; min-width:0;">' +
                               '<div style="font-size:11px; font-weight:600; color:#111b21;">' + cmd.nombre + '</div>' +
                               '<div style="font-size:8px; color:#6b7280;">' + (moduloNombres[cmd.modulo] || cmd.modulo) + ' · ' + cmd.categoria + '</div>' +
                           '</div>' +
-                          '<div style="font-size:9px; color:' + (cmd.creditos === 0 ? '#25d366' : '#111b21') + '; font-weight:600;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
+                          '<div style="font-size:9px; color:' + (cmd.creditos === 0 ? '#111b21' : '#111b21') + '; font-weight:600;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
                       '</div>';
                   }).join('') +
                   '</div>';
@@ -1817,8 +1817,8 @@
 
             container.innerHTML = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px;">' +
                 consultasModulos.map(function(mod) {
-                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:14px;" onmouseover="this.style.borderColor=\'#6b7280\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
-                        '<div style="width:42px; height:42px; min-width:42px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
+                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:14px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                        '<div style="width:42px; height:42px; min-width:42px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + mod.icono + '" style="font-size:17px; color:#fff;"></i>' +
                         '</div>' +
                         '<div style="flex:1;">' +
@@ -1869,14 +1869,14 @@
             };
 
             container.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                '<button onclick="renderConsultasCategorias()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                '<button onclick="renderConsultasCategorias()" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                 '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + (modInfo ? modInfo.nombre : moduloId) + '</div>' +
                 '<div style="font-size:10px; color:#8696a0; margin-left:auto;">' + categorias.length + ' categorías</div>' +
             '</div>' +
             '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:8px;">' +
                 categorias.map(function(cat) {
-                    return '<div onclick="renderConsultasComandos(\'' + cat + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#6b7280\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
-                        '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
+                    return '<div onclick="renderConsultasComandos(\'' + cat + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                        '<div style="width:34px; height:34px; min-width:34px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '" style="font-size:13px; color:#fff;"></i>' +
                         '</div>' +
                         '<div style="font-size:12px; font-weight:600; color:#111b21;">' + cat + '</div>' +
@@ -1907,13 +1907,13 @@
             var volverFn = consultasModuloActual ? 'renderConsultasModulo(\'' + consultasModuloActual + '\')' : 'renderConsultasCategorias()';
 
             cmdsEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                '<button onclick="' + volverFn + '" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                '<button onclick="' + volverFn + '" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                 '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + catId + '</div>' +
                 '<div style="font-size:10px; color:#8696a0; margin-left:auto;">' + consultasComandosData.length + ' servicios</div>' +
             '</div>' +
             '<div style="display:flex; flex-direction:column; gap:6px;">' +
                 consultasComandosData.map(function(cmd) {
-                    return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#6b7280\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
+                    return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
                         '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:13px; color:#fff;"></i>' +
                         '</div>' +
@@ -1922,7 +1922,7 @@
                             '<div style="font-size:9px; color:#6b7280;">' + cmd.descripcion + '</div>' +
                         '</div>' +
                         '<div style="flex-shrink:0; text-align:right;">' +
-                            '<div style="font-size:10px; font-weight:600; color:' + (cmd.creditos === 0 ? '#25d366' : '#111b21') + ';">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
+                            '<div style="font-size:10px; font-weight:600; color:' + (cmd.creditos === 0 ? '#111b21' : '#111b21') + ';">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
                             '<div style="font-size:8px; color:#6b7280;">' + cmd.tipo.toUpperCase() + '</div>' +
                         '</div>' +
                     '</div>';
@@ -1955,12 +1955,12 @@
                 ? '<label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Selecciona una foto</label>' +
                   '<input type="file" id="consultaFoto" accept="image/*" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-size:12px; color:#111b21; box-sizing:border-box; cursor:pointer;">'
                 : '<label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Dato a consultar</label>' +
-                  '<input type="text" id="consultaInput" placeholder="' + placeholder + '" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; color:#111b21; outline:none; box-sizing:border-box; text-align:center; font-family:\'Roboto\',sans-serif; transition:border-color 0.2s;" onfocus="this.style.borderColor=\'#25d366\'" onblur="this.style.borderColor=\'#e5e7eb\'" onkeydown="if(event.key===\'Enter\')ejecutarConsulta(\'' + cmdId + '\')">';
+                  '<input type="text" id="consultaInput" placeholder="' + placeholder + '" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; color:#111b21; outline:none; box-sizing:border-box; text-align:center; font-family:\'Roboto\',sans-serif; transition:border-color 0.2s;" onfocus="this.style.borderColor=\'#111b21\'" onblur="this.style.borderColor=\'#e5e7eb\'" onkeydown="if(event.key===\'Enter\')ejecutarConsulta(\'' + cmdId + '\')">';
 
             infoContent.innerHTML = '<div style="background:#111b21; padding:20px 18px 16px; position:relative;">' +
                 '<button onclick="document.getElementById(\'infoModal\').style.display=\'none\'" style="position:absolute; top:12px; right:12px; background:none; border:none; color:#8696a0; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>' +
                 '<div style="display:flex; align-items:center; gap:10px;">' +
-                    '<div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
+                    '<div style="width:36px; height:36px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
                         '<i class="fa-solid ' + (esFoto ? 'fa-camera' : cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:15px; color:#fff;"></i>' +
                     '</div>' +
                     '<div>' +
@@ -2058,7 +2058,7 @@
                         '</a>';
                     } else {
                         archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
-                            '<div style="width:36px; height:36px; min-width:36px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
+                            '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
                             '<div><div style="font-size:12px; font-weight:600;">Descargar archivo</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para descargar</div></div>' +
                             '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
                         '</a>';
@@ -2081,7 +2081,7 @@
             var cmdLabel = data.comando ? data.comando.nombre : '';
 
             resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                '<button onclick="volverConsultas()" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                 '<div style="flex:1;"><div style="font-size:13px; font-weight:600; color:#e9edef;">Resultado</div>' +
                 (moduloLabel ? '<div style="font-size:9px; color:#8696a0;">' + moduloLabel + ' · ' + cmdLabel + '</div>' : '') +
                 '</div></div>' +
@@ -2149,11 +2149,11 @@
                     if (resEl) {
                         resEl.style.display = 'block';
                         resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                            '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                            '<button onclick="volverConsultas()" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                             '<div style="font-size:13px; font-weight:600; color:#e9edef;">Procesando...</div>' +
                         '</div>' +
                         '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:30px; text-align:center;">' +
-                            '<i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:#25d366; margin-bottom:12px; display:block;"></i>' +
+                            '<i class="fa-solid fa-spinner fa-spin" style="font-size:28px; color:#111b21; margin-bottom:12px; display:block;"></i>' +
                             '<div style="font-size:13px; font-weight:600; color:#111b21;">Consultando al sistema...</div>' +
                             '<div style="font-size:11px; color:#6b7280; margin-top:4px;">Esto puede tardar unos segundos</div>' +
                         '</div>';
@@ -2167,7 +2167,7 @@
                             if (maxPolls <= 0) {
                                 clearInterval(pollInterval);
                                 if (resEl) resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                                    '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                                    '<button onclick="volverConsultas()" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                                     '<div style="font-size:13px; font-weight:600; color:#e9edef;">Timeout</div></div>' +
                                     '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; text-align:center;">' +
                                     '<div style="font-size:13px; color:#6b7280;">La consulta tardó demasiado.</div>' +
@@ -2195,7 +2195,7 @@
                     if (cmdsEl2) cmdsEl2.style.display = 'none';
                     resEl2.style.display = 'block';
                     resEl2.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                        '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<button onclick="volverConsultas()" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                         '<div style="font-size:13px; font-weight:600; color:#e9edef;">Error</div>' +
                     '</div>' +
                     '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; text-align:center;">' +
@@ -2278,7 +2278,7 @@
                                 '</a>';
                             } else {
                                 archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
-                                    '<div style="width:36px; height:36px; min-width:36px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
+                                    '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
                                     '<div><div style="font-size:12px; font-weight:600;">Descargar archivo</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para descargar</div></div>' +
                                     '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
                                 '</a>';
@@ -2298,7 +2298,7 @@
                     }
 
                     resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                        '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<button onclick="volverConsultas()" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                         '<div style="font-size:13px; font-weight:600; color:#e9edef;">Resultado</div>' +
                     '</div>' +
                     '<div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; font-size:12px; color:#111b21; line-height:1.7; word-break:break-word;">' +
@@ -2320,7 +2320,7 @@
                     if (cmdsEl3) cmdsEl3.style.display = 'none';
                     resEl3.style.display = 'block';
                     resEl3.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                        '<button onclick="volverConsultas()" style="background:#25d366; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                        '<button onclick="volverConsultas()" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
                         '<div style="font-size:13px; font-weight:600; color:#e9edef;">Error</div>' +
                     '</div>' +
                     '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; text-align:center;">' +
@@ -2386,14 +2386,14 @@
                 pwaBanner.id = "pwaBannerContainer";
                 pwaBanner.innerHTML = `
                     <div style="position:fixed; bottom:16px; left:12px; right:12px; max-width:460px; margin:0 auto; background:#111b21; border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px; z-index:99999; animation:slideInPwa 0.4s ease forwards; border:1px solid #2a3942;">
-                        <div style="width:40px; height:40px; min-width:40px; border-radius:10px; background:#25d366; display:flex; align-items:center; justify-content:center;">
+                        <div style="width:40px; height:40px; min-width:40px; border-radius:10px; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center;">
                             <i class="fa-solid fa-download" style="font-size:16px; color:#fff;"></i>
                         </div>
                         <div style="flex:1; min-width:0;">
                             <div style="font-weight:600; font-size:13px; color:#e9edef;">Instalar App</div>
                             <div style="font-size:11px; color:#8696a0; font-weight:400;">Acceso rápido desde tu pantalla de inicio</div>
                         </div>
-                        <button id="btnInstallApp" style="background:#25d366; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:600; cursor:pointer; font-size:11px; transition:background 0.2s; flex-shrink:0; white-space:nowrap;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                        <button id="btnInstallApp" style="background:#ffffff; color:#111b21; border:none; padding:8px 14px; border-radius:8px; font-weight:600; cursor:pointer; font-size:11px; transition:background 0.2s; flex-shrink:0; white-space:nowrap;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#ffffff'">
                             Instalar
                         </button>
                         <button id="btnDismissPwa" style="background:none; border:none; color:#8696a0; font-size:16px; cursor:pointer; padding:4px; flex-shrink:0;">
@@ -2646,7 +2646,7 @@
                             <div style="font-size: 11px; color: #64748b;">Pago único · Acceso permanente</div>
                         </div>
                         <div style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Tu saldo actual: <strong style="color: #10b981;">S/ ${soles}</strong></div>
-                        <button onclick="activarDashboard()" style="background:#25d366; color:#fff; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%; font-size: 14px;">ACTIVAR POR S/ 35.00</button>
+                        <button onclick="activarDashboard()" style="background:#111b21; color:#fff; border:none; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer; width:100%; font-size: 14px;">ACTIVAR POR S/ 35.00</button>
                         <button onclick="document.getElementById('infoModal').style.display='none';" style="background: none; border: none; color: #94a3b8; margin-top: 10px; cursor: pointer; font-size: 13px;">Cancelar</button>
                     </div>`;
             } else if (type === 'insufficient') {
@@ -2673,7 +2673,7 @@
                         </div>
 
                         <!-- Botón Principal Sólido -->
-                        <button onclick="document.getElementById('infoModal').style.display='none'; openSale('35.00', 'Acceso Dashboard Permanente', 0, 'dashboard')" style="background: #25d366; color:#fff; border:none; padding:15px; border-radius: 10px; font-weight:900; cursor:pointer; width:100%; font-size: 14px; margin-bottom:12px; text-transform: uppercase;">
+                        <button onclick="document.getElementById('infoModal').style.display='none'; openSale('35.00', 'Acceso Dashboard Permanente', 0, 'dashboard')" style="background: #111b21; color:#fff; border:none; padding:15px; border-radius: 10px; font-weight:900; cursor:pointer; width:100%; font-size: 14px; margin-bottom:12px; text-transform: uppercase;">
                             <i class="fa-solid fa-credit-card" style="margin-right: 8px;"></i> PAGAR AHORA
                         </button>
 
@@ -2745,7 +2745,7 @@
 
             grid.innerHTML = `
                 <div style="grid-column: 1 / -1; background:#111b21; border-radius:12px; padding:16px 18px; margin-bottom:8px; display:flex; align-items:center; gap:12px;">
-                    <button onclick="dashViewMode = 'categories'; renderDashGrid();" style="border:none; background:#25d366; color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:12px;">
+                    <button onclick="dashViewMode = 'categories'; renderDashGrid();" style="border:none; background:#111b21; color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:12px;">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
                     <div>
@@ -2762,7 +2762,7 @@
                         <div style="font-size:11px; font-weight:600; color:#111b21; text-transform:uppercase; letter-spacing:0.1px; line-height:1.3;">${esc(item.Titulo)}</div>
                         <div style="font-size:9px; font-weight:400; color:#6b7280; margin-top:2px;">${item.cat === 'SUNARP' ? 'SUNARP' : item.cat === 'MTC' ? 'MTC' : item.cat === 'MULTAS' ? 'Multas y Deudas' : item.cat === 'SEGUROS' ? 'Seguros y Reportes' : item.cat === 'GRATUITOS' ? 'Servicio Gratuito' : item.cat === 'REGIONES' ? 'Multas por Región' : 'General'}</div>
                     </div>
-                    <div style="color:#25d366; font-size:12px; flex-shrink:0;"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+                    <div style="color:#111b21; font-size:12px; flex-shrink:0;"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
                 </div>
             `).join('');
         }
