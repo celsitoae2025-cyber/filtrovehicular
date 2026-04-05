@@ -401,33 +401,31 @@ function renderLoggedInState() {
                     <div onclick="mostrarPerfilCliente()" style="cursor: pointer; padding: 18px 20px 14px; border-bottom: 1px solid #e5e7eb;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                             <span style="font-size: 14px; font-weight: 800; color: #111b21;">Mi Perfil</span>
-                            <span style="background: #111b21; color: #ffffff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px;">PREMIUM</span>
+                            <span style="background: #25d366; color: #ffffff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px;">PREMIUM</span>
                         </div>
                         <span style="font-size: 11px; color: #6b7280; font-weight: 500;">${maskedEmail}</span>
                     </div>
-                    <div style="padding: 14px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
-                        <div>
-                            <div style="font-size: 14px; font-weight: 700; color: #111b21; line-height: 1; text-transform:uppercase;">${creditosDisplay} Créditos</div>
-                            <div style="font-size: 10px; color: #6b7280; font-weight: 400; margin-top: 2px; text-transform:uppercase;">Créditos Disponibles</div>
-                        </div>
+                    <div style="padding: 14px 20px; border-bottom: 1px solid #e5e7eb;">
+                        <div style="font-size: 14px; font-weight: 700; color: #25d366; line-height: 1; text-transform:uppercase;">${creditosDisplay} Créditos</div>
+                        <div style="font-size: 10px; color: #6b7280; font-weight: 400; margin-top: 4px; text-transform:uppercase;">Créditos Disponibles</div>
                     </div>
                     <div style="padding: 4px 0;">
-                        <a href="panel_cliente.html" onclick="closeUserDropdown()" class="dropdown-item" id="misConsultasLink" style="color:#111b21;">
-                            <i class="fa-solid fa-file-invoice" style="color: #111b21;"></i> Mis Consultas
+                        <a href="panel_cliente.html" onclick="closeUserDropdown()" class="dropdown-item" style="color:#111b21;">
+                            <i class="fa-solid fa-file-invoice" style="color: #25d366;"></i> Mis Consultas
                         </a>
                         <a href="javascript:void(0)" onclick="closeUserDropdown(); openAccess();" class="dropdown-item" style="color:#111b21;">
-                            <i class="fa-solid fa-coins" style="color: #111b21;"></i> Mis Créditos
+                            <i class="fa-solid fa-coins" style="color: #25d366;"></i> Mis Créditos
                         </a>
                         <a href="javascript:void(0)" onclick="closeUserDropdown(); openChangePasswordModal();" class="dropdown-item" style="color:#111b21;">
-                            <i class="fa-solid fa-key" style="color: #111b21;"></i> Cambiar Contraseña
+                            <i class="fa-solid fa-key" style="color: #25d366;"></i> Cambiar Contraseña
                         </a>
                         <a href="tutorial.html" onclick="closeUserDropdown();" class="dropdown-item" style="color:#111b21;">
-                            <i class="fa-solid fa-book-open" style="color: #111b21;"></i> Tutorial
+                            <i class="fa-solid fa-book-open" style="color: #25d366;"></i> Tutorial
                         </a>
                     </div>
                     <div style="border-top: 1px solid #e5e7eb; padding: 4px 0;">
-                        <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item" style="color: #6b7280; font-weight: 500;">
-                            <i class="fa-solid fa-right-from-bracket" style="color: #6b7280;"></i> Cerrar Sesión
+                        <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item" style="color: #8696a0; font-weight: 500;">
+                            <i class="fa-solid fa-right-from-bracket" style="color: #8696a0;"></i> Cerrar Sesión
                         </a>
                     </div>
                 </div>

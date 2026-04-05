@@ -2077,7 +2077,7 @@
             margin-top: 10px;
             overflow: hidden;
             pointer-events: none;
-            border: 2px solid #6b7280;
+            border: 1px solid #e5e7eb;
             box-shadow: none;
         }
 
@@ -2105,7 +2105,7 @@
             font-size: 14px;
             width: 18px;
             text-align: center;
-            opacity: 0.6;
+            opacity: 1;
         }
 
         .dropdown-item:hover {
@@ -2252,7 +2252,7 @@
         .footer-logo-sub {
             font-size: 9px;
             font-weight: 600;
-            color: #ffffff;
+            color: #25d366;
             letter-spacing: 3px;
             text-transform: uppercase;
             text-align: right;
