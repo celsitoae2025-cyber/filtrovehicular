@@ -1792,7 +1792,7 @@
                   '<div style="display:flex; flex-direction:column; gap:6px;">' +
                   resultados.map(function(cmd) {
                       return '<div onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
-                          '<div style="width:30px; height:30px; min-width:30px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
+                          '<div style="width:30px; height:30px; min-width:30px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                               '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:12px; color:#fff;"></i>' +
                           '</div>' +
                           '<div style="flex:1; min-width:0;">' +
@@ -1914,7 +1914,7 @@
             '<div style="display:flex; flex-direction:column; gap:6px;">' +
                 consultasComandosData.map(function(cmd) {
                     return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
-                        '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
+                        '<div style="width:34px; height:34px; min-width:34px; background:#25d366; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:13px; color:#fff;"></i>' +
                         '</div>' +
                         '<div style="flex:1; min-width:0;">' +
