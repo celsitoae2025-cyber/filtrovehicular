@@ -2069,12 +2069,17 @@
                 docs.forEach(function(f) {
                     if (f.tipo === 'pdf') {
                         var pdfUrl = BRIDGE_URL + f.url;
-                        var viewerUrl = 'https://docs.google.com/gview?embedded=true&url=' + encodeURIComponent(pdfUrl);
-                        archivosHtml += '<div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">' +
-                            '<iframe src="' + viewerUrl + '" style="width:100%; height:450px; border:none; display:block;"></iframe>' +
-                            '<a href="' + pdfUrl + '" target="_blank" style="display:flex; align-items:center; gap:6px; padding:8px 12px; text-decoration:none; color:#ef4444; font-size:11px; font-weight:600; border-top:1px solid #e5e7eb;">' +
-                                '<i class="fa-solid fa-file-pdf" style="font-size:12px;"></i> Descargar PDF' +
-                            '</a>' +
+                        var pdfViewId = 'pdfView_' + f.id;
+                        archivosHtml += '<div style="margin-top:8px;">' +
+                            '<div style="display:flex; gap:8px;">' +
+                                '<a href="' + pdfUrl + '" download style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; background:#111b21; color:#fff; border-radius:10px; text-decoration:none; font-size:11px; font-weight:600;">' +
+                                    '<i class="fa-solid fa-download" style="font-size:13px;"></i> Descargar' +
+                                '</a>' +
+                                '<button onclick="var el=document.getElementById(\'' + pdfViewId + '\');if(el.style.display===\'none\'){el.style.display=\'block\';el.src=\'' + pdfUrl + '\';}else{el.style.display=\'none\';}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;">' +
+                                    '<i class="fa-solid fa-eye" style="font-size:13px;"></i> Visualizar' +
+                                '</button>' +
+                            '</div>' +
+                            '<iframe id="' + pdfViewId + '" style="display:none; width:100%; height:500px; border:1px solid #e5e7eb; border-radius:10px; margin-top:8px;"></iframe>' +
                         '</div>';
                     } else {
                         archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
@@ -2200,7 +2205,19 @@
                             }
                             var pollRes = await bridgeFetch(BRIDGE_URL + '/api/consulta/' + jobId);
                             var pollData = await pollRes.json();
-                            if (pollData.status === 'processing') return;
+                            if (pollData.status === 'processing') {
+                                // Mostrar datos parciales si hay
+                                if (pollData.partial && pollData.partial.texto && resEl) {
+                                    var partialHtml = formatearResultado(pollData.partial.texto);
+                                    resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
+                                        '<button onclick="volverConsultas()" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
+                                        '<div style="font-size:13px; font-weight:600; color:#e9edef;">Cargando...</div>' +
+                                        '<i class="fa-solid fa-spinner fa-spin" style="color:#25d366; margin-left:auto;"></i>' +
+                                    '</div>' +
+                                    '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:14px; font-size:12px; color:#111b21; line-height:1.5;">' + partialHtml + '</div>';
+                                }
+                                return;
+                            }
                             clearInterval(pollInterval);
                             mostrarResultadoConsulta(pollData);
                         } catch(pe) { /* seguir intentando */ }
@@ -2296,12 +2313,18 @@
                         docs.forEach(function(f) {
                             if (f.tipo === 'pdf') {
                                 var pdfUrl2 = BRIDGE_URL + f.url;
-                                var viewerUrl2 = 'https://docs.google.com/gview?embedded=true&url=' + encodeURIComponent(pdfUrl2);
-                                archivosHtml += '<div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">' +
-                                    '<iframe src="' + viewerUrl2 + '" style="width:100%; height:450px; border:none; display:block;"></iframe>' +
-                                    '<a href="' + pdfUrl2 + '" target="_blank" style="display:flex; align-items:center; gap:6px; padding:8px 12px; text-decoration:none; color:#ef4444; font-size:11px; font-weight:600; border-top:1px solid #e5e7eb;">' +
-                                        '<i class="fa-solid fa-file-pdf" style="font-size:12px;"></i> Descargar PDF' +
-                                    '</a></div>';
+                                var pdfViewId2 = 'pdfView2_' + f.id;
+                                archivosHtml += '<div style="margin-top:8px;">' +
+                                    '<div style="display:flex; gap:8px;">' +
+                                        '<a href="' + pdfUrl2 + '" download style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; background:#111b21; color:#fff; border-radius:10px; text-decoration:none; font-size:11px; font-weight:600;">' +
+                                            '<i class="fa-solid fa-download" style="font-size:13px;"></i> Descargar' +
+                                        '</a>' +
+                                        '<button onclick="var el=document.getElementById(\'' + pdfViewId2 + '\');if(el.style.display===\'none\'){el.style.display=\'block\';el.src=\'' + pdfUrl2 + '\';}else{el.style.display=\'none\';}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;">' +
+                                            '<i class="fa-solid fa-eye" style="font-size:13px;"></i> Visualizar' +
+                                        '</button>' +
+                                    '</div>' +
+                                    '<iframe id="' + pdfViewId2 + '" style="display:none; width:100%; height:500px; border:1px solid #e5e7eb; border-radius:10px; margin-top:8px;"></iframe>' +
+                                '</div>';
                             } else {
                                 archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
                                     '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
