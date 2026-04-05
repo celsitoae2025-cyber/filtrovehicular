@@ -2069,32 +2069,13 @@
                 docs.forEach(function(f) {
                     if (f.tipo === 'pdf') {
                         var pdfUrl = BRIDGE_URL + f.url;
-                        archivosHtml += '<div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; background:#fff;">' +
-                            '<div id="pdfPreview_' + f.id + '" style="width:100%; min-height:200px; display:flex; align-items:center; justify-content:center; padding:10px; box-sizing:border-box;">' +
-                                '<div style="text-align:center; color:#6b7280; font-size:11px;"><i class="fa-solid fa-spinner fa-spin" style="font-size:20px; color:#25d366; display:block; margin-bottom:8px;"></i>Cargando PDF...</div>' +
-                            '</div>' +
+                        var viewerUrl = 'https://docs.google.com/gview?embedded=true&url=' + encodeURIComponent(pdfUrl);
+                        archivosHtml += '<div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">' +
+                            '<iframe src="' + viewerUrl + '" style="width:100%; height:450px; border:none; display:block;"></iframe>' +
                             '<a href="' + pdfUrl + '" target="_blank" style="display:flex; align-items:center; gap:6px; padding:8px 12px; text-decoration:none; color:#ef4444; font-size:11px; font-weight:600; border-top:1px solid #e5e7eb;">' +
                                 '<i class="fa-solid fa-file-pdf" style="font-size:12px;"></i> Descargar PDF' +
                             '</a>' +
-                        '</div>' +
-                        '<script>' +
-                            '(function(){var c=document.getElementById("pdfPreview_' + f.id + '");if(!c)return;' +
-                            'var url="' + pdfUrl + '";' +
-                            'pdfjsLib.getDocument(url).promise.then(function(pdf){' +
-                                'c.innerHTML="";' +
-                                'var pages=Math.min(pdf.numPages,3);' +
-                                'for(var i=1;i<=pages;i++){(function(num){' +
-                                    'pdf.getPage(num).then(function(page){' +
-                                        'var vp=page.getViewport({scale:1.2});' +
-                                        'var cv=document.createElement("canvas");' +
-                                        'cv.width=vp.width;cv.height=vp.height;' +
-                                        'cv.style.width="100%";cv.style.height="auto";cv.style.display="block";' +
-                                        'c.appendChild(cv);' +
-                                        'page.render({canvasContext:cv.getContext("2d"),viewport:vp});' +
-                                    '});' +
-                                '})(i);}' +
-                            '}).catch(function(){c.innerHTML="<iframe src=\\""+url+"\\" style=\\"width:100%;height:400px;border:none;\\"></iframe>";});' +
-                        '})();<\/script>';
+                        '</div>';
                     } else {
                         archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
                             '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
@@ -2315,14 +2296,12 @@
                         docs.forEach(function(f) {
                             if (f.tipo === 'pdf') {
                                 var pdfUrl2 = BRIDGE_URL + f.url;
-                                archivosHtml += '<div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; background:#fff;">' +
-                                    '<div id="pdfPreview2_' + f.id + '" style="width:100%; min-height:200px; display:flex; align-items:center; justify-content:center; padding:10px; box-sizing:border-box;">' +
-                                        '<div style="text-align:center; color:#6b7280; font-size:11px;"><i class="fa-solid fa-spinner fa-spin" style="font-size:20px; color:#25d366; display:block; margin-bottom:8px;"></i>Cargando PDF...</div>' +
-                                    '</div>' +
+                                var viewerUrl2 = 'https://docs.google.com/gview?embedded=true&url=' + encodeURIComponent(pdfUrl2);
+                                archivosHtml += '<div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">' +
+                                    '<iframe src="' + viewerUrl2 + '" style="width:100%; height:450px; border:none; display:block;"></iframe>' +
                                     '<a href="' + pdfUrl2 + '" target="_blank" style="display:flex; align-items:center; gap:6px; padding:8px 12px; text-decoration:none; color:#ef4444; font-size:11px; font-weight:600; border-top:1px solid #e5e7eb;">' +
                                         '<i class="fa-solid fa-file-pdf" style="font-size:12px;"></i> Descargar PDF' +
-                                    '</a></div>' +
-                                    '<script>(function(){var c=document.getElementById("pdfPreview2_' + f.id + '");if(!c)return;var url="' + pdfUrl2 + '";pdfjsLib.getDocument(url).promise.then(function(pdf){c.innerHTML="";var pages=Math.min(pdf.numPages,3);for(var i=1;i<=pages;i++){(function(num){pdf.getPage(num).then(function(page){var vp=page.getViewport({scale:1.2});var cv=document.createElement("canvas");cv.width=vp.width;cv.height=vp.height;cv.style.width="100%";cv.style.height="auto";cv.style.display="block";c.appendChild(cv);page.render({canvasContext:cv.getContext("2d"),viewport:vp});});})(i);}}).catch(function(){c.innerHTML="<iframe src=\\""+url+"\\" style=\\"width:100%;height:400px;border:none;\\"></iframe>";});})();<\/script>';
+                                    '</a></div>';
                             } else {
                                 archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
                                     '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
