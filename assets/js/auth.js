@@ -24,6 +24,7 @@ async function initAuth() {
 
     window.plataformaActiva = false;
     window.dashboardActivo = false;
+    window.tieneCreditos = false;
 
     if (currentUser && currentUser.email) {
         hideLoginScreen();
@@ -186,11 +187,7 @@ async function renderLoggedInState() {
 
     var creditos = 0;
     var plataformaActiva = false;
-    
-    // Inicializar siempre en false por defecto
-    window.dashboardActivo = false;
-    window.plataformaActiva = false;
-    
+
     try {
         if (window.sb) {
             var res = await window.sb
@@ -208,9 +205,6 @@ async function renderLoggedInState() {
         }
     } catch (e) {
         console.error('Error obteniendo créditos:', e);
-        // Mantener valores por defecto en false si hay error
-        window.dashboardActivo = false;
-        window.plataformaActiva = false;
     }
 
     // Actualizar logo según estado de plataforma

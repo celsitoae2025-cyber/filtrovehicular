@@ -153,10 +153,14 @@
                 return;
             }
 
-            // Consultas requiere créditos (comprar un plan)
-            if (tabName === 'consultas' && !window.tieneCreditos) {
-                openAccess();
-                return;
+            // Consultas requiere créditos
+            if (tabName === 'consultas') {
+                // Verificar si tiene créditos (ya cargados en auth.js)
+                // Si aún no cargó (undefined), dejar pasar — el bridge verificará server-side
+                if (window.tieneCreditos === false) {
+                    openAccess();
+                    return;
+                }
             }
             
             // Agregar al historial de navegación
