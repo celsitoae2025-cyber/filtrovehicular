@@ -1993,26 +1993,32 @@
 
         function formatearResultado(texto) {
             if (!texto || !texto.trim()) return '<span style="color:#9ca3af;">Sin respuesta</span>';
-            // Convertir negritas markdown
             var html = texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            // Detectar líneas tipo "CAMPO : VALOR" y formatear como filas
-            var lineas = html.split('\n');
+            // Limpiar líneas basura del frontend
+            var lineas = html.split('\n').filter(function(l) {
+                var t = l.trim();
+                if (!t) return false;
+                if (t === '[' || t === ']') return false;
+                if (/^\[?\s*CONSULTA\s+TIVE/i.test(t)) return false;
+                if (/^Informaci.n General\s*:?\s*$/i.test(t)) return false;
+                if (/^Monedas\s*:?\s*$/i.test(t)) return false;
+                if (/^Id\s*:\s*\d+\s*$/i.test(t)) return false;
+                if (/^Consultado por/i.test(t)) return false;
+                return true;
+            });
             var filas = [];
             var otrasLineas = [];
             lineas.forEach(function(linea) {
                 var limpia = linea.trim();
-                if (!limpia) return;
-                // Detectar patrón CAMPO : VALOR
                 var match = limpia.match(/^([A-ZÁÉÍÓÚÑ\s\.\/_-]{2,}?)\s*:\s*(.+)$/i);
                 if (match && match[1].trim().length > 1 && match[2].trim().length > 0) {
                     filas.push({ campo: match[1].trim(), valor: match[2].trim() });
                 } else {
-                    // Si había filas acumuladas, renderizar tabla primero
                     if (filas.length > 0) {
                         otrasLineas.push(renderTablaResultado(filas));
                         filas = [];
                     }
-                    otrasLineas.push('<div style="padding:1px 0; font-size:11px; line-height:1.4;">' + limpia + '</div>');
+                    otrasLineas.push('<div style="font-size:11px; line-height:1.3; color:#111b21;">' + limpia + '</div>');
                 }
             });
             if (filas.length > 0) {
@@ -2022,11 +2028,11 @@
         }
 
         function renderTablaResultado(filas) {
-            var html = '<table style="width:100%; border-collapse:collapse; margin:4px 0;">';
+            var html = '<table style="width:100%; border-collapse:collapse;">';
             filas.forEach(function(f) {
                 html += '<tr>' +
-                    '<td style="padding:3px 8px 3px 0; font-weight:600; color:#6b7280; white-space:nowrap; vertical-align:top; font-size:10px; text-transform:uppercase;">' + f.campo + '</td>' +
-                    '<td style="padding:3px 0; color:#111b21; font-weight:500; font-size:11px;">' + f.valor + '</td>' +
+                    '<td style="padding:2px 6px 2px 0; font-weight:700; color:#111b21; white-space:nowrap; vertical-align:top; font-size:11px;">' + f.campo + '</td>' +
+                    '<td style="padding:2px 0; color:#374151; font-weight:400; font-size:11px;">' + f.valor + '</td>' +
                 '</tr>';
             });
             html += '</table>';
@@ -2062,13 +2068,33 @@
                 }
                 docs.forEach(function(f) {
                     if (f.tipo === 'pdf') {
-                        archivosHtml += '<div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">' +
-                            '<img src="' + BRIDGE_URL + f.url.replace('.pdf', '.jpg') + '" onerror="this.parentElement.innerHTML=\'<iframe src=\\x27' + BRIDGE_URL + f.url + '\\x27 style=\\x27width:100%;height:400px;border:none;\\x27></iframe>\'+this.parentElement.innerHTML.split(\'</img>\').pop()" style="display:none;">' +
-                            '<iframe src="' + BRIDGE_URL + f.url + '#toolbar=0&navpanes=0&scrollbar=0" style="width:100%; height:450px; border:none; display:block;"></iframe>' +
-                            '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:6px; padding:8px 12px; text-decoration:none; color:#ef4444; font-size:11px; font-weight:600; border-top:1px solid #e5e7eb; background:#fff;">' +
+                        var pdfUrl = BRIDGE_URL + f.url;
+                        archivosHtml += '<div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; background:#fff;">' +
+                            '<div id="pdfPreview_' + f.id + '" style="width:100%; min-height:200px; display:flex; align-items:center; justify-content:center; padding:10px; box-sizing:border-box;">' +
+                                '<div style="text-align:center; color:#6b7280; font-size:11px;"><i class="fa-solid fa-spinner fa-spin" style="font-size:20px; color:#25d366; display:block; margin-bottom:8px;"></i>Cargando PDF...</div>' +
+                            '</div>' +
+                            '<a href="' + pdfUrl + '" target="_blank" style="display:flex; align-items:center; gap:6px; padding:8px 12px; text-decoration:none; color:#ef4444; font-size:11px; font-weight:600; border-top:1px solid #e5e7eb;">' +
                                 '<i class="fa-solid fa-file-pdf" style="font-size:12px;"></i> Descargar PDF' +
                             '</a>' +
-                        '</div>';
+                        '</div>' +
+                        '<script>' +
+                            '(function(){var c=document.getElementById("pdfPreview_' + f.id + '");if(!c)return;' +
+                            'var url="' + pdfUrl + '";' +
+                            'pdfjsLib.getDocument(url).promise.then(function(pdf){' +
+                                'c.innerHTML="";' +
+                                'var pages=Math.min(pdf.numPages,3);' +
+                                'for(var i=1;i<=pages;i++){(function(num){' +
+                                    'pdf.getPage(num).then(function(page){' +
+                                        'var vp=page.getViewport({scale:1.2});' +
+                                        'var cv=document.createElement("canvas");' +
+                                        'cv.width=vp.width;cv.height=vp.height;' +
+                                        'cv.style.width="100%";cv.style.height="auto";cv.style.display="block";' +
+                                        'c.appendChild(cv);' +
+                                        'page.render({canvasContext:cv.getContext("2d"),viewport:vp});' +
+                                    '});' +
+                                '})(i);}' +
+                            '}).catch(function(){c.innerHTML="<iframe src=\\""+url+"\\" style=\\"width:100%;height:400px;border:none;\\"></iframe>";});' +
+                        '})();<\/script>';
                     } else {
                         archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
                             '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
@@ -2288,11 +2314,15 @@
 
                         docs.forEach(function(f) {
                             if (f.tipo === 'pdf') {
-                                archivosHtml += '<div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">' +
-                                    '<iframe src="' + BRIDGE_URL + f.url + '#toolbar=0&navpanes=0&scrollbar=0" style="width:100%; height:450px; border:none; display:block;"></iframe>' +
-                                    '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:6px; padding:8px 12px; text-decoration:none; color:#ef4444; font-size:11px; font-weight:600; border-top:1px solid #e5e7eb; background:#fff;">' +
+                                var pdfUrl2 = BRIDGE_URL + f.url;
+                                archivosHtml += '<div style="margin-top:8px; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; background:#fff;">' +
+                                    '<div id="pdfPreview2_' + f.id + '" style="width:100%; min-height:200px; display:flex; align-items:center; justify-content:center; padding:10px; box-sizing:border-box;">' +
+                                        '<div style="text-align:center; color:#6b7280; font-size:11px;"><i class="fa-solid fa-spinner fa-spin" style="font-size:20px; color:#25d366; display:block; margin-bottom:8px;"></i>Cargando PDF...</div>' +
+                                    '</div>' +
+                                    '<a href="' + pdfUrl2 + '" target="_blank" style="display:flex; align-items:center; gap:6px; padding:8px 12px; text-decoration:none; color:#ef4444; font-size:11px; font-weight:600; border-top:1px solid #e5e7eb;">' +
                                         '<i class="fa-solid fa-file-pdf" style="font-size:12px;"></i> Descargar PDF' +
-                                    '</a></div>';
+                                    '</a></div>' +
+                                    '<script>(function(){var c=document.getElementById("pdfPreview2_' + f.id + '");if(!c)return;var url="' + pdfUrl2 + '";pdfjsLib.getDocument(url).promise.then(function(pdf){c.innerHTML="";var pages=Math.min(pdf.numPages,3);for(var i=1;i<=pages;i++){(function(num){pdf.getPage(num).then(function(page){var vp=page.getViewport({scale:1.2});var cv=document.createElement("canvas");cv.width=vp.width;cv.height=vp.height;cv.style.width="100%";cv.style.height="auto";cv.style.display="block";c.appendChild(cv);page.render({canvasContext:cv.getContext("2d"),viewport:vp});});})(i);}}).catch(function(){c.innerHTML="<iframe src=\\""+url+"\\" style=\\"width:100%;height:400px;border:none;\\"></iframe>";});})();<\/script>';
                             } else {
                                 archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
                                     '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
