@@ -1998,18 +1998,20 @@
             var lineas = html.split('\n').filter(function(l) {
                 var t = l.trim();
                 if (!t) return false;
-                if (t === '[' || t === ']' || t === '**[**' || t === '**]**') return false;
-                if (/^\[?\s*\*?\*?\s*CONSULTA\s+TIVE/i.test(t)) return false;
-                if (/^\[?\s*\*?\*?\s*CONSULTA/i.test(t) && t.length < 50) return false;
-                if (/^Informaci.n General/i.test(t)) return false;
+                if (/^[\[\]]+$/.test(t)) return false;
+                if (/CONSULTA\s+TIVE/i.test(t)) return false;
+                if (/^\[?\s*CONSULTA\b/i.test(t) && t.length < 60) return false;
+                if (/^Informaci/i.test(t) && /General/i.test(t)) return false;
                 if (/^Monedas/i.test(t)) return false;
-                if (/^Id\s*[:=]\s*\d{5,}/i.test(t)) return false;
-                if (/^Consultado por/i.test(t)) return false;
-                if (/^\[\s*#/i.test(t)) return false;
-                if (/^\[\s*PERSONA/i.test(t)) return false;
-                if (/^\[\s*NACIMIENTO/i.test(t)) return false;
-                if (/^\[\s*INFORMACION/i.test(t)) return false;
-                if (/^\[\s*RESIDENCIA/i.test(t)) return false;
+                if (/Id\s*:\s*\d{5,}/i.test(t)) return false;
+                if (/Consultado por/i.test(t)) return false;
+                if (/^\[?\s*#/i.test(t)) return false;
+                if (/^\[?\s*DETALLES/i.test(t)) return false;
+                if (/^\[?\s*PERSONA/i.test(t)) return false;
+                if (/^\[?\s*NACIMIENTO/i.test(t)) return false;
+                if (/^\[?\s*INFORMACION/i.test(t)) return false;
+                if (/^\[?\s*RESIDENCIA/i.test(t)) return false;
+                if (/^\[?\s*DATOS\s+DEL/i.test(t)) return false;
                 return true;
             });
             var filas = [];
@@ -2078,10 +2080,10 @@
                         var pdfViewId = 'pdfView_' + f.id;
                         archivosHtml += '<div style="margin-top:10px;">' +
                             '<div style="display:flex; gap:8px;">' +
-                                '<a href="' + pdfUrl + '" download style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:9px 12px; background:#ef4444; color:#fff; border-radius:8px; text-decoration:none; font-size:11px; font-weight:600;">' +
+                                '<a href="' + pdfUrl + '" download style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 14px; background:#ef4444; color:#fff; border-radius:8px; text-decoration:none; font-size:10px; font-weight:600; max-width:160px;">' +
                                     '<i class="fa-solid fa-download" style="font-size:12px;"></i> Descargar' +
                                 '</a>' +
-                                '<button onclick="var el=document.getElementById(\'' + pdfViewId + '\');if(el.style.display===\'none\'){el.style.display=\'block\';el.src=\'' + pdfUrl + '\';}else{el.style.display=\'none\';}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:9px 12px; background:#25d366; color:#fff; border:none; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer;">' +
+                                '<button onclick="var el=document.getElementById(\'' + pdfViewId + '\');if(el.style.display===\'none\'){el.style.display=\'block\';el.src=\'' + pdfUrl + '\';}else{el.style.display=\'none\';}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 14px; background:#25d366; color:#fff; border:none; border-radius:8px; font-size:10px; font-weight:600; cursor:pointer; max-width:160px;">' +
                                     '<i class="fa-solid fa-eye" style="font-size:12px;"></i> Visualizar' +
                                 '</button>' +
                             '</div>' +
@@ -2322,10 +2324,10 @@
                                 var pdfViewId2 = 'pdfView2_' + f.id;
                                 archivosHtml += '<div style="margin-top:10px;">' +
                                     '<div style="display:flex; gap:8px;">' +
-                                        '<a href="' + pdfUrl2 + '" download style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:9px 12px; background:#ef4444; color:#fff; border-radius:8px; text-decoration:none; font-size:11px; font-weight:600;">' +
+                                        '<a href="' + pdfUrl2 + '" download style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 14px; background:#ef4444; color:#fff; border-radius:8px; text-decoration:none; font-size:10px; font-weight:600; max-width:160px;">' +
                                             '<i class="fa-solid fa-download" style="font-size:12px;"></i> Descargar' +
                                         '</a>' +
-                                        '<button onclick="var el=document.getElementById(\'' + pdfViewId2 + '\');if(el.style.display===\'none\'){el.style.display=\'block\';el.src=\'' + pdfUrl2 + '\';}else{el.style.display=\'none\';}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:9px 12px; background:#25d366; color:#fff; border:none; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer;">' +
+                                        '<button onclick="var el=document.getElementById(\'' + pdfViewId2 + '\');if(el.style.display===\'none\'){el.style.display=\'block\';el.src=\'' + pdfUrl2 + '\';}else{el.style.display=\'none\';}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 14px; background:#25d366; color:#fff; border:none; border-radius:8px; font-size:10px; font-weight:600; cursor:pointer; max-width:160px;">' +
                                             '<i class="fa-solid fa-eye" style="font-size:12px;"></i> Visualizar' +
                                         '</button>' +
                                     '</div>' +
