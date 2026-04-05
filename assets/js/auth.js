@@ -206,12 +206,12 @@ function renderLoggedInState() {
     if (!document.getElementById('profileClienteModal')) {
         var modalHtml = `
             <div id="profileClienteModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(248,250,252,0.30);z-index:999999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-family:'Roboto',sans-serif;padding:16px;overflow-y:auto;">
-                <div style="background:#ffffff;width:100%;max-width:420px;border-radius:20px;overflow:hidden;position:relative;border:2px solid #6b7280;margin:auto;">
+                <div style="background:#ffffff;width:100%;max-width:420px;border-radius:20px;overflow:hidden;position:relative;border:1px solid #e5e7eb;margin:auto;">
 
                     <!-- Header navy -->
                     <div style="background:linear-gradient(135deg,#111b21 0%,#1f2c34 100%);padding:30px 24px 24px;text-align:center;position:relative;">
                         <button onclick="document.getElementById('profileClienteModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;color:rgba(255,255,255,0.35);cursor:pointer;transition:0.2s;padding:4px;line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.35)'"><i class="fa-solid fa-xmark"></i></button>
-                        <div style="width:60px;height:60px;border-radius:50%;background:rgba(139,195,74,0.12);border:2px solid rgba(139,195,74,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                        <div style="width:60px;height:60px;border-radius:50%;background:#25d366;border:none;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
                             <i class="fa-solid fa-user" style="font-size:22px;color:#ffffff;"></i>
                         </div>
                         <h3 style="font-size:18px;color:#ffffff;margin:0 0 4px;font-weight:800;" id="profName">Nombre</h3>
@@ -263,19 +263,19 @@ function renderLoggedInState() {
                                 <div id="changePassForm" style="display:none;margin-top:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
                                     <div style="margin-bottom:10px;">
                                         <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Contraseña actual</label>
-                                        <input type="password" id="profCurrentPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
+                                        <input type="password" id="profCurrentPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e2e8f0'">
                                     </div>
                                     <div style="margin-bottom:10px;">
                                         <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Nueva contraseña</label>
-                                        <input type="password" id="profNewPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
+                                        <input type="password" id="profNewPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e2e8f0'">
                                     </div>
                                     <div style="margin-bottom:12px;">
                                         <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Confirmar nueva contraseña</label>
-                                        <input type="password" id="profConfirmPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
+                                        <input type="password" id="profConfirmPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e2e8f0'">
                                     </div>
                                     <div id="profPassError" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#dc2626;font-weight:600;"></div>
                                     <div id="profPassSuccess" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#15803d;font-weight:600;"></div>
-                                    <button onclick="handleChangePassword()" style="width:100%;padding:10px;background:#111b21;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
+                                    <button onclick="handleChangePassword()" style="width:100%;padding:10px;background:#25d366;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
                                         Actualizar contraseña
                                     </button>
                                 </div>
@@ -531,38 +531,42 @@ function showActivationNotification(plataformaActivada, dashboardActivado) {
 function showWelcomeModal(plataformaActivada, dashboardActivado) {
     const modalHtml = `
         <div id="welcomeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,27,33,0.5); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;" onclick="if(event.target===this){dismissNotification();}">
-            <div style="background: #ffffff; width: 92%; max-width: 400px; border-radius: 20px; padding: 35px 28px; text-align: center; border: 2px solid #6b7280; animation: scaleUp 0.3s ease forwards;">
+            <div style="background: #ffffff; width: 92%; max-width: 400px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; animation: scaleUp 0.3s ease forwards;">
                 <style>
                     @keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
                 </style>
-                <div style="width: 72px; height: 72px; border-radius: 50%; background: #111b21; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
-                    <i class="fa-solid fa-rocket"></i>
+                <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 28px 20px 24px; text-align: center;">
+                    <div style="width: 56px; height: 56px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
+                        <i class="fa-solid fa-rocket" style="font-size: 24px; color: #fff;"></i>
+                    </div>
+                    <h2 style="font-size: 20px; color: #ffffff; margin: 0 0 4px; font-weight: 800;">¡Bienvenido!</h2>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 12px; line-height: 1.6; margin: 0; font-weight: 500;">Tu cuenta <span style="color: #25d366; font-weight: 700;">PREMIUM</span> está activa</p>
                 </div>
-                <h2 style="font-size: 22px; color: #111b21; margin: 0 0 8px; font-weight: 900;">¡Bienvenido!</h2>
-                <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 0 0 24px; font-weight: 500;">Tu cuenta <span style="color: #111b21; font-weight: 700;">PREMIUM</span> está activa. Tienes acceso completo a:</p>
+                <div style="padding: 20px 22px 22px;">
+                <p style="color: #6b7280; font-size: 13px; line-height: 1.6; margin: 0 0 16px; font-weight: 500; text-align: center;">Tienes acceso completo a:</p>
 
-                <div style="background: #f9fafb; border-radius: 14px; padding: 18px 20px; margin-bottom: 24px; border: 1px solid #e5e7eb; text-align: left;">
+                <div style="background: #f9fafb; border-radius: 14px; padding: 18px 20px; margin-bottom: 20px; border: 1px solid #e5e7eb; text-align: left;">
                     <div style="display: grid; gap: 14px;">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #111b21; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
                             <span style="font-size: 13px; color: #111b21; font-weight: 600;">22 Servicios Vehiculares</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #111b21; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
                             <span style="font-size: 13px; color: #111b21; font-weight: 600;">Dashboard Organizado</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #111b21; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
                             <span style="font-size: 13px; color: #111b21; font-weight: 600;">Historial de Consultas</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #111b21; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
                             </div>
                             <span style="font-size: 13px; color: #111b21; font-weight: 600;">Acceso Permanente</span>
@@ -570,14 +574,15 @@ function showWelcomeModal(plataformaActivada, dashboardActivado) {
                     </div>
                 </div>
 
-                <button onclick="dismissNotification();" style="width: 100%; padding: 14px; background: #111b21; color: #ffffff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
+                <button onclick="dismissNotification();" style="width: 100%; padding: 13px; background: #25d366; color: #ffffff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
                     <i class="fa-solid fa-bolt" style="margin-right: 8px;"></i> COMENZAR
                 </button>
 
-                <p style="margin-top: 14px; font-size: 11px; color: #9ca3af; line-height: 1.4;">
+                <p style="margin-top: 14px; font-size: 11px; color: #9ca3af; line-height: 1.4; text-align: center;">
                     <i class="fa-solid fa-info-circle" style="margin-right: 4px;"></i>
                     Recuerda recargar créditos para realizar consultas
                 </p>
+                </div>
             </div>
         </div>
     `;
@@ -906,23 +911,28 @@ async function handleAuthSubmit() {
             }
 
             var alertHtml = `
-                <div id="customAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13,37,54,0.85); z-index: 9999999; display: flex; align-items: center; justify-content: center; animation: fadeInAlert 0.3s ease-out;">
+                <div id="customAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeInAlert 0.3s ease-out;">
                     <style>
                         @keyframes fadeInAlert { from { opacity: 0; } to { opacity: 1; } }
                         @keyframes scaleUpAlert { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
                     </style>
-                    <div style="background: #ffffff; width: 90%; max-width: 420px; border-radius: 20px; padding: 35px 30px; text-align: center; border: 2px solid #6b7280; animation: scaleUpAlert 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;">
-                        <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
-                            <i class="fa-solid fa-circle-check"></i>
+                    <div style="background: #ffffff; width: 92%; max-width: 420px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; animation: scaleUpAlert 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;">
+                        <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 28px 20px 24px; text-align: center;">
+                            <div style="width: 56px; height: 56px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
+                                <i class="fa-solid fa-circle-check" style="font-size: 24px; color: #fff;"></i>
+                            </div>
+                            <h3 style="font-size: 18px; color: #ffffff; margin: 0 0 4px; font-weight: 800;">¡Cuenta Creada Exitosamente!</h3>
+                            <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0;">Tu registro ha sido recibido</p>
                         </div>
-                        <h3 style="font-size: 22px; color: #111b21; margin: 0 0 12px; font-weight: 900; letter-spacing: -0.5px;">¡Cuenta Creada Exitosamente!</h3>
-                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 28px; font-weight: 500;">Tu registro ha sido recibido correctamente.<br><br>Para <b style="color: #111b21;">activar tu cuenta</b> y comenzar a usar la plataforma, contacta a nuestro equipo de soporte por WhatsApp.<br><br><span style="color: #111b21; font-weight: 700;">Te responderemos en minutos.</span></p>
+                        <div style="padding: 22px 24px 24px; text-align: center;">
+                        <p style="color: #64748b; font-size: 13px; line-height: 1.6; margin: 0 0 22px; font-weight: 500;">Para <b style="color: #111b21;">activar tu cuenta</b> y comenzar a usar la plataforma, contacta a nuestro equipo de soporte por WhatsApp.<br><br><span style="color: #111b21; font-weight: 700;">Te responderemos en minutos.</span></p>
                         <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <a href="https://wa.me/51932465820?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
-                                <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Contactar por WhatsApp
+                            <a href="https://wa.me/51932465820?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; background: #25d366; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; text-decoration: none; transition: background 0.2s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.background='#1ebe5d';" onmouseout="this.style.background='#25d366';">
+                                <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i> Contactar por WhatsApp
                             </a>
                             ${groupButtonHtml}
                             <button onclick="document.getElementById('customAlertModal').remove()" style="width: 100%; padding: 14px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#e2e8f0';" onmouseout="this.style.background='#f1f5f9';">Entendido</button>
+                        </div>
                         </div>
                     </div>
                 </div>`;

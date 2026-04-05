@@ -1307,14 +1307,19 @@
                                 if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> ENVIADO!';
                                 setTimeout(() => {
                                     const alertHtml = `
-                                        <div id="activacionAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-                                            <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; border: 2px solid #6b7280;">
-                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #fef3c7; color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
-                                                    <i class="fa-solid fa-rocket"></i>
+                                        <div id="activacionAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                                            <div style="background: #ffffff; width: 92%; max-width: 380px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
+                                                <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 24px 20px 20px; text-align: center;">
+                                                    <div style="width: 48px; height: 48px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                                                        <i class="fa-solid fa-rocket" style="font-size: 20px; color: #fff;"></i>
+                                                    </div>
+                                                    <h3 style="font-size: 16px; color: #ffffff; margin: 0 0 4px; font-weight: 700;">¡Pago Enviado!</h3>
+                                                    <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0;">Tu comprobante ha sido recibido</p>
                                                 </div>
-                                                <h3 style="font-size: 18px; color: #111b21; margin: 0 0 6px; font-weight: 900;">¡Pago Enviado!</h3>
-                                                <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 20px;">El administrador validará tu pago de S/ 35 para activar tu plataforma completa en breve.</p>
-                                                <button onclick="document.getElementById('activacionAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #111b21; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
+                                                <div style="padding: 20px 22px 22px; text-align: center;">
+                                                    <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 18px;">El administrador validará tu pago de S/ 35 para activar tu plataforma completa en breve.</p>
+                                                    <button onclick="document.getElementById('activacionAlertModal').remove(); closeSale();" style="width: 100%; padding: 13px; background: #25d366; color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">ENTENDIDO</button>
+                                                </div>
                                             </div>
                                         </div>`;
                                     document.body.insertAdjacentHTML('beforeend', alertHtml);
@@ -1339,14 +1344,19 @@
                                 if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> ENVIADO!';
                                 setTimeout(() => {
                                     const alertHtml = `
-                                        <div id="dashboardAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-                                            <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; border: 2px solid #6b7280;">
-                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #111b21; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
-                                                    <i class="fa-solid fa-circle-check"></i>
+                                        <div id="dashboardAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                                            <div style="background: #ffffff; width: 92%; max-width: 380px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
+                                                <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 24px 20px 20px; text-align: center;">
+                                                    <div style="width: 48px; height: 48px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                                                        <i class="fa-solid fa-circle-check" style="font-size: 20px; color: #fff;"></i>
+                                                    </div>
+                                                    <h3 style="font-size: 16px; color: #ffffff; margin: 0 0 4px; font-weight: 700;">¡Comprobante Enviado!</h3>
+                                                    <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0;">Tu comprobante ha sido recibido</p>
                                                 </div>
-                                                <h3 style="font-size: 18px; color: #111b21; margin: 0 0 6px; font-weight: 900;">¡Comprobante Enviado!</h3>
-                                                <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 20px;">El administrador validará tu pago para activar tu Dashboard en breve.</p>
-                                                <button onclick="document.getElementById('dashboardAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #111b21; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
+                                                <div style="padding: 20px 22px 22px; text-align: center;">
+                                                    <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 18px;">El administrador validará tu pago para activar tu Dashboard en breve.</p>
+                                                    <button onclick="document.getElementById('dashboardAlertModal').remove(); closeSale();" style="width: 100%; padding: 13px; background: #25d366; color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">ENTENDIDO</button>
+                                                </div>
                                             </div>
                                         </div>`;
                                     document.body.insertAdjacentHTML('beforeend', alertHtml);
@@ -1371,7 +1381,7 @@
                                 
                                 if (btn) {
                                     btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> SUBIR COMPROBANTE';
-                                    btn.style.background = 'linear-gradient(135deg, #111b21 0%, #1f2c34 100%)';
+                                    btn.style.background = '#25d366';
                                 }
                                 const montoRecarga = currentSaleAmount;
                                 currentSaleCredits = 0;
@@ -1379,14 +1389,19 @@
 
                                 setTimeout(() => {
                                     const alertHtml = `
-                                        <div id="rechargeAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-                                            <div style="background: #ffffff; width: 90%; max-width: 330px; border-radius: 20px; padding: 25px; text-align: center; border: 2px solid #6b7280;">
-                                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #111b21; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px;">
-                                                    <i class="fa-solid fa-circle-check"></i>
+                                        <div id="rechargeAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                                            <div style="background: #ffffff; width: 92%; max-width: 380px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
+                                                <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 24px 20px 20px; text-align: center;">
+                                                    <div style="width: 48px; height: 48px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                                                        <i class="fa-solid fa-circle-check" style="font-size: 20px; color: #fff;"></i>
+                                                    </div>
+                                                    <h3 style="font-size: 16px; color: #ffffff; margin: 0 0 4px; font-weight: 700;">¡Formulario Enviado!</h3>
+                                                    <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0;">Tu comprobante ha sido recibido</p>
                                                 </div>
-                                                <h3 style="font-size: 18px; color: #111b21; margin: 0 0 6px; font-weight: 900;">¡Formulario Enviado!</h3>
-                                                <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 20px;">Tu recarga de <b>S/ ${montoRecarga}</b> está siendo verificada.</p>
-                                                <button onclick="document.getElementById('rechargeAlertModal').remove(); closeSale();" style="width: 100%; padding: 12px; background: #111b21; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;">ENTENDIDO</button>
+                                                <div style="padding: 20px 22px 22px; text-align: center;">
+                                                    <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 18px;">Tu recarga de <b>S/ ${montoRecarga}</b> está siendo verificada.</p>
+                                                    <button onclick="document.getElementById('rechargeAlertModal').remove(); closeSale();" style="width: 100%; padding: 13px; background: #25d366; color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">ENTENDIDO</button>
+                                                </div>
                                             </div>
                                         </div>`;
                                     document.body.insertAdjacentHTML('beforeend', alertHtml);
@@ -1428,16 +1443,21 @@
                             
                             setTimeout(() => {
                                 const alertHtml = `
-                                    <div id="informeAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-                                        <div style="background: #ffffff; width: 90%; max-width: 360px; border-radius: 20px; padding: 28px 24px; text-align: center; border: 2px solid #6b7280;">
-                                            <div style="width: 56px; height: 56px; border-radius: 50%; background: #fff7ed; color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px;">
-                                                <i class="fa-solid fa-clock"></i>
+                                    <div id="informeAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                                        <div style="background: #ffffff; width: 92%; max-width: 380px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
+                                            <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 24px 20px 20px; text-align: center;">
+                                                <div style="width: 48px; height: 48px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                                                    <i class="fa-solid fa-clock" style="font-size: 20px; color: #fff;"></i>
+                                                </div>
+                                                <h3 style="font-size: 16px; color: #ffffff; margin: 0 0 4px; font-weight: 700;">Comprobante en validación</h3>
+                                                <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0;">Tu comprobante ha sido recibido</p>
                                             </div>
-                                            <h3 style="font-size: 19px; color: #111b21; margin: 0 0 8px; font-weight: 900;">Comprobante en validación</h3>
-                                            <p style="color: #64748b; font-size: 13px; line-height: 1.6; margin: 0 0 6px;">Tu comprobante para la placa <strong style="color: #111b21;">${p}</strong> ha sido recibido y está en proceso de validación.</p>
-                                            <p style="color: #64748b; font-size: 12px; line-height: 1.5; margin: 0 0 22px; background: #f8fafc; padding: 12px; border-radius: 10px; border-left: 3px solid #f59e0b;">Nuestro equipo verificará tu pago en los próximos minutos. Podrás ver el estado en <strong>"Mis Consultas"</strong>.</p>
-                                            <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge(); window.location.href='panel_cliente.html';" style="width: 100%; padding: 13px; background: #111b21; color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; margin-bottom: 8px;">VER MIS CONSULTAS</button>
-                                            <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge();" style="width: 100%; padding: 11px; background: transparent; color: #94a3b8; border: none; font-size: 12px; font-weight: 600; cursor: pointer;">CERRAR</button>
+                                            <div style="padding: 20px 22px 22px; text-align: center;">
+                                                <p style="color: #64748b; font-size: 13px; line-height: 1.6; margin: 0 0 6px;">Tu comprobante para la placa <strong style="color: #111b21;">${p}</strong> está en proceso de validación.</p>
+                                                <p style="color: #64748b; font-size: 12px; line-height: 1.5; margin: 0 0 18px; background: #f8fafc; padding: 12px; border-radius: 10px; border-left: 3px solid #25d366;">Nuestro equipo verificará tu pago en los próximos minutos. Podrás ver el estado en <strong>"Mis Consultas"</strong>.</p>
+                                                <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge(); window.location.href='panel_cliente.html';" style="width: 100%; padding: 13px; background: #25d366; color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; margin-bottom: 8px; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">VER MIS CONSULTAS</button>
+                                                <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge();" style="width: 100%; padding: 11px; background: transparent; color: #94a3b8; border: none; font-size: 12px; font-weight: 600; cursor: pointer;">CERRAR</button>
+                                            </div>
                                         </div>
                                     </div>`;
                                 document.body.insertAdjacentHTML('beforeend', alertHtml);
