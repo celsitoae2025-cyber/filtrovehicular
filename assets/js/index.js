@@ -1815,15 +1815,15 @@
             if (resEl) resEl.style.display = 'none';
             consultasModuloActual = null;
 
-            container.innerHTML = '<div style="display:flex; flex-direction:column; gap:8px;">' +
+            container.innerHTML = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px;">' +
                 consultasModulos.map(function(mod) {
-                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#e5e7eb\'">' +
-                        '<div style="width:40px; height:40px; min-width:40px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
-                            '<i class="fa-solid ' + mod.icono + '" style="font-size:16px; color:#fff;"></i>' +
+                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#111b21; border:1px solid #2a3942; border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#25d366\'" onmouseout="this.style.borderColor=\'#2a3942\'">' +
+                        '<div style="width:42px; height:42px; min-width:42px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
+                            '<i class="fa-solid ' + mod.icono + '" style="font-size:17px; color:#fff;"></i>' +
                         '</div>' +
                         '<div style="flex:1;">' +
-                            '<div style="font-size:13px; font-weight:600; color:#111b21;">' + mod.nombre + '</div>' +
-                            '<div style="font-size:10px; color:#6b7280;">' + mod.servicios + ' servicios</div>' +
+                            '<div style="font-size:14px; font-weight:600; color:#e9edef;">' + mod.nombre + '</div>' +
+                            '<div style="font-size:10px; color:#8696a0;">' + mod.servicios + ' servicios</div>' +
                         '</div>' +
                         '<i class="fa-solid fa-chevron-right" style="font-size:11px; color:#8696a0;"></i>' +
                     '</div>';
