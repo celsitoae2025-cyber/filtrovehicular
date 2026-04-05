@@ -2347,10 +2347,19 @@
         window.volverConsultas = volverConsultas;
         window.mostrarResultadoConsulta = mostrarResultadoConsulta;
 
-        // 1. Registrar el Service Worker
+        // 1. Registrar el Service Worker + forzar actualización
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             window.addEventListener('load', () => {
+                // Limpiar caches viejos
+                if (window.caches) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            if (name !== 'filtrov2-cache-v25') caches.delete(name);
+                        });
+                    });
+                }
                 navigator.serviceWorker.register('sw.js')
+                    .then(reg => { reg.update(); })
                     .catch(err => console.error('Error registrando Service Worker:', err));
             });
         }
