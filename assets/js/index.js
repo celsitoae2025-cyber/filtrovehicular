@@ -333,10 +333,6 @@
                 showAuthFloatingModal();
                 return;
             }
-            if (!window.plataformaActiva) {
-                showUpgradeModal();
-                return;
-            }
             callback();
         }
 
@@ -479,7 +475,7 @@
 
             // Usar el array cats existente (22 servicios actuales)
             servicesGrid.innerHTML = cats.map((service) => {
-                const isFree = !!service.link;
+                const isFree = !!(service.link || service.action);
                 return `
                 <div class="hook-card ${isFree ? 'hook-free' : 'hook-paid'}" onclick="handleServiceClick(${JSON.stringify(service).replace(/"/g, '&quot;')})">
                     <div class="hook-icon"><i class="fa-solid ${esc(service.icon)}"></i></div>
