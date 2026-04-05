@@ -527,12 +527,12 @@
                 <div style="padding:20px 22px 22px;">
                     <div style="margin-bottom:16px;">
                         <label style="font-size:9px; color:#6b7280; font-weight:600; display:block; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px;">Ingresa tu placa</label>
-                        <input type="text" id="servicePlateInput" placeholder="ABC-123" maxlength="10" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; text-align:center; text-transform:uppercase; letter-spacing:2px; outline:none; transition:border-color 0.2s; box-sizing:border-box; font-family:'Roboto',sans-serif; color:#111b21;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e5e7eb'">
+                        <input type="text" id="servicePlateInput" placeholder="ABC-123" maxlength="10" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; text-align:center; text-transform:uppercase; letter-spacing:2px; outline:none; transition:all 0.25s ease; box-sizing:border-box; font-family:'Roboto',sans-serif; color:#111b21;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e5e7eb'">
                     </div>
                     <button id="btnModalAction" onclick="processServicePayment('${escAttr(service.title)}', '${escAttr(service.price)}', '${escAttr(service.icon)}')" style="background:#111b21; color:#fff; border:none; width:100%; padding:12px; border-radius:10px; font-weight:600; cursor:pointer; font-size:13px; transition:background 0.2s; margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                         <i class="fa-solid fa-magnifying-glass" style="font-size:12px;"></i> Consultar ahora
                     </button>
-                    <a href="https://wa.me/51932465820?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(service.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; font-size:12px; font-weight:600; color:#111b21; cursor:pointer; transition:border-color 0.2s; margin-bottom:8px; box-sizing:border-box;" onmouseover="this.style.borderColor='#6b7280'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <a href="https://wa.me/51932465820?text=Hola%2C%20quiero%20consultar%20el%20servicio%20${encodeURIComponent(service.title)}%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:12px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; font-size:12px; font-weight:600; color:#111b21; cursor:pointer; transition:all 0.25s ease; margin-bottom:8px; box-sizing:border-box;" onmouseover="this.style.borderColor='#6b7280'" onmouseout="this.style.borderColor='#e5e7eb'">
                         <i class="fa-brands fa-whatsapp" style="font-size:15px; color:#111b21;"></i> Pagar por WhatsApp
                     </a>
                     <button onclick="document.getElementById('infoModal').style.display='none';" style="width:100%; padding:10px; background:transparent; color:#9ca3af; border:none; font-size:11px; font-weight:500; cursor:pointer;">Cancelar</button>
@@ -1791,7 +1791,7 @@
                 : '<div style="font-size:10px; color:#6b7280; margin-bottom:8px;">' + resultados.length + ' resultado(s)</div>' +
                   '<div style="display:flex; flex-direction:column; gap:6px;">' +
                   resultados.map(function(cmd) {
-                      return '<div onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #6b7280; border-radius:10px; padding:10px 12px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#111b21\'" onmouseout="this.style.borderColor=\'#6b7280\'">' +
+                      return '<div onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:0.5px solid #9ca3af; border-radius:12px; padding:14px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:all 0.25s ease;" onmouseover="this.style.borderColor=\'#111b21\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#9ca3af\';this.style.transform=\'none\'">' +
                           '<div style="width:30px; height:30px; min-width:30px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                               '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:12px; color:#fff;"></i>' +
                           '</div>' +
@@ -1817,7 +1817,7 @@
 
             container.innerHTML = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px;">' +
                 consultasModulos.map(function(mod) {
-                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#ffffff; border:1px solid #6b7280; border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:14px;" onmouseover="this.style.borderColor=\'#111b21\'" onmouseout="this.style.borderColor=\'#6b7280\'">' +
+                    return '<div onclick="renderConsultasModulo(\'' + mod.id + '\')" style="background:#ffffff; border:0.5px solid #9ca3af; border-radius:12px; padding:14px 16px; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; gap:14px;" onmouseover="this.style.borderColor=\'#111b21\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#9ca3af\';this.style.transform=\'none\'">' +
                         '<div style="width:42px; height:42px; min-width:42px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + mod.icono + '" style="font-size:17px; color:#fff;"></i>' +
                         '</div>' +
@@ -1875,7 +1875,7 @@
             '</div>' +
             '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:8px;">' +
                 categorias.map(function(cat) {
-                    return '<div onclick="renderConsultasComandos(\'' + cat + '\')" style="background:#ffffff; border:1px solid #6b7280; border-radius:10px; padding:12px 14px; cursor:pointer; transition:border-color 0.2s; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#111b21\'" onmouseout="this.style.borderColor=\'#6b7280\'">' +
+                    return '<div onclick="renderConsultasComandos(\'' + cat + '\')" style="background:#ffffff; border:0.5px solid #9ca3af; border-radius:12px; padding:14px 16px; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; gap:12px;" onmouseover="this.style.borderColor=\'#111b21\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#9ca3af\';this.style.transform=\'none\'">' +
                         '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '" style="font-size:13px; color:#fff;"></i>' +
                         '</div>' +
@@ -1913,7 +1913,7 @@
             '</div>' +
             '<div style="display:flex; flex-direction:column; gap:6px;">' +
                 consultasComandosData.map(function(cmd) {
-                    return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:1px solid #6b7280; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor=\'#111b21\'" onmouseout="this.style.borderColor=\'#6b7280\'">' +
+                    return '<div onclick="abrirConsultaModal(\'' + cmd.id + '\')" style="background:#ffffff; border:0.5px solid #9ca3af; border-radius:12px; padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all 0.25s ease;" onmouseover="this.style.borderColor=\'#111b21\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.borderColor=\'#9ca3af\';this.style.transform=\'none\'">' +
                         '<div style="width:34px; height:34px; min-width:34px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;">' +
                             '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:13px; color:#fff;"></i>' +
                         '</div>' +
@@ -1955,7 +1955,7 @@
                 ? '<label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Selecciona una foto</label>' +
                   '<input type="file" id="consultaFoto" accept="image/*" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-size:12px; color:#111b21; box-sizing:border-box; cursor:pointer;">'
                 : '<label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Dato a consultar</label>' +
-                  '<input type="text" id="consultaInput" placeholder="' + placeholder + '" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; color:#111b21; outline:none; box-sizing:border-box; text-align:center; font-family:\'Roboto\',sans-serif; transition:border-color 0.2s;" onfocus="this.style.borderColor=\'#111b21\'" onblur="this.style.borderColor=\'#e5e7eb\'" onkeydown="if(event.key===\'Enter\')ejecutarConsulta(\'' + cmdId + '\')">';
+                  '<input type="text" id="consultaInput" placeholder="' + placeholder + '" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; color:#111b21; outline:none; box-sizing:border-box; text-align:center; font-family:\'Roboto\',sans-serif; transition:all 0.25s ease;" onfocus="this.style.borderColor=\'#111b21\'" onblur="this.style.borderColor=\'#e5e7eb\'" onkeydown="if(event.key===\'Enter\')ejecutarConsulta(\'' + cmdId + '\')">';
 
             infoContent.innerHTML = '<div style="background:#111b21; padding:20px 18px 16px; position:relative;">' +
                 '<button onclick="document.getElementById(\'infoModal\').style.display=\'none\'" style="position:absolute; top:12px; right:12px; background:none; border:none; color:#8696a0; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>' +
