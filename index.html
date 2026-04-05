@@ -754,39 +754,43 @@
 
     <!-- MODAL FLOTANTE: OBTENER MI INFORME -->
     <div id="informeModal" onclick="if(event.target===this)this.style.display='none'" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:999999; align-items:center; justify-content:center; padding:20px;">
-        <div style="background:#ffffff; border-radius:16px; width:92%; max-width:380px; padding:28px 24px 24px; position:relative; border:2px solid #6b7280;">
-            <button onclick="document.getElementById('informeModal').style.display='none'" style="position:absolute; top:12px; right:14px; background:none; border:none; font-size:18px; color:#9ca3af; cursor:pointer; line-height:1;"><i class="fa-solid fa-xmark"></i></button>
-            <div style="text-align:center; margin-bottom:20px;">
-                <div style="width:42px; height:42px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
-                    <i class="fa-solid fa-file-lines" style="font-size:18px; color:#fff;"></i>
+        <div style="background:#ffffff; border-radius:16px; width:92%; max-width:380px; overflow:hidden; border:1px solid #e5e7eb;">
+            <div style="background:linear-gradient(135deg,#111b21 0%,#1f2c34 100%); padding:24px 20px 20px; text-align:center; position:relative;">
+                <button onclick="document.getElementById('informeModal').style.display='none'" style="position:absolute; top:12px; right:14px; background:none; border:none; font-size:16px; color:rgba(255,255,255,0.4); cursor:pointer;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.4)'"><i class="fa-solid fa-xmark"></i></button>
+                <div style="width:48px; height:48px; background:#25d366; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+                    <i class="fa-solid fa-file-lines" style="font-size:20px; color:#fff;"></i>
                 </div>
-                <h3 style="margin:0 0 4px; font-size:15px; font-weight:700; color:#111b21;">Filtro Completo</h3>
-                <p style="margin:0; font-size:11px; color:#6b7280; font-weight:400;">Ingresa la placa del vehículo a consultar</p>
+                <h3 style="margin:0 0 4px; font-size:16px; font-weight:700; color:#ffffff;">Filtro Completo</h3>
+                <p style="margin:0; font-size:11px; color:rgba(255,255,255,0.5);">Ingresa la placa del vehículo a consultar</p>
             </div>
-            <label style="font-size:9px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Número de placa</label>
-            <input type="text" id="informePlateInput" placeholder="ABC-123" maxlength="8" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; color:#111b21; text-align:center; outline:none; box-sizing:border-box; margin-bottom:14px; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e5e7eb'" onkeydown="if(event.key==='Enter') submitInformeRequest()">
-            <button onclick="submitInformeRequest()" style="width:100%; padding:12px; background:#111b21; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background 0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
-                <i class="fa-solid fa-magnifying-glass" style="font-size:13px;"></i> Consultar Placa
-            </button>
+            <div style="padding:20px 22px 22px;">
+                <label style="font-size:9px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Número de placa</label>
+                <input type="text" id="informePlateInput" placeholder="ABC-123" maxlength="8" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')" style="width:100%; padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; color:#111b21; text-align:center; outline:none; box-sizing:border-box; margin-bottom:14px; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'" onkeydown="if(event.key==='Enter') submitInformeRequest()">
+                <button onclick="submitInformeRequest()" style="width:100%; padding:13px; background:#25d366; color:#fff; border:none; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size:13px;"></i> Consultar Placa
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- MODAL FLOTANTE: SOLICITA POR WHATSAPP -->
     <div id="waPlateModal" onclick="if(event.target===this)this.style.display='none'" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%); z-index:999999; align-items:center; justify-content:center; padding:20px;">
-        <div style="background:#ffffff; border-radius:16px; width:92%; max-width:380px; padding:28px 24px 24px; position:relative; border:2px solid #6b7280;">
-            <button onclick="document.getElementById('waPlateModal').style.display='none'" style="position:absolute; top:12px; right:14px; background:none; border:none; font-size:18px; color:#9ca3af; cursor:pointer; line-height:1;"><i class="fa-solid fa-xmark"></i></button>
-            <div style="text-align:center; margin-bottom:20px;">
-                <div style="width:42px; height:42px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
-                    <i class="fa-brands fa-whatsapp" style="font-size:20px; color:#fff;"></i>
+        <div style="background:#ffffff; border-radius:16px; width:92%; max-width:380px; overflow:hidden; border:1px solid #e5e7eb;">
+            <div style="background:linear-gradient(135deg,#111b21 0%,#1f2c34 100%); padding:24px 20px 20px; text-align:center; position:relative;">
+                <button onclick="document.getElementById('waPlateModal').style.display='none'" style="position:absolute; top:12px; right:14px; background:none; border:none; font-size:16px; color:rgba(255,255,255,0.4); cursor:pointer;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.4)'"><i class="fa-solid fa-xmark"></i></button>
+                <div style="width:48px; height:48px; background:#25d366; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 12px;">
+                    <i class="fa-brands fa-whatsapp" style="font-size:22px; color:#fff;"></i>
                 </div>
-                <h3 style="margin:0 0 4px; font-size:15px; font-weight:700; color:#111b21;">Solicitar por WhatsApp</h3>
-                <p style="margin:0; font-size:11px; color:#6b7280; font-weight:400;">Ingresa la placa del vehículo a consultar</p>
+                <h3 style="margin:0 0 4px; font-size:16px; font-weight:700; color:#ffffff;">Solicitar por WhatsApp</h3>
+                <p style="margin:0; font-size:11px; color:rgba(255,255,255,0.5);">Ingresa la placa del vehículo a consultar</p>
             </div>
-            <label style="font-size:9px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Número de placa</label>
-            <input type="text" id="waPlateInput" placeholder="ABC-123" maxlength="8" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; color:#111b21; text-align:center; text-transform:uppercase; outline:none; box-sizing:border-box; margin-bottom:14px; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e5e7eb'" onkeydown="if(event.key==='Enter') enviarWAPlaca()">
-            <button onclick="enviarWAPlaca()" style="width:100%; padding:12px; background:#111b21; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background 0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
-                <i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> Enviar por WhatsApp
-            </button>
+            <div style="padding:20px 22px 22px;">
+                <label style="font-size:9px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Número de placa</label>
+                <input type="text" id="waPlateInput" placeholder="ABC-123" maxlength="8" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')" style="width:100%; padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px; font-size:15px; font-weight:600; color:#111b21; text-align:center; text-transform:uppercase; outline:none; box-sizing:border-box; margin-bottom:14px; transition:border-color 0.2s; font-family:'Roboto',sans-serif;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'" onkeydown="if(event.key==='Enter') enviarWAPlaca()">
+                <button onclick="enviarWAPlaca()" style="width:100%; padding:13px; background:#25d366; color:#fff; border:none; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                    <i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> Enviar por WhatsApp
+                </button>
+            </div>
         </div>
     </div>
 
