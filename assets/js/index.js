@@ -126,7 +126,7 @@
             // 3. Multas y deudas
             { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Lima', link: 'https://www.sat.gob.pe/pagosenlinea/' },
             { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Callao', link: 'https://pagopapeletascallao.pe/' },
-            { icon: 'fa-map-location-dot', title: 'Deudas y Multas por Región', link: 'https://www.sat.gob.pe/pagosenlinea/' },
+            { icon: 'fa-map-location-dot', title: 'Deudas y Multas por Región', action: 'regiones' },
             { icon: 'fa-triangle-exclamation', title: 'Papeletas de Tránsito ATU', link: 'https://pasarela.atu.gob.pe/#' },
             { icon: 'fa-truck', title: 'Papeletas SUTRAN', link: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/' },
             { icon: 'fa-camera', title: 'Foto Pit Lima', link: 'http://www.pit.gob.pe/pit2007/EstadoCuenta.aspx' },
@@ -502,7 +502,10 @@
 
         function handleServiceClick(service) {
             checkAccessAndRun(function() {
-                if (service.link) {
+                if (service.action === 'regiones') {
+                    switchServicesTab('accesos', true);
+                    setTimeout(function() { if (typeof showCategoryServices === 'function') showCategoryServices('REGIONES'); }, 300);
+                } else if (service.link) {
                     window.open(service.link, '_blank');
                 }
             });
