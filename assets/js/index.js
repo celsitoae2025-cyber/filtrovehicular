@@ -1966,23 +1966,23 @@
                 ? '<label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Selecciona una foto</label>' +
                   '<input type="file" id="consultaFoto" accept="image/*" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-size:12px; color:#111b21; box-sizing:border-box; cursor:pointer;">'
                 : '<label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Dato a consultar</label>' +
-                  '<input type="text" id="consultaInput" placeholder="' + placeholder + '" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; color:#111b21; outline:none; box-sizing:border-box; text-align:center; font-family:\'Roboto\',sans-serif; transition:all 0.25s ease;" onfocus="this.style.borderColor=\'#111b21\'" onblur="this.style.borderColor=\'#e5e7eb\'" onkeydown="if(event.key===\'Enter\')ejecutarConsulta(\'' + cmdId + '\')">';
+                  '<input type="text" id="consultaInput" placeholder="' + placeholder + '" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; color:#111b21; outline:none; box-sizing:border-box; text-align:center; font-family:\'Roboto\',sans-serif; transition:all 0.25s ease;" onfocus="this.style.borderColor=\'#25d366\'" onblur="this.style.borderColor=\'#e5e7eb\'" onkeydown="if(event.key===\'Enter\')ejecutarConsulta(\'' + cmdId + '\')">';
 
-            infoContent.innerHTML = '<div style="background:#111b21; padding:20px 18px 16px; position:relative;">' +
-                '<button onclick="document.getElementById(\'infoModal\').style.display=\'none\'" style="position:absolute; top:12px; right:12px; background:none; border:none; color:#8696a0; font-size:16px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>' +
-                '<div style="display:flex; align-items:center; gap:10px;">' +
-                    '<div style="width:36px; height:36px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
-                        '<i class="fa-solid ' + (esFoto ? 'fa-camera' : cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:15px; color:#fff;"></i>' +
+            infoContent.innerHTML = '<div style="background:linear-gradient(135deg,#111b21 0%,#1f2c34 100%); padding:22px 18px 18px; position:relative;">' +
+                '<button onclick="document.getElementById(\'infoModal\').style.display=\'none\'" style="position:absolute; top:12px; right:12px; background:none; border:none; color:rgba(255,255,255,0.4); font-size:16px; cursor:pointer;" onmouseover="this.style.color=\'#fff\'" onmouseout="this.style.color=\'rgba(255,255,255,0.4)\'"><i class="fa-solid fa-xmark"></i></button>' +
+                '<div style="display:flex; align-items:center; gap:12px;">' +
+                    '<div style="width:40px; height:40px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
+                        '<i class="fa-solid ' + (esFoto ? 'fa-camera' : cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:17px; color:#fff;"></i>' +
                     '</div>' +
                     '<div>' +
-                        '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + cmd.nombre + '</div>' +
-                        '<div style="font-size:10px; color:#8696a0;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + ' · ' + cmd.tipo.toUpperCase() + '</div>' +
+                        '<div style="font-size:14px; font-weight:700; color:#ffffff;">' + cmd.nombre + '</div>' +
+                        '<div style="font-size:10px; color:rgba(255,255,255,0.5);">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + ' · ' + cmd.tipo.toUpperCase() + '</div>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
-            '<div style="padding:18px;">' +
+            '<div style="padding:20px;">' +
                 inputHtml +
-                '<button id="btnConsulta" onclick="ejecutarConsulta(\'' + cmdId + '\')" style="width:100%; padding:12px; background:#111b21; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; margin-top:12px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background=\'#1f2c34\'" onmouseout="this.style.background=\'#111b21\'">' +
+                '<button id="btnConsulta" onclick="ejecutarConsulta(\'' + cmdId + '\')" style="width:100%; padding:13px; background:#25d366; color:#fff; border:none; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; margin-top:14px; display:flex; align-items:center; justify-content:center; gap:6px; transition:background 0.2s;" onmouseover="this.style.background=\'#1ebe5d\'" onmouseout="this.style.background=\'#25d366\'">' +
                     '<i class="fa-solid fa-magnifying-glass" style="font-size:12px;"></i> Consultar' +
                 '</button>' +
             '</div>';
