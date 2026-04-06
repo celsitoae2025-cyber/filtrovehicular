@@ -259,6 +259,12 @@
                     <i class="fa-solid fa-trash" style="font-size:12px;"></i> Limpiar
                 </button>
             </div>
+            <div style="margin-bottom:12px;">
+                <div style="position:relative;">
+                    <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:12px;"></i>
+                    <input type="text" id="historySearchInput" placeholder="Buscar por correo o WhatsApp..." oninput="filtrarHistorial()" style="width:100%; padding:10px 12px 10px 34px; border:1px solid #e5e7eb; border-radius:10px; font-size:12px; font-family:'Roboto',sans-serif; color:#111b21; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e5e7eb'">
+                </div>
+            </div>
             <div id="historyList" class="request-list">
                 <div class="empty-req">Cargando historial...</div>
             </div>
