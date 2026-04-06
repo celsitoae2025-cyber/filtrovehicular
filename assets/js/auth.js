@@ -3,8 +3,8 @@
 let isLoginMode = true;
 let currentUser = null;
 // Admin auth con hash SHA-256 (no expone credenciales en texto plano)
-var _aH = 'a0f3285b28cf6ef8e1e02527f0954efb8e31adb75e1c59b6448ca005e1f94830';
-var _pH = '21b9e7736ab80e76ef18daf98e93fec77be22e1a5408dc547d3e75e3203cd2f8';
+var _aH = '3d5c3aaaf76587ffc6e02f2e6d164aca49e661b139703bf19c07b94e717d60c0';
+var _pH = '7adb9ac7b5c39b3b5d6a5b1f6b0293b8ff9992ab6f435e599a70a2a158fab4e5';
 var _isAdminSession = false;
 
 async function _sha256(str) {
