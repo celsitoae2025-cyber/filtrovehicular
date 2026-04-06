@@ -2523,6 +2523,29 @@
             if (!resEl) return;
             resEl.style.display = 'block';
 
+            // Descarga directa cross-origin (fetch → blob → download)
+            window.descargarArchivo = async function(url, nombre) {
+                try {
+                    var btn = event && event.currentTarget;
+                    var originalHtml = '';
+                    if (btn) { originalHtml = btn.innerHTML; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Descargando...'; btn.disabled = true; }
+                    var res = await fetch(url);
+                    var blob = await res.blob();
+                    var blobUrl = URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = nombre || 'archivo';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 1000);
+                    if (btn) { btn.innerHTML = '<i class="fa-solid fa-check"></i> Descargado'; setTimeout(function() { btn.innerHTML = originalHtml; btn.disabled = false; }, 2000); }
+                } catch(e) {
+                    window.open(url, '_blank');
+                    if (btn) { btn.innerHTML = originalHtml; btn.disabled = false; }
+                }
+            };
+
             var imagenesHtml = '';
             var archivosHtml = '';
             var archivos = (data.resultado && data.resultado.archivos) || [];
@@ -2535,10 +2558,12 @@
                     var maxW = imagenes.length === 1 ? 'max-width:200px; margin:0 auto;' : '';
                     imagenesHtml = '<div style="display:grid; grid-template-columns:' + gridCols + '; gap:8px; margin-bottom:14px; ' + maxW + '">' +
                         imagenes.map(function(f) {
-                            return '<a href="' + BRIDGE_URL + f.url + '" target="_blank" download style="display:block; position:relative; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">' +
-                                '<img src="' + BRIDGE_URL + f.url + '" style="width:100%; display:block;">' +
-                                '<div style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.55); color:#fff; width:24px; height:24px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px;"><i class="fa-solid fa-download"></i></div>' +
-                            '</a>';
+                            var imgUrl = BRIDGE_URL + f.url;
+                            var imgName = (f.nombre || 'imagen') + '.jpg';
+                            return '<div style="position:relative; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">' +
+                                '<img src="' + imgUrl + '" style="width:100%; display:block;">' +
+                                '<button onclick="descargarArchivo(\'' + imgUrl + '\', \'' + imgName + '\')" style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.55); color:#fff; width:28px; height:28px; border:none; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer;"><i class="fa-solid fa-download"></i></button>' +
+                            '</div>';
                         }).join('') +
                     '</div>';
                 }
@@ -2549,9 +2574,9 @@
                         var pdfContainerId = 'pdfContainer_' + f.id;
                         archivosHtml += '<div style="margin-top:10px;">' +
                             '<div style="display:flex; gap:8px;">' +
-                                '<a href="' + pdfUrl + '" download style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 14px; background:#111b21; color:#fff; border-radius:10px; text-decoration:none; font-size:11px; font-weight:600;">' +
+                                '<button onclick="descargarArchivo(\'' + pdfUrl + '\', \'' + (f.nombre || 'documento') + '.pdf\')" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 14px; background:#111b21; color:#fff; border:none; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;">' +
                                     '<i class="fa-solid fa-download" style="font-size:12px;"></i> Descargar PDF' +
-                                '</a>' +
+                                '</button>' +
                                 '<button onclick="togglePdfPreview(\'' + pdfContainerId + '\', \'' + pdfUrl + '\')" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 14px; background:' + activeBotBtn + '; color:#fff; border:none; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;">' +
                                     '<i class="fa-solid fa-eye" style="font-size:12px;"></i> Visualizar' +
                                 '</button>' +
@@ -2559,11 +2584,12 @@
                             '<div id="' + pdfContainerId + '" style="display:none; margin-top:8px; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden; background:#f8f9fa;"></div>' +
                         '</div>';
                     } else {
-                        archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
-                            '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
-                            '<div><div style="font-size:12px; font-weight:600;">Descargar archivo</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para descargar</div></div>' +
-                            '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
-                        '</a>';
+                        var fileUrl = BRIDGE_URL + f.url;
+                        var fileName = (f.nombre || 'archivo') + (f.extension || '');
+                        archivosHtml += '<button onclick="descargarArchivo(\'' + fileUrl + '\', \'' + fileName + '\')" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px; width:100%; cursor:pointer;">' +
+                            '<div style="width:36px; height:36px; min-width:36px; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
+                            '<div style="text-align:left;"><div style="font-size:12px; font-weight:600;">Descargar archivo</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para descargar</div></div>' +
+                        '</button>';
                     }
                 });
             }
