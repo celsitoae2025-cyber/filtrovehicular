@@ -565,7 +565,7 @@
 
                     if (!exists) {
                         var reqKey = 'REGISTRO_' + Date.now();
-                        var regData = { placa: reqKey, timestamp: Date.now(), status: 'pending', isRegistro: true, email: email, pass: '', nombre: nombre, whatsapp: '', authProvider: 'google' };
+                        var regData = { placa: reqKey, timestamp: Date.now(), status: 'approved', isRegistro: true, email: email, pass: '', nombre: nombre, whatsapp: '', authProvider: 'google' };
                         await window.sb.from('solicitudes').upsert({ placa: reqKey, datos: regData, updated_at: new Date() });
                         var { data: gSaldo } = await window.sb.from('saldos').select('email').eq('email', email).maybeSingle();
                         if (!gSaldo) {
