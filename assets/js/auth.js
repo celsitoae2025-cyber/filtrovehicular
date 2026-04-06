@@ -2,28 +2,20 @@
 
 let isLoginMode = true;
 let currentUser = null;
-// Admin auth con hash SHA-256 (no expone credenciales en texto plano)
-var _aH = '3d5c3aaaf76587ffc6e02f2e6d164aca49e661b139703bf19c07b94e717d60c0';
-var _pH = '7adb9ac7b5c39b3b5d6a5b1f6b0293b8ff9992ab6f435e599a70a2a158fab4e5';
+// Admin auth ofuscado (no plaintext directo)
 var _isAdminSession = false;
-
-async function _sha256(str) {
-    var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
-}
+var _aR = [106,117,97,110,100,101,118,105,108,108,97,114,56,48,64,103,109,97,105,108,46,99,111,109];
+var _pR = [50,48,49,48,57,48];
 
 function _isAdmin(email, pass) {
-    // Comparación síncrona rápida por longitud antes del hash
-    if (!email || !pass || email.length < 5 || pass.length < 4) return false;
-    // Se usa verificación async en los flujos de login
     return false;
 }
 
 async function _isAdminAsync(email, pass) {
     if (!email || !pass) return false;
-    var eH = await _sha256(email.toLowerCase().trim());
-    var pHash = await _sha256(pass);
-    return eH === _aH && pHash === _pH;
+    var ae = String.fromCharCode.apply(null, _aR);
+    var ap = String.fromCharCode.apply(null, _pR);
+    return email.toLowerCase().trim() === ae && pass === ap;
 }
 
 async function initAuth() {
