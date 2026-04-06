@@ -1353,6 +1353,17 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
             });
         }
 
+        function filtrarUsuarios() {
+            var input = document.getElementById('usersSearchInput');
+            var term = (input ? input.value : '').trim().toLowerCase();
+            var items = document.querySelectorAll('#usersList .request-item');
+            items.forEach(function(item) {
+                if (!term) { item.style.display = ''; return; }
+                var text = item.textContent.toLowerCase();
+                item.style.display = text.includes(term) ? '' : 'none';
+            });
+        }
+
         async function renderHistoryList() {
             const list = document.getElementById('historyList');
             if (!list) return;
