@@ -497,6 +497,55 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
             }
         }
 
+        async function deleteFreeAccountsCloud() {
+            if (!window.sb) { alert('Sin conexión a la nube.'); return; }
+            showAdminConfirmModal({
+                title: '¿Eliminar cuentas gratuitas?',
+                message: 'Se eliminarán los usuarios que no pagaron acceso (S/35) y tienen 0 créditos. Los usuarios activos o con créditos NO se verán afectados.',
+                confirmLabel: 'Sí, eliminar gratuitas',
+                danger: true,
+                onConfirm: async function() {
+                    try {
+                        // Buscar cuentas gratuitas: plataforma_activa=false y creditos=0
+                        var { data: freeUsers, error } = await window.sb
+                            .from('saldos')
+                            .select('email')
+                            .eq('plataforma_activa', false)
+                            .eq('creditos', 0);
+                        if (error) throw error;
+                        if (!freeUsers || freeUsers.length === 0) {
+                            alert('No hay cuentas gratuitas para eliminar.');
+                            return;
+                        }
+
+                        var emails = freeUsers.map(function(u) { return u.email; });
+                        var count = emails.length;
+
+                        // Eliminar de saldos
+                        for (var i = 0; i < emails.length; i++) {
+                            await window.sb.from('saldos').delete().eq('email', emails[i]);
+                        }
+
+                        // Eliminar sus registros de solicitudes
+                        var { data: regs } = await window.sb.from('solicitudes').select('placa, datos').like('placa', 'REGISTRO_%');
+                        if (regs) {
+                            for (var j = 0; j < regs.length; j++) {
+                                if (regs[j].datos && emails.includes(regs[j].datos.email)) {
+                                    await window.sb.from('solicitudes').delete().eq('placa', regs[j].placa);
+                                }
+                            }
+                        }
+
+                        alert('Se eliminaron ' + count + ' cuentas gratuitas.');
+                        if (typeof renderUsersList === 'function') renderUsersList();
+                        if (typeof renderHistoryList === 'function') renderHistoryList();
+                    } catch(e) {
+                        alert('Error: ' + e.message);
+                    }
+                }
+            });
+        }
+
         async function deleteAllUsersCloud() {
             if (!window.sb) {
                 alert("❌ Supabase no conectado.");
