@@ -161,10 +161,13 @@
 
             // Consultas requiere créditos
             if (tabName === 'consultas') {
-                // Verificar si tiene créditos (ya cargados en auth.js)
-                // Si aún no cargó (undefined), dejar pasar — el bridge verificará server-side
                 if (window.tieneCreditos === false) {
-                    openAccess();
+                    // Si ya tiene acceso activo, mostrar solo recargas. Si no, mostrar todo.
+                    if (window.plataformaActiva) {
+                        openAccessCreditsOnly();
+                    } else {
+                        openAccess();
+                    }
                     return;
                 }
             }
@@ -277,25 +280,66 @@
                     var existRes = await window.sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%');
                     if ((existRes.data || []).some(function(r) { return r.datos && r.datos.email === email; })) throw new Error('Ese correo ya está registrado. Inicia sesión.');
 
-                    // Crear registro
+                    // Crear registro (aprobado al instante)
                     var reqKey = 'REGISTRO_' + Date.now();
-                    var regData = { placa: reqKey, timestamp: Date.now(), status: 'pending', isRegistro: true, email: email, pass: pass, nombre: name, whatsapp: wpp };
+                    var regData = { placa: reqKey, timestamp: Date.now(), status: 'approved', isRegistro: true, email: email, pass: pass, nombre: name, whatsapp: wpp };
                     var up = await window.sb.from('solicitudes').upsert({ placa: reqKey, datos: regData, updated_at: new Date() });
                     if (up.error) throw new Error('Error al crear cuenta.');
 
-                    // Crear saldo
-                    await window.sb.from('saldos').upsert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() }, { onConflict: 'email' });
+                    // Crear saldo solo si no existe (no sobrescribir si admin ya activó)
+                    var { data: existingSaldo } = await window.sb.from('saldos').select('email').eq('email', email).maybeSingle();
+                    if (!existingSaldo) {
+                        await window.sb.from('saldos').insert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() });
+                    }
 
                     currentUser = { email: email, nombre: name, whatsapp: wpp };
                     localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
                     document.getElementById('authFloatingModal').style.display = 'none';
                     hideLoginScreen();
                     renderLoggedInState();
-                    alert('Cuenta creada exitosamente.\n\nBienvenido a Filtro Vehicular Plus.');
+
+                    // Modal de bienvenida con grupo y planes
+                    var firstName = name.split(' ')[0];
+                    var welcomeHtml = '<div id="welcomeRegModal" class="modal-overlay" style="z-index:9999999;display:flex;">' +
+                        '<div class="modal-card" onclick="event.stopPropagation()" style="max-width:380px;">' +
+                            '<div class="modal-header" style="padding:30px 24px 16px;">' +
+                                '<button onclick="document.getElementById(\'welcomeRegModal\').remove()" class="modal-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>' +
+                                '<div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">' +
+                                    '<i class="fa-solid fa-circle-check" style="font-size:24px;color:#fff;"></i>' +
+                                '</div>' +
+                                '<div class="modal-title" style="font-size:17px;">¡Bienvenido, ' + firstName + '!</div>' +
+                                '<div class="modal-subtitle" style="color:#64748b;font-size:11px;">Tu cuenta ha sido creada exitosamente</div>' +
+                            '</div>' +
+                            '<div class="modal-body" style="text-align:center; padding:0 24px 24px;">' +
+                                '<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px 14px; margin-bottom:16px;">' +
+                                    '<div style="font-size:11px; color:#166534; font-weight:600;">Ya puedes explorar la plataforma</div>' +
+                                    '<div style="font-size:10px; color:#15803d; line-height:1.5; margin-top:2px;">Activa tu cuenta o adquiere creditos para acceder a los servicios.</div>' +
+                                '</div>' +
+                                '<div style="display:flex; flex-direction:column; gap:10px;">' +
+                                    '<button onclick="document.getElementById(\'welcomeRegModal\').remove(); if(typeof openAccess===\'function\') openAccess();" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; background:#25d366; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; letter-spacing:0.5px;">' +
+                                        'Ver Planes y Creditos' +
+                                    '</button>' +
+                                    '<a href="https://chat.whatsapp.com/Dt3goGL73tHLcL94GUmgwH" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:11px; background:#f8fafc; border:1px solid #e2e8f0; color:#111b21; border-radius:10px; font-weight:600; font-size:11px; cursor:pointer; text-decoration:none; transition:all 0.2s;">' +
+                                        '<i class="fa-brands fa-whatsapp" style="font-size:15px; color:#25d366;"></i> Unete al grupo y recibe 20 creditos gratis' +
+                                    '</a>' +
+                                    '<a href="https://wa.me/51932465820?text=Hola%2C%20acabo%20de%20registrarme%20en%20Filtro%20Vehicular%20Plus%20y%20necesito%20informacion." target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; background:transparent; border:1px solid #e2e8f0; color:#6b7280; border-radius:10px; font-weight:500; font-size:10px; cursor:pointer; text-decoration:none; transition:all 0.2s;">' +
+                                        '<i class="fa-brands fa-whatsapp" style="font-size:14px; color:#25d366;"></i> ¿Necesitas ayuda? Escribenos' +
+                                    '</a>' +
+                                    '<div style="display:flex; align-items:center; gap:6px; justify-content:center; margin-top:4px;">' +
+                                        '<span style="font-size:10px; color:#94a3b8;">¿Ya estas en el grupo?</span>' +
+                                        '<button onclick="document.getElementById(\'welcomeRegModal\').style.display=\'none\'; mostrarCanjeCodigo();" style="background:none; border:none; color:#25d366; font-size:10px; font-weight:700; cursor:pointer; text-decoration:underline;">Canjear codigo</button>' +
+                                    '</div>' +
+                                    '<button onclick="document.getElementById(\'welcomeRegModal\').remove()" style="padding:6px; background:transparent; color:#94a3b8; border:none; font-size:10px; font-weight:500; cursor:pointer; margin-top:2px;">Explorar primero</button>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+                    document.body.insertAdjacentHTML('beforeend', welcomeHtml);
 
                 } else {
                     // Login
-                    if (_isAdmin(email, pass)) {
+                    if (await _isAdminAsync(email, pass)) {
+                        _isAdminSession = true;
                         currentUser = { email: email, nombre: 'Admin' };
                         localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
                         window.plataformaActiva = true;
@@ -316,15 +360,23 @@
                     currentUser = { email: match.datos.email, nombre: match.datos.nombre || 'Usuario', whatsapp: match.datos.whatsapp || '' };
                     localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
 
-                    // Leer plataforma
+                    // Leer plataforma y verificar canje
+                    var yaCanjeo = false;
                     try {
-                        var sRes = await window.sb.from('saldos').select('plataforma_activa').eq('email', email).single();
-                        if (sRes.data) window.plataformaActiva = sRes.data.plataforma_activa || false;
+                        var sRes = await window.sb.from('saldos').select('plataforma_activa, codigos_canjeados').eq('email', email).single();
+                        if (sRes.data) {
+                            window.plataformaActiva = sRes.data.plataforma_activa || false;
+                            var canjeados = sRes.data.codigos_canjeados || [];
+                            yaCanjeo = canjeados.length > 0;
+                        }
                     } catch(e) {}
 
                     document.getElementById('authFloatingModal').style.display = 'none';
                     hideLoginScreen();
                     renderLoggedInState();
+
+                    // Mostrar promo de canje si nunca canjeó
+                    if (!yaCanjeo) mostrarPromoCanje();
                 }
             } catch (e) {
                 err.textContent = e.message;
@@ -333,6 +385,125 @@
             btn.innerHTML = _authFloatingMode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
             btn.disabled = false;
         }
+
+        // --- SISTEMA DE CANJE DE CÓDIGOS ---
+        var CODIGOS_CANJE = {
+            'FVP8K2MX': { creditos: 20, descripcion: 'Bono grupo WhatsApp' }
+        };
+
+        var _canjeandoCodigo = false;
+        async function canjearCodigo(codigo) {
+            if (_canjeandoCodigo) return;
+            if (!currentUser || !currentUser.email) {
+                alert('Debes iniciar sesión para canjear un código.');
+                return;
+            }
+            _canjeandoCodigo = true;
+            var code = String(codigo || '').trim().toUpperCase();
+            if (!code) {
+                _canjeandoCodigo = false; alert('Ingresa un código válido.');
+                return;
+            }
+            var plan = CODIGOS_CANJE[code];
+            if (!plan) {
+                _canjeandoCodigo = false; alert('Código inválido o expirado.');
+                return;
+            }
+            if (!window.sb) {
+                _canjeandoCodigo = false; alert('Sin conexión a la base de datos.');
+                return;
+            }
+
+            // Verificar si ya canjeó este código
+            var email = currentUser.email;
+            var { data: saldo } = await window.sb.from('saldos').select('creditos, codigos_canjeados').eq('email', email).maybeSingle();
+            var canjeados = (saldo && saldo.codigos_canjeados) ? saldo.codigos_canjeados : [];
+            if (canjeados.includes(code)) {
+                _canjeandoCodigo = false; alert('Ya canjeaste este código anteriormente.');
+                return;
+            }
+
+            // Acreditar
+            var creditosActuales = (saldo && saldo.creditos) ? saldo.creditos : 0;
+            canjeados.push(code);
+            if (saldo) {
+                await window.sb.from('saldos').update({
+                    creditos: creditosActuales + plan.creditos,
+                    codigos_canjeados: canjeados,
+                    updated_at: new Date()
+                }).eq('email', email);
+            } else {
+                await window.sb.from('saldos').insert({
+                    email: email,
+                    creditos: plan.creditos,
+                    codigos_canjeados: canjeados,
+                    plataforma_activa: false,
+                    dashboard_activo: false,
+                    updated_at: new Date()
+                });
+            }
+
+            // Actualizar UI
+            window.creditosUsuario = creditosActuales + plan.creditos;
+            window.tieneCreditos = true;
+            var logoStatus = document.querySelector('.dropdown-trigger span');
+            if (logoStatus) logoStatus.textContent = Math.floor(window.creditosUsuario) + ' Créditos';
+
+            _canjeandoCodigo = false;
+            alert('¡Código canjeado!\n\nSe acreditaron ' + plan.creditos + ' créditos a tu cuenta.\nNuevo saldo: ' + (creditosActuales + plan.creditos) + ' créditos.');
+
+            // Cerrar modal de canje si existe
+            var canjeModal = document.getElementById('canjeCodigoModal');
+            if (canjeModal) canjeModal.remove();
+        }
+
+        function mostrarCanjeCodigo() {
+            if (document.getElementById('canjeCodigoModal')) return;
+            var html = '<div id="canjeCodigoModal" class="modal-overlay" style="z-index:9999999;display:flex;" onclick="if(event.target===this){this.remove(); var w=document.getElementById(\'welcomeRegModal\'); if(w)w.style.display=\'flex\';}">' +
+                '<div class="modal-card" onclick="event.stopPropagation()" style="max-width:360px;">' +
+                    '<div class="modal-header" style="padding:28px 24px 14px;">' +
+                        '<button onclick="document.getElementById(\'canjeCodigoModal\').remove(); var w=document.getElementById(\'welcomeRegModal\'); if(w)w.style.display=\'flex\';" class="modal-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>' +
+                        '<div style="width:48px;height:48px;border-radius:50%;background:#111b21;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">' +
+                            '<i class="fa-solid fa-gift" style="font-size:20px;color:#25d366;"></i>' +
+                        '</div>' +
+                        '<div class="modal-title" style="font-size:16px;">Canjear Código</div>' +
+                        '<div class="modal-subtitle" style="font-size:11px;color:#64748b;">Ingresa tu código para recibir créditos gratis</div>' +
+                    '</div>' +
+                    '<div class="modal-body" style="padding:4px 24px 24px;">' +
+                        '<input type="text" id="canjeCodigoInput" placeholder="Ej: BS2026" maxlength="20" style="width:100%;padding:14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:3px;outline:none;transition:border-color 0.2s;font-family:Roboto,sans-serif;color:#111b21;box-sizing:border-box;" onfocus="this.style.borderColor=\'#25d366\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
+                        '<button onclick="canjearCodigo(document.getElementById(\'canjeCodigoInput\').value)" style="width:100%;padding:14px;background:#25d366;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;margin-top:12px;text-transform:uppercase;letter-spacing:0.5px;transition:background 0.2s;">Canjear</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+            document.body.insertAdjacentHTML('beforeend', html);
+            setTimeout(function() { var inp = document.getElementById('canjeCodigoInput'); if (inp) inp.focus(); }, 100);
+        }
+
+        // Banner promo de canje post-login
+        function mostrarPromoCanje() {
+            if (document.getElementById('promoCanjeBanner')) return;
+            var banner = document.createElement('div');
+            banner.id = 'promoCanjeBanner';
+            banner.style.cssText = 'position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:99998; width:calc(100% - 32px); max-width:380px; background:#111b21; border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px; animation:slideUpBanner 0.4s cubic-bezier(0.16,1,0.3,1);';
+            banner.innerHTML = '<div style="width:40px;height:40px;min-width:40px;border-radius:10px;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;">' +
+                '<i class="fa-solid fa-gift" style="font-size:16px;color:#fff;"></i>' +
+            '</div>' +
+            '<div style="flex:1;min-width:0;">' +
+                '<div style="font-size:12px;font-weight:700;color:#e9edef;">Tienes 20 créditos de regalo</div>' +
+                '<div style="font-size:10px;color:#8696a0;margin-top:1px;">Canjea tu código del grupo de WhatsApp</div>' +
+            '</div>' +
+            '<button onclick="document.getElementById(\'promoCanjeBanner\').remove(); mostrarCanjeCodigo();" style="background:#25d366;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Canjear</button>' +
+            '<button onclick="document.getElementById(\'promoCanjeBanner\').remove();" style="position:absolute;top:6px;right:8px;background:none;border:none;color:#8696a0;font-size:12px;cursor:pointer;padding:4px;">✕</button>';
+            document.body.appendChild(banner);
+
+            // Auto-ocultar después de 15 segundos
+            setTimeout(function() { var b = document.getElementById('promoCanjeBanner'); if (b) b.remove(); }, 15000);
+        }
+
+        // Animación del banner
+        var bannerStyle = document.createElement('style');
+        bannerStyle.textContent = '@keyframes slideUpBanner { from { opacity:0; transform:translateX(-50%) translateY(20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }';
+        document.head.appendChild(bannerStyle);
 
         // Mostrar modal de upgrade S/35
         function showUpgradeModal() {
@@ -375,13 +546,8 @@
         // Recuperar contraseña
         function handleForgotPassword() {
             var email = document.getElementById('authRegEmail').value.trim().toLowerCase();
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showAppAlert('Recuperar contraseña', 'Ingresa tu correo electrónico en el campo de arriba y luego presiona "¿Olvidaste tu contraseña?"');
-                return;
-            }
-            showAppConfirm('¿Enviar instrucciones de recuperación a ' + email + '?', function() {
-                showAppAlert('Correo enviado', 'Si la cuenta existe, recibirás un enlace para restablecer tu contraseña en ' + email);
-            });
+            var msg = email ? encodeURIComponent('Hola, olvidé mi contraseña. Mi correo es: ' + email) : encodeURIComponent('Hola, necesito recuperar mi contraseña.');
+            window.open('https://wa.me/51932465820?text=' + msg, '_blank');
         }
 
         // Verificar sesión OAuth al volver de Google
@@ -401,7 +567,10 @@
                         var reqKey = 'REGISTRO_' + Date.now();
                         var regData = { placa: reqKey, timestamp: Date.now(), status: 'pending', isRegistro: true, email: email, pass: '', nombre: nombre, whatsapp: '', authProvider: 'google' };
                         await window.sb.from('solicitudes').upsert({ placa: reqKey, datos: regData, updated_at: new Date() });
-                        await window.sb.from('saldos').upsert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() }, { onConflict: 'email' });
+                        var { data: gSaldo } = await window.sb.from('saldos').select('email').eq('email', email).maybeSingle();
+                        if (!gSaldo) {
+                            await window.sb.from('saldos').insert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() });
+                        }
                     }
 
                     currentUser = { email: email, nombre: nombre, whatsapp: '' };
@@ -815,6 +984,45 @@
 
         function openAccess() { document.getElementById('accessModal').style.display = 'flex'; }
         function closeAccess() { document.getElementById('accessModal').style.display = 'none'; }
+
+        function openAccessCreditsOnly() {
+            if (document.getElementById('creditsOnlyModal')) {
+                document.getElementById('creditsOnlyModal').style.display = 'flex';
+                return;
+            }
+            var html = '<div id="creditsOnlyModal" class="modal-overlay" style="z-index:99999; overflow-y:auto; padding:12px;" onclick="if(event.target===this)this.style.display=\'none\'">' +
+                '<div class="access-plans-container" onclick="event.stopPropagation()">' +
+                    '<button onclick="document.getElementById(\'creditsOnlyModal\').style.display=\'none\'" class="modal-close"><i class="fa-solid fa-xmark"></i></button>' +
+                    '<div style="text-align:center; margin-bottom:14px;">' +
+                        '<div class="modal-title" style="font-size:17px;">Recarga Créditos</div>' +
+                        '<div class="modal-subtitle">Necesitas créditos para acceder a Consultas</div>' +
+                    '</div>' +
+                    '<div class="access-plans-grid">' +
+                        '<div class="access-plan-card" onclick="document.getElementById(\'creditsOnlyModal\').style.display=\'none\'; openSale(\'42.00\', \'Plan Avanzado: 850 Créditos\', 850)">' +
+                            '<div class="access-plan-header"><div class="access-plan-name">Avanzado</div><div class="access-plan-price">S/42</div><div class="access-plan-credits">850 créditos</div></div>' +
+                            '<ul class="access-plan-features"><li><i class="fa-solid fa-check"></i> Acceso a RENIEC, C4, etc</li><li><i class="fa-solid fa-check"></i> Telefonía, SUNAT, sueldos</li><li><i class="fa-solid fa-check"></i> SUNARP, partida registral</li><li><i class="fa-solid fa-check"></i> Soporte 24/7</li></ul>' +
+                            '<i class="fa-solid fa-chevron-right access-plan-arrow"></i><div class="access-plan-btn">Seleccionar</div>' +
+                        '</div>' +
+                        '<div class="access-plan-card access-plan-featured" onclick="document.getElementById(\'creditsOnlyModal\').style.display=\'none\'; openSale(\'140.00\', \'Plan Profesional: 4000 Créditos\', 4000)">' +
+                            '<span class="access-plan-badge">Recomendado</span>' +
+                            '<div class="access-plan-header"><div class="access-plan-name" style="color:#25d366;">Profesional</div><div class="access-plan-price">S/140</div><div class="access-plan-credits">4,000 créditos</div></div>' +
+                            '<ul class="access-plan-features"><li><i class="fa-solid fa-check"></i> Reconocimiento Facial</li><li><i class="fa-solid fa-check"></i> Módulos desarrollador (APIS)</li><li><i class="fa-solid fa-check"></i> +60 módulos de búsqueda</li><li><i class="fa-solid fa-check"></i> Soporte 24/7</li></ul>' +
+                            '<i class="fa-solid fa-chevron-right access-plan-arrow"></i><div class="access-plan-btn access-plan-btn-green">Seleccionar</div>' +
+                        '</div>' +
+                        '<div class="access-plan-card" onclick="document.getElementById(\'creditsOnlyModal\').style.display=\'none\'; openSale(\'84.00\', \'Plan Business: 2000 Créditos\', 2000)">' +
+                            '<div class="access-plan-header"><div class="access-plan-name">Business</div><div class="access-plan-price">S/84</div><div class="access-plan-credits">2,000 créditos</div></div>' +
+                            '<ul class="access-plan-features"><li><i class="fa-solid fa-check"></i> Sentinel, Experian, SBS</li><li><i class="fa-solid fa-check"></i> Migraciones, TIVE vehicular</li><li><i class="fa-solid fa-check"></i> Delitos, denuncias</li><li><i class="fa-solid fa-check"></i> Soporte 24/7</li></ul>' +
+                            '<i class="fa-solid fa-chevron-right access-plan-arrow"></i><div class="access-plan-btn">Seleccionar</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div style="margin-top:12px; text-align:center;">' +
+                        '<a href="https://wa.me/51932465820?text=Hola%2C%20quiero%20recargar%20cr%C3%A9ditos%20en%20Filtro%20Vehicular." target="_blank" onclick="document.getElementById(\'creditsOnlyModal\').style.display=\'none\';" class="access-wa-btn"><i class="fa-brands fa-whatsapp"></i> Recargar por WhatsApp</a>' +
+                        '<div style="font-size:8px; color:#94a3b8; margin-top:6px;"><i class="fa-solid fa-shield-halved" style="margin-right:3px;"></i> Pago seguro · Créditos al instante · Soporte 24/7</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+            document.body.insertAdjacentHTML('beforeend', html);
+        }
         let currentSaleCredits = 0;
         let currentSaleAmount = '0.00';
         let currentSaleType = 'regular'; // 'regular' o 'dashboard'
@@ -929,7 +1137,7 @@
                         'apikey': SUPABASE_ANON,
                         'Authorization': 'Bearer ' + SUPABASE_ANON
                     },
-                    body: JSON.stringify({ plan: plan, email: currentUser.email })
+                    body: JSON.stringify({ plan: plan, email: currentUser.email, placa: localStorage.getItem('temp_informe_placa') || '' })
                 });
                 var data = await res.json();
                 if (data.init_point) {
@@ -2860,16 +3068,22 @@
                     return;
                 }
 
-                // 2. Descontar 7 créditos y activar dashboard
-                const { error } = await window.sb
+                // 2. Descontar 35 créditos y activar dashboard (con guard atómico)
+                const { data: updated, error } = await window.sb
                     .from('saldos')
-                    .update({ 
-                        creditos: saldoData.creditos - 35, 
-                        dashboard_activo: true 
+                    .update({
+                        creditos: saldoData.creditos - 35,
+                        dashboard_activo: true
                     })
-                    .eq('email', currentUser.email);
+                    .eq('email', currentUser.email)
+                    .gte('creditos', 35)
+                    .select('creditos');
 
                 if (error) throw error;
+                if (!updated || updated.length === 0) {
+                    alert('Error: saldo insuficiente o ya fue procesado.');
+                    return;
+                }
 
                 // 3. Actualizar estado local
                 window.dashboardActivo = true;

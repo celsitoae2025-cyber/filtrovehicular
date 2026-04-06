@@ -27,7 +27,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { plan, email } = await req.json();
+    const { plan, email, placa } = await req.json();
 
     if (!plan || !email || !PLANS[plan]) {
       return new Response(
@@ -58,6 +58,7 @@ serve(async (req: Request) => {
         credits: p.credits,
         type: p.type,
         plan,
+        ...(placa ? { placa } : {}),
       }),
       back_urls: {
         success: `${SITE_URL}/pago-exitoso.html`,

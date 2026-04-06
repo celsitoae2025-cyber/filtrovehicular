@@ -60,7 +60,7 @@ serve(async (req: Request) => {
     }
 
     // Parsear referencia externa
-    let ref: { email: string; credits: number; type: string; plan: string };
+    let ref: { email: string; credits: number; type: string; plan: string; placa?: string };
     try {
       ref = JSON.parse(payment.external_reference);
     } catch {
@@ -69,6 +69,16 @@ serve(async (req: Request) => {
     }
 
     if (!ref.email) return new Response('OK', { status: 200 });
+
+    // Validar monto contra precio esperado del plan
+    const PLAN_PRICES: Record<string, number> = {
+      filtro: 45, acceso: 35, avanzado: 42, business: 84, profesional: 140,
+    };
+    const expectedPrice = PLAN_PRICES[ref.plan];
+    if (!expectedPrice || payment.transaction_amount < expectedPrice) {
+      console.error(`Monto invalido: esperado ${expectedPrice}, recibido ${payment.transaction_amount}, plan ${ref.plan}`);
+      return new Response('OK', { status: 200 });
+    }
 
     const sb = getSupabase();
     if (!sb) {
@@ -157,6 +167,31 @@ serve(async (req: Request) => {
       await notifyTelegram(
         `✅ <b>ACTIVACION APROBADA - MercadoPago</b>\n` +
         `🚀 Acceso Plataforma Premium\n` +
+        `💰 S/ ${payment.transaction_amount}\n` +
+        `📧 ${ref.email}\n` +
+        `🆔 MP #${paymentId}\n` +
+        `🕐 ${fechaLima()}`
+      );
+
+    } else if (ref.type === 'filtro') {
+      // Crear solicitud de filtro vehicular
+      const placa = ref.placa || 'SIN_PLACA';
+      await sb.from('solicitudes').upsert({
+        placa: placa,
+        datos: {
+          placa: placa,
+          email: ref.email,
+          status: 'pending',
+          timestamp: Date.now(),
+          pagoCon: 'mercadopago',
+          mpPaymentId: String(paymentId),
+        },
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'placa' });
+
+      await notifyTelegram(
+        `✅ <b>FILTRO VEHICULAR PAGADO - MercadoPago</b>\n` +
+        `🚗 Placa: ${placa}\n` +
         `💰 S/ ${payment.transaction_amount}\n` +
         `📧 ${ref.email}\n` +
         `🆔 MP #${paymentId}\n` +

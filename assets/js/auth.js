@@ -2,10 +2,28 @@
 
 let isLoginMode = true;
 let currentUser = null;
-var _adminEmail = 'juandevillar80@gmail.com';
+// Admin auth con hash SHA-256 (no expone credenciales en texto plano)
+var _aH = 'a0f3285b28cf6ef8e1e02527f0954efb8e31adb75e1c59b6448ca005e1f94830';
+var _pH = '21b9e7736ab80e76ef18daf98e93fec77be22e1a5408dc547d3e75e3203cd2f8';
+var _isAdminSession = false;
+
+async function _sha256(str) {
+    var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
 
 function _isAdmin(email, pass) {
-    return email === _adminEmail && pass === '201090';
+    // Comparación síncrona rápida por longitud antes del hash
+    if (!email || !pass || email.length < 5 || pass.length < 4) return false;
+    // Se usa verificación async en los flujos de login
+    return false;
+}
+
+async function _isAdminAsync(email, pass) {
+    if (!email || !pass) return false;
+    var eH = await _sha256(email.toLowerCase().trim());
+    var pHash = await _sha256(pass);
+    return eH === _aH && pHash === _pH;
 }
 
 async function initAuth() {
@@ -45,7 +63,7 @@ async function initAuth() {
         }
 
         // Admin override
-        if (currentUser.email === _adminEmail) {
+        if (_isAdminSession || currentUser.nombre === 'Admin') {
             window.plataformaActiva = true;
             window.dashboardActivo = true;
             window.tieneCreditos = true;
@@ -100,7 +118,8 @@ async function handleLoginScreen() {
         if (!window.sb) throw new Error('Sin conexión. Verifica tu internet.');
 
         // Admin
-        if (_isAdmin(email, pass)) {
+        if (await _isAdminAsync(email, pass)) {
+            _isAdminSession = true;
             currentUser = { email: email, nombre: 'Admin' };
             localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
             hideLoginScreen();
@@ -119,9 +138,7 @@ async function handleLoginScreen() {
 
         if (!match) throw new Error('Correo o contraseña incorrectos.');
 
-        if (match.datos.status !== 'approved' && email !== _adminEmail) {
-            throw new Error('Tu cuenta está pendiente de activación. Contacta a soporte por WhatsApp.');
-        }
+        // Cuenta siempre aprobada al registrarse — no bloquear login
 
         currentUser = {
             email: match.datos.email,
@@ -133,6 +150,15 @@ async function handleLoginScreen() {
         renderLoggedInState();
         checkPromoPlataforma();
         autoSuscribirPush();
+
+        // Mostrar promo de canje si nunca canjeó
+        if (window.sb && currentUser.email) {
+            try {
+                var saldoCheck = await window.sb.from('saldos').select('codigos_canjeados').eq('email', currentUser.email).maybeSingle();
+                var canjeados = (saldoCheck && saldoCheck.data && saldoCheck.data.codigos_canjeados) ? saldoCheck.data.codigos_canjeados : [];
+                if (canjeados.length === 0 && typeof mostrarPromoCanje === 'function') mostrarPromoCanje();
+            } catch(e) {}
+        }
 
     } catch (e) {
         err.textContent = e.message;
@@ -264,7 +290,7 @@ async function renderLoggedInState() {
     var namePart = emailParts[0];
     var maskedName = namePart.length > 4 ? namePart.substring(0, 4) + '***' : namePart.substring(0, 1) + '***';
     var maskedEmail = maskedName + '@' + (emailParts[1] || 'gmail.com');
-    var isAdminEmail = currentUser.email === _adminEmail;
+    var isAdminEmail = _isAdminSession || currentUser.nombre === 'Admin';
 
     window.currentUserProfile = {
         nombre: displayName,
@@ -520,17 +546,19 @@ async function renderLoggedInState() {
 }
 
 // Sistema de notificaciones
+var _notifInterval = null;
 function startNotificationChecker() {
     if (!currentUser) return;
-    
+    if (_notifInterval) clearInterval(_notifInterval);
+
     // Guardar estado inicial
     const initialState = {
         plataformaActiva: window.plataformaActiva || false,
         dashboardActivo: window.dashboardActivo || false
     };
-    
+
     // Verificar cada 30 segundos
-    setInterval(async () => {
+    _notifInterval = setInterval(async () => {
         if (!currentUser || !window.sb) return;
         
         try {
@@ -880,7 +908,8 @@ async function handleAuthSubmit() {
         }
 
         if (isLoginMode) {
-            if (_isAdmin(email, pass)) {
+            if (await _isAdminAsync(email, pass)) {
+                _isAdminSession = true;
                 currentUser = { email: email, nombre: 'Admin' };
                 localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
                 closeAuthModal();
@@ -908,9 +937,7 @@ async function handleAuthSubmit() {
                 throw new Error('Correo o contraseña incorrectos.');
             }
 
-            if (userMatch.datos.status !== 'approved' && email !== _adminEmail) {
-                throw new Error('Tu cuenta aún está pendiente de activación. Por favor, contacta a soporte por WhatsApp para que la aprueben.');
-            }
+            // Cuenta siempre aprobada al registrarse — no bloquear login
 
             currentUser = {
                 email: userMatch.datos.email,
@@ -959,7 +986,7 @@ async function handleAuthSubmit() {
             var regData = {
                 placa: reqKey,
                 timestamp: timestamp,
-                status: 'pending',
+                status: 'approved',
                 isRegistro: true,
                 email: email,
                 pass: pass,
@@ -970,53 +997,54 @@ async function handleAuthSubmit() {
             var up = await window.sb.from('solicitudes').upsert({ placa: reqKey, datos: regData, updated_at: new Date() });
             if (up.error) throw new Error('Fallo al crear cuenta. Intenta de nuevo.');
 
+            // Crear fila en saldos solo si no existe (no sobrescribir activaciones previas)
+            var { data: existingSaldo } = await window.sb.from('saldos').select('email').eq('email', email).maybeSingle();
+            if (!existingSaldo) {
+                await window.sb.from('saldos').insert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() });
+            }
+
+            // Auto-login inmediato
+            currentUser = { email: email, nombre: name, whatsapp: wpp };
+            localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
             closeAuthModal();
+            renderLoggedInState();
 
             // Obtener enlace del grupo de WhatsApp desde localStorage
             var whatsappGroupLink = localStorage.getItem('whatsapp_group_link') || '';
             var groupButtonHtml = '';
-            
-            // Si hay enlace de grupo configurado, agregar botón de unirse al grupo
             if (whatsappGroupLink) {
                 groupButtonHtml = `
-                    <a href="${whatsappGroupLink}" target="_blank" id="joinGroupBtn" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
-                        <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Unirse al Grupo de Clientes
+                    <a href="${whatsappGroupLink}" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; background:linear-gradient(135deg, #111b21 0%, #1f2c34 100%); color:#fff; border:none; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer; text-decoration:none; transition:all 0.2s; letter-spacing:0.3px;">
+                        <i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> Únete al grupo de clientes
                     </a>`;
             }
 
             var alertHtml = `
                 <div id="customAlertModal" class="modal-overlay" style="z-index:9999999;display:flex;">
-                    <div class="modal-card" onclick="event.stopPropagation()" style="max-width:420px;">
-                        <div class="modal-header">
-                            <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
-                                <i class="fa-solid fa-circle-check" style="font-size:22px;color:#fff;"></i>
+                    <div class="modal-card" onclick="event.stopPropagation()" style="max-width:400px;">
+                        <div class="modal-header" style="padding:32px 24px 18px;">
+                            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                                <i class="fa-solid fa-circle-check" style="font-size:26px;color:#fff;"></i>
                             </div>
-                            <div class="modal-title">¡Cuenta Creada Exitosamente!</div>
-                            <div class="modal-subtitle">Tu registro ha sido recibido</div>
+                            <div class="modal-title" style="font-size:18px;">¡Bienvenido, ${name.split(' ')[0]}!</div>
+                            <div class="modal-subtitle" style="color:#64748b;font-size:12px;">Tu cuenta ha sido creada exitosamente</div>
                         </div>
-                        <div class="modal-body" style="text-align:center;">
-                            <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0 0 22px;font-weight:500;">Para <b style="color:#111b21;">activar tu cuenta</b> y comenzar a usar la plataforma, contacta a nuestro equipo de soporte por WhatsApp.<br><br><span style="color:#111b21;font-weight:700;">Te responderemos en minutos.</span></p>
-                            <div style="display:flex;flex-direction:column;gap:12px;">
-                                <a href="https://wa.me/51932465820?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:#25d366;color:white;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;transition:background 0.2s;text-transform:uppercase;letter-spacing:0.5px;">
-                                    <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> Contactar por WhatsApp
-                                </a>
+                        <div class="modal-body" style="text-align:center; padding:0 24px 24px;">
+                            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px 16px; margin-bottom:18px;">
+                                <div style="font-size:11px; color:#166534; font-weight:600; margin-bottom:2px;">Ya puedes explorar la plataforma</div>
+                                <div style="font-size:10px; color:#15803d; line-height:1.5;">Para acceder a consultas y servicios, activa tu cuenta o adquiere créditos.</div>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:10px;">
+                                <button onclick="document.getElementById('customAlertModal').remove(); openAccess();" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; background:#25d366; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; letter-spacing:0.5px;">
+                                    <i class="fa-solid fa-crown" style="font-size:14px;"></i> Ver Planes y Créditos
+                                </button>
                                 ${groupButtonHtml}
-                                <button onclick="document.getElementById('customAlertModal').remove()" class="modal-btn modal-btn-secondary">Entendido</button>
+                                <button onclick="document.getElementById('customAlertModal').remove()" style="padding:10px; background:transparent; color:#94a3b8; border:none; font-size:11px; font-weight:500; cursor:pointer;">Explorar primero</button>
                             </div>
                         </div>
                     </div>
                 </div>`;
             document.body.insertAdjacentHTML('beforeend', alertHtml);
-            
-            // Abrir automáticamente el enlace del grupo después de 2 segundos si existe
-            if (whatsappGroupLink) {
-                setTimeout(function() {
-                    var joinBtn = document.getElementById('joinGroupBtn');
-                    if (joinBtn) {
-                        joinBtn.click();
-                    }
-                }, 2000);
-            }
         }
     } catch (err) {
         errBox.innerText = err.message;
@@ -1034,6 +1062,7 @@ async function handleAuthSubmit() {
 
 async function handleLogout() {
     showAppConfirm('¿Seguro que deseas salir de tu cuenta?', function () {
+        if (_notifInterval) { clearInterval(_notifInterval); _notifInterval = null; }
         if (window.FiltroSession) window.FiltroSession.clear();
         else localStorage.removeItem('filtro_user_session');
         currentUser = null;
@@ -1249,8 +1278,9 @@ async function submitChangePassword() {
             throw new Error('La contraseña actual es incorrecta.');
         }
 
-        // Actualizar contraseña
+        // Actualizar contraseña (ambos campos para consistencia)
         userReg.datos.pass = newPass;
+        userReg.datos.password = newPass;
         var upRes = await window.sb.from('solicitudes').update({
             datos: userReg.datos,
             updated_at: new Date()

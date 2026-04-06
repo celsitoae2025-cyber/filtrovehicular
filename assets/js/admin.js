@@ -239,8 +239,10 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
             const pendingNormSeen = new Set();
             let count = 0;
             rows.forEach((d) => {
+                // Registros de cuenta no cuentan como pendientes
+                if (d.isRegistro) return;
                 if (solicitudEstadoAprobado(d)) return;
-                const n = normalize(String(d.placa));
+                var n = normalize(String(d.placa));
                 if (approvedNorm.has(n)) return;
                 if (pendingNormSeen.has(n)) return;
                 pendingNormSeen.add(n);
@@ -697,13 +699,15 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                 // 1. INTENTAR CON LA NUBE ☁️
                 if (window.sb) {
                     try {
-                        const { data } = await window.sb
+                        const { data, error: readErr } = await window.sb
                             .from('saldos')
                             .select('creditos')
                             .eq('email', email)
                             .single();
+                        if (readErr && readErr.code !== 'PGRST116') console.error('Error leyendo saldo:', readErr.message);
                         if (data) { currentData = data; currentBalance = data.creditos; }
-                    } catch(cloudErr) { 
+                    } catch(cloudErr) {
+                        console.error('Error de conexión al leer saldo:', cloudErr);
                     }
                 }
 
@@ -722,8 +726,16 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                         const { error } = await window.sb
                             .from('saldos')
                             .upsert({ email: email, creditos: newBalance }, { onConflict: 'email' });
-                        if (!error) cloudSaved = true;
-                    } catch(cloudErr) { }
+                        if (error) {
+                            console.error('Error guardando créditos en nube:', error.message);
+                            alert('⚠️ Error al guardar en la nube: ' + error.message + '\nLos créditos se guardaron solo localmente.');
+                        } else {
+                            cloudSaved = true;
+                        }
+                    } catch(cloudErr) {
+                        console.error('Error de conexión al guardar créditos:', cloudErr);
+                        alert('⚠️ Sin conexión a la nube. Los créditos se guardaron solo localmente.');
+                    }
                 }
 
                 // 4. GUARDAR SIEMPRE LOCALMENTE 💾
@@ -1207,6 +1219,8 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
 
             const pendingCandidates = reqs.filter((req) => {
                 if (!req || !req.placa) return false;
+                // Registros de cuenta van al historial, no a pendientes
+                if (req.isRegistro) return false;
                 if (solicitudEstadoAprobado(req)) return false;
                 if (approvedNorm.has(normalize(String(req.placa)))) return false;
                 return true;
@@ -1300,11 +1314,8 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                 } else if (req.isIndividual) {
                     actionBtn = `<button class="btn-req btn-confirm-pay" onclick="approveRequest('${escAttr(req.placa)}')"><i class="fa-solid fa-file-pen"></i> Redactar</button>`;
                 } else if (req.isRegistro) {
-                    var passRaw = String(req.pass || req.password || '');
-                    var passHint = passRaw.length > 4 ? '••••' + passRaw.slice(-4) : (passRaw.length > 0 ? '••••' + passRaw.slice(-2) : 'No disponible');
-                    const msgText = `*¡Bienvenido a Filtro Vehicular Plus!*\n\nHola *${req.nombre}*, tu cuenta ha sido *activada con éxito*.\n\nYa puedes ingresar a la plataforma para realizar tus consultas vehiculares.\n\n*Tus Credenciales:*\n• *Usuario:* ${req.email}\n• *Contraseña:* ${passHint}\n\n*Link de acceso:*\nhttps://filtrovehicularperu.com\n\n*¿Necesitas ayuda?* Estamos aquí para ti.`;
-                    const wppUrl = `https://wa.me/51${req.whatsapp}?text=${encodeURIComponent(msgText)}`;
-                    actionBtn = `<a href="${escAttr(wppUrl)}" target="_blank" class="btn-req btn-confirm-pay" style="text-decoration:none;" onclick="setTimeout(() => confirmRegistro('${escAttr(req.placa)}'), 500)"><i class="fa-solid fa-check"></i> Aprobar</a>`;
+                    // Registros se aprueban automáticamente — solo mostrar info
+                    actionBtn = `<span style="display:inline-flex; align-items:center; gap:4px; padding:6px 12px; background:#ecfdf5; color:#059669; border-radius:8px; font-size:11px; font-weight:700;"><i class="fa-solid fa-circle-check" style="font-size:10px;"></i> Auto-aprobado</span>`;
                 } else {
                     actionBtn = `<button class="btn-req btn-confirm-pay" onclick="confirmPayment('${escAttr(normP)}')"><i class="fa-solid fa-check"></i> Confirmar</button>`;
                 }
@@ -1471,15 +1482,11 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
             // --- ACTUALIZAR EN SUPABASE NUESTRA SOLICITUD A APPROVED ---
             if (window.sb) {
                 try {
-                    // Buscar la recarga con la llave
-                    const { data } = await window.sb.from('solicitudes').select('datos').ilike('placa', '%RECARGA%');
-                    if (data) {
-                        for (let item of data) {
-                            if (item.datos && item.datos.email === email && item.datos.status !== 'approved') {
-                                item.datos.status = 'approved';
-                                await window.sb.from('solicitudes').upsert({ placa: item.datos.placa, datos: item.datos, updated_at: new Date() }, { onConflict: 'placa' });
-                            }
-                        }
+                    // Buscar la recarga específica por placa exacta
+                    const { data: reqData } = await window.sb.from('solicitudes').select('datos').eq('placa', normP).single();
+                    if (reqData && reqData.datos && reqData.datos.status !== 'approved') {
+                        reqData.datos.status = 'approved';
+                        await window.sb.from('solicitudes').update({ datos: reqData.datos, updated_at: new Date() }).eq('placa', normP);
                     }
                 } catch(e) { console.error("Error confirmando carga de recarga:", e); }
             }
@@ -1946,7 +1953,7 @@ Link: https://filtrovehicularperu.com`;
                 var d = row.datos;
                 if (!d || !row.placa) return;
                 if (!solicitudEstadoAprobado(d)) return;
-                if (esFilaProtegida(d)) return;
+                // No proteger registros en historial — se pueden borrar
                 if (seen.has(row.placa)) return;
                 seen.add(row.placa);
                 toDelete.push(row.placa);
@@ -2002,6 +2009,7 @@ Link: https://filtrovehicularperu.com`;
                     if (reqView && reqView.offsetParent !== null) renderRequestsList();
 
                     rows.forEach((d) => {
+                        if (d.isRegistro) return;
                         if (solicitudEstadoAprobado(d)) return;
                         const n = normalize(String(d.placa));
                         if (approvedNorm.has(n)) return;

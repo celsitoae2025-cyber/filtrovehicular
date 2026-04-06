@@ -424,15 +424,9 @@
                         </button>
 
                         <!-- Metodos aceptados -->
-                        <div style="margin-top:20px;">
-                            <p style="font-size:9px; color:#b0b0b0; font-weight:500; text-transform:uppercase; letter-spacing:0.8px; margin:0 0 10px; text-align:center;">Aceptamos</p>
-                            <div style="display:flex; align-items:center; justify-content:center; gap:12px;">
-                                <img src="assets/media/yape.png" alt="Yape" style="height:18px; object-fit:contain;">
-                                <img src="assets/media/plin_logo.svg" alt="Plin" style="height:18px; object-fit:contain;">
-                                <i class="fa-brands fa-cc-visa" style="font-size:24px; color:#1a1f71;"></i>
-                                <i class="fa-brands fa-cc-mastercard" style="font-size:24px; color:#eb001b;"></i>
-                                <i class="fa-brands fa-cc-amex" style="font-size:24px; color:#006fcf;"></i>
-                            </div>
+                        <div style="margin-top:20px; text-align:center;">
+                            <p style="font-size:9px; color:#b0b0b0; font-weight:500; text-transform:uppercase; letter-spacing:0.8px; margin:0 0 10px;">Aceptamos</p>
+                            <img src="assets/media/logospagos.png" alt="Métodos de pago" style="max-width:100%; height:28px; object-fit:contain;">
                         </div>
 
                         <!-- Seguridad -->
@@ -473,6 +467,20 @@
                     <div style="text-align:center; margin-bottom:14px;">
                         <div class="modal-title" style="font-size:17px;">Elige tu Plan</div>
                         <div class="modal-subtitle">Accede a más de 370 consultas en 5 módulos</div>
+                    </div>
+
+                    <!-- ACCESO COMPLETO S/35 -->
+                    <div onclick="closeAccess(); openSale('35.00', 'Acceso Completo a la Plataforma', 0, 'activacion')" style="background:#111b21; border-radius:14px; padding:20px; margin-bottom:14px; cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.01)'" onmouseout="this.style.transform='scale(1)'">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                            <div style="font-size:15px; font-weight:800; color:#e9edef;">Acceso Completo</div>
+                            <div style="font-size:20px; font-weight:900; color:#25d366;">S/35</div>
+                        </div>
+                        <div style="font-size:10px; color:#8696a0; line-height:1.5;">Desbloquea Servicios y Accesos · Pago único · De por vida</div>
+                        <div style="margin-top:12px; padding:10px; background:rgba(37,211,102,0.08); border-radius:8px; font-size:9px; color:#25d366; font-weight:600; text-align:center; letter-spacing:0.3px;">SELECCIONAR ACCESO COMPLETO</div>
+                    </div>
+
+                    <div style="text-align:center; margin-bottom:10px;">
+                        <div style="font-size:10px; color:#94a3b8; font-weight:600; text-transform:uppercase; letter-spacing:1px;">O recarga créditos</div>
                     </div>
 
                     <div class="access-plans-grid">
@@ -791,8 +799,8 @@
         <div class="modal-card" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <button onclick="document.getElementById('soatFormModal').style.display='none'" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-                <div style="width:56px;height:56px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;overflow:hidden;">
-                    <img src="img/logo-protecta.svg" alt="Protecta" style="width:44px;height:44px;object-fit:contain;">
+                <div style="display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                    <img src="img/logo-protecta.svg" alt="Protecta" style="width:180px;height:auto;object-fit:contain;">
                 </div>
                 <div class="modal-title">Cotizar SOAT</div>
                 <div class="modal-subtitle">Completa los datos para recibir tu cotización</div>
