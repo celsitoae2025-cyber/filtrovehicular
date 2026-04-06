@@ -1394,23 +1394,27 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
         function filtrarHistorial() {
             var input = document.getElementById('historySearchInput');
             var term = (input ? input.value : '').trim().toLowerCase();
-            var items = document.querySelectorAll('#historyList .request-item');
-            items.forEach(function(item) {
-                if (!term) { item.style.display = ''; return; }
-                var text = item.textContent.toLowerCase();
-                item.style.display = text.includes(term) ? '' : 'none';
-            });
+            var list = document.getElementById('historyList');
+            if (!list) return;
+            var items = list.children;
+            for (var i = 0; i < items.length; i++) {
+                if (!term) { items[i].style.display = ''; continue; }
+                var text = items[i].textContent.toLowerCase();
+                items[i].style.display = text.includes(term) ? '' : 'none';
+            }
         }
 
         function filtrarUsuarios() {
             var input = document.getElementById('usersSearchInput');
             var term = (input ? input.value : '').trim().toLowerCase();
-            var items = document.querySelectorAll('#usersList .request-item');
-            items.forEach(function(item) {
-                if (!term) { item.style.display = ''; return; }
-                var text = item.textContent.toLowerCase();
-                item.style.display = text.includes(term) ? '' : 'none';
-            });
+            var list = document.getElementById('usersList');
+            if (!list) return;
+            var items = list.children;
+            for (var i = 0; i < items.length; i++) {
+                if (!term) { items[i].style.display = ''; continue; }
+                var text = items[i].textContent.toLowerCase();
+                items[i].style.display = text.includes(term) ? '' : 'none';
+            }
         }
 
         async function renderHistoryList() {
