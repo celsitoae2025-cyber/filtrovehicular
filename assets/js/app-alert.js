@@ -1,31 +1,42 @@
 /**
  * Modal de alerta y confirmación personalizado.
- * Colores institucionales: #111b21 + #25d366
- * Fondo arcoíris difuminado estilo premium.
+ * Usa clases .modal-* del sistema unificado.
+ * Estilo idéntico al modal de login: icono circular, título, subtítulo, botones.
  */
 (function () {
     'use strict';
 
-    var RAINBOW_BG = 'linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%)';
+    var iconMap = {
+        success: { icon: 'fa-solid fa-check',            bg: '#25d366' },
+        error:   { icon: 'fa-solid fa-triangle-exclamation', bg: '#ef4444' },
+        warning: { icon: 'fa-solid fa-exclamation',       bg: '#f59e0b' },
+        info:    { icon: 'fa-solid fa-info',              bg: '#111b21' }
+    };
 
     function createModal() {
         if (document.getElementById('appAlertOverlay')) return;
         var overlay = document.createElement('div');
         overlay.id = 'appAlertOverlay';
-        overlay.style.cssText = 'display:none;position:fixed;inset:0;z-index:9999999;background:' + RAINBOW_BG + ';backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);align-items:center;justify-content:center;padding:20px;';
-        overlay.innerHTML = '<div id="appAlertCard" style="background:#ffffff;border-radius:16px;max-width:360px;width:92%;padding:28px 24px 24px;text-align:center;border:1px solid #e5e7eb;animation:appAlertIn 0.2s ease-out;">' +
-            '<div id="appAlertIcon" style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:20px;"></div>' +
-            '<h3 id="appAlertTitle" style="font-size:15px;font-weight:700;color:#111b21;margin:0 0 6px;line-height:1.3;"></h3>' +
-            '<p id="appAlertMsg" style="font-size:12px;color:#6b7280;line-height:1.6;margin:0 0 20px;white-space:pre-line;font-weight:400;"></p>' +
-            '<button id="appAlertBtn" type="button" style="width:100%;padding:12px;background:#25d366;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background=\'#1ebe5d\'" onmouseout="this.style.background=\'#25d366\'">Entendido</button>' +
+        overlay.className = 'modal-overlay';
+        overlay.style.zIndex = '9999999';
+        overlay.innerHTML =
+            '<div id="appAlertCard" class="modal-card" style="max-width:360px;">' +
+                '<div class="modal-header">' +
+                    '<button id="appAlertClose" type="button" class="modal-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>' +
+                    '<div id="appAlertIcon" style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">' +
+                        '<i id="appAlertIconI" style="font-size:20px;color:#fff;"></i>' +
+                    '</div>' +
+                    '<div id="appAlertTitle" class="modal-title"></div>' +
+                    '<div id="appAlertMsg" class="modal-subtitle" style="margin-top:4px; line-height:1.5; white-space:pre-line;"></div>' +
+                '</div>' +
+                '<div class="modal-body" style="padding-top:8px;">' +
+                    '<button id="appAlertBtn" type="button" class="modal-btn modal-btn-primary">Entendido</button>' +
+                '</div>' +
             '</div>';
         document.body.appendChild(overlay);
 
-        var style = document.createElement('style');
-        style.textContent = '@keyframes appAlertIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}';
-        document.head.appendChild(style);
-
         document.getElementById('appAlertBtn').addEventListener('click', closeAppAlert);
+        document.getElementById('appAlertClose').addEventListener('click', closeAppAlert);
         overlay.addEventListener('click', function (e) {
             if (e.target === overlay) closeAppAlert();
         });
@@ -39,12 +50,20 @@
         return 'info';
     }
 
+    function applyIcon(type) {
+        var cfg = iconMap[type] || iconMap.info;
+        var iconWrap = document.getElementById('appAlertIcon');
+        var iconI = document.getElementById('appAlertIconI');
+        iconWrap.style.background = cfg.bg;
+        iconI.className = cfg.icon;
+    }
+
     var _alertCallback = null;
 
     window.showAppAlert = function (titleOrMsg, msg, callback) {
         createModal();
         var title, message;
-        if (msg !== undefined && msg !== null) {
+        if (msg !== undefined && msg !== null && typeof msg !== 'function') {
             title = String(titleOrMsg || '');
             message = String(msg || '');
         } else {
@@ -57,20 +76,16 @@
         _alertCallback = callback || null;
 
         var type = detectType(title, message);
-        var icons = {
-            success: { bg: 'rgba(37,211,102,0.1)', color: '#25d366', icon: 'fa-circle-check' },
-            error: { bg: 'rgba(239,68,68,0.1)', color: '#ef4444', icon: 'fa-circle-xmark' },
-            warning: { bg: 'rgba(245,158,11,0.1)', color: '#f59e0b', icon: 'fa-triangle-exclamation' },
-            info: { bg: 'rgba(37,211,102,0.1)', color: '#25d366', icon: 'fa-circle-info' }
-        };
-        var cfg = icons[type];
-
-        var iconEl = document.getElementById('appAlertIcon');
-        iconEl.style.background = cfg.bg;
-        iconEl.innerHTML = '<i class="fa-solid ' + cfg.icon + '" style="color:' + cfg.color + ';"></i>';
-
+        applyIcon(type);
         document.getElementById('appAlertTitle').textContent = title;
         document.getElementById('appAlertMsg').textContent = message;
+        document.getElementById('appAlertMsg').style.display = message ? 'block' : 'none';
+
+        // Reset: show single button, remove confirm buttons if exist
+        document.getElementById('appAlertBtn').style.display = '';
+        var existingBtns = document.getElementById('appConfirmBtns');
+        if (existingBtns) existingBtns.remove();
+
         document.getElementById('appAlertOverlay').style.display = 'flex';
     };
 
@@ -84,7 +99,6 @@
         }
     };
 
-    // Override global alert
     window._originalAlert = window.alert;
     window.alert = function (msg) {
         if (typeof window.showAppAlert === 'function') {
@@ -94,67 +108,45 @@
         }
     };
 
-    // Confirm personalizado
     window.showAppConfirm = function (msg, onAccept, onCancel) {
         createModal();
         var overlay = document.getElementById('appAlertOverlay');
-        var type = 'info';
         var text = String(msg || '');
         var lines = text.split('\n');
         var title = lines[0].replace(/^[^\w\s¿]*\s*/, '').substring(0, 60);
         var message = lines.length > 1 ? lines.slice(1).join('\n').trim() : '';
 
-        if (text.toLowerCase().includes('eliminar') || text.toLowerCase().includes('borrar') || text.toLowerCase().includes('limpiar') || text.toLowerCase().includes('salir')) type = 'warning';
-
-        var icons = {
-            success: { bg: 'rgba(37,211,102,0.1)', color: '#25d366', icon: 'fa-circle-check' },
-            error: { bg: 'rgba(239,68,68,0.1)', color: '#ef4444', icon: 'fa-circle-xmark' },
-            warning: { bg: 'rgba(245,158,11,0.1)', color: '#f59e0b', icon: 'fa-triangle-exclamation' },
-            info: { bg: 'rgba(37,211,102,0.1)', color: '#25d366', icon: 'fa-circle-info' }
-        };
-        var cfg = icons[type];
-
-        var iconEl = document.getElementById('appAlertIcon');
-        iconEl.style.background = cfg.bg;
-        iconEl.innerHTML = '<i class="fa-solid ' + cfg.icon + '" style="color:' + cfg.color + ';"></i>';
+        var type = text.toLowerCase().match(/eliminar|borrar|limpiar|salir/) ? 'warning' : 'info';
+        applyIcon(type);
 
         document.getElementById('appAlertTitle').textContent = title;
         document.getElementById('appAlertMsg').textContent = message;
+        document.getElementById('appAlertMsg').style.display = message ? 'block' : 'none';
 
+        // Hide single button, add confirm pair
         var btnEl = document.getElementById('appAlertBtn');
         btnEl.style.display = 'none';
-        var card = document.getElementById('appAlertCard');
         var existingBtns = document.getElementById('appConfirmBtns');
         if (existingBtns) existingBtns.remove();
 
         var btnsDiv = document.createElement('div');
         btnsDiv.id = 'appConfirmBtns';
-        btnsDiv.style.cssText = 'display:flex;gap:10px;margin-top:4px;';
-        btnsDiv.innerHTML = '<button id="appConfirmNo" type="button" style="flex:1;padding:12px;background:#f9fafb;color:#6b7280;border:1px solid #e5e7eb;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:0.2s;">Cancelar</button>' +
-            '<button id="appConfirmYes" type="button" style="flex:1;padding:12px;background:#25d366;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:0.2s;" onmouseover="this.style.background=\'#1ebe5d\'" onmouseout="this.style.background=\'#25d366\'">Aceptar</button>';
-        card.appendChild(btnsDiv);
+        btnsDiv.style.cssText = 'display:flex; gap:10px;';
+        btnsDiv.innerHTML =
+            '<button id="appConfirmNo" type="button" class="modal-btn modal-btn-secondary" style="flex:1;">Cancelar</button>' +
+            '<button id="appConfirmYes" type="button" class="modal-btn modal-btn-primary" style="flex:1;">Aceptar</button>';
+        btnEl.parentNode.appendChild(btnsDiv);
 
         overlay.style.display = 'flex';
 
         function cleanup() {
             overlay.style.display = 'none';
             btnsDiv.remove();
-            btnEl.style.display = 'block';
+            btnEl.style.display = '';
         }
 
-        document.getElementById('appConfirmYes').onclick = function () {
-            cleanup();
-            if (onAccept) onAccept();
-        };
-        document.getElementById('appConfirmNo').onclick = function () {
-            cleanup();
-            if (onCancel) onCancel();
-        };
-        overlay.onclick = function (e) {
-            if (e.target === overlay) {
-                cleanup();
-                if (onCancel) onCancel();
-            }
-        };
+        document.getElementById('appConfirmYes').onclick = function () { cleanup(); if (onAccept) onAccept(); };
+        document.getElementById('appConfirmNo').onclick = function () { cleanup(); if (onCancel) onCancel(); };
+        overlay.onclick = function (e) { if (e.target === overlay) { cleanup(); if (onCancel) onCancel(); } };
     };
 })();

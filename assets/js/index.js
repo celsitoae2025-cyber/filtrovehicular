@@ -32,7 +32,7 @@
                             var fullName = d.nombre_completo || ((d.nombres || '') + ' ' + (d.apellido_paterno || '') + ' ' + (d.apellido_materno || '')).trim();
                             result.innerHTML = `
                                 <div style="text-align:center; padding:6px 0 2px;">
-                                    <div style="font-size:16px; font-weight:800; color:#111b21; margin-bottom:4px;">${esc(fullName)}</div>
+                                    <div style="font-size:16px; font-weight:600; color:#111b21; margin-bottom:4px;">${esc(fullName)}</div>
                                     <div style="font-size:12px; color:#94a3b8; font-weight:500; margin-bottom:12px;">DNI: ${esc(d.numero || dni)}${d.codigo_verificacion ? ' · Cód: ' + esc(d.codigo_verificacion) : ''}</div>
                                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                                         <div style="background:#f8fafc; border-radius:8px; padding:10px; text-align:left;">
@@ -112,34 +112,40 @@
         }
 
         const cats = [
-            // 1. Registro y propiedad
-            { icon: 'fa-id-card', title: 'Propiedad Vehicular SUNARP', link: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/' },
-            { icon: 'fa-file-lines', title: 'Inscripción y Precio de Vehículo (PDF)', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces' },
-            { icon: 'fa-car-side', title: 'Cambio de Características', link: 'https://sprl.sunarp.gob.pe/sprl/ingreso' },
-            { icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces' },
-            { icon: 'fa-users', title: 'Historial de Propietarios Inscritos', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces' },
-            { icon: 'fa-building-columns', title: 'Boleta Informativa', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces' },
-            // 2. Seguridad y denuncias
-            { icon: 'fa-handcuffs', title: 'Denuncias y Órdenes de Captura', link: 'https://serviciopolicias.policia.gob.pe:8090/Denuncias/verificar' },
-            { icon: 'fa-heart-pulse', title: 'Siniestralidad por Placa', link: 'https://servicios.sbs.gob.pe/reportesoat/' },
-            { icon: 'fa-sheet-plastic', title: 'Estado de Placa', link: 'https://www.placas.pe/#/home/verificarEstadoPlaca' },
-            // 3. Multas y deudas
-            { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Lima', link: 'https://www.sat.gob.pe/pagosenlinea/' },
-            { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Callao', link: 'https://pagopapeletascallao.pe/' },
-            { icon: 'fa-map-location-dot', title: 'Deudas y Multas por Región', action: 'regiones' },
-            { icon: 'fa-triangle-exclamation', title: 'Papeletas de Tránsito ATU', link: 'https://pasarela.atu.gob.pe/#' },
-            { icon: 'fa-truck', title: 'Papeletas SUTRAN', link: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/' },
-            { icon: 'fa-camera', title: 'Foto Pit Lima', link: 'http://www.pit.gob.pe/pit2007/EstadoCuenta.aspx' },
-            // 4. Documentos y técnico
-            { icon: 'fa-screwdriver-wrench', title: 'Inspección Técnica Vehicular CITV', link: 'https://rec.mtc.gob.pe/Citv/ArConsultaCitv' },
-            { icon: 'fa-shield-halved', title: 'Vigencia del SOAT', link: 'https://www.apeseg.org.pe/consultas-soat/' },
-            { icon: 'fa-address-card', title: 'Récord de Conductor (DNI)', link: 'https://recordconductor.mtc.gob.pe/' },
-            { icon: 'fa-circle-half-stroke', title: 'Lunas Oscurecidas', link: 'https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas' },
-            // 5. Servicios adicionales
-            { icon: 'fa-gas-pump', title: 'FISE GNV Subsidio Gas', link: 'https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio' },
-            { icon: 'fa-coins', title: 'Consulta Deuda GNV', link: 'https://infogas.com.pe/consulta-placa/' },
-            { icon: 'fa-list-check', title: 'Otras Afectaciones', link: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/' }
+            // Registros SUNARP
+            { icon: 'fa-id-card', title: 'Propiedad Vehicular SUNARP', desc: 'Consulta registral de vehículos', link: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/', group: 'sunarp' },
+            { icon: 'fa-file-lines', title: 'Inscripción y Precio de Vehículo (PDF)', desc: 'Valor de inscripción en SUNARP', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces', group: 'sunarp' },
+            { icon: 'fa-car-side', title: 'Cambio de Características', desc: 'Modificaciones registrales del vehículo', link: 'https://sprl.sunarp.gob.pe/sprl/ingreso', group: 'sunarp' },
+            { icon: 'fa-id-badge', title: 'Tarjeta de Propiedad (TIVE)', desc: 'Tarjeta de identificación vehicular', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces', group: 'sunarp' },
+            { icon: 'fa-users', title: 'Historial de Propietarios Inscritos', desc: 'Registro de dueños anteriores', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces', group: 'sunarp' },
+            { icon: 'fa-building-columns', title: 'Boleta Informativa', desc: 'Resumen de datos registrales', link: 'https://enlinea.sunarp.gob.pe/sunarpweb/pages/acceso/ingreso.faces', group: 'sunarp' },
+            // Multas y Deudas
+            { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Lima', desc: 'Papeletas y deudas municipales Lima', link: 'https://www.sat.gob.pe/pagosenlinea/', group: 'multas' },
+            { icon: 'fa-money-bill-wave', title: 'Deudas y Multas SAT Callao', desc: 'Papeletas y deudas municipales Callao', link: 'https://pagopapeletascallao.pe/', group: 'multas' },
+            { icon: 'fa-map-location-dot', title: 'Deudas y Multas por Región', desc: 'Infracciones por departamento', action: 'regiones', group: 'multas' },
+            { icon: 'fa-triangle-exclamation', title: 'Papeletas de Tránsito ATU', desc: 'Autoridad de Transporte Urbano', link: 'https://pasarela.atu.gob.pe/#', group: 'multas' },
+            { icon: 'fa-truck', title: 'Papeletas SUTRAN', desc: 'Infracciones de transporte terrestre', link: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/', group: 'multas' },
+            { icon: 'fa-camera', title: 'Foto Pit Lima', desc: 'Fotopapeletas con imagen', link: 'http://www.pit.gob.pe/pit2007/EstadoCuenta.aspx', group: 'multas' },
+            // Verificaciones
+            { icon: 'fa-handcuffs', title: 'Denuncias y Órdenes de Captura', desc: 'Verificar denuncias PNP', link: 'https://serviciopolicias.policia.gob.pe:8090/Denuncias/verificar', group: 'verif' },
+            { icon: 'fa-heart-pulse', title: 'Siniestralidad por Placa', desc: 'Reporte de accidentes SBS', link: 'https://servicios.sbs.gob.pe/reportesoat/', group: 'verif' },
+            { icon: 'fa-sheet-plastic', title: 'Estado de Placa', desc: 'Verificar estado activo de placa', link: 'https://www.placas.pe/#/home/verificarEstadoPlaca', group: 'verif' },
+            { icon: 'fa-screwdriver-wrench', title: 'Inspección Técnica Vehicular CITV', desc: 'Revisión técnica obligatoria', link: 'https://rec.mtc.gob.pe/Citv/ArConsultaCitv', group: 'verif' },
+            { icon: 'fa-shield-halved', title: 'Vigencia del SOAT', desc: 'Seguro obligatorio de accidentes', link: 'https://www.apeseg.org.pe/consultas-soat/', group: 'verif' },
+            { icon: 'fa-address-card', title: 'Récord de Conductor (DNI)', desc: 'Historial de infracciones MTC', link: 'https://recordconductor.mtc.gob.pe/', group: 'verif' },
+            // Otros servicios
+            { icon: 'fa-circle-half-stroke', title: 'Lunas Oscurecidas', desc: 'Permiso de polarizado PNP', link: 'https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas', group: 'otros' },
+            { icon: 'fa-gas-pump', title: 'FISE GNV Subsidio Gas', desc: 'Consulta de subsidio FISE', link: 'https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio', group: 'otros' },
+            { icon: 'fa-coins', title: 'Consulta Deuda GNV', desc: 'Deudas por conversión a gas', link: 'https://infogas.com.pe/consulta-placa/', group: 'otros' },
+            { icon: 'fa-list-check', title: 'Otras Afectaciones', desc: 'Cargas y gravámenes adicionales', link: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/', group: 'otros' }
         ];
+
+        const groupConfig = {
+            sunarp: { label: 'Registros SUNARP', color: 'hook-icon-green' },
+            multas: { label: 'Multas y Deudas', color: 'hook-icon-amber' },
+            verif:  { label: 'Verificaciones', color: 'hook-icon-blue' },
+            otros:  { label: 'Otros servicios', color: 'hook-icon-gray' }
+        };
 
         // --- SISTEMA DE HISTORIAL DE NAVEGACIÓN ---
         let navigationStack = ['home'];
@@ -210,31 +216,38 @@
         var _authFloatingMode = 'register';
 
         function showAuthFloatingModal() {
-            _authFloatingMode = 'register';
+            _authFloatingMode = 'login';
             var m = document.getElementById('authFloatingModal');
             if (m) {
-                document.getElementById('authRegisterFields').style.display = 'block';
-                document.getElementById('authModalIcon').className = 'fa-solid fa-user-pen';
-                document.getElementById('authModalTitle').textContent = 'Crear cuenta';
-                document.getElementById('authModalSubtitle').textContent = 'Regístrate para acceder a todos los servicios';
-                document.getElementById('authModalBtn').textContent = 'Crear cuenta';
-                document.getElementById('authToggleText').innerHTML = '¿Ya tienes cuenta? <b style="color:#111b21;">Inicia sesión</b>';
+                document.getElementById('authRegisterFields').style.display = 'none';
+                document.getElementById('authModalTitle').textContent = 'Iniciar sesión';
+                document.getElementById('authModalSubtitle').textContent = 'Ingresa tus datos para continuar';
+                document.getElementById('authModalBtn').textContent = 'Iniciar sesión';
+                document.getElementById('authToggleText').innerHTML = '¿No tienes cuenta? <b>Regístrate gratis</b>';
                 document.getElementById('authModalError').style.display = 'none';
+                var remRow = document.getElementById('authRememberRow');
+                if (remRow) remRow.style.display = 'flex';
+                var socialSec = document.getElementById('authSocialSection');
+                if (socialSec) socialSec.style.display = 'block';
                 m.style.display = 'flex';
             }
         }
 
         function toggleAuthFloatingMode() {
             _authFloatingMode = _authFloatingMode === 'register' ? 'login' : 'register';
-            document.getElementById('authRegisterFields').style.display = _authFloatingMode === 'register' ? 'block' : 'none';
-            document.getElementById('authModalIcon').className = _authFloatingMode === 'register' ? 'fa-solid fa-user-pen' : 'fa-solid fa-user-lock';
-            document.getElementById('authModalTitle').textContent = _authFloatingMode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
-            document.getElementById('authModalSubtitle').textContent = _authFloatingMode === 'register' ? 'Regístrate para acceder a todos los servicios' : 'Ingresa tus credenciales para continuar';
-            document.getElementById('authModalBtn').textContent = _authFloatingMode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
-            document.getElementById('authToggleText').innerHTML = _authFloatingMode === 'register'
-                ? '¿Ya tienes cuenta? <b style="color:#111b21;">Inicia sesión</b>'
-                : '¿No tienes cuenta? <b style="color:#111b21;">Regístrate</b>';
+            var isReg = _authFloatingMode === 'register';
+            document.getElementById('authRegisterFields').style.display = isReg ? 'block' : 'none';
+            document.getElementById('authModalTitle').textContent = isReg ? 'Crear cuenta' : 'Iniciar sesión';
+            document.getElementById('authModalSubtitle').textContent = isReg ? 'Regístrate para acceder a todos los servicios' : 'Ingresa tus datos para continuar';
+            document.getElementById('authModalBtn').textContent = isReg ? 'Crear cuenta' : 'Iniciar sesión';
+            document.getElementById('authToggleText').innerHTML = isReg
+                ? '¿Ya tienes cuenta? <b>Inicia sesión</b>'
+                : '¿No tienes cuenta? <b>Regístrate gratis</b>';
             document.getElementById('authModalError').style.display = 'none';
+            var remRow = document.getElementById('authRememberRow');
+            if (remRow) remRow.style.display = isReg ? 'none' : 'flex';
+            var socialSec = document.getElementById('authSocialSection');
+            if (socialSec) socialSec.style.display = isReg ? 'none' : 'block';
         }
 
         async function handleAuthFloating() {
@@ -335,6 +348,70 @@
             }
             callback();
         }
+
+        // Google Sign-In: usa Supabase Auth OAuth
+        async function handleGoogleSignIn() {
+            try {
+                if (!window.sb) throw new Error('Sin conexión a la base de datos.');
+                var btn = document.querySelector('#authSocialSection .modal-btn-social');
+                if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando...'; btn.disabled = true; }
+
+                var { data, error } = await window.sb.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { redirectTo: window.location.origin + window.location.pathname }
+                });
+                if (error) throw error;
+            } catch (e) {
+                var msg = e.message || '';
+                if (msg.includes('not enabled') || msg.includes('provider')) {
+                    showAppAlert('Google Sign-In', 'Para activar el inicio con Google, configura el proveedor en el panel de Supabase:\n\nAuthentication → Providers → Google');
+                } else {
+                    showAppAlert('Error', msg || 'No se pudo conectar con Google.');
+                }
+                if (btn) { btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continuar con Google'; btn.disabled = false; }
+            }
+        }
+
+        // Recuperar contraseña
+        function handleForgotPassword() {
+            var email = document.getElementById('authRegEmail').value.trim().toLowerCase();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showAppAlert('Recuperar contraseña', 'Ingresa tu correo electrónico en el campo de arriba y luego presiona "¿Olvidaste tu contraseña?"');
+                return;
+            }
+            showAppConfirm('¿Enviar instrucciones de recuperación a ' + email + '?', function() {
+                showAppAlert('Correo enviado', 'Si la cuenta existe, recibirás un enlace para restablecer tu contraseña en ' + email);
+            });
+        }
+
+        // Verificar sesión OAuth al volver de Google
+        (function checkOAuthReturn() {
+            if (!window.sb || !window.sb.auth) return;
+            window.sb.auth.onAuthStateChange(async function(event, session) {
+                if (event === 'SIGNED_IN' && session && session.user) {
+                    var gUser = session.user;
+                    var email = gUser.email;
+                    var nombre = gUser.user_metadata ? (gUser.user_metadata.full_name || gUser.user_metadata.name || 'Usuario') : 'Usuario';
+
+                    // Verificar si existe en solicitudes
+                    var res = await window.sb.from('solicitudes').select('datos, placa').like('placa', 'REGISTRO_%');
+                    var exists = (res.data || []).find(function(r) { return r.datos && r.datos.email === email; });
+
+                    if (!exists) {
+                        var reqKey = 'REGISTRO_' + Date.now();
+                        var regData = { placa: reqKey, timestamp: Date.now(), status: 'pending', isRegistro: true, email: email, pass: '', nombre: nombre, whatsapp: '', authProvider: 'google' };
+                        await window.sb.from('solicitudes').upsert({ placa: reqKey, datos: regData, updated_at: new Date() });
+                        await window.sb.from('saldos').upsert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() }, { onConflict: 'email' });
+                    }
+
+                    currentUser = { email: email, nombre: nombre, whatsapp: '' };
+                    localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+                    document.getElementById('authFloatingModal').style.display = 'none';
+                    hideLoginScreen();
+                    renderLoggedInState();
+                }
+            });
+        })();
 
         // Funciones legacy redirigidas
         function showAccessRestrictedModal() { showAuthFloatingModal(); }
@@ -577,145 +654,142 @@
 
         const hook = document.getElementById('hookSection');
         if(hook) {
+            const groupOrder = ['sunarp', 'multas', 'verif', 'otros'];
+            const grouped = {};
             cats.forEach(c => {
-                const d = document.createElement('div');
-                d.className = 'hook-card';
-                d.onclick = async () => {
-                    if (!currentUser) { showAuthFloatingModal(); return; }
-                    if (!window.plataformaActiva) { showUpgradeModal(); return; }
+                const g = c.group || 'otros';
+                if (!grouped[g]) grouped[g] = [];
+                grouped[g].push(c);
+            });
 
-                    if (c.link) {
-                        window.open(c.link, '_blank');
-                    } else if (c.price) {
-                        const infoModal = document.getElementById('infoModal');
-                        const infoContent = document.getElementById('infoContent');
-                        if (infoModal && infoContent) {
-                            infoContent.innerHTML = renderServicePlateModal(c);
-                            infoModal.style.display = 'flex';
+            groupOrder.forEach(gKey => {
+                const items = grouped[gKey];
+                if (!items || !items.length) return;
+                const cfg = groupConfig[gKey];
 
-                            // Reasignar botón para usar lógica de créditos
-                            document.getElementById('btnModalAction').onclick = async () => {
-                                const plateIn = document.getElementById('servicePlateInput');
-                                if (!plateIn || plateIn.value.trim().length < 5) {
-                                    alert("Por favor, ingresa una placa válida.");
-                                    return;
-                                }
-                                const p = plateIn.value.trim().toUpperCase();
+                // Section header
+                const hdr = document.createElement('div');
+                hdr.className = 'hook-section-header';
+                hdr.innerHTML = `<span class="hook-section-title">${cfg.label}</span><span class="hook-section-line"></span>`;
+                hook.appendChild(hdr);
 
-                                // Bloquear botón
-                                const btn = document.getElementById('btnModalAction');
-                                btn.disabled = true;
-                                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PROCESANDO...';
+                items.forEach(c => {
+                    const d = document.createElement('div');
+                    d.className = 'hook-card ' + (c.link ? 'hook-free' : 'hook-paid');
+                    d.onclick = async () => {
+                        if (!currentUser) { showAuthFloatingModal(); return; }
+                        if (!window.plataformaActiva) { showUpgradeModal(); return; }
 
-                                try {
-                                    // Consultar créditos disponibles
-                                    const { data, error: fetchError } = await window.sb
-                                        .from('saldos')
-                                        .select('creditos')
-                                        .eq('email', currentUser.email)
-                                        .single();
+                        if (c.action === 'regiones') {
+                            setTimeout(function() { setDashTab('REGIONES', null); }, 300);
+                        } else if (c.link) {
+                            window.open(c.link, '_blank');
+                        } else if (c.price) {
+                            const infoModal = document.getElementById('infoModal');
+                            const infoContent = document.getElementById('infoContent');
+                            if (infoModal && infoContent) {
+                                infoContent.innerHTML = renderServicePlateModal(c);
+                                infoModal.style.display = 'flex';
 
-                                    // Validar que la consulta fue exitosa
-                                    if (fetchError) {
-                                        console.error("Error al consultar créditos:", fetchError);
-                                        alert("Error al verificar tus créditos. Por favor, intenta nuevamente.");
-                                        btn.disabled = false;
-                                        btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
+                                document.getElementById('btnModalAction').onclick = async () => {
+                                    const plateIn = document.getElementById('servicePlateInput');
+                                    if (!plateIn || plateIn.value.trim().length < 5) {
+                                        alert("Por favor, ingresa una placa válida.");
                                         return;
                                     }
+                                    const p = plateIn.value.trim().toUpperCase();
+                                    const btn = document.getElementById('btnModalAction');
+                                    btn.disabled = true;
+                                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PROCESANDO...';
 
-                                    // Validar que data existe y tiene créditos
-                                    if (!data || typeof data.creditos !== 'number') {
-                                        console.error("Datos de créditos inválidos:", data);
-                                        alert("Error al obtener tu saldo. Por favor, contacta a soporte.");
-                                        btn.disabled = false;
-                                        btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
-                                        return;
-                                    }
+                                    try {
+                                        const { data, error: fetchError } = await window.sb
+                                            .from('saldos')
+                                            .select('creditos')
+                                            .eq('email', currentUser.email)
+                                            .single();
 
-                                    // Calcular créditos necesarios (1 crédito = S/ 1.00)
-                                    const creditNeed = parseFloat(c.price);
-                                    const creditosActuales = data.creditos;
+                                        if (fetchError) {
+                                            alert("Error al verificar tus créditos. Por favor, intenta nuevamente.");
+                                            btn.disabled = false;
+                                            btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
+                                            return;
+                                        }
 
-                                    // Logging para debugging
+                                        if (!data || typeof data.creditos !== 'number') {
+                                            alert("Error al obtener tu saldo. Por favor, contacta a soporte.");
+                                            btn.disabled = false;
+                                            btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
+                                            return;
+                                        }
 
-                                    // VALIDACIÓN ESTRICTA: Verificar que tiene créditos suficientes
-                                    if (creditosActuales < creditNeed) {
-                                        alert(`Créditos insuficientes.\n\nTienes: ${creditosActuales.toFixed(2)} crédito(s)\nNecesitas: ${creditNeed.toFixed(2)} crédito(s)\n\nPor favor, recarga créditos para continuar.`);
+                                        const creditNeed = parseFloat(c.price);
+                                        const creditosActuales = data.creditos;
+
+                                        if (creditosActuales < creditNeed) {
+                                            alert(`Créditos insuficientes.\n\nTienes: ${creditosActuales.toFixed(2)} crédito(s)\nNecesitas: ${creditNeed.toFixed(2)} crédito(s)\n\nPor favor, recarga créditos para continuar.`);
+                                            document.getElementById('infoModal').style.display = 'none';
+                                            window.currentCardTitle = c.title;
+                                            window.currentCardPlate = p;
+                                            btn.disabled = false;
+                                            btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
+                                            if (typeof openAccess === 'function') openAccess();
+                                            return;
+                                        }
+
+                                        const nuevoSaldo = creditosActuales - creditNeed;
+                                        if (nuevoSaldo < 0) {
+                                            alert("Error en el cálculo de créditos. Por favor, contacta a soporte.");
+                                            btn.disabled = false;
+                                            btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
+                                            return;
+                                        }
+
+                                        const { data: updatedRows, error: updateError } = await window.sb
+                                            .from('saldos')
+                                            .update({ creditos: nuevoSaldo })
+                                            .eq('email', currentUser.email)
+                                            .gte('creditos', creditNeed)
+                                            .select('creditos');
+
+                                        if (updateError || !updatedRows || updatedRows.length === 0) {
+                                            alert('Error al procesar el pago. No se descontaron créditos. Inténtalo de nuevo.');
+                                            btn.disabled = false;
+                                            btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
+                                            return;
+                                        }
+
+                                        const pendingData = {
+                                            placa: p,
+                                            timestamp: Date.now(),
+                                            status: 'pending',
+                                            email: currentUser.email,
+                                            nombre: currentUser.nombre || '',
+                                            whatsapp: currentUser.whatsapp || '',
+                                            servicio: c.title,
+                                            isIndividual: true
+                                        };
+                                        localStorage.setItem('pending_request_' + p, JSON.stringify(pendingData));
+                                        localStorage.setItem('last_pending_plate', p);
+                                        await syncSolicitudToNube(p, pendingData);
+
+                                        alert(`Pago procesado exitosamente\n\nSe descontaron ${creditNeed.toFixed(2)} crédito(s).\nNuevo saldo: ${nuevoSaldo.toFixed(2)} crédito(s)\n\nTu solicitud de «${c.title}» quedó en cola.`);
                                         document.getElementById('infoModal').style.display = 'none';
-                                        window.currentCardTitle = c.title;
-                                        window.currentCardPlate = p;
+                                        window.location.href = 'panel_cliente.html';
+
+                                    } catch (e) {
+                                        alert("Error inesperado al procesar tu consulta. Por favor, verifica tu conexión e intenta nuevamente.");
                                         btn.disabled = false;
                                         btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
-                                        if (typeof openAccess === 'function') openAccess();
-                                        return;
                                     }
-
-                                    // DOBLE VERIFICACIÓN: Calcular nuevo saldo
-                                    const nuevoSaldo = creditosActuales - creditNeed;
-                                    
-                                    // Verificar que el nuevo saldo no sea negativo
-                                    if (nuevoSaldo < 0) {
-                                        console.error('ERROR: El nuevo saldo sería negativo:', nuevoSaldo);
-                                        alert("Error en el cálculo de créditos. Por favor, contacta a soporte.");
-                                        btn.disabled = false;
-                                        btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
-                                        return;
-                                    }
-
-
-                                    // Descontar créditos atómicamente (gte verifica saldo suficiente)
-                                    const { data: updatedRows, error: updateError } = await window.sb
-                                        .from('saldos')
-                                        .update({ creditos: nuevoSaldo })
-                                        .eq('email', currentUser.email)
-                                        .gte('creditos', creditNeed)
-                                        .select('creditos');
-
-                                    if (updateError || !updatedRows || updatedRows.length === 0) {
-                                        console.error("Error al actualizar créditos:", updateError || 'Saldo cambió entre lectura y escritura');
-                                        alert('Error al procesar el pago. No se descontaron créditos. Inténtalo de nuevo.');
-                                        btn.disabled = false;
-                                        btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
-                                        return;
-                                    }
-
-                                    // Créditos descontados exitosamente - Procesar solicitud
-                                    const timestamp = Date.now();
-                                    const pendingData = {
-                                        placa: p,
-                                        timestamp: timestamp,
-                                        status: 'pending',
-                                        email: currentUser.email,
-                                        nombre: currentUser.nombre || '',
-                                        whatsapp: currentUser.whatsapp || '',
-                                        servicio: c.title,
-                                        isIndividual: true
-                                    };
-                                    
-                                    localStorage.setItem('pending_request_' + p, JSON.stringify(pendingData));
-                                    localStorage.setItem('last_pending_plate', p);
-                                    await syncSolicitudToNube(p, pendingData);
-
-                                    alert(`Pago procesado exitosamente\n\nSe descontaron ${creditNeed.toFixed(2)} crédito(s).\nNuevo saldo: ${nuevoSaldo.toFixed(2)} crédito(s)\n\nTu solicitud de «${c.title}» quedó en cola.`);
-                                    document.getElementById('infoModal').style.display = 'none';
-                                    window.location.href = 'panel_cliente.html';
-
-                                } catch (e) { 
-                                    console.error("ERROR CRÍTICO en proceso de consulta:", e);
-                                    alert("Error inesperado al procesar tu consulta. Por favor, verifica tu conexión e intenta nuevamente.");
-                                    btn.disabled = false;
-                                    btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Consultar ahora';
-                                    return;
-                                }
-                            };
+                                };
+                            }
                         }
-                    }
-                };
-                
-                d.className = 'hook-card ' + (c.link ? 'hook-free' : 'hook-paid');
-                d.innerHTML = `<div class="hook-icon"><i class="fa-solid ${c.icon}"></i></div><div class="hook-text">${c.title}</div>${c.link ? '' : '<span class="hook-premium"></span>'}`;
-                hook.appendChild(d);
+                    };
+
+                    d.innerHTML = `<div class="hook-icon ${cfg.color}"><i class="fa-solid ${c.icon}"></i></div><div style="flex:1; min-width:0;"><div class="hook-text">${c.title}</div><div class="hook-desc">${c.desc || ''}</div></div><div style="color:#94a3b8; font-size:14px; flex-shrink:0;"><i class="fa-solid fa-chevron-right"></i></div>`;
+                    hook.appendChild(d);
+                });
             });
         }
 
@@ -775,45 +849,106 @@
                 p = window.currentCardPlate || '---';
             }
 
+            // Icono dinamico
+            var iconWrap = document.getElementById('saleIconWrap');
+            var iconI = document.getElementById('saleIconI');
+            if (type === 'activacion' || type === 'dashboard') {
+                if (iconWrap) iconWrap.style.background = '#111b21';
+                if (iconI) iconI.className = 'fa-solid fa-crown';
+            } else {
+                if (iconWrap) iconWrap.style.background = '#25d366';
+                if (iconI) iconI.className = 'fa-solid fa-coins';
+            }
+
+            // Monto unificado
+            var amountDisplay = document.getElementById('saleAmountDisplay');
+            if (amountDisplay) amountDisplay.textContent = 'S/ ' + parseFloat(amount).toFixed(2);
+
             if (type === 'dashboard' || type === 'activacion' || credits > 0) {
-                // Mostrar header con concepto (premium/recarga)
                 if (conceptHeader) conceptHeader.style.display = 'block';
                 if (simpleHeader) simpleHeader.style.display = 'none';
-                
                 var conceptEl = document.getElementById('saleConcept');
                 var emailEl = document.getElementById('saleUserEmail');
-                var amountHeaderEl = document.getElementById('saleAmountHeader');
-                var conceptIconEl = document.getElementById('saleConceptIcon');
-                
                 if (conceptEl) conceptEl.textContent = concept;
                 if (emailEl) emailEl.textContent = currentUser.email;
-                if (amountHeaderEl) amountHeaderEl.textContent = 'S/ ' + amount;
-                
-                if (conceptIconEl) {
-                    if (type === 'dashboard') {
-                        conceptIconEl.className = 'fa-solid fa-crown';
-                    } else {
-                        conceptIconEl.className = 'fa-solid fa-coins';
-                    }
-                }
             } else {
-                // Mostrar header simple (placa + monto)
                 if (conceptHeader) conceptHeader.style.display = 'none';
-                if (simpleHeader) simpleHeader.style.display = 'flex';
-                
+                if (simpleHeader) simpleHeader.style.display = 'block';
                 var saleLabel = document.getElementById('saleLabel');
                 if (saleLabel) saleLabel.textContent = 'Placa';
-                
                 var plateDisplay = document.getElementById('salePlate');
                 if (plateDisplay) plateDisplay.textContent = p;
+            }
 
-                var saleAmountDisplay = document.getElementById('saleAmount');
-                if (saleAmountDisplay) saleAmountDisplay.textContent = 'S/ ' + amount;
+            // Reset boton MP
+            var mpBtn = document.getElementById('btnMercadoPago');
+            if (mpBtn) {
+                mpBtn.disabled = false;
+                mpBtn.innerHTML = '<i class="fa-solid fa-lock" style="font-size:13px;"></i> Pagar ahora';
             }
 
             document.getElementById('modalSale').style.display = 'flex';
         }
         function closeSale() { document.getElementById('modalSale').style.display = 'none'; }
+
+        // --- MERCADOPAGO CHECKOUT ---
+        var SUPABASE_FUNC_URL = 'https://xojgpfbpomjxpyytmczg.supabase.co/functions/v1';
+        var SUPABASE_ANON = 'sb_publishable_CjQ1bJD0Uvhs5wlKgI6FKw_PX7V4fuB';
+
+        function detectSalePlan() {
+            if (currentSaleType === 'filtro') return 'filtro';
+            if (currentSaleType === 'activacion' || currentSaleType === 'dashboard') return 'acceso';
+            if (currentSaleCredits === 850) return 'avanzado';
+            if (currentSaleCredits === 2000) return 'business';
+            if (currentSaleCredits === 4000) return 'profesional';
+            return null;
+        }
+
+        async function pagarConMercadoPago() {
+            var plan = detectSalePlan();
+            if (!plan) {
+                showAppAlert('Error', 'Este tipo de pago no esta disponible con MercadoPago');
+                return;
+            }
+            if (!currentUser || !currentUser.email) {
+                showAppAlert('Error', 'Debes iniciar sesion para pagar');
+                return;
+            }
+
+            var btn = document.getElementById('btnMercadoPago');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Redirigiendo...';
+            }
+
+            try {
+                var res = await fetch(SUPABASE_FUNC_URL + '/crear-preferencia', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON
+                    },
+                    body: JSON.stringify({ plan: plan, email: currentUser.email })
+                });
+                var data = await res.json();
+                if (data.init_point) {
+                    window.location.href = data.init_point;
+                } else {
+                    showAppAlert('Error', data.error || 'No se pudo crear el pago. Intenta de nuevo.');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pagar con MercadoPago';
+                    }
+                }
+            } catch (err) {
+                showAppAlert('Error', 'Error de conexion. Intenta de nuevo.');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-credit-card"></i> Pagar con MercadoPago';
+                }
+            }
+        }
         
 
         // Sanitización HTML para prevenir XSS
@@ -1085,15 +1220,15 @@
                         .eq('email', currentUser.email)
                         .single();
                         
-                    if (data && data.creditos >= 20) {
-                        const nuevoSaldo = data.creditos - 20;
+                    if (data && data.creditos >= 45) {
+                        const nuevoSaldo = data.creditos - 45;
 
                         // UPDATE atómico: solo descuenta si aún hay saldo suficiente
                         const { data: updatedRows, error } = await window.sb
                             .from('saldos')
                             .update({ creditos: nuevoSaldo })
                             .eq('email', currentUser.email)
-                            .gte('creditos', 20)
+                            .gte('creditos', 45)
                             .select('creditos');
 
                         if (!error && updatedRows && updatedRows.length > 0) {
@@ -1134,7 +1269,7 @@
                                 console.error('Error actualizando solicitud con creditos:', e);
                             }
 
-                            alert('Pago con créditos confirmado (S/ 20.00 descontados). El administrador procesará tu solicitud.');
+                            alert('Pago con créditos confirmado (S/ 45.00 descontados). El administrador procesará tu solicitud.');
 
                             window.location.href = 'panel_cliente.html';
                             isScanning = false;
@@ -1149,19 +1284,19 @@
 
                         const openPaymentGateway = () => {
                             localStorage.setItem('temp_informe_placa', placa);
-                            openSale(20, 'Filtro Vehicular Completo - Placa: ' + placa, 0, 'filtro');
+                            openSale(45, 'Filtro Vehicular Completo - Placa: ' + placa, 0, 'filtro');
                         };
                         
                         if (creditos === 0) {
                             showCustomAlert(
                                 'Saldo Insuficiente',
-                                'No tienes créditos disponibles para este servicio. Puedes recargar tu saldo o pagar directamente por este expediente (S/ 20.00).',
+                                'No tienes créditos disponibles para este servicio. Puedes recargar tu saldo o pagar directamente por este expediente (S/ 45.00).',
                                 openPaymentGateway
                             );
                         } else {
                             showCustomAlert(
                                 'Saldo Insuficiente',
-                                `Tienes ${creditos} créditos pero necesitas 20 para este servicio. Puedes recargar tu saldo o pagar la diferencia.`,
+                                `Tienes ${creditos} créditos pero necesitas 45 para este servicio. Puedes recargar tu saldo o pagar la diferencia.`,
                                 openPaymentGateway
                             );
                         }
@@ -1176,7 +1311,7 @@
 
             // 2. Si no hay créditos, guardar placa temporalmente y abrir pasarela de pago
             localStorage.setItem('temp_informe_placa', placa);
-            openSale(20, 'Filtro Vehicular Completo - Placa: ' + placa, 0, 'filtro');
+            openSale(45, 'Filtro Vehicular Completo - Placa: ' + placa, 0, 'filtro');
             isScanning = false;
             isDeductingCredits = false;
         }
@@ -1184,26 +1319,13 @@
 
 
         function setPayMethod(method) {
-            // Remover estilos activos de todos los tabs
-            document.querySelectorAll('.checkout-tab').forEach(t => {
+            document.querySelectorAll('.sale-tab').forEach(function(t) {
                 t.classList.remove('active');
-                t.style.background = 'transparent';
-                t.style.boxShadow = 'none';
-                t.style.border = 'none';
-                t.style.filter = 'grayscale(1)';
-                t.style.opacity = '0.5';
             });
-            
-            // Aplicar estilos al tab seleccionado
-            const tabId = 'tab' + method.charAt(0).toUpperCase() + method.slice(1);
-            const tab = document.getElementById(tabId);
+            var tabId = 'tab' + method.charAt(0).toUpperCase() + method.slice(1);
+            var tab = document.getElementById(tabId);
             if (tab) {
                 tab.classList.add('active');
-                tab.style.background = '#ffffff';
-                tab.style.boxShadow = '0 2px 8px rgba(13,37,54,0.08)';
-                tab.style.border = '2px solid #111b21';
-                tab.style.filter = 'grayscale(0)';
-                tab.style.opacity = '1';
             }
 
             const qr = document.getElementById('checkoutQR');
@@ -1307,18 +1429,18 @@
                                 if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> ENVIADO!';
                                 setTimeout(() => {
                                     const alertHtml = `
-                                        <div id="activacionAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;">
-                                            <div style="background: #ffffff; width: 92%; max-width: 380px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
-                                                <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 24px 20px 20px; text-align: center;">
-                                                    <div style="width: 48px; height: 48px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
-                                                        <i class="fa-solid fa-rocket" style="font-size: 20px; color: #fff;"></i>
+                                        <div id="activacionAlertModal" class="modal-overlay" style="z-index:9999999;display:flex;">
+                                            <div class="modal-card" onclick="event.stopPropagation()">
+                                                <div class="modal-header">
+                                                    <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                                                        <i class="fa-solid fa-rocket" style="font-size:20px;color:#fff;"></i>
                                                     </div>
-                                                    <h3 style="font-size: 16px; color: #ffffff; margin: 0 0 4px; font-weight: 700;">¡Pago Enviado!</h3>
-                                                    <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0;">Tu comprobante ha sido recibido</p>
+                                                    <div class="modal-title">¡Pago Enviado!</div>
+                                                    <div class="modal-subtitle">Tu comprobante ha sido recibido</div>
                                                 </div>
-                                                <div style="padding: 20px 22px 22px; text-align: center;">
-                                                    <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 18px;">El administrador validará tu pago de S/ 35 para activar tu plataforma completa en breve.</p>
-                                                    <button onclick="document.getElementById('activacionAlertModal').remove(); closeSale();" style="width: 100%; padding: 13px; background: #25d366; color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">ENTENDIDO</button>
+                                                <div class="modal-body" style="text-align:center;">
+                                                    <p style="color:#475569;font-size:13px;line-height:1.4;margin:0 0 18px;">El administrador validará tu pago de S/ 35 para activar tu plataforma completa en breve.</p>
+                                                    <button onclick="document.getElementById('activacionAlertModal').remove(); closeSale();" class="modal-btn modal-btn-primary">ENTENDIDO</button>
                                                 </div>
                                             </div>
                                         </div>`;
@@ -1344,18 +1466,18 @@
                                 if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> ENVIADO!';
                                 setTimeout(() => {
                                     const alertHtml = `
-                                        <div id="dashboardAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;">
-                                            <div style="background: #ffffff; width: 92%; max-width: 380px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
-                                                <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 24px 20px 20px; text-align: center;">
-                                                    <div style="width: 48px; height: 48px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
-                                                        <i class="fa-solid fa-circle-check" style="font-size: 20px; color: #fff;"></i>
+                                        <div id="dashboardAlertModal" class="modal-overlay" style="z-index:9999999;display:flex;">
+                                            <div class="modal-card" onclick="event.stopPropagation()">
+                                                <div class="modal-header">
+                                                    <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                                                        <i class="fa-solid fa-circle-check" style="font-size:22px;color:#fff;"></i>
                                                     </div>
-                                                    <h3 style="font-size: 16px; color: #ffffff; margin: 0 0 4px; font-weight: 700;">¡Comprobante Enviado!</h3>
-                                                    <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0;">Tu comprobante ha sido recibido</p>
+                                                    <div class="modal-title">¡Comprobante Enviado!</div>
+                                                    <div class="modal-subtitle">Tu comprobante ha sido recibido</div>
                                                 </div>
-                                                <div style="padding: 20px 22px 22px; text-align: center;">
-                                                    <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 18px;">El administrador validará tu pago para activar tu Dashboard en breve.</p>
-                                                    <button onclick="document.getElementById('dashboardAlertModal').remove(); closeSale();" style="width: 100%; padding: 13px; background: #25d366; color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">ENTENDIDO</button>
+                                                <div class="modal-body" style="text-align:center;">
+                                                    <p style="color:#475569;font-size:13px;line-height:1.4;margin:0 0 18px;">El administrador validará tu pago para activar tu Dashboard en breve.</p>
+                                                    <button onclick="document.getElementById('dashboardAlertModal').remove(); closeSale();" class="modal-btn modal-btn-primary">ENTENDIDO</button>
                                                 </div>
                                             </div>
                                         </div>`;
@@ -1389,18 +1511,18 @@
 
                                 setTimeout(() => {
                                     const alertHtml = `
-                                        <div id="rechargeAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;">
-                                            <div style="background: #ffffff; width: 92%; max-width: 380px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
-                                                <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 24px 20px 20px; text-align: center;">
-                                                    <div style="width: 48px; height: 48px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
-                                                        <i class="fa-solid fa-circle-check" style="font-size: 20px; color: #fff;"></i>
+                                        <div id="rechargeAlertModal" class="modal-overlay" style="z-index:9999999;display:flex;">
+                                            <div class="modal-card" onclick="event.stopPropagation()">
+                                                <div class="modal-header">
+                                                    <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                                                        <i class="fa-solid fa-wallet" style="font-size:20px;color:#fff;"></i>
                                                     </div>
-                                                    <h3 style="font-size: 16px; color: #ffffff; margin: 0 0 4px; font-weight: 700;">¡Formulario Enviado!</h3>
-                                                    <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0;">Tu comprobante ha sido recibido</p>
+                                                    <div class="modal-title">¡Formulario Enviado!</div>
+                                                    <div class="modal-subtitle">Tu comprobante ha sido recibido</div>
                                                 </div>
-                                                <div style="padding: 20px 22px 22px; text-align: center;">
-                                                    <p style="color: #64748b; font-size: 13px; line-height: 1.4; margin: 0 0 18px;">Tu recarga de <b>S/ ${montoRecarga}</b> está siendo verificada.</p>
-                                                    <button onclick="document.getElementById('rechargeAlertModal').remove(); closeSale();" style="width: 100%; padding: 13px; background: #25d366; color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">ENTENDIDO</button>
+                                                <div class="modal-body" style="text-align:center;">
+                                                    <p style="color:#475569;font-size:13px;line-height:1.4;margin:0 0 18px;">Tu recarga de <b style="color:#111b21;">S/ ${montoRecarga}</b> está siendo verificada.</p>
+                                                    <button onclick="document.getElementById('rechargeAlertModal').remove(); closeSale();" class="modal-btn modal-btn-primary">ENTENDIDO</button>
                                                 </div>
                                             </div>
                                         </div>`;
@@ -1443,20 +1565,22 @@
                             
                             setTimeout(() => {
                                 const alertHtml = `
-                                    <div id="informeAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;">
-                                        <div style="background: #ffffff; width: 92%; max-width: 380px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
-                                            <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 24px 20px 20px; text-align: center;">
-                                                <div style="width: 48px; height: 48px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
-                                                    <i class="fa-solid fa-clock" style="font-size: 20px; color: #fff;"></i>
+                                    <div id="informeAlertModal" class="modal-overlay" style="z-index:9999999;display:flex;">
+                                        <div class="modal-card" onclick="event.stopPropagation()">
+                                            <div class="modal-header">
+                                                <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                                                    <i class="fa-solid fa-clock" style="font-size:20px;color:#fff;"></i>
                                                 </div>
-                                                <h3 style="font-size: 16px; color: #ffffff; margin: 0 0 4px; font-weight: 700;">Comprobante en validación</h3>
-                                                <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0;">Tu comprobante ha sido recibido</p>
+                                                <div class="modal-title">Comprobante en validación</div>
+                                                <div class="modal-subtitle">Tu comprobante ha sido recibido</div>
                                             </div>
-                                            <div style="padding: 20px 22px 22px; text-align: center;">
-                                                <p style="color: #64748b; font-size: 13px; line-height: 1.6; margin: 0 0 6px;">Tu comprobante para la placa <strong style="color: #111b21;">${p}</strong> está en proceso de validación.</p>
-                                                <p style="color: #64748b; font-size: 12px; line-height: 1.5; margin: 0 0 18px; background: #f8fafc; padding: 12px; border-radius: 10px; border-left: 3px solid #25d366;">Nuestro equipo verificará tu pago en los próximos minutos. Podrás ver el estado en <strong>"Mis Consultas"</strong>.</p>
-                                                <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge(); window.location.href='panel_cliente.html';" style="width: 100%; padding: 13px; background: #25d366; color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; margin-bottom: 8px; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">VER MIS CONSULTAS</button>
-                                                <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge();" style="width: 100%; padding: 11px; background: transparent; color: #94a3b8; border: none; font-size: 12px; font-weight: 600; cursor: pointer;">CERRAR</button>
+                                            <div class="modal-body" style="text-align:center;">
+                                                <p style="color:#475569;font-size:13px;line-height:1.6;margin:0 0 6px;">Tu comprobante para la placa <strong style="color:#111b21;">${p}</strong> está en proceso de validación.</p>
+                                                <div style="background:#f8fafc;padding:12px;border-radius:10px;border-left:3px solid #25d366;margin:12px 0 18px;text-align:left;">
+                                                    <p style="color:#6b7280;font-size:12px;line-height:1.5;margin:0;">Nuestro equipo verificará tu pago en los próximos minutos. Podrás ver el estado en <strong style="color:#111b21;">"Mis Consultas"</strong>.</p>
+                                                </div>
+                                                <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge(); window.location.href='panel_cliente.html';" class="modal-btn modal-btn-primary" style="margin-bottom:8px;">VER MIS CONSULTAS</button>
+                                                <button onclick="document.getElementById('informeAlertModal').remove(); closeSale(); showPendingNotificationBadge();" class="modal-btn modal-btn-secondary">CERRAR</button>
                                             </div>
                                         </div>
                                     </div>`;
@@ -1568,7 +1692,7 @@
             var modal = document.getElementById('infoModal');
             var content = document.getElementById('infoContent');
             if (modal && content) {
-                content.innerHTML = '<div style="text-align:center;padding:20px;"><i class="fa-solid fa-user-circle" style="font-size:48px;color:#111b21;margin-bottom:15px;"></i><h3 style="font-size:18px;font-weight:800;color:#111b21;margin-bottom:8px;">Mi Perfil</h3><p style="font-size:13px;color:#64748b;">Gestiona tu cuenta desde el panel de cliente.</p><a href="panel_cliente.html" style="display:inline-block;margin-top:15px;background:#111b21;color:#fff;padding:10px 25px;border-radius:10px;text-decoration:none;font-weight:700;font-size:13px;">IR AL PANEL</a></div>';
+                content.innerHTML = '<div style="text-align:center;padding:20px;"><i class="fa-solid fa-user-circle" style="font-size:48px;color:#111b21;margin-bottom:15px;"></i><h3 style="font-size:18px;font-weight:600;color:#111b21;margin-bottom:8px;">Mi Perfil</h3><p style="font-size:13px;color:#64748b;">Gestiona tu cuenta desde el panel de cliente.</p><a href="panel_cliente.html" style="display:inline-block;margin-top:15px;background:#111b21;color:#fff;padding:10px 25px;border-radius:10px;text-decoration:none;font-weight:600;font-size:13px;">IR AL PANEL</a></div>';
                 modal.style.display = 'flex';
             }
         }
@@ -1587,7 +1711,7 @@
                             <div style="width:36px; height:36px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">
                                 <i class="fa-solid fa-file-contract" style="color:#fff; font-size:16px;"></i>
                             </div>
-                            <span style="font-size:16px; font-weight:800; color:#111b21;">Términos de Servicio</span>
+                            <span style="font-size:16px; font-weight:600; color:#111b21;">Términos de Servicio</span>
                         </div>
                         <button onclick="closeInfo()" style="background:none; border:none; color:#9ca3af; font-size:18px; cursor:pointer; padding:4px;"><i class="fa-solid fa-xmark"></i></button>
                     </div>
@@ -1627,7 +1751,7 @@
                             <div style="width:36px; height:36px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">
                                 <i class="fa-solid fa-shield-halved" style="color:#fff; font-size:16px;"></i>
                             </div>
-                            <span style="font-size:16px; font-weight:800; color:#111b21;">Política de Privacidad</span>
+                            <span style="font-size:16px; font-weight:600; color:#111b21;">Política de Privacidad</span>
                         </div>
                         <button onclick="closeInfo()" style="background:none; border:none; color:#9ca3af; font-size:18px; cursor:pointer; padding:4px;"><i class="fa-solid fa-xmark"></i></button>
                     </div>
@@ -1663,7 +1787,7 @@
                             <div style="width:36px; height:36px; background:#111b21; border-radius:10px; display:flex; align-items:center; justify-content:center;">
                                 <i class="fa-solid fa-headset" style="color:#fff; font-size:16px;"></i>
                             </div>
-                            <span style="font-size:16px; font-weight:800; color:#111b21;">Centro de Contacto</span>
+                            <span style="font-size:16px; font-weight:600; color:#111b21;">Centro de Contacto</span>
                         </div>
                         <button onclick="closeInfo()" style="background:none; border:none; color:#9ca3af; font-size:18px; cursor:pointer; padding:4px;"><i class="fa-solid fa-xmark"></i></button>
                     </div>
@@ -1726,19 +1850,22 @@
         // Helper para fetch con header ngrok
         function bridgeFetch(url, options) {
             options = options || {};
-            options.headers = options.headers || {};
-            if (typeof options.headers === 'object' && !(options.headers instanceof Headers)) {
-                options.headers['ngrok-skip-browser-warning'] = 'true';
+            // No setear headers custom si es FormData (multipart boundary se rompe)
+            if (!(options.body instanceof FormData)) {
+                options.headers = options.headers || {};
+                if (typeof options.headers === 'object' && !(options.headers instanceof Headers)) {
+                    options.headers['ngrok-skip-browser-warning'] = 'true';
+                }
             }
             return fetch(url, options);
         }
 
         var consultasModulos = [
-            { id: 'orion', nombre: 'Orión', icono: 'fa-ghost', servicios: 121, desc: 'RENIEC, Vehículos, Delitos, SUNAT, Financiero' },
-            { id: 'atlas', nombre: 'Atlas', icono: 'fa-atlas', servicios: 89, desc: 'RENIEC, Justicia, Actas, Migraciones, Facial' },
-            { id: 'fenix', nombre: 'Fénix', icono: 'fa-fire-flame-curved', servicios: 65, desc: 'RENIEC, SUNARP, Generador, Telefonía' },
-            { id: 'titan', nombre: 'Titán', icono: 'fa-shield-halved', servicios: 56, desc: 'RENIEC, Telefonía, SUNARP, Metadata' },
-            { id: 'nova', nombre: 'Nova', icono: 'fa-rocket', servicios: 42, desc: 'RENIEC, Generador, Telefonía, SUNARP' },
+            { id: 'orion', nombre: 'Orión', icono: 'fa-robot', servicios: 121, desc: 'RENIEC, Vehículos, Delitos, SUNAT, Financiero', color: 'hook-icon-bot-orion' },
+            { id: 'atlas', nombre: 'Atlas', icono: 'fa-microchip', servicios: 89, desc: 'RENIEC, Justicia, Actas, Migraciones, Facial', color: 'hook-icon-bot-atlas' },
+            { id: 'fenix', nombre: 'Fénix', icono: 'fa-brain', servicios: 65, desc: 'RENIEC, SUNARP, Generador, Telefonía', color: 'hook-icon-bot-fenix' },
+            { id: 'titan', nombre: 'Titán', icono: 'fa-terminal', servicios: 56, desc: 'RENIEC, Telefonía, SUNARP, Metadata', color: 'hook-icon-bot-titan' },
+            { id: 'nova', nombre: 'Nova', icono: 'fa-wand-magic-sparkles', servicios: 42, desc: 'RENIEC, Generador, Telefonía, SUNARP', color: 'hook-icon-bot-nova' },
         ];
 
         var consultasModuloActual = null;
@@ -1749,6 +1876,63 @@
         var consultasCategoriasCache = {}; // Cache de categorías por módulo
 
         // Navegación inteligente: vuelve al paso anterior
+        window.togglePdfPreview = function(containerId, pdfUrl) {
+            var container = document.getElementById(containerId);
+            if (!container) return;
+            if (container.style.display !== 'none') {
+                container.style.display = 'none';
+                return;
+            }
+            container.style.display = 'block';
+            if (container.dataset.loaded) return;
+            container.dataset.loaded = '1';
+            container.innerHTML = '<div style="padding:20px; text-align:center;"><i class="fa-solid fa-spinner fa-spin" style="font-size:20px; color:#111b21;"></i><div style="font-size:11px; color:#6b7280; margin-top:8px;">Cargando PDF...</div></div>';
+
+            if (typeof pdfjsLib === 'undefined') {
+                container.innerHTML = '<iframe src="' + pdfUrl + '" style="width:100%; height:500px; border:none;"></iframe>';
+                return;
+            }
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+            pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+                container.innerHTML = '';
+                var pagesRendered = 0;
+                var totalPages = pdf.numPages;
+                var pageInfo = document.createElement('div');
+                pageInfo.style.cssText = 'padding:8px 12px; background:#111b21; color:#e9edef; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:space-between;';
+                pageInfo.innerHTML = '<span><i class="fa-solid fa-file-pdf" style="color:#ef4444; margin-right:6px;"></i>' + totalPages + ' página' + (totalPages > 1 ? 's' : '') + '</span>';
+                container.appendChild(pageInfo);
+
+                function renderPage(num) {
+                    pdf.getPage(num).then(function(page) {
+                        var containerWidth = container.clientWidth || 340;
+                        var viewport = page.getViewport({ scale: 1 });
+                        var scale = containerWidth / viewport.width;
+                        var scaledViewport = page.getViewport({ scale: scale });
+                        var canvas = document.createElement('canvas');
+                        canvas.style.cssText = 'width:100%; display:block;';
+                        canvas.width = scaledViewport.width;
+                        canvas.height = scaledViewport.height;
+                        container.appendChild(canvas);
+                        page.render({ canvasContext: canvas.getContext('2d'), viewport: scaledViewport }).promise.then(function() {
+                            pagesRendered++;
+                            if (pagesRendered < totalPages && pagesRendered < 10) {
+                                renderPage(num + 1);
+                            }
+                        });
+                    });
+                }
+                renderPage(1);
+            }).catch(function() {
+                container.innerHTML = '<div style="padding:20px; text-align:center; background:#f8f9fa;">' +
+                    '<i class="fa-solid fa-file-pdf" style="font-size:28px; color:#ef4444; margin-bottom:10px; display:block;"></i>' +
+                    '<div style="font-size:12px; font-weight:600; color:#111b21; margin-bottom:4px;">No se pudo previsualizar</div>' +
+                    '<div style="font-size:11px; color:#6b7280; margin-bottom:12px;">Usa el botón Descargar para ver el archivo</div>' +
+                    '<a href="' + pdfUrl + '" download style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#111b21; color:#fff; border-radius:8px; text-decoration:none; font-size:11px; font-weight:600;">' +
+                        '<i class="fa-solid fa-download"></i> Descargar PDF</a>' +
+                '</div>';
+            });
+        };
+
         function volverConsultas() {
             var resEl = document.getElementById('consultasResultado');
             if (resEl && resEl.style.display === 'block') {
@@ -1805,21 +1989,23 @@
             });
 
             var moduloNombres = { orion: 'Orión', atlas: 'Atlas', fenix: 'Fénix', titan: 'Titán', nova: 'Nova' };
+            var moduloColores = { orion: 'hook-icon-purple', atlas: 'hook-icon-blue', fenix: 'hook-icon-orange', titan: 'hook-icon-red', nova: 'hook-icon-teal' };
 
             busqEl.innerHTML = resultados.length === 0
                 ? '<div style="text-align:center; padding:20px; color:#6b7280; font-size:12px;">No se encontraron servicios</div>'
                 : '<div style="font-size:10px; color:#6b7280; margin-bottom:8px;">' + resultados.length + ' resultado(s)</div>' +
                   '<div style="display:flex; flex-direction:column; gap:6px;">' +
                   resultados.map(function(cmd) {
+                      var searchColor = moduloColores[cmd.modulo] || '';
                       return '<div class="hook-card" onclick="consultasComandosData=[]; consultasComandosData.push(' + JSON.stringify(cmd).replace(/"/g, '&quot;').replace(/'/g, "\\'") + '); abrirConsultaModal(\'' + cmd.id + '\')">' +
-                          '<div class="hook-icon">' +
+                          '<div class="hook-icon ' + searchColor + '">' +
                               '<i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '"></i>' +
                           '</div>' +
                           '<div style="flex:1; min-width:0;">' +
-                              '<div class="hook-text" style="margin-bottom:2px;">' + cmd.nombre + '</div>' +
-                              '<div style="font-size:8px; color:#6b7280; text-transform:uppercase;">' + (moduloNombres[cmd.modulo] || cmd.modulo) + ' · ' + cmd.categoria + '</div>' +
+                              '<div class="hook-text">' + cmd.nombre + '</div>' +
+                              '<div class="hook-desc">' + (moduloNombres[cmd.modulo] || cmd.modulo) + ' · ' + cmd.categoria + '</div>' +
                           '</div>' +
-                          '<div style="font-size:9px; color:' + (cmd.creditos === 0 ? '#111b21' : '#111b21') + '; font-weight:600;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
+                          '<div style="font-size:9px; color:#111b21; font-weight:600;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
                       '</div>';
                   }).join('') +
                   '</div>';
@@ -1837,11 +2023,11 @@
 
             container.innerHTML = '<div class="hook-section">' + consultasModulos.map(function(mod) {
                     return '<div class="hook-card" onclick="renderConsultasModulo(\'' + mod.id + '\')">' +
-                        '<div class="hook-icon"><i class="fa-solid ' + mod.icono + '"></i></div>' +
+                        '<div class="hook-icon ' + (mod.color || '') + '"><i class="fa-solid ' + mod.icono + '"></i></div>' +
                         '<div style="flex:1; min-width:0;">' +
-                            '<div class="hook-text" style="margin-bottom:2px;">' + mod.nombre + '</div>' +
-                            '<div style="font-size:9px; color:#6b7280; line-height:1.3;">' + mod.desc + '</div>' +
-                            '<div style="font-size:10px; color:#6b7280; margin-top:2px;">' + mod.servicios + ' servicios</div>' +
+                            '<div class="hook-text">' + mod.nombre + '</div>' +
+                            '<div class="hook-desc">' + mod.desc + '</div>' +
+                            '<div class="hook-desc" style="margin-top:1px;">' + mod.servicios + ' servicios</div>' +
                         '</div>' +
                         '<div style="color:#94a3b8; font-size:14px; flex-shrink:0;"><i class="fa-solid fa-chevron-right"></i></div>' +
                     '</div>';
@@ -1884,15 +2070,19 @@
                 'SIN COSTO': 'fa-gift', 'EXTRAS 2': 'fa-plus'
             };
 
-            container.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                '<button onclick="renderConsultasCategorias()" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
-                '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + (modInfo ? modInfo.nombre : moduloId) + '</div>' +
-                '<div style="font-size:10px; color:#8696a0; margin-left:auto;">' + categorias.length + ' categorías</div>' +
+            var modColor = modInfo && modInfo.color ? modInfo.color : '';
+            container.innerHTML = '<div class="hook-back-bar">' +
+                '<button class="hook-back-btn" onclick="renderConsultasCategorias()"><i class="fa-solid fa-arrow-left"></i></button>' +
+                '<div style="flex:1; min-width:0;">' +
+                    '<div style="font-size:9px; font-weight:500; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Consultas</div>' +
+                    '<div style="font-size:14px; font-weight:600; color:#111b21; text-transform:uppercase; letter-spacing:0.2px;">' + (modInfo ? modInfo.nombre : moduloId) + '</div>' +
+                '</div>' +
+                '<div style="font-size:10px; color:#6b7280;">' + categorias.length + ' categorías</div>' +
             '</div>' +
             '<div class="hook-section">' +
             categorias.map(function(cat) {
                     return '<div class="hook-card" onclick="renderConsultasComandos(\'' + cat + '\')">' +
-                        '<div class="hook-icon"><i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '"></i></div>' +
+                        '<div class="hook-icon ' + modColor + '"><i class="fa-solid ' + (iconosCategoria[cat] || 'fa-folder') + '"></i></div>' +
                         '<div class="hook-text">' + cat + '</div>' +
                         '<div style="color:#94a3b8; font-size:14px; flex-shrink:0;"><i class="fa-solid fa-chevron-right"></i></div>' +
                     '</div>';
@@ -1918,19 +2108,24 @@
             var catInfo = null;
 
             var volverFn = consultasModuloActual ? 'renderConsultasModulo(\'' + consultasModuloActual + '\')' : 'renderConsultasCategorias()';
+            var modInfo2 = consultasModuloActual ? consultasModulos.find(function(m) { return m.id === consultasModuloActual; }) : null;
+            var cmdIconColor = modInfo2 && modInfo2.color ? modInfo2.color : '';
 
-            cmdsEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                '<button onclick="' + volverFn + '" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
-                '<div style="font-size:13px; font-weight:600; color:#e9edef;">' + catId + '</div>' +
-                '<div style="font-size:10px; color:#8696a0; margin-left:auto;">' + consultasComandosData.length + ' servicios</div>' +
+            cmdsEl.innerHTML = '<div class="hook-back-bar">' +
+                '<button class="hook-back-btn" onclick="' + volverFn + '"><i class="fa-solid fa-arrow-left"></i></button>' +
+                '<div style="flex:1; min-width:0;">' +
+                    '<div style="font-size:9px; font-weight:500; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">' + (modInfo2 ? modInfo2.nombre : 'Consultas') + '</div>' +
+                    '<div style="font-size:14px; font-weight:600; color:#111b21; text-transform:uppercase; letter-spacing:0.2px;">' + catId + '</div>' +
+                '</div>' +
+                '<div style="font-size:10px; color:#6b7280;">' + consultasComandosData.length + ' servicios</div>' +
             '</div>' +
             '<div class="hook-section">' +
                 consultasComandosData.map(function(cmd) {
                     return '<div class="hook-card" onclick="abrirConsultaModal(\'' + cmd.id + '\')">' +
-                        '<div class="hook-icon"><i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '"></i></div>' +
+                        '<div class="hook-icon ' + cmdIconColor + '"><i class="fa-solid ' + (cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '"></i></div>' +
                         '<div style="flex:1; min-width:0;">' +
-                            '<div class="hook-text" style="margin-bottom:2px;">' + cmd.nombre + '</div>' +
-                            '<div style="font-size:9px; color:#6b7280; text-transform:uppercase;">' + cmd.descripcion + '</div>' +
+                            '<div class="hook-text">' + cmd.nombre + '</div>' +
+                            '<div class="hook-desc">' + cmd.descripcion + '</div>' +
                         '</div>' +
                         '<div style="flex-shrink:0; text-align:right;">' +
                             '<div style="font-size:10px; font-weight:600; color:#111b21;">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + '</div>' +
@@ -1940,6 +2135,22 @@
                 }).join('') +
             '</div>';
         }
+
+        var botColorMap = {
+            orion: 'linear-gradient(135deg, #7c3aed, #a855f7)',
+            atlas: 'linear-gradient(135deg, #2563eb, #38bdf8)',
+            fenix: 'linear-gradient(135deg, #ea580c, #facc15)',
+            titan: 'linear-gradient(135deg, #dc2626, #f87171)',
+            nova: 'linear-gradient(135deg, #0d9488, #34d399)'
+        };
+
+        var botBtnColorMap = {
+            orion: '#7c3aed',
+            atlas: '#2563eb',
+            fenix: '#ea580c',
+            titan: '#dc2626',
+            nova: '#0d9488'
+        };
 
         function abrirConsultaModal(cmdId) {
             var cmd = consultasComandosData.find(function(c) { return c.id === cmdId; });
@@ -1963,56 +2174,95 @@
             if (!infoModal || !infoContent) return;
 
             var inputHtml = esFoto
-                ? '<label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Selecciona una foto</label>' +
-                  '<input type="file" id="consultaFoto" accept="image/*" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-size:12px; color:#111b21; box-sizing:border-box; cursor:pointer;">'
-                : '<label style="font-size:9px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:5px;">Dato a consultar</label>' +
-                  '<input type="text" id="consultaInput" placeholder="' + placeholder + '" style="width:100%; padding:11px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; color:#111b21; outline:none; box-sizing:border-box; text-align:center; font-family:\'Roboto\',sans-serif; transition:all 0.25s ease;" onfocus="this.style.borderColor=\'#25d366\'" onblur="this.style.borderColor=\'#e5e7eb\'" onkeydown="if(event.key===\'Enter\')ejecutarConsulta(\'' + cmdId + '\')">';
+                ? '<label class="modal-label">Selecciona una foto</label>' +
+                  '<input type="file" id="consultaFoto" accept="image/*" class="modal-input" style="padding:10px; cursor:pointer;">'
+                : '<label class="modal-label">Dato a consultar</label>' +
+                  '<input type="text" id="consultaInput" placeholder="' + placeholder + '" class="modal-input" style="text-align:center;" onkeydown="if(event.key===\'Enter\')ejecutarConsulta(\'' + cmdId + '\')">';
 
-            infoContent.innerHTML = '<div style="background:linear-gradient(135deg,#111b21 0%,#1f2c34 100%); padding:22px 18px 18px; position:relative;">' +
-                '<button onclick="document.getElementById(\'infoModal\').style.display=\'none\'" style="position:absolute; top:12px; right:12px; background:none; border:none; color:rgba(255,255,255,0.4); font-size:16px; cursor:pointer;" onmouseover="this.style.color=\'#fff\'" onmouseout="this.style.color=\'rgba(255,255,255,0.4)\'"><i class="fa-solid fa-xmark"></i></button>' +
-                '<div style="display:flex; align-items:center; gap:12px;">' +
-                    '<div style="width:40px; height:40px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">' +
-                        '<i class="fa-solid ' + (esFoto ? 'fa-camera' : cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines') + '" style="font-size:17px; color:#fff;"></i>' +
+            var iconClass = esFoto ? 'fa-camera' : cmd.tipo === 'pdf' ? 'fa-file-pdf' : cmd.tipo === 'foto' ? 'fa-image' : 'fa-file-lines';
+            var creditLabel = cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos';
+
+            var modId = consultasModuloActual || '';
+            var iconBg = botColorMap[modId] || '#25d366';
+            var btnColor = botBtnColorMap[modId] || '#25d366';
+            var modInfo = consultasModulos.find(function(m) { return m.id === modId; });
+            var botName = modInfo ? modInfo.nombre : '';
+            var botIcon = modInfo ? modInfo.icono : '';
+
+            infoContent.innerHTML =
+                '<div class="modal-header">' +
+                    '<button onclick="document.getElementById(\'infoModal\').style.display=\'none\'" class="modal-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>' +
+                    '<div style="width:48px;height:48px;border-radius:50%;background:' + iconBg + ';display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">' +
+                        '<i class="fa-solid ' + (botIcon || iconClass) + '" style="font-size:20px;color:#fff;"></i>' +
                     '</div>' +
-                    '<div>' +
-                        '<div style="font-size:14px; font-weight:700; color:#ffffff;">' + cmd.nombre + '</div>' +
-                        '<div style="font-size:10px; color:rgba(255,255,255,0.5);">' + (cmd.creditos === 0 ? 'Gratis' : cmd.creditos + ' Créditos') + ' · ' + cmd.tipo.toUpperCase() + '</div>' +
-                    '</div>' +
+                    '<div class="modal-title">' + cmd.nombre + '</div>' +
+                    '<div class="modal-subtitle">' + (botName ? botName + ' · ' : '') + creditLabel + ' · ' + cmd.tipo.toUpperCase() + '</div>' +
                 '</div>' +
-            '</div>' +
-            '<div style="padding:20px;">' +
-                inputHtml +
-                '<button id="btnConsulta" onclick="ejecutarConsulta(\'' + cmdId + '\')" style="width:100%; padding:13px; background:#25d366; color:#fff; border:none; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; margin-top:14px; display:flex; align-items:center; justify-content:center; gap:6px; transition:background 0.2s;" onmouseover="this.style.background=\'#1ebe5d\'" onmouseout="this.style.background=\'#25d366\'">' +
-                    '<i class="fa-solid fa-magnifying-glass" style="font-size:12px;"></i> Consultar' +
-                '</button>' +
-            '</div>';
+                '<div class="modal-body">' +
+                    '<div class="modal-field">' + inputHtml + '</div>' +
+                    '<button id="btnConsulta" onclick="ejecutarConsulta(\'' + cmdId + '\')" class="modal-btn modal-btn-primary" style="background:' + btnColor + ';">' +
+                        '<i class="fa-solid fa-magnifying-glass"></i> Consultar' +
+                    '</button>' +
+                '</div>';
 
+            var overlayBg = botColorMap[modId];
+            if (overlayBg) {
+                var colors = overlayBg.match(/#[0-9a-fA-F]{6}/g);
+                if (colors && colors.length >= 2) {
+                    infoModal.style.background = 'linear-gradient(135deg, ' + colors[0] + ' 0%, ' + colors[1] + ' 50%, ' + colors[0] + ' 100%)';
+                }
+            }
             infoModal.style.display = 'flex';
             setTimeout(function() { var inp = document.getElementById('consultaInput'); if(inp) inp.focus(); }, 100);
         }
 
+        // Campos internos del sistema que no deben mostrarse
+        var camposBasura = /^(modo|mode|credits?|cr[eé]ditos?|wanted\s*(for)?|status|bot|timestamp|coins|fenixcoins|orioncoins|atlascoins|titancoins|novacoins|id_consulta|job_?id|consultado\s+por|monedas|token|api_?key|session|unlimited|lvl|level|bloque\s+de\s+datos|id|tiempo\s+de\s+proceso|estado|genero\s+detectado|rostro|edad\s+aproximada|genero\s+de\s+la\s+persona)$/i;
+        // Valores vacíos o nulos
+        var valoresVacios = /^(none|null|undefined|n\/a|ninguno|ninguna|no\s+registra|no\s+tiene|sin\s+datos?|sin\s+registro|-+|\.+|0|\s*)$/i;
+        // Líneas sueltas sin valor (solo encabezados)
+        var lineasSueltas = /^(DIRECCION|UBIGEO|UBICACION|ACTAS\s+REGISTRADAS|ACTAS\s*\/?\s*CERTIFICADOS|DETALLES|PERSONA|NACIMIENTO|INFORMACION|RESIDENCIA|DATOS\s+DEL|OTROS|OBSERVACIONES?|DATOS\s+GENERALES|PARAMETROS\s+OPCIONALES.*|SE\s+USO\s+EL\s+MODO.*|ESTE\s+MODO\s+PRIORIZA.*|INFORME\s+GENERADO.*)$/i;
+
         function formatearResultado(texto) {
             if (!texto || !texto.trim()) return '<span style="color:#9ca3af;">Sin respuesta</span>';
-            var html = texto.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            // Limpiar líneas basura del frontend
-            var lineas = html.split('\n').filter(function(l) {
-                var t = l.trim();
+            // Limpiar caracteres basura globales (antes del HTML)
+            var limpio = texto
+                .replace(/```[a-z]*\n?/gi, '')
+                .replace(/^#+\s*/gm, '');
+            // Filtrar líneas basura en texto plano (antes de convertir a HTML)
+            var lineas = limpio.split('\n').filter(function(l) {
+                var t = l.replace(/\*\*/g, '').replace(/\*/g, '').replace(/[\[\]]/g, '').trim();
                 if (!t) return false;
-                if (/^[\[\]]+$/.test(t)) return false;
+                if (/^[-=_]{3,}$/.test(t)) return false;
+                if (lineasSueltas.test(t)) return false;
                 if (/CONSULTA\s+TIVE/i.test(t)) return false;
-                if (/^\[?\s*CONSULTA\b/i.test(t) && t.length < 60) return false;
+                if (/^\s*CONSULTA\b/i.test(t) && t.length < 60) return false;
                 if (/^Informaci/i.test(t) && /General/i.test(t)) return false;
-                if (/^Monedas/i.test(t)) return false;
-                if (/Id\s*:\s*\d{5,}/i.test(t)) return false;
-                if (/Consultado por/i.test(t)) return false;
-                if (/^\[?\s*#/i.test(t)) return false;
-                if (/^\[?\s*DETALLES/i.test(t)) return false;
-                if (/^\[?\s*PERSONA/i.test(t)) return false;
-                if (/^\[?\s*NACIMIENTO/i.test(t)) return false;
-                if (/^\[?\s*INFORMACION/i.test(t)) return false;
-                if (/^\[?\s*RESIDENCIA/i.test(t)) return false;
-                if (/^\[?\s*DATOS\s+DEL/i.test(t)) return false;
+                if (/modo\s+de\s+precisi[oó]n/i.test(t)) return false;
+                if (/modo\s+prioriza/i.test(t)) return false;
+                if (/corresponde\s+al\s+nivel/i.test(t)) return false;
+                if (/alto\s+disponible/i.test(t)) return false;
+                if (/detectado.*especificar.*correcto/i.test(t)) return false;
+                if (/informe\s+generado/i.test(t)) return false;
+                if (/bajo\s+disponible/i.test(t)) return false;
+                if (/prioriza\s+la\s+velocidad/i.test(t)) return false;
+                if (/fue\s+correcto\)?$/i.test(t)) return false;
+                // Filtrar campo:valor con campo interno
+                var kvMatch = t.match(/^([^:]+?)\s*:\s*(.*)$/);
+                if (kvMatch) {
+                    var campo = kvMatch[1].trim();
+                    var valor = kvMatch[2].trim();
+                    if (camposBasura.test(campo)) return false;
+                    if (campo.toLowerCase().includes('coins')) return false;
+                    if (campo.toLowerCase().includes('unlimited')) return false;
+                    // Campo con valor vacío/nulo
+                    if (!valor || valoresVacios.test(valor)) return false;
+                }
                 return true;
+            });
+            // Ahora convertir a HTML
+            lineas = lineas.map(function(l) {
+                return l.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*/g, '').replace(/[\[\]]/g, '');
             });
             var filas = [];
             var otrasLineas = [];
@@ -2020,13 +2270,21 @@
                 var limpia = linea.trim();
                 var match = limpia.match(/^([A-ZÁÉÍÓÚÑ\s\.\/_-]{2,}?)\s*:\s*(.+)$/i);
                 if (match && match[1].trim().length > 1 && match[2].trim().length > 0) {
-                    filas.push({ campo: match[1].trim(), valor: match[2].trim() });
+                    var campoLimpio = match[1].trim();
+                    var valorLimpio = match[2].trim();
+                    // Doble check: no mostrar campos basura
+                    if (camposBasura.test(campoLimpio)) return;
+                    if (valoresVacios.test(valorLimpio)) return;
+                    filas.push({ campo: campoLimpio, valor: valorLimpio });
                 } else {
                     if (filas.length > 0) {
                         otrasLineas.push(renderTablaResultado(filas));
                         filas = [];
                     }
-                    otrasLineas.push('<div style="font-size:11px; line-height:1.3; color:#111b21;">' + limpia + '</div>');
+                    // No mostrar líneas sueltas sin contenido útil
+                    if (!lineasSueltas.test(limpia.replace(/<[^>]+>/g, '').trim())) {
+                        otrasLineas.push('<div style="font-size:11px; line-height:1.3; color:#111b21;">' + limpia + '</div>');
+                    }
                 }
             });
             if (filas.length > 0) {
@@ -2065,29 +2323,32 @@
                 var docs = archivos.filter(function(f) { return f.tipo !== 'imagen'; });
 
                 if (imagenes.length > 0) {
-                    imagenesHtml = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:8px; margin-bottom:14px;">' +
+                    var gridCols = imagenes.length === 1 ? '1fr' : 'repeat(2, 1fr)';
+                    var maxW = imagenes.length === 1 ? 'max-width:200px; margin:0 auto;' : '';
+                    imagenesHtml = '<div style="display:grid; grid-template-columns:' + gridCols + '; gap:8px; margin-bottom:14px; ' + maxW + '">' +
                         imagenes.map(function(f) {
-                            return '<a href="' + BRIDGE_URL + f.url + '" target="_blank" download style="display:block; position:relative; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden; aspect-ratio:3/4;">' +
-                                '<img src="' + BRIDGE_URL + f.url + '" style="width:100%; height:100%; object-fit:cover; display:block;">' +
-                                '<div style="position:absolute; bottom:4px; right:4px; background:rgba(0,0,0,0.6); color:#fff; width:22px; height:22px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:9px;"><i class="fa-solid fa-download"></i></div>' +
+                            return '<a href="' + BRIDGE_URL + f.url + '" target="_blank" download style="display:block; position:relative; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">' +
+                                '<img src="' + BRIDGE_URL + f.url + '" style="width:100%; display:block;">' +
+                                '<div style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.55); color:#fff; width:24px; height:24px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px;"><i class="fa-solid fa-download"></i></div>' +
                             '</a>';
                         }).join('') +
                     '</div>';
                 }
+                var activeBotBtn = botBtnColorMap[consultasModuloActual] || '#25d366';
                 docs.forEach(function(f) {
                     if (f.tipo === 'pdf') {
                         var pdfUrl = BRIDGE_URL + f.url;
-                        var pdfViewId = 'pdfView_' + f.id;
+                        var pdfContainerId = 'pdfContainer_' + f.id;
                         archivosHtml += '<div style="margin-top:10px;">' +
                             '<div style="display:flex; gap:8px;">' +
-                                '<a href="' + pdfUrl + '" download style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 14px; background:#ef4444; color:#fff; border-radius:8px; text-decoration:none; font-size:10px; font-weight:600; max-width:160px;">' +
-                                    '<i class="fa-solid fa-download" style="font-size:12px;"></i> Descargar' +
+                                '<a href="' + pdfUrl + '" download style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 14px; background:#111b21; color:#fff; border-radius:10px; text-decoration:none; font-size:11px; font-weight:600;">' +
+                                    '<i class="fa-solid fa-download" style="font-size:12px;"></i> Descargar PDF' +
                                 '</a>' +
-                                '<button onclick="var el=document.getElementById(\'' + pdfViewId + '\');if(el.style.display===\'none\'){el.style.display=\'block\';el.src=\'' + pdfUrl + '\';}else{el.style.display=\'none\';}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 14px; background:#25d366; color:#fff; border:none; border-radius:8px; font-size:10px; font-weight:600; cursor:pointer; max-width:160px;">' +
+                                '<button onclick="togglePdfPreview(\'' + pdfContainerId + '\', \'' + pdfUrl + '\')" style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 14px; background:' + activeBotBtn + '; color:#fff; border:none; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;">' +
                                     '<i class="fa-solid fa-eye" style="font-size:12px;"></i> Visualizar' +
                                 '</button>' +
                             '</div>' +
-                            '<iframe id="' + pdfViewId + '" style="display:none; width:100%; height:500px; border:1px solid #e5e7eb; border-radius:8px; margin-top:8px;"></iframe>' +
+                            '<div id="' + pdfContainerId + '" style="display:none; margin-top:8px; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden; background:#f8f9fa;"></div>' +
                         '</div>';
                     } else {
                         archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
@@ -2102,11 +2363,19 @@
             var textoFormateado = formatearResultado((data.resultado && data.resultado.texto) || '');
             var creditoHtml = '';
             if (data.cobrado) {
-                creditoHtml = '<div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:#dcfce7; border:1px solid #bbf7d0; border-radius:8px; margin-top:12px; font-size:11px; color:#15803d;">' +
-                    '<i class="fa-solid fa-coins"></i> Se descontaron <b>' + data.creditosUsados + '</b> crédito(s) &nbsp;|&nbsp; Saldo: <b>' + (data.creditosRestantes !== undefined ? data.creditosRestantes : '?') + '</b> créditos</div>';
+                var saldo = data.creditosRestantes !== undefined ? Math.floor(data.creditosRestantes) : '?';
+                creditoHtml = '<div style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:#dcfce7; border:1px solid #bbf7d0; border-radius:10px; margin-top:14px;">' +
+                    '<i class="fa-solid fa-circle-check" style="font-size:16px; color:#15803d;"></i>' +
+                    '<div style="flex:1; font-size:11px; color:#15803d; line-height:1.5;">' +
+                        '<div style="font-weight:700;">Se descontaron ' + data.creditosUsados + ' crédito' + (data.creditosUsados > 1 ? 's' : '') + '</div>' +
+                        '<div style="font-weight:400; opacity:0.8;">Saldo disponible: ' + saldo + ' créditos</div>' +
+                    '</div>' +
+                '</div>';
             } else if (data.ok && !data.cobrado) {
-                creditoHtml = '<div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:#fef3c7; border:1px solid #fde68a; border-radius:8px; margin-top:12px; font-size:11px; color:#92400e;">' +
-                    '<i class="fa-solid fa-info-circle"></i> No se cobraron créditos (sin resultados útiles)</div>';
+                creditoHtml = '<div style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:#fef3c7; border:1px solid #fde68a; border-radius:10px; margin-top:14px;">' +
+                    '<i class="fa-solid fa-circle-info" style="font-size:16px; color:#92400e;"></i>' +
+                    '<div style="flex:1; font-size:11px; color:#92400e; font-weight:500;">No se cobraron créditos (sin resultados útiles)</div>' +
+                '</div>';
             }
 
             var moduloNombres2 = { orion: 'Orión', atlas: 'Atlas', fenix: 'Fénix', titan: 'Titán', nova: 'Nova' };
@@ -2292,85 +2561,7 @@
                 }
 
                 document.getElementById('infoModal').style.display = 'none';
-
-                var resEl = document.getElementById('consultasResultado');
-                if (document.getElementById('consultasCategorias')) document.getElementById('consultasCategorias').style.display = 'none';
-                if (document.getElementById('consultasComandos')) document.getElementById('consultasComandos').style.display = 'none';
-                if (resEl) {
-                    resEl.style.display = 'block';
-                    var textoFormateado = formatearResultado((data.resultado && data.resultado.texto) || '');
-
-                    // Renderizar archivos (imágenes y PDFs)
-                    var imagenesHtml = '';
-                    var archivosHtml = '';
-                    if (data.resultado && data.resultado.archivos && data.resultado.archivos.length > 0) {
-                        var imagenes = data.resultado.archivos.filter(function(f) { return f.tipo === 'imagen'; });
-                        var docs = data.resultado.archivos.filter(function(f) { return f.tipo !== 'imagen'; });
-
-                        if (imagenes.length > 0) {
-                            imagenesHtml = '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:8px; margin-bottom:14px;">' +
-                                imagenes.map(function(f) {
-                                    return '<a href="' + BRIDGE_URL + f.url + '" target="_blank" download style="display:block; position:relative; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden; aspect-ratio:3/4;">' +
-                                        '<img src="' + BRIDGE_URL + f.url + '" style="width:100%; height:100%; object-fit:cover; display:block;">' +
-                                        '<div style="position:absolute; bottom:4px; right:4px; background:rgba(0,0,0,0.6); color:#fff; width:22px; height:22px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:9px;"><i class="fa-solid fa-download"></i></div>' +
-                                    '</a>';
-                                }).join('') +
-                            '</div>';
-                        }
-
-                        docs.forEach(function(f) {
-                            if (f.tipo === 'pdf') {
-                                var pdfUrl2 = BRIDGE_URL + f.url;
-                                var pdfViewId2 = 'pdfView2_' + f.id;
-                                archivosHtml += '<div style="margin-top:10px;">' +
-                                    '<div style="display:flex; gap:8px;">' +
-                                        '<a href="' + pdfUrl2 + '" download style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 14px; background:#ef4444; color:#fff; border-radius:8px; text-decoration:none; font-size:10px; font-weight:600; max-width:160px;">' +
-                                            '<i class="fa-solid fa-download" style="font-size:12px;"></i> Descargar' +
-                                        '</a>' +
-                                        '<button onclick="var el=document.getElementById(\'' + pdfViewId2 + '\');if(el.style.display===\'none\'){el.style.display=\'block\';el.src=\'' + pdfUrl2 + '\';}else{el.style.display=\'none\';}" style="flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 14px; background:#25d366; color:#fff; border:none; border-radius:8px; font-size:10px; font-weight:600; cursor:pointer; max-width:160px;">' +
-                                            '<i class="fa-solid fa-eye" style="font-size:12px;"></i> Visualizar' +
-                                        '</button>' +
-                                    '</div>' +
-                                    '<iframe id="' + pdfViewId2 + '" style="display:none; width:100%; height:500px; border:1px solid #e5e7eb; border-radius:8px; margin-top:8px;"></iframe>' +
-                                '</div>';
-                            } else {
-                                archivosHtml += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#111b21; border:1px solid #2a3942; border-radius:10px; text-decoration:none; color:#e9edef; font-size:12px; font-weight:600; margin-top:10px;">' +
-                                    '<div style="width:36px; height:36px; min-width:36px; background:#111b21; border-radius:8px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-download" style="color:#fff; font-size:14px;"></i></div>' +
-                                    '<div><div style="font-size:12px; font-weight:600;">Descargar archivo</div><div style="font-size:10px; color:#8696a0; font-weight:400;">Toca para descargar</div></div>' +
-                                    '<i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:auto; font-size:11px; color:#8696a0;"></i>' +
-                                '</a>';
-                            }
-                        });
-                    }
-
-                    var creditoHtml = '';
-                    if (data.cobrado) {
-                        creditoHtml = '<div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:#dcfce7; border:1px solid #bbf7d0; border-radius:8px; margin-top:12px; font-size:11px; color:#15803d;">' +
-                            '<i class="fa-solid fa-coins"></i> Se descontaron <b>' + data.creditosUsados + '</b> crédito(s) &nbsp;|&nbsp; Saldo: <b>' + (data.creditosRestantes !== undefined ? data.creditosRestantes : '?') + '</b> créditos' +
-                        '</div>';
-                    } else if (data.ok && !data.cobrado) {
-                        creditoHtml = '<div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:#fef3c7; border:1px solid #fde68a; border-radius:8px; margin-top:12px; font-size:11px; color:#92400e;">' +
-                            '<i class="fa-solid fa-info-circle"></i> No se cobraron créditos (sin resultados útiles)' +
-                        '</div>';
-                    }
-
-                    resEl.innerHTML = '<div style="background:#111b21; border-radius:12px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:10px;">' +
-                        '<button onclick="volverConsultas()" style="background:#111b21; color:#fff; border:none; width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;"><i class="fa-solid fa-arrow-left"></i></button>' +
-                        '<div style="font-size:13px; font-weight:600; color:#e9edef;">Resultado</div>' +
-                    '</div>' +
-                    '<div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; font-size:12px; color:#111b21; line-height:1.7; word-break:break-word;">' +
-                        imagenesHtml + textoFormateado + archivosHtml + creditoHtml +
-                    '</div>';
-
-                    if (data.creditosRestantes !== undefined) {
-                        var logoStatus = document.getElementById('logoStatus');
-                        if (logoStatus) logoStatus.textContent = Math.floor(data.creditosRestantes) + ' Créditos';
-                    window.creditosUsuario = data.creditosRestantes;
-                    window.tieneCreditos = data.creditosRestantes > 0;
-                    var creditSpan = document.querySelector('.dropdown-trigger span');
-                    if (creditSpan) creditSpan.textContent = Math.floor(data.creditosRestantes) + ' Créditos';
-                    }
-                }
+                mostrarResultadoConsulta(data);
             } catch(e) {
                 document.getElementById('infoModal').style.display = 'none';
                 var resEl3 = document.getElementById('consultasResultado');
@@ -2466,7 +2657,7 @@
                             <div style="font-weight:700; font-size:13px; color:#ffffff;">Instalar App</div>
                             <div style="font-size:10px; color:#8696a0; font-weight:400;">Acceso rápido desde tu pantalla de inicio</div>
                         </div>
-                        <button id="btnInstallApp" style="background:#25d366; color:#ffffff; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-size:11px; transition:background 0.2s; flex-shrink:0; white-space:nowrap;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                        <button id="btnInstallApp" style="background:#25d366; color:#ffffff; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; font-size:11px; transition:background 0.2s; flex-shrink:0; white-space:nowrap;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                             Instalar
                         </button>
                         <button id="btnDismissPwa" style="background:none; border:none; color:rgba(255,255,255,0.4); font-size:16px; cursor:pointer; padding:4px; flex-shrink:0;">
@@ -2736,11 +2927,11 @@
                         <!-- Tarjetas de Saldo Sólidas -->
                         <div style="display: flex; gap: 12px; margin-bottom: 25px;">
                             <div style="flex: 1; background: #fff; border: 2px solid #111b21; border-radius: 10px; padding: 12px; text-align: left;">
-                                <div style="font-size: 11px; font-weight: 800; color: #111b21; text-transform: uppercase;">Tu Saldo</div>
+                                <div style="font-size: 11px; font-weight: 600; color: #111b21; text-transform: uppercase;">Tu Saldo</div>
                                 <div style="font-size: 18px; font-weight: 900; color: #ef4444; margin-top: 4px;">S/ ${soles}</div>
                             </div>
                             <div style="flex: 1; background: #fff; border: 2px solid #111b21; border-radius: 10px; padding: 12px; text-align: left;">
-                                <div style="font-size: 11px; font-weight: 800; color: #111b21; text-transform: uppercase;">Costo Único</div>
+                                <div style="font-size: 11px; font-weight: 600; color: #111b21; text-transform: uppercase;">Costo Único</div>
                                 <div style="font-size: 18px; font-weight: 900; color: #111b21; margin-top: 4px;">S/ 35.00</div>
                             </div>
                         </div>
@@ -2780,12 +2971,12 @@
             if (tabs) tabs.style.display = 'none'; // Desactivamos tabs superiores para evitar saturación visual
 
             const cats = [
-                { id: 'SUNARP', title: 'SUNARP', icon: 'fa-building-columns', desc: 'REGISTROS PÚBLICOS, CONSULTAS Y TRÁMITES' },
-                { id: 'MTC', title: 'MTC', icon: 'fa-road', desc: 'BREVETES, CITV, RÉCORD Y TRÁMITES' },
-                { id: 'MULTAS', title: 'MULTAS Y DEUDAS', icon: 'fa-file-invoice-dollar', desc: 'PAPELETAS, SAT, SUTRAN Y ATU' },
-                { id: 'REGIONES', title: 'INFRACCIONES POR REGIONES', icon: 'fa-map-location-dot', desc: 'PAPELETAS E INFRACCIONES POR DEPARTAMENTO' },
-                { id: 'SEGUROS', title: 'SEGUROS Y REPORTES', icon: 'fa-shield-halved', desc: 'SOAT, SINIESTRALIDAD Y SERVICIOS PREMIUM' },
-                { id: 'GRATUITOS', title: 'GRATUITOS', icon: 'fa-gift', desc: 'SERVICIOS SIN COSTO DE SUNARP' }
+                { id: 'SUNARP', title: 'SUNARP', icon: 'fa-building-columns', desc: 'REGISTROS PÚBLICOS, CONSULTAS Y TRÁMITES', color: 'hook-icon-green' },
+                { id: 'MTC', title: 'MTC', icon: 'fa-road', desc: 'BREVETES, CITV, RÉCORD Y TRÁMITES', color: 'hook-icon-blue' },
+                { id: 'MULTAS', title: 'MULTAS Y DEUDAS', icon: 'fa-file-invoice-dollar', desc: 'PAPELETAS, SAT, SUTRAN Y ATU', color: 'hook-icon-amber' },
+                { id: 'REGIONES', title: 'INFRACCIONES POR REGIONES', icon: 'fa-map-location-dot', desc: 'PAPELETAS E INFRACCIONES POR DEPARTAMENTO', color: 'hook-icon-orange' },
+                { id: 'SEGUROS', title: 'SEGUROS Y REPORTES', icon: 'fa-shield-halved', desc: 'SOAT, SINIESTRALIDAD Y SERVICIOS PREMIUM', color: 'hook-icon-purple' },
+                { id: 'GRATUITOS', title: 'GRATUITOS', icon: 'fa-gift', desc: 'SERVICIOS SIN COSTO DE SUNARP', color: 'hook-icon-teal' }
             ];
 
             if (dashViewMode === 'categories') {
@@ -2796,10 +2987,10 @@
 
                 grid.innerHTML = filteredCats.map((c, i) => `
                     <div class="hook-card" style="cursor:pointer;" onclick="dashViewMode = 'links'; currentDashTab = '${c.id}'; renderDashGrid();">
-                        <div class="hook-icon"><i class="fa-solid ${esc(c.icon)}"></i></div>
+                        <div class="hook-icon ${c.color || ''}"><i class="fa-solid ${esc(c.icon)}"></i></div>
                         <div style="flex: 1; min-width: 0;">
-                            <div class="hook-text" style="margin-bottom: 2px;">${esc(c.title)}</div>
-                            <div style="font-size: 10px; font-weight: 500; color: #94a3b8; font-family: 'Roboto', sans-serif; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.2px;">${esc(c.desc)}</div>
+                            <div class="hook-text">${esc(c.title)}</div>
+                            <div class="hook-desc">${esc(c.desc)}</div>
                         </div>
                         <div style="color: #94a3b8; font-size: 14px; flex-shrink: 0;"><i class="fa-solid fa-chevron-right"></i></div>
                     </div>
@@ -2817,13 +3008,13 @@
             const currentCatTitle = cats.find(c => c.id === currentDashTab)?.title || 'Accesos';
 
             grid.innerHTML = `
-                <div style="grid-column: 1 / -1; background:#111b21; border-radius:12px; padding:16px 18px; margin-bottom:8px; display:flex; align-items:center; gap:12px;">
-                    <button onclick="dashViewMode = 'categories'; renderDashGrid();" style="border:none; background:#111b21; color:#fff; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:12px;">
+                <div class="hook-back-bar" style="grid-column: 1 / -1;">
+                    <button class="hook-back-btn" onclick="dashViewMode = 'categories'; renderDashGrid();">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
-                    <div>
-                        <div style="font-size:9px; font-weight:500; color:#8696a0; text-transform:uppercase; letter-spacing:0.5px;">Dashboard</div>
-                        <div style="font-size:14px; font-weight:600; color:#e9edef; text-transform:uppercase; letter-spacing:0.2px;">${esc(currentCatTitle)}</div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:9px; font-weight:500; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Dashboard</div>
+                        <div style="font-size:14px; font-weight:600; color:#111b21; text-transform:uppercase; letter-spacing:0.2px;">${esc(currentCatTitle)}</div>
                     </div>
                 </div>
             ` + filtered.map((item, i) => `

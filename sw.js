@@ -15,8 +15,7 @@ const PRECACHE = [
     './assets/css/panel_cliente.css',
     './assets/js/index.js',
     './assets/js/admin.js',
-    './assets/js/panel_cliente.js',
-    './assets/css/intranet-modal.css'
+    './assets/js/panel_cliente.js'
 ];
 
 self.addEventListener('install', (e) => {

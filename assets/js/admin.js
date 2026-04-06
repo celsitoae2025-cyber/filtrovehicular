@@ -1666,19 +1666,24 @@ Link: https://filtrovehicularperu.com`;
             if(!modal) {
                 modal = document.createElement('div');
                 modal.id = 'voucherModal';
-                modal.style = "position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:99999; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(5px);";
+                modal.className = 'modal-overlay';
+                modal.style.cssText = 'z-index:99999;display:flex;';
                 modal.onclick = function() { this.style.display = 'none'; };
                 document.body.appendChild(modal);
             }
-            
+
             let titleTxt = `Voucher: ${esc(title)}`;
 
             modal.innerHTML = `
-                <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:24px; border:1px solid rgba(255,255,255,0.1); text-align:center; max-width:400px; width:90%; position:relative;" onclick="event.stopPropagation()">
-                    <div style="font-size:14px; color:#94a3b8; font-weight:800; margin-bottom:15px; text-transform:uppercase; letter-spacing:1px;">${titleTxt}</div>
-                    <img src="${escAttr(voucherUrl)}" style="width:100%; max-height:70vh; object-fit:contain; border-radius:12px; border:1px solid rgba(255,255,255,0.15); box-shadow:0 20px 50px rgba(0,0,0,0.5);">
-                    <button onclick="document.getElementById('voucherModal').style.display='none';" style="position:absolute; top:-15px; right:-15px; background:#dc2626; color:white; border:none; width:35px; height:35px; border-radius:50%; font-weight:900; cursor:pointer; box-shadow:0 4px 10px rgba(220, 38, 38, 0.3);"><i class="fa-solid fa-times"></i></button>
-                    <div style="margin-top:20px; color:#cbd5e1; font-size:12px; font-weight:600;"><i class="fa-solid fa-lightbulb" style="color:#f59e0b; margin-right:5px;"></i> Revisa el comprobante antes de validar.</div>
+                <div class="modal-card" onclick="event.stopPropagation()" style="max-width:400px;">
+                    <div class="modal-header" style="padding:18px 20px 14px;position:relative;">
+                        <button onclick="document.getElementById('voucherModal').style.display='none';" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+                        <div class="modal-title" style="font-size:14px;">${titleTxt}</div>
+                    </div>
+                    <div class="modal-body" style="text-align:center;">
+                        <img src="${escAttr(voucherUrl)}" style="width:100%; max-height:60vh; object-fit:contain; border-radius:12px; border:1px solid #e5e7eb;">
+                        <div style="margin-top:14px; color:#6b7280; font-size:12px; font-weight:400;">Revisa el comprobante antes de validar.</div>
+                    </div>
                 </div>
             `;
             

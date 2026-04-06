@@ -273,45 +273,45 @@ async function renderLoggedInState() {
 
     if (!document.getElementById('profileClienteModal')) {
         var modalHtml = `
-            <div id="profileClienteModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(248,250,252,0.30);z-index:999999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-family:'Roboto',sans-serif;padding:16px;overflow-y:auto;">
-                <div style="background:#ffffff;width:100%;max-width:420px;border-radius:20px;overflow:hidden;position:relative;border:1px solid #e5e7eb;margin:auto;">
+            <div id="profileClienteModal" class="modal-overlay" style="z-index:999999;" onclick="if(event.target===this)this.style.display='none'">
+                <div class="modal-card" onclick="event.stopPropagation()" style="max-width:420px;">
 
-                    <!-- Header navy -->
-                    <div style="background:linear-gradient(135deg,#111b21 0%,#1f2c34 100%);padding:30px 24px 24px;text-align:center;position:relative;">
-                        <button onclick="document.getElementById('profileClienteModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;color:rgba(255,255,255,0.35);cursor:pointer;transition:0.2s;padding:4px;line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.35)'"><i class="fa-solid fa-xmark"></i></button>
-                        <div style="width:60px;height:60px;border-radius:50%;background:#25d366;border:none;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
-                            <i class="fa-solid fa-user" style="font-size:22px;color:#ffffff;"></i>
+                    <!-- Header -->
+                    <div class="modal-header">
+                        <button onclick="document.getElementById('profileClienteModal').style.display='none'" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+                        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                            <i class="fa-solid fa-user" style="font-size:20px;color:#fff;"></i>
                         </div>
-                        <h3 style="font-size:18px;color:#ffffff;margin:0 0 4px;font-weight:800;" id="profName">Nombre</h3>
-                        <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:0;font-weight:500;" id="profEmail">correo@ejemplo.com</p>
+                        <div class="modal-title" id="profName">Nombre</div>
+                        <div class="modal-subtitle" id="profEmail">correo@ejemplo.com</div>
                     </div>
 
                     <!-- Contenido -->
-                    <div style="padding:20px 24px 24px;">
+                    <div style="padding:0 24px 24px;">
 
                         <!-- Info personal -->
                         <div style="margin-bottom:18px;">
-                            <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Información personal</div>
+                            <div style="font-size:10px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Información personal</div>
                             <div style="display:flex;flex-direction:column;gap:0;">
                                 <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;">
-                                    <div style="width:32px;height:32px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                        <i class="fa-solid fa-user-tag" style="color:#111b21;font-size:12px;"></i>
+                                    <div style="width:32px;height:32px;background:#f8fafc;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="fa-solid fa-user-tag" style="color:#475569;font-size:12px;"></i>
                                     </div>
                                     <div style="flex:1;min-width:0;">
                                         <div style="font-size:10px;color:#94a3b8;font-weight:500;">Nombre completo</div>
-                                        <div style="font-size:13px;color:#111b21;font-weight:700;" id="profNameField">---</div>
+                                        <div style="font-size:13px;color:#111b21;font-weight:500;" id="profNameField">---</div>
                                     </div>
                                 </div>
                                 <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
-                                    <div style="width:32px;height:32px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                        <i class="fa-solid fa-envelope" style="color:#111b21;font-size:12px;"></i>
+                                    <div style="width:32px;height:32px;background:#f8fafc;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="fa-solid fa-envelope" style="color:#475569;font-size:12px;"></i>
                                     </div>
                                     <div style="flex:1;min-width:0;">
                                         <div style="font-size:10px;color:#94a3b8;font-weight:500;">Correo electrónico</div>
-                                        <div style="font-size:13px;color:#111b21;font-weight:700;word-break:break-all;" id="profEmailField">---</div>
+                                        <div style="font-size:13px;color:#111b21;font-weight:500;word-break:break-all;" id="profEmailField">---</div>
                                     </div>
-                                    <div style="width:22px;height:22px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Correo verificado">
-                                        <i class="fa-solid fa-check" style="color:#22c55e;font-size:10px;"></i>
+                                    <div style="width:22px;height:22px;background:rgba(37,211,102,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;" title="Correo verificado">
+                                        <i class="fa-solid fa-check" style="color:#25d366;font-size:10px;"></i>
                                     </div>
                                 </div>
                             </div>
@@ -319,31 +319,31 @@ async function renderLoggedInState() {
 
                         <!-- Seguridad -->
                         <div style="margin-bottom:20px;">
-                            <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Seguridad</div>
+                            <div style="font-size:10px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Seguridad</div>
                             <div id="profChangePassSection">
-                                <button onclick="toggleChangePassword()" id="btnTogglePass" style="width:100%;padding:12px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:0.2s;" onmouseover="this.style.borderColor='#cbd5e1'" onmouseout="this.style.borderColor='#e2e8f0'">
-                                    <div style="width:32px;height:32px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                        <i class="fa-solid fa-lock" style="color:#111b21;font-size:12px;"></i>
+                                <button onclick="toggleChangePassword()" id="btnTogglePass" style="width:100%;padding:12px 14px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                                    <div style="width:32px;height:32px;background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="fa-solid fa-lock" style="color:#475569;font-size:12px;"></i>
                                     </div>
-                                    <span style="font-size:13px;color:#111b21;font-weight:600;flex:1;text-align:left;">Cambiar contraseña</span>
-                                    <i class="fa-solid fa-chevron-right" style="color:#cbd5e1;font-size:11px;"></i>
+                                    <span style="font-size:13px;color:#111b21;font-weight:500;flex:1;text-align:left;">Cambiar contraseña</span>
+                                    <i class="fa-solid fa-chevron-right" style="color:#9ca3af;font-size:11px;"></i>
                                 </button>
-                                <div id="changePassForm" style="display:none;margin-top:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;">
+                                <div id="changePassForm" style="display:none;margin-top:10px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:16px;">
                                     <div style="margin-bottom:10px;">
-                                        <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Contraseña actual</label>
-                                        <input type="password" id="profCurrentPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e2e8f0'">
+                                        <label style="font-size:11px;color:#475569;font-weight:500;display:block;margin-bottom:4px;">Contraseña actual</label>
+                                        <input type="password" id="profCurrentPass" placeholder="••••••••" style="width:100%;padding:10px 12px;background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;color:#111b21;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
                                     </div>
                                     <div style="margin-bottom:10px;">
-                                        <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Nueva contraseña</label>
-                                        <input type="password" id="profNewPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e2e8f0'">
+                                        <label style="font-size:11px;color:#475569;font-weight:500;display:block;margin-bottom:4px;">Nueva contraseña</label>
+                                        <input type="password" id="profNewPass" placeholder="••••••••" style="width:100%;padding:10px 12px;background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;color:#111b21;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
                                     </div>
                                     <div style="margin-bottom:12px;">
-                                        <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px;">Confirmar nueva contraseña</label>
-                                        <input type="password" id="profConfirmPass" placeholder="••••••••" style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e2e8f0'">
+                                        <label style="font-size:11px;color:#475569;font-weight:500;display:block;margin-bottom:4px;">Confirmar nueva contraseña</label>
+                                        <input type="password" id="profConfirmPass" placeholder="••••••••" style="width:100%;padding:10px 12px;background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;color:#111b21;font-family:'Roboto',sans-serif;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
                                     </div>
-                                    <div id="profPassError" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#dc2626;font-weight:600;"></div>
-                                    <div id="profPassSuccess" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#15803d;font-weight:600;"></div>
-                                    <button onclick="handleChangePassword()" style="width:100%;padding:10px;background:#25d366;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
+                                    <div id="profPassError" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#dc2626;font-weight:500;"></div>
+                                    <div id="profPassSuccess" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#15803d;font-weight:500;"></div>
+                                    <button onclick="handleChangePassword()" style="width:100%;padding:10px;background:#111b21;color:#fff;border:none;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;transition:0.2s;text-transform:uppercase;letter-spacing:0.5px;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
                                         Actualizar contraseña
                                     </button>
                                 </div>
@@ -353,21 +353,21 @@ async function renderLoggedInState() {
                         <!-- Panel Admin (solo para admin) -->
                         ${isAdminEmail ? `
                         <div style="margin-bottom:18px;">
-                            <button onclick="window.location.href='admin.html'" style="width:100%;padding:14px 16px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:0.2s;" onmouseover="this.style.borderColor='#111b21';this.style.background='#ffffff'" onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc'">
-                                <div style="width:32px;height:32px;background:linear-gradient(135deg,#111b21,#1f2c34);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="fa-solid fa-shield-halved" style="color:#ffffff;font-size:13px;"></i>
+                            <button onclick="window.location.href='admin.html'" style="width:100%;padding:14px 16px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                                <div style="width:32px;height:32px;background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <i class="fa-solid fa-shield-halved" style="color:#475569;font-size:13px;"></i>
                                 </div>
                                 <div style="flex:1;text-align:left;">
-                                    <div style="font-size:13px;color:#111b21;font-weight:700;">Panel Administrador</div>
-                                    <div style="font-size:10px;color:#94a3b8;font-weight:500;">Acceso completo al sistema</div>
+                                    <div style="font-size:13px;color:#111b21;font-weight:500;">Panel Administrador</div>
+                                    <div style="font-size:10px;color:#94a3b8;font-weight:400;">Acceso completo al sistema</div>
                                 </div>
-                                <i class="fa-solid fa-chevron-right" style="color:#cbd5e1;font-size:12px;"></i>
+                                <i class="fa-solid fa-chevron-right" style="color:#9ca3af;font-size:12px;"></i>
                             </button>
                         </div>
                         ` : ''}
 
                         <!-- Botón cerrar -->
-                        <button onclick="document.getElementById('profileClienteModal').style.display='none'" style="width:100%;padding:12px;background:#f1f5f9;color:#64748b;border:none;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                        <button onclick="document.getElementById('profileClienteModal').style.display='none'" style="width:100%;padding:12px;background:#f8fafc;color:#475569;border:1px solid #e5e7eb;border-radius:10px;font-weight:600;font-size:13px;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
                             Cerrar
                         </button>
                     </div>
@@ -462,38 +462,50 @@ async function renderLoggedInState() {
                     <span style="font-size:11px; font-weight:500; font-family:'Roboto',sans-serif; color:#ffffff; text-transform:uppercase; letter-spacing:0.5px;">${creditosDisplay} Créditos</span>
                     <div style="width:34px; height:34px; background:#ffffff; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative;">
                         <i class="fa-solid fa-bars" style="font-size:14px; color:#111b21;"></i>
-                        <span id="notificationBadge" style="position:absolute; top:-3px; right:-3px; background:#ef4444; color:white; font-size:9px; font-weight:800; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; border:2px solid #111b21; display:none;"></span>
+                        <span id="notificationBadge" style="position:absolute; top:-3px; right:-3px; background:#ef4444; color:white; font-size:9px; font-weight:600; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; border:2px solid #111b21; display:none;"></span>
                     </div>
                 </div>
-                <div class="dropdown-menu" id="userDropdownMenu" style="background:#ffffff; border:1px solid #e5e7eb;">
-                    <div onclick="mostrarPerfilCliente()" style="cursor: pointer; padding: 18px 20px 14px; border-bottom: 1px solid #e5e7eb;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                            <span style="font-size: 14px; font-weight: 800; color: #111b21;">Mi Perfil</span>
-                            <span style="background: #25d366; color: #ffffff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px;">PREMIUM</span>
+                <div class="dropdown-menu" id="userDropdownMenu">
+                    <div onclick="mostrarPerfilCliente()" style="cursor:pointer; padding:20px 20px 16px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="width:42px; height:42px; background:#111b21; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                <span style="font-size:16px; font-weight:600; color:#ffffff;">${displayName.charAt(0).toUpperCase()}</span>
+                            </div>
+                            <div style="flex:1; min-width:0;">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span style="font-size:15px; font-weight:600; color:#111b21;">${displayName}</span>
+                                    <span style="background:#25d366; color:#fff; font-size:8px; font-weight:700; padding:2px 7px; border-radius:4px; letter-spacing:0.5px;">PREMIUM</span>
+                                </div>
+                                <span style="font-size:11px; color:#94a3b8; font-weight:400; display:block; margin-top:2px;">${maskedEmail}</span>
+                            </div>
                         </div>
-                        <span style="font-size: 11px; color: #6b7280; font-weight: 500;">${maskedEmail}</span>
                     </div>
-                    <div style="padding: 14px 20px; border-bottom: 1px solid #e5e7eb;">
-                        <div style="font-size: 14px; font-weight: 700; color: #25d366; line-height: 1; text-transform:uppercase;">${creditosDisplay} Créditos</div>
-                        <div style="font-size: 10px; color: #6b7280; font-weight: 400; margin-top: 4px; text-transform:uppercase;">Créditos Disponibles</div>
+                    <div style="margin:0 16px 12px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;" onclick="closeUserDropdown(); openAccess();">
+                        <div>
+                            <div style="font-size:18px; font-weight:600; color:#111b21; line-height:1;">${creditosDisplay}</div>
+                            <div style="font-size:10px; color:#6b7280; font-weight:500; margin-top:3px; text-transform:uppercase; letter-spacing:0.3px;">Créditos disponibles</div>
+                        </div>
+                        <div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-plus" style="color:#fff; font-size:14px;"></i>
+                        </div>
                     </div>
-                    <div style="padding: 4px 0;">
-                        <a href="panel_cliente.html" onclick="closeUserDropdown()" class="dropdown-item" style="color:#111b21;">
-                            <i class="fa-solid fa-file-invoice" style="color: #25d366;"></i> Mis Consultas
+                    <div style="padding:4px 0; border-top:1px solid #f1f5f9;">
+                        <a href="panel_cliente.html" onclick="closeUserDropdown()" class="dropdown-item">
+                            <div class="dropdown-item-icon"><i class="fa-solid fa-file-invoice"></i></div> Mis Consultas
                         </a>
-                        <a href="javascript:void(0)" onclick="closeUserDropdown(); openAccess();" class="dropdown-item" style="color:#111b21;">
-                            <i class="fa-solid fa-coins" style="color: #25d366;"></i> Mis Créditos
+                        <a href="javascript:void(0)" onclick="closeUserDropdown(); openAccess();" class="dropdown-item">
+                            <div class="dropdown-item-icon"><i class="fa-solid fa-coins"></i></div> Mis Créditos
                         </a>
-                        <a href="javascript:void(0)" onclick="closeUserDropdown(); openChangePasswordModal();" class="dropdown-item" style="color:#111b21;">
-                            <i class="fa-solid fa-key" style="color: #25d366;"></i> Cambiar Contraseña
+                        <a href="javascript:void(0)" onclick="closeUserDropdown(); openChangePasswordModal();" class="dropdown-item">
+                            <div class="dropdown-item-icon"><i class="fa-solid fa-key"></i></div> Cambiar Contraseña
                         </a>
-                        <a href="tutorial.html" onclick="closeUserDropdown();" class="dropdown-item" style="color:#111b21;">
-                            <i class="fa-solid fa-book-open" style="color: #25d366;"></i> Tutorial
+                        <a href="tutorial.html" onclick="closeUserDropdown();" class="dropdown-item">
+                            <div class="dropdown-item-icon"><i class="fa-solid fa-book-open"></i></div> Tutorial
                         </a>
                     </div>
-                    <div style="border-top: 1px solid #e5e7eb; padding: 4px 0;">
-                        <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item" style="color: #8696a0; font-weight: 500;">
-                            <i class="fa-solid fa-right-from-bracket" style="color: #8696a0;"></i> Cerrar Sesión
+                    <div style="border-top:1px solid #f1f5f9; padding:4px 0;">
+                        <a href="javascript:void(0)" onclick="handleLogout()" class="dropdown-item dropdown-item-logout">
+                            <div class="dropdown-item-icon" style="background:#fef2f2; color:#ef4444;"><i class="fa-solid fa-right-from-bracket"></i></div> Cerrar Sesión
                         </a>
                     </div>
                 </div>
@@ -598,56 +610,50 @@ function showActivationNotification(plataformaActivada, dashboardActivado) {
 
 function showWelcomeModal(plataformaActivada, dashboardActivado) {
     const modalHtml = `
-        <div id="welcomeModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17,27,33,0.5); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px;" onclick="if(event.target===this){dismissNotification();}">
-            <div style="background: #ffffff; width: 92%; max-width: 400px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; animation: scaleUp 0.3s ease forwards;">
-                <style>
-                    @keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-                </style>
-                <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 28px 20px 24px; text-align: center;">
-                    <div style="width: 56px; height: 56px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
-                        <i class="fa-solid fa-rocket" style="font-size: 24px; color: #fff;"></i>
+        <div id="welcomeModal" class="modal-overlay" style="z-index:9999999;display:flex;" onclick="if(event.target===this){dismissNotification();}">
+            <div class="modal-card" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                        <i class="fa-solid fa-crown" style="font-size:20px;color:#fff;"></i>
                     </div>
-                    <h2 style="font-size: 20px; color: #ffffff; margin: 0 0 4px; font-weight: 800;">¡Bienvenido!</h2>
-                    <p style="color: rgba(255,255,255,0.5); font-size: 12px; line-height: 1.6; margin: 0; font-weight: 500;">Tu cuenta <span style="color: #25d366; font-weight: 700;">PREMIUM</span> está activa</p>
+                    <div class="modal-title">¡Bienvenido!</div>
+                    <div class="modal-subtitle">Tu cuenta <span style="color:#25d366;font-weight:700;">PREMIUM</span> está activa</div>
                 </div>
-                <div style="padding: 20px 22px 22px;">
-                <p style="color: #6b7280; font-size: 13px; line-height: 1.6; margin: 0 0 16px; font-weight: 500; text-align: center;">Tienes acceso completo a:</p>
+                <div class="modal-body">
+                <p style="color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 16px;font-weight:400;text-align:center;">Tienes acceso completo a:</p>
 
-                <div style="background: #f9fafb; border-radius: 14px; padding: 18px 20px; margin-bottom: 20px; border: 1px solid #e5e7eb; text-align: left;">
-                    <div style="display: grid; gap: 14px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
+                <div style="background:#f8fafc;border-radius:14px;padding:18px 20px;margin-bottom:20px;border:1px solid #e5e7eb;text-align:left;">
+                    <div style="display:grid;gap:14px;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:30px;height:30px;background:rgba(37,211,102,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fa-solid fa-check" style="color:#25d366;font-size:13px;"></i>
                             </div>
-                            <span style="font-size: 13px; color: #111b21; font-weight: 600;">22 Servicios Vehiculares</span>
+                            <span style="font-size:13px;color:#111b21;font-weight:500;">22 Servicios Vehiculares</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:30px;height:30px;background:rgba(37,211,102,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fa-solid fa-check" style="color:#25d366;font-size:13px;"></i>
                             </div>
-                            <span style="font-size: 13px; color: #111b21; font-weight: 600;">Dashboard Organizado</span>
+                            <span style="font-size:13px;color:#111b21;font-weight:500;">Dashboard Organizado</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:30px;height:30px;background:rgba(37,211,102,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fa-solid fa-check" style="color:#25d366;font-size:13px;"></i>
                             </div>
-                            <span style="font-size: 13px; color: #111b21; font-weight: 600;">Historial de Consultas</span>
+                            <span style="font-size:13px;color:#111b21;font-weight:500;">Historial de Consultas</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 30px; height: 30px; background: #25d366; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fa-solid fa-check" style="color: #ffffff; font-size: 13px;"></i>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:30px;height:30px;background:rgba(37,211,102,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fa-solid fa-check" style="color:#25d366;font-size:13px;"></i>
                             </div>
-                            <span style="font-size: 13px; color: #111b21; font-weight: 600;">Acceso Permanente</span>
+                            <span style="font-size:13px;color:#111b21;font-weight:500;">Acceso Permanente</span>
                         </div>
                     </div>
                 </div>
 
-                <button onclick="dismissNotification();" style="width: 100%; padding: 13px; background: #25d366; color: #ffffff; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
-                    <i class="fa-solid fa-bolt" style="margin-right: 8px;"></i> COMENZAR
-                </button>
+                <button onclick="dismissNotification();" class="modal-btn modal-btn-primary">COMENZAR</button>
 
-                <p style="margin-top: 14px; font-size: 11px; color: #9ca3af; line-height: 1.4; text-align: center;">
-                    <i class="fa-solid fa-info-circle" style="margin-right: 4px;"></i>
+                <p style="margin-top:14px;font-size:11px;color:#9ca3af;line-height:1.4;text-align:center;">
                     Recuerda recargar créditos para realizar consultas
                 </p>
                 </div>
@@ -721,13 +727,13 @@ function showFloatingElements() {
 function openAuthModal() {
     if (typeof showAuthFloatingModal === 'function') {
         showAuthFloatingModal();
-        if (typeof toggleAuthFloatingMode === 'function') toggleAuthFloatingMode();
     }
 }
 
 function openRegisterModal() {
     if (typeof showAuthFloatingModal === 'function') {
         showAuthFloatingModal();
+        if (typeof toggleAuthFloatingMode === 'function') toggleAuthFloatingMode();
     }
 }
 
@@ -979,28 +985,24 @@ async function handleAuthSubmit() {
             }
 
             var alertHtml = `
-                <div id="customAlertModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(37,211,102,0.25) 0%, rgba(59,130,246,0.22) 25%, rgba(168,85,247,0.22) 50%, rgba(236,72,153,0.22) 75%, rgba(251,191,36,0.18) 100%); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeInAlert 0.3s ease-out;">
-                    <style>
-                        @keyframes fadeInAlert { from { opacity: 0; } to { opacity: 1; } }
-                        @keyframes scaleUpAlert { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-                    </style>
-                    <div style="background: #ffffff; width: 92%; max-width: 420px; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; animation: scaleUpAlert 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;">
-                        <div style="background: linear-gradient(135deg, #111b21 0%, #1f2c34 100%); padding: 28px 20px 24px; text-align: center;">
-                            <div style="width: 56px; height: 56px; background: #25d366; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
-                                <i class="fa-solid fa-circle-check" style="font-size: 24px; color: #fff;"></i>
+                <div id="customAlertModal" class="modal-overlay" style="z-index:9999999;display:flex;">
+                    <div class="modal-card" onclick="event.stopPropagation()" style="max-width:420px;">
+                        <div class="modal-header">
+                            <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                                <i class="fa-solid fa-circle-check" style="font-size:22px;color:#fff;"></i>
                             </div>
-                            <h3 style="font-size: 18px; color: #ffffff; margin: 0 0 4px; font-weight: 800;">¡Cuenta Creada Exitosamente!</h3>
-                            <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0;">Tu registro ha sido recibido</p>
+                            <div class="modal-title">¡Cuenta Creada Exitosamente!</div>
+                            <div class="modal-subtitle">Tu registro ha sido recibido</div>
                         </div>
-                        <div style="padding: 22px 24px 24px; text-align: center;">
-                        <p style="color: #64748b; font-size: 13px; line-height: 1.6; margin: 0 0 22px; font-weight: 500;">Para <b style="color: #111b21;">activar tu cuenta</b> y comenzar a usar la plataforma, contacta a nuestro equipo de soporte por WhatsApp.<br><br><span style="color: #111b21; font-weight: 700;">Te responderemos en minutos.</span></p>
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <a href="https://wa.me/51932465820?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; background: #25d366; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; text-decoration: none; transition: background 0.2s; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.background='#1ebe5d';" onmouseout="this.style.background='#25d366';">
-                                <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i> Contactar por WhatsApp
-                            </a>
-                            ${groupButtonHtml}
-                            <button onclick="document.getElementById('customAlertModal').remove()" style="width: 100%; padding: 14px; background: #f1f5f9; color: #64748b; border: none; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#e2e8f0';" onmouseout="this.style.background='#f1f5f9';">Entendido</button>
-                        </div>
+                        <div class="modal-body" style="text-align:center;">
+                            <p style="color:#64748b;font-size:13px;line-height:1.6;margin:0 0 22px;font-weight:500;">Para <b style="color:#111b21;">activar tu cuenta</b> y comenzar a usar la plataforma, contacta a nuestro equipo de soporte por WhatsApp.<br><br><span style="color:#111b21;font-weight:700;">Te responderemos en minutos.</span></p>
+                            <div style="display:flex;flex-direction:column;gap:12px;">
+                                <a href="https://wa.me/51932465820?text=Hola,%20acabo%20de%20registrarme%20con%20el%20correo%20${encodeURIComponent(email)}.%20Por%20favor%20activar%20mi%20cuenta." target="_blank" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:#25d366;color:white;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;transition:background 0.2s;text-transform:uppercase;letter-spacing:0.5px;">
+                                    <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> Contactar por WhatsApp
+                                </a>
+                                ${groupButtonHtml}
+                                <button onclick="document.getElementById('customAlertModal').remove()" class="modal-btn modal-btn-secondary">Entendido</button>
+                            </div>
                         </div>
                     </div>
                 </div>`;
@@ -1156,31 +1158,37 @@ function openChangePasswordModal() {
 
     var modal = document.createElement('div');
     modal.id = 'changePassModal';
-    modal.style.cssText = 'display:flex;position:fixed;inset:0;z-index:9999999;background:rgba(13,37,54,0.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;';
+    modal.className = 'modal-overlay';
+    modal.style.cssText = 'display:flex;z-index:9999999;';
     modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
 
-    modal.innerHTML = '<div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:28px 24px;box-shadow:0 25px 60px rgba(0,0,0,0.15);border:1px solid #e2e8f0;">' +
-        '<div style="text-align:center;margin-bottom:20px;">' +
-            '<div style="width:50px;height:50px;border-radius:50%;background:#eff6ff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><i class="fa-solid fa-key" style="font-size:20px;color:#3b82f6;"></i></div>' +
-            '<h3 style="font-size:17px;font-weight:900;color:#111b21;margin:0 0 4px;">Cambiar Contraseña</h3>' +
-            '<p style="font-size:12px;color:#94a3b8;margin:0;">Ingresa tu contraseña actual y la nueva</p>' +
+    modal.innerHTML = '<div class="modal-card" onclick="event.stopPropagation()">' +
+        '<div class="modal-header">' +
+            '<button onclick="document.getElementById(\'changePassModal\').remove()" class="modal-close"><i class="fa-solid fa-xmark"></i></button>' +
+            '<div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#111b21,#1f2c34);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">' +
+                '<i class="fa-solid fa-lock" style="font-size:20px;color:#fff;"></i>' +
+            '</div>' +
+            '<div class="modal-title">Cambiar Contraseña</div>' +
+            '<div class="modal-subtitle">Ingresa tu contraseña actual y la nueva</div>' +
         '</div>' +
-        '<div style="margin-bottom:14px;">' +
-            '<label style="display:block;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Contraseña actual</label>' +
-            '<input type="password" id="cpCurrentPass" placeholder="Tu contraseña actual" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#111b21\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
+        '<div class="modal-body">' +
+        '<div class="modal-field">' +
+            '<label class="modal-label">Contraseña actual</label>' +
+            '<input type="password" id="cpCurrentPass" class="modal-input">' +
         '</div>' +
-        '<div style="margin-bottom:14px;">' +
-            '<label style="display:block;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Nueva contraseña</label>' +
-            '<input type="password" id="cpNewPass" placeholder="Mínimo 6 caracteres" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#111b21\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
+        '<div class="modal-field">' +
+            '<label class="modal-label">Nueva contraseña</label>' +
+            '<input type="password" id="cpNewPass" class="modal-input">' +
         '</div>' +
-        '<div style="margin-bottom:18px;">' +
-            '<label style="display:block;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Confirmar nueva contraseña</label>' +
-            '<input type="password" id="cpConfirmPass" placeholder="Repite la nueva contraseña" style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;transition:0.2s;box-sizing:border-box;" onfocus="this.style.borderColor=\'#111b21\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
+        '<div class="modal-field">' +
+            '<label class="modal-label">Confirmar nueva contraseña</label>' +
+            '<input type="password" id="cpConfirmPass" class="modal-input">' +
         '</div>' +
-        '<div id="cpError" style="display:none;margin-bottom:14px;padding:10px 12px;background:#fef2f2;color:#b91c1c;border-radius:10px;font-size:12px;font-weight:600;"></div>' +
+        '<div id="cpError" class="modal-error"></div>' +
         '<div style="display:flex;gap:10px;">' +
-            '<button onclick="document.getElementById(\'changePassModal\').remove()" style="flex:1;padding:13px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">Cancelar</button>' +
-            '<button onclick="submitChangePassword()" id="cpSubmitBtn" style="flex:1;padding:13px;background:#111b21;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;">Guardar</button>' +
+            '<button onclick="document.getElementById(\'changePassModal\').remove()" class="modal-btn modal-btn-secondary" style="flex:1;">Cancelar</button>' +
+            '<button onclick="submitChangePassword()" id="cpSubmitBtn" class="modal-btn modal-btn-primary" style="flex:1;">Guardar</button>' +
+        '</div>' +
         '</div>' +
     '</div>';
 

@@ -35,13 +35,17 @@
     <div id="loginOverlay" style="display:none;"></div>
 
     <!-- Modal confirmación -->
-    <div id="adminConfirmModal" onclick="if(event.target===this)closeAdminConfirmModal()" style="display:none; position:fixed; inset:0; z-index:400000; background:rgba(0,0,0,0.4); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); align-items:center; justify-content:center; padding:20px;" role="dialog" aria-modal="true" aria-labelledby="adminConfirmTitle">
-        <div style="background:#fff; border-radius:12px; padding:22px 20px 18px; max-width:380px; width:92%;" onclick="event.stopPropagation()">
-            <h3 id="adminConfirmTitle" style="margin:0 0 8px; font-size:15px; font-weight:600; color:#111b21;">Confirmar</h3>
-            <p id="adminConfirmMsg" style="margin:0; font-size:12px; color:#6b7280; line-height:1.5;"></p>
-            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:18px;">
-                <button type="button" id="adminConfirmCancel" style="padding:9px 14px; border-radius:8px; border:1px solid #e5e7eb; background:#f9fafb; color:#6b7280; font-weight:600; font-size:12px; cursor:pointer;">Cancelar</button>
-                <button type="button" id="adminConfirmOk" style="padding:9px 14px; border-radius:8px; border:none; background:#25d366; color:#fff; font-weight:600; font-size:12px; cursor:pointer;">Aceptar</button>
+    <div id="adminConfirmModal" class="modal-overlay" style="z-index:400000;" onclick="if(event.target===this)closeAdminConfirmModal()" role="dialog" aria-modal="true" aria-labelledby="adminConfirmTitle">
+        <div class="modal-card" onclick="event.stopPropagation()" style="max-width:380px;">
+            <div class="modal-header" style="padding:22px 20px 14px;">
+                <div class="modal-title" id="adminConfirmTitle" style="font-size:15px;">Confirmar</div>
+                <div class="modal-subtitle" id="adminConfirmMsg"></div>
+            </div>
+            <div class="modal-body" style="padding:14px 20px 18px;">
+                <div style="display:flex; gap:8px; justify-content:flex-end;">
+                    <button type="button" id="adminConfirmCancel" class="modal-btn modal-btn-secondary" style="flex:1;">Cancelar</button>
+                    <button type="button" id="adminConfirmOk" class="modal-btn modal-btn-primary" style="flex:1;">Aceptar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -58,13 +62,13 @@
         </a>
 
         <div style="display:flex; align-items:center; gap:8px;">
-            <button onclick="imprimirReporteAdmin()" title="Imprimir" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#ffffff; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+            <button onclick="imprimirReporteAdmin()" title="Imprimir" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#111b21; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
                 <i class="fa-solid fa-file-pdf"></i>
             </button>
             <button onclick="saveReport()" title="Publicar" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#25d366; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
                 <i class="fa-solid fa-paper-plane"></i>
             </button>
-            <button onclick="toggleSidebar()" title="Menú" style="position:relative; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#ffffff; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+            <button onclick="toggleSidebar()" title="Menú" style="position:relative; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#111b21; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
                 <i class="fa-solid fa-bars"></i>
                 <span id="mobileCount" style="display:none; position:absolute; top:-6px; right:-6px; background:#ef4444; color:white; font-size:9px; min-width:18px; height:18px; border-radius:50px; text-align:center; line-height:18px; font-weight:800; border:2px solid #111b21; padding:0 4px;">0</span>
             </button>
@@ -412,13 +416,11 @@
     
 
     <!-- MODAL DE IMPRESIÓN -->
-    <div id="printModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 999999; align-items: center; justify-content: center; padding: 20px;">
-        <div style="background: white; width: 100%; max-width: 950px; max-height: 90vh; overflow-y: auto; border-radius: 12px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-            <div style="padding: 22px 28px; border-bottom: 2px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 10;">
-                <h3 style="margin: 0; color: #111b21; font-size: 18px; font-weight: 800; letter-spacing: 0.3px;">Vista Previa del Certificado</h3>
-                <button onclick="cerrarPrintModal()" style="background: transparent; border: none; font-size: 28px; color: #94a3b8; cursor: pointer; padding: 0; width: 38px; height: 38px; transition: all 0.2s;" onmouseover="this.style.color='#111b21'; this.style.transform='scale(1.1)'" onmouseout="this.style.color='#94a3b8'; this.style.transform='scale(1)'">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+    <div id="printModal" class="modal-overlay" style="z-index:999999;">
+        <div class="modal-card" style="max-width:950px; max-height:90vh; overflow-y:auto;">
+            <div style="padding:22px 28px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#ffffff; z-index:10; border-radius:16px 16px 0 0;">
+                <h3 style="margin:0; color:#111b21; font-size:18px; font-weight:800; letter-spacing:0.3px;">Vista Previa del Certificado</h3>
+                <button onclick="cerrarPrintModal()" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="printContent" style="padding: 24px;"></div>
         </div>
