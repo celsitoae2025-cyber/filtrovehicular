@@ -490,6 +490,39 @@
                     document.getElementById('authFloatingModal').style.display = 'none';
                     hideLoginScreen();
                     renderLoggedInState();
+
+                    // Modal de bienvenida si es registro nuevo con Google
+                    if (!exists) {
+                        window.creditosUsuario = 5;
+                        window.tieneCreditos = true;
+                        var firstName = nombre.split(' ')[0];
+                        var waMsg = encodeURIComponent('Hola, me registre con Google en Filtro Vehicular Plus.\n\nNombre: ' + nombre + '\nCorreo: ' + email + '\n\nNecesito informacion sobre los servicios.');
+                        var gWelcome = '<div id="welcomeRegModal" class="modal-overlay" style="z-index:9999999;display:flex;">' +
+                            '<div class="modal-card" onclick="event.stopPropagation()" style="max-width:380px;">' +
+                                '<div class="modal-header" style="padding:30px 24px 16px;">' +
+                                    '<div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">' +
+                                        '<i class="fa-solid fa-circle-check" style="font-size:24px;color:#fff;"></i>' +
+                                    '</div>' +
+                                    '<div class="modal-title" style="font-size:17px;">¡Bienvenido, ' + firstName + '!</div>' +
+                                    '<div class="modal-subtitle" style="color:#64748b;font-size:11px;">Tu cuenta ha sido creada exitosamente</div>' +
+                                '</div>' +
+                                '<div class="modal-body" style="text-align:center; padding:0 24px 24px;">' +
+                                    '<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; margin-bottom:16px;">' +
+                                        '<div style="font-size:20px; font-weight:900; color:#166534;">5 creditos de regalo</div>' +
+                                        '<div style="font-size:10px; color:#15803d; line-height:1.5; margin-top:4px;">Se acreditaron automaticamente a tu cuenta para que empieces a usar la plataforma.</div>' +
+                                    '</div>' +
+                                    '<div style="display:flex; flex-direction:column; gap:10px;">' +
+                                        '<a href="https://wa.me/51932465820?text=' + waMsg + '" target="_blank" onclick="document.getElementById(\'welcomeRegModal\').remove();" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; background:#25d366; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; text-decoration:none; transition:all 0.2s; text-transform:uppercase; letter-spacing:0.5px;">' +
+                                            '<i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> Escribenos por WhatsApp' +
+                                        '</a>' +
+                                        '<button onclick="document.getElementById(\'welcomeRegModal\').remove(); openAccess();" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:11px; background:#f8fafc; border:1px solid #e2e8f0; color:#111b21; border-radius:10px; font-weight:600; font-size:11px; cursor:pointer; transition:all 0.2s;">Recargar Creditos</button>' +
+                                        '<button onclick="document.getElementById(\'welcomeRegModal\').remove()" style="padding:6px; background:transparent; color:#94a3b8; border:none; font-size:10px; font-weight:500; cursor:pointer;">Explorar primero</button>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                        document.body.insertAdjacentHTML('beforeend', gWelcome);
+                    }
                 }
             });
         })();

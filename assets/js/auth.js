@@ -469,7 +469,6 @@ async function renderLoggedInState() {
             </div>
             <div class="dropdown" id="userDropdown">
                 <div class="dropdown-trigger" onclick="toggleDropdown(event)" style="position:relative; display:flex; align-items:center; gap:8px; cursor:pointer;">
-                    <span style="font-size:11px; font-weight:500; font-family:'Roboto',sans-serif; color:#ffffff; text-transform:uppercase; letter-spacing:0.5px;">${creditosDisplay} Créditos</span>
                     <div style="width:34px; height:34px; background:#ffffff; border-radius:50%; display:flex; align-items:center; justify-content:center; position:relative;">
                         <i class="fa-solid fa-bars" style="font-size:14px; color:#111b21;"></i>
                         <span id="notificationBadge" style="position:absolute; top:-3px; right:-3px; background:#ef4444; color:white; font-size:9px; font-weight:600; width:16px; height:16px; border-radius:50%; align-items:center; justify-content:center; border:2px solid #111b21; display:none;"></span>

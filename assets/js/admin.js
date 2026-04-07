@@ -500,14 +500,24 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
         }
 
         async function deleteUser(email) {
-            if (!confirm(`¿Estás seguro de eliminar a ${email}? Se borrará permanentemente de la Nube.`)) return;
+            if (!confirm(`¿Estás seguro de eliminar a ${email}? Se borrará permanentemente de la Nube (saldo + registro).`)) return;
             try {
-                const { error } = await window.sb.from('saldos').delete().eq('email', email);
-                if (error) throw error;
-                alert(`✅ Usuario ${email} removido de la nube.`);
-                renderUsersList(); // Refrescar
+                // Eliminar saldo
+                await window.sb.from('saldos').delete().eq('email', email);
+                // Eliminar registro de solicitudes
+                var { data: regs } = await window.sb.from('solicitudes').select('placa, datos').like('placa', 'REGISTRO_%');
+                if (regs) {
+                    for (var i = 0; i < regs.length; i++) {
+                        if (regs[i].datos && regs[i].datos.email === email) {
+                            await window.sb.from('solicitudes').delete().eq('placa', regs[i].placa);
+                        }
+                    }
+                }
+                alert('Usuario ' + email + ' eliminado completamente de la nube.');
+                renderUsersList();
+                if (typeof renderHistoryList === 'function') renderHistoryList();
             } catch (e) {
-                alert("❌ Fallo crítico al borrar: " + e.message);
+                alert('Error al eliminar: ' + e.message);
             }
         }
 
