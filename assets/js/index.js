@@ -2053,7 +2053,7 @@
 
         var BRIDGE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:3500'
-            : 'https://cheese-raid-held-browsers.trycloudflare.com';
+            : 'https://filtro-bridge-production.up.railway.app';
 
         // Helper para fetch con header ngrok
         function bridgeFetch(url, options) {
