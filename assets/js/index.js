@@ -3329,8 +3329,8 @@
             var alertCard = document.getElementById('appAlertCard');
             var iconWrap = document.getElementById('appAlertIcon');
             var iconI = document.getElementById('appAlertIconI');
-            if (alertCard) alertCard.style.cssText += 'max-width:340px;margin-top:40px;overflow:visible;position:relative;';
-            if (iconWrap) iconWrap.style.cssText = 'width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:absolute;top:-28px;left:50%;transform:translateX(-50%);background:#0d2536;border:3px solid #fff;z-index:1;';
+            if (alertCard) alertCard.style.cssText += 'max-width:340px;margin-top:50px;overflow:visible;position:relative;';
+            if (iconWrap) iconWrap.style.cssText = 'width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:absolute;top:-48px;left:50%;transform:translateX(-50%);background:#0d2536;z-index:1;';
             if (iconI) { iconI.className = 'fa-solid fa-file-pdf'; iconI.style.fontSize = '22px'; }
         }
 
