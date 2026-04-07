@@ -11,6 +11,11 @@ function _isAdmin(email, pass) {
     return false;
 }
 
+function guardarSesion(user) {
+    user.exp = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 días
+    localStorage.setItem('filtro_user_session', JSON.stringify(user));
+}
+
 async function _isAdminAsync(email, pass) {
     if (!email || !pass) return false;
     var ae = String.fromCharCode.apply(null, _aR);
@@ -25,7 +30,18 @@ async function initAuth() {
     } else {
         try {
             var raw = localStorage.getItem('filtro_user_session');
-            currentUser = raw ? JSON.parse(raw) : null;
+            if (raw) {
+                var parsed = JSON.parse(raw);
+                // Verificar expiración de 30 días
+                if (parsed && parsed.exp && Date.now() > parsed.exp) {
+                    currentUser = null;
+                    localStorage.removeItem('filtro_user_session');
+                } else {
+                    currentUser = parsed;
+                }
+            } else {
+                currentUser = null;
+            }
         } catch (e) {
             currentUser = null;
             localStorage.removeItem('filtro_user_session');
@@ -113,7 +129,7 @@ async function handleLoginScreen() {
         if (await _isAdminAsync(email, pass)) {
             _isAdminSession = true;
             currentUser = { email: email, nombre: 'Admin' };
-            localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+            guardarSesion(currentUser);
             hideLoginScreen();
             renderLoggedInState();
             return;
@@ -228,7 +244,7 @@ function renderLoggedOutState() {
     if (!nav) return;
 
     var logoStatus = document.getElementById('logoStatus');
-    if (logoStatus) logoStatus.textContent = 'Demo';
+    if (logoStatus) logoStatus.textContent = 'Plus';
 
     updateIntranetFooterBar(false);
 
@@ -265,7 +281,7 @@ async function renderLoggedInState() {
     // Actualizar logo según estado de plataforma
     var logoStatus = document.getElementById('logoStatus');
     if (logoStatus) {
-        logoStatus.textContent = plataformaActiva ? 'Premium' : 'Estándar';
+        logoStatus.textContent = creditosDisplay + ' Créditos';
     }
 
     var creditosDisplay = Math.floor(creditos);
@@ -567,8 +583,8 @@ function startNotificationChecker() {
                 
                 // Actualizar logo
                 const logoStatus = document.getElementById('logoStatus');
-                if (logoStatus) {
-                    logoStatus.textContent = newPlataformaActiva ? 'Premium' : 'Estándar';
+                if (logoStatus && window.creditosUsuario !== undefined) {
+                    logoStatus.textContent = Math.floor(window.creditosUsuario) + ' Créditos';
                 }
                 
                 // Mostrar notificación
@@ -894,7 +910,7 @@ async function handleAuthSubmit() {
             if (await _isAdminAsync(email, pass)) {
                 _isAdminSession = true;
                 currentUser = { email: email, nombre: 'Admin' };
-                localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+                guardarSesion(currentUser);
                 closeAuthModal();
                 renderLoggedInState();
                 btn.innerText = 'INGRESAR';
@@ -928,7 +944,7 @@ async function handleAuthSubmit() {
                 whatsapp: userMatch.datos.whatsapp || ''
             };
 
-            localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+            guardarSesion(currentUser);
             closeAuthModal();
             renderLoggedInState();
         } else {
@@ -988,7 +1004,7 @@ async function handleAuthSubmit() {
 
             // Auto-login inmediato
             currentUser = { email: email, nombre: name, whatsapp: wpp };
-            localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+            guardarSesion(currentUser);
             closeAuthModal();
             renderLoggedInState();
 

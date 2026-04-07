@@ -295,7 +295,7 @@
                     window.tieneCreditos = true;
 
                     currentUser = { email: email, nombre: name, whatsapp: wpp };
-                    localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+                    guardarSesion(currentUser);
                     document.getElementById('authFloatingModal').style.display = 'none';
                     hideLoginScreen();
                     renderLoggedInState();
@@ -336,7 +336,7 @@
                     if (await _isAdminAsync(email, pass)) {
                         _isAdminSession = true;
                         currentUser = { email: email, nombre: 'Admin' };
-                        localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+                        guardarSesion(currentUser);
                         window.plataformaActiva = true;
                         document.getElementById('authFloatingModal').style.display = 'none';
                         hideLoginScreen();
@@ -353,7 +353,7 @@
                     if (!match) throw new Error('Correo o contraseña incorrectos.');
 
                     currentUser = { email: match.datos.email, nombre: match.datos.nombre || 'Usuario', whatsapp: match.datos.whatsapp || '' };
-                    localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+                    guardarSesion(currentUser);
 
                     // Leer créditos
                     try {
@@ -486,7 +486,7 @@
                     }
 
                     currentUser = { email: email, nombre: nombre, whatsapp: '' };
-                    localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
+                    guardarSesion(currentUser);
                     document.getElementById('authFloatingModal').style.display = 'none';
                     hideLoginScreen();
                     renderLoggedInState();
