@@ -2560,8 +2560,8 @@
                         imagenes.map(function(f) {
                             var imgUrl = BRIDGE_URL + f.url;
                             var imgName = (f.nombre || 'imagen') + '.jpg';
-                            return '<div style="position:relative; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden;">' +
-                                '<img src="' + imgUrl + '" style="width:100%; height:auto; display:block; max-height:160px; object-fit:contain; background:#f8f9fa;">' +
+                            return '<div style="position:relative; border:1px solid #e5e7eb; border-radius:10px; overflow:hidden; aspect-ratio:1/1;">' +
+                                '<img src="' + imgUrl + '" style="width:100%; height:100%; display:block; object-fit:cover; background:#f8f9fa;">' +
                                 '<button onclick="descargarArchivo(\'' + imgUrl + '\', \'' + imgName + '\')" style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.55); color:#fff; width:28px; height:28px; border:none; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer;"><i class="fa-solid fa-download"></i></button>' +
                             '</div>';
                         }).join('') +
@@ -2627,7 +2627,7 @@
                     '.resultado-layout .resultado-imagenes { width: 100%; }' +
                     '@media(min-width:700px) {' +
                         '.resultado-layout { flex-direction: row !important; }' +
-                        '.resultado-layout .resultado-texto { flex: 1; }' +
+                        '.resultado-layout .resultado-texto { flex: 1; padding-left: 12px; padding-right: 20px; }' +
                         '.resultado-layout .resultado-imagenes { width: 40%; flex-shrink: 0; }' +
                     '}' +
                 '</style>' +
