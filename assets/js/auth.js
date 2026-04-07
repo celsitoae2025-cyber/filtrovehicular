@@ -1002,6 +1002,13 @@ async function handleAuthSubmit() {
                 await window.sb.from('saldos').insert({ email: email, creditos: 5, plataforma_activa: true, dashboard_activo: true, updated_at: new Date() });
             }
 
+            // Notificar registro a Telegram
+            fetch('https://xojgpfbpomjxpyytmczg.supabase.co/functions/v1/notificar-registro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'apikey': 'sb_publishable_CjQ1bJD0Uvhs5wlKgI6FKw_PX7V4fuB', 'Authorization': 'Bearer sb_publishable_CjQ1bJD0Uvhs5wlKgI6FKw_PX7V4fuB' },
+                body: JSON.stringify({ nombre: name, email: email, whatsapp: wpp, tipo: 'correo' })
+            }).catch(function() {});
+
             // Auto-login inmediato
             currentUser = { email: email, nombre: name, whatsapp: wpp };
             guardarSesion(currentUser);
