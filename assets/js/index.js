@@ -286,11 +286,13 @@
                     var up = await window.sb.from('solicitudes').upsert({ placa: reqKey, datos: regData, updated_at: new Date() });
                     if (up.error) throw new Error('Error al crear cuenta.');
 
-                    // Crear saldo solo si no existe (no sobrescribir si admin ya activó)
+                    // Crear saldo con 5 créditos de bienvenida (solo si no existe)
                     var { data: existingSaldo } = await window.sb.from('saldos').select('email').eq('email', email).maybeSingle();
                     if (!existingSaldo) {
-                        await window.sb.from('saldos').insert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() });
+                        await window.sb.from('saldos').insert({ email: email, creditos: 5, plataforma_activa: true, dashboard_activo: true, updated_at: new Date() });
                     }
+                    window.creditosUsuario = 5;
+                    window.tieneCreditos = true;
 
                     currentUser = { email: email, nombre: name, whatsapp: wpp };
                     localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
@@ -298,12 +300,12 @@
                     hideLoginScreen();
                     renderLoggedInState();
 
-                    // Modal de bienvenida con grupo y planes
+                    // Modal de bienvenida con 5 créditos + WhatsApp
                     var firstName = name.split(' ')[0];
+                    var waMsg = encodeURIComponent('Hola, acabo de registrarme en Filtro Vehicular Plus.\n\nNombre: ' + name + '\nCorreo: ' + email + '\n\nNecesito informacion sobre los servicios.');
                     var welcomeHtml = '<div id="welcomeRegModal" class="modal-overlay" style="z-index:9999999;display:flex;">' +
                         '<div class="modal-card" onclick="event.stopPropagation()" style="max-width:380px;">' +
                             '<div class="modal-header" style="padding:30px 24px 16px;">' +
-                                '<button onclick="document.getElementById(\'welcomeRegModal\').remove()" class="modal-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>' +
                                 '<div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">' +
                                     '<i class="fa-solid fa-circle-check" style="font-size:24px;color:#fff;"></i>' +
                                 '</div>' +
@@ -311,25 +313,18 @@
                                 '<div class="modal-subtitle" style="color:#64748b;font-size:11px;">Tu cuenta ha sido creada exitosamente</div>' +
                             '</div>' +
                             '<div class="modal-body" style="text-align:center; padding:0 24px 24px;">' +
-                                '<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px 14px; margin-bottom:16px;">' +
-                                    '<div style="font-size:11px; color:#166534; font-weight:600;">Ya puedes explorar la plataforma</div>' +
-                                    '<div style="font-size:10px; color:#15803d; line-height:1.5; margin-top:2px;">Activa tu cuenta o adquiere creditos para acceder a los servicios.</div>' +
+                                '<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; margin-bottom:16px;">' +
+                                    '<div style="font-size:20px; font-weight:900; color:#166534;">5 creditos de regalo</div>' +
+                                    '<div style="font-size:10px; color:#15803d; line-height:1.5; margin-top:4px;">Se acreditaron automaticamente a tu cuenta para que empieces a usar la plataforma.</div>' +
                                 '</div>' +
                                 '<div style="display:flex; flex-direction:column; gap:10px;">' +
-                                    '<button onclick="document.getElementById(\'welcomeRegModal\').remove(); if(typeof openAccess===\'function\') openAccess();" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; background:#25d366; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; letter-spacing:0.5px;">' +
-                                        'Ver Planes y Creditos' +
+                                    '<a href="https://wa.me/51932465820?text=' + waMsg + '" target="_blank" onclick="document.getElementById(\'welcomeRegModal\').remove();" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; background:#25d366; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; text-decoration:none; transition:all 0.2s; text-transform:uppercase; letter-spacing:0.5px;">' +
+                                        '<i class="fa-brands fa-whatsapp" style="font-size:16px;"></i> Escribenos por WhatsApp' +
+                                    '</a>' +
+                                    '<button onclick="document.getElementById(\'welcomeRegModal\').remove(); openAccess();" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:11px; background:#f8fafc; border:1px solid #e2e8f0; color:#111b21; border-radius:10px; font-weight:600; font-size:11px; cursor:pointer; transition:all 0.2s;">' +
+                                        'Recargar Creditos' +
                                     '</button>' +
-                                    '<a href="https://chat.whatsapp.com/Dt3goGL73tHLcL94GUmgwH" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:11px; background:#f8fafc; border:1px solid #e2e8f0; color:#111b21; border-radius:10px; font-weight:600; font-size:11px; cursor:pointer; text-decoration:none; transition:all 0.2s;">' +
-                                        '<i class="fa-brands fa-whatsapp" style="font-size:15px; color:#25d366;"></i> Unete al grupo y recibe 20 creditos gratis' +
-                                    '</a>' +
-                                    '<a href="https://wa.me/51932465820?text=Hola%2C%20acabo%20de%20registrarme%20en%20Filtro%20Vehicular%20Plus%20y%20necesito%20informacion." target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; background:transparent; border:1px solid #e2e8f0; color:#6b7280; border-radius:10px; font-weight:500; font-size:10px; cursor:pointer; text-decoration:none; transition:all 0.2s;">' +
-                                        '<i class="fa-brands fa-whatsapp" style="font-size:14px; color:#25d366;"></i> ¿Necesitas ayuda? Escribenos' +
-                                    '</a>' +
-                                    '<div style="display:flex; align-items:center; gap:6px; justify-content:center; margin-top:4px;">' +
-                                        '<span style="font-size:10px; color:#94a3b8;">¿Ya estas en el grupo?</span>' +
-                                        '<button onclick="document.getElementById(\'welcomeRegModal\').style.display=\'none\'; mostrarCanjeCodigo();" style="background:none; border:none; color:#25d366; font-size:10px; font-weight:700; cursor:pointer; text-decoration:underline;">Canjear codigo</button>' +
-                                    '</div>' +
-                                    '<button onclick="document.getElementById(\'welcomeRegModal\').remove()" style="padding:6px; background:transparent; color:#94a3b8; border:none; font-size:10px; font-weight:500; cursor:pointer; margin-top:2px;">Explorar primero</button>' +
+                                    '<button onclick="document.getElementById(\'welcomeRegModal\').remove()" style="padding:6px; background:transparent; color:#94a3b8; border:none; font-size:10px; font-weight:500; cursor:pointer;">Explorar primero</button>' +
                                 '</div>' +
                             '</div>' +
                         '</div>' +
@@ -360,23 +355,19 @@
                     currentUser = { email: match.datos.email, nombre: match.datos.nombre || 'Usuario', whatsapp: match.datos.whatsapp || '' };
                     localStorage.setItem('filtro_user_session', JSON.stringify(currentUser));
 
-                    // Leer plataforma y verificar canje
-                    var yaCanjeo = false;
+                    // Leer créditos
                     try {
-                        var sRes = await window.sb.from('saldos').select('plataforma_activa, codigos_canjeados').eq('email', email).single();
+                        var sRes = await window.sb.from('saldos').select('creditos, plataforma_activa').eq('email', email).single();
                         if (sRes.data) {
                             window.plataformaActiva = sRes.data.plataforma_activa || false;
-                            var canjeados = sRes.data.codigos_canjeados || [];
-                            yaCanjeo = canjeados.length > 0;
+                            window.creditosUsuario = sRes.data.creditos || 0;
+                            window.tieneCreditos = window.creditosUsuario > 0;
                         }
                     } catch(e) {}
 
                     document.getElementById('authFloatingModal').style.display = 'none';
                     hideLoginScreen();
                     renderLoggedInState();
-
-                    // Mostrar promo de canje si nunca canjeó
-                    if (!yaCanjeo) mostrarPromoCanje();
                 }
             } catch (e) {
                 err.textContent = e.message;
@@ -386,124 +377,45 @@
             btn.disabled = false;
         }
 
-        // --- SISTEMA DE CANJE DE CÓDIGOS ---
-        var CODIGOS_CANJE = {
-            'FVP8K2MX': { creditos: 20, descripcion: 'Bono grupo WhatsApp' }
-        };
-
-        var _canjeandoCodigo = false;
-        async function canjearCodigo(codigo) {
-            if (_canjeandoCodigo) return;
-            if (!currentUser || !currentUser.email) {
-                alert('Debes iniciar sesión para canjear un código.');
-                return;
-            }
-            _canjeandoCodigo = true;
-            var code = String(codigo || '').trim().toUpperCase();
-            if (!code) {
-                _canjeandoCodigo = false; alert('Ingresa un código válido.');
-                return;
-            }
-            var plan = CODIGOS_CANJE[code];
-            if (!plan) {
-                _canjeandoCodigo = false; alert('Código inválido o expirado.');
-                return;
-            }
-            if (!window.sb) {
-                _canjeandoCodigo = false; alert('Sin conexión a la base de datos.');
-                return;
-            }
-
-            // Verificar si ya canjeó este código
-            var email = currentUser.email;
-            var { data: saldo } = await window.sb.from('saldos').select('creditos, codigos_canjeados').eq('email', email).maybeSingle();
-            var canjeados = (saldo && saldo.codigos_canjeados) ? saldo.codigos_canjeados : [];
-            if (canjeados.includes(code)) {
-                _canjeandoCodigo = false; alert('Ya canjeaste este código anteriormente.');
-                return;
-            }
-
-            // Acreditar
-            var creditosActuales = (saldo && saldo.creditos) ? saldo.creditos : 0;
-            canjeados.push(code);
-            if (saldo) {
-                await window.sb.from('saldos').update({
-                    creditos: creditosActuales + plan.creditos,
-                    codigos_canjeados: canjeados,
-                    updated_at: new Date()
-                }).eq('email', email);
-            } else {
-                await window.sb.from('saldos').insert({
-                    email: email,
-                    creditos: plan.creditos,
-                    codigos_canjeados: canjeados,
-                    plataforma_activa: false,
-                    dashboard_activo: false,
-                    updated_at: new Date()
-                });
-            }
-
-            // Actualizar UI
-            window.creditosUsuario = creditosActuales + plan.creditos;
-            window.tieneCreditos = true;
-            var logoStatus = document.querySelector('.dropdown-trigger span');
-            if (logoStatus) logoStatus.textContent = Math.floor(window.creditosUsuario) + ' Créditos';
-
-            _canjeandoCodigo = false;
-            alert('¡Código canjeado!\n\nSe acreditaron ' + plan.creditos + ' créditos a tu cuenta.\nNuevo saldo: ' + (creditosActuales + plan.creditos) + ' créditos.');
-
-            // Cerrar modal de canje si existe
-            var canjeModal = document.getElementById('canjeCodigoModal');
-            if (canjeModal) canjeModal.remove();
+        // --- COBRO DE 1 CRÉDITO POR LINK EN SERVICIOS/ACCESOS ---
+        async function cobrarCreditoYAbrir(url) {
+            if (!currentUser || !currentUser.email) { showAuthFloatingModal(); return; }
+            if (!window.sb) { window.open(url, '_blank'); return; }
+            try {
+                var { data: saldo } = await window.sb.from('saldos').select('creditos').eq('email', currentUser.email).maybeSingle();
+                var cred = (saldo && saldo.creditos) ? saldo.creditos : 0;
+                if (cred < 1) {
+                    openAccessCreditsOnly ? openAccessCreditsOnly() : openAccess();
+                    return;
+                }
+                var { data: updated, error } = await window.sb.from('saldos')
+                    .update({ creditos: cred - 1, updated_at: new Date() })
+                    .eq('email', currentUser.email)
+                    .gte('creditos', 1)
+                    .select('creditos');
+                if (error || !updated || updated.length === 0) {
+                    openAccessCreditsOnly ? openAccessCreditsOnly() : openAccess();
+                    return;
+                }
+                window.creditosUsuario = updated[0].creditos;
+                window.tieneCreditos = updated[0].creditos > 0;
+                var logoStatus = document.querySelector('.dropdown-trigger span');
+                if (logoStatus) logoStatus.textContent = Math.floor(updated[0].creditos) + ' Créditos';
+                var headerStatus = document.getElementById('logoStatus');
+                if (headerStatus) headerStatus.textContent = Math.floor(updated[0].creditos) + ' Créditos';
+                window.open(url, '_blank');
+            } catch(e) { window.open(url, '_blank'); }
         }
 
-        function mostrarCanjeCodigo() {
-            if (document.getElementById('canjeCodigoModal')) return;
-            var html = '<div id="canjeCodigoModal" class="modal-overlay" style="z-index:9999999;display:flex;" onclick="if(event.target===this){this.remove(); var w=document.getElementById(\'welcomeRegModal\'); if(w)w.style.display=\'flex\';}">' +
-                '<div class="modal-card" onclick="event.stopPropagation()" style="max-width:360px;">' +
-                    '<div class="modal-header" style="padding:28px 24px 14px;">' +
-                        '<button onclick="document.getElementById(\'canjeCodigoModal\').remove(); var w=document.getElementById(\'welcomeRegModal\'); if(w)w.style.display=\'flex\';" class="modal-close" aria-label="Cerrar"><i class="fa-solid fa-xmark"></i></button>' +
-                        '<div style="width:48px;height:48px;border-radius:50%;background:#111b21;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">' +
-                            '<i class="fa-solid fa-gift" style="font-size:20px;color:#25d366;"></i>' +
-                        '</div>' +
-                        '<div class="modal-title" style="font-size:16px;">Canjear Código</div>' +
-                        '<div class="modal-subtitle" style="font-size:11px;color:#64748b;">Ingresa tu código para recibir créditos gratis</div>' +
-                    '</div>' +
-                    '<div class="modal-body" style="padding:4px 24px 24px;">' +
-                        '<input type="text" id="canjeCodigoInput" placeholder="Ej: BS2026" maxlength="20" style="width:100%;padding:14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:3px;outline:none;transition:border-color 0.2s;font-family:Roboto,sans-serif;color:#111b21;box-sizing:border-box;" onfocus="this.style.borderColor=\'#25d366\'" onblur="this.style.borderColor=\'#e2e8f0\'">' +
-                        '<button onclick="canjearCodigo(document.getElementById(\'canjeCodigoInput\').value)" style="width:100%;padding:14px;background:#25d366;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;margin-top:12px;text-transform:uppercase;letter-spacing:0.5px;transition:background 0.2s;">Canjear</button>' +
-                    '</div>' +
-                '</div>' +
-            '</div>';
-            document.body.insertAdjacentHTML('beforeend', html);
-            setTimeout(function() { var inp = document.getElementById('canjeCodigoInput'); if (inp) inp.focus(); }, 100);
+        // Notificar registro a Telegram
+        async function notificarRegistroTelegram(nombre, email, wpp) {
+            try {
+                var tgToken = '205bc031b8f97ea807468c677bd85a0a72ee2bba7015';
+                var tgChat = 'b1b4a8651a03a85cc4fd31fd2b066b6106a6e66737e6';
+                // No enviar directamente desde el frontend por seguridad
+                // La notificación se envía via Supabase cuando se crea la solicitud
+            } catch(e) {}
         }
-
-        // Banner promo de canje post-login
-        function mostrarPromoCanje() {
-            if (document.getElementById('promoCanjeBanner')) return;
-            var banner = document.createElement('div');
-            banner.id = 'promoCanjeBanner';
-            banner.style.cssText = 'position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:99998; width:calc(100% - 32px); max-width:380px; background:#111b21; border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px; animation:slideUpBanner 0.4s cubic-bezier(0.16,1,0.3,1);';
-            banner.innerHTML = '<div style="width:40px;height:40px;min-width:40px;border-radius:10px;background:linear-gradient(135deg,#25d366,#1ebe5d);display:flex;align-items:center;justify-content:center;">' +
-                '<i class="fa-solid fa-gift" style="font-size:16px;color:#fff;"></i>' +
-            '</div>' +
-            '<div style="flex:1;min-width:0;">' +
-                '<div style="font-size:12px;font-weight:700;color:#e9edef;">Tienes 20 créditos de regalo</div>' +
-                '<div style="font-size:10px;color:#8696a0;margin-top:1px;">Canjea tu código del grupo de WhatsApp</div>' +
-            '</div>' +
-            '<button onclick="document.getElementById(\'promoCanjeBanner\').remove(); mostrarCanjeCodigo();" style="background:#25d366;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Canjear</button>' +
-            '<button onclick="document.getElementById(\'promoCanjeBanner\').remove();" style="position:absolute;top:6px;right:8px;background:none;border:none;color:#8696a0;font-size:12px;cursor:pointer;padding:4px;">✕</button>';
-            document.body.appendChild(banner);
-
-            // Auto-ocultar después de 15 segundos
-            setTimeout(function() { var b = document.getElementById('promoCanjeBanner'); if (b) b.remove(); }, 15000);
-        }
-
-        // Animación del banner
-        var bannerStyle = document.createElement('style');
-        bannerStyle.textContent = '@keyframes slideUpBanner { from { opacity:0; transform:translateX(-50%) translateY(20px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }';
-        document.head.appendChild(bannerStyle);
 
         // Mostrar modal de upgrade S/35
         function showUpgradeModal() {
@@ -569,7 +481,7 @@
                         await window.sb.from('solicitudes').upsert({ placa: reqKey, datos: regData, updated_at: new Date() });
                         var { data: gSaldo } = await window.sb.from('saldos').select('email').eq('email', email).maybeSingle();
                         if (!gSaldo) {
-                            await window.sb.from('saldos').insert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() });
+                            await window.sb.from('saldos').insert({ email: email, creditos: 5, plataforma_activa: true, dashboard_activo: true, updated_at: new Date() });
                         }
                     }
 
@@ -788,10 +700,10 @@
 
         function handleDashboardService(icon, title, desc, link, price) {
             if (!currentUser) { showAuthFloatingModal(); return; }
-            if (!window.plataformaActiva) { showUpgradeModal(); return; }
+            if (window.tieneCreditos === false) { openAccess(); return; }
             const service = { icon: icon, title: title, desc: desc, link: link, price: price };
             if (service.link) {
-                window.open(service.link, '_blank');
+                cobrarCreditoYAbrir(service.link);
             } else if (service.price) {
                 const infoModal = document.getElementById('infoModal');
                 const infoContent = document.getElementById('infoContent');
@@ -847,12 +759,12 @@
                     d.className = 'hook-card ' + (c.link ? 'hook-free' : 'hook-paid');
                     d.onclick = async () => {
                         if (!currentUser) { showAuthFloatingModal(); return; }
-                        if (!window.plataformaActiva) { showUpgradeModal(); return; }
+                        if (window.tieneCreditos === false) { openAccess(); return; }
 
                         if (c.action === 'regiones') {
                             setTimeout(function() { setDashTab('REGIONES', null); }, 300);
                         } else if (c.link) {
-                            window.open(c.link, '_blank');
+                            cobrarCreditoYAbrir(c.link);
                         } else if (c.price) {
                             const infoModal = document.getElementById('infoModal');
                             const infoContent = document.getElementById('infoContent');
@@ -3215,7 +3127,7 @@
         // Función para abrir enlaces del dashboard con verificación premium
         function abrirDashLink(url) {
             if (!currentUser) { showAuthFloatingModal(); return; }
-            if (!window.plataformaActiva) { showUpgradeModal(); return; }
+            if (window.tieneCreditos === false) { openAccess(); return; }
             window.open(url, '_blank');
         }
 
@@ -3365,10 +3277,10 @@
                 return;
             }
 
-            // Verificar acceso S/35
-            if (!window.plataformaActiva) {
+            // Verificar créditos
+            if (window.tieneCreditos === false) {
                 document.getElementById('informeModal').style.display = 'none';
-                showUpgradeModal();
+                openAccess();
                 return;
             }
 

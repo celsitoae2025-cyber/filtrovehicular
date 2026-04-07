@@ -143,14 +143,6 @@ async function handleLoginScreen() {
         checkPromoPlataforma();
         autoSuscribirPush();
 
-        // Mostrar promo de canje si nunca canjeó
-        if (window.sb && currentUser.email) {
-            try {
-                var saldoCheck = await window.sb.from('saldos').select('codigos_canjeados').eq('email', currentUser.email).maybeSingle();
-                var canjeados = (saldoCheck && saldoCheck.data && saldoCheck.data.codigos_canjeados) ? saldoCheck.data.codigos_canjeados : [];
-                if (canjeados.length === 0 && typeof mostrarPromoCanje === 'function') mostrarPromoCanje();
-            } catch(e) {}
-        }
 
     } catch (e) {
         err.textContent = e.message;
@@ -989,10 +981,10 @@ async function handleAuthSubmit() {
             var up = await window.sb.from('solicitudes').upsert({ placa: reqKey, datos: regData, updated_at: new Date() });
             if (up.error) throw new Error('Fallo al crear cuenta. Intenta de nuevo.');
 
-            // Crear fila en saldos solo si no existe (no sobrescribir activaciones previas)
+            // Crear fila en saldos con 5 créditos de bienvenida (solo si no existe)
             var { data: existingSaldo } = await window.sb.from('saldos').select('email').eq('email', email).maybeSingle();
             if (!existingSaldo) {
-                await window.sb.from('saldos').insert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() });
+                await window.sb.from('saldos').insert({ email: email, creditos: 5, plataforma_activa: true, dashboard_activo: true, updated_at: new Date() });
             }
 
             // Auto-login inmediato
