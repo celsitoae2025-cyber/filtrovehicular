@@ -3293,30 +3293,14 @@
             const p = normalize(input ? input.value : '');
 
             if (!p || p.length < 5) {
-                alert('Por favor, ingresa una placa válida (mínimo 5 caracteres).');
+                showAppAlert('Placa inválida', 'Por favor, ingresa una placa válida (mínimo 5 caracteres).');
                 return;
             }
 
-            // Guardar placa temporalmente
-            window._pendingInformePlate = p;
-
-            // Verificar cuenta
-            if (!currentUser) {
-                document.getElementById('informeModal').style.display = 'none';
-                showAuthFloatingModal();
-                return;
-            }
-
-            // Verificar créditos
-            if (window.tieneCreditos === false) {
-                document.getElementById('informeModal').style.display = 'none';
-                openAccess();
-                return;
-            }
-
+            // Cerrar modal de placa
             document.getElementById('informeModal').style.display = 'none';
 
-            // 1. Ya fue aprobado anteriormente
+            // 1. Ya fue aprobado anteriormente — ir directo al reporte
             if (localStorage.getItem('approved_request_' + p)) {
                 localStorage.removeItem('last_pending_plate');
                 localStorage.removeItem('has_pending_notification');
@@ -3324,17 +3308,23 @@
                 return;
             }
 
-            // 2. Ya está en espera
+            // 2. Ya está en espera — mostrar estado pendiente
             if (localStorage.getItem('pending_request_' + p)) {
                 localStorage.setItem('last_pending_plate', p);
                 checkPendingFlow();
                 return;
             }
 
-            // 3. Verificar créditos/pago PRIMERO, luego crear solicitud
-            // startSmartScan creará la solicitud solo si el pago se confirma
-            localStorage.setItem('last_pending_plate', p);
-            startSmartScan(p);
+            // 3. Nueva solicitud — mostrar modal de confirmación antes de pagar
+            showAppConfirm(
+                '¿Desea adquirir el Filtro Vehicular Completo en PDF para la placa ' + p + '?\n\nPrecio: S/ 45.00',
+                function() {
+                    // Usuario confirmó — abrir pasarela de pago
+                    localStorage.setItem('temp_informe_placa', p);
+                    localStorage.setItem('last_pending_plate', p);
+                    openSale(45, 'Filtro Vehicular Completo - Placa: ' + p, 0, 'filtro');
+                }
+            );
         }
 
         let customAlertCallback = null;
