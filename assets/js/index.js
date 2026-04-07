@@ -3317,7 +3317,7 @@
 
             // 3. Nueva solicitud — mostrar modal de confirmación antes de pagar
             showAppConfirm(
-                'Filtro Vehicular Completo\nPlaca: ' + p + ' — S/ 45.00\nDocumento entregado en PDF en un máximo de 30 minutos.',
+                'Filtro Vehicular Completo\nPlaca: ' + p + ' — S/ 45.00\nInforme detallado, filtrado y verificado con fuentes oficiales. Entrega en PDF en máx. 30 min.',
                 function() {
                     // Usuario confirmó — abrir pasarela de pago
                     localStorage.setItem('temp_informe_placa', p);
