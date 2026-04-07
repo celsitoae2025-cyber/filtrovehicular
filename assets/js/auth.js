@@ -190,8 +190,10 @@ async function autoSuscribirPush() {
     if (Notification.permission === 'denied') return;
 
     try {
-        // Pedir permiso si no se ha dado
+        // Solo pedir permiso si no se ha pedido antes en esta sesión
         if (Notification.permission === 'default') {
+            if (localStorage.getItem('push_permission_asked')) return;
+            localStorage.setItem('push_permission_asked', '1');
             var perm = await Notification.requestPermission();
             if (perm !== 'granted') return;
         }
@@ -263,21 +265,24 @@ async function renderLoggedInState() {
 
     var displayName = currentUser.nombre || currentUser.email.split('@')[0];
 
-    // Cargar créditos frescos de Supabase
-    if (window.sb && currentUser.email) {
-        try {
-            var saldoRes = await window.sb.from('saldos').select('creditos, plataforma_activa, dashboard_activo').eq('email', currentUser.email).single();
-            if (saldoRes.data) {
-                window.creditosUsuario = saldoRes.data.creditos || 0;
-                window.plataformaActiva = saldoRes.data.plataforma_activa || false;
-                window.dashboardActivo = saldoRes.data.dashboard_activo || false;
-                window.tieneCreditos = window.creditosUsuario > 0;
-            }
-        } catch(e) {}
-    }
+    // Usar créditos en memoria para render rápido
     var creditos = window.creditosUsuario || 0;
     var plataformaActiva = window.plataformaActiva || false;
     var creditosDisplay = Math.floor(creditos);
+
+    // Cargar créditos frescos de Supabase en segundo plano
+    if (window.sb && currentUser.email) {
+        window.sb.from('saldos').select('creditos, plataforma_activa, dashboard_activo').eq('email', currentUser.email).single().then(function(res) {
+            if (res.data) {
+                window.creditosUsuario = res.data.creditos || 0;
+                window.plataformaActiva = res.data.plataforma_activa || false;
+                window.dashboardActivo = res.data.dashboard_activo || false;
+                window.tieneCreditos = window.creditosUsuario > 0;
+                var ls = document.getElementById('logoStatus');
+                if (ls) ls.textContent = Math.floor(window.creditosUsuario) + ' Créditos';
+            }
+        }).catch(function() {});
+    }
 
     // Actualizar logo con créditos
     var logoStatus = document.getElementById('logoStatus');

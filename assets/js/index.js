@@ -387,31 +387,28 @@
         // --- COBRO DE 1 CRÉDITO POR LINK EN SERVICIOS/ACCESOS ---
         async function cobrarCreditoYAbrir(url) {
             if (!currentUser || !currentUser.email) { showAuthFloatingModal(); return; }
-            if (!window.sb) { window.open(url, '_blank'); return; }
-            try {
-                var { data: saldo } = await window.sb.from('saldos').select('creditos').eq('email', currentUser.email).maybeSingle();
-                var cred = (saldo && saldo.creditos) ? saldo.creditos : 0;
-                if (cred < 1) {
-                    openAccessCreditsOnly ? openAccessCreditsOnly() : openAccess();
-                    return;
-                }
-                var { data: updated, error } = await window.sb.from('saldos')
-                    .update({ creditos: cred - 1, updated_at: new Date() })
+            // Verificar créditos en memoria primero (rápido)
+            var credLocal = window.creditosUsuario || 0;
+            if (credLocal < 1) {
+                openAccess();
+                return;
+            }
+            // Abrir link inmediatamente
+            window.open(url, '_blank');
+            // Descontar en memoria
+            window.creditosUsuario = credLocal - 1;
+            window.tieneCreditos = window.creditosUsuario > 0;
+            var headerStatus = document.getElementById('logoStatus');
+            if (headerStatus) headerStatus.textContent = Math.floor(window.creditosUsuario) + ' Créditos';
+            // Descontar en Supabase en segundo plano
+            if (window.sb) {
+                window.sb.from('saldos')
+                    .update({ creditos: credLocal - 1, updated_at: new Date() })
                     .eq('email', currentUser.email)
                     .gte('creditos', 1)
-                    .select('creditos');
-                if (error || !updated || updated.length === 0) {
-                    openAccessCreditsOnly ? openAccessCreditsOnly() : openAccess();
-                    return;
-                }
-                window.creditosUsuario = updated[0].creditos;
-                window.tieneCreditos = updated[0].creditos > 0;
-                var logoStatus = document.querySelector('.dropdown-trigger span');
-                if (logoStatus) logoStatus.textContent = Math.floor(updated[0].creditos) + ' Créditos';
-                var headerStatus = document.getElementById('logoStatus');
-                if (headerStatus) headerStatus.textContent = Math.floor(updated[0].creditos) + ' Créditos';
-                window.open(url, '_blank');
-            } catch(e) { window.open(url, '_blank'); }
+                    .then(function() {})
+                    .catch(function() {});
+            }
         }
 
         // Notificar registro a Telegram
