@@ -3325,13 +3325,19 @@
                     openSale(45, 'Filtro Vehicular Completo - Placa: ' + p, 0, 'filtro');
                 }
             );
-            // Personalizar modal: ícono fuera del cuadro, compacto, color institucional
+            // Personalizar modal: ícono dentro del cuadro, bien estructurado y proporcional
             var alertCard = document.getElementById('appAlertCard');
+            var modalHeader = alertCard ? alertCard.querySelector('.modal-header') : null;
             var iconWrap = document.getElementById('appAlertIcon');
             var iconI = document.getElementById('appAlertIconI');
-            if (alertCard) alertCard.style.cssText += 'max-width:340px;margin-top:60px;overflow:visible;position:relative;';
-            if (iconWrap) iconWrap.style.cssText = 'width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:absolute;top:-72px;left:50%;transform:translateX(-50%);background:#0d2536;z-index:1;';
-            if (iconI) { iconI.className = 'fa-solid fa-file-pdf'; iconI.style.fontSize = '26px'; }
+            var alertTitle = document.getElementById('appAlertTitle');
+            var alertMsg = document.getElementById('appAlertMsg');
+            if (alertCard) alertCard.style.cssText += 'max-width:360px;';
+            if (modalHeader) modalHeader.style.cssText += 'padding:28px 24px 20px;';
+            if (iconWrap) iconWrap.style.cssText = 'width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;background:#0d2536;';
+            if (iconI) { iconI.className = 'fa-solid fa-file-pdf'; iconI.style.cssText = 'font-size:26px;color:#fff;'; }
+            if (alertTitle) alertTitle.style.cssText += 'font-size:18px;margin-bottom:12px;';
+            if (alertMsg) alertMsg.style.cssText += 'font-size:13px;color:#6b7280;line-height:1.6;';
         }
 
         let customAlertCallback = null;
