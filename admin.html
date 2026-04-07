@@ -221,17 +221,9 @@
                     });
                 }
                 function processCredit() {
-                    var custom = document.getElementById('creditCustom').value;
-                    if (custom && parseInt(custom) > 0) {
-                        document.getElementById('creditAmount').value = custom;
-                        var sel = document.getElementById('creditAmount');
-                        var exists = false;
-                        for (var i = 0; i < sel.options.length; i++) {
-                            if (sel.options[i].value == custom) { exists = true; sel.selectedIndex = i; break; }
-                        }
-                        if (!exists) {
-                            sel.innerHTML += '<option value="' + custom + '" selected>' + custom + '</option>';
-                        }
+                    var customInput = document.getElementById('customCreditAmount').value;
+                    if (customInput && parseInt(customInput) > 0) {
+                        selectCreditPack(null, parseInt(customInput));
                     }
                     addCredits();
                 }
