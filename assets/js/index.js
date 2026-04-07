@@ -3317,7 +3317,7 @@
 
             // 3. Nueva solicitud — mostrar modal de confirmación antes de pagar
             showAppConfirm(
-                '¿Desea adquirir el Filtro Vehicular Completo en PDF para la placa ' + p + '?\n\nPrecio: S/ 45.00',
+                'Filtro Vehicular Completo\nPlaca: ' + p + '\nPrecio: S/ 45.00',
                 function() {
                     // Usuario confirmó — abrir pasarela de pago
                     localStorage.setItem('temp_informe_placa', p);
