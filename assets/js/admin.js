@@ -476,12 +476,26 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                             '<div style="font-size:7px; color:#9ca3af; text-transform:uppercase; margin-top:1px;">créditos</div>' +
                         '</div>' +
                         (plataforma ? '<span style="font-size:7px; font-weight:600; color:#25d366; background:rgba(37,211,102,0.1); padding:2px 6px; border-radius:4px; flex-shrink:0;">PRO</span>' : '<span style="font-size:7px; font-weight:600; color:#f59e0b; background:rgba(245,158,11,0.1); padding:2px 6px; border-radius:4px; flex-shrink:0;">FREE</span>') +
+                        (hasCredits ? '<button onclick="event.stopPropagation(); resetCredits(\'' + escAttr(email) + '\')" style="background:transparent; border:none; color:#f59e0b; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:11px; flex-shrink:0;" title="Quitar créditos"><i class="fa-solid fa-coins"></i></button>' : '') +
                         '<button onclick="event.stopPropagation(); deleteUser(\'' + escAttr(email) + '\')" style="background:transparent; border:none; color:#ef4444; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:11px; flex-shrink:0;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>' +
                     '</div>';
                 }).join('');
 
             } catch (e) {
                 list.innerHTML = '<div class="empty-req">Error descargando usuarios: ' + esc(e.message) + '</div>';
+            }
+        }
+
+        async function resetCredits(email) {
+            if (!confirm('¿Quitar todos los créditos a ' + email + '?')) return;
+            try {
+                if (!window.sb) throw new Error('Supabase no conectado.');
+                var { error } = await window.sb.from('saldos').update({ creditos: 0, updated_at: new Date() }).eq('email', email);
+                if (error) throw error;
+                alert('Créditos eliminados para ' + email);
+                renderUsersList();
+            } catch (e) {
+                alert('Error: ' + e.message);
             }
         }
 
