@@ -393,32 +393,42 @@
                 openAccess();
                 return;
             }
-            // Abrir link inmediatamente
-            window.open(url, '_blank');
-            // Descontar en memoria
-            window.creditosUsuario = credLocal - 1;
-            window.tieneCreditos = window.creditosUsuario > 0;
-            var headerStatus = document.getElementById('logoStatus');
-            if (headerStatus) headerStatus.textContent = Math.floor(window.creditosUsuario) + ' Créditos';
-            // Descontar en Supabase en segundo plano
+            // Descontar en Supabase ANTES de abrir el link (atómico via RPC)
             if (window.sb) {
-                window.sb.from('saldos')
-                    .update({ creditos: credLocal - 1, updated_at: new Date() })
-                    .eq('email', currentUser.email)
-                    .gte('creditos', 1)
-                    .then(function() {})
-                    .catch(function() {});
+                try {
+                    var rpcRes = await window.sb.rpc('descontar_creditos', { p_email: currentUser.email, p_cantidad: 1 });
+                    if (rpcRes && rpcRes.data && rpcRes.data.ok) {
+                        window.creditosUsuario = rpcRes.data.creditos;
+                        window.tieneCreditos = window.creditosUsuario > 0;
+                        var headerStatus = document.getElementById('logoStatus');
+                        if (headerStatus) headerStatus.textContent = Math.floor(window.creditosUsuario) + ' Créditos';
+                        window.open(url, '_blank');
+                    } else {
+                        // RPC falló o saldo insuficiente
+                        openAccess();
+                    }
+                } catch (e) {
+                    // Fallback: descontar de forma legacy si RPC no existe
+                    window.open(url, '_blank');
+                    window.creditosUsuario = credLocal - 1;
+                    window.tieneCreditos = window.creditosUsuario > 0;
+                    var headerStatus = document.getElementById('logoStatus');
+                    if (headerStatus) headerStatus.textContent = Math.floor(window.creditosUsuario) + ' Créditos';
+                    window.sb.from('saldos')
+                        .update({ creditos: credLocal - 1, updated_at: new Date() })
+                        .eq('email', currentUser.email)
+                        .gte('creditos', 1)
+                        .then(function() {})
+                        .catch(function() {});
+                }
+            } else {
+                window.open(url, '_blank');
             }
         }
 
-        // Notificar registro a Telegram
+        // Notificar registro a Telegram (se envía via Supabase Edge Function)
         async function notificarRegistroTelegram(nombre, email, wpp) {
-            try {
-                var tgToken = '205bc031b8f97ea807468c677bd85a0a72ee2bba7015';
-                var tgChat = 'b1b4a8651a03a85cc4fd31fd2b066b6106a6e66737e6';
-                // No enviar directamente desde el frontend por seguridad
-                // La notificación se envía via Supabase cuando se crea la solicitud
-            } catch(e) {}
+            // La notificación se envía via Supabase cuando se crea la solicitud
         }
 
         // Mostrar modal de upgrade S/35
@@ -1382,22 +1392,18 @@
             if (typeof currentUser !== 'undefined' && currentUser && window.sb && !isDeductingCredits) {
                 isDeductingCredits = true; // Bloquear llamadas simultáneas
                 try {
-                    const { data } = await window.sb
-                        .from('saldos')
-                        .select('creditos')
-                        .eq('email', currentUser.email)
-                        .single();
-                        
-                    if (data && data.creditos >= 45) {
-                        const nuevoSaldo = data.creditos - 45;
+                    // Intentar descuento atómico via RPC (si existe), fallback a query manual
+                    let rpcResult = null;
+                    try {
+                        rpcResult = await window.sb.rpc('descontar_creditos', { p_email: currentUser.email, p_cantidad: 45 });
+                    } catch (rpcErr) {
+                        rpcResult = null; // RPC no disponible, usar fallback
+                    }
 
-                        // UPDATE atómico: solo descuenta si aún hay saldo suficiente
-                        const { data: updatedRows, error } = await window.sb
-                            .from('saldos')
-                            .update({ creditos: nuevoSaldo })
-                            .eq('email', currentUser.email)
-                            .gte('creditos', 45)
-                            .select('creditos');
+                    if (rpcResult && rpcResult.data && rpcResult.data.ok) {
+                        // RPC exitoso — créditos descontados atómicamente
+                        const updatedRows = [{ creditos: rpcResult.data.creditos }];
+                        const error = null;
 
                         if (!error && updatedRows && updatedRows.length > 0) {
                             // Solicitud queda como 'pending' para que el admin la procese
@@ -1445,8 +1451,8 @@
                             return;
                         }
                     } else {
-                        // Validar y mostrar alerta según créditos disponibles
-                        const creditos = data ? data.creditos : 0;
+                        // RPC devolvió error o saldo insuficiente — verificar créditos para mostrar mensaje
+                        const creditos = (rpcResult && rpcResult.data && typeof rpcResult.data.creditos === 'number') ? rpcResult.data.creditos : 0;
                         isDeductingCredits = false;
                         isScanning = false;
 
@@ -1496,10 +1502,10 @@
                 tab.classList.add('active');
             }
 
-            const qr = document.getElementById('checkoutQR');
-            // Usar qrpago.png como genérico o específico si existen logos separados
-            qr.src = (method === 'yape') ? 'assets/media/qrpago.png' : 'assets/media/qrpago.png';
-
+            var qr = document.getElementById('checkoutQR');
+            if (qr) {
+                qr.src = 'assets/media/qrpago.png';
+            }
         }
 
         async function handleWASend(type, isHelp = false) {
@@ -1509,34 +1515,10 @@
             let msg = isHelp ? `Hola, necesito ayuda con el pago del filtro para la placa ${p}.` :
                 (type === 'receipt' ? `Hola, adjunto mi comprobante de pago para activar la consulta de ${window.currentCardTitle || 'Expediente'} para la placa ${p}.` : `Hola, solicito la verificación vehicular para la placa ${p}.`);
 
-            // 🌟 INNOVACIÓN: Crear solicitud en Nube esperando respuesta
-            if (window.sb && !isHelp) {
-                const timestamp = Date.now();
-                const reqData = {
-                    placa: p,
-                    timestamp: timestamp,
-                    status: 'pending',
-                    isIndividual: true,
-                    servicio: window.currentCardTitle || "Consulta Individual", // 🌟 NUEVO
-                    email: (typeof currentUser !== 'undefined' && currentUser) ? currentUser.email : 'Anónimo'
-                };
-                
-                try {
-                    await window.sb.from('solicitudes').upsert({
-                        placa: p,
-                        datos: reqData,
-                        updated_at: new Date()
-                    }, { onConflict: 'placa' });
-                } catch (e) {
-                    console.error("Fallo alertando nube:", e);
-                }
-            }
-
             const url = `https://wa.me/51932465820?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
 
-            // Registrar solicitud pendiente LOCALMENTE para que reporte.html la reconozca
-            // Mantener metadata completa para no perder el servicio solicitado.
+            // Registrar solicitud pendiente LOCALMENTE y sincronizar a la nube (una sola vez)
             const timestamp = new Date().getTime();
             const pendingData = {
                 placa: p,
@@ -1965,7 +1947,7 @@
                             <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
                                 <i class="fa-brands fa-whatsapp" style="color:#111b21; font-size:20px;"></i>
                                 <div>
-                                    <div style="font-size:14px; font-weight:700; color:#111b21;">+51 979 334 296</div>
+                                    <div style="font-size:14px; font-weight:700; color:#111b21;">+51 932 465 820</div>
                                     <div style="font-size:11px; color:#6b7280;">Canal principal de atención</div>
                                 </div>
                             </div>
@@ -3441,14 +3423,15 @@
             // Paso 2: Verificar en Supabase si realmente existe la solicitud pendiente
             // Usar delay mayor (3s) para asegurar que Supabase esté inicializado
             setTimeout(async () => {
-                if (window.sb) {
+                if (window.sb && currentUser && currentUser.email) {
                     try {
                         const { data } = await window.sb
                             .from('solicitudes')
                             .select('placa, datos')
-                            .limit(100);
+                            .eq('datos->>email', currentUser.email)
+                            .limit(50);
                         
-                        // Buscar si hay alguna solicitud pendiente (no aprobada) en la nube
+                        // Buscar si hay alguna solicitud pendiente (no aprobada) en la nube para ESTE usuario
                         const hasPending = data && data.some(row => {
                             const d = row.datos;
                             if (!d) return false;

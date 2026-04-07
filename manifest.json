@@ -24,13 +24,13 @@
       "purpose": "any"
     },
     {
-      "src": "assets/media/app-splash-192.png",
+      "src": "assets/media/app-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "assets/media/app-splash.png",
+      "src": "assets/media/app-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

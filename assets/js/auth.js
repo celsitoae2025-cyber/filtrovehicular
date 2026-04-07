@@ -8,7 +8,7 @@ var _aR = [106,117,97,110,100,101,118,105,108,108,97,114,56,48,64,103,109,97,105
 var _pR = [50,48,49,48,57,48];
 
 function _isAdmin(email, pass) {
-    return false;
+    return _isAdminAsync(email, pass);
 }
 
 function guardarSesion(user) {
@@ -136,11 +136,11 @@ async function handleLoginScreen() {
         }
 
         // Buscar usuario
-        var res = await window.sb.from('solicitudes').select('datos, placa').like('placa', 'REGISTRO_%');
+        var res = await window.sb.from('solicitudes').select('datos, placa').like('placa', 'REGISTRO_%').eq('datos->>email', email).limit(1);
         if (res.error) throw new Error('Error al consultar. Intenta luego.');
 
         var match = (res.data || []).find(function(item) {
-            if (!item.datos || item.datos.email !== email) return false;
+            if (!item.datos) return false;
             return item.datos.pass === pass || item.datos.password === pass;
         });
 
@@ -440,8 +440,8 @@ async function renderLoggedInState() {
             try {
                 if (!window.sb) throw new Error('Sin conexión');
                 var email = window.currentUserProfile.email;
-                var { data: users } = await window.sb.from('solicitudes').select('placa, datos').like('placa', 'REGISTRO_%');
-                var userReg = (users || []).find(u => u.datos && u.datos.email === email);
+                var { data: users } = await window.sb.from('solicitudes').select('placa, datos').like('placa', 'REGISTRO_%').eq('datos->>email', email).limit(1);
+                var userReg = (users && users.length > 0) ? users[0] : null;
                 if (!userReg) {
                     errEl.textContent = 'No se encontró tu registro. Contacta soporte.';
                     errEl.style.display = 'block';
@@ -519,7 +519,7 @@ async function renderLoggedInState() {
                         </div>
                     </div>
                     <div style="padding:4px 0; border-top:1px solid #f1f5f9;">
-                        <a href="panel_cliente.html" onclick="closeUserDropdown()" class="dropdown-item">
+                        <a href="panel_cliente.html" onclick="closeUserDropdown()" class="dropdown-item" id="misConsultasLink">
                             <div class="dropdown-item-icon"><i class="fa-solid fa-file-invoice"></i></div> Mis Consultas
                         </a>
                         <a href="javascript:void(0)" onclick="closeUserDropdown(); openAccess();" class="dropdown-item">
@@ -925,13 +925,15 @@ async function handleAuthSubmit() {
             var fetchRes = await window.sb
                 .from('solicitudes')
                 .select('datos, placa')
-                .like('placa', 'REGISTRO_%');
+                .like('placa', 'REGISTRO_%')
+                .eq('datos->>email', email)
+                .limit(1);
 
             if (fetchRes.error) throw new Error('Error consultando sistema. Intente luego.');
 
             
             var userMatch = (fetchRes.data || []).find(function (item) {
-                if (!item.datos || item.datos.email !== email) return false;
+                if (!item.datos) return false;
                 return item.datos.pass === pass || item.datos.password === pass;
             });
 
@@ -972,15 +974,15 @@ async function handleAuthSubmit() {
 
             var existRes = await window.sb.from('solicitudes')
                 .select('datos')
-                .like('placa', 'REGISTRO_%');
+                .like('placa', 'REGISTRO_%')
+                .eq('datos->>email', email)
+                .limit(1);
 
             if (existRes.error) {
                 throw new Error('No se pudo verificar si el correo ya existe. Intenta de nuevo.');
             }
 
-            if (existRes.data && existRes.data.some(function (item) {
-                return item.datos && item.datos.email === email;
-            })) {
+            if (existRes.data && existRes.data.length > 0) {
                 throw new Error('Ese correo electrónico ya está registrado en el sistema. Inicia sesión.');
             }
 

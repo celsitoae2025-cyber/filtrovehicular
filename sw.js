@@ -42,7 +42,14 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
     e.respondWith(
         fetch(e.request, { signal: AbortSignal.timeout(8000) }).catch(() => {
-            return caches.match(e.request, { ignoreSearch: true });
+            return caches.match(e.request, { ignoreSearch: true }).then(function(cached) {
+                if (cached) return cached;
+                // Fallback: respuesta offline para navegación HTML
+                if (e.request.mode === 'navigate') {
+                    return caches.match('./index.html');
+                }
+                return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+            });
         })
     );
 });
