@@ -2621,10 +2621,19 @@
                 '<div style="flex:1;"><div style="font-size:13px; font-weight:600; color:#e9edef;">Resultado</div>' +
                 (moduloLabel ? '<div style="font-size:9px; color:#8696a0;">' + moduloLabel + ' · ' + cmdLabel + '</div>' : '') +
                 '</div></div>' +
+                '<style>' +
+                    '.resultado-layout { display: flex; flex-direction: column-reverse; gap: 14px; }' +
+                    '.resultado-layout .resultado-texto { min-width: 0; }' +
+                    '.resultado-layout .resultado-imagenes { width: 100%; }' +
+                    '@media(min-width:700px) {' +
+                        '.resultado-layout { flex-direction: row !important; }' +
+                        '.resultado-layout .resultado-texto { flex: 1; }' +
+                        '.resultado-layout .resultado-imagenes { width: 40%; flex-shrink: 0; }' +
+                    '}' +
+                '</style>' +
                 '<div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; font-size:12px; color:#111b21; line-height:1.7; word-break:break-word;">' +
                 (imagenesHtml
-                    ? '<div class="resultado-layout" style="display:flex; flex-direction:column; gap:14px;">' +
-                        '<style>.resultado-layout { flex-direction: column !important; } @media(min-width:700px) { .resultado-layout { flex-direction: row !important; } .resultado-layout .resultado-texto { flex: 1; min-width: 0; } .resultado-layout .resultado-imagenes { width: 45%; flex-shrink: 0; } }</style>' +
+                    ? '<div class="resultado-layout">' +
                         '<div class="resultado-texto">' + textoFormateado + archivosHtml + creditoHtml + '</div>' +
                         imagenesHtml +
                       '</div>'
