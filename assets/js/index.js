@@ -3325,6 +3325,11 @@
                     openSale(45, 'Filtro Vehicular Completo - Placa: ' + p, 0, 'filtro');
                 }
             );
+            // Cambiar ícono del modal a uno más atractivo para el cliente
+            var iconWrap = document.getElementById('appAlertIcon');
+            var iconI = document.getElementById('appAlertIconI');
+            if (iconWrap) iconWrap.style.background = 'linear-gradient(135deg, #25d366, #1ebe5d)';
+            if (iconI) iconI.className = 'fa-solid fa-file-pdf';
         }
 
         let customAlertCallback = null;
