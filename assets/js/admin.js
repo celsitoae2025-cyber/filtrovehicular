@@ -739,6 +739,32 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
             }
         }
 
+        async function pagarPruebaMP() {
+            if (!currentUser || !currentUser.email) {
+                alert('Debes iniciar sesión primero.');
+                return;
+            }
+            try {
+                var res = await fetch('https://xojgpfbpomjxpyytmczg.supabase.co/functions/v1/crear-preferencia', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': 'sb_publishable_CjQ1bJD0Uvhs5wlKgI6FKw_PX7V4fuB',
+                        'Authorization': 'Bearer sb_publishable_CjQ1bJD0Uvhs5wlKgI6FKw_PX7V4fuB'
+                    },
+                    body: JSON.stringify({ plan: 'prueba', email: currentUser.email })
+                });
+                var data = await res.json();
+                if (data.init_point) {
+                    window.location.href = data.init_point;
+                } else {
+                    alert('Error: ' + (data.error || 'No se pudo crear el pago.'));
+                }
+            } catch (e) {
+                alert('Error de conexión: ' + e.message);
+            }
+        }
+
         async function addCredits() {
             const email = document.getElementById('creditEmail').value.trim().toLowerCase();
             const amount = parseInt(document.getElementById('creditAmount').value);

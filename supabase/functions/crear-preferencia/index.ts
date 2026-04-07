@@ -16,6 +16,7 @@ const PLANS: Record<string, { title: string; price: number; credits: number; typ
   avanzado:    { title: 'Plan Avanzado - 850 Creditos',        price: 42,  credits: 850,  type: 'recarga' },
   business:    { title: 'Plan Business - 2000 Creditos',       price: 84,  credits: 2000, type: 'recarga' },
   profesional: { title: 'Plan Profesional - 4000 Creditos',    price: 140, credits: 4000, type: 'recarga' },
+  prueba:      { title: 'Pago de Prueba',                     price: 5,   credits: 0,    type: 'prueba' },
 };
 
 serve(async (req: Request) => {

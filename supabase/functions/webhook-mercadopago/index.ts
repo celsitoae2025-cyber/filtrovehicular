@@ -72,7 +72,7 @@ serve(async (req: Request) => {
 
     // Validar monto contra precio esperado del plan
     const PLAN_PRICES: Record<string, number> = {
-      filtro: 45, acceso: 35, avanzado: 42, business: 84, profesional: 140,
+      filtro: 45, acceso: 35, avanzado: 42, business: 84, profesional: 140, prueba: 5,
     };
     const expectedPrice = PLAN_PRICES[ref.plan];
     if (!expectedPrice || payment.transaction_amount < expectedPrice) {
@@ -192,6 +192,15 @@ serve(async (req: Request) => {
       await notifyTelegram(
         `✅ <b>FILTRO VEHICULAR PAGADO - MercadoPago</b>\n` +
         `🚗 Placa: ${placa}\n` +
+        `💰 S/ ${payment.transaction_amount}\n` +
+        `📧 ${ref.email}\n` +
+        `🆔 MP #${paymentId}\n` +
+        `🕐 ${fechaLima()}`
+      );
+
+    } else if (ref.type === 'prueba') {
+      await notifyTelegram(
+        `🧪 <b>PAGO DE PRUEBA - MercadoPago</b>\n` +
         `💰 S/ ${payment.transaction_amount}\n` +
         `📧 ${ref.email}\n` +
         `🆔 MP #${paymentId}\n` +
