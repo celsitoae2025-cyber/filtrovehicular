@@ -740,10 +740,17 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
         }
 
         async function pagarPruebaMP() {
-            if (!currentUser || !currentUser.email) {
-                alert('Debes iniciar sesión primero.');
-                return;
-            }
+            var email = '';
+            try {
+                var raw = localStorage.getItem('filtro_user_session');
+                if (raw) email = JSON.parse(raw).email || '';
+            } catch(e) {}
+            if (!email) { alert('Debes iniciar sesión primero.'); return; }
+
+            var btn = event.currentTarget;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creando pago...';
+            btn.disabled = true;
+
             try {
                 var res = await fetch('https://xojgpfbpomjxpyytmczg.supabase.co/functions/v1/crear-preferencia', {
                     method: 'POST',
@@ -752,16 +759,20 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
                         'apikey': 'sb_publishable_CjQ1bJD0Uvhs5wlKgI6FKw_PX7V4fuB',
                         'Authorization': 'Bearer sb_publishable_CjQ1bJD0Uvhs5wlKgI6FKw_PX7V4fuB'
                     },
-                    body: JSON.stringify({ plan: 'prueba', email: currentUser.email })
+                    body: JSON.stringify({ plan: 'prueba', email: email })
                 });
                 var data = await res.json();
                 if (data.init_point) {
                     window.location.href = data.init_point;
                 } else {
                     alert('Error: ' + (data.error || 'No se pudo crear el pago.'));
+                    btn.innerHTML = '<i class="fa-solid fa-credit-card" style="font-size:12px;"></i> Pago de Prueba S/5 (MercadoPago)';
+                    btn.disabled = false;
                 }
             } catch (e) {
                 alert('Error de conexión: ' + e.message);
+                btn.innerHTML = '<i class="fa-solid fa-credit-card" style="font-size:12px;"></i> Pago de Prueba S/5 (MercadoPago)';
+                btn.disabled = false;
             }
         }
 
