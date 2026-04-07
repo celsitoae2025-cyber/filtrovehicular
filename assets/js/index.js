@@ -472,8 +472,13 @@
         // Verificar sesión OAuth al volver de Google
         (function checkOAuthReturn() {
             if (!window.sb || !window.sb.auth) return;
+            // Si ya tiene sesión local, no procesar el callback de Google
+            var yaLogueado = false;
+            try { yaLogueado = !!localStorage.getItem('filtro_user_session'); } catch(e) {}
             window.sb.auth.onAuthStateChange(async function(event, session) {
+                if (yaLogueado) return;
                 if (event === 'SIGNED_IN' && session && session.user) {
+                    yaLogueado = true;
                     var gUser = session.user;
                     var email = gUser.email;
                     var nombre = gUser.user_metadata ? (gUser.user_metadata.full_name || gUser.user_metadata.name || 'Usuario') : 'Usuario';

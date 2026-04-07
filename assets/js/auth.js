@@ -277,14 +277,13 @@ async function renderLoggedInState() {
     }
     var creditos = window.creditosUsuario || 0;
     var plataformaActiva = window.plataformaActiva || false;
+    var creditosDisplay = Math.floor(creditos);
 
-    // Actualizar logo según estado de plataforma
+    // Actualizar logo con créditos
     var logoStatus = document.getElementById('logoStatus');
     if (logoStatus) {
         logoStatus.textContent = creditosDisplay + ' Créditos';
     }
-
-    var creditosDisplay = Math.floor(creditos);
 
     var emailParts = currentUser.email.split('@');
     var namePart = emailParts[0];
