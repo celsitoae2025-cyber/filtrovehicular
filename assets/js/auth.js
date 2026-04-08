@@ -57,8 +57,9 @@ async function initAuth() {
     if (currentUser && currentUser.email) {
         hideLoginScreen();
 
-        // Cargar datos de Supabase UNA sola vez
-        if (window.sb) {
+        // Cargar datos de Supabase UNA sola vez (solo si NO es admin)
+        var isAdminAtLoad = currentUser.nombre === 'Admin';
+        if (window.sb && !isAdminAtLoad) {
             try {
                 var res = await window.sb.from('saldos').select('plataforma_activa, dashboard_activo, creditos').eq('email', currentUser.email).single();
                 if (res.data) {
@@ -70,10 +71,11 @@ async function initAuth() {
             } catch (e) {}
         }
 
-        // Admin override
+        // Admin override (aplicar siempre que sea admin)
         if (_isAdminSession || currentUser.nombre === 'Admin') {
             window.plataformaActiva = true;
             window.dashboardActivo = true;
+            window.creditosUsuario = Infinity;
             window.tieneCreditos = true;
         }
 
@@ -232,6 +234,8 @@ async function autoSuscribirPush() {
 // Actualizar créditos en el header sin recargar toda la UI
 async function actualizarCreditosHeader() {
     if (!currentUser || !currentUser.email || !window.sb) return;
+    // No actualizar créditos si es admin (tiene infinitos)
+    if (currentUser.nombre === 'Admin' || _isAdminSession) return;
     try {
         var res = await window.sb.from('saldos').select('creditos').eq('email', currentUser.email).single();
         if (res.data) {
@@ -277,8 +281,8 @@ async function renderLoggedInState() {
     var plataformaActiva = window.plataformaActiva || false;
     var creditosDisplay = Math.floor(creditos);
 
-    // Cargar créditos frescos de Supabase en segundo plano
-    if (window.sb && currentUser.email) {
+    // Cargar créditos frescos de Supabase en segundo plano (solo si NO es admin)
+    if (window.sb && currentUser.email && currentUser.nombre !== 'Admin' && !_isAdminSession) {
         window.sb.from('saldos').select('creditos, plataforma_activa, dashboard_activo').eq('email', currentUser.email).single().then(function(res) {
             if (res.data) {
                 window.creditosUsuario = res.data.creditos || 0;
