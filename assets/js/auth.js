@@ -279,7 +279,8 @@ async function renderLoggedInState() {
     // Usar créditos en memoria para render rápido
     var creditos = window.creditosUsuario || 0;
     var plataformaActiva = window.plataformaActiva || false;
-    var creditosDisplay = Math.floor(creditos);
+    var isAdmin = currentUser.nombre === 'Admin' || _isAdminSession;
+    var creditosDisplay = isAdmin ? '∞' : Math.floor(creditos);
 
     // Cargar créditos frescos de Supabase en segundo plano (solo si NO es admin)
     if (window.sb && currentUser.email && currentUser.nombre !== 'Admin' && !_isAdminSession) {
@@ -298,7 +299,7 @@ async function renderLoggedInState() {
     // Actualizar logo con créditos
     var logoStatus = document.getElementById('logoStatus');
     if (logoStatus) {
-        logoStatus.textContent = creditosDisplay + ' Créditos';
+        logoStatus.textContent = isAdmin ? '∞ Créditos' : (creditosDisplay + ' Créditos');
     }
 
     var emailParts = currentUser.email.split('@');
@@ -523,7 +524,7 @@ async function renderLoggedInState() {
                     <div style="margin:0 16px 12px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;" onclick="closeUserDropdown(); openAccess();">
                         <div>
                             <div style="font-size:18px; font-weight:600; color:#111b21; line-height:1;">${creditosDisplay}</div>
-                            <div style="font-size:10px; color:#6b7280; font-weight:500; margin-top:3px; text-transform:uppercase; letter-spacing:0.3px;">Créditos disponibles</div>
+                            <div style="font-size:10px; color:#6b7280; font-weight:500; margin-top:3px; text-transform:uppercase; letter-spacing:0.3px;">${isAdmin ? 'Créditos ilimitados' : 'Créditos disponibles'}</div>
                         </div>
                         <div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
                             <i class="fa-solid fa-plus" style="color:#fff; font-size:14px;"></i>
