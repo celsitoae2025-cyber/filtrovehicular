@@ -130,8 +130,15 @@ async function handleLoginScreen() {
             _isAdminSession = true;
             currentUser = { email: email, nombre: 'Admin' };
             guardarSesion(currentUser);
-            hideLoginScreen();
+            
+            // Admin tiene créditos ilimitados
+            window.creditosUsuario = Infinity;
+            window.tieneCreditos = true;
+            
+            closeAuthModal();
             renderLoggedInState();
+            btn.innerText = 'INGRESAR';
+            btn.disabled = false;
             return;
         }
 
@@ -915,6 +922,11 @@ async function handleAuthSubmit() {
                 _isAdminSession = true;
                 currentUser = { email: email, nombre: 'Admin' };
                 guardarSesion(currentUser);
+                
+                // Admin tiene créditos ilimitados
+                window.creditosUsuario = Infinity;
+                window.tieneCreditos = true;
+                
                 closeAuthModal();
                 renderLoggedInState();
                 btn.innerText = 'INGRESAR';
