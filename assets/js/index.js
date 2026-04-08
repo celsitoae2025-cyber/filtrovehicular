@@ -159,9 +159,10 @@
                 return;
             }
 
-            // Consultas requiere créditos
+            // Consultas requiere créditos (excepto admin)
             if (tabName === 'consultas') {
-                if (window.tieneCreditos === false) {
+                var isAdminUser = currentUser && (currentUser.nombre === 'Admin' || _isAdminSession);
+                if (!isAdminUser && window.tieneCreditos === false) {
                     // Si ya tiene acceso activo, mostrar solo recargas. Si no, mostrar todo.
                     if (window.plataformaActiva) {
                         openAccessCreditsOnly();
@@ -395,6 +396,12 @@
         // --- COBRO DE 1 CRÉDITO POR LINK EN SERVICIOS/ACCESOS ---
         async function cobrarCreditoYAbrir(url) {
             if (!currentUser || !currentUser.email) { showAuthFloatingModal(); return; }
+            // Admin tiene acceso ilimitado
+            var isAdminUser = currentUser.nombre === 'Admin' || _isAdminSession;
+            if (isAdminUser) {
+                window.open(url, '_blank');
+                return;
+            }
             // Verificar créditos en memoria primero (rápido)
             var credLocal = window.creditosUsuario || 0;
             if (credLocal < 1) {
@@ -766,7 +773,8 @@
 
         function handleDashboardService(icon, title, desc, link, price) {
             if (!currentUser) { showAuthFloatingModal(); return; }
-            if (window.tieneCreditos === false) { openAccess(); return; }
+            var isAdminUser = currentUser.nombre === 'Admin' || _isAdminSession;
+            if (!isAdminUser && window.tieneCreditos === false) { openAccess(); return; }
             const service = { icon: icon, title: title, desc: desc, link: link, price: price };
             if (service.link) {
                 cobrarCreditoYAbrir(service.link);
@@ -825,7 +833,8 @@
                     d.className = 'hook-card ' + (c.link ? 'hook-free' : 'hook-paid');
                     d.onclick = async () => {
                         if (!currentUser) { showAuthFloatingModal(); return; }
-                        if (window.tieneCreditos === false) { openAccess(); return; }
+                        var isAdminUser = currentUser.nombre === 'Admin' || _isAdminSession;
+                        if (!isAdminUser && window.tieneCreditos === false) { openAccess(); return; }
 
                         if (c.action === 'regiones') {
                             setTimeout(function() { setDashTab('REGIONES', null); }, 300);
