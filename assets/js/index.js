@@ -362,15 +362,23 @@
                     currentUser = { email: match.datos.email, nombre: match.datos.nombre || 'Usuario', whatsapp: match.datos.whatsapp || '' };
                     guardarSesion(currentUser);
 
-                    // Leer créditos
-                    try {
-                        var sRes = await window.sb.from('saldos').select('creditos, plataforma_activa').eq('email', email).single();
-                        if (sRes.data) {
-                            window.plataformaActiva = sRes.data.plataforma_activa || false;
-                            window.creditosUsuario = sRes.data.creditos || 0;
-                            window.tieneCreditos = window.creditosUsuario > 0;
-                        }
-                    } catch(e) {}
+                    // Leer créditos (solo si NO es admin)
+                    var isAdminUser = currentUser.nombre === 'Admin' || (typeof _isAdminSession !== 'undefined' && _isAdminSession);
+                    if (!isAdminUser) {
+                        try {
+                            var sRes = await window.sb.from('saldos').select('creditos, plataforma_activa').eq('email', email).single();
+                            if (sRes.data) {
+                                window.plataformaActiva = sRes.data.plataforma_activa || false;
+                                window.creditosUsuario = sRes.data.creditos || 0;
+                                window.tieneCreditos = window.creditosUsuario > 0;
+                            }
+                        } catch(e) {}
+                    } else {
+                        // Admin: mantener créditos ilimitados
+                        window.plataformaActiva = true;
+                        window.creditosUsuario = Infinity;
+                        window.tieneCreditos = true;
+                    }
 
                     document.getElementById('authFloatingModal').style.display = 'none';
                     hideLoginScreen();
