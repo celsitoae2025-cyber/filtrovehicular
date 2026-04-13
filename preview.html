@@ -3400,7 +3400,7 @@
           var regData = { placa: 'REGISTRO_' + ts, timestamp: ts, status: 'approved', isRegistro: true, email: email, pass: pass, nombre: name, whatsapp: wpp };
           await sb.from('solicitudes').upsert({ placa: 'REGISTRO_' + ts, datos: regData, updated_at: new Date() });
 
-          // Crear saldo con 5 créditos
+          // Crear saldo con 0 créditos
           var existSaldo = await sb.from('saldos').select('email').eq('email', email).maybeSingle();
           if (!existSaldo.data) {
             await sb.from('saldos').insert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() });
