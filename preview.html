@@ -5985,12 +5985,19 @@
     }
     updateSidebarUser();
 
-    // WhatsApp float: actualizar href con datos del usuario antes de navegar
-    document.getElementById('waFloatBtn').addEventListener('click', function() {
-      var name = currentUser.name || 'cliente';
-      var msg = encodeURIComponent('Hola, soy ' + name + ' y necesito ayuda con Filtro Vehicular+. Mi cuenta es: ' + (currentUser.email || '') + '.');
-      this.href = 'https://wa.me/51932465820?text=' + msg;
-    });
+    // WhatsApp float: actualizar href dinámicamente
+    function actualizarWaHref() {
+      var btn = document.getElementById('waFloatBtn');
+      if (!btn) return;
+      var parts = ['Hola, necesito ayuda con Filtro Vehicular+.'];
+      if (currentUser.name) parts.push(' Soy ' + currentUser.name + '.');
+      if (currentUser.email) parts.push(' Mi cuenta: ' + currentUser.email + '.');
+      btn.href = 'https://wa.me/51932465820?text=' + encodeURIComponent(parts.join(''));
+    }
+    actualizarWaHref();
+    // Re-actualizar después del login
+    var _origUpdateUserUI = updateUserUI;
+    updateUserUI = function() { _origUpdateUserUI(); actualizarWaHref(); };
   </script>
 
   <!-- Botón flotante WhatsApp -->
