@@ -3052,7 +3052,8 @@
         e.preventDefault();
         const tab = btn.dataset.tab;
         var required = tabRequiredPlan[tab];
-        if (required && !isAdmin() && (planLevel[currentUser.plan] || 0) < (planLevel[required] || 0)) {
+        var hasCredits = isAdmin() || currentUser.credits > 0;
+        if (required && !hasCredits && (planLevel[currentUser.plan] || 0) < (planLevel[required] || 0)) {
           var planNames = { standard: 'Est\u00e1ndar', advanced: 'Avanzado', premium: 'Premium' };
           showUpgradeModal(
             'Acceso restringido',
@@ -3671,7 +3672,9 @@
       var planLevel = { free: 0, standard: 1, advanced: 2, premium: 3 };
       var planNames = { standard: 'Est\u00e1ndar', advanced: 'Avanzado', premium: 'Premium' };
 
-      if (planLevel[currentUser.plan] < planLevel[required]) {
+      // Si el usuario tiene créditos (cargados por admin o plan), puede acceder
+      var hasCredits = isAdmin() || currentUser.credits > 0;
+      if (!hasCredits && planLevel[currentUser.plan] < planLevel[required]) {
         showUpgradeModal(
           'Plan requerido',
           'Este servicio requiere el plan ' + planNames[required] + ' para funcionar.',
@@ -4552,7 +4555,8 @@
           </div>
         </div>`;
       function doQuery() {
-        if (!isAdmin() && (planLevel[currentUser.plan] || 0) < (planLevel['standard'] || 0)) {
+        var hasCreditsQ = isAdmin() || currentUser.credits > 0;
+        if (!hasCreditsQ && (planLevel[currentUser.plan] || 0) < (planLevel['standard'] || 0)) {
           showUpgradeModal('Plan requerido', 'Necesitas el plan Est\u00e1ndar para realizar consultas vehiculares.', 'standard');
           return;
         }
@@ -4574,7 +4578,8 @@
     document.addEventListener('click', e => {
       const card = e.target.closest('.card[data-item]');
       if (!card) return;
-      if (!isAdmin() && (planLevel[currentUser.plan] || 0) < planLevel['standard']) {
+      var hasCreditsC = isAdmin() || currentUser.credits > 0;
+      if (!hasCreditsC && (planLevel[currentUser.plan] || 0) < planLevel['standard']) {
         showUpgradeModal('Acceso restringido', 'Necesitas el plan Est\u00e1ndar para acceder a consultas vehiculares.', 'standard');
         return;
       }
