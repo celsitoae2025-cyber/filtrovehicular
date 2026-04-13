@@ -5120,6 +5120,7 @@
       const hist = getQueryHistory();
       const hoy = new Date().toISOString().slice(0, 10);
       const mes = new Date().toISOString().slice(0, 7);
+      const adminUser = isAdmin();
 
       // Últimos 7 días
       const dayLabels = ['L','M','X','J','V','S','D'];
@@ -5132,10 +5133,11 @@
       const maxVal = Math.max(1, ...weekData.map(d => d.val));
 
       // Créditos
-      const creditosUsados = hist.reduce((s, q) => s + (q.creditos || 0), 0);
-      const creditosRestantes = currentUser.credits || 0;
-      const creditosTotal = creditosUsados + creditosRestantes;
-      const pct = creditosTotal > 0 ? Math.round((creditosUsados / creditosTotal) * 100) : 0;
+      const creditosUsados = hist.reduce((s, q) => s + (Number(q.creditos) || 0), 0);
+      const creditosRestantes = adminUser ? '\u221e' : (currentUser.credits || 0);
+      const creditosRestantesNum = adminUser ? 0 : (currentUser.credits || 0);
+      const creditosTotal = creditosUsados + creditosRestantesNum;
+      const pct = adminUser ? 0 : (creditosTotal > 0 ? Math.round((creditosUsados / creditosTotal) * 100) : 0);
       const circ = 2 * Math.PI * 38;
       const offset = circ * (1 - pct / 100);
 
@@ -5189,8 +5191,8 @@
                 stroke-linecap="round" transform="rotate(-90 50 50)"/>
             </svg>
             <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
-              <div style="font-size:1.15rem;font-weight:600;color:#1a1a1a;line-height:1">${pct}%</div>
-              <div style="font-size:0.58rem;font-weight:500;color:#bbb;margin-top:2px">uso</div>
+              <div style="font-size:1.15rem;font-weight:600;color:#1a1a1a;line-height:1">${adminUser ? '\u221e' : pct + '%'}</div>
+              <div style="font-size:0.58rem;font-weight:500;color:#bbb;margin-top:2px">${adminUser ? 'admin' : 'uso'}</div>
             </div>
           </div>
           <div class="stat-side">
@@ -5199,7 +5201,7 @@
           </div>
         </div>
         <div class="stat-pills">
-          <div class="stat-pill"><div class="stat-pill-num">${creditosUsados}</div><div class="stat-pill-lbl">Créditos usados</div></div>
+          <div class="stat-pill"><div class="stat-pill-num">${adminUser ? '\u221e' : creditosUsados}</div><div class="stat-pill-lbl">Cr\u00e9ditos usados</div></div>
           <div class="stat-pill"><div class="stat-pill-num">${creditosRestantes}</div><div class="stat-pill-lbl">Restantes</div></div>
         </div>
         <div class="stat-chart-lbl">Actividad — últimos 7 días</div>
@@ -5228,7 +5230,7 @@
             <div>
               <div style="font-weight:700;font-size:0.9rem">${cfgName}</div>
               <div style="font-size:0.75rem;color:var(--text-muted)">${cfgEmail}</div>
-              <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px">Plan ${cfgPlan} &middot; ${currentUser.credits} créditos</div>
+              <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px">Plan ${cfgPlan} &middot; ${isAdmin() ? '\u221e' : currentUser.credits} cr\u00e9ditos</div>
             </div>
           </div>
 
