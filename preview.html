@@ -2717,11 +2717,9 @@
       <div class="sb-user-info">
         <div class="sb-user-name" id="sbUserName">Usuario</div>
         <div class="sb-user-plan" id="sbUserPlan">Plan Free · 0 créditos</div>
+        <div id="sbUserEmail" style="font-size:0.68rem;color:#bbb;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px"></div>
       </div>
     </div>
-
-    <!-- Email -->
-    <div id="sbUserEmail" style="padding:0 14px 0;font-size:0.7rem;color:#999;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
 
     <!-- Acciones rápidas -->
     <div class="sb-quick">
@@ -3269,9 +3267,9 @@
         el.innerHTML = '<div style="padding:8px 14px;font-size:0.7rem;color:#bbb">Sin consultas recientes</div>';
         return;
       }
-      el.innerHTML = h.map(function(q) {
+      el.innerHTML = h.map(function(q, idx) {
         var label = (q.valor || '').substring(0, 15) + ' \u00b7 ' + (q.servicio || '');
-        return '<button type="button" class="sb-recent-item">' + label + '</button>';
+        return '<button type="button" class="sb-recent-item" data-hist-idx="' + idx + '">' + label + '</button>';
       }).join('');
     }
     function updateEstadisticas() {
@@ -5311,44 +5309,41 @@
     });
 
     // ---------- Recent items ----------
-    const recentMeta = {
-      'Placa ABC-123 · SUNARP': { icon:'ph-car-profile', servicio:'SUNARP – Propiedad vehicular', resultado:'Titular: Juan Pérez · Toyota Corolla 2019', creditos:2, estado:'Completado' },
-      'DNI 74851236 · RENIEC': { icon:'ph-identification-card', servicio:'RENIEC – Identidad', resultado:'Nombre: María García Loza · DNI activo', creditos:1, estado:'Completado' },
-      'Placa XYZ-789 · SAT Lima': { icon:'ph-currency-circle-dollar', servicio:'SAT Lima – Multas', resultado:'2 papeletas pendientes · S/ 708.00', creditos:2, estado:'Pendiente' },
-      'Placa MNO-456 · SOAT': { icon:'ph-shield-check', servicio:'SOAT – Vigencia', resultado:'SOAT vigente hasta: 12 May 2026', creditos:1, estado:'Completado' },
-      'Multas pendientes · Lima': { icon:'ph-warning-diamond', servicio:'SAT Lima – Multas', resultado:'3 infracciones · S/ 1,062.00 deuda', creditos:2, estado:'Completado' },
-    };
-
-    document.querySelectorAll('.sb-recent-item').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const text = btn.textContent.trim();
-        const meta = recentMeta[text] || { icon:'ph-clock', servicio: text, resultado:'Consulta registrada', creditos:1, estado:'Completado' };
-        openSbModal(meta.icon, text, `
-          <div style="background:var(--bg);border-radius:12px;padding:16px;margin-bottom:16px">
-            <div style="font-size:0.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px">Servicio consultado</div>
-            <div style="font-size:0.9rem;font-weight:700;margin-bottom:2px">${meta.servicio}</div>
-            <div style="font-size:0.78rem;color:var(--text-secondary)">${meta.resultado}</div>
+    document.getElementById('sbRecentBlock').addEventListener('click', function(e) {
+      const btn = e.target.closest('.sb-recent-item');
+      if (!btn) return;
+      const idx = parseInt(btn.getAttribute('data-hist-idx') || '0');
+      const hist = getQueryHistory();
+      const q = hist[idx] || {};
+      const servicio = q.servicio || btn.textContent.trim();
+      const valor = q.valor || '';
+      const creditos = Number(q.creditos) || 0;
+      const fecha = q.fecha ? new Date(q.fecha).toLocaleDateString('es-PE', {day:'2-digit',month:'short',year:'numeric'}) : 'Hoy';
+      const creditDisplay = isAdmin() ? '\u221e' : creditos;
+      openSbModal('ph-clock', servicio, `
+        <div style="background:var(--bg);border-radius:12px;padding:16px;margin-bottom:16px">
+          <div style="font-size:0.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px">Servicio consultado</div>
+          <div style="font-size:0.9rem;font-weight:700;margin-bottom:2px">${servicio}</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary)">${valor ? 'Búsqueda: ' + valor : 'Consulta registrada'}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+          <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:1.1rem;font-weight:800">${creditDisplay}</div>
+            <div style="font-size:0.68rem;color:var(--text-muted)">créditos</div>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
-            <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center">
-              <div style="font-size:1.1rem;font-weight:800">${meta.creditos}</div>
-              <div style="font-size:0.68rem;color:var(--text-muted)">créditos</div>
-            </div>
-            <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center">
-              <div style="font-size:0.78rem;font-weight:700">${meta.estado}</div>
-              <div style="font-size:0.68rem;color:var(--text-muted)">estado</div>
-            </div>
-            <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center">
-              <div style="font-size:0.78rem;font-weight:700">Hoy</div>
-              <div style="font-size:0.68rem;color:var(--text-muted)">fecha</div>
-            </div>
+          <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:0.78rem;font-weight:700">Completado</div>
+            <div style="font-size:0.68rem;color:var(--text-muted)">estado</div>
           </div>
-          <div style="display:flex;gap:8px">
-            <button class="dl-download-btn" style="margin-top:0;flex:1" onclick="showToast('<i class=\'ph ph-download-simple\' style=\'font-size:16px\'></i> Descargando...'); closeSbModal();"><i class="ph ph-download-simple" style="font-size:15px"></i> Descargar</button>
-            <button class="logout-cancel" style="flex:1" onclick="closeSbModal()">Cerrar</button>
+          <div style="background:var(--bg);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:0.78rem;font-weight:700">${fecha}</div>
+            <div style="font-size:0.68rem;color:var(--text-muted)">fecha</div>
           </div>
-        `);
-      });
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="logout-cancel" style="flex:1" onclick="closeSbModal()">Cerrar</button>
+        </div>
+      `);
     });
 
     // ---------- 7. PANEL ADMIN ----------
