@@ -2264,6 +2264,39 @@
     .mf-banner-sub { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
     .mf-banner i { font-size: 24px; }
 
+    /* WhatsApp floating button */
+    .wa-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 450;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #25d366;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 13px 20px 13px 16px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+    }
+    .wa-float:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(37,211,102,0.55);
+    }
+    .wa-float i { font-size: 22px; }
+    .wa-float-label { white-space: nowrap; }
+    @media (max-width: 600px) {
+      .wa-float { bottom: 16px; right: 16px; padding: 14px; border-radius: 50%; }
+      .wa-float-label { display: none; }
+    }
+
     /* Auth modal */
     .auth-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:600;align-items:center;justify-content:center;padding:20px; }
     .auth-overlay.active { display:flex; }
@@ -5953,6 +5986,20 @@
       if (nameEl) nameEl.textContent = currentUser.name || 'Usuario';
     }
     updateSidebarUser();
+
+    // WhatsApp float: ocultar en modales activos
+    document.getElementById('waFloatBtn').addEventListener('click', function() {
+      var name = currentUser.name || 'cliente';
+      var msg = encodeURIComponent('Hola, soy ' + name + ' y necesito ayuda con Filtro Vehicular+. Mi cuenta es: ' + (currentUser.email || '') + '.');
+      window.open('https://wa.me/51932465820?text=' + msg, '_blank');
+    });
   </script>
+
+  <!-- Botón flotante WhatsApp -->
+  <a id="waFloatBtn" class="wa-float" href="#" onclick="return false;" aria-label="Contactar por WhatsApp">
+    <i class="ph-fill ph-whatsapp-logo"></i>
+    <span class="wa-float-label">¿Necesitas ayuda?</span>
+  </a>
+
 </body>
 </html>
