@@ -3451,6 +3451,24 @@
       } catch (e) {}
     }
 
+    async function descontarCreditos(cantidad) {
+      if (isAdmin() || !cantidad || cantidad <= 0 || !currentUser.email) return;
+      var nuevos = Math.max(0, (currentUser.credits || 0) - cantidad);
+      currentUser.credits = nuevos;
+      // Actualizar plan según créditos restantes
+      if (nuevos >= 4000) currentUser.plan = 'premium';
+      else if (nuevos >= 2000) currentUser.plan = 'advanced';
+      else if (nuevos >= 800) currentUser.plan = 'standard';
+      else if (nuevos > 0) currentUser.plan = currentUser.plan || 'standard'; // mantener plan si quedan créditos
+      guardarSesion(currentUser);
+      updateUserUI();
+      try {
+        await sb.from('saldos').update({ creditos: nuevos }).eq('email', currentUser.email);
+      } catch (e) {
+        console.error('[Créditos] Error actualizando Supabase:', e);
+      }
+    }
+
     // ─── Modal resultado de pago MercadoPago ────────────────────
     function mostrarResultadoPago(status, paymentId, monto) {
       var overlay = document.createElement('div');
@@ -4189,9 +4207,10 @@
 
     function mostrarResultado(data, body, btn, esFacial, _queryInfo) {
       btn.disabled = false; btn.textContent = esFacial ? 'Analizar rostro' : 'Consultar';
-      // Trackear consulta exitosa
+      // Trackear consulta exitosa y descontar créditos
       if (data.ok && _queryInfo) {
         saveQuery(_queryInfo.servicio || '', _queryInfo.valor || '', _queryInfo.creditos || 0);
+        descontarCreditos(_queryInfo.creditos || 0);
       }
       if (!data.ok && data.error) {
         body.innerHTML = '<div class="c-result-hint" style="color:#c00">' + data.error + '</div>';
