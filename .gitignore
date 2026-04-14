@@ -1,12 +1,92 @@
+# ==========================================
 # Credenciales sensibles
+# ==========================================
 assets/js/intranet-access.js
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
 
+# ==========================================
+# Dependencias (cada workspace las regenera)
+# ==========================================
+node_modules/
+**/node_modules/
+
+# ==========================================
+# Build artifacts (no versionar compilados)
+# ==========================================
+backend/dist/
+frontend/dist/
+**/dist/
+**/build/
+*.tsbuildinfo
+
+# ==========================================
+# Logs y debug
+# ==========================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+pnpm-debug.log*
+
+# ==========================================
+# Caches
+# ==========================================
+.cache/
+.parcel-cache/
+.vite/
+.next/
+.nuxt/
+coverage/
+.nyc_output/
+
+# ==========================================
+# Editores e IDEs
+# ==========================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ==========================================
 # Archivos del sistema
+# ==========================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 desktop.ini
 
-# Archivos de desarrollo
+# ==========================================
+# Activos de diseño grandes
+# ==========================================
 *.psd
 *.ai
-node_modules
+*.sketch
+*.fig
+
+# ==========================================
+# Bridge de bots (sesiones y descargas locales)
+# ==========================================
+backend/bridge/session/
+backend/bridge/downloads/
+
+# ==========================================
+# Misc
+# ==========================================
+*.bak
+*.old
+*.tmp
+.DS_Store

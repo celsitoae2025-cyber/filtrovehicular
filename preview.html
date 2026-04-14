@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Filtro Vehicular+ | Portal de Consultas</title>
+  <!-- PWA: manifest + theme color para habilitar instalación -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1a1a1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Filtro Vehicular+" />
+  <link rel="apple-touch-icon" href="assets/media/logopwa.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -1053,7 +1060,12 @@
       .page-split { border: none !important; }
       .panel-left { border-right: none !important; border-left: none !important; border-top: none !important; }
       .tab-bar { display: block; }
-      #mobileMenuBtn { display: flex !important; }
+      /* En móvil, el avatar del header se reemplaza por la hamburguesa del
+         tab-bar. WhatsApp SÍ se mantiene visible como flotante para que el
+         cliente pueda contactar sin abrir el menú. */
+      .avatar-btn { display: none !important; }
+      /* El padding-bottom de 80px evita que el botón flotante de WA tape
+         el contenido en la esquina inferior. */
       .mobile-featured { display: block !important; padding-bottom: 80px !important; }
       /* Textos más grandes en móvil */
       /* Móvil: 2 tamaños elegantes - global */
@@ -2296,31 +2308,36 @@
     }
 
     /* Auth modal */
-    .auth-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:600;align-items:center;justify-content:center;padding:20px; }
+    .auth-overlay { display:none;position:fixed;inset:0;background:#eee5d0;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center;padding:20px;overflow-y:auto; }
     .auth-overlay.active { display:flex; }
-    .auth-modal { background:#fff;border-radius:20px;max-width:360px;width:100%;padding:0;position:relative;overflow:hidden; }
-    .auth-header { background:#f7f7f7;padding:28px 28px 20px;text-align:center; }
-    .auth-avatar { width:56px;height:56px;border-radius:50%;background:#303130;display:flex;align-items:center;justify-content:center;margin:0 auto 12px; }
-    .auth-avatar i { font-size:26px;color:#fff; }
-    .auth-title { font-size:1.05rem;font-weight:800;color:#1a1a1a;margin-bottom:2px; }
-    .auth-sub { font-size:0.72rem;color:#999; }
-    .auth-body { padding:20px 28px 24px; }
-    .auth-close { position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:#bbb;font-size:18px;z-index:1; }
-    .auth-label { font-size:0.68rem;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;display:block; }
-    .auth-input-wrap { display:flex;align-items:center;border:1px solid #e5e5e5;border-radius:10px;padding:0 12px;margin-bottom:12px;background:#fff; }
-    .auth-input-wrap:focus-within { border-color:#aaa; }
-    .auth-input-wrap i { font-size:15px;color:#bbb;flex-shrink:0; }
-    .auth-input { flex:1;padding:11px 10px;border:none;font-family:inherit;font-size:0.82rem;outline:none;color:#1a1a1a;background:transparent;box-sizing:border-box; }
-    .auth-input::placeholder { color:#ccc; }
-    .auth-btn { width:100%;padding:12px;background:#303130;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:0.85rem;font-weight:700;cursor:pointer;margin-bottom:8px;letter-spacing:0.3px; }
-    .auth-btn:disabled { background:#ccc;cursor:not-allowed; }
-    .auth-divider { display:flex;align-items:center;gap:10px;margin:12px 0;font-size:0.68rem;color:#ccc; }
-    .auth-divider::before,.auth-divider::after { content:'';flex:1;height:1px;background:#eee; }
-    .auth-google { width:100%;padding:11px;background:#fff;color:#303130;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.82rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px; }
-    .auth-google:hover { background:#f9f9f9; }
-    .auth-toggle { text-align:center;margin-top:14px;font-size:0.75rem;color:#999; }
+    /* ===== Auth modal estilo Anthropic (fondo crema) ===== */
+    .auth-wrapper { width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px;align-items:stretch; }
+    .auth-modal { background:#f5f0e4;border:1px solid #e6dec8;border-radius:22px;padding:22px 22px 18px;position:relative; }
+    .auth-title-area { text-align:center;margin-bottom:14px;padding:4px 20px 0; }
+    .auth-title { font-size:1.05rem;font-weight:700;color:#1a1a1a;margin-bottom:4px;letter-spacing:-0.2px; }
+    .auth-sub { font-size:0.76rem;color:#888; }
+    .auth-close { position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:transparent;border:none;cursor:pointer;color:#999;display:flex;align-items:center;justify-content:center;z-index:2; }
+    .auth-close:hover { background:rgba(0,0,0,0.06); }
+    .auth-close i { font-size:14px; }
+    .auth-input { width:100%;padding:13px 16px;border:1px solid #d9d0b8;border-radius:12px;font-family:inherit;font-size:0.88rem;color:#1a1a1a;background:#fff;box-sizing:border-box;outline:none;transition:border-color 0.15s; }
+    .auth-input:focus { border-color:#8a7e5e; }
+    .auth-input::placeholder { color:#b5a890; }
+    #authRegFields .auth-input, #authPassWrap .auth-input { margin-top:10px; }
+    .auth-btn { width:100%;padding:13px 16px;background:#1a1a1a;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:0.88rem;font-weight:600;cursor:pointer;margin-top:12px;letter-spacing:-0.1px;transition:opacity 0.15s; }
+    .auth-btn:hover { opacity:0.9; }
+    .auth-btn:disabled { opacity:0.5;cursor:not-allowed; }
+    .auth-or { text-align:center;margin:12px 0;font-size:0.8rem;color:#8a7e5e;font-weight:500; }
+    .auth-google { width:100%;padding:13px 16px;background:#fff;color:#1a1a1a;border:1px solid #d9d0b8;border-radius:12px;font-family:inherit;font-size:0.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:background 0.15s; }
+    .auth-google:hover { background:#faf6ed; }
+    .auth-policy { font-size:0.72rem;color:#8a7e5e;text-align:center;margin-top:14px;line-height:1.5;padding:0 6px; }
+    .auth-policy a { color:#1a1a1a;text-decoration:underline;font-weight:500; }
+    .auth-toggle { text-align:center;margin-top:14px;font-size:0.78rem;color:#8a7e5e; }
     .auth-toggle a { color:#1a1a1a;font-weight:600;cursor:pointer;text-decoration:none; }
-    .auth-error { font-size:0.72rem;color:#c00;text-align:center;margin-bottom:8px;display:none; }
+    .auth-toggle a:hover { text-decoration:underline; }
+    .auth-error { font-size:0.76rem;color:#c0392b;text-align:center;margin-top:10px;display:none;background:rgba(192,57,43,0.08);padding:8px 12px;border-radius:8px; }
+    .auth-install { width:100%;padding:13px 16px;background:#fff;color:#1a1a1a;border:1px solid #e6dec8;border-radius:14px;font-family:inherit;font-size:0.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:background 0.15s; }
+    .auth-install:hover { background:#faf6ed; }
+    .auth-install i { font-size:18px; }
 
     /* Mobile service modal */
     .c-mobile-modal-overlay {
@@ -2541,36 +2558,35 @@
                 <div class="mf-banner-title">+100 servicios disponibles</div>
                 <div class="mf-banner-sub">RENIEC, SUNARP, SUNAT, Delitos y m&aacute;s</div>
               </div>
-              <i class="ph ph-caret-right" style="font-size:14px;color:rgba(255,255,255,0.4)"></i>
             </div>
             <div style="font-size:0.78rem;font-weight:700;color:#1a1a1a;margin-bottom:10px;padding:0 8px">Servicios destacados</div>
             <div class="mobile-featured-grid">
-              <div class="mf-card">
+              <div class="mf-card" data-tab="consultas" role="button" tabindex="0" style="cursor:pointer">
                 <i class="ph-duotone ph-scan" style="font-size:24px;color:#303130"></i>
                 <div class="mf-title">Reconocimiento Facial</div>
                 <div class="mf-sub">Identifica personas por foto</div>
               </div>
-              <div class="mf-card">
+              <div class="mf-card" data-tab="consultas" role="button" tabindex="0" style="cursor:pointer">
                 <i class="ph-duotone ph-chart-pie-slice" style="font-size:24px;color:#303130"></i>
                 <div class="mf-title">Sentinel</div>
                 <div class="mf-sub">Reporte financiero completo</div>
               </div>
-              <div class="mf-card">
+              <div class="mf-card" data-tab="consultas" role="button" tabindex="0" style="cursor:pointer">
                 <i class="ph-duotone ph-identification-card" style="font-size:24px;color:#303130"></i>
                 <div class="mf-title">RENIEC Tiempo Real</div>
                 <div class="mf-sub">Datos actualizados al instante</div>
               </div>
-              <div class="mf-card">
+              <div class="mf-card" data-tab="consultas" role="button" tabindex="0" style="cursor:pointer">
                 <i class="ph-duotone ph-shield-warning" style="font-size:24px;color:#303130"></i>
                 <div class="mf-title">Denuncias PNP</div>
                 <div class="mf-sub">Consulta denuncias policiales</div>
               </div>
-              <div class="mf-card">
+              <div class="mf-card" data-tab="consultas" role="button" tabindex="0" style="cursor:pointer">
                 <i class="ph-duotone ph-credit-card" style="font-size:24px;color:#303130"></i>
                 <div class="mf-title">TIVE Vehicular</div>
                 <div class="mf-sub">Tarjeta de propiedad PDF</div>
               </div>
-              <div class="mf-card">
+              <div class="mf-card" data-tab="consultas" role="button" tabindex="0" style="cursor:pointer">
                 <i class="ph-duotone ph-tree-structure" style="font-size:24px;color:#303130"></i>
                 <div class="mf-title">&Aacute;rbol Geneal&oacute;gico</div>
                 <div class="mf-sub">Familiares y v&iacute;nculos</div>
@@ -2785,6 +2801,7 @@
     <!-- Pie de sidebar -->
     <div class="sb-bottom">
       <button class="sb-bottom-item" id="btnCfg"><i class="ph ph-gear"></i><span>Configuración</span><span class="sb-shortcut">Ctrl ,</span></button>
+      <button class="sb-bottom-item" id="sbInstallBtn" style="display:none"><i class="ph ph-download-simple"></i><span>Instalar aplicaci&oacute;n</span></button>
       <button class="sb-bottom-item" id="btnAyuda"><i class="ph ph-headset"></i><span>Obtener ayuda</span></button>
 
       <button class="sb-bottom-item" id="btnMasInfo"><i class="ph ph-info"></i><span>Más información</span></button>
@@ -2811,35 +2828,55 @@
 
   <!-- ========== AUTH MODAL ========== -->
   <div class="auth-overlay" id="authOverlay">
-    <div class="auth-modal">
-      <button class="auth-close" id="authClose"><i class="ph ph-x"></i></button>
-      <div class="auth-header">
-        <div class="auth-avatar"><i class="ph ph-user"></i></div>
-        <div class="auth-title" id="authTitle">Iniciar sesi&oacute;n</div>
-        <div class="auth-sub" id="authSub">Ingresa tus datos para continuar</div>
-      </div>
-      <div class="auth-body">
-        <div class="auth-error" id="authError"></div>
-        <div id="authRegFields" style="display:none">
-          <label class="auth-label">Nombre completo</label>
-          <div class="auth-input-wrap"><i class="ph ph-user"></i><input class="auth-input" id="authName" placeholder="Tu nombre" /></div>
-          <label class="auth-label">WhatsApp</label>
-          <div class="auth-input-wrap"><i class="ph ph-phone"></i><input class="auth-input" id="authWhatsapp" placeholder="9 d&iacute;gitos" maxlength="9" /></div>
+    <div class="auth-wrapper">
+      <!-- Card principal -->
+      <div class="auth-modal">
+        <button class="auth-close" id="authClose" aria-label="Cerrar"><i class="ph ph-x"></i></button>
+        <div class="auth-title-area">
+          <div class="auth-title" id="authTitle">Iniciar sesi&oacute;n</div>
+          <div class="auth-sub" id="authSub">Accede a tus consultas</div>
         </div>
-        <label class="auth-label">Correo electr&oacute;nico</label>
-        <div class="auth-input-wrap"><i class="ph ph-envelope-simple"></i><input class="auth-input" id="authEmail" placeholder="tu@correo.com" type="email" /></div>
-        <label class="auth-label">Contrase&ntilde;a</label>
-        <div class="auth-input-wrap"><i class="ph ph-lock-simple"></i><input class="auth-input" id="authPass" placeholder="M&iacute;nimo 6 caracteres" type="password" /></div>
-        <button class="auth-btn" id="authSubmit">INICIAR SESI&Oacute;N</button>
-        <div class="auth-divider">o</div>
+
+        <!-- Google -->
         <button class="auth-google" id="authGoogle">
-          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
           Continuar con Google
         </button>
+
+        <div class="auth-or">o</div>
+
+        <!-- Email siempre visible -->
+        <input class="auth-input" id="authEmail" placeholder="Ingresa tu correo electr&oacute;nico" type="email" autocomplete="email" />
+
+        <!-- Campos de registro (nombre + whatsapp) ocultos hasta que toggle a registro -->
+        <div id="authRegFields" style="display:none">
+          <input class="auth-input" id="authName" placeholder="Nombre completo" autocomplete="name" />
+          <input class="auth-input" id="authWhatsapp" placeholder="WhatsApp (9 d&iacute;gitos)" maxlength="9" autocomplete="tel" />
+        </div>
+
+        <!-- Password: oculto inicialmente, se muestra tras "Continuar con correo" -->
+        <div id="authPassWrap" style="display:none">
+          <input class="auth-input" id="authPass" placeholder="Tu contrase&ntilde;a" type="password" autocomplete="current-password" />
+        </div>
+
+        <div class="auth-error" id="authError"></div>
+
+        <button class="auth-btn" id="authSubmit">Continuar con correo electr&oacute;nico</button>
+
+        <div class="auth-policy">
+          Al continuar, aceptas nuestros <a href="#" onclick="return false">T&eacute;rminos</a> y <a href="#" onclick="return false">Pol&iacute;tica de Privacidad</a>.
+        </div>
+
         <div class="auth-toggle" id="authToggle">
           &iquest;No tienes cuenta? <a id="authToggleLink">Reg&iacute;strate gratis</a>
         </div>
       </div>
+
+      <!-- Instalar app (solo si el navegador lo permite) -->
+      <button class="auth-install" id="authInstall" style="display:none">
+        <i class="ph ph-device-mobile"></i>
+        <span>Instalar aplicaci&oacute;n</span>
+      </button>
     </div>
   </div>
 
@@ -2851,6 +2888,9 @@
   <!-- ========== MOBILE TAB BAR ========== -->
   <div class="tab-bar">
     <div style="display:flex;align-items:center;gap:8px">
+      <button id="tabMenuBtn" aria-label="Abrir menú" style="flex-shrink:0;width:40px;height:40px;border-radius:10px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;color:#303130">
+        <i class="ph ph-list" style="font-size:22px"></i>
+      </button>
       <div class="tab-bar-inner" style="flex:1">
         <button class="tab-btn active" data-tab="vehiculos">
           <i class="ph-duotone ph-car-profile" style="font-size:20px"></i>
@@ -2864,7 +2904,6 @@
     </div>
   </div>
   <!-- Mobile user button fixed bottom right -->
-  <button id="mobileMenuBtn" style="display:none;position:fixed;bottom:20px;right:20px;width:48px;height:48px;border-radius:50%;background:#303130;border:none;cursor:pointer;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 12px rgba(0,0,0,0.15)"><i class="ph ph-user" style="font-size:20px;color:#fff"></i></button>
 
   <!-- ========== DATA & LOGIC ========== -->
   <script>
@@ -3124,11 +3163,24 @@
       document.body.style.overflow = '';
     }
 
-    avatarBtn.addEventListener('click', openSidebar);
+    // Toggle: si el sidebar ya está abierto, lo cierra; si no, lo abre.
+    // Envolver en función asegura que al click se llame a la versión
+    // ACTUAL de openSidebar (más adelante se redefine para auth).
+    // Nombre distinto de toggleSidebar (que se usa abajo para el
+    // colapsado desktop).
+    function toggleSidebarOpenClose() {
+      if (sidebar.classList.contains('active')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    }
+    avatarBtn.addEventListener('click', toggleSidebarOpenClose);
     closeBtn.addEventListener('click', closeSidebar);
-    var mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', openSidebar);
     overlay.addEventListener('click', closeSidebar);
+    // Hamburguesa en el tab-bar móvil (único punto de entrada al sidebar)
+    var tabMenuBtn = document.getElementById('tabMenuBtn');
+    if (tabMenuBtn) tabMenuBtn.addEventListener('click', toggleSidebarOpenClose);
 
     // Sidebar collapse/expand toggle (desktop)
     const toggleBtn = document.getElementById('sidebarToggle');
@@ -3328,18 +3380,30 @@
       setTimeout(function() { showAuthModal(); }, 300);
     }
 
+    // Paso del flujo: 1 = email (inicio), 2 = password + registro (segundo paso)
+    var _authStep = 1;
+
+    function resetAuthToStep1() {
+      _authStep = 1;
+      document.getElementById('authPassWrap').style.display = 'none';
+      document.getElementById('authSubmit').textContent = 'Continuar con correo electr\u00f3nico';
+      // En paso 1, el email se ve y los campos de registro también (si modo registro)
+    }
+
     function showAuthModal() {
       _authMode = 'login';
+      resetAuthToStep1();
       document.getElementById('authOverlay').classList.add('active');
       document.getElementById('authClose').style.display = currentUser.email ? '' : 'none';
       document.getElementById('authTitle').textContent = 'Iniciar sesi\u00f3n';
-      document.getElementById('authSub').textContent = 'Ingresa tus datos para continuar';
-      document.getElementById('authSubmit').textContent = 'INICIAR SESI\u00d3N';
+      document.getElementById('authSub').textContent = 'Accede a tus consultas';
       document.getElementById('authRegFields').style.display = 'none';
       document.getElementById('authToggle').innerHTML = '\u00bfNo tienes cuenta? <a id="authToggleLink">Reg\u00edstrate gratis</a>';
       document.getElementById('authError').style.display = 'none';
       document.getElementById('authEmail').value = '';
       document.getElementById('authPass').value = '';
+      var n = document.getElementById('authName'); if (n) n.value = '';
+      var w = document.getElementById('authWhatsapp'); if (w) w.value = '';
       document.getElementById('authToggleLink').addEventListener('click', toggleAuthMode);
     }
 
@@ -3352,19 +3416,36 @@
         _authMode = 'register';
         document.getElementById('authTitle').textContent = 'Crear cuenta';
         document.getElementById('authSub').textContent = 'Reg\u00edstrate para acceder a la plataforma';
-        document.getElementById('authSubmit').textContent = 'REGISTRARME';
         document.getElementById('authRegFields').style.display = 'block';
         document.getElementById('authToggle').innerHTML = '\u00bfYa tienes cuenta? <a id="authToggleLink">Inicia sesi\u00f3n</a>';
       } else {
         _authMode = 'login';
         document.getElementById('authTitle').textContent = 'Iniciar sesi\u00f3n';
-        document.getElementById('authSub').textContent = 'Ingresa tus datos para continuar';
-        document.getElementById('authSubmit').textContent = 'INICIAR SESI\u00d3N';
+        document.getElementById('authSub').textContent = 'Accede a tus consultas';
         document.getElementById('authRegFields').style.display = 'none';
         document.getElementById('authToggle').innerHTML = '\u00bfNo tienes cuenta? <a id="authToggleLink">Reg\u00edstrate gratis</a>';
       }
+      resetAuthToStep1();
       document.getElementById('authError').style.display = 'none';
       document.getElementById('authToggleLink').addEventListener('click', toggleAuthMode);
+    }
+
+    // Validación simple de email en paso 1
+    function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+    function advanceToStep2() {
+      var email = document.getElementById('authEmail').value.trim().toLowerCase();
+      if (!email || !isValidEmail(email)) {
+        showAuthError('Ingresa un correo v\u00e1lido');
+        return;
+      }
+      _authStep = 2;
+      document.getElementById('authError').style.display = 'none';
+      document.getElementById('authPassWrap').style.display = 'block';
+      document.getElementById('authSubmit').textContent = _authMode === 'register' ? 'Crear cuenta' : 'Iniciar sesi\u00f3n';
+      setTimeout(function() {
+        var p = document.getElementById('authPass'); if (p) p.focus();
+      }, 50);
     }
 
     function showAuthError(msg) {
@@ -3388,12 +3469,12 @@
         if (_authMode === 'register') {
           var name = document.getElementById('authName').value.trim();
           var wpp = document.getElementById('authWhatsapp').value.trim();
-          if (!name) { showAuthError('Ingresa tu nombre'); btn.disabled = false; btn.textContent = 'Registrarme'; return; }
-          if (!wpp || wpp.length !== 9 || wpp[0] !== '9') { showAuthError('WhatsApp inv\u00e1lido (9 d\u00edgitos, empieza con 9)'); btn.disabled = false; btn.textContent = 'Registrarme'; return; }
+          if (!name) { showAuthError('Ingresa tu nombre'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
+          if (!wpp || wpp.length !== 9 || wpp[0] !== '9') { showAuthError('WhatsApp inv\u00e1lido (9 d\u00edgitos, empieza con 9)'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
 
           // Verificar que no existe
           var existRes = await sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%').eq('datos->>email', email).limit(1);
-          if (existRes.data && existRes.data.length > 0) { showAuthError('Ese correo ya est\u00e1 registrado'); btn.disabled = false; btn.textContent = 'Registrarme'; return; }
+          if (existRes.data && existRes.data.length > 0) { showAuthError('Ese correo ya est\u00e1 registrado'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
 
           // Crear registro
           var ts = Date.now();
@@ -3429,15 +3510,15 @@
             closeAuthModal();
             updateUserUI();
             showToast('Bienvenido Administrador');
-            btn.disabled = false; btn.textContent = 'INICIAR SESI\u00d3N';
+            btn.disabled = false; btn.textContent = 'Iniciar sesi\u00f3n';
             return;
           }
 
           var loginRes = await sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%').eq('datos->>email', email).limit(1);
-          if (!loginRes.data || loginRes.data.length === 0) { showAuthError('Correo no registrado'); btn.disabled = false; btn.textContent = 'INICIAR SESI\u00d3N'; return; }
+          if (!loginRes.data || loginRes.data.length === 0) { showAuthError('Correo no registrado'); btn.disabled = false; btn.textContent = 'Iniciar sesi\u00f3n'; return; }
 
           var userData = loginRes.data[0].datos;
-          if (userData.pass !== pass && userData.password !== pass) { showAuthError('Contrase\u00f1a incorrecta'); btn.disabled = false; btn.textContent = 'INICIAR SESI\u00d3N'; return; }
+          if (userData.pass !== pass && userData.password !== pass) { showAuthError('Contrase\u00f1a incorrecta'); btn.disabled = false; btn.textContent = 'Iniciar sesi\u00f3n'; return; }
 
           currentUser = { plan: 'free', credits: 0, name: userData.nombre || '', email: email };
           guardarSesion(currentUser);
@@ -3641,10 +3722,100 @@
     document.getElementById('authOverlay').addEventListener('click', function(e) {
       if (e.target === document.getElementById('authOverlay') && currentUser.email) closeAuthModal();
     });
-    document.getElementById('authSubmit').addEventListener('click', handleAuthSubmit);
+    // Flujo 2 pasos: paso 1 valida email y revela contraseña; paso 2 hace submit.
+    document.getElementById('authSubmit').addEventListener('click', function() {
+      if (_authStep === 1) advanceToStep2();
+      else handleAuthSubmit();
+    });
     document.getElementById('authGoogle').addEventListener('click', handleGoogleSignIn);
-    document.getElementById('authPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleAuthSubmit(); });
+    document.getElementById('authEmail').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); if (_authStep === 1) advanceToStep2(); }
+    });
+    document.getElementById('authPass').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleAuthSubmit();
+    });
     document.getElementById('authToggleLink').addEventListener('click', toggleAuthMode);
+
+    // ===== PWA: registrar service worker (necesario para install prompt) =====
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js').catch(function(err) {
+          console.warn('SW registration failed:', err);
+        });
+      });
+    }
+
+    // ===== PWA install prompt =====
+    var _deferredInstallPrompt = null;
+
+    function mostrarBotonesInstalar() {
+      var authBtn = document.getElementById('authInstall');
+      var sbBtn = document.getElementById('sbInstallBtn');
+      if (authBtn) authBtn.style.display = 'flex';
+      if (sbBtn) sbBtn.style.display = '';
+    }
+
+    function ocultarBotonesInstalar() {
+      var authBtn = document.getElementById('authInstall');
+      var sbBtn = document.getElementById('sbInstallBtn');
+      if (authBtn) authBtn.style.display = 'none';
+      if (sbBtn) sbBtn.style.display = 'none';
+    }
+
+    async function lanzarInstall() {
+      if (_deferredInstallPrompt) {
+        _deferredInstallPrompt.prompt();
+        try {
+          var choice = await _deferredInstallPrompt.userChoice;
+          if (choice && choice.outcome === 'accepted') ocultarBotonesInstalar();
+        } catch (_) {}
+        _deferredInstallPrompt = null;
+      } else {
+        // Fallback: iOS Safari u otros sin beforeinstallprompt
+        var esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        if (esIOS) {
+          alert('Para instalar: toca el icono Compartir y elige "Agregar a pantalla de inicio".');
+        } else {
+          alert('Abre el menú del navegador (⋮) y selecciona "Instalar app" o "Agregar a pantalla de inicio".');
+        }
+      }
+    }
+
+    // El evento puede dispararse cuando la página aún no terminó de cargar;
+    // lo capturamos siempre y revelamos los botones que ya existan.
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      _deferredInstallPrompt = e;
+      mostrarBotonesInstalar();
+    });
+
+    window.addEventListener('appinstalled', function() {
+      ocultarBotonesInstalar();
+      _deferredInstallPrompt = null;
+    });
+
+    // Si ya está corriendo como PWA instalada, no mostrar botones.
+    function estaInstalada() {
+      return window.matchMedia('(display-mode: standalone)').matches ||
+             window.navigator.standalone === true;
+    }
+
+    // Cablear ambos botones (el del modal de auth y el del sidebar)
+    document.addEventListener('DOMContentLoaded', function() {
+      var authBtn = document.getElementById('authInstall');
+      var sbBtn = document.getElementById('sbInstallBtn');
+      if (authBtn) authBtn.addEventListener('click', lanzarInstall);
+      if (sbBtn) sbBtn.addEventListener('click', lanzarInstall);
+
+      // En iOS, mostrar los botones para que el usuario pueda ver las
+      // instrucciones manuales (no hay beforeinstallprompt ahí).
+      var esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      if (esIOS && !estaInstalada()) {
+        mostrarBotonesInstalar();
+      }
+
+      if (estaInstalada()) ocultarBotonesInstalar();
+    });
 
     function canAccessConsultas() {
       return currentUser.plan === 'advanced' || currentUser.plan === 'premium';
@@ -5985,7 +6156,9 @@
     }
     updateSidebarUser();
 
-    // WhatsApp float: actualizar href dinámicamente
+    // WhatsApp: actualizar href dinámicamente con datos del usuario.
+    // El href inicial trae mensaje por defecto, así que aunque esta función
+    // corra antes de que el botón exista, el enlace sigue funcionando.
     function actualizarWaHref() {
       var btn = document.getElementById('waFloatBtn');
       if (!btn) return;
@@ -5994,14 +6167,22 @@
       if (currentUser.email) parts.push(' Mi cuenta: ' + currentUser.email + '.');
       btn.href = 'https://wa.me/51932465820?text=' + encodeURIComponent(parts.join(''));
     }
+    // Intentar de inmediato (por si el botón ya está en el DOM) y también
+    // cuando el documento termine de cargar (garantiza que lo encuentre).
     actualizarWaHref();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', actualizarWaHref);
+    } else {
+      // DOM ya listo pero el botón puede estar más abajo — reintento en el siguiente tick
+      setTimeout(actualizarWaHref, 0);
+    }
     // Re-actualizar después del login
     var _origUpdateUserUI = updateUserUI;
     updateUserUI = function() { _origUpdateUserUI(); actualizarWaHref(); };
   </script>
 
   <!-- Botón flotante WhatsApp -->
-  <a id="waFloatBtn" class="wa-float" href="https://wa.me/51932465820" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+  <a id="waFloatBtn" class="wa-float" href="https://wa.me/51932465820?text=Hola%2C%20necesito%20ayuda%20con%20Filtro%20Vehicular%2B." target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
     <span class="wa-float-label">¿Necesitas ayuda?</span>
   </a>
