@@ -6295,13 +6295,137 @@
           } catch (e) { c.innerHTML = '<div style="color:#c00;padding:20px;font-size:0.78rem">Error: ' + e.message + '</div>'; }
 
         } else if (adminTab === 'gestion') {
-          var h = '<div style="background:#fff;border-radius:14px;border:1px solid #e8e8e6;padding:18px;margin-bottom:14px">';
+          var h = '';
+
+          // ===== NUEVO: Activar cuenta por email (clientes que llegan por WhatsApp) =====
+          h += '<div style="background:#fff;border-radius:14px;border:1px solid #e8e8e6;padding:18px;margin-bottom:14px">';
+          h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">';
+          h += '<div style="width:28px;height:28px;background:#25d366;border-radius:8px;display:flex;align-items:center;justify-content:center"><i class="ph ph-envelope-open" style="font-size:14px;color:#fff"></i></div>';
+          h += '<div style="font-size:0.82rem;font-weight:700;color:#1a1a1a">Activar cuenta nueva por email</div>';
+          h += '</div>';
+          h += '<div style="font-size:0.68rem;color:#aaa;margin-bottom:14px;padding-left:38px">Para clientes que te contactaron por WhatsApp y necesitan acceso</div>';
+          h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
+          h += '<div style="grid-column:1/-1"><div style="font-size:0.62rem;color:#888;text-transform:uppercase;font-weight:600;margin-bottom:4px">Correo del cliente *</div><input id="admActEmail" type="email" placeholder="cliente@gmail.com" style="width:100%;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;outline:none;box-sizing:border-box" /></div>';
+          h += '<div><div style="font-size:0.62rem;color:#888;text-transform:uppercase;font-weight:600;margin-bottom:4px">Nombre completo *</div><input id="admActNombre" type="text" placeholder="Juan Pérez" style="width:100%;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;outline:none;box-sizing:border-box" /></div>';
+          h += '<div><div style="font-size:0.62rem;color:#888;text-transform:uppercase;font-weight:600;margin-bottom:4px">WhatsApp del cliente *</div><input id="admActWpp" type="tel" maxlength="9" placeholder="987654321" style="width:100%;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;outline:none;box-sizing:border-box" /></div>';
+          h += '<div><div style="font-size:0.62rem;color:#888;text-transform:uppercase;font-weight:600;margin-bottom:4px">Plan</div><select id="admActPlan" style="width:100%;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;outline:none;background:#fff;box-sizing:border-box">';
+          h += '<option value="free" data-credits="0">Free (0 créditos)</option>';
+          h += '<option value="advanced" data-credits="850" selected>Avanzado — S/42 (850 cr.)</option>';
+          h += '<option value="business" data-credits="2000">Business — S/84 (2000 cr.)</option>';
+          h += '<option value="premium" data-credits="4000">Profesional — S/140 (4000 cr.)</option>';
+          h += '</select></div>';
+          h += '<div><div style="font-size:0.62rem;color:#888;text-transform:uppercase;font-weight:600;margin-bottom:4px">Créditos</div><input id="admActCreditos" type="number" value="850" min="0" style="width:100%;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;outline:none;box-sizing:border-box" /></div>';
+          h += '<div style="grid-column:1/-1"><div style="font-size:0.62rem;color:#888;text-transform:uppercase;font-weight:600;margin-bottom:4px">Contraseña</div><div style="display:flex;gap:6px"><input id="admActPass" type="text" placeholder="Click Generar o escríbela" style="flex:1;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:monospace;font-size:0.78rem;outline:none;box-sizing:border-box" /><button id="admActGenerarPass" style="padding:10px 14px;background:#f4f4f2;color:#1a1a1a;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.72rem;font-weight:600;cursor:pointer;white-space:nowrap"><i class="ph ph-shuffle"></i> Generar</button></div></div>';
+          h += '</div>';
+          h += '<div id="admActFeedback" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:0.74rem;font-weight:600"></div>';
+          h += '<div style="margin-top:14px;display:flex;justify-content:flex-end;gap:8px"><button id="admActLimpiar" style="padding:10px 16px;background:#f4f4f2;color:#666;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Limpiar</button><button id="admActCrear" style="padding:10px 22px;background:#25d366;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:0.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px"><i class="ph ph-user-plus"></i> Crear cuenta</button></div>';
+          h += '<div id="admActResultado" style="margin-top:14px"></div>';
+          h += '</div>';
+
+          // ===== EXISTENTE: Buscar y gestionar usuario =====
+          h += '<div style="background:#fff;border-radius:14px;border:1px solid #e8e8e6;padding:18px;margin-bottom:14px">';
           h += '<div style="font-size:0.82rem;font-weight:700;color:#1a1a1a;margin-bottom:4px">Buscar y gestionar usuario</div>';
           h += '<div style="font-size:0.68rem;color:#aaa;margin-bottom:12px">Busca por email para activar, desactivar o recargar cr\u00e9ditos</div>';
           h += '<div style="display:flex;gap:8px"><input id="admGestEmail" placeholder="Email del usuario..." style="flex:1;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;outline:none" />';
           h += '<button id="admGestSearch" style="padding:10px 16px;background:#303130;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer">Buscar</button></div></div>';
           h += '<div id="admGestResult"></div>';
           c.innerHTML = h;
+
+          // ===== Handlers del nuevo formulario "Activar por email" =====
+          document.getElementById('admActPlan').addEventListener('change', function() {
+            var opt = this.options[this.selectedIndex];
+            var c = opt ? opt.getAttribute('data-credits') : '0';
+            document.getElementById('admActCreditos').value = c;
+          });
+
+          document.getElementById('admActGenerarPass').addEventListener('click', function() {
+            var chars = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            var p = '';
+            for (var i = 0; i < 8; i++) p += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('admActPass').value = p;
+          });
+
+          document.getElementById('admActLimpiar').addEventListener('click', function() {
+            ['admActEmail','admActNombre','admActWpp','admActPass'].forEach(function(id){ var el = document.getElementById(id); if (el) el.value = ''; });
+            document.getElementById('admActPlan').value = 'advanced';
+            document.getElementById('admActCreditos').value = '850';
+            var fb = document.getElementById('admActFeedback'); if (fb) fb.style.display = 'none';
+            document.getElementById('admActResultado').innerHTML = '';
+          });
+
+          function admActFeedback(msg, tipo) {
+            var fb = document.getElementById('admActFeedback');
+            if (!fb) return;
+            var bg = tipo === 'ok' ? '#dcfce7' : tipo === 'err' ? '#fee2e2' : '#fef3c7';
+            var color = tipo === 'ok' ? '#166534' : tipo === 'err' ? '#991b1b' : '#92400e';
+            fb.style.display = 'block';
+            fb.style.background = bg;
+            fb.style.color = color;
+            fb.textContent = msg;
+          }
+
+          document.getElementById('admActCrear').addEventListener('click', async function() {
+            var email = (document.getElementById('admActEmail').value || '').trim().toLowerCase();
+            var nombre = (document.getElementById('admActNombre').value || '').trim();
+            var wpp = (document.getElementById('admActWpp').value || '').trim();
+            var plan = document.getElementById('admActPlan').value;
+            var creditos = parseInt(document.getElementById('admActCreditos').value || '0', 10);
+            var pass = (document.getElementById('admActPass').value || '').trim();
+
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { admActFeedback('Email inv\u00e1lido.', 'err'); return; }
+            if (!nombre || nombre.length < 2) { admActFeedback('Ingresa el nombre completo.', 'err'); return; }
+            if (!wpp || wpp.length !== 9 || wpp[0] !== '9') { admActFeedback('WhatsApp inv\u00e1lido (9 d\u00edgitos, empieza con 9).', 'err'); return; }
+            if (!pass) { document.getElementById('admActGenerarPass').click(); pass = document.getElementById('admActPass').value; }
+            if (pass.length < 6) { admActFeedback('La clave debe tener al menos 6 caracteres.', 'err'); return; }
+            if (isNaN(creditos) || creditos < 0) { admActFeedback('Cr\u00e9ditos inv\u00e1lidos.', 'err'); return; }
+
+            var btn = this;
+            btn.disabled = true; btn.style.opacity = '0.6';
+            admActFeedback('Creando cuenta...', 'info');
+
+            try {
+              var existRes = await sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%').eq('datos->>email', email).limit(1);
+              if (existRes.data && existRes.data.length > 0) {
+                admActFeedback('Ya existe una cuenta con ese correo.', 'err');
+                btn.disabled = false; btn.style.opacity = '1';
+                return;
+              }
+
+              var ts = Date.now();
+              var regData = { placa: 'REGISTRO_' + ts, timestamp: ts, status: 'approved', isRegistro: true, email: email, pass: pass, nombre: nombre, whatsapp: wpp, plan: plan, createdByAdmin: true };
+              await sb.from('solicitudes').upsert({ placa: 'REGISTRO_' + ts, datos: regData, updated_at: new Date() });
+
+              var existSaldo = await sb.from('saldos').select('email').eq('email', email).maybeSingle();
+              if (!existSaldo.data) {
+                await sb.from('saldos').insert({ email: email, creditos: creditos, plataforma_activa: plan !== 'free', dashboard_activo: false, updated_at: new Date() });
+              } else {
+                await sb.from('saldos').update({ creditos: creditos, plataforma_activa: plan !== 'free', updated_at: new Date() }).eq('email', email);
+              }
+
+              var planNames = { free: 'Free', advanced: 'Avanzado (S/42)', business: 'Business (S/84)', premium: 'Profesional (S/140)' };
+              var planLabel = planNames[plan] || 'Free';
+              var msg = '\u00a1Bienvenido a Filtro Vehicular+! \uD83D\uDE97\n\nTu cuenta est\u00e1 activa con los siguientes datos:\n\n\uD83D\uDCE7 Email: ' + email + '\n\uD83D\uDD10 Clave: ' + pass + '\n\n\uD83D\uDD17 Ingresa aqu\u00ed: https://filtrovehicularperu.com\n\n\uD83D\uDD39 PLAN: ' + planLabel + ' \u2014 ' + creditos + ' cr\u00e9ditos disponibles\n\n\u00bfDudas? Resp\u00f3ndenos por aqu\u00ed mismo.';
+              var waUrl = 'https://wa.me/51' + wpp + '?text=' + encodeURIComponent(msg);
+
+              var safeEmail = email.replace(/'/g, "\\'");
+              var safePass = pass.replace(/'/g, "\\'");
+              document.getElementById('admActResultado').innerHTML =
+                '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:14px">' +
+                  '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div style="width:24px;height:24px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center"><i class="ph ph-check" style="color:#fff;font-size:14px"></i></div><div style="font-size:0.82rem;font-weight:700;color:#166534">Cuenta creada</div></div>' +
+                  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">' +
+                    '<div style="background:#fff;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5"><div style="font-size:0.6rem;text-transform:uppercase;color:#888;font-weight:600;margin-bottom:2px">Email</div><div style="font-size:0.74rem;color:#1a1a1a;font-family:monospace;word-break:break-all">' + email + '</div></div>' +
+                    '<div style="background:#fff;padding:8px 10px;border-radius:8px;border:1px solid #e5e5e5"><div style="font-size:0.6rem;text-transform:uppercase;color:#888;font-weight:600;margin-bottom:2px">Clave</div><div style="font-size:0.74rem;color:#1a1a1a;font-family:monospace">' + pass + '</div></div>' +
+                  '</div>' +
+                  '<a href="' + waUrl + '" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;background:#25d366;color:#fff;text-decoration:none;border-radius:10px;font-size:0.78rem;font-weight:700"><i class="ph ph-whatsapp-logo" style="font-size:16px"></i> Enviar credenciales por WhatsApp</a>' +
+                '</div>';
+              admActFeedback('\u2705 Cuenta creada. Cliente: ' + email, 'ok');
+            } catch (e) {
+              console.error('admActCrear error:', e);
+              admActFeedback('Error: ' + (e.message || e), 'err');
+            } finally {
+              btn.disabled = false; btn.style.opacity = '1';
+            }
+          });
 
           document.getElementById('admGestSearch').addEventListener('click', async function() {
             var email = document.getElementById('admGestEmail').value.trim().toLowerCase();
