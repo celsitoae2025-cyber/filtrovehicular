@@ -1013,7 +1013,14 @@
         max-height: none;
         overflow: visible;
       }
-      .sb-bottom { padding-bottom: 20px; }
+      /* Cerrar sesión y demás del footer van pegados a la esquina inferior.
+         margin-top:auto empuja el footer al fondo cuando hay espacio sobrante.
+         Si el contenido excede la pantalla, el scroll lo maneja el sidebar y
+         el footer queda al final natural del scroll. */
+      .sb-bottom {
+        margin-top: auto;
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+      }
     }
 
     /* ========== MOBILE TAB BAR ========== */
