@@ -2077,8 +2077,19 @@
       .v-cat-mobile-grid .card-title { font-size: 0.82rem; }
       .v-cat-mobile-grid .card-desc { font-size: 0.74rem; }
       /* Rotate arrow when open */
-      .v-cat-item.open .v-cat-btn .v-cat-arrow { transform: rotate(90deg); }
-      .v-cat-item.open .v-cat-btn { background: rgba(0,0,0,0.06); }
+      .v-cat-item.open .v-cat-btn .v-cat-arrow { transform: rotate(90deg); color: rgba(255,255,255,0.7) !important; }
+      /* Header oscuro + sticky para diferenciar la categoría expandida */
+      .v-cat-item.open .v-cat-btn {
+        background: #1a1a1a !important;
+        position: sticky;
+        top: 90px;           /* justo debajo del tab-bar (padding-top:90px del main) */
+        z-index: 5;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        border-radius: 14px;
+      }
+      .v-cat-item.open .v-cat-btn > i:first-child { color: #fff !important; }
+      .v-cat-item.open .v-cat-btn .v-cat-name { color: #fff !important; }
+      .v-cat-item.open .v-cat-btn .v-cat-count { color: rgba(255,255,255,0.6) !important; }
       .vehiculos-search-wrap { min-width: 0; }
     }
 
@@ -2287,8 +2298,19 @@
       #consultas .panel-left-inner { padding: 20px 16px 32px; }
       .c-cat-mobile-grid { display: none; grid-template-columns: 1fr; gap: 8px; padding: 8px 0 12px; }
       .c-cat-mobile-grid.open { display: grid; }
-      .c-cat-item.open .c-cat-btn .c-cat-arrow { transform: rotate(90deg); }
-      .c-cat-item.open .c-cat-btn { background: rgba(0,0,0,0.06); }
+      .c-cat-item.open .c-cat-btn .c-cat-arrow { transform: rotate(90deg); color: rgba(255,255,255,0.7) !important; }
+      /* Header oscuro + sticky para la categoría expandida */
+      .c-cat-item.open .c-cat-btn {
+        background: #1a1a1a !important;
+        position: sticky;
+        top: 90px;
+        z-index: 5;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        border-radius: 14px;
+      }
+      .c-cat-item.open .c-cat-btn > i:first-child { color: #fff !important; }
+      .c-cat-item.open .c-cat-btn .c-cat-name { color: #fff !important; }
+      .c-cat-item.open .c-cat-btn .c-cat-count { color: rgba(255,255,255,0.6) !important; }
     }
 
     /* Featured section - visible en todos los dispositivos */
