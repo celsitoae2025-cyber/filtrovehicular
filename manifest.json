@@ -1,6 +1,6 @@
 {
-  "name": "Filtro Vehicular +",
-  "short_name": "Filtro Vehicular +",
+  "name": "Filtro Vehicular+ | Gestor de Consultas",
+  "short_name": "Filtro Vehicular+",
   "description": "Plataforma integral de verificación vehicular",
   "start_url": "./preview.html",
   "scope": "./",
