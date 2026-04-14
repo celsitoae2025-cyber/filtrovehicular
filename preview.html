@@ -10,7 +10,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Filtro Vehicular+" />
-  <link rel="apple-touch-icon" href="assets/media/logopwa.png" />
+  <link rel="icon" type="image/png" href="assets/media/logonuevo.png" />
+  <link rel="apple-touch-icon" href="assets/media/logonuevo.png" />
+  <link rel="shortcut icon" type="image/png" href="assets/media/logonuevo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -2308,7 +2310,7 @@
     }
 
     /* Auth modal */
-    .auth-overlay { display:none;position:fixed;inset:0;background:#eee5d0;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center;padding:20px;overflow-y:auto; }
+    .auth-overlay { display:none;position:fixed;inset:0;background:#eee5d0;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center;padding:20px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch; }
     .auth-overlay.active { display:flex; }
     /* ===== Auth modal estilo Anthropic (fondo crema) ===== */
     .auth-wrapper { width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px;align-items:stretch; }
@@ -3460,6 +3462,9 @@
       var authOv = document.getElementById('authOverlay');
       var wasOpen = authOv.classList.contains('active');
       authOv.classList.add('active');
+      // Bloquear scroll del body para que el modal no deje ver el contenido de atrás
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
       if (!wasOpen) { try { history.pushState({ layer: 'authModal' }, ''); } catch(_){} }
       document.getElementById('authClose').style.display = currentUser.email ? '' : 'none';
       document.getElementById('authTitle').textContent = 'Iniciar sesi\u00f3n';
@@ -3479,6 +3484,9 @@
       if (!authOv.classList.contains('active')) return;
       if (_popInProgress) {
         authOv.classList.remove('active');
+        // Restaurar scroll del body
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
       } else {
         history.back();
       }
@@ -3880,14 +3888,15 @@
       if (authBtn) authBtn.addEventListener('click', lanzarInstall);
       if (sbBtn) sbBtn.addEventListener('click', lanzarInstall);
 
-      // En iOS, mostrar los botones para que el usuario pueda ver las
-      // instrucciones manuales (no hay beforeinstallprompt ahí).
-      var esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-      if (esIOS && !estaInstalada()) {
+      // Mostrar los botones SIEMPRE (si no está ya instalada). Si el
+      // navegador todavía no disparó beforeinstallprompt, al hacer click
+      // caemos al fallback con instrucciones manuales; si lo disparó,
+      // se usa el prompt nativo. Así el usuario siempre ve la opción.
+      if (!estaInstalada()) {
         mostrarBotonesInstalar();
+      } else {
+        ocultarBotonesInstalar();
       }
-
-      if (estaInstalada()) ocultarBotonesInstalar();
     });
 
     function canAccessConsultas() {
