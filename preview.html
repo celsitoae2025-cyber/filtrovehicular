@@ -5870,17 +5870,56 @@
         renderAdminTab();
       }
 
+      // Helper: rechaza la promesa si tarda más de ms milisegundos.
+      // Evita que las queries de Supabase se queden colgadas en datos móviles lentos.
+      function withTimeout(promise, ms, label) {
+        return new Promise(function(resolve, reject) {
+          var to = setTimeout(function() {
+            reject(new Error('⏱️ ' + (label || 'La consulta') + ' tardó más de ' + Math.round(ms/1000) + 's. Verifica tu conexión a internet.'));
+          }, ms);
+          promise.then(function(v){ clearTimeout(to); resolve(v); }, function(e){ clearTimeout(to); reject(e); });
+        });
+      }
+
+      // Renderiza estado de error con botón Reintentar
+      function renderAdminError(c, errMsg) {
+        c.innerHTML =
+          '<div style="background:#fff;border:1px solid #fecaca;border-radius:14px;padding:24px;text-align:center">' +
+            '<div style="font-size:32px;margin-bottom:10px">⚠️</div>' +
+            '<div style="font-size:0.86rem;font-weight:700;color:#991b1b;margin-bottom:6px">No se pudieron cargar los datos</div>' +
+            '<div style="font-size:0.75rem;color:#7f1d1d;margin-bottom:16px">' + (errMsg || 'Error desconocido') + '</div>' +
+            '<button id="admRetryBtn" style="padding:10px 20px;background:#303130;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:0.78rem;font-weight:700;cursor:pointer">🔄 Reintentar</button>' +
+          '</div>';
+        var rb = document.getElementById('admRetryBtn');
+        if (rb) rb.addEventListener('click', renderAdminTab);
+      }
+
       async function renderAdminTab() {
         var c = document.getElementById('admFContent');
         if (!c) return;
-        c.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa;font-size:0.78rem"><i class="ph ph-spinner" style="font-size:24px;display:block;margin-bottom:8px"></i>Cargando...</div>';
+        c.innerHTML = '<div id="admLoadingMsg" style="text-align:center;padding:40px;color:#aaa;font-size:0.78rem"><i class="ph ph-spinner" style="font-size:24px;display:block;margin-bottom:8px"></i>Cargando...</div>';
+        // Mensaje de "tarda más de lo normal" después de 6 segundos
+        var slowMsgTimer = setTimeout(function() {
+          var lm = document.getElementById('admLoadingMsg');
+          if (lm) lm.innerHTML = '<i class="ph ph-spinner" style="font-size:24px;display:block;margin-bottom:8px"></i>Cargando... <br><span style="font-size:0.7rem;color:#bbb;margin-top:6px;display:inline-block">Tarda más de lo normal — verifica tu conexión</span>';
+        }, 6000);
+        // Auto-cancelar el spinner cuando termine renderAdminTab (el contenido cambia)
+        setTimeout(function() { clearTimeout(slowMsgTimer); }, 25000);
 
         if (adminTab === 'usuarios') {
           try {
-            var salRes = await sb.from('saldos').select('email,creditos,plataforma_activa,dashboard_activo,updated_at').order('creditos', { ascending: false });
+            // Paralelo + timeout 20s para no colgar en datos lentos
+            var resPair = await withTimeout(
+              Promise.all([
+                sb.from('saldos').select('email,creditos,plataforma_activa,dashboard_activo,updated_at').order('creditos', { ascending: false }),
+                sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%').limit(300)
+              ]),
+              20000,
+              'Cargar usuarios'
+            );
+            var salRes = resPair[0];
+            var solRes = resPair[1];
             var saldos = salRes.data || [];
-
-            var solRes = await sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%').limit(500);
             var nombreMap = {};
             if (solRes.data) solRes.data.forEach(function(r) {
               var d = r.datos || {};
@@ -6105,11 +6144,15 @@
               });
             }
 
-          } catch (e) { c.innerHTML = '<div style="color:#c00;padding:20px;font-size:0.78rem">Error: ' + e.message + '</div>'; }
+          } catch (e) { renderAdminError(c, e.message); }
 
         } else if (adminTab === 'activos') {
           try {
-            var salRes2 = await sb.from('saldos').select('email,creditos,plataforma_activa,dashboard_activo,updated_at').gte('creditos', 800).order('creditos', { ascending: false });
+            var salRes2 = await withTimeout(
+              sb.from('saldos').select('email,creditos,plataforma_activa,dashboard_activo,updated_at').gte('creditos', 800).order('creditos', { ascending: false }),
+              20000,
+              'Cargar usuarios activos'
+            );
             var activosData = salRes2.data || [];
 
             var now2 = new Date();
@@ -6217,11 +6260,15 @@
                 r.style.display = r.getAttribute('data-search2').includes(q2) ? '' : 'none';
               });
             });
-          } catch (e) { c.innerHTML = '<div style="color:#c00;padding:20px;font-size:0.78rem">Error: ' + e.message + '</div>'; }
+          } catch (e) { renderAdminError(c, e.message); }
 
         } else if (adminTab === 'compras') {
           try {
-            var pagRes = await sb.from('pagos_mp').select('*').order('created_at', { ascending: false }).limit(200);
+            var pagRes = await withTimeout(
+              sb.from('pagos_mp').select('*').order('created_at', { ascending: false }).limit(200),
+              20000,
+              'Cargar compras'
+            );
             var pagos = pagRes.data || [];
             var aprobados = pagos.filter(function(p) { return (p.status || '').toLowerCase() === 'approved'; });
             var totalMonto = aprobados.reduce(function(s, p) { return s + (parseFloat(p.amount) || 0); }, 0);
@@ -6292,7 +6339,7 @@
                 aplicarFiltroCompras();
               });
             });
-          } catch (e) { c.innerHTML = '<div style="color:#c00;padding:20px;font-size:0.78rem">Error: ' + e.message + '</div>'; }
+          } catch (e) { renderAdminError(c, e.message); }
 
         } else if (adminTab === 'gestion') {
           var h = '';
