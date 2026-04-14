@@ -994,7 +994,27 @@
       body.sb-collapsed .sb-toggle { margin: 0 auto; }
     }
     @media (max-width: 1023px) { .sidebar { width: 240px; } }
-    @media (max-width: 768px) { .sidebar { width: 85%; } .sb-bottom { padding-bottom: 20px; } .sb-nav { max-height: calc(100vh - 320px); } }
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 85%;
+        /* 100dvh = viewport dinámico real (descuenta la barra del navegador).
+           Fallback a 100vh para navegadores viejos. */
+        height: 100vh;
+        height: 100dvh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      /* En móvil todo el sidebar scrollea como una unidad, así nunca
+         se corta "Cerrar sesión" al fondo. sb-nav ya no tiene su
+         propio scroll interno. */
+      .sb-nav {
+        flex: 0 0 auto;
+        max-height: none;
+        overflow: visible;
+      }
+      .sb-bottom { padding-bottom: 20px; }
+    }
 
     /* ========== MOBILE TAB BAR ========== */
     .tab-bar {
