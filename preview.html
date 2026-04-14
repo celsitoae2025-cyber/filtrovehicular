@@ -3174,7 +3174,10 @@
     function openSidebar() {
       if (sidebar.classList.contains('active')) return;
       sidebar.classList.add('active');
-      if (isMobile()) { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+      if (isMobile()) {
+        overlay.classList.add('active');
+        lockBodyScroll();
+      }
       try { history.pushState({ layer: 'sidebar' }, ''); } catch(_){}
     }
 
@@ -3183,7 +3186,7 @@
       if (_popInProgress) {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
-        document.body.style.overflow = '';
+        if (isMobile()) unlockBodyScroll();
       } else {
         history.back();
       }
@@ -3203,6 +3206,7 @@
         if (authOv && authOv.classList.contains('active')) {
           if (currentUser && currentUser.email) {
             authOv.classList.remove('active');
+            unlockBodyScroll();
           } else {
             // Sin sesión no puede cerrar auth; re-empujar para mantener la capa
             try { history.pushState({ layer: 'authModal' }, ''); } catch(_){}
@@ -3219,7 +3223,8 @@
           sb.classList.remove('active');
           var sbOv = document.getElementById('sidebarOverlay');
           if (sbOv) sbOv.classList.remove('active');
-          document.body.style.overflow = '';
+          if (window.innerWidth < 1024) unlockBodyScroll();
+          else { document.body.style.overflow = ''; document.documentElement.style.overflow = ''; }
         } else if (e.state && e.state.tab && e.state.tab !== _currentTab) {
           // El usuario volvió a un estado con una pestaña distinta
           _switchTabDom(e.state.tab);
@@ -3456,15 +3461,36 @@
       // En paso 1, el email se ve y los campos de registro también (si modo registro)
     }
 
+    // Scroll lock robusto para móvil (iOS Safari y Chrome Android)
+    var _lockedScrollY = 0;
+    function lockBodyScroll() {
+      _lockedScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+      document.body.style.position = 'fixed';
+      document.body.style.top = '-' + _lockedScrollY + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    }
+    function unlockBodyScroll() {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      window.scrollTo(0, _lockedScrollY);
+    }
+
     function showAuthModal() {
       _authMode = 'login';
       resetAuthToStep1();
       var authOv = document.getElementById('authOverlay');
       var wasOpen = authOv.classList.contains('active');
       authOv.classList.add('active');
-      // Bloquear scroll del body para que el modal no deje ver el contenido de atrás
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
+      if (!wasOpen) lockBodyScroll();
       if (!wasOpen) { try { history.pushState({ layer: 'authModal' }, ''); } catch(_){} }
       document.getElementById('authClose').style.display = currentUser.email ? '' : 'none';
       document.getElementById('authTitle').textContent = 'Iniciar sesi\u00f3n';
@@ -3484,9 +3510,7 @@
       if (!authOv.classList.contains('active')) return;
       if (_popInProgress) {
         authOv.classList.remove('active');
-        // Restaurar scroll del body
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
+        unlockBodyScroll();
       } else {
         history.back();
       }
