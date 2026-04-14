@@ -694,7 +694,12 @@
       font-weight: 700;
       color: #1a1a1a;
       letter-spacing: -0.2px;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
     }
+    .sb-logo-main { font-size: 1rem; font-weight: 700; color: #1a1a1a; letter-spacing: -0.2px; }
+    .sb-logo-sub { font-size: 0.62rem; font-weight: 600; color: #8a7e5e; letter-spacing: 1.2px; text-transform: uppercase; margin-top: 2px; }
     .sidebar-close {
       width: 26px;
       height: 26px;
@@ -2752,7 +2757,10 @@
     <!-- Logo -->
     <div class="sb-header">
       <div class="sb-header-top">
-        <span class="sb-logo">Filtro Vehicular+</span>
+        <span class="sb-logo">
+          <span class="sb-logo-main">Filtro Vehicular+</span>
+          <span class="sb-logo-sub">Gestor de Consultas</span>
+        </span>
         <div style="display:flex;align-items:center;gap:4px;">
           <button class="sb-toggle" id="sidebarToggle" title="Colapsar barra lateral"><i class="ph ph-sidebar-simple"></i></button>
           <button class="sidebar-close" id="sidebarClose"><i class="ph ph-x" style="font-size:13px"></i></button>
