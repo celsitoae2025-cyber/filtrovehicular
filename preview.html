@@ -4162,6 +4162,40 @@
     var BRIDGE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? 'http://localhost:3501'
       : 'https://filtro-bridge-production.up.railway.app';
+
+    // Descarga automática de archivos que vienen del bridge (cross-origin).
+    // Usa fetch→blob→<a download> para forzar descarga en vez de abrirlo inline.
+    // Fallback: si el bridge no tiene CORS, abre el archivo en pestaña.
+    function nombreDesdeUrl(url, fallback) {
+      try {
+        var u = new URL(url, window.location.origin);
+        var n = decodeURIComponent(u.pathname.split('/').pop() || '');
+        return n && n.indexOf('.') >= 0 ? n : (fallback || 'archivo');
+      } catch (_) { return fallback || 'archivo'; }
+    }
+    async function descargarArchivoAuto(url, nombreSugerido) {
+      var nombre = nombreSugerido || nombreDesdeUrl(url, 'archivo');
+      try {
+        var res = await fetch(url, { mode: 'cors' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        var blob = await res.blob();
+        var blobUrl = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = nombre;
+        a.rel = 'noopener';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 2000);
+      } catch (err) {
+        // CORS bloqueado o error de red → fallback a abrir en pestaña
+        console.warn('Descarga automática falló, abriendo en pestaña:', err);
+        window.open(url, '_blank', 'noopener');
+      }
+    }
+    window.descargarArchivoAuto = descargarArchivoAuto;
+
     var socket = io(BRIDGE_URL);
     socket.on('connect', function() { console.log('[WS] Conectado al bridge'); });
     socket.on('disconnect', function() { console.log('[WS] Desconectado del bridge'); });
@@ -4638,10 +4672,14 @@
           html += '<div style="font-size:0.82rem;color:#888">Consulta: <strong>' + valorConsultado + '</strong></div>';
         }
         resultado.archivos.forEach(function(f) {
+          var fullUrl = BRIDGE_URL + f.url;
+          var safeUrl = fullUrl.replace(/'/g, "\\'");
+          var safeName = (valorConsultado ? valorConsultado + '_' : '') + (f.tipo === 'pdf' ? 'reporte.pdf' : 'archivo.txt');
+          safeName = safeName.replace(/'/g, "\\'");
           if (f.tipo === 'pdf') {
-            html += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" class="c-result-pdf-btn" style="margin-top:8px;padding:12px 28px;font-size:0.88rem"><i class="ph ph-file-pdf" style="font-size:20px"></i> Descargar PDF</a>';
+            html += '<button type="button" onclick="descargarArchivoAuto(\'' + safeUrl + '\', \'' + safeName + '\')" class="c-result-pdf-btn" style="margin-top:8px;padding:12px 28px;font-size:0.88rem;border:none;cursor:pointer"><i class="ph ph-file-pdf" style="font-size:20px"></i> Descargar PDF</button>';
           } else if (f.tipo === 'txt') {
-            html += '<a href="' + BRIDGE_URL + f.url + '" target="_blank" class="c-result-pdf-btn" style="margin-top:8px;padding:12px 28px;font-size:0.88rem"><i class="ph ph-file-text" style="font-size:20px"></i> Descargar archivo</a>';
+            html += '<button type="button" onclick="descargarArchivoAuto(\'' + safeUrl + '\', \'' + safeName + '\')" class="c-result-pdf-btn" style="margin-top:8px;padding:12px 28px;font-size:0.88rem;border:none;cursor:pointer"><i class="ph ph-file-text" style="font-size:20px"></i> Descargar archivo</button>';
           }
         });
         html += '</div>';
