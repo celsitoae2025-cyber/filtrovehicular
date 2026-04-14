@@ -3115,6 +3115,30 @@
     // Tab switching
     var planLevel = { free: 0, standard: 1, advanced: 2, premium: 3 };
     var tabRequiredPlan = { vehiculos: 'standard', consultas: 'advanced' };
+    // ===== Historial de navegación: back cierra capas abiertas =====
+    var _popInProgress = false;
+    var _currentTab = 'vehiculos';
+    // Reemplazar el estado inicial para que al hacer back desde un tab, e.state tenga el tab inicial.
+    try { if (!history.state) history.replaceState({ layer: 'initial', tab: 'vehiculos' }, ''); } catch(_){}
+
+    function _switchTabDom(tab) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      var target = document.getElementById(tab);
+      if (!target) return;
+      target.classList.add('active');
+      document.querySelectorAll('nav a, .tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll(`[data-tab="${tab}"]`).forEach(b => b.classList.add('active'));
+      applyServiceFilter();
+      document.querySelectorAll('.section').forEach(s => {
+        s.style.animation = 'none';
+        s.offsetHeight;
+        s.style.animation = '';
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      _currentTab = tab;
+    }
+    window._switchTabDom = _switchTabDom;
+
     document.querySelectorAll('[data-tab]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -3130,17 +3154,10 @@
           );
           return;
         }
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(tab).classList.add('active');
-        document.querySelectorAll('nav a, .tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll(`[data-tab="${tab}"]`).forEach(b => b.classList.add('active'));
-        applyServiceFilter();
-        document.querySelectorAll('.section').forEach(s => {
-          s.style.animation = 'none';
-          s.offsetHeight;
-          s.style.animation = '';
-        });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (tab === _currentTab) return;
+        // Push history entry so browser back returns to prior tab
+        try { history.pushState({ layer: 'tab', tab: tab, prev: _currentTab }, ''); } catch(_){}
+        _switchTabDom(tab);
       });
     });
 
@@ -3153,15 +3170,62 @@
     function isMobile() { return window.innerWidth < 1024; }
 
     function openSidebar() {
+      if (sidebar.classList.contains('active')) return;
       sidebar.classList.add('active');
       if (isMobile()) { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+      try { history.pushState({ layer: 'sidebar' }, ''); } catch(_){}
     }
 
     function closeSidebar() {
-      sidebar.classList.remove('active');
-      overlay.classList.remove('active');
-      document.body.style.overflow = '';
+      if (!sidebar.classList.contains('active')) return;
+      if (_popInProgress) {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      } else {
+        history.back();
+      }
     }
+
+    // Handler global del botón Atrás del navegador.
+    // Cierra la capa abierta más arriba (modal auth > sbModal > cMobileModal > sidebar)
+    // o revierte el cambio de pestaña. Solo si no hay nada, se deja salir al sitio previo.
+    window.addEventListener('popstate', function(e) {
+      _popInProgress = true;
+      try {
+        var authOv = document.getElementById('authOverlay');
+        var sbM = document.getElementById('sbModal');
+        var cMob = document.getElementById('cMobileModal');
+        var sb = document.getElementById('sidebar');
+
+        if (authOv && authOv.classList.contains('active')) {
+          if (currentUser && currentUser.email) {
+            authOv.classList.remove('active');
+          } else {
+            // Sin sesión no puede cerrar auth; re-empujar para mantener la capa
+            try { history.pushState({ layer: 'authModal' }, ''); } catch(_){}
+          }
+        } else if (sbM && sbM.classList.contains('active')) {
+          var sbO = document.getElementById('sbModalOverlay');
+          sbM.classList.remove('active');
+          if (sbO) sbO.classList.remove('active');
+        } else if (cMob && cMob.classList.contains('active')) {
+          cMob.classList.remove('active');
+          var cContent = document.getElementById('cMobileModalContent');
+          if (cContent) cContent.innerHTML = '';
+        } else if (sb && sb.classList.contains('active')) {
+          sb.classList.remove('active');
+          var sbOv = document.getElementById('sidebarOverlay');
+          if (sbOv) sbOv.classList.remove('active');
+          document.body.style.overflow = '';
+        } else if (e.state && e.state.tab && e.state.tab !== _currentTab) {
+          // El usuario volvió a un estado con una pestaña distinta
+          _switchTabDom(e.state.tab);
+        }
+      } finally {
+        _popInProgress = false;
+      }
+    });
 
     // Toggle: si el sidebar ya está abierto, lo cierra; si no, lo abre.
     // Envolver en función asegura que al click se llame a la versión
@@ -3393,7 +3457,10 @@
     function showAuthModal() {
       _authMode = 'login';
       resetAuthToStep1();
-      document.getElementById('authOverlay').classList.add('active');
+      var authOv = document.getElementById('authOverlay');
+      var wasOpen = authOv.classList.contains('active');
+      authOv.classList.add('active');
+      if (!wasOpen) { try { history.pushState({ layer: 'authModal' }, ''); } catch(_){} }
       document.getElementById('authClose').style.display = currentUser.email ? '' : 'none';
       document.getElementById('authTitle').textContent = 'Iniciar sesi\u00f3n';
       document.getElementById('authSub').textContent = 'Accede a tus consultas';
@@ -3408,7 +3475,13 @@
     }
 
     function closeAuthModal() {
-      document.getElementById('authOverlay').classList.remove('active');
+      var authOv = document.getElementById('authOverlay');
+      if (!authOv.classList.contains('active')) return;
+      if (_popInProgress) {
+        authOv.classList.remove('active');
+      } else {
+        history.back();
+      }
     }
 
     function toggleAuthMode() {
@@ -4210,8 +4283,18 @@
       if (isMobile) {
         var overlay = document.getElementById('cMobileModal');
         container = document.getElementById('cMobileModalContent');
+        var wasOpen = overlay.classList.contains('active');
         overlay.classList.add('active');
-        closeCallback = function() { overlay.classList.remove('active'); container.innerHTML = ''; };
+        if (!wasOpen) { try { history.pushState({ layer: 'cMobileModal' }, ''); } catch(_){} }
+        closeCallback = function() {
+          if (!overlay.classList.contains('active')) return;
+          if (typeof _popInProgress !== 'undefined' && _popInProgress) {
+            overlay.classList.remove('active');
+            container.innerHTML = '';
+          } else {
+            history.back();
+          }
+        };
         overlay.onclick = function(e) { if (e.target === overlay) closeCallback(); };
       } else {
         container = document.getElementById('cResultContainer');
@@ -4923,15 +5006,22 @@
     const sbToast = document.getElementById('sbToast');
 
     function openSbModal(icon, title, bodyHtml) {
+      var wasOpen = sbModal.classList.contains('active');
       sbModalTitle.innerHTML = `<i class="ph ${icon}"></i> ${title}`;
       sbModalBody.innerHTML = bodyHtml;
       sbModalOverlay.classList.add('active');
       sbModal.classList.add('active');
+      if (!wasOpen) { try { history.pushState({ layer: 'sbModal' }, ''); } catch(_){} }
     }
 
     function closeSbModal() {
-      sbModalOverlay.classList.remove('active');
-      sbModal.classList.remove('active');
+      if (!sbModal.classList.contains('active')) return;
+      if (_popInProgress) {
+        sbModalOverlay.classList.remove('active');
+        sbModal.classList.remove('active');
+      } else {
+        history.back();
+      }
     }
 
     function showToast(message, duration = 3000) {
