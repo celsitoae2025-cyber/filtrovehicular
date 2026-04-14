@@ -287,7 +287,8 @@ function esc(s) { var d = document.createElement('div'); d.textContent = String(
             if (document.getElementById('historyView')) document.getElementById('historyView').style.display = view === 'history' ? 'block' : 'none';
             if (document.getElementById('usersView')) document.getElementById('usersView').style.display = view === 'users' ? 'block' : 'none';
             if (document.getElementById('accessView')) document.getElementById('accessView').style.display = view === 'access' ? 'block' : 'none';
-            
+            if (document.getElementById('activateEmailView')) document.getElementById('activateEmailView').style.display = view === 'activateEmail' ? 'block' : 'none';
+
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             if (document.getElementById('nav-' + view)) document.getElementById('nav-' + view).classList.add('active');
             
@@ -3320,3 +3321,184 @@ Link: https://filtrovehicularperu.com`;
         }
 
         window.addEventListener('afterprint', cerrarPrintModal);
+
+        // ═══════════════════════════════════════════════════════════════
+        // Activar por Email — crear cuenta rápida para clientes de WhatsApp
+        // Nueva vista 'activateEmail'. Inserta en solicitudes (REGISTRO_*) y
+        // saldos, mismo patrón que usa el registro normal desde el web.
+        // ═══════════════════════════════════════════════════════════════
+
+        function actByEmail_updateCreditos() {
+            var sel = document.getElementById('actByEmail_plan');
+            if (!sel) return;
+            var opt = sel.options[sel.selectedIndex];
+            var c = opt ? opt.getAttribute('data-credits') : '0';
+            var inp = document.getElementById('actByEmail_creditos');
+            if (inp) inp.value = c;
+        }
+
+        function actByEmail_generarPass() {
+            // 8 caracteres: letras y números, fácil de dictar por WhatsApp (sin 0/O/1/l/I)
+            var chars = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            var pass = '';
+            for (var i = 0; i < 8; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            var inp = document.getElementById('actByEmail_pass');
+            if (inp) inp.value = pass;
+        }
+
+        function actByEmail_feedback(msg, tipo) {
+            var el = document.getElementById('actByEmail_feedback');
+            if (!el) return;
+            var bg = tipo === 'ok' ? '#dcfce7' : tipo === 'err' ? '#fee2e2' : '#fef3c7';
+            var color = tipo === 'ok' ? '#166534' : tipo === 'err' ? '#991b1b' : '#92400e';
+            el.style.display = 'block';
+            el.style.background = bg;
+            el.style.color = color;
+            el.textContent = msg;
+        }
+
+        function actByEmail_limpiar() {
+            ['actByEmail_email','actByEmail_nombre','actByEmail_whatsapp','actByEmail_pass','actByEmail_notas'].forEach(function(id){
+                var el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            var sel = document.getElementById('actByEmail_plan');
+            if (sel) sel.value = 'advanced';
+            actByEmail_updateCreditos();
+            var fb = document.getElementById('actByEmail_feedback');
+            if (fb) fb.style.display = 'none';
+            var res = document.getElementById('actByEmail_resultado');
+            if (res) res.style.display = 'none';
+        }
+
+        async function actByEmail_crear() {
+            if (!window.sb) { actByEmail_feedback('Supabase no conectado.', 'err'); return; }
+
+            var email = (document.getElementById('actByEmail_email').value || '').trim().toLowerCase();
+            var nombre = (document.getElementById('actByEmail_nombre').value || '').trim();
+            var wpp = (document.getElementById('actByEmail_whatsapp').value || '').trim();
+            var planSel = document.getElementById('actByEmail_plan');
+            var plan = planSel ? planSel.value : 'free';
+            var creditos = parseInt(document.getElementById('actByEmail_creditos').value || '0', 10);
+            var pass = (document.getElementById('actByEmail_pass').value || '').trim();
+            var notas = (document.getElementById('actByEmail_notas').value || '').trim();
+
+            // Validación
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { actByEmail_feedback('Email inválido.', 'err'); return; }
+            if (!nombre || nombre.length < 2) { actByEmail_feedback('Ingresa el nombre completo.', 'err'); return; }
+            if (!wpp || wpp.length !== 9 || wpp[0] !== '9') { actByEmail_feedback('WhatsApp inválido (9 dígitos, empieza con 9).', 'err'); return; }
+            if (!pass) { actByEmail_generarPass(); pass = document.getElementById('actByEmail_pass').value; }
+            if (pass.length < 6) { actByEmail_feedback('La clave debe tener al menos 6 caracteres.', 'err'); return; }
+            if (isNaN(creditos) || creditos < 0) { actByEmail_feedback('Créditos inválidos.', 'err'); return; }
+
+            actByEmail_feedback('Creando cuenta...', 'info');
+
+            try {
+                // Verificar que no exista
+                var existRes = await window.sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%').eq('datos->>email', email).limit(1);
+                if (existRes.data && existRes.data.length > 0) {
+                    actByEmail_feedback('Ya existe una cuenta con ese correo.', 'err');
+                    return;
+                }
+
+                // Crear registro (mismo formato que el registro desde web)
+                var ts = Date.now();
+                var regData = {
+                    placa: 'REGISTRO_' + ts,
+                    timestamp: ts,
+                    status: 'approved',
+                    isRegistro: true,
+                    email: email,
+                    pass: pass,
+                    nombre: nombre,
+                    whatsapp: wpp,
+                    plan: plan,
+                    createdByAdmin: true,
+                    adminNotas: notas || ''
+                };
+                var insRes = await window.sb.from('solicitudes').upsert({ placa: 'REGISTRO_' + ts, datos: regData, updated_at: new Date() });
+                if (insRes.error) throw insRes.error;
+
+                // Crear/actualizar saldo con los créditos iniciales
+                var existSaldo = await window.sb.from('saldos').select('email').eq('email', email).maybeSingle();
+                if (!existSaldo.data) {
+                    var sldRes = await window.sb.from('saldos').insert({
+                        email: email,
+                        creditos: creditos,
+                        plataforma_activa: plan !== 'free',
+                        dashboard_activo: false,
+                        updated_at: new Date()
+                    });
+                    if (sldRes.error) throw sldRes.error;
+                } else {
+                    await window.sb.from('saldos').update({
+                        creditos: creditos,
+                        plataforma_activa: plan !== 'free',
+                        updated_at: new Date()
+                    }).eq('email', email);
+                }
+
+                // Construir mensaje WhatsApp
+                var planNames = { free: 'Free', advanced: 'Avanzado (S/42)', business: 'Business (S/84)', premium: 'Profesional (S/140)' };
+                var planLabel = planNames[plan] || 'Free';
+                var msgLines = [
+                    '¡Bienvenido a Filtro Vehicular+! 🚗',
+                    '',
+                    'Tu cuenta está activa con los siguientes datos:',
+                    '',
+                    '📧 Email: ' + email,
+                    '🔐 Clave: ' + pass,
+                    '',
+                    '🔗 Ingresa aquí: https://filtrovehicularperu.com',
+                    '',
+                    '🔹 CÓMO USAR',
+                    '1. Click en "Iniciar sesión" arriba',
+                    '2. Ingresa tu email y clave',
+                    '3. Ya puedes consultar los 100+ servicios',
+                    '',
+                    '🔹 PLAN: ' + planLabel + ' — ' + creditos + ' créditos disponibles',
+                    '',
+                    '¿Dudas? Respóndenos por aquí mismo.'
+                ];
+                var msg = msgLines.join('\n');
+                var waUrl = 'https://wa.me/51' + wpp + '?text=' + encodeURIComponent(msg);
+
+                // Mostrar resultado
+                var res = document.getElementById('actByEmail_resultado');
+                var safeEmail = email.replace(/"/g, '&quot;');
+                var safePass = pass.replace(/"/g, '&quot;');
+                var safeMsg = msg.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                res.innerHTML =
+                    '<div class="admin-card" style="padding:20px; border-left:4px solid #25d366; background:#f0fdf4;">' +
+                      '<div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">' +
+                        '<div style="width:32px; height:32px; background:#25d366; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-check" style="color:#fff;"></i></div>' +
+                        '<div><div style="font-size:14px; font-weight:700; color:#166534;">Cuenta creada</div><div style="font-size:11px; color:#15803d;">' + safeEmail + '</div></div>' +
+                      '</div>' +
+                      '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">' +
+                        '<div><div style="font-size:10px; text-transform:uppercase; color:#64748b; font-weight:600; margin-bottom:4px;">Email</div><div style="display:flex; gap:6px; align-items:center;"><code style="flex:1; background:#fff; padding:8px 10px; border-radius:6px; font-size:12px; border:1px solid #e2e8f0;">' + safeEmail + '</code><button onclick="navigator.clipboard.writeText(\'' + safeEmail + '\').then(function(){actByEmail_feedback(\'Email copiado.\', \'ok\');})" style="background:#fff; border:1px solid #e2e8f0; padding:8px; border-radius:6px; cursor:pointer;" title="Copiar"><i class="fa-regular fa-copy"></i></button></div></div>' +
+                        '<div><div style="font-size:10px; text-transform:uppercase; color:#64748b; font-weight:600; margin-bottom:4px;">Clave</div><div style="display:flex; gap:6px; align-items:center;"><code style="flex:1; background:#fff; padding:8px 10px; border-radius:6px; font-size:12px; border:1px solid #e2e8f0;">' + safePass + '</code><button onclick="navigator.clipboard.writeText(\'' + safePass + '\').then(function(){actByEmail_feedback(\'Clave copiada.\', \'ok\');})" style="background:#fff; border:1px solid #e2e8f0; padding:8px; border-radius:6px; cursor:pointer;" title="Copiar"><i class="fa-regular fa-copy"></i></button></div></div>' +
+                      '</div>' +
+                      '<div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:14px;">' +
+                        '<div style="font-size:10px; text-transform:uppercase; color:#64748b; font-weight:600; margin-bottom:6px;">Mensaje que se enviará por WhatsApp</div>' +
+                        '<pre style="margin:0; white-space:pre-wrap; font-family:inherit; font-size:12px; color:#111b21; line-height:1.5;">' + safeMsg + '</pre>' +
+                      '</div>' +
+                      '<div style="display:flex; gap:8px;">' +
+                        '<a href="' + waUrl + '" target="_blank" rel="noopener noreferrer" style="flex:1; padding:12px; background:#25d366; color:#fff; text-decoration:none; border-radius:10px; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;"><i class="fa-brands fa-whatsapp"></i> Enviar credenciales por WhatsApp</a>' +
+                        '<button onclick="actByEmail_limpiar()" style="padding:12px 18px; background:#fff; color:#111b21; border:1px solid #e2e8f0; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer;">Nueva cuenta</button>' +
+                      '</div>' +
+                    '</div>';
+                res.style.display = 'block';
+                actByEmail_feedback('Cuenta creada correctamente.', 'ok');
+                res.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (e) {
+                console.error('actByEmail_crear error:', e);
+                actByEmail_feedback('Error al crear cuenta: ' + (e.message || e), 'err');
+            }
+        }
+
+        // Exponer funciones globalmente para los onclick del HTML
+        window.actByEmail_updateCreditos = actByEmail_updateCreditos;
+        window.actByEmail_generarPass = actByEmail_generarPass;
+        window.actByEmail_crear = actByEmail_crear;
+        window.actByEmail_limpiar = actByEmail_limpiar;
+        window.actByEmail_feedback = actByEmail_feedback;

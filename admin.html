@@ -105,6 +105,9 @@
             <a href="javascript:void(0)" onclick="showView('access'); toggleSidebar(false)" class="nav-item" id="nav-access">
                 <i class="fa-solid fa-unlock-keyhole"></i> Activar Acceso
             </a>
+            <a href="javascript:void(0)" onclick="showView('activateEmail'); toggleSidebar(false)" class="nav-item" id="nav-activateEmail">
+                <i class="fa-solid fa-envelope-open-text"></i> Activar por Email
+            </a>
         </nav>
         
         <!-- Configuración -->
@@ -326,6 +329,63 @@
             </div>
         </div>
 
+        <!-- VISTA ACTIVAR POR EMAIL (clientes que vienen por WhatsApp) -->
+        <div id="activateEmailView" class="requests-panel" style="display: none;">
+            <h2 style="margin:0 0 4px; font-size:16px; font-weight:600; color:#111b21;">Activar por Email</h2>
+            <p style="font-size:11px; color:#6b7280; margin:0 0 16px; font-weight:400;">Crea una cuenta para un cliente que te contactó por WhatsApp y envíale sus credenciales.</p>
+
+            <div class="admin-card" style="padding:20px; margin-bottom:16px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Correo del cliente *</label>
+                        <input type="email" id="actByEmail_email" placeholder="cliente@gmail.com" style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Nombre completo *</label>
+                        <input type="text" id="actByEmail_nombre" placeholder="Juan Pérez" style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">WhatsApp del cliente *</label>
+                        <input type="tel" id="actByEmail_whatsapp" maxlength="9" placeholder="987654321" style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Plan inicial</label>
+                        <select id="actByEmail_plan" onchange="actByEmail_updateCreditos()" style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none; background:white;">
+                            <option value="free" data-credits="0">Free (0 créditos)</option>
+                            <option value="advanced" data-credits="850" selected>Avanzado — S/42 (850 créditos)</option>
+                            <option value="business" data-credits="2000">Business — S/84 (2000 créditos)</option>
+                            <option value="premium" data-credits="4000">Profesional — S/140 (4000 créditos)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Créditos (editable)</label>
+                        <input type="number" id="actByEmail_creditos" value="850" min="0" style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Contraseña</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="actByEmail_pass" placeholder="Se genera automáticamente" style="flex:1; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none; font-family:monospace;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
+                            <button type="button" onclick="actByEmail_generarPass()" style="padding:11px 14px; background:#f8fafc; color:#111b21; border:1.5px solid #e2e8f0; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;"><i class="fa-solid fa-dice"></i> Generar</button>
+                        </div>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Notas internas (opcional)</label>
+                        <input type="text" id="actByEmail_notas" placeholder="Ej: pagó por Yape, referido por..." style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
+                    </div>
+                </div>
+
+                <div id="actByEmail_feedback" style="display:none; margin-top:14px; padding:10px 14px; border-radius:8px; font-size:12px; font-weight:600;"></div>
+
+                <div style="margin-top:16px; display:flex; justify-content:flex-end; gap:8px;">
+                    <button type="button" onclick="actByEmail_limpiar()" style="padding:11px 18px; background:#f8fafc; color:#64748b; border:1.5px solid #e2e8f0; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">Limpiar</button>
+                    <button type="button" onclick="actByEmail_crear()" style="padding:11px 22px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-user-plus"></i> Crear cuenta</button>
+                </div>
+            </div>
+
+            <!-- Resultado tras crear la cuenta -->
+            <div id="actByEmail_resultado" style="display:none;"></div>
+        </div>
+
         <!-- VISTA DEL EDITOR -->
         <div id="editorView">
             <!-- Header -->
@@ -440,7 +500,7 @@
     </div>
 
     
-    <script src="assets/js/admin.js?v=1"></script>
+    <script src="assets/js/admin.js?v=2"></script>
 </body>
 
 </html>
