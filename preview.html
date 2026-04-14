@@ -4,6 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Filtro Vehicular+ | Gestor de Consultas</title>
+
+  <!-- SEO / Social preview -->
+  <meta name="description" content="Filtro Vehicular+ · Gestor de Consultas. Accede a más de 100 servicios: SUNARP, SOAT, multas SAT, CITV, RENIEC, denuncias PNP y más. Resultados en segundos." />
+  <meta name="keywords" content="consulta vehicular, SUNARP, SOAT, multas SAT, CITV, RENIEC, denuncias PNP, Perú, placa, papeletas" />
+  <meta name="author" content="Filtro Vehicular+" />
+  <link rel="canonical" href="https://filtrovehicularperu.com/preview.html" />
+
+  <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://filtrovehicularperu.com/" />
+  <meta property="og:title" content="Filtro Vehicular+ | Gestor de Consultas" />
+  <meta property="og:description" content="Accede a más de 100 servicios oficiales: SUNARP, SOAT, multas SAT, CITV, RENIEC y más. Resultados en segundos." />
+  <meta property="og:image" content="https://filtrovehicularperu.com/assets/media/logonuevo.png" />
+  <meta property="og:image:width" content="1586" />
+  <meta property="og:image:height" content="1586" />
+  <meta property="og:locale" content="es_PE" />
+  <meta property="og:site_name" content="Filtro Vehicular+" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Filtro Vehicular+ | Gestor de Consultas" />
+  <meta name="twitter:description" content="Más de 100 servicios vehiculares y ciudadanos en un solo lugar." />
+  <meta name="twitter:image" content="https://filtrovehicularperu.com/assets/media/logonuevo.png" />
+
   <!-- PWA: manifest + theme color para habilitar instalación -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#1a1a1a" />
@@ -51,7 +75,11 @@
       --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    html { scroll-behavior: smooth; }
+    /* overscroll-behavior:auto explícito garantiza pull-to-refresh nativo
+       en Chrome Android. Si algún parent hereda 'contain' o 'none' no
+       debería afectar al html/body raíz. */
+    html { scroll-behavior: smooth; overscroll-behavior-y: auto; }
+    body { overscroll-behavior-y: auto; }
 
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -3530,7 +3558,9 @@
 
     // Scroll lock robusto para móvil (iOS Safari y Chrome Android)
     var _lockedScrollY = 0;
+    var _bodyIsLocked = false;
     function lockBodyScroll() {
+      if (_bodyIsLocked) return; // evita re-lock que perdería la scrollY real
       _lockedScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
       document.body.style.position = 'fixed';
       document.body.style.top = '-' + _lockedScrollY + 'px';
@@ -3539,8 +3569,10 @@
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+      _bodyIsLocked = true;
     }
     function unlockBodyScroll() {
+      if (!_bodyIsLocked) return;
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.left = '';
@@ -3549,7 +3581,21 @@
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
       window.scrollTo(0, _lockedScrollY);
+      _bodyIsLocked = false;
     }
+    // Safety reset al cargar: si por algún motivo la página quedó con
+    // body en position:fixed (ej: reload con modal abierto), limpiar.
+    // Esto permite que el pull-to-refresh nativo del navegador funcione.
+    (function resetBodyOnLoad() {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      _bodyIsLocked = false;
+    })();
 
     function showAuthModal() {
       _authMode = 'login';
