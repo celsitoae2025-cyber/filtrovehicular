@@ -3528,7 +3528,8 @@
       plan: 'free',
       credits: 0,
       name: '',
-      email: ''
+      email: '',
+      plataforma_activa: false
     };
 
     // ─── Supabase Auth ────────────────────────────────────────
@@ -3816,10 +3817,11 @@
         var res = await sb.from('saldos').select('creditos, plataforma_activa, dashboard_activo').eq('email', email).maybeSingle();
         if (res.data) {
           currentUser.credits = res.data.creditos || 0;
+          currentUser.plataforma_activa = !!res.data.plataforma_activa;
           if (res.data.creditos >= 4000) currentUser.plan = 'premium';
           else if (res.data.creditos >= 2000) currentUser.plan = 'advanced';
           else if (res.data.creditos >= 800 || res.data.plataforma_activa) currentUser.plan = 'standard';
-          else currentUser.plan = 'free';
+          else currentUser.plan = res.data.plataforma_activa ? 'standard' : 'free';
         }
       } catch (e) { console.warn('[cargarDatosUsuario] Error consultando saldos:', e && e.message); }
     }
@@ -5117,11 +5119,16 @@
       const card = e.target.closest('.card[data-item]');
       if (!card) return;
       const item = JSON.parse(decodeURIComponent(card.getAttribute('data-item')));
-      // Bloqueo por créditos: cualquier click en tarjeta (incluyendo URLs
-      // externas a SUNARP, SAT, etc.) requiere plan activo.
-      var hasCreditsCard = isAdmin() || currentUser.credits > 0;
-      if (!hasCreditsCard) {
+      // Acceso al módulo Vehículos (URLs oficiales): ilimitado de por vida
+      // para quien tenga la plataforma activa (compró cualquier plan).
+      // Las consultas con bots de Consultas+ siguen su propia lógica de créditos.
+      var tieneAccesoVehiculos = isAdmin() || currentUser.plataforma_activa === true;
+      if (item.url && !tieneAccesoVehiculos) {
         showUpgradeModal('Activa un plan para usar la plataforma', '', 'standard');
+        return;
+      }
+      if (!item.url && !isAdmin() && currentUser.credits <= 0) {
+        showUpgradeModal('Activa un plan para consultar', 'Necesitas cr\u00e9ditos para usar Consultas+. Tu acceso a Veh\u00edculos es ilimitado.', 'standard');
         return;
       }
       if (item.url) {
@@ -5414,17 +5421,23 @@
             '<div class="plan-price" style="font-size:1.7rem;font-weight:800;color:#1d1e1d;letter-spacing:-1.2px;line-height:1">S/ ' + p.price + '</div>' +
             '<div class="plan-tag" style="font-size:0.6rem;color:#aaa;margin-top:3px;margin-bottom:10px">' + p.tag + '</div>' +
             // Bloque destacado de créditos
+            // Bloque destacado: VEHÍCULOS ILIMITADO (lo más vendedor)
+            '<div class="plan-cr" style="background:#1d1e1d;color:#fff;border-radius:8px;padding:10px 6px;margin-bottom:8px">' +
+              '<div style="font-size:0.95rem;font-weight:800;line-height:1.1;letter-spacing:-0.3px">Veh\u00edculos</div>' +
+              '<div style="font-size:0.62rem;font-weight:700;margin-top:3px;letter-spacing:0.3px">ILIMITADO DE POR VIDA</div>' +
+            '</div>' +
+            // Bloque secundario: créditos para Consultas+
             '<div class="plan-cr" style="background:#f8f8f5;border-radius:8px;padding:8px 6px;margin-bottom:10px">' +
-              '<div style="font-size:1.1rem;font-weight:800;color:#1d1e1d;line-height:1">' + p.total.toLocaleString() + '</div>' +
-              '<div style="font-size:0.58rem;color:#666;font-weight:600;margin-top:2px">cr\u00e9ditos</div>' +
-              '<div style="font-size:0.55rem;color:#999;margin-top:3px">' + creditosDetalle + '</div>' +
+              '<div style="font-size:1.05rem;font-weight:800;color:#1d1e1d;line-height:1">' + p.total.toLocaleString() + '</div>' +
+              '<div style="font-size:0.55rem;color:#666;font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:0.4px">cr\u00e9ditos Consultas+</div>' +
+              '<div style="font-size:0.52rem;color:#999;margin-top:2px">' + creditosDetalle + '</div>' +
             '</div>' +
           '</div>' +
-          // Features: beneficios generales (sin revelar costo por consulta)
+          // Features: lo que incluye cada plan (sin precio por consulta)
           '<div class="plan-feat" style="display:flex;flex-direction:column;gap:4px;text-align:left;margin-bottom:10px;flex:1;padding:0 4px">' +
-            '<div style="display:flex;align-items:center;gap:5px;font-size:0.67rem;color:#1d1e1d"><span style="color:#1d1e1d;font-weight:700">✓</span> Acceso completo a Veh\u00edculos</div>' +
-            '<div style="display:flex;align-items:center;gap:5px;font-size:0.67rem;color:#1d1e1d"><span style="color:#1d1e1d;font-weight:700">✓</span> Acceso completo a Consultas+</div>' +
-            '<div style="display:flex;align-items:center;gap:5px;font-size:0.67rem;color:#1d1e1d"><span style="color:#1d1e1d;font-weight:700">✓</span> Descarga de PDFs e im\u00e1genes</div>' +
+            '<div style="display:flex;align-items:center;gap:5px;font-size:0.67rem;color:#1d1e1d"><span style="color:#1d1e1d;font-weight:700">✓</span> +50 servicios oficiales (SUNARP, SAT, SUTRAN)</div>' +
+            '<div style="display:flex;align-items:center;gap:5px;font-size:0.67rem;color:#1d1e1d"><span style="color:#1d1e1d;font-weight:700">✓</span> RENIEC, denuncias, financiero (con cr\u00e9ditos)</div>' +
+            '<div style="display:flex;align-items:center;gap:5px;font-size:0.67rem;color:#1d1e1d"><span style="color:#1d1e1d;font-weight:700">✓</span> Recargas opcionales para Consultas+</div>' +
           '</div>' +
           (isCurrent ?
             '<div class="plan-btn" style="padding:9px;font-size:0.72rem;font-weight:600;color:#aaa;border:1px solid #eee;border-radius:9px">Tu plan actual</div>' :
@@ -5442,20 +5455,34 @@
             '<i class="ph ph-check-circle" style="color:#1d1e1d;font-size:14px"></i> Incluido en los 3 planes' +
             '<i class="ph ph-caret-down" style="margin-left:auto;font-size:12px;color:#888;transition:transform 0.2s"></i>' +
           '</summary>' +
-          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:0.66rem;color:#444;margin-top:10px;padding-top:8px;border-top:1px solid #eeeeec">' +
-            '<div>\u2713 Veh\u00edculos (SUNARP, SOAT, CITV)</div>' +
+          '<div style="font-size:0.62rem;color:#666;margin-top:10px;padding-top:8px;border-top:1px solid #eeeeec;font-weight:700;text-transform:uppercase;letter-spacing:0.4px">M\u00f3dulo Veh\u00edculos (ilimitado)</div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:0.66rem;color:#444;margin-top:6px">' +
+            '<div>\u2713 Consulta vehicular SUNARP</div>' +
             '<div>\u2713 Multas SAT Lima y Callao</div>' +
-            '<div>\u2713 Consultas+ (RENIEC, SUNAT, SBS)</div>' +
+            '<div>\u2713 Historial de propietarios</div>' +
+            '<div>\u2713 SOAT y revisi\u00f3n t\u00e9cnica</div>' +
+            '<div>\u2713 Garant\u00edas mobiliarias</div>' +
+            '<div>\u2713 \u00d3rdenes de captura</div>' +
+            '<div>\u2713 Modificaciones registrales</div>' +
+            '<div>\u2713 SUTRAN, MTC, ATU</div>' +
+          '</div>' +
+          '<div style="font-size:0.62rem;color:#666;margin-top:12px;padding-top:8px;border-top:1px solid #eeeeec;font-weight:700;text-transform:uppercase;letter-spacing:0.4px">M\u00f3dulo Consultas+ (con cr\u00e9ditos)</div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:0.66rem;color:#444;margin-top:6px">' +
+            '<div>\u2713 RENIEC (DNI, fichas, C4)</div>' +
+            '<div>\u2713 SUNAT, SBS, financiero</div>' +
             '<div>\u2713 Denuncias PNP, delitos</div>' +
             '<div>\u2713 Reconocimiento facial</div>' +
-            '<div>\u2713 Certificados y fichas en PDF</div>' +
-            '<div>\u2713 Descarga autom\u00e1tica de archivos</div>' +
-            '<div>\u2713 Soporte por WhatsApp</div>' +
+            '<div>\u2713 Telefon\u00eda y antecedentes</div>' +
+            '<div>\u2713 Certificados RENIEC en PDF</div>' +
           '</div>' +
         '</details>';
 
-      // Info pill eliminado por pedido — no mostrar info de créditos por consulta
-      var infoBox = '';
+      // Info pill: nuevo modelo de acceso (Vehículos ilimitado + créditos para Consultas+)
+      var infoBox =
+        '<div style="background:#f5f0e4;border:1px solid #e6dec8;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px">' +
+          '<div style="width:28px;height:28px;background:#1d1e1d;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ph ph-infinity" style="color:#fff;font-size:14px"></i></div>' +
+          '<div style="font-size:0.72rem;color:#1d1e1d;line-height:1.4"><b>Acceso ilimitado a Veh\u00edculos de por vida</b> con cualquier plan. Los cr\u00e9ditos son solo para Consultas+ (RENIEC, denuncias, financiero).</div>' +
+        '</div>';
 
       // Banner contextual cuando el modal se abre por bloqueo (no tiene créditos)
       var contextBanner = '';

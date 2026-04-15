@@ -117,12 +117,15 @@ serve(async (req: Request) => {
       .maybeSingle();
 
     if (ref.type === 'recarga' && ref.credits > 0) {
-      // Acreditar creditos
+      // Acreditar creditos + ACTIVAR PLATAFORMA (acceso ilimitado a Vehiculos
+      // de por vida con cualquier plan; los creditos son solo para Consultas+).
       const currentCredits = saldo?.creditos || 0;
       if (saldo) {
         await sb.from('saldos')
           .update({
             creditos: currentCredits + ref.credits,
+            plataforma_activa: true,
+            dashboard_activo: true,
             updated_at: new Date().toISOString(),
           })
           .eq('email', ref.email);
@@ -130,8 +133,8 @@ serve(async (req: Request) => {
         await sb.from('saldos').insert({
           email: ref.email,
           creditos: ref.credits,
-          plataforma_activa: false,
-          dashboard_activo: false,
+          plataforma_activa: true,
+          dashboard_activo: true,
         });
       }
 
