@@ -6453,9 +6453,9 @@
           h += '<div><div style="font-size:0.62rem;color:#888;text-transform:uppercase;font-weight:600;margin-bottom:4px">WhatsApp del cliente *</div><input id="admActWpp" type="tel" maxlength="9" placeholder="987654321" style="width:100%;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;outline:none;box-sizing:border-box" /></div>';
           h += '<div><div style="font-size:0.62rem;color:#888;text-transform:uppercase;font-weight:600;margin-bottom:4px">Plan</div><select id="admActPlan" style="width:100%;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;outline:none;background:#fff;box-sizing:border-box">';
           h += '<option value="free" data-credits="0">Free (0 créditos)</option>';
-          h += '<option value="advanced" data-credits="850" selected>Avanzado — S/42 (850 cr.)</option>';
-          h += '<option value="business" data-credits="2000">Business — S/84 (2000 cr.)</option>';
-          h += '<option value="premium" data-credits="4000">Profesional — S/140 (4000 cr.)</option>';
+          h += '<option value="standard" data-credits="850" selected>Estándar — S/42 (850 cr.)</option>';
+          h += '<option value="advanced" data-credits="2100">Avanzado — S/84 (2,100 cr.)</option>';
+          h += '<option value="premium" data-credits="4200">Premium — S/140 (4,200 cr.)</option>';
           h += '</select></div>';
           h += '<div><div style="font-size:0.62rem;color:#888;text-transform:uppercase;font-weight:600;margin-bottom:4px">Créditos</div><input id="admActCreditos" type="number" value="850" min="0" style="width:100%;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;outline:none;box-sizing:border-box" /></div>';
           h += '<div style="grid-column:1/-1"><div style="font-size:0.62rem;color:#888;text-transform:uppercase;font-weight:600;margin-bottom:4px">Contraseña</div><div style="display:flex;gap:6px"><input id="admActPass" type="text" placeholder="Click Generar o escríbela" style="flex:1;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:monospace;font-size:0.78rem;outline:none;box-sizing:border-box" /><button id="admActGenerarPass" style="padding:10px 14px;background:#f4f4f2;color:#1a1a1a;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.72rem;font-weight:600;cursor:pointer;white-space:nowrap"><i class="ph ph-shuffle"></i> Generar</button></div></div>';
@@ -6545,7 +6545,7 @@
                 await sb.from('saldos').update({ creditos: creditos, plataforma_activa: plan !== 'free', updated_at: new Date() }).eq('email', email);
               }
 
-              var planNames = { free: 'Free', advanced: 'Avanzado (S/42)', business: 'Business (S/84)', premium: 'Profesional (S/140)' };
+              var planNames = { free: 'Free', standard: 'Estándar (S/42)', advanced: 'Avanzado (S/84)', premium: 'Premium (S/140)' };
               var planLabel = planNames[plan] || 'Free';
               var msg = '\u00a1Bienvenido a Filtro Vehicular+! \uD83D\uDE97\n\nTu cuenta est\u00e1 activa con los siguientes datos:\n\n\uD83D\uDCE7 Email: ' + email + '\n\uD83D\uDD10 Clave: ' + pass + '\n\n\uD83D\uDD17 Ingresa aqu\u00ed: https://filtrovehicularperu.com\n\n\uD83D\uDD39 PLAN: ' + planLabel + ' \u2014 ' + creditos + ' cr\u00e9ditos disponibles\n\n\u00bfDudas? Resp\u00f3ndenos por aqu\u00ed mismo.';
               var waUrl = 'https://wa.me/51' + wpp + '?text=' + encodeURIComponent(msg);
@@ -6607,10 +6607,28 @@
                   '</div>' +
                   '<div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">' +
                     '<div>' +
-                      '<div style="font-size:0.68rem;color:#888;font-weight:600;margin-bottom:6px">RECARGAR CR\u00c9DITOS</div>' +
-                      '<div style="display:flex;gap:8px">' +
-                        '<input id="admCreditos" type="number" min="1" placeholder="Cantidad de cr\u00e9ditos..." style="flex:1;padding:10px 14px;border:1px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:0.78rem;outline:none" />' +
-                        '<button id="admRecargar" style="padding:10px 16px;background:#059669;color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:0.78rem;font-weight:700;cursor:pointer">+ Recargar</button>' +
+                      '<div style="font-size:0.68rem;color:#888;font-weight:600;margin-bottom:8px">RECARGAR POR PLAN</div>' +
+                      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">' +
+                        '<button class="admQuickRec" data-cr="850" data-plan="Est\u00e1ndar" data-price="42" style="padding:10px 6px;background:#f0fdf4;color:#15803d;border:1.5px solid #86efac;border-radius:10px;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;gap:2px;align-items:center;transition:all 0.15s">' +
+                          '<div style="font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#166534">Est\u00e1ndar</div>' +
+                          '<div style="font-size:0.98rem;font-weight:800;color:#15803d">850</div>' +
+                          '<div style="font-size:0.58rem;color:#166534;font-weight:600">S/ 42</div>' +
+                        '</button>' +
+                        '<button class="admQuickRec" data-cr="2100" data-plan="Avanzado" data-price="84" style="padding:10px 6px;background:#eff6ff;color:#1d4ed8;border:1.5px solid #93c5fd;border-radius:10px;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;gap:2px;align-items:center;transition:all 0.15s">' +
+                          '<div style="font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#1e40af">Avanzado</div>' +
+                          '<div style="font-size:0.98rem;font-weight:800;color:#1d4ed8">2,100</div>' +
+                          '<div style="font-size:0.58rem;color:#1e40af;font-weight:600">S/ 84</div>' +
+                        '</button>' +
+                        '<button class="admQuickRec" data-cr="4200" data-plan="Premium" data-price="140" style="padding:10px 6px;background:#faf5ff;color:#7c3aed;border:1.5px solid #d8b4fe;border-radius:10px;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;gap:2px;align-items:center;transition:all 0.15s">' +
+                          '<div style="font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#6b21a8">Premium</div>' +
+                          '<div style="font-size:0.98rem;font-weight:800;color:#7c3aed">4,200</div>' +
+                          '<div style="font-size:0.58rem;color:#6b21a8;font-weight:600">S/ 140</div>' +
+                        '</button>' +
+                      '</div>' +
+                      '<div style="font-size:0.6rem;color:#aaa;text-align:center;margin-bottom:6px">o monto personalizado</div>' +
+                      '<div style="display:flex;gap:6px">' +
+                        '<input id="admCreditos" type="number" min="1" placeholder="Cantidad..." style="flex:1;padding:9px 12px;border:1px solid #e5e5e5;border-radius:9px;font-family:inherit;font-size:0.76rem;outline:none" />' +
+                        '<button id="admRecargar" style="padding:9px 14px;background:#303130;color:#fff;border:none;border-radius:9px;font-family:inherit;font-size:0.74rem;font-weight:600;cursor:pointer">+ Recargar</button>' +
                       '</div>' +
                     '</div>' +
                     '<div style="display:flex;gap:8px">' +
@@ -6622,18 +6640,55 @@
 
               document.getElementById('admActivar').addEventListener('click', async function() {
                 var nuevo = !u.plataforma_activa;
-                await sb.from('saldos').update({ plataforma_activa: nuevo, dashboard_activo: nuevo }).eq('email', email);
+                var ra = await sb.from('saldos').update({ plataforma_activa: nuevo, dashboard_activo: nuevo, updated_at: new Date() }).eq('email', email).select('email');
+                if (ra.error) { showToast('\u274C Error: ' + ra.error.message); return; }
+                if (!ra.data || ra.data.length === 0) { showToast('\u274C No se pudo cambiar estado (verifica permisos Supabase)'); return; }
                 showToast(email + (nuevo ? ' activado' : ' desactivado'));
                 document.getElementById('admGestSearch').click();
               });
 
+              // Función compartida de recarga con captura de errores
+              async function recargarCreditos(cant, labelExtra) {
+                if (!cant || cant <= 0) { showToast('Cantidad inv\u00e1lida'); return; }
+                var nuevoSaldo = (u.creditos || 0) + cant;
+                // .select() al final devuelve la fila actualizada; si data está vacío
+                // significa que el UPDATE no afectó ninguna fila (RLS / permisos).
+                var r = await sb.from('saldos').update({
+                  creditos: nuevoSaldo,
+                  plataforma_activa: true,
+                  updated_at: new Date()
+                }).eq('email', email).select('creditos,plataforma_activa');
+                if (r.error) {
+                  console.error('Error recargar:', r.error);
+                  showToast('\u274C Error de Supabase: ' + r.error.message);
+                  return;
+                }
+                if (!r.data || r.data.length === 0) {
+                  showToast('\u274C No se pudo recargar. Revisa permisos RLS en Supabase o que el email exista.');
+                  return;
+                }
+                var saldoConfirmado = r.data[0].creditos;
+                showToast('\u2705 +' + cant + ' cr\u00e9ditos' + (labelExtra ? ' (' + labelExtra + ')' : '') + ' a ' + email + ' \u00b7 Total: ' + saldoConfirmado);
+                document.getElementById('admGestSearch').click();
+              }
+
+              // 3 botones rápidos de plan
+              document.querySelectorAll('.admQuickRec').forEach(function(btn) {
+                btn.addEventListener('click', async function() {
+                  var cant = parseInt(btn.getAttribute('data-cr'));
+                  var planLbl = btn.getAttribute('data-plan');
+                  var priceLbl = btn.getAttribute('data-price');
+                  if (!confirm('\u00bfRecargar ' + cant.toLocaleString() + ' cr\u00e9ditos (Plan ' + planLbl + ' \u2013 S/ ' + priceLbl + ') a ' + email + '?')) return;
+                  btn.disabled = true; btn.style.opacity = '0.6';
+                  await recargarCreditos(cant, 'Plan ' + planLbl);
+                  btn.disabled = false; btn.style.opacity = '1';
+                });
+              });
+
+              // Botón de monto personalizado
               document.getElementById('admRecargar').addEventListener('click', async function() {
                 var cant = parseInt(document.getElementById('admCreditos').value);
-                if (!cant || cant <= 0) { showToast('Ingresa cantidad v\u00e1lida'); return; }
-                var nuevoSaldo = (u.creditos || 0) + cant;
-                await sb.from('saldos').update({ creditos: nuevoSaldo, updated_at: new Date() }).eq('email', email);
-                showToast('\u2705 +' + cant + ' cr\u00e9ditos a ' + email + ' (total: ' + nuevoSaldo + ')');
-                document.getElementById('admGestSearch').click();
+                await recargarCreditos(cant);
               });
 
               document.getElementById('admEliminarUser').addEventListener('click', async function() {
