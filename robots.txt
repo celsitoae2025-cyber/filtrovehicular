@@ -4,7 +4,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
-Disallow: /reporte.html
 Disallow: /pago-exitoso.html
 Disallow: /pago-pendiente.html
 Disallow: /assets/js/

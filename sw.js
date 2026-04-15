@@ -1,6 +1,7 @@
-const CACHE_NAME = 'filtrov2-cache-v38';
+const CACHE_NAME = 'filtrov2-cache-v39';
 const PRECACHE = [
     './index.html',
+    './preview.html',
     './admin.html',
     './panel_cliente.html',
     './assets/media/logopwa.png',
@@ -9,11 +10,11 @@ const PRECACHE = [
     './assets/js/session.js',
     './assets/js/auth.js',
     './assets/js/app-alert.js',
+    './assets/js/admin-gate.js',
+    './assets/js/intranet-access.js',
     './assets/css/components.css',
-    './assets/css/index.css',
     './assets/css/admin.css',
     './assets/css/panel_cliente.css',
-    './assets/js/index.js',
     './assets/js/admin.js',
     './assets/js/panel_cliente.js'
 ];
@@ -23,7 +24,9 @@ self.addEventListener('install', (e) => {
     e.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return Promise.allSettled(
-                PRECACHE.map((url) => cache.add(url).catch(() => {}))
+                PRECACHE.map((url) => cache.add(url).catch((err) => {
+                    console.warn('[SW] Precache fall\u00f3 para', url, err && err.message);
+                }))
             );
         })
     );
