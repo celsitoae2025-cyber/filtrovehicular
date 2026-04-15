@@ -1,4 +1,4 @@
-const CACHE_NAME = 'filtrov2-cache-v34';
+const CACHE_NAME = 'filtrov2-cache-v35';
 const PRECACHE = [
     './index.html',
     './admin.html',
