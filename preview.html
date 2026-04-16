@@ -4216,6 +4216,14 @@
       // Guardamos el plan para redirigir al modal de planes después del login.
       if (!currentUser.email) {
         window._pendingPlanAfterLogin = planId;
+        // Cerrar sbModal de forma directa (sin history.back) para evitar que
+        // el popstate dispare después y cierre también el modal de auth.
+        try {
+          var _sbM = document.getElementById('sbModal');
+          var _sbO = document.getElementById('sbModalOverlay');
+          if (_sbM) _sbM.classList.remove('active');
+          if (_sbO) _sbO.classList.remove('active');
+        } catch(_){}
         showAuthModal();
         return;
       }
