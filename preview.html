@@ -3643,6 +3643,21 @@
       _bodyIsLocked = false;
     })();
 
+    // Safety net: si ningún modal/overlay está activo, asegurar scroll libre.
+    // Corre cada 500ms y previene bloqueos por race conditions entre modales.
+    setInterval(function() {
+      try {
+        var anyModalActive =
+          (document.getElementById('authOverlay') && document.getElementById('authOverlay').classList.contains('active')) ||
+          (document.getElementById('sbModal') && document.getElementById('sbModal').classList.contains('active')) ||
+          (document.getElementById('cMobileModal') && document.getElementById('cMobileModal').classList.contains('active')) ||
+          (isMobile() && document.getElementById('sidebar') && document.getElementById('sidebar').classList.contains('active'));
+        if (!anyModalActive && _bodyIsLocked) {
+          unlockBodyScroll();
+        }
+      } catch(_){}
+    }, 500);
+
     function showAuthModal(opts) {
       _authMode = 'login';
       resetAuthToStep1();
@@ -5388,6 +5403,21 @@
     const creditHistory = [];
 
     document.getElementById('btnCreditos').addEventListener('click', () => {
+      // Si no hay sesión, abrir directamente el modal de auth (evita
+      // abrir sbModal + race conditions con history al querer cambiar al auth).
+      if (!currentUser.email) {
+        // Cerrar sidebar si está abierto, sin tocar history.
+        try {
+          var _sb = document.getElementById('sidebar');
+          var _sbOv = document.getElementById('sidebarOverlay');
+          if (_sb) _sb.classList.remove('active');
+          if (_sbOv) _sbOv.classList.remove('active');
+          if (isMobile()) unlockBodyScroll();
+        } catch(_){}
+        window._pendingPlanAfterLogin = 'standard';
+        showAuthModal();
+        return;
+      }
       var planNames = { free: 'Free', standard: 'Est\u00e1ndar', advanced: 'Avanzado', premium: 'Premium' };
       var pn = planNames[currentUser.plan] || 'Free';
       var WA = '51932465820';
