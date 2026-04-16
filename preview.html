@@ -3759,12 +3759,13 @@
           }).catch(function() {});
 
           // Auto-login
-          currentUser = { plan: 'free', credits: 0, name: name, email: email };
+          currentUser = { plan: 'free', credits: 0, name: name, email: email, plataforma_activa: false };
           guardarSesion(currentUser);
           closeAuthModal();
           await cargarDatosUsuario(email);
           updateUserUI();
           showToast('Bienvenido ' + name);
+          if (window._pendingPlanAfterLogin) { var _pp = window._pendingPlanAfterLogin; window._pendingPlanAfterLogin = null; setTimeout(function(){ document.getElementById('btnCreditos').click(); }, 600); }
 
         } else {
           // Login - verificar admin primero
@@ -3784,12 +3785,13 @@
           var userData = loginRes.data[0].datos;
           if (userData.pass !== pass && userData.password !== pass) { showAuthError('Contrase\u00f1a incorrecta'); btn.disabled = false; btn.textContent = 'Iniciar sesi\u00f3n'; return; }
 
-          currentUser = { plan: 'free', credits: 0, name: userData.nombre || '', email: email };
+          currentUser = { plan: 'free', credits: 0, name: userData.nombre || '', email: email, plataforma_activa: false };
           guardarSesion(currentUser);
           closeAuthModal();
           await cargarDatosUsuario(email);
           updateUserUI();
           showToast('Bienvenido ' + (userData.nombre || ''));
+          if (window._pendingPlanAfterLogin) { var _pp = window._pendingPlanAfterLogin; window._pendingPlanAfterLogin = null; setTimeout(function(){ document.getElementById('btnCreditos').click(); }, 600); }
         }
       } catch (e) {
         showAuthError(e.message || 'Error al procesar');
@@ -3965,11 +3967,12 @@
             }).catch(function() {});
           }
 
-          currentUser = { plan: 'free', credits: 0, name: nombre, email: email };
+          currentUser = { plan: 'free', credits: 0, name: nombre, email: email, plataforma_activa: false };
           guardarSesion(currentUser);
           await cargarDatosUsuario(email);
           updateUserUI();
           closeAuthModal();
+          if (window._pendingPlanAfterLogin) { var _pp = window._pendingPlanAfterLogin; window._pendingPlanAfterLogin = null; setTimeout(function(){ document.getElementById('btnCreditos').click(); }, 600); }
         }
       });
 
@@ -4209,6 +4212,13 @@
     }
 
     function pagarConMercadoPago(planId) {
+      // Si no tiene sesión, debe iniciar sesión primero.
+      // Guardamos el plan para redirigir al modal de planes después del login.
+      if (!currentUser.email) {
+        window._pendingPlanAfterLogin = planId;
+        showAuthModal();
+        return;
+      }
       var planMap = {
         standard: { mpPlan: 'avanzado', name: 'Est\u00e1ndar' },
         advanced: { mpPlan: 'business', name: 'Avanzado' },
