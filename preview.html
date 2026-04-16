@@ -4212,18 +4212,22 @@
     }
 
     function pagarConMercadoPago(planId) {
+      // Cerrar sbModal de forma DIRECTA (sin history.back) para evitar que
+      // el popstate dispare después y cierre el modal de auth o el loading.
+      try {
+        var _sbM = document.getElementById('sbModal');
+        var _sbO = document.getElementById('sbModalOverlay');
+        if (_sbM && _sbM.classList.contains('active')) {
+          _sbM.classList.remove('active');
+          if (_sbO) _sbO.classList.remove('active');
+          try { if (history.state && history.state.layer === 'sbModal') history.replaceState(null, '', window.location.href); } catch(_){}
+        }
+      } catch(_){}
+
       // Si no tiene sesión, debe iniciar sesión primero.
       // Guardamos el plan para redirigir al modal de planes después del login.
       if (!currentUser.email) {
         window._pendingPlanAfterLogin = planId;
-        // Cerrar sbModal de forma directa (sin history.back) para evitar que
-        // el popstate dispare después y cierre también el modal de auth.
-        try {
-          var _sbM = document.getElementById('sbModal');
-          var _sbO = document.getElementById('sbModalOverlay');
-          if (_sbM) _sbM.classList.remove('active');
-          if (_sbO) _sbO.classList.remove('active');
-        } catch(_){}
         showAuthModal();
         return;
       }
@@ -5557,12 +5561,14 @@
         '<div class="plan-footer-note" style="text-align:center;font-size:0.6rem;color:#aaa;line-height:1.4">Pago seguro con MercadoPago \u00b7 Yape, tarjeta o transferencia</div>'
       );
 
-      // Event listeners para botones de compra
+      // Event listeners para botones de compra.
+      // NOTA: no llamamos closeSbModal() aquí porque dispara history.back()
+      // asíncrono y rompe la apertura del modal de auth cuando el usuario
+      // no tiene sesión. pagarConMercadoPago() cierra el sbModal directamente.
       document.querySelectorAll('.mp-buy-btn').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
-          e.stopPropagation();   // evitar que el click del card también dispare
+          e.stopPropagation();
           var p = plans[parseInt(btn.getAttribute('data-plan-idx'))];
-          closeSbModal();
           pagarConMercadoPago(p.id);
         });
       });
@@ -5602,7 +5608,7 @@
               <div style="font-size:0.95rem;font-weight:700;color:#1d1e1d">S/ 42.00</div>
             </div>
             <div style="font-size:0.72rem;color:#888;margin-bottom:10px">800 + 50 cr\u00e9ditos \u00b7 Acceso a Veh\u00edculos</div>
-            <button onclick="closeSbModal();pagarConMercadoPago('standard');" style="width:100%;padding:9px;background:#1d1e1d;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer" ${currentUser.plan === 'standard' ? 'disabled' : ''}>Elegir Est\u00e1ndar</button>
+            <button onclick="pagarConMercadoPago('standard');" style="width:100%;padding:9px;background:#1d1e1d;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer" ${currentUser.plan === 'standard' ? 'disabled' : ''}>Elegir Est\u00e1ndar</button>
           </div>
           <div style="border:2px solid #1d1e1d;border-radius:12px;padding:16px;position:relative;${currentUser.plan === 'advanced' ? 'opacity:0.5;' : ''}">
             <div style="position:absolute;top:-8px;left:16px;font-size:0.6rem;font-weight:700;padding:2px 8px;background:#1d1e1d;color:#fff;border-radius:4px">RECOMENDADO</div>
@@ -5611,7 +5617,7 @@
               <div style="font-size:0.95rem;font-weight:700;color:#1d1e1d">S/ 84.00</div>
             </div>
             <div style="font-size:0.72rem;color:#888;margin-bottom:10px">2,000 + 100 cr\u00e9ditos \u00b7 Veh\u00edculos + Consultas+</div>
-            <button onclick="closeSbModal();pagarConMercadoPago('advanced');" style="width:100%;padding:9px;background:#1d1e1d;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer" ${currentUser.plan === 'advanced' ? 'disabled' : ''}>Elegir Avanzado</button>
+            <button onclick="pagarConMercadoPago('advanced');" style="width:100%;padding:9px;background:#1d1e1d;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer" ${currentUser.plan === 'advanced' ? 'disabled' : ''}>Elegir Avanzado</button>
           </div>
           <div style="border:1px solid #eee;border-radius:12px;padding:16px;background:linear-gradient(135deg,#fafafa,#f0f0f0);${currentUser.plan === 'premium' ? 'opacity:0.5;' : ''}">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -5619,7 +5625,7 @@
               <div style="font-size:0.95rem;font-weight:700;color:#1d1e1d">S/ 140.00</div>
             </div>
             <div style="font-size:0.72rem;color:#888;margin-bottom:10px">4,000 + 200 cr\u00e9ditos \u00b7 Acceso total + Avanzado Premium</div>
-            <button onclick="closeSbModal();pagarConMercadoPago('premium');" style="width:100%;padding:9px;background:#1d1e1d;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer" ${currentUser.plan === 'premium' ? 'disabled' : ''}>Elegir Premium</button>
+            <button onclick="pagarConMercadoPago('premium');" style="width:100%;padding:9px;background:#1d1e1d;color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:0.78rem;font-weight:600;cursor:pointer" ${currentUser.plan === 'premium' ? 'disabled' : ''}>Elegir Premium</button>
           </div>
         </div>
       `);
