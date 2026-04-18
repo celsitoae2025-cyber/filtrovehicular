@@ -18,7 +18,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { email } = await req.json();
+    const { email, nombre } = await req.json();
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return new Response(
@@ -74,26 +74,8 @@ serve(async (req: Request) => {
       body: JSON.stringify({
         from: 'Filtro Vehicular+ <noreply@filtrovehicularperu.com>',
         to: [email],
-        subject: `${codigo} — Código de verificación · Filtro Vehicular+`,
-        html: `
-          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;color:#1d1e1d">
-            <div style="text-align:center;margin-bottom:28px">
-              <div style="font-size:18px;font-weight:700;letter-spacing:1px">FILTRO VEHICULAR+</div>
-              <div style="font-size:12px;color:#8a7e5e;margin-top:4px">Verificación de cuenta</div>
-            </div>
-            <div style="text-align:center;margin-bottom:24px">
-              <div style="font-size:14px;color:#5e5848;margin-bottom:16px">Tu código de verificación es:</div>
-              <div style="font-size:42px;font-weight:800;letter-spacing:8px;color:#1d1e1d;padding:18px 0;background:#f5f0e4;border-radius:12px">${codigo}</div>
-            </div>
-            <div style="font-size:13px;color:#8a7e5e;text-align:center;line-height:1.5;margin-bottom:24px">
-              Este código vence en <b style="color:#1d1e1d">5 minutos</b>.<br/>
-              Si no solicitaste este código, ignora este mensaje.
-            </div>
-            <div style="border-top:1px solid #e6dec8;padding-top:16px;text-align:center;font-size:11px;color:#b5a890">
-              filtrovehicularperu.com · Lima, Perú
-            </div>
-          </div>
-        `,
+        subject: `${codigo} es tu código de verificación — Filtro Vehicular+`,
+        html: `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body style="margin:0;padding:0;background:#f7f7f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif"><div style="max-width:500px;margin:0 auto;padding:24px 16px"><div style="background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #eee"><div style="padding:24px 28px 16px"><div style="font-size:14px;font-weight:700;color:#1d1e1d;letter-spacing:1.5px;margin-bottom:16px">FILTRO VEHICULAR+</div></div><div style="background:#f5f0e4;padding:18px 28px"><div style="font-size:18px;font-weight:600;color:#1d1e1d">Código de verificación de<br/>Filtro Vehicular+</div></div><div style="padding:28px 28px 24px"><div style="font-size:14px;color:#333;line-height:1.7;margin-bottom:20px">Hola${nombre ? ', ' + nombre : ''}.<br/><br/>Recibimos una solicitud para verificar tu cuenta con tu dirección de correo electrónico. Tu código de verificación es:</div><div style="text-align:center;padding:16px 0 20px"><div style="font-size:36px;font-weight:700;color:#1d1e1d;letter-spacing:6px">${codigo}</div></div><div style="text-align:center;margin-bottom:24px"><a href="https://filtrovehicularperu.com/preview.html?vc=${codigo}&ve=${encodeURIComponent(email)}" style="display:inline-block;padding:12px 32px;background:#1d1e1d;color:#fff;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600">Activar mi cuenta</a></div><div style="font-size:13px;color:#555;line-height:1.7;margin-bottom:16px">Si no solicitaste este código, es posible que otra persona esté intentando acceder a tu cuenta. <b>No reenvíes ni compartas este código con nadie.</b></div><div style="font-size:13px;color:#555;line-height:1.7">Este código vence en <b>5 minutos</b>.</div></div><div style="padding:16px 28px;border-top:1px solid #f0f0f0"><div style="font-size:13px;color:#888;line-height:1.6">Atentamente,<br/><br/>El equipo de Filtro Vehicular+</div></div></div><div style="text-align:center;padding:16px;font-size:11px;color:#aaa"><a href="https://filtrovehicularperu.com" style="color:#999;text-decoration:none">filtrovehicularperu.com</a></div></div></body></html>`,
       }),
     });
 

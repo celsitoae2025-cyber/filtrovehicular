@@ -2280,8 +2280,11 @@
     .c-result-loading {
       display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 0; color: #bbb;
     }
-    .c-result-text { font-size: 0.84rem; line-height: 1.7; color: #1d1e1d; padding: 0 20px; }
+    .c-result-text { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.84rem; line-height: 1.7; color: #1d1e1d; padding: 0 20px; }
+    .c-result-text * { font-family: inherit; }
     .c-result-text strong { color: #1d1e1d; }
+    .c-result-body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .c-result-body * { font-family: inherit; }
     .c-result-images { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
     .c-result-images img {
       max-width: 160px; border-radius: 0; border: 1px solid var(--border); cursor: pointer;
@@ -2558,6 +2561,7 @@
       font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s;
     }
     .panel-query-btn:hover { opacity: 0.8; }
+    .result-lbl, .result-card, .result-row, .result-key, .result-val { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; }
     .result-lbl { font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #bbb; margin-bottom: 7px; margin-top: 14px; }
     .result-lbl:first-child { margin-top: 0; }
     .result-card {
@@ -2582,6 +2586,10 @@
       display: flex; align-items: center; gap: 8px;
       justify-content: center; padding: 40px 20px;
       color: #ccc; font-size: 0.8rem;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #panelQResult, #panelQResult * {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .spin-icon { animation: spin 0.7s linear infinite; }
@@ -3754,11 +3762,11 @@
     var _codeVerificationPending = false; // true cuando se envió el código y esperamos input
 
     // Enviar código de verificación por email
-    async function enviarCodigoVerificacion(email) {
+    async function enviarCodigoVerificacion(email, nombre) {
       var res = await fetch(SUPABASE_URL + '/functions/v1/enviar-codigo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
-        body: JSON.stringify({ email: email })
+        body: JSON.stringify({ email: email, nombre: nombre || '' })
       });
       return await res.json();
     }
@@ -3798,9 +3806,33 @@
             var existRes = await sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%').eq('datos->>email', email).limit(1);
             if (existRes.data && existRes.data.length > 0) { showAuthError('Ese correo ya est\u00e1 registrado'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
 
+            // Si el email ya fue verificado desde el link del correo, saltar todo el paso del código
+            if (localStorage.getItem('email_verified_' + email) === 'true') {
+              localStorage.removeItem('email_verified_' + email);
+              // Saltar directamente a crear la cuenta (no necesita código)
+              btn.textContent = 'Creando cuenta...';
+              var ts = Date.now();
+              var regData = { placa: 'REGISTRO_' + ts, timestamp: ts, status: 'approved', isRegistro: true, email: email, pass: pass, nombre: name, whatsapp: wpp, emailVerificado: true };
+              await sb.from('solicitudes').upsert({ placa: 'REGISTRO_' + ts, datos: regData, updated_at: new Date() });
+              var existSaldo = await sb.from('saldos').select('email').eq('email', email).maybeSingle();
+              if (!existSaldo.data) {
+                await sb.from('saldos').insert({ email: email, creditos: 0, plataforma_activa: false, dashboard_activo: false, updated_at: new Date() });
+              }
+              fetch(SUPABASE_URL + '/functions/v1/notificar-registro', { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }, body: JSON.stringify({ nombre: name, email: email, whatsapp: wpp, tipo: 'correo' }) }).catch(function() {});
+              currentUser = { plan: 'free', credits: 0, name: name, email: email, plataforma_activa: false };
+              guardarSesion(currentUser);
+              closeAuthModal();
+              await cargarDatosUsuario(email);
+              updateUserUI();
+              showToast('Cuenta creada y verificada');
+              if (window._pendingPlanAfterLogin) { window._pendingPlanAfterLogin = null; setTimeout(function(){ document.getElementById('btnCreditos').click(); }, 600); }
+              btn.disabled = false; btn.textContent = 'Crear cuenta';
+              return;
+            }
+
             // Enviar código de verificación
             btn.textContent = 'Enviando c\u00f3digo...';
-            var codeRes = await enviarCodigoVerificacion(email);
+            var codeRes = await enviarCodigoVerificacion(email, name);
             if (!codeRes.ok) { showAuthError(codeRes.error || 'No se pudo enviar el c\u00f3digo'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
 
             // Mostrar paso de código
@@ -4083,6 +4115,35 @@
       // Navegación libre: el modal solo aparece al intentar consultar (checkAccess).
       // Si quieres reactivar el gate al cargar, descomenta:
       // if (!currentUser.email) showAuthModal();
+
+      // Auto-verificación desde link del email
+      (function checkEmailVerifyLink() {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var vc = params.get('vc');
+          var ve = params.get('ve');
+          if (vc && ve) {
+            // Limpiar URL sin recargar
+            history.replaceState(null, '', window.location.pathname);
+            // Verificar código automáticamente
+            fetch(SUPABASE_URL + '/functions/v1/verificar-codigo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+              body: JSON.stringify({ email: ve, codigo: vc })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (data.ok) {
+                localStorage.setItem('email_verified_' + ve, 'true');
+                showToast('Correo verificado. Completa tu registro.');
+              } else {
+                showToast(data.error || 'Código inválido o expirado');
+              }
+            })
+            .catch(function() { showToast('Error al verificar. Ingresa el código manualmente.'); });
+          }
+        } catch(_) {}
+      })();
     })();
 
     // Event listeners del auth modal — siempre cerrable (navegación libre)
