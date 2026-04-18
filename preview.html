@@ -4485,9 +4485,24 @@
     }
     window.descargarArchivoAuto = descargarArchivoAuto;
 
-    var socket = io(BRIDGE_URL);
-    socket.on('connect', function() { console.log('[WS] Conectado al bridge'); });
-    socket.on('disconnect', function() { console.log('[WS] Desconectado del bridge'); });
+    var socket = io(BRIDGE_URL, {
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 10000,
+      forceNew: false
+    });
+    socket.on('connect', function() { console.log('[WS] Conectado al bridge · ID:', socket.id); });
+    socket.on('disconnect', function(reason) {
+      console.warn('[WS] Desconectado:', reason);
+      if (reason === 'io server disconnect') socket.connect();
+    });
+    socket.on('connect_error', function(err) {
+      console.warn('[WS] Error conexión:', err.message);
+    });
+    socket.on('reconnect', function(n) { console.log('[WS] Reconectado después de', n, 'intentos'); });
 
     var facialServices = [
       { icon:'ph ph-scan', title:'Reconocimiento Facial V5', desc:'Identifica persona por foto', tipo:'pdf', creditos:20, comandoId:'facial_rfn', placeholder:'Sube una foto del rostro', inputType:'foto', comando:'/rfn', bot:'lederdata_oficial_bot' },
@@ -4865,37 +4880,60 @@
 
     function pollConsulta(jobId, item, body, btn, esFacial, _qInfo) {
       var done = false;
+      var startTime = Date.now();
 
-      // WebSocket: resultado en tiempo real
-      socket.on('resultado:' + jobId, function(data) {
+      function finalize(data) {
         if (done) return;
         done = true;
         socket.off('resultado:' + jobId);
+        var elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        console.log('[Consulta] Resultado recibido en ' + elapsed + 's via ' + (data._via || 'desconocido'));
         mostrarResultado(data, body, btn, esFacial, _qInfo);
+      }
+
+      // WebSocket: resultado en tiempo real (instantáneo)
+      socket.on('resultado:' + jobId, function(data) {
+        data._via = 'websocket';
+        finalize(data);
       });
 
-      // Polling fallback cada 1s por si WebSocket falla (velocidad mejorada)
+      // Polling agresivo: 500ms los primeros 10s, luego 1s hasta 60s, luego 2s
       var attempts = 0;
-      var interval = setInterval(function() {
-        if (done) { clearInterval(interval); return; }
+      function doPoll() {
+        if (done) return;
+        var elapsed = Date.now() - startTime;
         attempts++;
-        if (attempts >= 120) {
-          clearInterval(interval);
+
+        // Timeout: 2 minutos máximo
+        if (elapsed > 120000) {
           socket.off('resultado:' + jobId);
-          body.innerHTML = '<div class="c-result-hint" style="color:#c00">Tiempo de espera agotado</div>';
+          body.innerHTML = '<div class="c-result-hint" style="color:#c00">Tiempo de espera agotado. Intenta de nuevo.</div>';
           btn.disabled = false; btn.textContent = esFacial ? 'Analizar rostro' : 'Consultar';
           return;
         }
+
         fetch(BRIDGE_URL + '/api/consulta/' + jobId)
         .then(function(r) { return r.json(); })
         .then(function(data) {
-          if (done || data.status === 'processing') return;
-          done = true;
-          clearInterval(interval);
-          socket.off('resultado:' + jobId);
-          mostrarResultado(data, body, btn, esFacial, _qInfo);
-        }).catch(function() {});
-      }, 1000);
+          if (done) return;
+          // Si tiene resultado (no está processing), mostrar
+          if (data.status !== 'processing') {
+            data._via = 'polling';
+            finalize(data);
+            return;
+          }
+          // Si sigue processing, programar siguiente poll
+          var nextDelay = elapsed < 10000 ? 500 : elapsed < 60000 ? 1000 : 2000;
+          setTimeout(doPoll, nextDelay);
+        })
+        .catch(function() {
+          // Error de red, reintentar
+          setTimeout(doPoll, 2000);
+        });
+      }
+
+      // Primer poll inmediato después de 500ms
+      setTimeout(doPoll, 500);
     }
 
     function mostrarResultado(data, body, btn, esFacial, _queryInfo) {
