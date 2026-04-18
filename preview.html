@@ -2998,22 +2998,27 @@
           <input class="auth-input" id="authWhatsapp" placeholder="WhatsApp (9 d&iacute;gitos)" maxlength="9" autocomplete="tel" />
         </div>
 
+        <!-- Paso de verificación por código (oculto hasta que se envíe el código) -->
+        <div id="authCodeStep" style="display:none">
+          <div style="text-align:center;font-size:0.82rem;color:#5e5848;line-height:1.45;margin-bottom:12px;padding:10px 14px;background:#f5f0e4;border:1px solid #e6dec8;border-radius:10px">
+            <div style="font-weight:700;color:#1d1e1d;margin-bottom:4px">Verificación de correo</div>
+            Enviamos un código de 6 dígitos a <b id="authCodeEmail" style="color:#1d1e1d"></b>
+          </div>
+          <input class="auth-input" id="authCode" placeholder="000000" maxlength="6" autocomplete="one-time-code" inputmode="numeric" style="text-align:center;letter-spacing:10px;font-size:1.3rem;font-weight:800;margin-top:8px" />
+          <div style="text-align:center;margin-top:10px;font-size:0.78rem;color:#8a7e5e">
+            &iquest;No lleg&oacute;? <a id="authResendCode" style="color:#1d1e1d;font-weight:600;cursor:pointer;text-decoration:underline">Reenviar c&oacute;digo</a>
+          </div>
+        </div>
+
         <div class="auth-error" id="authError"></div>
 
         <button class="auth-btn" id="authSubmit">Iniciar sesi&oacute;n</button>
-
-        <div class="auth-or"><span>o</span></div>
-
-        <button class="auth-google" id="authGoogle">
-          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-          Continuar con Google
-        </button>
 
         <div class="auth-toggle" id="authToggle">
           &iquest;No tienes cuenta? <a id="authToggleLink">Reg&iacute;strate gratis</a>
         </div>
 
-        <div class="auth-help">
+        <div class="auth-help" id="authHelp" style="display:none">
           &iquest;Necesitas ayuda?
           <a id="authWaHelp" href="https://wa.me/51932465820?text=Hola%2C%20necesito%20ayuda%20para%20ingresar%20a%20Filtro%20Vehicular%2B." target="_blank" rel="noopener noreferrer">Escr&iacute;benos por WhatsApp</a>
         </div>
@@ -3600,6 +3605,16 @@
       _authStep = 2;
       document.getElementById('authPassWrap').style.display = '';
       document.getElementById('authSubmit').textContent = (_authMode === 'register') ? 'Crear cuenta' : 'Iniciar sesi\u00f3n';
+      // Resetear paso de verificación por código
+      _codeVerificationPending = false;
+      var codeStep = document.getElementById('authCodeStep');
+      if (codeStep) codeStep.style.display = 'none';
+      var codeInput = document.getElementById('authCode');
+      if (codeInput) codeInput.value = '';
+      var emailInput = document.getElementById('authEmail');
+      if (emailInput) emailInput.disabled = false;
+      var toggleEl = document.getElementById('authToggle');
+      if (toggleEl) toggleEl.style.display = '';
     }
 
     // Scroll lock robusto para móvil (iOS Safari y Chrome Android)
@@ -3691,18 +3706,21 @@
     }
 
     function toggleAuthMode() {
+      var helpEl = document.getElementById('authHelp');
       if (_authMode === 'login') {
         _authMode = 'register';
         document.getElementById('authTitle').textContent = 'Crear cuenta';
         document.getElementById('authSub').textContent = 'Reg\u00edstrate para acceder a la plataforma';
         document.getElementById('authRegFields').style.display = 'block';
         document.getElementById('authToggle').innerHTML = '\u00bfYa tienes cuenta? <a id="authToggleLink">Inicia sesi\u00f3n</a>';
+        if (helpEl) helpEl.style.display = '';
       } else {
         _authMode = 'login';
         document.getElementById('authTitle').innerHTML = 'Consulta r\u00e1pido,<br/>decide mejor';
         document.getElementById('authSub').textContent = 'Inicia sesi\u00f3n para continuar';
         document.getElementById('authRegFields').style.display = 'none';
         document.getElementById('authToggle').innerHTML = '\u00bfNo tienes cuenta? <a id="authToggleLink">Reg\u00edstrate gratis</a>';
+        if (helpEl) helpEl.style.display = 'none';
       }
       resetAuthToStep1();
       document.getElementById('authError').style.display = 'none';
@@ -3733,6 +3751,28 @@
       el.style.display = 'block';
     }
 
+    var _codeVerificationPending = false; // true cuando se envió el código y esperamos input
+
+    // Enviar código de verificación por email
+    async function enviarCodigoVerificacion(email) {
+      var res = await fetch(SUPABASE_URL + '/functions/v1/enviar-codigo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+        body: JSON.stringify({ email: email })
+      });
+      return await res.json();
+    }
+
+    // Verificar código ingresado
+    async function verificarCodigo(email, codigo) {
+      var res = await fetch(SUPABASE_URL + '/functions/v1/verificar-codigo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+        body: JSON.stringify({ email: email, codigo: codigo })
+      });
+      return await res.json();
+    }
+
     async function handleAuthSubmit() {
       var email = document.getElementById('authEmail').value.trim().toLowerCase();
       var pass = document.getElementById('authPass').value;
@@ -3748,16 +3788,61 @@
         if (_authMode === 'register') {
           var name = document.getElementById('authName').value.trim();
           var wpp = document.getElementById('authWhatsapp').value.trim();
-          if (!name) { showAuthError('Ingresa tu nombre'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
-          if (!wpp || wpp.length !== 9 || wpp[0] !== '9') { showAuthError('WhatsApp inv\u00e1lido (9 d\u00edgitos, empieza con 9)'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
 
-          // Verificar que no existe
-          var existRes = await sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%').eq('datos->>email', email).limit(1);
-          if (existRes.data && existRes.data.length > 0) { showAuthError('Ese correo ya est\u00e1 registrado'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
+          // --- PASO 1: Validar campos y enviar código ---
+          if (!_codeVerificationPending) {
+            if (!name) { showAuthError('Ingresa tu nombre'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
+            if (!wpp || wpp.length !== 9 || wpp[0] !== '9') { showAuthError('WhatsApp inv\u00e1lido (9 d\u00edgitos, empieza con 9)'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
 
-          // Crear registro
+            // Verificar que no existe
+            var existRes = await sb.from('solicitudes').select('datos').like('placa', 'REGISTRO_%').eq('datos->>email', email).limit(1);
+            if (existRes.data && existRes.data.length > 0) { showAuthError('Ese correo ya est\u00e1 registrado'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
+
+            // Enviar código de verificación
+            btn.textContent = 'Enviando c\u00f3digo...';
+            var codeRes = await enviarCodigoVerificacion(email);
+            if (!codeRes.ok) { showAuthError(codeRes.error || 'No se pudo enviar el c\u00f3digo'); btn.disabled = false; btn.textContent = 'Crear cuenta'; return; }
+
+            // Mostrar paso de código
+            _codeVerificationPending = true;
+            document.getElementById('authRegFields').style.display = 'none';
+            document.getElementById('authPassWrap').style.display = 'none';
+            document.getElementById('authEmail').parentElement.querySelector('#authEmail').disabled = true;
+            document.getElementById('authCodeStep').style.display = 'block';
+            document.getElementById('authCodeEmail').textContent = email;
+            document.getElementById('authToggle').style.display = 'none';
+            btn.textContent = 'Verificar c\u00f3digo';
+            btn.disabled = false;
+            document.getElementById('authTitle').textContent = 'Verifica tu correo';
+            document.getElementById('authSub').textContent = 'Ingresa el c\u00f3digo que enviamos';
+            setTimeout(function() { document.getElementById('authCode').focus(); }, 100);
+
+            // Listener para reenviar código
+            document.getElementById('authResendCode').onclick = async function() {
+              this.textContent = 'Enviando...';
+              this.style.pointerEvents = 'none';
+              await enviarCodigoVerificacion(email);
+              this.textContent = 'C\u00f3digo reenviado';
+              setTimeout(function() {
+                var el = document.getElementById('authResendCode');
+                if (el) { el.textContent = 'Reenviar c\u00f3digo'; el.style.pointerEvents = ''; }
+              }, 3000);
+            };
+            return;
+          }
+
+          // --- PASO 2: Verificar código e crear cuenta ---
+          var codigo = document.getElementById('authCode').value.trim();
+          if (!codigo || codigo.length !== 6) { showAuthError('Ingresa el c\u00f3digo de 6 d\u00edgitos'); btn.disabled = false; btn.textContent = 'Verificar c\u00f3digo'; return; }
+
+          btn.textContent = 'Verificando...';
+          var verRes = await verificarCodigo(email, codigo);
+          if (!verRes.ok) { showAuthError(verRes.error || 'C\u00f3digo inv\u00e1lido'); btn.disabled = false; btn.textContent = 'Verificar c\u00f3digo'; return; }
+
+          // Código válido: crear la cuenta
+          btn.textContent = 'Creando cuenta...';
           var ts = Date.now();
-          var regData = { placa: 'REGISTRO_' + ts, timestamp: ts, status: 'approved', isRegistro: true, email: email, pass: pass, nombre: name, whatsapp: wpp };
+          var regData = { placa: 'REGISTRO_' + ts, timestamp: ts, status: 'approved', isRegistro: true, email: email, pass: pass, nombre: name, whatsapp: wpp, emailVerificado: true };
           await sb.from('solicitudes').upsert({ placa: 'REGISTRO_' + ts, datos: regData, updated_at: new Date() });
 
           // Crear saldo con 0 créditos
@@ -3773,13 +3858,16 @@
             body: JSON.stringify({ nombre: name, email: email, whatsapp: wpp, tipo: 'correo' })
           }).catch(function() {});
 
+          // Resetear estado de verificación
+          _codeVerificationPending = false;
+
           // Auto-login
           currentUser = { plan: 'free', credits: 0, name: name, email: email, plataforma_activa: false };
           guardarSesion(currentUser);
           closeAuthModal();
           await cargarDatosUsuario(email);
           updateUserUI();
-          showToast('Bienvenido ' + name);
+          showToast('Bienvenido ' + name + '. Cuenta verificada.');
           if (window._pendingPlanAfterLogin) { var _pp = window._pendingPlanAfterLogin; window._pendingPlanAfterLogin = null; setTimeout(function(){ document.getElementById('btnCreditos').click(); }, 600); }
 
         } else {
@@ -4015,7 +4103,9 @@
       if (_authStep === 1) advanceToStep2();
       else handleAuthSubmit();
     });
-    document.getElementById('authGoogle').addEventListener('click', handleGoogleSignIn);
+    // Google Sign-In removido del modal de auth
+    var _authGoogleBtn = document.getElementById('authGoogle');
+    if (_authGoogleBtn) _authGoogleBtn.addEventListener('click', handleGoogleSignIn);
     document.getElementById('authEmail').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { e.preventDefault(); if (_authStep === 1) advanceToStep2(); }
     });
