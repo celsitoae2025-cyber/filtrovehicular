@@ -2276,15 +2276,13 @@
       .c-reniec-fotos:not(.c-fotos-1) { grid-template-columns: repeat(2, 1fr); }
       .c-reniec-fotos.c-fotos-1 { max-width: 280px; margin: 0 auto; }
     }
-    .c-result-body { padding: 20px; min-height: 200px; }
+    .c-result-body { padding: 20px; min-height: 200px; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-weight: 400; }
+    .c-result-body, .c-result-body *, .c-result-text, .c-result-text *, #panelQResult, #panelQResult * { font-family: inherit !important; }
     .c-result-loading {
       display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 0; color: #bbb;
     }
-    .c-result-text { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.84rem; line-height: 1.7; color: #1d1e1d; padding: 0 20px; }
-    .c-result-text * { font-family: inherit; }
+    .c-result-text { font-size: 0.84rem; line-height: 1.7; color: #1d1e1d; padding: 0 20px; }
     .c-result-text strong { color: #1d1e1d; }
-    .c-result-body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-    .c-result-body * { font-family: inherit; }
     .c-result-images { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
     .c-result-images img {
       max-width: 160px; border-radius: 0; border: 1px solid var(--border); cursor: pointer;
@@ -2561,7 +2559,6 @@
       font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s;
     }
     .panel-query-btn:hover { opacity: 0.8; }
-    .result-lbl, .result-card, .result-row, .result-key, .result-val { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; }
     .result-lbl { font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #bbb; margin-bottom: 7px; margin-top: 14px; }
     .result-lbl:first-child { margin-top: 0; }
     .result-card {
@@ -2574,8 +2571,8 @@
       font-size: 0.8rem; align-items: center;
     }
     .result-row:last-child { border-bottom: none; }
-    .result-key { color: #888; font-weight: 600; }
-    .result-val { color: #1d1e1d; font-weight: 400; }
+    .result-key { color: #888; font-weight: 500; }
+    .result-val { color: #1d1e1d; font-weight: 400; font-style: normal; }
     .result-badge {
       display: inline-flex; align-items: center;
       font-size: 0.7rem; font-weight: 700;
@@ -2586,10 +2583,6 @@
       display: flex; align-items: center; gap: 8px;
       justify-content: center; padding: 40px 20px;
       color: #ccc; font-size: 0.8rem;
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    #panelQResult, #panelQResult * {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .spin-icon { animation: spin 0.7s linear infinite; }
@@ -4684,7 +4677,7 @@
         // Campo : Valor
         var match = line.match(/^([A-ZÁÉÍÓÚÑ\s\.\-\/\(\)\°\#]+)\s*:\s*(.+)$/i);
         if (match) {
-          return '<div style="display:flex;padding:3px 0;font-size:0.8rem;line-height:1.4"><span style="color:#1d1e1d;font-weight:700;width:180px;flex-shrink:0">' + match[1].trim() + '</span><span style="color:#1d1e1d;font-weight:400">' + match[2].trim() + '</span></div>';
+          return '<div style="display:flex;padding:3px 0;font-size:0.8rem;line-height:1.4"><span style="color:#888;font-weight:500;width:180px;flex-shrink:0">' + match[1].trim() + '</span><span style="color:#1d1e1d;font-weight:400">' + match[2].trim() + '</span></div>';
         }
         // Campo solo (sin valor, ej: "DELITOS:")
         var matchSolo = line.match(/^([A-ZÁÉÍÓÚÑ\s\.\-\/]+)\s*:$/i);
@@ -4884,12 +4877,12 @@
         mostrarResultado(data, body, btn, esFacial, _qInfo);
       });
 
-      // Polling fallback cada 2s por si WebSocket falla
+      // Polling fallback cada 1s por si WebSocket falla (velocidad mejorada)
       var attempts = 0;
       var interval = setInterval(function() {
         if (done) { clearInterval(interval); return; }
         attempts++;
-        if (attempts >= 60) {
+        if (attempts >= 120) {
           clearInterval(interval);
           socket.off('resultado:' + jobId);
           body.innerHTML = '<div class="c-result-hint" style="color:#c00">Tiempo de espera agotado</div>';
@@ -4905,7 +4898,7 @@
           socket.off('resultado:' + jobId);
           mostrarResultado(data, body, btn, esFacial, _qInfo);
         }).catch(function() {});
-      }, 2000);
+      }, 1000);
     }
 
     function mostrarResultado(data, body, btn, esFacial, _queryInfo) {
