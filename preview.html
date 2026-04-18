@@ -4664,27 +4664,24 @@
       return text.split('\n').map(function(line) {
         line = line.trim();
         if (!line) return '';
-        // Secciones en negrita: **GENERAL**, **PROPIETARIOS**
-        line = line.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        // Línea que es solo un título en negrita
-        if (line.match(/^<strong>[^<]+<\/strong>$/)) {
-          return '<div style="padding:10px 0 4px;font-weight:700;font-size:0.84rem;color:#1d1e1d;border-bottom:1px solid #eee;margin-top:8px">' + line + '</div>';
+        // Primero: limpiar marcadores de negrita del bot (**texto**)
+        var cleanLine = line.replace(/\*\*/g, '');
+        // Secciones/títulos: líneas TODO MAYÚSCULAS solas (OTROS, GENERAL, etc.)
+        if (cleanLine.match(/^(OTROS|CASO|DELITOS|DIRECCION|NACIMIENTO|UBICACION|ACTAS|INTEGRANTES|LUGAR DE|CLASIFICACION|INFORMACION|GENERAL|PROPIETARIOS|DATOS|VEHICULO)[^\:]*$/i)) {
+          return '<div style="padding:10px 0 4px;font-weight:700;font-size:0.84rem;color:#1d1e1d;border-bottom:1px solid #eee;margin-top:8px">' + cleanLine + '</div>';
         }
-        // Secciones/títulos (líneas TODO MAYÚSCULAS sin ":" o que empiezan con CASO, DELITOS, etc)
-        if (line.match(/^(CASO|DELITOS|DIRECCION|NACIMIENTO|UBICACION|ACTAS|INTEGRANTES|LUGAR DE|CLASIFICACION|INFORMACION)[^\:]*$/i)) {
-          return '<div style="padding:8px 0 3px;font-weight:700;font-size:0.82rem;color:#1d1e1d;border-bottom:1px solid #f0f0f0;margin-top:6px">' + line + '</div>';
-        }
-        // Campo : Valor
-        var match = line.match(/^([A-ZÁÉÍÓÚÑ\s\.\-\/\(\)\°\#]+)\s*:\s*(.+)$/i);
+        // Campo : Valor (la mayoría de líneas de resultados)
+        var match = cleanLine.match(/^([A-ZÁÉÍÓÚÑ\s\.\-\/\(\)\°\#\,]+)\s*:\s*(.+)$/i);
         if (match) {
-          return '<div style="display:flex;padding:3px 0;font-size:0.8rem;line-height:1.4"><span style="color:#888;font-weight:500;width:180px;flex-shrink:0">' + match[1].trim() + '</span><span style="color:#1d1e1d;font-weight:400">' + match[2].trim() + '</span></div>';
+          return '<div style="display:flex;padding:4px 0;font-size:0.82rem;line-height:1.45"><span style="color:#888;font-weight:500;min-width:160px;max-width:200px;flex-shrink:0">' + match[1].trim() + ':</span><span style="color:#1d1e1d;font-weight:400;margin-left:8px">' + match[2].trim() + '</span></div>';
         }
-        // Campo solo (sin valor, ej: "DELITOS:")
-        var matchSolo = line.match(/^([A-ZÁÉÍÓÚÑ\s\.\-\/]+)\s*:$/i);
+        // Campo solo sin valor (ej: "GENERO:")
+        var matchSolo = cleanLine.match(/^([A-ZÁÉÍÓÚÑ\s\.\-\/]+)\s*:$/i);
         if (matchSolo) {
-          return '<div style="padding:8px 0 3px;font-weight:700;font-size:0.82rem;color:#1d1e1d;margin-top:4px">' + matchSolo[1].trim() + '</div>';
+          return '<div style="display:flex;padding:4px 0;font-size:0.82rem;line-height:1.45"><span style="color:#888;font-weight:500;min-width:160px;max-width:200px;flex-shrink:0">' + matchSolo[1].trim() + ':</span><span style="color:#1d1e1d;font-weight:400;margin-left:8px">-</span></div>';
         }
-        return '<div style="padding:2px 0;font-size:0.8rem;color:#1d1e1d">' + line + '</div>';
+        // Texto normal (fallback)
+        return '<div style="padding:3px 0;font-size:0.82rem;color:#1d1e1d;font-weight:400">' + cleanLine + '</div>';
       }).join('');
     }
 
