@@ -71,6 +71,8 @@
   html.is-dashboard-view .right-panel { display: none !important; }
   /* Secciones ocultas por defecto hasta init */
   .view[hidden] { display: none !important; }
+  .sb-info-card { display: none !important; }
+  .result-panel:has(.empty-query-state:not([hidden])) { display: none !important; }
   /* Spinner de carga */
   #appLoader {
     position: fixed;
