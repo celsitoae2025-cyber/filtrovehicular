@@ -266,6 +266,8 @@
 
       var empty = $(emptyId());
       var body = $(bodyId());
+      var rp = body ? body.closest('.result-panel') : null;
+      if (rp) rp.hidden = true;
       if (empty) empty.hidden = false;
       if (body) { body.hidden = true; body.innerHTML = ''; }
       var status = $(statusId());
@@ -279,6 +281,8 @@
     function mostrarCargando() {
       var body = $(bodyId());
       var empty = $(emptyId());
+      var rp = body ? body.closest('.result-panel') : null;
+      if (rp) rp.hidden = false;
       if (empty) empty.hidden = true;
       if (body) {
         body.hidden = false;

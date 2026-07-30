@@ -358,20 +358,8 @@
       </div>
     </div>
 
-    <!-- Tarjeta informativa: saldo, plan y CTA de compra.
-         Se rellena desde js/modules/auth-ui.js cuando hay sesión. -->
-    <div class="sb-info-card" id="sidebarInfoCard">
-      <div class="sb-info-header">
-        <span class="sb-info-eyebrow">Tu saldo</span>
-      </div>
-      <div class="sb-info-credits">
-        <strong id="sbInfoCredits">0</strong>
-        <span>créditos</span>
-      </div>
-      <button type="button" class="sb-info-cta" data-nav="saldo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Comprar créditos
-      </button>
+    <div class="sb-info-card" id="sidebarInfoCard" hidden>
+      <strong id="sbInfoCredits">0</strong>
     </div>
 
     <div class="sidebar-actions">
@@ -666,7 +654,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -725,7 +713,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -782,7 +770,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -839,7 +827,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -898,7 +886,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -957,7 +945,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1016,7 +1004,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1075,7 +1063,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1134,7 +1122,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-license"/></svg>
@@ -1193,7 +1181,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-seeker"/></svg>
@@ -1252,7 +1240,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gem"/></svg>
@@ -1311,7 +1299,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1370,7 +1358,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1429,7 +1417,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1486,7 +1474,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1543,7 +1531,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1602,7 +1590,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1661,7 +1649,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -2340,7 +2328,7 @@
           <span class="hero-eyebrow">Mis compras</span>
           <h1 class="simple-title">Historial de recargas</h1>
         </header>
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -2361,7 +2349,7 @@
           <span class="hero-eyebrow">Mis consultas</span>
           <h1 class="simple-title">Historial de búsquedas</h1>
         </header>
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -2382,7 +2370,7 @@
           <span class="hero-eyebrow">Notificaciones</span>
           <h1 class="simple-title">Tu actividad reciente</h1>
         </header>
-        <section class="panel result-panel">
+        <section class="panel result-panel" hidden>
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
@@ -2534,7 +2522,7 @@
 <!-- ============================================================
      BANNER DE COOKIES (aparece hasta que el usuario elige)
 ============================================================ -->
-<div class="cookie-banner" id="cookieBanner" hidden role="dialog" aria-live="polite">
+<div class="cookie-banner" id="cookieBanner" hidden role="dialog" aria-live="polite" style="left:0;right:0;width:520px;max-width:calc(100vw - 32px);margin:0 auto">
   <div class="cookie-content">
     <div class="cookie-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -2594,7 +2582,7 @@
 <script src="js/modules/subscription.js?v=2"></script>
 <script src="js/modules/subscription-gate.js?v=5"></script>
 <script src="js/modules/render-helpers.js?v=2"></script>
-<script src="js/modules/category-view.js?v=8"></script>
+<script src="js/modules/category-view.js?v=9"></script>
 <script src="js/modules/reniec.js"></script>
 <script src="js/modules/sunat.js"></script>
 <script src="js/modules/financiero.js"></script>
@@ -2631,7 +2619,7 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="js/modules/report-generator.js?v=5"></script>
-<script src="js/modules/filter.js?v=4"></script>
+<script src="js/modules/filter.js?v=5"></script>
 <script src="js/modules/polish.js"></script>
 <script src="js/modules/services-uploader.js"></script>
 <script src="js/modules/saldo-catalog.js?v=3"></script>

@@ -120,7 +120,7 @@
     var resultPanel = $('filter-result');
     var empty = $('filter-empty');
     var body  = $('filter-result-body');
-    if (resultPanel) resultPanel.hidden = false;
+    if (resultPanel) resultPanel.hidden = true;
     if (empty) empty.hidden = false;
     if (body) { body.hidden = true; body.innerHTML = ''; }
     var status = $('filterResultStatus');
@@ -135,6 +135,8 @@
   function mostrarCargando() {
     var body  = $('filter-result-body');
     var empty = $('filter-empty');
+    var rp = $('filter-result');
+    if (rp) rp.hidden = false;
     if (empty) empty.hidden = true;
     if (body) {
       body.hidden = false;
