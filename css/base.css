@@ -329,10 +329,12 @@ body { background: #d4dade !important; }
 /* En móvil: eliminar el espacio flex que empuja las secciones al final,
    apilarlas naturalmente y compactar el layout. */
 @media (max-width: 720px) {
-  .content > .view:not([hidden]) > .result-panel,
-  .content > .view:not([hidden]) > .panel.result-panel,
   .content > .view:not([hidden]) > *:last-child {
     flex: 0 0 auto !important;
+  }
+  .content > .view:not([hidden]) > .result-panel,
+  .content > .view:not([hidden]) > .panel.result-panel {
+    flex: 1 0 auto !important;
   }
   .plans-columns { gap: 10px !important; }
   .terms-notice { padding: 14px; gap: 10px; }
