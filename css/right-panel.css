@@ -1,0 +1,327 @@
+﻿/* ============================================================
+   RIGHT PANEL — panel lateral derecho en desktop
+   Solo visible en pantallas â‰¥ 1100px
+============================================================ */
+
+/* Right-panel oculto en todas las vistas y en todos los tamaños de pantalla.
+   El contenido siempre queda a una sola columna. */
+.right-panel {
+  display: none !important;
+}
+
+/* â”€â”€ CARDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.rp-card {
+  background: transparent;
+  border-radius: 0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.rp-card + .rp-card {
+  border-top: 1px solid var(--c-bg);
+}
+
+.rp-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase; /* micro-label OK a 11px */
+  letter-spacing: .5px;
+  color: var(--c-muted);
+}
+
+/* â”€â”€ PLAN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.rp-plan {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-muted);
+  letter-spacing: .4px;
+  text-transform: uppercase; /* nombre del plan como badge compacto */
+}
+
+/* Créditos */
+.rp-credits-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rp-credits-label {
+  font-size: 11px;
+  color: var(--c-muted);
+  font-weight: 400;
+}
+.rp-credits-num {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--c-primary);
+  line-height: 1.1;
+}
+.rp-buy-btn { width: 100%; font-size: 13px; }
+
+/* Card del gauge */
+.rp-gauge-card { align-items: center; }
+
+.rp-gauge-wrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+}
+.rp-gauge-svg { width: 100px; height: 100px; }
+.rp-gauge-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.rp-gauge-text strong {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--c-primary);
+  line-height: 1;
+}
+.rp-gauge-text span {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-top: 2px;
+}
+
+.rp-hist-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-accent);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition: opacity .13s;
+}
+.rp-hist-btn:hover { opacity: .75; }
+
+/* â”€â”€ STATS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.rp-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.rp-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: var(--c-bg);
+  border-radius: 8px;
+  padding: 10px 6px;
+}
+.rp-stat-num {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c-primary);
+  line-height: 1;
+}
+.rp-stat-label {
+  font-size: 10px;
+  color: var(--c-muted);
+  text-align: center;
+  font-weight: 500;
+}
+
+/* â”€â”€ ACCESOS RÃPIDOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.rp-quick {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.rp-quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 6px;
+  border: none;
+  border-radius: 9px;
+  background: var(--c-bg);
+  color: var(--c-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .13s, color .13s;
+  font-family: inherit;
+}
+.rp-quick-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.rp-quick-btn:hover {
+  background: var(--c-accent);
+  color: #fff;
+}
+.rp-quick-btn:hover svg {
+  stroke: #fff;
+}
+
+/* â”€â”€ VENCIMIENTO DE PLAN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.rp-expiry {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.rp-expiry-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--c-bg);
+  overflow: hidden;
+}
+.rp-expiry-fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--c-primary);
+  transition: width .4s ease;
+}
+.rp-expiry-fill.is-warning { background: #141d1c; }
+.rp-expiry-fill.is-danger  { background: var(--c-danger); }
+.rp-expiry-text {
+  font-size: 11px;
+  color: var(--c-muted);
+  font-weight: 500;
+}
+.rp-expiry-text.is-warning { color: #141d1c; }
+.rp-expiry-text.is-danger  { color: var(--c-danger); font-weight: 600; }
+
+/* â”€â”€ ÃšLTIMA CONSULTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.rp-last-query-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rp-lq-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rp-lq-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rp-lq-cat {
+  font-size: 11px;
+  color: var(--c-muted);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+.rp-lq-time {
+  font-size: 10px;
+  color: var(--c-muted);
+}
+.rp-lq-repeat {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--c-border);
+  background: var(--c-bg);
+  color: var(--c-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .13s, color .13s;
+}
+.rp-lq-repeat svg { width: 16px; height: 16px; }
+.rp-lq-repeat:hover {
+  background: var(--c-primary);
+  color: #fff;
+}
+
+/* â”€â”€ FAVORITOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.rp-fav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rp-fav-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 7px;
+  transition: background .13s;
+}
+.rp-fav-item:hover { background: var(--c-bg); }
+.rp-fav-go {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+.rp-fav-q {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rp-fav-cat {
+  font-size: 10px;
+  color: var(--c-muted);
+  font-weight: 500;
+}
+.rp-fav-del {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--c-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity .13s, color .13s;
+}
+.rp-fav-del svg { width: 12px; height: 12px; }
+.rp-fav-item:hover .rp-fav-del { opacity: 1; }
+.rp-fav-del:hover { color: var(--c-danger); }
+
+/* â”€â”€ RESPONSIVE MÃ“VIL — refuerzo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@media (max-width: 1099px) {
+  /* En tablet/móvil siempre panel oculto (content mantiene su flex) */
+  .right-panel { display: none !important; }
+}
+
+@media (max-width: 600px) {
+  /* Cards más compactas en móvil */
+  .rp-card { padding: 14px; gap: 10px; }
+  .rp-credits-num { font-size: 22px; }
+  .rp-stats { gap: 6px; }
+  .rp-stat { padding: 8px 4px; }
+  .rp-stat-num { font-size: 16px; }
+  .rp-quick { gap: 5px; }
+  .rp-quick-btn { padding: 8px 4px; font-size: 10px; }
+  .rp-gauge-wrap, .rp-gauge-svg { width: 90px; height: 90px; }
+}

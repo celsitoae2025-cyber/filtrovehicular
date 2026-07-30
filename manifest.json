@@ -1,48 +1,39 @@
 {
-  "name": "Filtro Vehicular+ | Gestor de Consultas",
-  "short_name": "Filtro Vehicular+",
-  "description": "Plataforma integral de verificación vehicular",
-  "start_url": "./preview.html",
-  "scope": "./",
+  "name": "Filtro Vehicular+",
+  "short_name": "FV+",
+  "description": "Consultas vehiculares oficiales al instante. Reniec, Sunarp, SUNAT, Migraciones y más desde un solo lugar.",
+  "start_url": "/app.html",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f5f0e4",
-  "theme_color": "#1a1a1a",
-  "prefer_related_applications": false,
-  "categories": ["business", "productivity"],
+  "background_color": "#F8F5EF",
+  "theme_color": "#1F2A28",
+  "lang": "es-PE",
+  "dir": "ltr",
   "icons": [
     {
-      "src": "assets/media/logonuevo.png",
-      "sizes": "any",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "assets/media/logonuevo.png",
-      "sizes": "any",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "assets/media/app-icon-192.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/media/app-icon.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
-    }
-  ],
-  "shortcuts": [
+    },
     {
-      "name": "Mis Consultas",
-      "short_name": "Consultas",
-      "description": "Ver historial de consultas",
-      "url": "./panel_cliente.html",
-      "icons": [{ "src": "assets/media/logonuevo.png", "sizes": "any" }]
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

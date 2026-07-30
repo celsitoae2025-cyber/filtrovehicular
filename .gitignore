@@ -1,92 +1,40 @@
-# ==========================================
-# Credenciales sensibles
-# ==========================================
-assets/js/intranet-access.js
-.env
-.env.local
-.env.*.local
-*.pem
-*.key
-
-# ==========================================
-# Dependencias (cada workspace las regenera)
-# ==========================================
-node_modules/
-**/node_modules/
-
-# ==========================================
-# Build artifacts (no versionar compilados)
-# ==========================================
-backend/dist/
-frontend/dist/
-**/dist/
-**/build/
-*.tsbuildinfo
-
-# ==========================================
-# Logs y debug
-# ==========================================
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-logs/
-pnpm-debug.log*
-
-# ==========================================
-# Caches
-# ==========================================
-.cache/
-.parcel-cache/
-.vite/
-.next/
-.nuxt/
-coverage/
-.nyc_output/
-
-# ==========================================
-# Editores e IDEs
-# ==========================================
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.idea/
-*.swp
-*.swo
-*~
-
-# ==========================================
-# Archivos del sistema
-# ==========================================
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
+﻿.DS_Store
 Thumbs.db
-desktop.ini
+*.log
+node_modules/
+.vscode/
+.idea/
 
-# ==========================================
-# Activos de diseño grandes
-# ==========================================
-*.psd
-*.ai
-*.sketch
-*.fig
+# === Bridge de Telegram (repo separado) ===
+# filtro-bridge/ es un repositorio git independiente
+# (github.com/filtrovehicularperu/filtro-bridge), desplegado en Railway.
+# No debe incluirse dentro del repo principal.
+filtro-bridge/
 
-# ==========================================
-# Bridge de bots (sesiones y descargas locales)
-# ==========================================
-backend/bridge/session/
-backend/bridge/downloads/
+# === Generador de session de Telegram (uso local one-shot) ===
+# Tiene apiId/apiHash hardcodeados y la session string final
+tg-session-generator/
 
-# ==========================================
-# Misc
-# ==========================================
-*.bak
-*.old
+# === Scripts personales del usuario (no van al repo publico) ===
+tools/
+
+# === Archivos de debug y temporales ===
+bridge-debug.json
 *.tmp
-.DS_Store
+
+# === Estado local del CLI de Supabase (no versionar) ===
+supabase/.temp/
+
+# === Build artifacts (generados por tools/build-bundle.js) ===
+dist/
+app.html.bundled
+
+# === Documentos con credenciales (NO commitear nunca) ===
+ACCESOS-Y-CREDENCIALES.md
+CUENTAS-Y-SERVICIOS.md
+MIGRACION-CUENTAS.md
+RESUMEN-CUENTAS.md
+RESUMEN-RAPIDO-BOTS.md
+NOTAS-CASCADE.md
+FUENTESDATA-INVENTARIO.md
+

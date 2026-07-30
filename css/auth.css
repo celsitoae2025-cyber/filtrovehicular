@@ -1,0 +1,889 @@
+﻿/* ============================================================
+   AUTH — modales estilo minimalista (inspirado en Claude/Anthropic)
+============================================================ */
+
+.auth-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Bloqueo del scroll del body cuando hay un modal de auth abierto.
+   Convive con .sidebar-open / .admin-sidebar-open sin pisarse
+   porque cada uno añade/quita su propia clase. */
+body.auth-modal-open { overflow: hidden; }
+
+.auth-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: #f5f5f5;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(20, 29, 28, .025) 0, rgba(20, 29, 28, .025) 1px,
+      transparent 1px, transparent 7px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(60, 40, 20, .015) 0, rgba(60, 40, 20, .015) 1px,
+      transparent 1px, transparent 11px
+    );
+}
+
+.auth-modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: 92vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  border: none;
+  border-radius: 18px;
+  padding: 40px 36px 28px;
+}
+
+/* ============================================================
+   Layout split (login + signup): form izquierda, marca derecha
+   Altura fija para que login y signup se vean del mismo tamaño.
+============================================================ */
+.auth-modal-panel.auth-split {
+  max-width: 816px;
+  height: 680px;
+  max-height: 92vh;
+  padding: 0;
+  display: flex;
+  overflow: hidden;
+}
+.auth-form-side {
+  flex: 1 1 50%;
+  padding: 28px 40px;
+  min-width: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  /* Oculta scrollbar manteniendo el scroll funcional */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.auth-form-side::-webkit-scrollbar { display: none; }
+
+/* Wrapper del contenido del formulario.
+   min-height:100% â†’ si el contenido es corto (login), llena
+   todo el espacio y auth-legal-foot baja al pie con margin-top:auto.
+   Si el contenido es largo (signup), crece más allá del 100%
+   y el padre (auth-form-side) scrollea. */
+.auth-form-wrap {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Footer legal — margin-top:auto lo empuja al pie */
+.auth-legal-foot {
+  margin-top: auto;
+  padding: 16px 0 4px;
+  border-top: none;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--c-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.auth-legal-foot a {
+  color: var(--c-muted);
+  text-decoration: none;
+  transition: color .15s;
+}
+.auth-legal-foot a:hover {
+  color: var(--c-primary);
+  text-decoration: underline;
+}
+.auth-legal-foot .dot { opacity: .5; }
+.auth-brand-side {
+  flex: 1 1 50%;
+  padding: 48px 40px;
+  background: var(--c-primary);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+/* Logo gigante como marca de agua — rompe el bloque de color sin usar efectos */
+.auth-brand-side::before {
+  content: '';
+  position: absolute;
+  bottom: -140px;
+  right: -140px;
+  width: 560px;
+  height: 560px;
+  background-image: url("../icons/logo-filtro.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: .12;
+  pointer-events: none;
+}
+
+.auth-brand-logo {
+  display: none; /* el logo va de fondo gigante, no arriba */
+}
+
+.auth-brand-content {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.auth-brand-title {
+  margin: 0 0 14px;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -.6px;
+  line-height: 1.15;
+}
+.auth-brand-title .brand-plus-lg {
+  color: #8fc72e;
+  margin-left: 2px;
+}
+.auth-brand-tagline {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: rgba(255,255,255,.7);
+  max-width: 360px;
+}
+
+.auth-brand-foot {
+  position: relative;
+  z-index: 1;
+  font-size: 11.5px;
+  color: rgba(255,255,255,.35);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+
+.auth-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--c-muted);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.auth-modal-close:hover { background: var(--c-bg); color: var(--c-primary); }
+.auth-modal-close svg { width: 18px; height: 18px; }
+
+.auth-modal-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.auth-modal-icon svg { width: 42px; height: 42px; }
+
+.auth-modal-title {
+  margin: 0 0 6px;
+  font-family: inherit;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--c-primary);
+  text-align: left;
+  letter-spacing: -.5px;
+  line-height: 1.2;
+}
+
+.auth-modal-sub {
+  margin: 0 0 26px;
+  font-size: 13.5px;
+  color: var(--c-muted);
+  text-align: left;
+  line-height: 1.5;
+}
+.auth-modal-sub strong {
+  color: var(--c-primary);
+  font-weight: 600;
+}
+
+/* ============================================================
+   FORM — labels arriba de inputs, botón dark
+============================================================ */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.auth-field > label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-primary);
+  letter-spacing: .05px;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 13px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--c-primary);
+  background: #fff;
+  border: 1px solid var(--c-border);
+  border-radius: 9px;
+  transition: border-color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.auth-input:hover { border-color: #C8C8C8; }
+.auth-input:focus,
+.auth-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-color: var(--c-primary);
+}
+
+/* Anula la sombra global dentro de cualquier modal de auth */
+.auth-modal *:focus,
+.auth-modal *:focus-visible {
+  box-shadow: none !important;
+  outline: none !important;
+}
+.auth-input::placeholder {
+  color: #9A9A9A;
+  font-weight: 400;
+}
+
+/* Wrapper para inputs con icono a la izquierda */
+.auth-input-wrap {
+  position: relative;
+}
+.auth-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 17px;
+  height: 17px;
+  color: #9A9A9A;
+  pointer-events: none;
+  transition: color .15s;
+}
+.auth-input.has-icon {
+  padding-left: 42px;
+}
+.auth-input-wrap:focus-within .auth-input-icon {
+  color: var(--c-primary);
+}
+
+/* Password toggle */
+.auth-pass-wrap .auth-input {
+  padding-right: 44px;
+}
+.auth-pass-toggle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #9A9A9A;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: color .15s, background .15s;
+}
+.auth-pass-toggle:hover {
+  color: var(--c-primary);
+  background: var(--c-bg);
+}
+.auth-pass-toggle svg { width: 17px; height: 17px; }
+
+/* Checkbox (términos y "recordarme") */
+.auth-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--c-muted);
+  cursor: pointer;
+  line-height: 1.4;
+}
+.auth-checkbox input {
+  accent-color: var(--c-primary);
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+}
+.auth-checkbox a {
+  color: var(--c-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--c-border);
+  text-underline-offset: 2px;
+}
+.auth-checkbox a:hover {
+  text-decoration-color: var(--c-primary);
+}
+
+/* Fila: "Recordarme" + "¿Olvidaste tu contraseña?" */
+.auth-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* Link "¿Olvidaste tu contraseña?" */
+.auth-forgot {
+  background: transparent;
+  border: none;
+  color: var(--c-accent);
+  font-size: 12.5px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.auth-forgot:hover {
+  color: var(--c-accent-hover);
+  text-decoration: underline;
+}
+
+/* Hint de requisitos (ej: contraseña) */
+.auth-hint {
+  font-size: 11.5px;
+  color: var(--c-muted);
+  line-height: 1.4;
+  margin-top: -2px;
+}
+
+/* Mensaje de error */
+.auth-error {
+  padding: 11px 14px;
+  background: #f5f5f5;
+  border: 1px solid #DCDCDC;
+  border-radius: 10px;
+  color: #141d1c;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+/* Botón principal (dark) */
+.auth-submit {
+  margin-top: 10px;
+  padding: 14px 22px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .1px;
+  color: #fff;
+  background: var(--c-primary);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.auth-submit:hover:not(:disabled) { background: #141d1c; }
+.auth-submit:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+/* Evita el background amarillo/celeste del autocompletar del navegador */
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px #fff inset !important;
+  -webkit-text-fill-color: var(--c-primary) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ============================================================
+   OTP — cuadraditos de verificación de 6 dígitos
+============================================================ */
+.otp-inputs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 6px 0 8px;
+}
+.otp-digit {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--c-primary);
+  background: #fff;
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  transition: border-color .15s, background .15s;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+  min-width: 0;
+}
+.otp-digit:hover { border-color: #C8C8C8; }
+.otp-digit:focus,
+.otp-digit:focus-visible {
+  outline: none;
+  border-color: var(--c-primary);
+  background: #FAFBFB;
+}
+.otp-digit::-webkit-outer-spin-button,
+.otp-digit::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.otp-resend-wrap {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+@media (max-width: 480px) {
+  .otp-digit { width: 42px; height: 50px; font-size: 21px; }
+  .otp-inputs { gap: 8px; }
+}
+
+/* ============================================================
+   FOOTER — "¿No tienes cuenta? Regístrate gratis"
+============================================================ */
+.auth-switch {
+  margin: 0;
+  padding: 14px 0 6px;
+  border-top: 1px solid var(--c-border);
+  font-size: 13px;
+  color: var(--c-muted);
+  text-align: center;
+}
+.auth-switch button {
+  background: transparent;
+  border: none;
+  color: var(--c-accent);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.auth-switch button:hover {
+  color: var(--c-accent-hover);
+  text-decoration: underline;
+}
+.auth-switch-single button {
+  color: var(--c-muted);
+  font-weight: 500;
+}
+
+/* ============================================================
+   Responsive
+============================================================ */
+
+/* ---- Tablet/mobile: split se colapsa a columna única, brand arriba ---- */
+@media (max-width: 820px) {
+  .auth-modal-panel.auth-split {
+    max-width: 480px;
+    height: auto;
+    flex-direction: column;
+  }
+  .auth-brand-side {
+    order: -1; /* lo mueve arriba del form en column */
+    flex: none;
+    height: 180px;
+    padding: 28px 32px;
+    justify-content: center;
+    text-align: left;
+  }
+  .auth-brand-side::before {
+    width: 340px;
+    height: 340px;
+    bottom: -100px;
+    right: -100px;
+    opacity: .10;
+  }
+  .auth-brand-content { margin: 0; }
+  .auth-brand-title { font-size: 22px; margin-bottom: 6px; }
+  .auth-brand-tagline { font-size: 13px; line-height: 1.5; max-width: none; }
+  .auth-brand-foot { display: none; }
+  .auth-form-side {
+    flex: 1 1 auto;
+    padding: 26px 28px;
+  }
+}
+
+/* ---- Celular: modal edge-to-edge, fondo blanco, proporcional ---- */
+@media (max-width: 480px) {
+  .auth-modal { padding: 0; align-items: stretch; }
+  .auth-modal-overlay { background: #fff; }
+  .auth-modal-panel,
+  .auth-modal-panel.auth-split {
+    max-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  .auth-modal-panel { padding: 32px 24px 22px; }
+
+  /* Banner proporcional: más compacto para dejar espacio al formulario */
+  .auth-brand-side {
+    height: clamp(120px, 18vh, 160px);
+    padding: 20px 24px;
+    flex-shrink: 0;
+  }
+  .auth-brand-side::before {
+    width: 260px;
+    height: 260px;
+    bottom: -70px;
+    right: -60px;
+    opacity: .10;
+  }
+  .auth-brand-title { font-size: 20px; margin-bottom: 4px; }
+  .auth-brand-tagline { font-size: 12px; line-height: 1.4; }
+
+  /* Close button sobre banner oscuro — blanco */
+  .auth-modal-close {
+    top: 14px;
+    right: 14px;
+    color: rgba(255,255,255,.85);
+    z-index: 2;
+  }
+  .auth-modal-close:hover {
+    background: rgba(255,255,255,.12);
+    color: #fff;
+  }
+
+  /* Form side ocupa el resto con scroll */
+  .auth-form-side {
+    flex: 1 1 0;
+    min-height: 0;
+    padding: 20px 24px 16px;
+    overflow-y: auto;
+  }
+
+  .auth-modal-title { font-size: 22px; margin-bottom: 4px; }
+  .auth-modal-sub { margin-bottom: 18px; }
+  .auth-input { padding: 12px 14px; font-size: 14px; }
+  .auth-submit { padding: 13px 18px; font-size: 14px; margin-top: 6px; }
+  .auth-form { gap: 10px; }
+  .auth-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .auth-switch { padding: 10px 0 4px; }
+}
+
+/* ============================================================
+   Botón "Iniciar sesión" del topbar (solo sin sesión)
+============================================================ */
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.auth-btn {
+  padding: 9px 20px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .1px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  border: none;
+  white-space: nowrap;
+}
+.auth-btn-primary {
+  background: var(--c-primary);
+  color: #fff;
+}
+.auth-btn-primary:hover {
+  background: #141d1c;
+}
+.auth-btn-primary:active {
+  transform: scale(.97);
+}
+
+@media (max-width: 560px) {
+  .auth-btn { padding: 8px 16px; font-size: 12.5px; }
+}
+
+/* ============================================================
+   Modales legales (Términos / Cookies) — minimalista
+   Se abren ENCIMA del modal de registro/login con z-index mayor.
+============================================================ */
+.auth-modal-legal { z-index: 10001; }
+
+.auth-modal-legal .auth-modal-overlay {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+  background-image: none;
+}
+
+.auth-legal-panel {
+  max-width: 520px;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 32px 24px;
+}
+
+.auth-legal-panel .auth-modal-title {
+  margin-bottom: 4px;
+}
+
+.auth-legal-meta {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0 0 18px 0;
+}
+
+.auth-legal-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+  margin-bottom: 18px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--c-muted);
+}
+
+.auth-legal-content h3 {
+  margin: 18px 0 6px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-primary);
+  letter-spacing: -0.2px;
+}
+.auth-legal-content h3:first-child { margin-top: 0; }
+
+.auth-legal-content p {
+  margin: 0 0 8px 0;
+}
+
+.auth-legal-content strong {
+  color: var(--c-primary);
+  font-weight: 600;
+}
+
+/* Scrollbar fino y sobrio */
+.auth-legal-content::-webkit-scrollbar {
+  width: 6px;
+}
+.auth-legal-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+.auth-legal-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@media (max-width: 480px) {
+  .auth-legal-panel {
+    max-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    padding: 28px 22px 18px;
+  }
+  .auth-legal-content {
+    font-size: 13px;
+  }
+}
+
+/* ============================================================
+   Modal de confirmación de términos (al marcar checkbox)
+   Minimalista — monocromo, sin colores, alineado a la izquierda.
+============================================================ */
+.auth-confirm-panel {
+  max-width: 380px;
+  padding: 28px 28px 22px;
+  text-align: left;
+  border-radius: 14px;
+}
+
+.auth-confirm-icon {
+  width: 36px;
+  height: 36px;
+  margin: 0 0 16px 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-primary);
+}
+.auth-confirm-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-confirm-title {
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  margin: 0 0 6px 0 !important;
+  letter-spacing: -0.2px;
+  color: var(--c-primary);
+}
+
+.auth-confirm-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--c-muted);
+  margin: 0 0 22px 0;
+}
+
+.auth-confirm-text a {
+  color: var(--c-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--c-border);
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+.auth-confirm-text a:hover {
+  text-decoration-color: var(--c-primary);
+}
+
+.auth-confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.auth-confirm-cancel,
+.auth-confirm-accept {
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  font-family: inherit;
+  min-width: 90px;
+}
+
+.auth-confirm-cancel {
+  background: #fff;
+  color: var(--c-muted);
+  border: 1px solid #e5e7eb;
+}
+.auth-confirm-cancel:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.auth-confirm-accept {
+  background: var(--c-primary);
+  color: #fff;
+  border: 1px solid var(--c-primary);
+}
+.auth-confirm-accept:hover {
+  background: var(--c-primary-2);
+  border-color: var(--c-primary-2);
+}
+
+@media (max-width: 480px) {
+  /* En móvil, los modales legales NO ocupan pantalla completa.
+     Override de la regla general .auth-modal-panel que sí lo hace. */
+  #authModalTermsConfirm,
+  #authModalTerms,
+  #authModalCookies {
+    padding: 16px;
+    align-items: center;
+  }
+  #authModalTermsConfirm .auth-modal-overlay,
+  #authModalTerms .auth-modal-overlay,
+  #authModalCookies .auth-modal-overlay {
+    background: rgba(15, 23, 42, 0.55);
+  }
+  #authModalTermsConfirm .auth-confirm-panel {
+    width: calc(100vw - 32px);
+    max-width: 380px;
+    height: auto;
+    max-height: 90vh;
+    border-radius: 14px;
+    padding: 24px 22px 18px;
+  }
+  /* Modales legales completos también más compactos en móvil */
+  #authModalTerms .auth-legal-panel,
+  #authModalCookies .auth-legal-panel {
+    width: calc(100vw - 32px);
+    max-width: 480px;
+    height: auto;
+    max-height: 85vh;
+    border-radius: 14px;
+    padding: 24px 22px 18px;
+  }
+}
+
+/* ============================================================
+   AUTH GATE — bloqueo de la app cuando no hay sesión
+   - .auth-locked oculta el shell de la app (sidebar, topbar, contenido)
+   - .auth-mandatory oculta el botón cerrar y el overlay queda no clickeable
+     (la lógica de no-cerrar vive en auth-modals.js / auth-gate.js)
+============================================================ */
+body.auth-locked .topbar,
+body.auth-locked .sidebar,
+body.auth-locked .views,
+body.auth-locked .app-shell,
+body.auth-locked .install-prompt,
+body.auth-locked #appPreloader {
+  display: none !important;
+}
+
+/* Fondo neutro mientras está bloqueado (igual que la zona de modal) */
+body.auth-locked {
+  background: var(--bg, #f4f5f9) !important;
+}
+
+/* En modo obligatorio: ocultar el botón X. La única salida es autenticarse
+   o registrarse. (En el modal forgot el botón "Volver al login" sigue
+   visible porque solo cambia de modal, no cierra.) */
+body.auth-mandatory .auth-modal-close {
+  display: none !important;
+}
+
+/* WhatsApp FAB visible sobre el modal de auth */
+body.auth-locked .wa-fab {
+  z-index: 501;
+}
+

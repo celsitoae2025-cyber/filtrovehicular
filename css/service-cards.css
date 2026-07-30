@@ -1,0 +1,243 @@
+/* ============================================================
+   SERVICE CARDS V3 — Reescritura desde cero, dimensiones exactas
+   en píxeles ENTEROS para eliminar TODOS los subpixel issues.
+   Usa flexbox con calc() determinístico en vez de grid.
+============================================================ */
+
+/* Reset agresivo contra reglas viejas */
+.services-section {
+  margin-top: 24px;
+  contain: layout style;
+  position: relative;
+}
+
+.services-head {
+  margin: 0 0 16px;
+}
+.services-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-muted);
+  letter-spacing: .4px;
+  line-height: 1.35;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* ── GRID con FLEXBOX para control total del subpixel ────── */
+.services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  contain: layout style;
+  /* GPU layer para scroll suave */
+  transform: translateZ(0);
+}
+
+/* ── CARD: dimensiones EXACTAS con calc() ──────────────── */
+.service-card {
+  /* 3 columnas: (100% - 2 gaps de 8px) / 3 */
+  flex: 0 0 calc((100% - 16px) / 3);
+  width: calc((100% - 16px) / 3);
+  height: 64px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  overflow: hidden;
+  /* SIN transitions, SIN animations, SIN hover transforms */
+  transition: none;
+  /* GPU layer individual para evitar repaint del grid completo */
+  transform: translateZ(0);
+  contain: layout style paint;
+  /* No reaccionar a hover con cambios de layout */
+  will-change: auto;
+}
+
+.service-card:hover {
+  border-color: var(--c-primary);
+  /* SIN transform, SIN box-shadow */
+}
+.service-card:active {
+  background: var(--c-bg);
+}
+
+/* ── ÍCONO ────────────────────────────────────────────── */
+.service-icon {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  max-width: 36px;
+  min-height: 36px;
+  max-height: 36px;
+  border-radius: 8px;
+  background: var(--c-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-primary);
+  flex-shrink: 0;
+  flex-grow: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.service-icon > svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+.service-icon > img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  padding: 6px;
+  display: block;
+  box-sizing: border-box;
+}
+
+/* Indicador "has-image": shadow inset NO border (no afecta dimensiones) */
+.service-card.has-image .service-icon {
+  background: var(--c-surface);
+  box-shadow: inset 0 0 0 1px var(--c-border);
+}
+
+/* ── STACK + NAME + META ─────────────────────────────── */
+.service-stack {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+}
+
+.service-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--c-primary);
+  line-height: 1.25;
+  letter-spacing: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.service-stack .service-name {
+  -webkit-line-clamp: 1;
+  flex: initial;
+}
+.service-meta {
+  font-size: 10.5px;
+  color: var(--c-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.service-ext {
+  width: 13px;
+  height: 13px;
+  color: var(--c-muted);
+  opacity: .4;
+  flex-shrink: 0;
+}
+
+/* ── CARD DESTACADA: Infracciones por regiones ──────── */
+.service-card[data-nav="regiones"] {
+  background: #8fc72e;
+  border-color: #8fc72e;
+  color: #ffffff;
+}
+.service-card[data-nav="regiones"]:hover {
+  background: #7ab325;
+  border-color: #7ab325;
+}
+.service-card[data-nav="regiones"] .service-name {
+  color: #ffffff;
+}
+.service-card[data-nav="regiones"] .service-meta {
+  color: rgba(255,255,255,.7);
+}
+.service-card[data-nav="regiones"] .service-icon {
+  background: rgba(255,255,255,.1);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
+}
+.service-card[data-nav="regiones"] .service-ext {
+  color: rgba(255,255,255,.6);
+}
+.service-card[data-nav="regiones"].has-image .service-icon {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
+}
+
+/* ── LOCKED CARDS (anónimo) ────────────────────────── */
+body.is-anonymous .service-card.is-locked-anon {
+  opacity: .55;
+  position: relative;
+}
+body.is-anonymous .service-card.is-locked-anon:hover {
+  opacity: .75;
+  border-color: var(--c-border);
+}
+body.is-anonymous .service-card.is-locked-anon .service-ext {
+  display: none;
+}
+body.is-anonymous .service-card.is-locked-anon::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 12px;
+  height: 12px;
+  background: var(--c-muted);
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='11' width='16' height='10' rx='2'/><path d='M8 11V7a4 4 0 0 1 8 0v4'/></svg>") no-repeat center / contain;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='11' width='16' height='10' rx='2'/><path d='M8 11V7a4 4 0 0 1 8 0v4'/></svg>") no-repeat center / contain;
+}
+
+/* ── RESPONSIVE ────────────────────────────────────── */
+/* Tablet — 2 columnas */
+@media (max-width: 900px) {
+  .service-card {
+    flex: 0 0 calc((100% - 8px) / 2);
+    width: calc((100% - 8px) / 2);
+  }
+}
+
+/* Móvil — 2 columnas más compactas */
+@media (max-width: 640px) {
+  .services-grid { gap: 6px; }
+  .service-card {
+    flex: 0 0 calc((100% - 6px) / 2);
+    width: calc((100% - 6px) / 2);
+    height: 56px;
+    padding: 0 10px;
+    gap: 10px;
+  }
+  .service-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    min-height: 32px;
+    max-height: 32px;
+  }
+  .service-icon > svg { width: 16px; height: 16px; }
+  .service-icon > img { width: 32px; height: 32px; }
+  .service-name {
+    font-size: 11.5px;
+    line-height: 1.3;
+  }
+  .service-ext { display: none; }
+}

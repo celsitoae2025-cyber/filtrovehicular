@@ -1,0 +1,1908 @@
+﻿/* ============================================================
+   BASE — variables, reset, tipografía, utilidades globales
+============================================================ */
+
+:root {
+  --c-primary: #141d1c;
+  --c-primary-2: #0e1312;
+  --c-secondary: #141d1c;
+  --c-text: #141d1c;
+  --c-accent: #8fc72e;
+  --c-accent-hover: #7ab325;
+  --c-teal-soft: #edf7d9;
+  --c-surface: #ffffff;
+  --c-bg: #F3F3F3;
+  --c-border: #DCDCDC;
+  --c-muted: #5A6B6A;
+  --c-success: #141d1c;
+  --c-danger: #141d1c;
+  --c-warning: #141d1c;
+  --sidebar-w: 260px;
+  --topbar-h: 71px;
+
+  --t-fast: .12s ease;
+  --t-base: .18s cubic-bezier(.2, .8, .2, 1);
+  --t-slow: .28s cubic-bezier(.2, .8, .2, 1);
+
+  --shadow-sm: 0 1px 2px rgba(31, 42, 40, .06);
+  --shadow-md: 0 4px 12px rgba(31, 42, 40, .08);
+  --shadow-lg: 0 14px 40px rgba(31, 42, 40, .14);
+  --focus-ring: 0 0 0 3px rgba(31, 42, 40, .18);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+html { -webkit-text-size-adjust: 100%; }
+
+[hidden] { display: none !important; }
+
+body {
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--c-bg);
+  color: var(--c-primary);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* â”€â”€ Tipografía UNIFICADA a 11.5px en todo el proyecto â”€â”€â”€â”€
+   Headings mantienen peso pero comparten el mismo tamaño base.
+   Solo títulos grandes (display) usan tamaños distintos. */
+h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, textarea, label, li {
+  font-size: 14px;
+}
+h1 { font-weight: 700; line-height: 1.3; letter-spacing: -.2px; }
+h2 { font-weight: 600; line-height: 1.35; letter-spacing: -.1px; }
+h3 { font-weight: 600; line-height: 1.4; }
+h4 { font-weight: 600; line-height: 1.4; }
+p  { line-height: 1.6; }
+
+/* Excepciones: display numbers / títulos grandes mantienen su tamaño
+   propio definido en sus reglas específicas (saldo, gauge, etc.) */
+
+button, input, select, textarea { font-family: inherit; }
+
+/* Contenedor raíz: altura exacta del viewport, sin overflow.
+   Así el sidebar nunca cambia de tamaño al mostrarse/ocultarse
+   la barra del navegador en móvil — elimina el "jumping" de cards. */
+.app {
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.content {
+  padding: 15px;                              /* 5mm uniforme alrededor */
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;                                  /* 5mm uniforme entre bloques */
+  box-sizing: border-box;
+  background: #03a7a4;                        /* fondo turquesa */
+  min-height: calc(100vh - var(--topbar-h));  /* llena el viewport */
+  min-height: calc(100dvh - var(--topbar-h));
+}
+/* Cada vista es un flex column con gap 15px y se estira para ocupar el
+   alto disponible del content. El último panel/result crece para llenar
+   el hueco, así siempre queda 15px de padding-bottom del content y no
+   sobra franja turquesa vacía. */
+.content > .view:not([hidden]) {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+/* El último panel de cada vista crece para llenar el hueco vertical
+   restante. Aplica al result-panel en categorías y al quick-panel
+   (Accesos rápidos) en el dashboard, garantizando que siempre haya
+   solo 15px de gap al borde inferior. */
+.content > .view:not([hidden]) > .result-panel,
+.content > .view:not([hidden]) > .panel.result-panel,
+.content > .view:not([hidden]) > *:last-child {
+  flex: 1 0 auto !important;
+}
+
+/* Espaciado uniforme 15px también en mobile — selectores con mayor
+   especificidad (body .content) para ganar sobre mobile.css/polish.css
+   que también usan !important. Estable en cualquier ancho de pantalla. */
+@media (max-width: 900px) {
+  body .content { padding: 15px !important; gap: 15px !important; }
+  body .view { gap: 15px !important; }
+  body .dash-grid { gap: 15px !important; }
+  body .dash-col { gap: 15px !important; }
+}
+@media (max-width: 600px) {
+  body .content { padding: 15px !important; gap: 15px !important; }
+  body .dash-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  body .content { padding: 15px !important; gap: 15px !important; }
+}
+/* Fondo GRIS en TODA la app (body, main, content) — sin turquesa */
+body { background: #d4dade !important; }
+.main { background: #d4dade !important; }
+.content { background: #d4dade !important; }
+
+/* Accesos rápidos del dashboard — botones centrados sin importar cuántos entren */
+#view-dashboard .quick-actions-compact {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  justify-items: stretch !important;
+  align-items: stretch !important;
+  width: 100%;
+}
+#view-dashboard .quick-actions-compact > * {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  gap: 8px !important;
+}
+
+/* Logo del sidebar — 40% más grande (17 → 24px) */
+.brand-name,
+.sidebar-brand,
+.sidebar .brand strong,
+.sidebar .brand-title {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  letter-spacing: .1px !important;
+}
+.brand { padding: 22px !important; }
+
+/* Anillo de créditos — sin la etiqueta "Consumos", solo % centrado */
+.credits-ring-text {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+.credits-ring-text span { display: none !important; }
+.credits-ring-text strong {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  color: #141d1c !important;
+}
+
+/* Título "CONSULTA SERVICIOS VEHICULARES CON TU PLACA" — se pierde
+   sobre el turquesa. Le doy un contenedor blanco tipo "sección" para
+   que resalte y esté legible. */
+.services-section .services-head {
+  background: #ffffff !important;
+  border-radius: 10px !important;
+  padding: 14px 16px 18px !important;   /* reserva espacio para la barra dentro */
+  margin: 0 0 12px !important;
+  overflow: hidden !important;          /* recorta la barra al borde redondeado */
+  position: relative;
+}
+/* Sección de servicios: garantizar espacio bajo la última fila,
+   nunca pegada al fondo de la pantalla */
+/* Espacio garantizado bajo la sección de servicios — sobrepone la
+   regla global `.view > * { margin: 0 !important }` con más especificidad
+   y aplica padding directo sobre la grilla. */
+.view .services-section,
+.view > .services-section { margin: 0 0 15px !important; padding-bottom: 15px !important; }
+.services-grid { padding-bottom: 0 !important; }
+.services-section .services-title {
+  color: #141d1c !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: .5px !important;
+  text-transform: uppercase !important;
+  margin: 0 !important;
+}
+
+/* Oculto la fila "Consumo + créditos" del panel de entrada en todas las
+   categorías; la info del costo queda visible en el resultado (empty-chip). */
+.consumo-row { display: none !important; }
+
+/* ── LAYOUT DE PLANES: 1 columna full width, grid interno adaptable ── */
+.plans-columns {
+  grid-template-columns: 1fr !important;
+  gap: 15px !important;
+}
+#catalogGridCredits {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 12px !important;
+}
+@media (max-width: 960px) {
+  #catalogGridCredits { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* ── PAY KARD (tarjeta de plan — DISEÑO LIMPIO Y MÍNIMO) ─
+   Sin iconos, sin franjas de color, sin tiers, sin negritas exageradas.
+   Solo cantidad de créditos y precio, todo apilado y centrado. */
+.pay-kard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 26px 20px;
+  background: #ffffff;
+  border: 1px solid rgba(20,29,28,.1);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  color: inherit;
+  transition: border-color .16s, background .16s;
+}
+.pay-kard:hover,
+.pay-kard:focus-visible,
+.pay-kard:active,
+.pay-kard.is-selected {
+  border-color: #03a7a4 !important;
+  background: #03a7a4 !important;
+  color: #ffffff !important;
+  outline: none;
+}
+.pay-kard:hover .pk-credits-num,
+.pay-kard:focus-visible .pk-credits-num,
+.pay-kard:active .pk-credits-num,
+.pay-kard.is-selected .pk-credits-num,
+.pay-kard:hover .pk-price,
+.pay-kard:focus-visible .pk-price,
+.pay-kard:active .pk-price,
+.pay-kard.is-selected .pk-price { color: #ffffff !important; }
+.pay-kard:hover .pk-credits-unit,
+.pay-kard:focus-visible .pk-credits-unit,
+.pay-kard:active .pk-credits-unit,
+.pay-kard.is-selected .pk-credits-unit { color: rgba(255,255,255,.85) !important; }
+.pay-kard:hover .pk-divider,
+.pay-kard:focus-visible .pk-divider,
+.pay-kard:active .pk-divider,
+.pay-kard.is-selected .pk-divider { background: rgba(255,255,255,.4) !important; }
+.pk-credits-num {
+  font-size: 30px;
+  font-weight: 400;
+  color: #141d1c;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.pk-credits-unit {
+  font-size: 12.5px;
+  color: rgba(20,29,28,.55);
+  font-weight: 400;
+  letter-spacing: .2px;
+}
+.pk-divider {
+  width: 24px;
+  height: 1px;
+  background: rgba(20,29,28,.15);
+  margin: 10px 0 4px;
+}
+.pk-price {
+  font-size: 16px;
+  font-weight: 400;
+  color: #141d1c;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Aviso de términos (cuadro turquesa bajo la recarga personalizada) ── */
+.terms-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  background: #03a7a4;
+  border-radius: 12px;
+  color: #ffffff;
+}
+.terms-notice-icon {
+  width: 24px; height: 24px;
+  flex-shrink: 0;
+  color: #ffffff;
+  margin-top: 2px;
+}
+.terms-notice-body { flex: 1; min-width: 0; }
+.terms-notice-body strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #ffffff;
+}
+.terms-notice-body p {
+  font-size: 12.5px;
+  line-height: 1.55;
+  margin: 0;
+  color: rgba(255,255,255,.9);
+}
+.terms-notice-body a {
+  color: #ffffff;
+  text-decoration: underline;
+  font-weight: 700;
+}
+.terms-notice-body a:hover { opacity: .85; }
+
+/* En móvil: eliminar el espacio flex que empuja las secciones al final,
+   apilarlas naturalmente y compactar el layout. */
+@media (max-width: 720px) {
+  .content > .view:not([hidden]) > .result-panel,
+  .content > .view:not([hidden]) > .panel.result-panel,
+  .content > .view:not([hidden]) > *:last-child {
+    flex: 0 0 auto !important;
+  }
+  .plans-columns { gap: 10px !important; }
+  .terms-notice { padding: 14px; gap: 10px; }
+  .terms-notice-body strong { font-size: 13px; }
+  .terms-notice-body p { font-size: 12px; }
+}
+
+/* ── Recarga de créditos: layout MÁS COMPACTO en móvil ── */
+@media (max-width: 720px) {
+  #catalogGridCredits {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .pay-kard {
+    padding: 14px 10px !important;
+    border-radius: 10px !important;
+    gap: 2px !important;
+  }
+  .pk-credits-num { font-size: 22px !important; }
+  .pk-credits-unit { font-size: 11px !important; }
+  .pk-divider { margin: 6px 0 2px !important; width: 18px !important; }
+  .pk-price { font-size: 14px !important; }
+  #plansSection-credits, #plansSection-custom {
+    padding: 14px !important;
+  }
+  .plans-section-title { font-size: 13px !important; padding-bottom: 8px !important; }
+}
+@media (max-width: 380px) {
+  .pay-kard { padding: 12px 8px !important; }
+  .pk-credits-num { font-size: 20px !important; }
+}
+
+/* ── HERO DE RECARGA PERSONALIZADA (LIMPIO, SIN OSCUROS) ─ */
+.pay-custom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  padding: 22px 26px;
+  background: #ffffff;
+  border: 1px dashed rgba(20,29,28,.2);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: inherit;
+  transition: border-color .15s, background .15s;
+  position: relative;
+}
+.pay-custom:hover {
+  border-color: #8fc72e;
+  border-style: solid;
+  background: #fbfffa;
+}
+.pay-custom-eyebrow {
+  font-size: 11.5px;
+  color: rgba(20,29,28,.55);
+  letter-spacing: .3px;
+  margin-bottom: 4px;
+}
+.pay-custom-title {
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  color: #141d1c !important;
+  margin: 0 !important;
+  line-height: 1.2;
+}
+.pay-custom-sub {
+  font-size: 13px;
+  color: rgba(20,29,28,.6);
+  line-height: 1.4;
+  margin: 4px 0 12px;
+}
+.pay-custom-cta {
+  align-self: flex-start;
+  padding: 10px 20px;
+  background: #8fc72e;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* ── HERO DE RECARGA PERSONALIZADA ─────────────────────── */
+.custom-plan-hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  padding: 22px 24px;
+  border: 2px dashed rgba(20,29,28,.2);
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: inherit;
+  transition: border-color .15s, background .15s;
+}
+.custom-plan-hero:hover {
+  border-color: #8fc72e;
+  border-style: solid;
+  background: #f9fef0;
+}
+.custom-plan-hero-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: #ecfccb;
+  color: #365314;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.custom-plan-hero-icon svg { width: 26px; height: 26px; }
+.custom-plan-hero-body { min-width: 0; }
+.custom-plan-hero-title {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #141d1c !important;
+  margin: 0 0 4px !important;
+  line-height: 1.25;
+}
+.custom-plan-hero-sub {
+  font-size: 13px;
+  color: rgba(20,29,28,.65);
+  margin: 0;
+  line-height: 1.4;
+}
+.custom-plan-hero-cta {
+  padding: 10px 18px;
+  background: #8fc72e;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+@media (max-width: 640px) {
+  .custom-plan-hero {
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+  }
+  .custom-plan-hero-cta { grid-column: 1 / -1; text-align: center; }
+}
+
+/* ── TARJETAS DE PLAN CLICKEABLES ────────────────────────
+   Toda la tarjeta es el botón — al clic abre el modal de pago. */
+.plan-card-v2-clickable {
+  cursor: pointer;
+  border: 1px solid rgba(20,29,28,.12);
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 18px;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  transition: border-color .15s, transform .12s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.plan-card-v2-clickable:hover {
+  border-color: #8fc72e;
+  transform: translateY(-1px);
+}
+.plan-card-v2-clickable:active { transform: translateY(0); }
+.plan-card-v2-custom {
+  border-style: dashed !important;
+  border-color: rgba(20,29,28,.25) !important;
+  background: rgba(255,255,255,.6);
+}
+.plan-card-v2-custom:hover { border-color: #8fc72e !important; background: #ffffff; }
+
+/* ── MODAL DE RECARGA PERSONALIZADA (LIMPIO, SIN OSCUROS) ─ */
+.rx-modal {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: cn-fade-in .22s ease-out;
+}
+.rx-modal[hidden] { display: none !important; }
+.rx-modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(20,29,28,.35);
+  backdrop-filter: blur(3px);
+}
+.rx-modal-shell {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: 92vh;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #ffffff;
+  animation: cn-pop-in .28s cubic-bezier(.16,.84,.44,1);
+}
+.rx-modal-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 32px; height: 32px;
+  border: none; background: transparent;
+  color: rgba(20,29,28,.55);
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 3;
+  transition: background .13s, color .13s;
+}
+.rx-modal-close:hover { background: rgba(20,29,28,.06); color: #141d1c; }
+.rx-modal-close svg { width: 16px; height: 16px; }
+
+.rx-modal-main {
+  padding: 28px 26px 22px;
+  display: flex; flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+.rx-main-title {
+  font-size: 18px;
+  font-weight: 400;
+  color: #141d1c;
+  margin: 0;
+  line-height: 1.3;
+}
+.rx-main-sub {
+  font-size: 13px;
+  color: rgba(20,29,28,.6);
+  line-height: 1.5;
+  margin: -8px 0 0;
+}
+.rx-field {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.rx-label {
+  font-size: 12px;
+  color: rgba(20,29,28,.6);
+}
+.rx-input-wrap {
+  position: relative;
+  display: flex; align-items: center;
+}
+.rx-input {
+  width: 100%;
+  padding: 12px 88px 12px 14px;
+  border: 1px solid rgba(20,29,28,.15);
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 400;
+  font-family: inherit;
+  color: #141d1c;
+  background: #ffffff;
+  transition: border-color .13s;
+}
+.rx-input:focus { outline: none; border-color: #8fc72e; }
+.rx-input-suffix {
+  position: absolute;
+  right: 14px;
+  font-size: 12px;
+  color: rgba(20,29,28,.5);
+  pointer-events: none;
+}
+
+.rx-summary {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 12px 14px;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+.rx-summary-key {
+  font-size: 12.5px;
+  color: rgba(20,29,28,.6);
+}
+.rx-summary-val {
+  font-size: 20px;
+  color: #141d1c;
+  font-variant-numeric: tabular-nums;
+}
+
+.rx-cta {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 12px 20px;
+  background: #8fc72e;
+  color: #ffffff !important;
+  border-radius: 8px;
+  font-size: 13.5px;
+  text-decoration: none;
+  transition: background .13s;
+}
+.rx-cta:hover { background: #7ab325; }
+.rx-cta[aria-disabled="true"],
+.rx-cta.is-disabled {
+  background: rgba(20,29,28,.1);
+  color: rgba(20,29,28,.4) !important;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.rx-foot-note {
+  margin: 0;
+  font-size: 11.5px;
+  color: rgba(20,29,28,.5);
+  text-align: center;
+}
+
+/* ── MODAL DE PAGO ──────────────────────────────────────── */
+.pay-modal {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: cn-fade-in .22s ease-out;
+}
+.pay-modal[hidden] { display: none !important; }
+.pay-modal-backdrop {
+  position: absolute; inset: 0;
+  background: #4b5563;   /* gris opaco — sin dejar ver el turquesa */
+  backdrop-filter: blur(3px);
+}
+.pay-modal-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 14px;
+  max-width: 420px;
+  width: 100%;
+  overflow: hidden;
+  animation: cn-pop-in .28s cubic-bezier(.16,.84,.44,1);
+}
+.pay-modal-stripes {
+  height: 5px;
+  background: #8fc72e;      /* una sola franja verde */
+}
+.pay-modal-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 30px; height: 30px;
+  border: none; background: transparent;
+  color: rgba(20,29,28,.55);
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+}
+.pay-modal-close:hover { background: rgba(20,29,28,.08); color: #141d1c; }
+.pay-modal-close svg { width: 16px; height: 16px; }
+.pay-modal-body { padding: 26px 26px 22px; }
+.pay-modal-eyebrow {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #365314;
+  background: #ecfccb;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 10px;
+}
+.pay-modal-title {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #141d1c !important;
+  margin: 0 0 6px !important;
+  line-height: 1.2;
+}
+.pay-modal-sub {
+  font-size: 13.5px;
+  color: rgba(20,29,28,.65);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+.pay-modal-options {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.pay-opt {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: center;
+  gap: 10px 12px;
+  padding: 14px 16px;
+  border: 2px solid rgba(20,29,28,.12);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #141d1c;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  transition: border-color .13s, background .13s;
+}
+.pay-opt:hover { border-color: #8fc72e; background: #f9fef0; }
+.pay-opt svg { grid-row: 1 / 3; width: 24px; height: 24px; }
+.pay-opt-mp svg { color: #009ee3; }
+.pay-opt-wa svg { color: #25d366; }
+.pay-opt-label {
+  grid-column: 2;
+  font-size: 14px;
+  font-weight: 700;
+  color: #141d1c;
+}
+.pay-opt-hint {
+  grid-column: 2;
+  font-size: 12px;
+  color: rgba(20,29,28,.55);
+  font-weight: 400;
+}
+
+/* ── FORM DE RECARGA PERSONALIZADA ─────────────────────── */
+.custom-pay-form {
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.custom-pay-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #141d1c;
+  margin-bottom: -2px;
+}
+.custom-pay-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid rgba(20,29,28,.15);
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #141d1c;
+  background: #ffffff;
+  transition: border-color .13s;
+}
+.custom-pay-input:focus {
+  outline: none;
+  border-color: #8fc72e;
+}
+.custom-pay-summary {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 14px 16px;
+  background: #d4dade;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+.custom-pay-summary-label {
+  font-size: 13px;
+  color: rgba(20,29,28,.65);
+  font-weight: 400;
+}
+.custom-pay-summary-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #141d1c;
+  font-variant-numeric: tabular-nums;
+}
+.custom-pay-note {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(20,29,28,.55);
+  line-height: 1.5;
+  text-align: center;
+}
+.custom-pay-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 14px 20px;
+  background: #25d366;
+  color: #ffffff !important;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .13s, opacity .13s;
+  margin-top: 6px;
+}
+.custom-pay-cta:hover { background: #1eb554; }
+.custom-pay-cta svg { width: 20px; height: 20px; color: #ffffff; }
+.custom-pay-cta.is-disabled {
+  background: rgba(20,29,28,.15);
+  color: rgba(20,29,28,.4) !important;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.custom-pay-cta.is-disabled svg { color: rgba(20,29,28,.4); }
+
+/* ── AVISO CENTRADO (mantenimiento / mejora en curso) ─────
+   Modal en el centro de la pantalla al cargar. Se cierra con la X. */
+.center-notice {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: cn-fade-in .22s ease-out;
+}
+.center-notice[hidden] { display: none !important; }
+.center-notice-backdrop {
+  position: absolute;
+  inset: 0;
+  background: #4b5563;   /* gris opaco — sin turquesa detrás */
+  backdrop-filter: blur(3px);
+}
+.center-notice-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 36px 32px 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  animation: cn-pop-in .28s cubic-bezier(.16,.84,.44,1);
+  overflow: hidden;
+  border-top: none;
+}
+/* Franja superior — un solo color verde */
+.center-notice-stripes {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: #8fc72e;
+}
+/* Franja inferior — un solo color verde más tenue */
+.center-notice-stripes-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: #8fc72e;
+  opacity: .55;
+}
+/* Chip / badge "EN MEJORA" */
+.center-notice-badge {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #ecfccb;
+  color: #365314;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+.center-notice-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px; height: 30px;
+  border: none;
+  background: transparent;
+  color: rgba(20,29,28,.55);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+  padding: 0;
+}
+.center-notice-close:hover { background: rgba(20,29,28,.08); color: #141d1c; }
+.center-notice-close svg { width: 16px; height: 16px; }
+.center-notice-icon {
+  width: 64px; height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #ecfccb;
+  color: #365314;
+  display: flex; align-items: center; justify-content: center;
+}
+.center-notice-icon svg { width: 34px; height: 34px; }
+.center-notice-title {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #141d1c !important;
+  margin: 0 0 8px !important;
+  line-height: 1.2;
+}
+.center-notice-sub {
+  font-size: 14px;
+  color: rgba(20,29,28,.65);
+  margin: 0;
+  line-height: 1.5;
+}
+@keyframes cn-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes cn-pop-in {
+  from { opacity: 0; transform: scale(.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@media (max-width: 480px) {
+  .center-notice-card { padding: 26px 20px 22px; }
+  .center-notice-title { font-size: 18px !important; }
+}
+
+/* Fondo TURQUESA plano, sin textura */
+.auth-modal-overlay {
+  background-color: #03a7a4 !important;
+  background-image: none !important;
+}
+
+/* Lado izquierdo del modal (marca) — verde lima con distribución
+   vertical clara: título arriba, footer abajo, todo con jerarquía. */
+.auth-brand-side {
+  background: #141d1c !important;
+  justify-content: space-between !important;
+  padding: 40px 40px 32px !important;
+}
+.auth-brand-content {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+.auth-brand-title {
+  font-size: 34px !important;
+  font-weight: 700 !important;
+  letter-spacing: -.5px !important;
+  line-height: 1.1 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+}
+.auth-brand-title .brand-plus-lg {
+  color: #8fc72e !important;                     /* el "+" en verde lima sobre verde oscuro */
+  margin-left: 2px !important;
+}
+.auth-brand-tagline {
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+  color: rgba(255,255,255,.9) !important;
+  max-width: 340px !important;
+  margin: 0 0 4px !important;
+}
+/* Lista vertical de consultas — solo visible en desktop, donde el
+   panel de marca tiene alto fijo (680px) y espacio de sobra. */
+.auth-brand-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 340px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.auth-brand-list::-webkit-scrollbar { display: none; }
+.auth-brand-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: rgba(255,255,255,.85);
+}
+.auth-brand-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8fc72e;
+}
+/* Fallback corto (una sola línea) — solo se usa si por algún motivo
+   la lista no cupiera; normalmente queda oculto porque la portada
+   móvil ahora ocupa toda la pantalla y sí tiene espacio para la lista. */
+.auth-brand-tagline-mobile {
+  display: none;
+  font-size: 13px;
+  color: rgba(255,255,255,.85);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Botón CTA de la portada — solo visible en móvil/tablet */
+.auth-brand-cta {
+  display: none;
+  margin-top: 18px;
+  padding: 13px 18px;
+  background: #8fc72e;
+  color: #141d1c;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+}
+.auth-brand-cta:active { transform: scale(.98); }
+
+/* Cabeceras y barra de acción móviles — ocultas en desktop.
+   El bloque responsive completo vive al final del archivo para que
+   ninguna regla posterior (p.ej. `.auth-brand-foot { margin:0 }`)
+   lo pise por orden de cascada. */
+.auth-form-mh,
+.auth-brand-mh,
+.auth-brand-actions,
+.auth-brand-sources { display: none; }
+
+/* Enlaces verdes sobre blanco: #8fc72e da 2.0:1 de contraste, muy por
+   debajo del 4.5:1 exigible para texto pequeno. Se oscurece el mismo
+   tono hasta 5.3:1. Sobre fondo oscuro el verde original no se toca. */
+.auth-forgot,
+.auth-switch button {
+  color: #4e7519 !important;
+}
+.auth-forgot:hover,
+.auth-switch button:hover {
+  color: #3d5c14 !important;
+}
+.auth-forgot { font-weight: 400 !important; }
+.auth-switch button { font-weight: 700 !important; }
+
+/* Boton principal en verde de marca: la accion primaria se queda con
+   el color de marca y los enlaces secundarios dejan de competir.
+   Texto oscuro sobre verde da 8.4:1. */
+.auth-submit {
+  background: #8fc72e !important;
+  color: #141d1c !important;
+  font-weight: 700 !important;
+}
+.auth-submit:hover:not(:disabled) { background: #7ab325 !important; }
+/* Footer "© 2026 Filtro Vehicular+ Perú" al pie del cuadro verde */
+.auth-brand-foot {
+  font-size: 11.5px !important;
+  color: rgba(255,255,255,.7) !important;
+  letter-spacing: .5px !important;
+  text-transform: uppercase !important;
+  margin: 0 !important;
+  padding-top: 16px !important;
+  border-top: 1px solid rgba(255,255,255,.15) !important;
+}
+.auth-brand-side::before {
+  display: none !important;
+}
+
+/* Footer legal (Términos · Cookies) fuera del panel del modal, fijo al
+   fondo del viewport sobre el fondo turquesa. Solo cuando hay un modal
+   de auth abierto (body.auth-modal-open) para no interferir con la app. */
+body.auth-modal-open .auth-legal-foot {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 20px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 9999;
+  color: rgba(20,29,28,.75) !important;
+  font-size: 12.5px !important;
+  letter-spacing: .3px;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  pointer-events: auto;
+}
+.auth-legal-foot a { color: rgba(20,29,28,.75) !important; }
+.auth-legal-foot a:hover { color: #141d1c !important; text-decoration: underline; }
+.auth-legal-foot .dot { color: rgba(20,29,28,.5) !important; opacity: 1 !important; }
+
+/* Sidebar siempre expandido — el botón toggle causaba colapsos accidentales
+   al confundirse con otros controles del topbar. Se oculta y se fuerza el
+   ancho completo aunque tenga la clase .collapsed. */
+#sidebarToggle,
+.sidebar-toggle { display: none !important; }
+.sidebar.collapsed {
+  width: var(--sidebar-w) !important;
+  min-width: var(--sidebar-w) !important;
+}
+.sidebar.collapsed .nav-item .label,
+.sidebar.collapsed .brand-text,
+.sidebar.collapsed .sb-action span,
+.sidebar.collapsed .sidebar-legal { display: unset !important; opacity: 1 !important; }
+
+/* Etiqueta "MI CUENTA / MI SALDO / MIS CONSULTAS…" y su título grande
+   al inicio de cada vista — ya aparece en el breadcrumb superior, no la
+   mostramos otra vez. Oculto todo el bloque <header class="compact-hero">. */
+.hero-eyebrow,
+.eyebrow,
+.simple-eyebrow,
+.compact-hero,
+.hero.compact-hero,
+header.compact-hero { display: none !important; }
+
+/* ─── Barra de acento cuatricolor bajo cada encabezado de sección ────
+   Aplicada de forma sutil y consistente: solo debajo de los títulos
+   principales de panel/vista, no en cada input. */
+:root {
+  --accent-gradient: linear-gradient(
+    to right,
+    #00bcd4 0%,      #00bcd4 12.5%,
+    #8fc72e 12.5%,   #8fc72e 25%,
+    #ffb020 25%,     #ffb020 37.5%,
+    #e53935 37.5%,   #e53935 50%,
+    #00bcd4 50%,     #00bcd4 62.5%,
+    #8fc72e 62.5%,   #8fc72e 75%,
+    #ffb020 75%,     #ffb020 87.5%,
+    #e53935 87.5%,   #e53935 100%
+  );
+}
+/* La barra cuatricolor se coloca DENTRO del panel, justo debajo del
+   título/encabezado, no en el borde inferior del contenedor. */
+/* NO overflow:hidden — permite que el combo-panel se despliegue por fuera */
+.selector-card { position: relative; overflow: visible !important; }
+.selector-card > .combo { position: relative; z-index: 5; }
+.selector-label {
+  display: block;
+  position: relative;
+  padding-bottom: 14px !important;
+  margin: 0 0 14px !important;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: hidden;                     /* recorta la barra al ancho del label */
+}
+.selector-label::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 5px;
+  border-radius: 2px;
+  background: var(--accent-gradient);
+}
+
+.view-header,
+.credits-header,
+.result-header,
+.services-head {
+  position: relative;
+  padding-bottom: 14px !important;
+  margin-bottom: 14px !important;
+  border-bottom: none !important;
+}
+.view-header::after,
+.credits-header::after,
+.result-header::after,
+.services-head::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 5px;
+  border-radius: 2px;
+  background: var(--accent-gradient);
+}
+
+/* En el dashboard NO mostrar las franjas de color */
+#view-dashboard .selector-card::after,
+#view-dashboard .view-header::after,
+#view-dashboard .credits-header::after,
+#view-dashboard .result-header::after,
+#view-dashboard .services-head::after {
+  display: none !important;
+}
+#view-dashboard .selector-card,
+#view-dashboard .view-header,
+#view-dashboard .credits-header,
+#view-dashboard .result-header,
+#view-dashboard .services-head {
+  padding-bottom: 0 !important;
+  margin-bottom: 8px !important;
+}
+
+/* Breadcrumb — nombre de la vista actual en mayúsculas */
+.breadcrumb .crumb.current,
+.breadcrumb .current { text-transform: uppercase !important; letter-spacing: .4px; }
+
+/* Inputs y trigger del combo con borde más grueso — mejor legibilidad */
+.input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="search"],
+textarea,
+select,
+.combo-trigger {
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-color: rgba(20, 29, 28, .22) !important;
+  border-radius: 8px !important;
+}
+.input:focus,
+input:focus,
+textarea:focus,
+select:focus,
+.combo-trigger:focus,
+.combo-trigger[aria-expanded="true"] {
+  border-color: #8fc72e !important;
+  outline: none !important;
+}
+
+/* ── CABECERA (topbar) más profesional y estructurada ────── */
+.topbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(20, 29, 28, .1) !important;
+  padding: 0 22px !important;
+  height: 71px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  position: sticky !important;
+  top: 0;
+  z-index: 40;
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex: 1;
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  min-width: 0;
+  padding: 6px 14px;
+  background: rgba(20, 29, 28, .04);
+  border-radius: 999px;
+}
+.breadcrumb .crumb {
+  color: rgba(20, 29, 28, .55);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: .1px;
+}
+.breadcrumb .crumb-link:hover { color: #141d1c; }
+.breadcrumb .crumb.current {
+  color: #141d1c !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  letter-spacing: .8px !important;
+}
+.breadcrumb .sep {
+  color: rgba(20, 29, 28, .35);
+  display: inline-flex;
+  align-items: center;
+}
+.breadcrumb .sep svg { width: 13px; height: 13px; }
+
+/* Botón primario en verde lima (antes era rojo #dc2626) */
+.btn-primary,
+button.btn-primary,
+.plan-cta,
+.primary-btn {
+  background: #8fc72e !important;
+  border-color: #8fc72e !important;
+  color: #ffffff !important;
+}
+.btn-primary:hover,
+button.btn-primary:hover,
+.plan-cta:hover,
+.primary-btn:hover {
+  background: #7ab325 !important;
+  border-color: #7ab325 !important;
+}
+
+/* Plan-card del dashboard: cover con esquinas redondeadas + contenido
+   perfectamente centrado. */
+#view-dashboard .plan-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+#view-dashboard .plan-cover {
+  width: 100% !important;
+  height: 110px !important;
+  border-radius: 10px 10px 0 0 !important;
+  background: #141d1c !important;
+}
+#view-dashboard .plan-avatar { margin-top: -48px !important; }
+#view-dashboard .plan-name,
+#view-dashboard .plan-email,
+#view-dashboard .plan-stats,
+#view-dashboard .plan-cta {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+#view-dashboard .plan-stats {
+  justify-content: center !important;
+  width: calc(100% - 32px) !important;
+}
+#view-dashboard .plan-cta { width: calc(100% - 32px) !important; margin-bottom: 16px !important; }
+
+/* ── Tarjeta de saldo en el sidebar (llena el hueco entre nav y actions) ── */
+.sb-info-card {
+  margin: 12px 12px;
+  padding: 14px 14px 12px;
+  background: linear-gradient(135deg, #03a7a4 0%, #028f8c 100%);
+  border-radius: 12px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sb-info-card[hidden] { display: none !important; }
+.sb-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.sb-info-eyebrow {
+  font-size: 10.5px;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.75);
+  font-weight: 400;
+}
+.sb-info-plan {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.15);
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100px;
+}
+.sb-info-credits {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.sb-info-credits strong {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.sb-info-credits span {
+  font-size: 11.5px;
+  color: rgba(255,255,255,.8);
+}
+.sb-info-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.25);
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 2px;
+  transition: background .13s;
+}
+.sb-info-cta:hover { background: rgba(255,255,255,.25); }
+.sb-info-cta svg { width: 14px; height: 14px; }
+/* Anónimo → texto genérico */
+body.is-anonymous .sb-info-card { background: rgba(20,29,28,.06); color: #141d1c; }
+body.is-anonymous .sb-info-eyebrow { color: rgba(20,29,28,.55); }
+body.is-anonymous .sb-info-plan { background: rgba(20,29,28,.08); color: #141d1c; }
+body.is-anonymous .sb-info-credits strong { color: #141d1c; }
+body.is-anonymous .sb-info-credits span { color: rgba(20,29,28,.55); }
+body.is-anonymous .sb-info-cta {
+  background: #8fc72e; border-color: #8fc72e; color: #ffffff;
+}
+body.is-anonymous .sb-info-cta:hover { background: #7ab325; border-color: #7ab325; }
+
+/* ── Pestaña "Extras" del sidebar (agrupa todas las categorías) ── */
+.nav-item.nav-parent {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+}
+.nav-item.nav-parent .nav-chevron {
+  width: 14px; height: 14px;
+  margin-left: auto;
+  transition: transform .2s ease;
+  color: currentColor;
+  opacity: .6;
+}
+.nav-item.nav-parent.is-open .nav-chevron { transform: rotate(180deg); }
+.nav-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 10px;
+  margin: 4px 0 6px;
+  border-left: 1px solid rgba(255,255,255,.08);
+  margin-left: 20px;
+}
+.nav-submenu[hidden] { display: none !important; }
+.nav-submenu .nav-item { padding-left: 10px; }
+
+/* Accesos rápidos del dashboard — botones cuadrados en turquesa */
+#view-dashboard .quick-compact,
+#view-dashboard .quick-actions-compact > button,
+#view-dashboard .quick-actions-compact > a {
+  background: #03a7a4 !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+#view-dashboard .quick-compact svg,
+#view-dashboard .quick-compact span {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+#view-dashboard .quick-compact:hover {
+  background: #028f8c !important;
+}
+
+/* Botón "Ver historial de consumos" (dashboard credits-card) — verde lima */
+#view-dashboard .credits-card .btn-outline,
+#view-dashboard .credits-card .btn.btn-outline,
+#view-dashboard .credits-info .btn-outline {
+  background: #8fc72e !important;
+  border-color: #8fc72e !important;
+  color: #ffffff !important;
+}
+#view-dashboard .credits-card .btn-outline:hover,
+#view-dashboard .credits-info .btn-outline:hover {
+  background: #7ab325 !important;
+  border-color: #7ab325 !important;
+  color: #ffffff !important;
+}
+.content > * { margin: 0 !important; }
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;                  /* 5mm uniforme entre paneles dentro de cada vista */
+}
+.view > * { margin: 0 !important; }
+
+/* ── Sin bordes ni sombras en contenedores (visual plano) ── */
+.panel,
+.card,
+.selector-card,
+.view-header,
+.plan-card,
+.credits-card,
+.stats-panel,
+.modules-panel,
+.quick-panel,
+.combo-panel,
+.result-panel,
+.saldo-panel,
+.dash-summary,
+.low-balance-alert,
+.rp-card,
+.admin-login-card,
+.prem-form-panel,
+.prem-result-panel,
+.service-card,
+.region-card,
+.hero,
+.compact-hero,
+.modal-panel,
+.auth-modal-panel,
+.maint-panel {
+  border: none !important;
+  box-shadow: none !important;
+}
+/* Dash-grid: columnas se estiran a la altura de la más larga,
+   y dentro de cada columna el último panel crece para que ambas
+   terminen exactamente al mismo Y. Espaciado uniforme 15px. */
+.dash-grid {
+  align-items: stretch !important;
+  gap: 15px !important;
+}
+.dash-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 15px !important;
+  height: 100%;
+}
+.dash-col > * { min-height: 0; }
+.dash-col > :last-child { flex: 1 1 auto; }
+
+
+/* Foco global accesible — solo en navegación por teclado */
+:focus { outline: none; }
+:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-radius: 7px;
+}
+a:focus-visible, button:focus-visible, [role="button"]:focus-visible,
+.nav-item:focus-visible, .sb-action:focus-visible,
+.combo-trigger:focus-visible, .service-card:focus-visible, .region-card:focus-visible {
+  box-shadow: none;
+}
+
+/* Anti-FOUC: body.app-ready revela la app (inline style en app.html pone opacity:0) */
+body.app-ready { opacity: 1; transition: opacity .2s ease; }
+
+/* Media queries generales */
+@media (max-width: 1024px) { :root { --sidebar-w: 240px; } }
+@media (max-width: 480px) { :root { --sidebar-w: 280px; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* ============================================================
+   AUTH MOVIL (<=768px) — diseño de tres bandas de color
+   ------------------------------------------------------------
+   Cada color de la marca ocupa una banda estructural propia:
+
+     TURQUESA #03a7a4 -> banda superior (identidad)
+     OSCURO   #141d1c -> cuerpo y pie
+     VERDE    #8fc72e -> acentos y barra de accion
+
+   Paso 1: portada (.auth-brand-side)
+   Paso 2: formulario (.form-revealed -> .auth-form-side)
+
+   Reparto vertical por flex: cabecera y pie con flex:0 0 auto,
+   cuerpo con flex:1 1 auto + min-height:0 (sin este ultimo un
+   hijo flex no baja de su alto intrinseco y no scrollea).
+
+   Bloque situado al FINAL del archivo a proposito: reglas como
+   .auth-brand-foot { margin:0 !important } aparecen mas arriba y
+   con igual especificidad ganarian por orden de cascada.
+============================================================ */
+@media (max-width: 768px) {
+
+  /* ---------- Lienzo ---------- */
+  #authModalLogin,
+  #authModalSignup {
+    padding: 0 !important;
+    align-items: stretch !important;
+  }
+  #authModalLogin  .auth-modal-panel.auth-split,
+  #authModalSignup .auth-modal-panel.auth-split {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    /* Alto de referencia: lo usa la franja del pie, y la banda verde
+       lo deriva a la mitad. Tocando este valor se mueven las dos
+       manteniendo la proporcion. */
+    --auth-bar-h: 46px;
+  }
+  /* Banda verde superior: la mitad de alto que el pie */
+  #authModalLogin  .auth-modal-panel.auth-split::before,
+  #authModalSignup .auth-modal-panel.auth-split::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: calc(var(--auth-bar-h) / 2) !important;
+    background: #8fc72e !important;
+    z-index: 4 !important;
+  }
+  /* Boton cerrar: por debajo de la banda verde para que no lo tape
+     (la banda va en z-index 4) y en oscuro, ahora que el fondo es blanco */
+  #authModalLogin  .auth-modal-close,
+  #authModalSignup .auth-modal-close {
+    top: calc(var(--auth-bar-h) / 2 + 12px) !important;
+    right: 16px !important;
+    z-index: 5 !important;
+    color: rgba(20,29,28,.5) !important;
+  }
+  #authModalLogin  .auth-modal-close:hover,
+  #authModalSignup .auth-modal-close:hover {
+    color: #141d1c !important;
+    background: rgba(20,29,28,.06) !important;
+  }
+
+  /* ---------- Encabezado (comun a los dos pasos) ---------- */
+  .auth-brand-mh,
+  .auth-form-mh {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    flex: 0 0 auto !important;
+    background: transparent !important;
+    color: #141d1c !important;
+  }
+  /* El padding superior deja pasar la banda verde: con 20px el texto
+     quedaba por debajo de ella y se recortaba. */
+  .auth-brand-mh {
+    padding: calc(var(--auth-bar-h) / 2 + 22px) 20px 20px !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  /* Encabezado del formulario: no es una barra superior, viaja dentro
+     del area centrada y se apoya justo encima de la tarjeta blanca,
+     alineado con su borde izquierdo. El margin-top:auto es la mitad
+     de arriba del centrado; la otra mitad la pone la tarjeta. */
+  .auth-form-mh {
+    /* Dos margenes auto aqui, mas uno en la tarjeta, reparten el
+       espacio sobrante en tres partes iguales: arriba del encabezado,
+       entre encabezado y tarjeta, y debajo de la tarjeta. El resultado
+       es que el encabezado queda centrado en el hueco que le toca sea
+       cual sea el alto de pantalla, sin numeros fijos.
+       Si no sobra espacio, los margenes auto valen 0: en pantallas
+       cortas (o en el registro, mas largo) todo se compacta y el
+       contenedor scrollea, en lugar de recortarse. */
+    margin: auto 0 !important;
+    padding: 0 4px 18px !important;
+    background: transparent !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  /* Barra cuatricolor de la plataforma, tambien en los modales de auth.
+     Una sola por pantalla y bajo la marca — sirve en los tres casos:
+     portada, login y registro. Se reusa --accent-gradient para que
+     siga cualquier cambio de la paleta en el resto de la app.
+     Ancho acotado, no a sangre: los encabezados van centrados y una
+     barra de borde a borde partiria la pantalla en dos. */
+  .auth-brand-mh::after,
+  .auth-form-mh::after {
+    content: '' !important;
+    display: block !important;
+    width: 140px !important;
+    height: 5px !important;
+    margin-top: 9px !important;
+    border-radius: 2px !important;
+    background: var(--accent-gradient) !important;
+  }
+
+  /* Sobre blanco: marca en oscuro (17.2:1) y el "+" en verde de marca */
+  .mh-brand {
+    font-size: 19px !important;
+    font-weight: 700 !important;
+    letter-spacing: -.6px !important;
+    line-height: 1.1 !important;
+    color: #141d1c !important;
+  }
+  .mh-plus {
+    color: #8fc72e !important;
+    margin-left: 1px !important;
+  }
+  .mh-sub {
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    line-height: 1.45 !important;
+    color: rgba(20,29,28,.6) !important;
+    max-width: 280px !important;
+  }
+
+  /* ---------- Cuerpo (scroll) ---------- */
+  .auth-brand-side {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    order: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    text-align: left !important;
+  }
+  /* La identidad vive en el encabezado */
+  .auth-brand-logo,
+  .auth-brand-title,
+  .auth-brand-tagline,
+  .auth-brand-tagline-mobile { display: none !important; }
+
+  .auth-brand-content {
+    display: block !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    scrollbar-width: none !important;
+    margin: 0 !important;
+    padding: 18px 20px 20px !important;
+  }
+  .auth-brand-content::-webkit-scrollbar { display: none !important; }
+
+  /* Servicios en rejilla de fichas, no en lista corrida */
+  .auth-brand-list {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  /* Fichas blancas con borde, igual que la tarjeta del login */
+  .auth-brand-list li {
+    display: flex !important;
+    align-items: center !important;
+    /* justify-content centra la caja; text-align hace falta ademas
+       para las fichas cuyo texto ocupa dos lineas. */
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 11px 12px !important;
+    background: #ffffff !important;
+    border: 1px solid #a4b1b9 !important;
+    border-radius: 8px !important;
+    font-size: 11.5px !important;
+    font-weight: 400 !important;
+    line-height: 1.35 !important;
+    color: #141d1c !important;
+    /* En mayusculas por CSS y no en el HTML: el texto original queda
+       legible en el codigo y las tildes se conservan (Á, Ó, Í). */
+    text-transform: uppercase !important;
+    letter-spacing: .3px !important;
+  }
+  .auth-brand-list li::before { display: none !important; }
+  /* El ultimo item cierra la rejilla a lo ancho. Verde oscurecido:
+     el #8fc72e sobre blanco solo daria 2.0:1. */
+  .auth-brand-list li:last-child {
+    grid-column: 1 / -1 !important;
+    justify-content: center !important;
+    color: #4e7519 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Entidades consultadas — misma rejilla y misma ficha que los servicios */
+  .auth-brand-sources {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+    /* Separado del bloque de servicios: son entidades, no consultas */
+    margin-top: 20px !important;
+    padding-top: 20px !important;
+    border-top: 1px solid #a4b1b9 !important;
+  }
+  .auth-brand-sources span {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 11px 12px !important;
+    background: #ffffff !important;
+    border: 1px solid #a4b1b9 !important;
+    border-radius: 8px !important;
+    font-size: 11.5px !important;
+    font-weight: 400 !important;
+    line-height: 1.35 !important;
+    color: #141d1c !important;
+    text-transform: uppercase !important;
+    letter-spacing: .3px !important;
+  }
+
+  /* ---------- Accion verde + pie blanco ---------- */
+  .auth-brand-actions {
+    display: block !important;
+    flex: 0 0 auto !important;
+    /* El padding inferior es lo que lo despega del pie: subirlo sube
+       el boton. Arriba se deja aire para que no pegue con las fichas. */
+    padding: 18px 20px 60px !important;
+  }
+  .auth-brand-cta {
+    display: block !important;
+    width: 100% !important;
+    max-width: 250px !important;     /* mas angosto, centrado */
+    margin: 0 auto !important;
+    padding: 13px 18px !important;   /* mas bajo */
+    border: none !important;
+    border-radius: 10px !important;
+    background: #8fc72e !important;
+    color: #141d1c !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+  }
+  .auth-brand-cta:active { background: #7ab325 !important; }
+
+  /* Mismo pie que el login: blanco, linea gris arriba y el mismo alto */
+  .auth-brand-foot {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    height: calc(var(--auth-bar-h) + env(safe-area-inset-bottom)) !important;
+    padding: 0 20px env(safe-area-inset-bottom) !important;
+    border-top: 1px solid #a4b1b9 !important;
+    background: #ffffff !important;
+    text-align: center !important;
+    font-size: 10px !important;
+    letter-spacing: .7px !important;
+    color: rgba(20,29,28,.55) !important;
+  }
+
+  .auth-modal-panel.auth-split:not(.form-revealed) .auth-form-side {
+    display: none !important;
+  }
+
+  /* ---------- PASO 2 · Formulario ---------- */
+  .auth-modal-panel.auth-split.form-revealed .auth-brand-side {
+    display: none !important;
+  }
+  .auth-modal-panel.auth-split.form-revealed .auth-form-side {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;  /* solo el login; la portada sigue oscura */
+    position: relative !important;   /* ancla del pie legal */
+  }
+  .auth-modal-panel.auth-split.form-revealed .auth-form-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    scrollbar-width: none !important;
+    /* Los dos margenes se derivan de los elementos que deben despejar,
+       no de numeros fijos: arriba la banda verde, abajo el pie anclado.
+       Asi siguen cuadrando si cambia --auth-bar-h o el alto del equipo. */
+    padding: calc(var(--auth-bar-h) / 2 + 18px) 16px
+             calc(var(--auth-bar-h) + 20px) !important;
+    background: transparent !important;
+  }
+  .auth-form-wrap::-webkit-scrollbar { display: none !important; }
+
+  /* Tarjeta blanca con el formulario, centrada sobre el fondo oscuro.
+     Se centra con margenes automaticos y no con justify-content: los
+     margenes auto valen 0 cuando no sobra espacio, asi que el formulario
+     alto (registro) nunca se recorta por arriba al scrollear. */
+  /* Blanco sobre blanco no se recorta solo: el borde es lo que separa
+     la tarjeta del lienzo (sin sombra, segun la guia del proyecto). */
+  .auth-modal-panel.auth-split.form-revealed .auth-form-card {
+    background: #ffffff !important;
+    border: 1px solid #a4b1b9 !important;   /* 2.2:1, se distingue sin pesar */
+    border-radius: 14px !important;
+    padding: 30px 22px 26px !important;
+    margin: 0 0 auto !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* Pie legal anclado al fondo: enlaces en turquesa y filo verde arriba */
+  body.auth-modal-open .auth-modal-panel.auth-split.form-revealed .auth-legal-foot {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    margin: 0 !important;
+    /* Mismo alto que la banda verde. Con box-sizing:border-box el
+       padding del safe-area no engorda el area util. */
+    height: calc(var(--auth-bar-h) + env(safe-area-inset-bottom)) !important;
+    padding: 0 20px env(safe-area-inset-bottom) !important;
+    background: #ffffff !important;
+    border-top: 1px solid #a4b1b9 !important;   /* mismo gris que la tarjeta */
+    font-size: 11.5px !important;
+    color: #141d1c !important;
+  }
+  body.auth-modal-open .auth-modal-panel.auth-split.form-revealed .auth-legal-foot a {
+    color: #141d1c !important;
+  }
+  body.auth-modal-open .auth-modal-panel.auth-split.form-revealed .auth-legal-foot .dot {
+    color: rgba(20,29,28,.4) !important;
+  }
+}

@@ -1,0 +1,2650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#141D1C">
+<meta name="description" content="Plataforma Filtro Vehicular+ — consultas vehiculares, Sunarp, Reniec, Sunat e infracciones en Perú. Resultados oficiales al instante.">
+<meta name="author" content="Plataforma Filtro Vehicular+">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://filtrovehicularperu.com/app.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Plataforma Filtro Vehicular+">
+<meta property="og:title" content="Plataforma Filtro Vehicular+">
+<meta property="og:description" content="Plataforma Filtro Vehicular+ — consultas vehiculares, Sunarp, Reniec, Sunat e infracciones en Perú. Resultados oficiales al instante.">
+<meta property="og:locale" content="es_PE">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=2">
+<link rel="apple-touch-icon" href="icons/icon-192.png?v=2">
+
+
+<!-- Bridge de consultas: ahora pasa por la edge function 'bridge-proxy' de
+     Supabase para no exponer la API key del bridge en el cliente.
+     - En localhost se puede sobrescribir window.FV_BRIDGE_DIRECT_URL para
+       apuntar al bridge local sin pasar por la edge function (modo dev).
+     - En producción, se llama a la edge function que valida la sesión
+       del usuario y reenvía al bridge con la API key del lado servidor.
+-->
+<script>
+  (function () {
+    var h = location.hostname;
+    var isLocal = h === "localhost" || h === "127.0.0.1" || h.startsWith("192.168.") || h.startsWith("10.");
+    if (isLocal) {
+      // Modo dev: permitir saltar el proxy y pegar directo al bridge local.
+    }
+  })();
+</script>
+
+<title>Plataforma Filtro Vehicular+</title>
+
+<!-- Poppins — preload para evitar FOUT -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap" as="style">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap">
+
+<!-- CSS modular -->
+<link rel="stylesheet" href="css/base.css?v=5">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/topbar.css?v=2">
+<link rel="stylesheet" href="css/components.css?v=3">
+<link rel="stylesheet" href="css/views.css?v=9">
+<link rel="stylesheet" href="css/service-cards.css?v=1">
+<link rel="stylesheet" href="css/plans-catalog.css?v=4">
+<link rel="stylesheet" href="css/auth.css?v=29">
+<link rel="stylesheet" href="css/overlays.css?v=4">
+<link rel="stylesheet" href="css/polish.css?v=4">
+<link rel="stylesheet" href="css/premium.css?v=3">
+<link rel="stylesheet" href="css/right-panel.css">
+<link rel="stylesheet" href="css/features.css?v=3">
+<link rel="stylesheet" href="css/mobile.css?v=1">
+
+<!-- Anti-flash: pre-aplica is-dashboard-view en <html> si la carga inicial
+     es el dashboard (sin hash). Impide que el right-panel aparezca un frame
+     antes de que DOMContentLoaded lo oculte con body.is-dashboard-view. -->
+<style>
+  /* Anti-FOUC: body invisible hasta que todo esté listo */
+  body { opacity: 0; }
+  html.is-dashboard-view .right-panel { display: none !important; }
+  /* Secciones ocultas por defecto hasta init */
+  .view[hidden] { display: none !important; }
+  /* Spinner de carga */
+  #appLoader {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f5f9;
+  }
+  #appLoader .ld-ring {
+    width: 38px;
+    height: 38px;
+    border: 3px solid #e0e0e0;
+    border-top-color: #141D1C;
+    border-radius: 50%;
+    animation: ld-spin .7s linear infinite;
+  }
+  @keyframes ld-spin { to { transform: rotate(360deg); } }
+  #appLoader.ld-hide {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+  }
+</style>
+<script>
+  (function () {
+    var h = (window.location.hash || '').replace(/^#/, '');
+    if (!h || h === 'dashboard') {
+      document.documentElement.classList.add('is-dashboard-view');
+    }
+    // Safety timeout: quitar spinner si auth no responde en 8s
+    setTimeout(function () {
+      var ld = document.getElementById('appLoader');
+      if (ld) { ld.classList.add('ld-hide'); setTimeout(function () { ld.remove(); }, 400); }
+    }, 8000);
+  }());
+</script>
+</head>
+<body>
+
+<div id="appLoader"><div class="ld-ring"></div></div>
+
+<!-- Sprite de iconos (inline para funcionar con file:// y http://) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 21000 21000" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+      <path d="M1907.74 10666.08c-98.58,-1133.73 698.74,-1010.91 1561.22,-824.11 622.16,134.76 1749.21,320.35 2000.86,736.65 626.07,1035.68 -997.54,822.91 -1615.8,824.19 -827.04,1.73 -1865.95,187.54 -1946.28,-736.73zm645.81 -3738.59c-119.68,-202.78 -75.38,-278.68 -352.79,-338.75 -159.31,-34.46 -521.71,-21.77 -698.74,-20.64 -520.13,3.08 -901.74,-19.82 -1067.66,358.41 -462.02,1053.1 1053.7,1154.98 1341.69,1324.13 -130.48,269.9 -394.08,522.46 -672.53,999.42 -575.62,985.98 -348.74,3263.58 -349.04,4657.83 -0.37,1930.6 -141.29,1995.46 1383.29,1986.15 481.47,-2.92 1194.92,92.2 1455.36,-211.71 312.02,-364.12 64.57,-1088.99 181.69,-1529.01 377.48,-141.52 5495.08,-44.22 6391.65,-48.73 -330.26,-666.75 -1206.48,-1346.65 -1236.29,-3247.29 -17.64,-1124.8 450.61,-2520.92 1118.12,-3271.61 -1145.15,-144.68 -6215.37,278.23 -6617.93,129.88 -27.78,-348.81 1032.07,-2320.77 1256.7,-2699.83 296.48,-500.31 618.56,-500.01 1350.48,-615.41 581.62,-91.66 1236.67,-154.05 1826.32,-202.4 1263.09,-103.68 2506.21,-53.98 3752.18,97.6 1755.14,213.67 1839.53,89.56 2519.8,1470.82l1120.74 186.34c-104.43,-337.92 -609.02,-1266.24 -806.1,-1561.14 -355.56,-531.77 -668.48,-733.72 -1537.87,-881.7 -1434.26,-244.07 -2998.71,-383.27 -4482.52,-305.94 -1134.11,59.09 -3205.63,173.88 -4027.27,701.74 -720.81,463.08 -1405.06,2465 -1704.39,2872.51l-144.89 149.33z"/>
+      <path d="M13502.65 7769.02c1761.07,-213.59 3069.28,1110.01 3236.78,2648.03 191.45,1757.7 -1067.14,3140.23 -2555.53,3333.63 -1717.46,223.13 -3086.63,-1152.65 -3240.69,-2653.66 -178.46,-1738.7 1033.58,-3143.01 2559.44,-3328zm2901.71 6369.96l227.56 259.99c-23.95,1085.23 453.09,1114.59 1468.12,2235.03 341.68,377.11 1385.77,1829.24 2266.64,882.68 836.43,-898.67 -490.62,-1879.55 -870.59,-2279.33 -312.31,-328.54 -575.91,-637.25 -909.7,-931.4 -552.19,-486.57 -259.54,-516.83 -1251.9,-602.27l-266.75 -360.14c1427.51,-1925.49 1062.18,-4433.8 -446.63,-5719.11 -2929.57,-2495.55 -6681,-396.78 -6905.85,2862.37 -111.87,1622.18 815.33,3194.28 2035.48,3914.95 2391.86,1412.71 4105.64,-82.36 4653.62,-262.77z"/>
+    </symbol>
+    <symbol id="i-face" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+      <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+      <circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/>
+      <path d="M9 15c.83.67 1.83 1 3 1s2.17-.33 3-1"/>
+    </symbol>
+    <symbol id="i-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 17h2v-5l-2-5H5L3 12v5h2"/>
+      <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+      <path d="M9 17h6"/>
+    </symbol>
+    <symbol id="i-id" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="2"/>
+      <circle cx="9" cy="12" r="2.2"/>
+      <path d="M6.5 17c.5-1.4 1.5-2.2 2.5-2.2s2 .8 2.5 2.2"/>
+      <path d="M14 10h4M14 13h4M14 16h3"/>
+    </symbol>
+    <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/>
+      <path d="M16 10h3a2 2 0 0 1 2 2v9"/>
+      <path d="M9 8h2M9 12h2M9 16h2M3 21h18"/>
+    </symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 3h14v18l-3-2-3 2-3-2-3 2-2-2V3Z"/>
+      <path d="M8 8h8M8 12h8M8 16h5"/>
+    </symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 10 12 4l9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8"/>
+      <path d="M3 20h18"/>
+    </symbol>
+    <symbol id="i-graduation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 10 12 5 2 10l10 5 10-5Z"/>
+      <path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/>
+      <path d="M22 10v6"/>
+    </symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/>
+    </symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+      <circle cx="9.5" cy="7" r="3.5"/>
+      <path d="M22 21v-2a4 4 0 0 0-3-3.9"/>
+      <path d="M16 3.1a4 4 0 0 1 0 7.8"/>
+    </symbol>
+    <symbol id="i-cert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/>
+      <path d="M14 3v6h6"/><path d="M8 13h8M8 17h6"/>
+    </symbol>
+    <symbol id="i-shield-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
+      <path d="M12 8v4"/><circle cx="12" cy="15.5" r=".6" fill="currentColor" stroke="none"/>
+    </symbol>
+    <symbol id="i-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.8 19.2 16 11l3.5-3.5a2.1 2.1 0 0 0-3-3L13 8l-8.2-1.8L3 8l6 3.5L6 14.5 3 14l-1 1 3 2 2 3 1-1-.5-3 3-3 3.5 6 1.8-1.8Z"/>
+    </symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7.5" height="7.5" rx="1.2"/>
+      <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.2"/>
+      <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.2"/>
+      <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.2"/>
+    </symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"/>
+    </symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </symbol>
+    <symbol id="i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/>
+    </symbol>
+    <symbol id="i-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="3 17 9 11 13 15 21 7"/>
+      <polyline points="14 7 21 7 21 14"/>
+    </symbol>
+    <symbol id="i-scroll" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 2h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+      <rect x="8" y="2" width="4" height="4" rx="1"/>
+      <line x1="8" y1="11" x2="16" y2="11"/>
+      <line x1="8" y1="15" x2="14" y2="15"/>
+    </symbol>
+    <symbol id="i-seeker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="7"/>
+      <path d="m21 21-4.3-4.3"/>
+      <circle cx="11" cy="11" r="3"/>
+      <circle cx="11" cy="11" r="0.8" fill="currentColor" stroke="none"/>
+    </symbol>
+    <symbol id="i-license" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="5" width="20" height="14" rx="2"/>
+      <circle cx="8" cy="12" r="2.4"/>
+      <path d="M5.5 17c.5-1.5 1.6-2.3 2.5-2.3s2 .8 2.5 2.3"/>
+      <path d="M14 9h5M14 12h5M14 15h4"/>
+    </symbol>
+    <symbol id="i-gem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 3h12l4 6-10 12L2 9l4-6Z"/>
+      <path d="M6 3l2.5 6L12 21M18 3l-2.5 6L12 21"/>
+      <line x1="2" y1="9" x2="22" y2="9"/>
+    </symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="7" width="20" height="14" rx="2"/>
+      <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      <line x1="2" y1="13" x2="22" y2="13"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="app">
+
+  <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+    <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Contraer menú" title="Contraer menú">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="16" rx="2"/>
+        <line x1="9" y1="4" x2="9" y2="20"/>
+        <polyline points="15 9 12 12 15 15"/>
+      </svg>
+    </button>
+    <div class="brand">
+      <div class="brand-text">
+        <div class="brand-name">Plataforma Filtro<br>Vehicular<span class="brand-plus">+</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-scroll">
+      <button class="nav-item" data-nav="filter" data-tooltip="Consulta vehicular" type="button">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.3-4.3"/>
+        </svg>
+        <span class="label">Consulta vehicular</span>
+      </button>
+      <button class="nav-item" data-nav="dashboard" data-tooltip="Dashboard" type="button">
+        <svg class="ico"><use href="#i-dashboard"/></svg>
+        <span class="label">Dashboard</span>
+      </button>
+      <!-- ============================================================
+           Grupo Extras: todas las categorías dentro de una pestaña
+           expandible. Al clic muestra/oculta el submenú.
+      ============================================================ -->
+      <button class="nav-item nav-parent" id="extrasToggle" data-toggle-extras type="button" aria-expanded="false" aria-controls="extrasSubmenu">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span class="label">Extras</span>
+        <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+
+      <div class="nav-submenu" id="extrasSubmenu" hidden>
+        <button class="nav-item nav-category" data-nav="reniec" data-tooltip="Reniec" type="button">
+          <svg class="ico"><use href="#i-id"/></svg>
+          <span class="label">Reniec</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="telefonia" data-tooltip="Telefonía" type="button">
+          <svg class="ico"><use href="#i-phone"/></svg>
+          <span class="label">Telefonía</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="delitos" data-tooltip="Justicia" type="button">
+          <svg class="ico"><use href="#i-shield-alert"/></svg>
+          <span class="label">Justicia</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="sunat" data-tooltip="Sunat" type="button">
+          <svg class="ico"><use href="#i-receipt"/></svg>
+          <span class="label">Sunat</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="sunarp" data-tooltip="Sunarp" type="button">
+          <svg class="ico"><use href="#i-building"/></svg>
+          <span class="label">Sunarp</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="vehiculos" data-tooltip="Vehículos" type="button">
+          <svg class="ico"><use href="#i-car"/></svg>
+          <span class="label">Vehículos</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="certificados" data-tooltip="Certificados" type="button">
+          <svg class="ico"><use href="#i-cert"/></svg>
+          <span class="label">Certificados</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="estudios" data-tooltip="Estudios" type="button">
+          <svg class="ico"><use href="#i-graduation"/></svg>
+          <span class="label">Estudios</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="familiares" data-tooltip="Familia" type="button">
+          <svg class="ico"><use href="#i-users"/></svg>
+          <span class="label">Familia</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="financiero" data-tooltip="Financiero" type="button">
+          <svg class="ico"><use href="#i-bank"/></svg>
+          <span class="label">Financiero</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="seeker" data-tooltip="Seeker" type="button">
+          <svg class="ico"><use href="#i-seeker"/></svg>
+          <span class="label">Seeker</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="mtc" data-tooltip="MTC" type="button">
+          <svg class="ico"><use href="#i-license"/></svg>
+          <span class="label">MTC</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="actas" data-tooltip="Actas" type="button">
+          <svg class="ico"><use href="#i-scroll"/></svg>
+          <span class="label">Actas</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="vip" data-tooltip="VIP" type="button">
+          <svg class="ico"><use href="#i-gem"/></svg>
+          <span class="label">VIP</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="facial" data-tooltip="Reconocimiento facial" type="button">
+          <svg class="ico"><use href="#i-face"/></svg>
+          <span class="label">Facial</span>
+        </button>
+
+        <button class="nav-item nav-category" data-nav="migraciones" data-tooltip="Internacional" type="button">
+          <svg class="ico"><use href="#i-plane"/></svg>
+          <span class="label">Internacional</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tarjeta informativa: saldo, plan y CTA de compra.
+         Se rellena desde js/modules/auth-ui.js cuando hay sesión. -->
+    <div class="sb-info-card" id="sidebarInfoCard">
+      <div class="sb-info-header">
+        <span class="sb-info-eyebrow">Tu saldo</span>
+      </div>
+      <div class="sb-info-credits">
+        <strong id="sbInfoCredits">0</strong>
+        <span>créditos</span>
+      </div>
+      <button type="button" class="sb-info-cta" data-nav="saldo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Comprar créditos
+      </button>
+    </div>
+
+    <div class="sidebar-actions">
+      <a class="sb-action sb-action-admin" id="sidebarAdminLink" href="admin.html" aria-label="Panel de administrador" data-tooltip="Panel de administrador" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+        <span>Panel de administrador</span>
+      </a>
+      <button class="sb-action" type="button" aria-label="Configuración" data-tooltip="Configuración" data-nav="configuracion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span>Configuración</span>
+      </button>
+    </div>
+
+    <div class="sidebar-legal">
+      <a href="#" data-modal="terms">Términos</a>
+      <span class="legal-sep">·</span>
+      <a href="#" data-modal="cookies">Cookies</a>
+      <span class="legal-sep">·</span>
+      <span class="legal-copy">© 2026</span>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar">
+          <svg><use href="#i-menu"/></svg>
+        </button>
+        <div class="breadcrumb" id="breadcrumb">
+          <button class="crumb crumb-link" type="button" id="goHomeBtn">Inicio</button>
+          <span class="sep" id="breadcrumbSep">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </span>
+          <span class="crumb current" id="currentCrumb">Filtro vehicular</span>
+        </div>
+      </div>
+      <!-- Visible cuando NO hay sesión -->
+      <div class="auth-buttons" id="authButtons" hidden>
+        <button class="auth-btn auth-btn-primary" type="button" data-auth-open="login">Iniciar sesión</button>
+      </div>
+
+      <!-- Visible cuando SÍ hay sesión -->
+      <!-- Campana de notificaciones (solo aparece cuando hay sin leer) -->
+      <button class="topbar-bell" id="topbarBell" type="button" data-nav="notificaciones" aria-label="Ver notificaciones" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+        </svg>
+        <span class="topbar-bell-badge" data-notif-badge hidden>0</span>
+      </button>
+      <div class="user-menu" hidden>
+        <button class="user" id="userBtn" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="user-name" id="userMenuName">—</span>
+          <div class="avatar" id="userMenuAvatar" aria-hidden="true">—</div>
+          <svg class="user-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <div class="dropdown-header">
+            <div class="avatar" id="userDropdownAvatar" aria-hidden="true">—</div>
+            <div class="dropdown-user-info">
+              <strong id="userDropdownName">—</strong>
+              <span id="userDropdownEmail">—</span>
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+
+          <button class="dropdown-item" type="button" role="menuitem" data-nav="cuenta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>Mi cuenta</span>
+          </button>
+
+          <button class="dropdown-item" type="button" role="menuitem" data-nav="saldo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/>
+              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+              <circle cx="17" cy="14" r="1.2"/>
+            </svg>
+            <span>Mi saldo</span>
+            <span class="dropdown-hint" id="userDropdownCredits">0 créditos</span>
+          </button>
+
+          <button class="dropdown-item" type="button" role="menuitem" data-nav="compras">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <span>Mis compras</span>
+          </button>
+
+          <button class="dropdown-item" type="button" role="menuitem" data-nav="historial">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="8" y1="13" x2="16" y2="13"/>
+              <line x1="8" y1="17" x2="13" y2="17"/>
+            </svg>
+            <span>Mis consultas</span>
+          </button>
+
+          <div class="dropdown-divider"></div>
+
+          <a class="dropdown-item dropdown-admin" id="adminPanelLink" href="admin.html" role="menuitem" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+            <span>Panel de administrador</span>
+          </a>
+
+          <div class="dropdown-divider" id="adminPanelDivider" hidden></div>
+
+          <button class="dropdown-item dropdown-danger" type="button" role="menuitem" id="logoutBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            <span>Cerrar sesión</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- Panel lateral derecho (desktop ≥1100px) -->
+      <aside class="right-panel" id="right-panel" aria-label="Resumen de cuenta">
+
+        <!-- Plan + créditos + vencimiento + comprar -->
+        <div class="rp-card">
+          <span class="rp-plan" id="rp-plan">—</span>
+          <div class="rp-credits-info">
+            <span class="rp-credits-label">TOTAL DISPONIBLES</span>
+            <span class="rp-credits-num" id="rp-credits">—</span>
+          </div>
+          <div class="rp-expiry" id="rp-expiry" hidden>
+            <div class="rp-expiry-bar"><span class="rp-expiry-fill" id="rp-expiry-fill"></span></div>
+            <span class="rp-expiry-text" id="rp-expiry-text"></span>
+          </div>
+          <button class="btn btn-primary rp-buy-btn" type="button" data-nav="saldo">
+            Comprar créditos
+          </button>
+        </div>
+
+        <!-- Gauge de consumos en su propia card -->
+        <div class="rp-card rp-gauge-card">
+          <span class="rp-card-title">Porcentaje de créditos</span>
+          <div class="rp-gauge-wrap">
+            <svg viewBox="0 0 120 120" class="gauge-svg rp-gauge-svg" id="rp-gauge-svg" data-percent="0" aria-hidden="true"></svg>
+            <div class="rp-gauge-text">
+              <strong id="rp-gauge-pct">0%</strong>
+              <span>Consumos</span>
+            </div>
+          </div>
+          <button class="rp-hist-btn" type="button" data-nav="historial">Ver historial de consumos →</button>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="rp-card">
+          <span class="rp-card-title">Consultas realizadas</span>
+          <div class="rp-stats">
+            <div class="rp-stat">
+              <span class="rp-stat-num" id="rp-stat-today">—</span>
+              <span class="rp-stat-label">Hoy</span>
+            </div>
+            <div class="rp-stat">
+              <span class="rp-stat-num" id="rp-stat-month">—</span>
+              <span class="rp-stat-label">Este mes</span>
+            </div>
+            <div class="rp-stat">
+              <span class="rp-stat-num" id="rp-stat-year">—</span>
+              <span class="rp-stat-label">Este año</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Última consulta -->
+        <div class="rp-card" id="rp-last-query" hidden>
+          <span class="rp-card-title">Última consulta</span>
+          <div class="rp-last-query-body">
+            <div class="rp-lq-info">
+              <strong class="rp-lq-value" id="rp-lq-value">—</strong>
+              <span class="rp-lq-cat" id="rp-lq-cat">—</span>
+              <span class="rp-lq-time" id="rp-lq-time">—</span>
+            </div>
+            <button class="rp-lq-repeat" type="button" id="rp-lq-repeat" title="Repetir consulta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Consultas favoritas -->
+        <div class="rp-card" id="rp-favorites" hidden>
+          <span class="rp-card-title">Favoritos</span>
+          <div class="rp-fav-list" id="rp-fav-list"></div>
+        </div>
+
+        <!-- Accesos rápidos -->
+        <div class="rp-card">
+          <span class="rp-card-title">Accesos rápidos</span>
+          <div class="rp-quick">
+            <button class="rp-quick-btn" type="button" data-nav="filter">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <span>Filtrar</span>
+            </button>
+            <button class="rp-quick-btn" type="button" data-nav="reniec">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              <span>Reniec</span>
+            </button>
+            <button class="rp-quick-btn" type="button" data-nav="vehiculos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              <span>Vehículos</span>
+            </button>
+            <button class="rp-quick-btn" type="button" data-nav="sunarp">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+              <span>Sunarp</span>
+            </button>
+            <button class="rp-quick-btn" type="button" data-nav="historial">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Historial</span>
+            </button>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- VISTA: Reconocimiento facial -->
+      <section class="view" id="view-facial" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="facialCombo">
+            <button class="combo-trigger" id="facialComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="facialComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="facialComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="facial-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="facial-credits">—</span>
+            </span>
+          </div>
+
+          <div class="facial-dropzone" id="facial-dropzone">
+            <input type="file" id="facial-file" accept="image/jpeg,image/png" hidden>
+            <div class="facial-dropzone-inner" id="facial-dropzone-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="9" cy="9" r="2"/>
+                <path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>
+              </svg>
+              <h4 class="facial-dropzone-title">Sube una foto</h4>
+              <p class="facial-dropzone-sub">Arrastra y suelta, o <span class="facial-dropzone-browse">haz click para elegir</span></p>
+              <p class="facial-dropzone-hint">Formatos aceptados: JPG o PNG</p>
+            </div>
+            <div class="facial-dropzone-preview" id="facial-dropzone-preview" hidden>
+              <img id="facial-preview-img" alt="Vista previa">
+              <div class="facial-dropzone-info">
+                <span class="facial-dropzone-filename" id="facial-preview-name">—</span>
+                <button type="button" class="facial-dropzone-remove" id="facial-remove-btn" aria-label="Quitar imagen">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <button class="btn btn-primary btn-block" type="button" id="facial-consultar" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="facial-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="facialResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="facial-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="facial-empty-desc">Sube una foto para realizar el reconocimiento.</p>
+            <span class="empty-chip">
+              <span id="facial-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="facial-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Vehículos -->
+      <section class="view" id="view-vehiculos" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="vehiculosCombo">
+            <button class="combo-trigger" id="vehiculosComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="vehiculosComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="vehiculosComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="vehiculos-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="vehiculos-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="vehiculos-input" placeholder="Ingresa la placa" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="vehiculos-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="vehiculos-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="vehiculosResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="vehiculos-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="vehiculos-empty-desc">Ingrese la placa del vehículo para obtener los datos.</p>
+            <span class="empty-chip">
+              <span id="vehiculos-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="vehiculos-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Laboral -->
+      <section class="view" id="view-laboral" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="laboralCombo">
+            <button class="combo-trigger" id="laboralComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="laboralComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="laboralComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="laboral-desc">Selecciona una consulta para ver su descripción.</p>
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="laboral-credits">—</span>
+            </span>
+          </div>
+          <div class="form-row">
+            <input type="text" class="input" id="laboral-input" placeholder="Ingresa el DNI o RUC" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="laboral-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="laboral-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="laboralResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+          <div class="empty-query-state" id="laboral-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="laboral-empty-desc">Ingrese el DNI o RUC para consultar información laboral.</p>
+            <span class="empty-chip">
+              <span id="laboral-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+          <div class="reniec-result-body" id="laboral-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Sunarp -->
+      <section class="view" id="view-sunarp" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="sunarpCombo">
+            <button class="combo-trigger" id="sunarpComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="sunarpComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="sunarpComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="sunarp-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="sunarp-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="sunarp-input" placeholder="Ingresa el DNI" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="sunarp-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="sunarp-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="sunarpResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="sunarp-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="sunarp-empty-desc">Ingrese el DNI para consultar propiedades registradas en Sunarp.</p>
+            <span class="empty-chip">
+              <span id="sunarp-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="sunarp-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Reniec -->
+      <section class="view" id="view-reniec" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="reniecCombo">
+            <button class="combo-trigger" id="reniecComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="reniecComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="reniecComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="reniec-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="reniec-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="reniec-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="reniec-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="reniec-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="reniecResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="reniec-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="reniec-empty-desc">Ingrese el DNI para consultar información en RENIEC.</p>
+            <span class="empty-chip">
+              <span id="reniec-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="reniec-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Sunat -->
+      <section class="view" id="view-sunat" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="sunatCombo">
+            <button class="combo-trigger" id="sunatComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="sunatComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="sunatComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="sunat-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="sunat-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="sunat-input" placeholder="Ingresa el RUC o DNI" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="sunat-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="sunat-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="sunatResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="sunat-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="sunat-empty-desc">Ingrese el RUC o DNI para consultar información en SUNAT.</p>
+            <span class="empty-chip">
+              <span id="sunat-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="sunat-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Financiero -->
+      <section class="view" id="view-financiero" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="financieroCombo">
+            <button class="combo-trigger" id="financieroComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="financieroComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="financieroComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="financiero-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="financiero-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="financiero-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="financiero-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="financiero-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="financieroResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="financiero-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="financiero-empty-desc">Ingrese el DNI para obtener el reporte financiero.</p>
+            <span class="empty-chip">
+              <span id="financiero-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="financiero-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Estudios -->
+      <section class="view" id="view-estudios" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="estudiosCombo">
+            <button class="combo-trigger" id="estudiosComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="estudiosComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="estudiosComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="estudios-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="estudios-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="estudios-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="estudios-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="estudios-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="estudiosResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="estudios-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="estudios-empty-desc">Ingrese el DNI del estudiante para obtener la información.</p>
+            <span class="empty-chip">
+              <span id="estudios-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="estudios-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: MTC -->
+      <section class="view" id="view-mtc" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="mtcCombo">
+            <button class="combo-trigger" id="mtcComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="mtcComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="mtcComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="mtc-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="mtc-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="mtc-input" placeholder="Ingresa el DNI o la placa" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="mtc-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-license"/></svg>
+              <h3 id="mtc-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="mtcResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="mtc-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="mtc-empty-desc">Ingrese el DNI o placa para obtener información de licencia, revisión técnica, SOAT o papeletas.</p>
+            <span class="empty-chip">
+              <span id="mtc-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="mtc-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Seeker -->
+      <section class="view" id="view-seeker" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="seekerCombo">
+            <button class="combo-trigger" id="seekerComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="seekerComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="seekerComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="seeker-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="seeker-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="seeker-input" placeholder="Ingresa el DNI (8 dígitos) o teléfono (9 dígitos)" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="seeker-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-seeker"/></svg>
+              <h3 id="seeker-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="seekerResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="seeker-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="seeker-empty-desc">Ingrese el DNI o teléfono para hacer una búsqueda Seeker integral.</p>
+            <span class="empty-chip">
+              <span id="seeker-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="seeker-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: VIP -->
+      <section class="view" id="view-vip" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="vipCombo">
+            <button class="combo-trigger" id="vipComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="vipComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="vipComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="vip-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="vip-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="vip-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="vip-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gem"/></svg>
+              <h3 id="vip-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="vipResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="vip-empty">
+            <h4 class="empty-title">Consulta agregada premium</h4>
+            <p class="empty-desc" id="vip-empty-desc">Ingrese el DNI para obtener información cruzada de RENIEC, MINSA, OSIPTEL, SUNARP, SISFOH y SUNAT.</p>
+            <span class="empty-chip">
+              <span id="vip-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="vip-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Telefonía -->
+      <section class="view" id="view-telefonia" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="telefoniaCombo">
+            <button class="combo-trigger" id="telefoniaComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="telefoniaComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="telefoniaComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="telefonia-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="telefonia-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="telefonia-input" placeholder="Ingresa el número o DNI" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="telefonia-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="telefonia-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="telefoniaResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="telefonia-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="telefonia-empty-desc">Ingrese el número de teléfono o DNI para realizar la consulta.</p>
+            <span class="empty-chip">
+              <span id="telefonia-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="telefonia-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Familiares -->
+      <section class="view" id="view-familiares" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="familiaresCombo">
+            <button class="combo-trigger" id="familiaresComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="familiaresComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="familiaresComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="familiares-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="familiares-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="familiares-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="familiares-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="familiares-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="familiaresResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="familiares-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="familiares-empty-desc">Ingrese el DNI del titular para obtener la información familiar.</p>
+            <span class="empty-chip">
+              <span id="familiares-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="familiares-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Certificados -->
+      <section class="view" id="view-certificados" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="certificadosCombo">
+            <button class="combo-trigger" id="certificadosComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="certificadosComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="certificadosComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="certificados-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="certificados-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="certificados-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="certificados-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="certificados-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="certificadosResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="certificados-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="certificados-empty-desc">Ingrese el DNI para obtener el certificado.</p>
+            <span class="empty-chip">
+              <span id="certificados-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="certificados-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Actas -->
+      <section class="view" id="view-actas" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="actasCombo">
+            <button class="combo-trigger" id="actasComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="actasComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="actasComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="actas-desc">Selecciona una consulta para ver su descripción.</p>
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="actas-credits">—</span>
+            </span>
+          </div>
+          <div class="form-row">
+            <input type="text" class="input" id="actas-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="actas-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="actas-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="actasResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+          <div class="empty-query-state" id="actas-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="actas-empty-desc">Ingrese el DNI para obtener el acta.</p>
+            <span class="empty-chip">
+              <span id="actas-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+          <div class="reniec-result-body" id="actas-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Delitos -->
+      <section class="view" id="view-delitos" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="delitosCombo">
+            <button class="combo-trigger" id="delitosComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="delitosComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="delitosComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="delitos-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="delitos-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="delitos-input" placeholder="Ingresa el dato" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="delitos-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="delitos-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="delitosResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="delitos-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="delitos-empty-desc">Ingrese el dato para consultar antecedentes.</p>
+            <span class="empty-chip">
+              <span id="delitos-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="delitos-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Migraciones -->
+      <section class="view" id="view-migraciones" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="migracionesCombo">
+            <button class="combo-trigger" id="migracionesComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="migracionesComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="migracionesComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="migraciones-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="migraciones-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="migraciones-input" placeholder="Ingresa el DNI o pasaporte" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="migraciones-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="migraciones-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="migracionesResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="migraciones-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="migraciones-empty-desc">Ingrese el dato para consultar movimientos migratorios.</p>
+            <span class="empty-chip">
+              <span id="migraciones-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="migraciones-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Extras -->
+      <section class="view" id="view-extras" hidden>
+        <div class="selector-card">
+          <span class="selector-label">Seleccione una opción</span>
+          <div class="combo" id="extrasCombo">
+            <button class="combo-trigger" id="extrasComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="extrasComboText">Cargando consultas…</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" id="extrasComboPanel" role="listbox">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="extras-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="extras-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="extras-input" placeholder="Ingresa el dato" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="extras-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="extras-result-title">Resultado</h3>
+              <span class="status-chip status-empty" id="extrasResultStatus">
+                <span class="status-dot"></span>
+                Esperando consulta
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="extras-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="extras-empty-desc">Ingrese el dato para realizar la consulta.</p>
+            <span class="empty-chip">
+              <span id="extras-empty-credits">Selecciona una consulta para ver su costo.</span>
+            </span>
+          </div>
+
+          <div class="reniec-result-body" id="extras-result-body" hidden></div>
+        </section>
+      </section>
+
+      <!-- VISTA: Filtra tu vehículo (vista principal) -->
+      <section class="view" id="view-filter" hidden>
+        <section class="filter-search-box">
+        <div class="selector-card">
+          <span class="selector-label">Tipo de consulta</span>
+          <div class="combo" id="filterCombo">
+            <button class="combo-trigger" id="filterComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="combo-text" id="filterComboText">Sin consultas activas</span>
+              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="combo-panel" role="listbox" id="filterComboPanel">
+              <div class="combo-empty">No hay consultas disponibles.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-desc" id="filter-desc">Selecciona una consulta para ver su descripción.</p>
+
+          <div class="consumo-row">
+            <span class="consumo-label">Consumo</span>
+            <span class="credits-badge credits-success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
+              <span id="filter-credits">—</span>
+            </span>
+          </div>
+
+          <div class="form-row">
+            <input type="text" class="input" id="filter-input" placeholder="Ingresa el dato" autocomplete="one-time-code">
+            <button class="btn btn-primary" type="button" id="filter-consultar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              Consultar
+            </button>
+          </div>
+        </div>
+        </section>
+
+        <!-- Resultado de la consulta (aparece aquí al hacer click en Consultar) -->
+        <section class="panel result-panel" id="filter-result" hidden>
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3 id="filter-result-title">Documento</h3>
+              <span class="status-chip status-empty" id="filterResultStatus">
+                <span class="status-dot"></span>
+                Sin generar
+              </span>
+            </div>
+          </header>
+
+          <div class="empty-query-state" id="filter-empty">
+            <h4 class="empty-title">Realice una consulta</h4>
+            <p class="empty-desc" id="filter-empty-desc">Ingrese la placa para obtener los datos del vehículo.</p>
+          </div>
+
+          <div class="pdf-preview filter-preview" id="filter-preview-pdf" hidden>
+            <div class="pdf-placeholder-page">
+              <div class="pdf-ph-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h6M9 17h4"/></svg>
+              </div>
+              <div class="pdf-ph-title">Vista previa del documento</div>
+              <div class="pdf-ph-sub">El PDF se generará aquí al confirmar la consulta gratuita.</div>
+            </div>
+          </div>
+
+          <div class="txt-preview filter-preview" id="filter-preview-txt" hidden>
+            <div class="txt-sheet">
+              <pre class="txt-content placeholder">El contenido generado por el sistema se mostrará aquí tras confirmar la consulta gratuita.</pre>
+            </div>
+          </div>
+
+          <div class="img-grid filter-preview" id="filter-preview-img" hidden>
+            <div class="img-slot" style="max-width: 380px;">
+              <div class="img-slot-inner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+              </div>
+              <span class="img-slot-label">Imagen</span>
+            </div>
+          </div>
+
+          <!-- Resultado real (para consultas que devuelven JSON) -->
+          <div class="filter-preview" id="filter-preview-data" hidden></div>
+
+          <!-- Resultado dinámico (cuando la consulta viene del catálogo y bridge) -->
+          <div class="reniec-result-body" id="filter-result-body" hidden></div>
+        </section>
+
+        <!-- Servicios disponibles -->
+        <section class="services-section">
+          <header class="services-head">
+            <h2 class="services-title">Consulta servicios vehiculares con tu placa</h2>
+          </header>
+
+          <div class="services-grid">
+            <button class="service-card is-locked-anon" type="button" data-nav="regiones">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 22s7-6 7-12a7 7 0 1 0-14 0c0 6 7 12 7 12z"/><circle cx="5" cy="20" r="1" fill="currentColor"/><circle cx="19" cy="20" r="1" fill="currentColor"/></svg></span>
+              <span class="service-stack">
+                <span class="service-name">Infracciones por regiones</span>
+                <span class="service-meta">17 regiones disponibles</span>
+              </span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+
+            <button class="service-card" type="button" data-href="https://consultavehicular.sunarp.gob.pe/consulta-vehicular/inicio">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><circle cx="8" cy="15" r="1.5"/><path d="M12 15h5"/></svg></span>
+              <span class="service-name">Propiedad Vehicular SUNARP</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card" type="button" data-href="https://sprl.sunarp.gob.pe/sprl/ingreso">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h6M9 17h5"/></svg></span>
+              <span class="service-name">Historial Completo por Placa</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://consultavehicular.sunarp.gob.pe/consulta-vehicular/inicio">
+              <span class="service-icon"><svg><use href="#i-car"/></svg></span>
+              <span class="service-name">Cambio de Características</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://www.sat.gob.pe/WebSiteV9/TributosMultas/Papeletas/ConsultasPapeletas">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg></span>
+              <span class="service-name">Deudas y Multas SAT Lima</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://pagopapeletascallao.pe/">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg></span>
+              <span class="service-name">Deudas y Multas SAT Callao</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://pasarela.atu.gob.pe/">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+              <span class="service-name">Papeletas de Tránsito ATU</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://servicios.sbs.gob.pe/reportesoat/">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+              <span class="service-name">Siniestralidad por Placa</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://www.placas.pe/#/home/verificarEstadoPlaca">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M6 11v2M10 11v2M14 11v2M18 11v2"/></svg></span>
+              <span class="service-name">Estado de Placa</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="http://www.pit.gob.pe/pit2007/EstadoCuenta.aspx">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>
+              <span class="service-name">Foto Pit Lima</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://rec.mtc.gob.pe/Citv/ArConsultaCitv">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+              <span class="service-name">Inspección Técnica Vehicular CITV</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://www.apeseg.org.pe/consultas-soat/">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+              <span class="service-name">Vigencia del SOAT</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
+              <span class="service-name">Papeletas SUTRAN</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></svg></span>
+              <span class="service-name">Lunas Oscurecidas</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9l-3-3"/></svg></span>
+              <span class="service-name">FISE GNV Subsidio Gas</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://infogas.com.pe/consulta-placa/">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg></span>
+              <span class="service-name">Consulta Deuda GNV</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://www.pj.gob.pe/wps/wcm/connect/CorteSupremaPJ/s_cortes_suprema_home/as_servicios/as_enlaces_de_interes/as_consulta_judicial_en_linea">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="4"/><circle cx="18" cy="18" r="4"/><path d="M6 14V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8"/></svg></span>
+              <span class="service-name">Denuncias y Órdenes de Captura</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://sprl.sunarp.gob.pe/sprl/ingreso">
+              <span class="service-icon"><svg><use href="#i-building"/></svg></span>
+              <span class="service-name">Boleta Informativa</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://tivative.sunarp.gob.pe/tivative/inicio">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="10" r="2"/><path d="M6 16c.5-1.3 1.3-2 2-2s1.5.7 2 2M13 10h5M13 14h5"/></svg></span>
+              <span class="service-name">Tarjeta de Propiedad (TIVE)</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://sprl.sunarp.gob.pe/sprl/ingreso">
+              <span class="service-icon"><svg><use href="#i-users"/></svg></span>
+              <span class="service-name">Historial de Propietarios Inscritos</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+
+            <button class="service-card is-locked-anon" type="button" data-href="https://recordconductor.mtc.gob.pe/">
+              <span class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2.2"/><path d="M14 10h4M14 14h4"/></svg></span>
+              <span class="service-name">Récord de Conductor (DNI)</span>
+              <svg class="service-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>
+          </div>
+        </section>
+
+      </section>
+
+
+      </section>
+
+      <!-- VISTA: Infracciones por regiones -->
+      <section class="view" id="view-regiones" hidden>
+        <header class="regiones-hero">
+          <span class="hero-eyebrow">Infracciones</span>
+          <h1 class="regiones-title">Infracciones por regiones</h1>
+          <p class="regiones-sub">Seleccioná la región para consultar las papeletas y multas registradas bajo la placa.</p>
+        </header>
+
+        <div class="regiones-toolbar">
+          <div class="regiones-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="text" id="regionesSearchView" placeholder="Filtrar por región o servicio..." autocomplete="one-time-code">
+          </div>
+          <span class="regiones-count"><strong id="regionesCount">17</strong> regiones disponibles</span>
+        </div>
+
+        <div class="regiones-grid regiones-grid-view">
+          <button class="region-card" type="button" data-region="lima" data-name="Lima" data-href="https://www.sat.gob.pe/WebSiteV9/TributosMultas/Papeletas/ConsultasPapeletas">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l4-3v15"/><path d="M13 21V5l4 3v13"/><path d="M17 14h2v7"/><path d="M7 13h1M7 17h1M15 10h1M15 14h1"/></svg></span>
+            <span class="region-info"><strong>Lima</strong><small>Consulta de papeletas SAT Lima</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="callao" data-name="Callao" data-href="https://pagopapeletascallao.pe/">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><path d="M12 22V7"/><path d="M5 12a7 7 0 0 0 14 0"/><path d="M8 12H5M19 12h-3"/></svg></span>
+            <span class="region-info"><strong>Callao</strong><small>Consulta de papeletas SAT Callao</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="arequipa" data-name="Arequipa" data-href="https://www.muniarequipa.gob.pe/oficina-virtual/c0nInfrPermisos/faltas/papeletas.php">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M4 20 10 8l2 3 3-3 5 12"/><path d="M10 5c0-1 .6-2 1.5-2s1.5 1 1.5 2"/></svg></span>
+            <span class="region-info"><strong>Arequipa</strong><small>Infracciones y permisos municipales</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="trujillo" data-name="Trujillo" data-href="https://www.satt.gob.pe/servicios/record-de-infracciones">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></span>
+            <span class="region-info"><strong>Trujillo</strong><small>Record de infracciones SATT</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="piura" data-name="Piura" data-href="http://www.munipiura.gob.pe/consulta-de-multas-administrativas#buscar-por-placa">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V10"/><path d="M12 10c-3-2-7-2-9 0"/><path d="M12 10c3-2 7-2 9 0"/><path d="M12 10c-1-3 0-6 3-7"/><path d="M12 10c1-3 0-6-3-7"/></svg></span>
+            <span class="region-info"><strong>Piura</strong><small>Multas administrativas municipales</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="cusco" data-name="Cusco" data-href="https://cusco.gob.pe/informatica/infracciones">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20 7 10l3 5 3-7 3 5 4-8v15"/><path d="M2 20h20"/></svg></span>
+            <span class="region-info"><strong>Cusco</strong><small>Infracciones de tránsito</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="chiclayo" data-name="Chiclayo" data-href="https://virtualsatch.satch.gob.pe/virtualsatch/record_infracciones/buscar_placa_">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="3"/><path d="M12 9v4"/><path d="M6 18h12L12 13z"/><path d="M10 6h4"/></svg></span>
+            <span class="region-info"><strong>Chiclayo</strong><small>Record de infracciones SATCH</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="huancayo" data-name="Huancayo" data-href="https://www.sath.gob.pe/tributos.html#multas-administrativas">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 10 8l4 6 2-3 5 9"/><path d="M2 20h20"/><path d="M8 13l2-2"/></svg></span>
+            <span class="region-info"><strong>Huancayo</strong><small>Multas administrativas SATH</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="puno" data-name="Puno" data-href="https://papeletas.munipuno.gob.pe/">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18c0 0 2 2 4 2s3-1 5-1 3 1 5 1 4-2 4-2"/><path d="M5 13h14l-2 4H7z"/><path d="M12 13V5l5 6"/></svg></span>
+            <span class="region-info"><strong>Puno</strong><small>Papeletas municipales</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="cajamarca" data-name="Cajamarca" data-href="https://www.satcajamarca.gob.pe/consultas">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20 7 11l3 4 2-3 3 5 3-4 2 7"/><path d="M2 20h20"/></svg></span>
+            <span class="region-info"><strong>Cajamarca</strong><small>Consultas SAT Cajamarca</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="ica" data-name="Ica" data-href="https://m.satica.gob.pe/consultapapeletas_web.php">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="1.6"/><circle cx="14" cy="10" r="1.6"/><circle cx="8" cy="13" r="1.6"/><circle cx="12" cy="13" r="1.6"/><circle cx="16" cy="13" r="1.6"/><circle cx="10" cy="16" r="1.6"/><circle cx="14" cy="16" r="1.6"/><circle cx="12" cy="19" r="1.6"/><path d="M13 7c1-2 3-3 5-2"/></svg></span>
+            <span class="region-info"><strong>Ica</strong><small>Consulta de papeletas SATICA</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="huanuco" data-name="Huánuco" data-href="https://www.munihuanuco.gob.pe/gt_consultapapeletas_placa.php">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V14"/><circle cx="12" cy="9" r="6"/><path d="M8 14h8"/></svg></span>
+            <span class="region-info"><strong>Huánuco</strong><small>Consulta de papeletas por placa</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="tacna" data-name="Tacna" data-href="https://www.munitacna.gob.pe/pagina/sf/servicios/papeletas">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22V3"/><path d="M5 4h13l-4 5 4 5H5"/></svg></span>
+            <span class="region-info"><strong>Tacna</strong><small>Papeletas municipales</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="chachapoyas" data-name="Chachapoyas" data-href="https://app.munichachapoyas.gob.pe/servicios/consulta_papeletas/app/papeletas.php">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 11h-1.26A8 8 0 1 0 9 20h8a4.5 4.5 0 0 0 0-9z"/><path d="M8 15h2M14 15h2"/></svg></span>
+            <span class="region-info"><strong>Chachapoyas</strong><small>Consulta de papeletas municipales</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="tarapoto" data-name="Tarapoto" data-href="https://www.sat-t.gob.pe/#consulta-papeletas">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20a7 7 0 0 1-1.2-13.9C15.5 5 17 4.5 19.8 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10z"/><path d="M2 21c0-3 1.9-5.4 5.1-6"/></svg></span>
+            <span class="region-info"><strong>Tarapoto</strong><small>Consulta de papeletas SAT-T</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="coronel-portillo" data-name="Coronel Portillo" data-href="http://consultas.municportillo.gob.pe:85/consultaVehiculo/consulta/">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/></svg></span>
+            <span class="region-info"><strong>Coronel Portillo</strong><small>Consulta vehicular municipal</small></span>
+          </button>
+          <button class="region-card" type="button" data-region="huarmey" data-name="Huarmey" data-href="https://munihuarmey.gob.pe/consultar-papeletas/">
+            <span class="region-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.2"/><path d="M12 22s8-4 8-10c0-3-3-5-5-4s-3 3-3 3-1-2-3-3-5 1-5 4c0 6 8 10 8 10z"/></svg></span>
+            <span class="region-info"><strong>Huarmey</strong><small>Consultar papeletas municipales</small></span>
+          </button>
+        </div>
+      </section>
+
+      <!-- VISTA: Dashboard -->
+      <section class="view" id="view-dashboard" hidden>
+
+        <!-- CTA anónimo: solo visible sin sesión -->
+        <section class="anon-cta" id="anonCta">
+          <div class="anon-cta-body">
+            <span class="anon-cta-eyebrow">Acceso instantáneo</span>
+            <h2 class="anon-cta-title">Accede a 60+ consultas oficiales al instante</h2>
+            <p class="anon-cta-sub">Reniec, Sunarp, SUNAT, Migraciones, Sentinel y más. Crea tu cuenta y recibe <strong>5 créditos gratis</strong> para probar el servicio.</p>
+            <div class="anon-cta-actions">
+              <button class="btn btn-primary anon-cta-primary" type="button" data-auth-open="signup">Crear cuenta gratis</button>
+              <button class="btn btn-outline" type="button" data-auth-open="login">Ya tengo cuenta</button>
+            </div>
+            <ul class="anon-cta-bullets">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Sin tarjeta de crédito</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Resultados en segundos</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Pagos por Mercado Pago y Yape</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Listado de tipos de consulta — visible para visitantes anónimos -->
+        <section class="anon-cats" id="anonCats">
+          <header class="anon-cats-head">
+            <h2 class="anon-cats-title">Tipos de consulta disponibles</h2>
+            <p class="anon-cats-sub">Más de 60 consultas oficiales. Crea tu cuenta y recibe <strong>5 créditos gratis</strong> para probar.</p>
+          </header>
+          <div class="anon-cats-grid">
+            <button class="anon-cat-card" type="button" data-nav="facial">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
+              <span class="anon-cat-text"><strong>Facial</strong><span>Reconocimiento por foto</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="vehiculos">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l2-6h14l2 6"/><circle cx="7" cy="16" r="2"/><circle cx="17" cy="16" r="2"/><path d="M5 16h-2v-3h2"/><path d="M19 16h2v-3h-2"/></svg></span>
+              <span class="anon-cat-text"><strong>Vehículos</strong><span>Datos por placa</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="sunarp">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg></span>
+              <span class="anon-cat-text"><strong>Sunarp</strong><span>Propiedad, sucesión</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="reniec">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.5"/><path d="M14 10h5M14 13h4"/></svg></span>
+              <span class="anon-cat-text"><strong>Reniec</strong><span>DNI ficha completa</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="sunat">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l4 4v16H6z"/><path d="M9 9h7M9 13h7M9 17h5"/></svg></span>
+              <span class="anon-cat-text"><strong>Sunat</strong><span>RUC, actividad</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="financiero">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-6 9 6"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+              <span class="anon-cat-text"><strong>Financiero</strong><span>Sentinel, deudas</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="estudios">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1 3 3 6 3s6-2 6-3v-5"/></svg></span>
+              <span class="anon-cat-text"><strong>Estudios</strong><span>Títulos académicos</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="telefonia">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></span>
+              <span class="anon-cat-text"><strong>Telefonía</strong><span>Titular de número</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="familiares">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M14 20a4 4 0 0 1 7 0"/></svg></span>
+              <span class="anon-cat-text"><strong>Familiares</strong><span>Árbol genealógico</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="certificados">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l4 4v16H6z"/><path d="M9 13l2 2 4-4"/></svg></span>
+              <span class="anon-cat-text"><strong>Certificados</strong><span>Antecedentes penales</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="actas">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span>
+              <span class="anon-cat-text"><strong>Actas</strong><span>Nacimiento, matrimonio</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="delitos">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z"/><path d="M12 8v4M12 16h.01"/></svg></span>
+              <span class="anon-cat-text"><strong>Delitos</strong><span>Denuncias, requisitorias</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="laboral">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg></span>
+              <span class="anon-cat-text"><strong>Laboral</strong><span>EsSalud, AFP, empleos</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="migraciones">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l9-9 4 4-9 9-4-4z"/><path d="M14 7l3 3"/><path d="M11 21l10-10"/></svg></span>
+              <span class="anon-cat-text"><strong>Migraciones</strong><span>Movimientos migratorios</span></span>
+            </button>
+            <button class="anon-cat-card" type="button" data-nav="extras">
+              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2 5 5 1-3.5 3.5L17 18l-5-3-5 3 1.5-5.5L5 9l5-1z"/></svg></span>
+              <span class="anon-cat-text"><strong>Extras</strong><span>Otras consultas</span></span>
+            </button>
+          </div>
+        </section>
+
+        <div class="dash-grid">
+          <!-- Columna izquierda -->
+          <div class="dash-col">
+            <!-- Card del plan -->
+            <section class="panel plan-card">
+              <div class="plan-cover"></div>
+              <div class="plan-avatar"><div class="avatar avatar-lg">—</div></div>
+              <h3 class="plan-name" id="planCardName">PLAN FREE</h3>
+              <div class="plan-sub-status" id="planCardSubStatus" hidden></div>
+              <div class="plan-email" id="planCardEmail">—</div>
+              <div class="plan-stats">
+                <div class="plan-stat">
+                  <strong>0</strong>
+                  <span>Créditos disponibles</span>
+                </div>
+                <div class="plan-divider"></div>
+                <div class="plan-stat">
+                  <strong>0</strong>
+                  <span>Consultas realizadas</span>
+                </div>
+              </div>
+              <button class="btn btn-primary plan-cta" type="button" data-nav="saldo">
+                Comprar créditos
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </section>
+
+            <!-- Porcentaje de créditos -->
+            <section class="panel credits-card">
+              <header class="credits-header">
+                <h3>Porcentaje de créditos</h3>
+                <span class="period-chip">Este mes</span>
+              </header>
+              <div class="credits-body">
+                <div class="credits-info">
+                  <span class="credits-label">Total disponibles</span>
+                  <strong class="credits-total">0</strong>
+                  <button class="btn btn-outline btn-sm" type="button" data-nav="historial">
+                    Ver historial de consumos →
+                  </button>
+                </div>
+                <div class="credits-ring">
+                  <svg viewBox="0 0 120 120" class="gauge-svg" data-percent="0" aria-hidden="true"></svg>
+                  <div class="credits-ring-text">
+                    <strong>0%</strong>
+                    <span>Consumos</span>
+                  </div>
+                </div>
+              </div>
+              <p class="credits-note">Revisa tus consumos de créditos para llevar un control detallado de tus consultas.</p>
+            </section>
+          </div>
+
+          <!-- Columna derecha -->
+          <div class="dash-col">
+            <section class="panel stats-panel">
+              <header class="credits-header">
+                <h3>Estadística de consultas</h3>
+                <span class="period-chip">Resumen</span>
+              </header>
+              <div class="period-stats">
+                <div class="period-card">
+                  <span>Hoy</span>
+                  <strong>0</strong>
+                </div>
+                <div class="period-card">
+                  <span>Este mes</span>
+                  <strong>0</strong>
+                </div>
+                <div class="period-card">
+                  <span>Este año</span>
+                  <strong>0</strong>
+                </div>
+              </div>
+              <div class="stats-chart" aria-hidden="true">
+                <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="var(--c-primary)" stop-opacity=".18"/>
+                      <stop offset="100%" stop-color="var(--c-primary)" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M 0 180 Q 100 178 200 150 T 400 40 T 600 180 L 600 200 L 0 200 Z" fill="url(#chartGrad)"/>
+                  <path d="M 0 180 Q 100 178 200 150 T 400 40 T 600 180" fill="none" stroke="var(--c-primary)" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <div class="chart-months">
+                  <span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Consumo por módulo -->
+            <section class="panel modules-panel">
+              <header class="credits-header">
+                <h3>Consumo por módulo</h3>
+                <span class="period-chip">Top 5</span>
+              </header>
+              <ul class="modules-list">
+                <li class="module-row" data-categoria="filter">
+                  <span class="module-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+                  <span class="module-name">Consultar placa</span>
+                  <div class="module-bar"><span style="width: 0%;"></span></div>
+                  <span class="module-count">0</span>
+                </li>
+                <li class="module-row" data-categoria="reniec">
+                  <span class="module-ico"><svg><use href="#i-id"/></svg></span>
+                  <span class="module-name">Reniec</span>
+                  <div class="module-bar"><span style="width: 0%;"></span></div>
+                  <span class="module-count">0</span>
+                </li>
+                <li class="module-row" data-categoria="vehiculos">
+                  <span class="module-ico"><svg><use href="#i-car"/></svg></span>
+                  <span class="module-name">Vehículos</span>
+                  <div class="module-bar"><span style="width: 0%;"></span></div>
+                  <span class="module-count">0</span>
+                </li>
+                <li class="module-row" data-categoria="sunarp">
+                  <span class="module-ico"><svg><use href="#i-building"/></svg></span>
+                  <span class="module-name">Sunarp</span>
+                  <div class="module-bar"><span style="width: 0%;"></span></div>
+                  <span class="module-count">0</span>
+                </li>
+                <li class="module-row" data-categoria="facial">
+                  <span class="module-ico"><svg><use href="#i-face"/></svg></span>
+                  <span class="module-name">Facial</span>
+                  <div class="module-bar"><span style="width: 0%;"></span></div>
+                  <span class="module-count">0</span>
+                </li>
+                <li class="module-row" data-categoria="delitos">
+                  <span class="module-ico"><svg><use href="#i-shield-alert"/></svg></span>
+                  <span class="module-name">Delitos</span>
+                  <div class="module-bar"><span style="width: 0%;"></span></div>
+                  <span class="module-count">0</span>
+                </li>
+              </ul>
+            </section>
+
+          </div>
+        </div>
+
+        <!-- Accesos rápidos compactos -->
+        <section class="panel quick-panel">
+          <header class="credits-header">
+            <h3>Accesos rápidos</h3>
+          </header>
+          <div class="quick-actions-compact">
+            <button class="quick-compact" data-nav="filter" type="button" title="Filtro vehicular">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <span>Filtrar</span>
+            </button>
+            <button class="quick-compact" data-go-submenu="vehiculos" type="button" title="Vehículos">
+              <svg><use href="#i-car"/></svg>
+              <span>Vehículos</span>
+            </button>
+            <button class="quick-compact" data-go-submenu="reniec" type="button" title="Reniec">
+              <svg><use href="#i-id"/></svg>
+              <span>Reniec</span>
+            </button>
+            <button class="quick-compact" data-go-submenu="sunarp" type="button" title="Sunarp">
+              <svg><use href="#i-building"/></svg>
+              <span>Sunarp</span>
+            </button>
+            <button class="quick-compact" data-nav="saldo" type="button" title="Mi saldo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              <span>Saldo</span>
+            </button>
+            <button class="quick-compact" data-nav="historial" type="button" title="Historial">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+              <span>Historial</span>
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <!-- VISTA: Consultas Premium (suscriptores) -->
+<!-- VISTA: Mi cuenta -->
+      <section class="view" id="view-cuenta" hidden>
+        <header class="hero compact-hero">
+          <span class="hero-eyebrow">Mi cuenta</span>
+          <h1 class="simple-title">Información personal</h1>
+        </header>
+        <div class="panel">
+          <div class="account-grid">
+            <div class="account-avatar">
+              <div class="avatar avatar-lg" id="accountAvatar">—</div>
+            </div>
+            <div class="account-info">
+              <div class="field"><label>Nombre completo</label><input class="input" id="accountName" value="" readonly></div>
+              <div class="field"><label>Correo electrónico</label><input class="input" id="accountEmail" value="" readonly></div>
+              <div class="field"><label>Teléfono</label><input class="input" id="accountPhone" value="" readonly></div>
+              <div class="auth-error" id="accountError" hidden></div>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="button" id="accountEditBtn">Editar perfil</button>
+                <button class="btn btn-primary" type="button" id="accountSaveBtn" hidden>Guardar cambios</button>
+                <button class="btn btn-outline" type="button" id="accountCancelBtn" hidden>Cancelar</button>
+                <button class="btn btn-outline" type="button" id="accountPasswordBtn">Cambiar contraseña</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VISTA: Mi saldo -->
+      <section class="view" id="view-saldo" hidden>
+        <header class="hero compact-hero">
+          <span class="hero-eyebrow">Mi saldo</span>
+          <h1 class="simple-title">Créditos disponibles</h1>
+        </header>
+        <div class="plans-columns">
+          <div class="plans-section" id="plansSection-credits">
+            <h2 class="plans-section-title">Recarga de créditos</h2>
+            <div class="plans-grid" id="catalogGridCredits"></div>
+          </div>
+          <div class="plans-section" id="plansSection-custom">
+            <h2 class="plans-section-title">Recarga personalizada</h2>
+            <div id="catalogGridCustom"></div>
+          </div>
+
+          <div class="terms-notice">
+            <svg class="terms-notice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+            <div class="terms-notice-body">
+              <strong>Compra segura</strong>
+              <p>Al recargar aceptas nuestros <a href="#" data-modal="terms">términos y condiciones</a> y la <a href="#" data-modal="cookies">política de cookies</a>. Los créditos son personales, no transferibles y no se reembolsan una vez utilizados.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VISTA: Mis compras -->
+      <section class="view" id="view-compras" hidden>
+        <header class="hero compact-hero">
+          <span class="hero-eyebrow">Mis compras</span>
+          <h1 class="simple-title">Historial de recargas</h1>
+        </header>
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              <h3>Recargas realizadas</h3>
+            </div>
+          </header>
+          <ul class="tx-list" id="comprasList" hidden></ul>
+          <div class="empty-query-state" id="comprasEmpty">
+            <h4 class="empty-title">No tienes compras todavía</h4>
+            <p class="empty-desc">Tus recargas de saldo y paquetes contratados aparecerán en este listado.</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- VISTA: Mis consultas (historial) -->
+      <section class="view" id="view-historial" hidden>
+        <header class="hero compact-hero">
+          <span class="hero-eyebrow">Mis consultas</span>
+          <h1 class="simple-title">Historial de búsquedas</h1>
+        </header>
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <h3>Consultas realizadas</h3>
+            </div>
+          </header>
+          <ul class="tx-list" id="historialList" hidden></ul>
+          <div class="empty-query-state" id="historialEmpty">
+            <h4 class="empty-title">Sin consultas registradas</h4>
+            <p class="empty-desc">Todas tus búsquedas quedarán guardadas aquí para acceso rápido.</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- VISTA: Notificaciones -->
+      <section class="view" id="view-notificaciones" hidden>
+        <header class="hero compact-hero">
+          <span class="hero-eyebrow">Notificaciones</span>
+          <h1 class="simple-title">Tu actividad reciente</h1>
+        </header>
+        <section class="panel result-panel">
+          <header class="result-header">
+            <div class="result-header-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+              <h3>Notificaciones</h3>
+            </div>
+            <button class="ghost-btn" type="button" title="Marcar todas como leídas" id="notifMarkAllBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          </header>
+          <ul class="notif-list" id="notifList" hidden></ul>
+          <div class="empty-query-state" id="notifEmpty">
+            <h4 class="empty-title">Todo al día</h4>
+            <p class="empty-desc">No tienes notificaciones pendientes. Te avisaremos de nuevas consultas, actualizaciones y recargas.</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- VISTA: Configuración -->
+      <section class="view" id="view-configuracion" hidden>
+        <header class="hero compact-hero">
+          <span class="hero-eyebrow">Configuración</span>
+          <h1 class="simple-title">Preferencias de la plataforma</h1>
+        </header>
+        <div class="panel">
+          <div class="settings-list">
+            <div class="setting-row">
+              <div class="setting-info">
+                <strong>Notificaciones por email</strong>
+                <span>Recibí avisos cuando una consulta se complete.</span>
+              </div>
+              <label class="switch"><input type="checkbox" checked><span></span></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <strong>Guardar historial de búsquedas</strong>
+                <span>Permite revisar consultas anteriores desde "Mis consultas".</span>
+              </div>
+              <label class="switch"><input type="checkbox" checked><span></span></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <strong>Autenticación en dos pasos</strong>
+                <span>Añadí una capa extra de seguridad al iniciar sesión.</span>
+              </div>
+              <label class="switch"><input type="checkbox"><span></span></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <strong>Idioma</strong>
+                <span>Idioma de la interfaz.</span>
+              </div>
+              <select class="select" style="max-width: 180px;">
+                <option>Español</option>
+                <option>English</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     AVISO DE MANTENIMIENTO — pantalla flotante grande, visible al
+     entrar mientras el usuario logueado no la cierre (se recuerda
+     por navegador vía localStorage, data-banner-id). Ver notifications.js
+============================================================ -->
+<!-- ============================================================
+     MODALES: Términos y Política de cookies
+============================================================ -->
+<div class="modal" id="termsModal" hidden role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+  <div class="modal-overlay" data-close></div>
+  <div class="modal-panel">
+    <header class="modal-header">
+      <h2 id="termsTitle">Términos y condiciones</h2>
+      <button class="modal-close" type="button" aria-label="Cerrar" data-close>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </header>
+    <div class="modal-body">
+      <p class="modal-lead">Última actualización: 1 de enero de 2026</p>
+
+      <h3>1. Aceptación de los términos</h3>
+      <p>Al acceder y utilizar <strong>Filtro Vehicular+</strong> (en adelante, "la plataforma"), el usuario (en adelante, "el Usuario") acepta íntegramente los presentes Términos y Condiciones de uso. Si no estás de acuerdo con alguna de las cláusulas, no deberás utilizar el servicio.</p>
+
+      <h3>2. Descripción del servicio</h3>
+      <p>Filtro Vehicular+ es una plataforma digital que proporciona acceso a consultas de información registral proveniente de fuentes oficiales (RENIEC, SUNARP, SUNAT, SBS, entre otras). Los resultados se entregan en formatos PDF, imagen o texto según corresponda a cada tipo de consulta.</p>
+
+      <h3>3. Uso de la plataforma</h3>
+      <p>El Usuario se compromete a utilizar el servicio únicamente con fines lícitos y de conformidad con las leyes aplicables. Queda prohibido emplear los datos obtenidos para actividades que vulneren la privacidad, el honor o los derechos de terceros.</p>
+
+      <h3>4. Créditos, pagos y reembolsos</h3>
+      <p>Cada consulta tiene un costo expresado en créditos, indicado previamente a su ejecución. Los créditos adquiridos no son reembolsables salvo por error técnico imputable a la plataforma. Las recargas se procesan mediante los medios de pago habilitados.</p>
+
+      <h3>5. Protección de datos personales</h3>
+      <p>Filtro Vehicular+ cumple con la normativa vigente de protección de datos personales. La información registrada del Usuario se trata de forma confidencial y solo se comparte cuando la ley lo exige.</p>
+
+      <h3>6. Limitación de responsabilidad</h3>
+      <p>La plataforma actúa como intermediario entre el Usuario y las fuentes oficiales. No garantizamos la exactitud absoluta de los datos registrados por terceros. El Usuario acepta que la responsabilidad por decisiones tomadas en base a la información consultada recae exclusivamente en sí mismo.</p>
+
+      <h3>7. Propiedad intelectual</h3>
+      <p>Todos los derechos sobre la plataforma, su diseño, marca, contenidos y código fuente pertenecen a Filtro Vehicular+ o a sus licenciantes. Está prohibida la reproducción total o parcial sin autorización expresa.</p>
+
+      <h3>8. Modificaciones</h3>
+      <p>Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios serán publicados en esta misma página con su fecha de actualización.</p>
+
+      <h3>9. Legislación aplicable</h3>
+      <p>Estos términos se rigen por las leyes del Perú. Cualquier controversia será sometida a los tribunales competentes de Lima.</p>
+
+      <h3>10. Contacto</h3>
+      <p>Para consultas sobre estos términos puedes escribir a <strong>soporte@filtrovehicularperu.com</strong>.</p>
+    </div>
+    <footer class="modal-footer">
+      <button class="btn btn-primary" type="button" data-close>Entendido</button>
+    </footer>
+  </div>
+</div>
+
+<div class="modal" id="cookiesModal" hidden role="dialog" aria-modal="true" aria-labelledby="cookiesTitle">
+  <div class="modal-overlay" data-close></div>
+  <div class="modal-panel">
+    <header class="modal-header">
+      <h2 id="cookiesTitle">Política de cookies</h2>
+      <button class="modal-close" type="button" aria-label="Cerrar" data-close>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </header>
+    <div class="modal-body">
+      <p>Filtro Vehicular+ utiliza cookies propias y de terceros para garantizar el correcto funcionamiento de la plataforma, analizar el uso del servicio y personalizar la experiencia del Usuario.</p>
+      <h3>Tipos de cookies que usamos</h3>
+      <ul>
+        <li><strong>Esenciales:</strong> necesarias para la sesión, autenticación y seguridad. No se pueden desactivar.</li>
+        <li><strong>Analíticas:</strong> permiten medir el uso y mejorar el rendimiento (Google Analytics o similar).</li>
+        <li><strong>Funcionales:</strong> recuerdan preferencias como idioma, tema o sesiones recientes.</li>
+      </ul>
+      <h3>Gestión de cookies</h3>
+      <p>Puedes aceptar o rechazar las cookies no esenciales al ingresar al sitio mediante el banner de consentimiento. También puedes modificar tus preferencias desde la configuración del navegador.</p>
+    </div>
+    <footer class="modal-footer">
+      <button class="btn btn-primary" type="button" data-close>Entendido</button>
+    </footer>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     BANNER DE COOKIES (aparece hasta que el usuario elige)
+============================================================ -->
+<div class="cookie-banner" id="cookieBanner" hidden role="dialog" aria-live="polite">
+  <div class="cookie-content">
+    <div class="cookie-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>
+        <circle cx="8.5" cy="8.5" r=".5" fill="currentColor"/>
+        <circle cx="15" cy="13" r=".5" fill="currentColor"/>
+        <circle cx="10" cy="15" r=".5" fill="currentColor"/>
+      </svg>
+    </div>
+    <div class="cookie-text">
+      <strong>Este sitio usa cookies</strong>
+      <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, analizar el uso del sitio y personalizar el contenido. Puedes aceptar todas o solo las esenciales.</p>
+    </div>
+    <div class="cookie-actions">
+      <button class="btn btn-outline" type="button" id="cookieReject">Solo esenciales</button>
+      <button class="btn btn-primary" type="button" id="cookieAccept">Aceptar todas</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor de toasts -->
+<div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Botón flotante de WhatsApp (soporte) -->
+<a class="wa-fab"
+   id="waSupport"
+   href="https://wa.me/51932465820"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="Contactar por WhatsApp">
+  <svg class="wa-fab-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<!-- Scripts (orden importa: módulos primero, main al final) -->
+<!-- Supabase SDK (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/shared/supabase-config.js"></script>
+<script src="js/shared/utils.js?v=2"></script>
+<script src="js/shared/device-fingerprint.js"></script>
+<script src="js/shared/email-validator.js"></script>
+<script src="js/shared/auth.js?v=21"></script>
+<script src="js/shared/plans-data.js"></script>
+<script src="js/modules/toasts.js"></script>
+<script src="js/modules/confirm-dialog.js"></script>
+<script src="js/modules/auth-modals.js?v=28"></script>
+<script src="js/modules/auth-gate.js?v=21"></script>
+<script src="js/modules/auth-ui.js?v=24"></script>
+<script src="js/modules/notifications.js"></script>
+<script src="js/modules/my-transactions.js?v=3"></script>
+<script src="js/modules/dashboard-stats.js?v=25"></script>
+<script src="js/modules/right-panel.js"></script>
+<script src="js/modules/whatsapp-support.js?v=2"></script>
+<script src="js/modules/validation.js"></script>
+<script src="js/modules/consulta-runner.js?v=4"></script>
+<script src="js/modules/subscription.js?v=2"></script>
+<script src="js/modules/subscription-gate.js?v=5"></script>
+<script src="js/modules/render-helpers.js?v=2"></script>
+<script src="js/modules/category-view.js?v=8"></script>
+<script src="js/modules/reniec.js"></script>
+<script src="js/modules/sunat.js"></script>
+<script src="js/modules/financiero.js"></script>
+<script src="js/modules/estudios.js"></script>
+<script src="js/modules/mtc.js"></script>
+<script src="js/modules/seeker.js"></script>
+<script src="js/modules/vip.js"></script>
+<script src="js/modules/telefonia.js"></script>
+<script src="js/modules/familiares.js"></script>
+<script src="js/modules/certificados.js"></script>
+<script src="js/modules/actas.js"></script>
+<script src="js/modules/delitos.js"></script>
+<script src="js/modules/laboral.js"></script>
+<script src="js/modules/vehiculos.js"></script>
+<script src="js/modules/sunarp.js"></script>
+<script src="js/modules/facial.js"></script>
+<script src="js/modules/migraciones.js"></script>
+<script src="js/modules/extras.js"></script>
+<script src="js/modules/premium.js?v=4"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  if (window.pdfjsLib) {
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  }
+</script>
+<!-- jsPDF + autoTable para generación de informes PDF en cliente -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  // Shim: jspdf-autotable busca window.jsPDF para engancharse al prototipo.
+  // jsPDF 2.x UMD lo expone como window.jspdf.jsPDF, no como window.jsPDF.
+  if (window.jspdf && window.jspdf.jsPDF && !window.jsPDF) {
+    window.jsPDF = window.jspdf.jsPDF;
+  }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="js/modules/report-generator.js?v=5"></script>
+<script src="js/modules/filter.js?v=4"></script>
+<script src="js/modules/polish.js"></script>
+<script src="js/modules/services-uploader.js"></script>
+<script src="js/modules/saldo-catalog.js?v=3"></script>
+<!-- Funciones nuevas -->
+<script src="js/modules/low-balance-alert.js?v=1"></script>
+<script src="js/modules/payment-watcher.js?v=1"></script>
+<script src="js/modules/plate-scanner.js?v=1"></script>
+<script src="js/modules/search-history.js?v=1"></script>
+<script src="js/modules/favorites.js?v=1"></script>
+<script src="js/modules/credits-counter.js?v=1"></script>
+<script src="js/sidebar.js"></script>
+<script src="js/topbar.js"></script>
+<script src="js/views.js"></script>
+<script src="js/overlays.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

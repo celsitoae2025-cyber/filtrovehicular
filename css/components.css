@@ -1,0 +1,488 @@
+﻿/* ============================================================
+   COMPONENTS — botones, inputs, badges, combos, chips, cards
+============================================================ */
+
+/* Grid y cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: clamp(16px, 2vw, 20px);
+}
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  padding: clamp(20px, 2.5vw, 26px);
+}
+.card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.card-icon {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  background: var(--c-bg);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--c-accent);
+  flex-shrink: 0;
+}
+.card-icon svg { width: 20px; height: 20px; }
+.card h2 { font-size: 15.5px; font-weight: 600; color: var(--c-primary); letter-spacing: -.1px; }
+.card-desc { color: var(--c-muted); font-size: 13px; margin-bottom: 20px; }
+
+/* Formularios */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-primary);
+  margin-bottom: 6px;
+}
+.input, .textarea, .select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 16px;
+  color: var(--c-primary);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 7px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.input:focus, .textarea:focus, .select:focus {
+  outline: none;
+  border-color: #4b5563;
+  border-width: 2px;
+  box-shadow: none;
+}
+.textarea { resize: vertical; min-height: 100px; }
+
+.form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+
+/* Botones */
+.btn {
+  padding: 11px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: none;
+  min-height: 44px;
+  flex: 1 1 auto;
+}
+.btn:active { transform: none; }
+.btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+.btn-primary { background: #141d1c; color: #ffffff; border-color: #141d1c; }
+/* Sin hover — el botón rojo no cambia de color al pasar el mouse */
+.btn-secondary { background: var(--c-surface); color: var(--c-primary); border-color: var(--c-border); }
+.btn-outline {
+  background: transparent;
+  color: var(--c-primary);
+  border: 1px solid var(--c-border);
+}
+
+.icon-btn {
+  position: relative;
+  width: 38px; height: 38px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-muted);
+  transition: background .15s, color .15s;
+}
+.icon-btn:hover { background: var(--c-bg); color: var(--c-primary); }
+.icon-btn svg { width: 19px; height: 19px; }
+
+.icon-dot {
+  position: absolute;
+  top: 9px; right: 10px;
+  width: 7px; height: 7px;
+  background: #141d1c;
+  border-radius: 50%;
+  border: 2px solid var(--c-surface);
+}
+
+/* Ghost button (acciones en headers de paneles) */
+.ghost-btn {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: 7px;
+  cursor: pointer;
+  color: var(--c-muted);
+  transition: background .15s, color .15s, border-color .15s;
+}
+.ghost-btn:hover:not(:disabled) {
+  background: var(--c-bg);
+  color: var(--c-primary);
+  border-color: #b8c0cc;
+}
+.ghost-btn:disabled { opacity: .45; cursor: not-allowed; }
+.ghost-btn svg { width: 15px; height: 15px; }
+
+/* Combo premium (dropdown custom) */
+.combo { position: relative; }
+.combo-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--c-primary);
+  text-align: left;
+  transition: border-color .15s, box-shadow .15s;
+}
+.combo-trigger:hover { border-color: var(--c-primary); }
+.combo.open .combo-trigger { border-color: var(--c-primary); }
+.combo-text {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--c-primary);
+}
+.combo-chev {
+  width: 16px; height: 16px;
+  color: var(--c-muted);
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+.combo.open .combo-chev { transform: rotate(180deg); }
+
+.combo-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 6px;
+  max-height: 360px;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity .15s, transform .15s, visibility .15s;
+  z-index: 30;
+}
+.combo.open .combo-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+.combo-option {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.combo-option:hover { background: var(--c-bg); }
+.combo-option.selected { background: var(--c-bg); color: var(--c-primary); }
+.combo-opt-text {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-primary);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+/* Encabezado de grupo en el combo (subcategoria) */
+.combo-group-header {
+  padding: 8px 12px 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--c-accent);
+  text-transform: uppercase;
+  border-top: 1px solid var(--c-border);
+  margin-top: 4px;
+  pointer-events: none;
+  user-select: none;
+}
+.combo-group-header:first-child {
+  border-top: none;
+  margin-top: 0;
+}
+
+/* Opciones bloqueadas: grises y con candado al hover */
+.combo-option.is-locked { opacity: .55; }
+.combo-option.is-locked .combo-opt-text { color: var(--c-muted); }
+.combo-option.is-locked::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='11' width='16' height='10' rx='2'/><path d='M8 11V7a4 4 0 0 1 8 0v4'/></svg>") no-repeat center / contain;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='11' width='16' height='10' rx='2'/><path d='M8 11V7a4 4 0 0 1 8 0v4'/></svg>") no-repeat center / contain;
+  color: var(--c-muted);
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+/* Badge 'Gratis' al costado de las 3 opciones sin costo */
+.combo-opt-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #8fc72e;
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+/* Badges */
+.credits-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  background: var(--c-primary);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.credits-badge > svg { display: none; }
+.credits-badge svg { display: inline-block; }
+.credits-success { background: var(--c-primary); color: #ffffff; }
+.credits-badge.is-premium {
+  background: #f5f5f5;
+  color: #141d1c;
+}
+
+/* Combo group header (separador de módulos en dropdown) */
+.combo-group {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--c-muted);
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  padding: 10px 12px 4px;
+  pointer-events: none;
+}
+.combo-group:first-child { padding-top: 4px; }
+
+/* Status chip */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.status-empty { background: #f1f3f6; color: #6b7785; }
+.status-empty .status-dot { background: #9aa3ae; }
+.status-ok { background: #f5f5f5; color: #141d1c; }
+.status-ok .status-dot { background: #141d1c; animation: pulse 1.5s ease-in-out infinite; }
+.status-loading { background: #f5f5f5; color: #141d1c; }
+.status-loading .status-dot { background: #141d1c; animation: pulse 1s ease-in-out infinite; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* ============================================================
+   Toasts — notificaciones flotantes (esquina inferior derecha)
+============================================================ */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  max-width: calc(100vw - 40px);
+}
+.toast {
+  pointer-events: auto;
+  min-width: 260px;
+  max-width: 380px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-left: 3px solid var(--c-accent);
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--c-primary);
+  animation: toast-in .28s cubic-bezier(.2, .8, .2, 1);
+}
+.toast.toast-leaving { animation: toast-out .22s ease forwards; }
+.toast-icon {
+  width: 22px; height: 22px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-accent);
+}
+.toast-icon svg { width: 18px; height: 18px; }
+.toast-body { flex: 1; line-height: 1.45; }
+.toast-body strong { display: block; font-weight: 600; font-size: 13px; margin-bottom: 1px; }
+.toast-body span { color: var(--c-muted); font-size: 12.5px; }
+.toast-close {
+  width: 22px; height: 22px;
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--c-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.toast-close:hover { background: var(--c-bg); color: var(--c-primary); }
+.toast-close svg { width: 14px; height: 14px; }
+
+.toast.toast-success { border-left-color: var(--c-success); }
+.toast.toast-success .toast-icon { color: var(--c-success); }
+.toast.toast-error { border-left-color: var(--c-danger); }
+.toast.toast-error .toast-icon { color: var(--c-danger); }
+.toast.toast-warning { border-left-color: var(--c-warning); }
+.toast.toast-warning .toast-icon { color: var(--c-warning); }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(18px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes toast-out {
+  to { opacity: 0; transform: translateX(18px); }
+}
+
+/* ============================================================
+   Skeletons — placeholders animados de carga
+============================================================ */
+.skeleton {
+  background: linear-gradient(90deg, #ececec 0%, #f5f5f5 50%, #ececec 100%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.3s ease-in-out infinite;
+  border-radius: 6px;
+  display: block;
+}
+.skeleton-line { height: 12px; margin-bottom: 8px; }
+.skeleton-line.sk-short { width: 40%; }
+.skeleton-line.sk-medium { width: 70%; }
+.skeleton-line.sk-full { width: 100%; }
+.skeleton-block { height: 120px; border-radius: 10px; }
+.skeleton-circle { width: 40px; height: 40px; border-radius: 50%; }
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ============================================================
+   Empty states — pantallas vacías con icono + mensaje
+============================================================ */
+.empty-state {
+  text-align: center;
+  padding: 40px 24px;
+  color: var(--c-muted);
+}
+.empty-state h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-primary);
+  margin: 0 0 6px;
+}
+.empty-state p {
+  font-size: 13px;
+  color: var(--c-muted);
+  margin: 0 auto 18px;
+  max-width: 360px;
+  line-height: 1.5;
+}
+.empty-state .btn { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+
+/* ============================================================
+   Input validation — estados visuales
+============================================================ */
+.input.is-valid,
+.input.is-invalid {
+  border-color: var(--c-border) !important;
+  box-shadow: none !important;
+}
+.field-hint {
+  font-size: 11.5px;
+  color: var(--c-muted);
+  margin-top: 6px;
+  min-height: 16px;
+}
+.field-hint.is-error { color: var(--c-danger); }
+.field-hint.is-ok { color: var(--c-success); }
+
+@media (min-width: 768px) {
+  .input, .textarea, .select { font-size: 13px; padding: 9px 12px; }
+  .btn { flex: 0 0 auto; padding: 10px 18px; min-height: auto; font-size: 13px; }
+}
+@media (max-width: 480px) {
+  .grid { grid-template-columns: 1fr; }
+  .form-actions .btn { flex: 1 1 100%; }
+  .toast-container { left: 12px; right: 12px; bottom: 12px; }
+  .toast { min-width: 0; max-width: none; }
+}
+@media (max-width: 640px) {
+  .combo-text { font-size: 12.5px; }
+  .combo-opt-text { font-size: 12px; }
+}
+
+/* ==========================================================
+   Botón flotante de WhatsApp — soporte al cliente
+   Píldora con ícono oficial + texto, pulso sutil de atención
+========================================================== */
+.wa-fab {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  z-index: 450;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #141d1c;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  text-decoration: none;
+}
+.wa-fab-icon {
+  width: 33px;
+  height: 33px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .wa-fab {
+    width: 59px;
+    height: 59px;
+    bottom: 70px;
+    right: 16px;
+  }
+  .wa-fab-icon { width: 30px; height: 30px; }
+}

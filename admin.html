@@ -1,506 +1,1277 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filtro Vehicular+ | Gestor de Consultas — Admin</title>
-    <link rel="manifest" href="./admin-manifest.json">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="FV Admin">
-    <meta name="theme-color" content="#111b21">
-    <link rel="apple-touch-icon" href="./assets/media/logopwa.png">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="icon" type="image/png" href="assets/media/logopwa.png">
-    <script src="assets/js/app-alert.js?v=1"></script>
-    <script>
-        (function () {
-            try {
-                var raw = sessionStorage.getItem('filtro_admin_auth_v1');
-                if (!raw) return;
-                var o = JSON.parse(raw);
-                if (o && o.exp > Date.now()) document.documentElement.classList.add('admin-session-ok');
-            } catch (e) {}
-        })();
-    </script>
-    <link rel="stylesheet" href="assets/css/admin.css?v=2">
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#141d1c">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin · Plataforma Filtro Vehicular+</title>
 
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=2">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap">
+
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/overlays.css">
+<link rel="stylesheet" href="css/plans-catalog.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
 <body>
 
-    <div id="loginOverlay" style="display:none;"></div>
+<!-- APP
+     Auth: se valida en js/admin/auth.js contra Supabase (profiles.is_admin).
+     Si la usuaria no esta logueada o no es admin, se redirige a index.html. -->
+<div id="adminApp" class="admin-app" hidden>
 
-    <!-- Modal confirmación -->
-    <div id="adminConfirmModal" class="modal-overlay" style="z-index:400000;" onclick="if(event.target===this)closeAdminConfirmModal()" role="dialog" aria-modal="true" aria-labelledby="adminConfirmTitle">
-        <div class="modal-card" onclick="event.stopPropagation()" style="max-width:380px;">
-            <div class="modal-header" style="padding:22px 20px 14px;">
-                <div class="modal-title" id="adminConfirmTitle" style="font-size:15px;">Confirmar</div>
-                <div class="modal-subtitle" id="adminConfirmMsg"></div>
-            </div>
-            <div class="modal-body" style="padding:14px 20px 18px;">
-                <div style="display:flex; gap:8px; justify-content:flex-end;">
-                    <button type="button" id="adminConfirmCancel" class="modal-btn modal-btn-secondary" style="flex:1;">Cancelar</button>
-                    <button type="button" id="adminConfirmOk" class="modal-btn modal-btn-primary" style="flex:1;">Aceptar</button>
-                </div>
-            </div>
-        </div>
+  <!-- SIDEBAR -->
+  <aside class="admin-side">
+    <div class="admin-brand">
+      <div class="admin-brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
+      </div>
+      <div class="admin-brand-text">
+        Consultia
+        <span class="admin-brand-badge">ADMIN</span>
+      </div>
     </div>
 
-    <div id="adminAppRoot">
+    <nav class="admin-menu">
+      <div class="admin-menu-section">General</div>
+      <button class="admin-link active" data-admin-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </button>
 
-    <div class="mobile-header" style="justify-content:space-between;">
-        <a href="admin.html" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
-            <img src="assets/media/logopwa.png" alt="Logo" style="width:32px; height:32px; object-fit:contain;">
-            <div style="display:flex; flex-direction:column; line-height:1.1;">
-                <span style="font-size:13px; font-weight:700; letter-spacing:0.3px; color:#e9edef;">Filtro Vehicular+</span>
-                <span style="font-size:8px; font-weight:600; color:#25d366; letter-spacing:2px; text-transform:uppercase; text-align:right;">Gestor de Consultas</span>
+      <div class="admin-menu-section">Operación</div>
+      <button class="admin-link" data-admin-view="users">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Usuarios
+      </button>
+      <button class="admin-link" data-admin-view="addusers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        Agregar Usuario
+      </button>
+      <button class="admin-link" data-admin-view="recargas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M7 12h10"/></svg>
+        Recargas
+      </button>
+      <button class="admin-link" data-admin-view="plans">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4h8z"/></svg>
+        Planes
+      </button>
+      <button class="admin-link" data-admin-view="compras">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Compras
+      </button>
+      <button class="admin-link" data-admin-view="consultas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Consultas
+      </button>
+      <button class="admin-link" data-admin-view="anuncios">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v3a1 1 0 0 0 1 1h2l3.5 4v-12L6 11H4a1 1 0 0 0-1 1z"/><path d="M14 4.5v15"/><path d="M18 7c1.5 1.5 2 3 2 5s-.5 3.5-2 5"/></svg>
+        Anuncios
+      </button>
+
+      <div class="admin-menu-section">Pagos</div>
+      <button class="admin-link" data-admin-view="mercadopago">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        Mercado Pago
+      </button>
+      <button class="admin-link" data-admin-view="webhooks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 8 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-8 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+        Webhooks
+      </button>
+
+      <div class="admin-menu-section">Sistema</div>
+      <button class="admin-link" data-admin-view="team">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Equipo
+      </button>
+      <button class="admin-link" data-admin-view="apikeys">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        API Keys
+      </button>
+      <button class="admin-link" data-admin-view="antiabuse">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        Anti-abuso
+      </button>
+      <button class="admin-link" data-admin-view="audit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Auditoría
+      </button>
+      <button class="admin-link" data-admin-view="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        Configuración
+      </button>
+    </nav>
+
+    <div class="admin-foot">
+      <button class="admin-foot-btn" id="adminLogout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </button>
+      <div class="admin-version">v1.0</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <header class="admin-bar">
+      <button class="admin-menu-btn" id="adminMenuBtn" type="button" aria-label="Menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <h1 class="admin-h1" id="adminPageTitle">Dashboard</h1>
+      <div class="admin-user">
+        <span class="avatar" id="adminAvatar">AD</span>
+        <span id="adminUserName">Admin</span>
+      </div>
+    </header>
+    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <div class="admin-body">
+
+      <!-- DASHBOARD -->
+      <section class="admin-view" id="adminView-dashboard">
+        <div class="kpi-grid">
+          <button type="button" class="kpi kpi-clickable" data-admin-view="users" title="Ver detalle de usuarios">
+            <div class="kpi-head">
+              <span class="kpi-label">Usuarios totales</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
             </div>
-        </a>
+            <strong class="kpi-value" id="kpiUsers">0</strong>
+            <span class="kpi-trend" id="kpiUsersTrend">—</span>
+          </button>
 
-        <div style="display:flex; align-items:center; gap:8px;">
-            <button onclick="imprimirReporteAdmin()" title="Imprimir" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); color:#e9edef; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
-                <i class="fa-solid fa-file-pdf"></i>
+          <button type="button" class="kpi kpi-clickable" data-admin-view="consultas" title="Ver consultas recientes">
+            <div class="kpi-head">
+              <span class="kpi-label">Activos hoy</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="kpiActive">0</strong>
+            <span class="kpi-trend" id="kpiActiveTrend">en las últimas 24 h</span>
+          </button>
+
+          <button type="button" class="kpi kpi-clickable" data-admin-view="revenue" title="Ver detalle de ingresos del mes">
+            <div class="kpi-head">
+              <span class="kpi-label">Ingresos (mes)</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="kpiRevenue">S/ 0</strong>
+            <span class="kpi-trend" id="kpiRevenueTrend">acumulado</span>
+          </button>
+
+          <button type="button" class="kpi kpi-clickable" data-admin-view="consultas" title="Ver todas las consultas">
+            <div class="kpi-head">
+              <span class="kpi-label">Consultas</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="kpiQueries">0</strong>
+            <span class="kpi-trend" id="kpiQueriesTrend">ejecutadas</span>
+          </button>
+        </div>
+
+        <div class="admin-panels">
+          <div class="admin-panel">
+            <header class="admin-panel-head">
+              <h2>Módulos más usados</h2>
+              <span class="admin-panel-sub">Top 5</span>
+            </header>
+            <div class="bars" id="topModules"></div>
+          </div>
+
+          <div class="admin-panel">
+            <header class="admin-panel-head">
+              <h2>Actividad reciente</h2>
+              <span class="admin-panel-sub">últimas 10</span>
+            </header>
+            <ul class="activity-list" id="recentActivity"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- INGRESOS DEL MES (detalle al hacer clic en KPI) -->
+      <section class="admin-view" id="adminView-revenue" hidden>
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-head">
+              <span class="kpi-label">Total del mes</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="revKpiTotal">S/ 0</strong>
+            <span class="kpi-trend" id="revKpiCount">0 transacciones</span>
+          </div>
+          <div class="kpi">
+            <div class="kpi-head">
+              <span class="kpi-label">Mercado Pago</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="revKpiMP">S/ 0</strong>
+            <span class="kpi-trend" id="revKpiMPCount">0 pagos aprobados</span>
+          </div>
+          <div class="kpi">
+            <div class="kpi-head">
+              <span class="kpi-label">Ventas manuales</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="revKpiManual">S/ 0</strong>
+            <span class="kpi-trend" id="revKpiManualCount">0 ventas WhatsApp/admin</span>
+          </div>
+          <div class="kpi">
+            <div class="kpi-head">
+              <span class="kpi-label">Suscripciones</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="revKpiSubs">S/ 0</strong>
+            <span class="kpi-trend" id="revKpiSubsCount">0 planes activados</span>
+          </div>
+        </div>
+
+        <div class="admin-panels">
+          <div class="admin-panel" style="grid-column: 1 / -1;">
+            <header class="admin-panel-head">
+              <h2>Detalle de ingresos del mes</h2>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <select id="revFilter" class="admin-select">
+                  <option value="all">Todos</option>
+                  <option value="mp">Solo Mercado Pago</option>
+                  <option value="manual">Solo manuales</option>
+                  <option value="subscription">Solo suscripciones</option>
+                </select>
+                <button type="button" class="btn btn-secondary" id="revRefresh" title="Refrescar">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                  Refrescar
+                </button>
+              </div>
+            </header>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Fecha y hora</th>
+                    <th>Usuario</th>
+                    <th>Origen</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th style="text-align:right">Monto</th>
+                  </tr>
+                </thead>
+                <tbody id="revTableBody">
+                  <tr><td colspan="6" class="admin-empty">Cargando…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- USUARIOS -->
+      <section class="admin-view" id="adminView-users" hidden>
+        <div class="users-stats" id="usersStats">
+          <div class="users-stat-card">
+            <span class="users-stat-label">Total registrados</span>
+            <span class="users-stat-value" id="usersStatTotal">0</span>
+          </div>
+          <div class="users-stat-card">
+            <span class="users-stat-label">Pagaron MP</span>
+            <span class="users-stat-value" id="usersStatPaidMp">0</span>
+          </div>
+          <div class="users-stat-card">
+            <span class="users-stat-label">Activados por admin</span>
+            <span class="users-stat-value" id="usersStatPaidAdmin">0</span>
+          </div>
+          <div class="users-stat-card">
+            <span class="users-stat-label">Gastaron sus 5 créditos</span>
+            <span class="users-stat-value" id="usersStatUsedFree">0</span>
+          </div>
+        </div>
+        <div class="users-live-bar">
+          <span class="users-live-dot" id="usersLiveDot" data-state="off"></span>
+          <span class="users-live-label" id="usersLiveLabel">Conectando…</span>
+        </div>
+        <div class="admin-toolbar">
+          <div class="admin-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="usersSearch" placeholder="Buscar por nombre, correo o DNI...">
+          </div>
+          <select id="usersFilter" class="admin-select">
+            <option value="all">Todos</option>
+            <optgroup label="Suscripción">
+              <option value="has_sub">Con plan activo</option>
+              <option value="sub_profesional">Plan Profesional</option>
+              <option value="sub_profesional_plus">Plan Profesional Plus (Premium)</option>
+              <option value="sub_business">Plan Business (Premium)</option>
+              <option value="sub_premium">Con acceso Premium</option>
+              <option value="no_sub">Sin plan (Free)</option>
+            </optgroup>
+            <optgroup label="Pagos">
+              <option value="paid_mp">Pagaron por Mercado Pago</option>
+              <option value="paid_admin">Activados por admin</option>
+            </optgroup>
+            <optgroup label="Uso del catálogo">
+              <option value="used_free">Gastaron sus 5 créditos</option>
+              <option value="kept_free">Aún tienen sus 5 créditos</option>
+            </optgroup>
+            <optgroup label="Inactividad">
+              <option value="inactive">Inactivos (no pagó ni consultó)</option>
+              <option value="no_login_30d">Sin login hace 30+ días</option>
+              <option value="has_credits_no_use">Con saldo, sin consultar</option>
+            </optgroup>
+            <optgroup label="Email">
+              <option value="unconfirmed">Sin confirmar email</option>
+              <option value="confirmed">Email confirmado</option>
+            </optgroup>
+          </select>
+          <button class="btn btn-primary" id="usersDeleteSelected" hidden style="background:#141d1c;border-color:#141d1c;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            Eliminar (<span id="usersDeleteCount">0</span>)
+          </button>
+          <button class="btn-ghost" id="usersExport">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exportar
+          </button>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th id="usersSelectAllCol" hidden style="width:36px;"><input type="checkbox" id="usersSelectAll" aria-label="Seleccionar todos"></th>
+                <th>Usuario</th>
+                <th>Correo</th>
+                <th>Plan</th>
+                <th>Registro</th>
+                <th>Créditos</th>
+                <th>Gastado</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+        <div class="admin-empty" id="usersEmpty" hidden>Sin resultados.</div>
+      </section>
+
+      <!-- AGREGAR USUARIO -->
+      <section class="admin-view" id="adminView-addusers" hidden>
+        <div class="stack-view">
+
+          <div class="block-card">
+            <div class="block-head">
+              <h2>Agregar usuario por correo</h2>
+              <span class="block-tag">Debe estar registrado</span>
+            </div>
+            <form id="addUserForm" class="block-form" autocomplete="off">
+              <div class="form-field">
+                <label for="addUserEmail">Correo del usuario</label>
+                <input type="email" id="addUserEmail" class="input" placeholder="usuario@correo.com" required>
+                <small class="field-hint" id="addUserEmailHint">Escribe el correo de un usuario registrado</small>
+              </div>
+
+              <div class="user-pill" id="addUserPreview" hidden>
+                <div class="avatar" id="addUserAvatar">--</div>
+                <div class="user-pill-text">
+                  <strong id="addUserName"></strong>
+                  <span id="addUserInfo"></span>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="addUserCreditsPreset">Créditos a otorgar (opcional)</label>
+                <select id="addUserCreditsPreset" class="admin-select">
+                  <option value="0">Sin créditos</option>
+                  <option value="50">50 créditos (bienvenida)</option>
+                  <option value="100">100 créditos</option>
+                  <option value="250">250 créditos</option>
+                  <option value="500">500 créditos</option>
+                  <option value="custom">Monto personalizado</option>
+                </select>
+              </div>
+
+              <div class="form-field" id="addUserCreditsCustomField" hidden>
+                <label for="addUserCredits">Cantidad personalizada</label>
+                <input type="number" id="addUserCredits" class="input" placeholder="Ej: 75" min="1">
+              </div>
+
+              <div class="form-field">
+                <label for="addUserSubPlan">Plan por días (opcional)</label>
+                <select id="addUserSubPlan" class="admin-select">
+                  <option value="">No otorgar suscripción</option>
+                </select>
+                <small class="field-hint">Otorga acceso por días además de los créditos</small>
+              </div>
+
+              <div class="form-field">
+                <label for="addUserNote">Nota (opcional)</label>
+                <input type="text" id="addUserNote" class="input" placeholder="Ej: cliente VIP, requiere seguimiento...">
+              </div>
+
+              <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">Agregar</button>
+                <button type="reset" class="btn-ghost">Limpiar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="block-card">
+            <div class="block-head">
+              <h2>Usuarios agregados</h2>
+              <span class="block-tag" id="addedUsersCount">0 registros</span>
+            </div>
+            <ul class="entries-list" id="addedUsersList"></ul>
+            <div class="empty-state" id="addedUsersEmpty" hidden>
+              <p>Aún no hay usuarios agregados.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- RECARGAS -->
+      <section class="admin-view" id="adminView-recargas" hidden>
+        <div class="stack-view">
+
+          <!-- Botón de prueba — pago de S/1 que acredita 200 créditos al admin
+               actual. Sirve para verificar que el webhook de MP recarga
+               automáticamente al aprobar un pago real. -->
+          <div class="block-card test-payment-card">
+            <div class="block-head">
+              <h2>ðŸ§ª Pago de prueba — S/ 2 = 200 créditos</h2>
+              <span class="block-tag" style="background:#f5f5f5;color:#141d1c;">TEST</span>
+            </div>
+            <div style="padding:14px 16px 4px;">
+              <p style="margin:0 0 12px;color:var(--c-muted);font-size:13px;line-height:1.5;">
+                Realiza un pago real de <strong>S/ 2</strong> con Mercado Pago. Si el webhook está bien configurado,
+                en menos de 10 segundos se acreditarán <strong>200 créditos</strong> a la cuenta con la que estás logueado en el admin.
+                Ideal para verificar el flujo de pago automático sin gastar dinero real.
+              </p>
+              <button type="button" class="btn btn-primary" id="testMpPaymentBtn" style="width:auto;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;margin-right:6px;vertical-align:-3px;"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                Pagar S/ 2 con Mercado Pago
+              </button>
+              <small id="testMpPaymentHint" class="field-hint" style="display:block;margin-top:10px;">
+                Te redirigirá al checkout de Mercado Pago.
+              </small>
+            </div>
+          </div>
+
+          <div class="block-card">
+            <div class="block-head">
+              <h2>Recargar por correo</h2>
+              <span class="block-tag">Manual</span>
+            </div>
+            <form id="recargaForm" class="block-form" autocomplete="off">
+              <div class="form-field">
+                <label for="recargaEmail">Correo del usuario</label>
+                <input type="email" id="recargaEmail" class="input" placeholder="usuario@correo.com" required>
+                <small class="field-hint" id="recargaEmailHint">Debe estar registrado</small>
+              </div>
+
+              <div class="user-pill" id="recargaUserPreview" hidden>
+                <div class="avatar" id="recargaUserAvatar">--</div>
+                <div class="user-pill-text">
+                  <strong id="recargaUserName"></strong>
+                  <span id="recargaUserCredits"></span>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>Tipo de operación</label>
+                <div class="radio-group" id="recargaTipoGroup">
+                  <label class="radio-option">
+                    <input type="radio" name="recargaTipo" value="creditos" checked>
+                    <span>Solo créditos</span>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="recargaTipo" value="dias">
+                    <span>Solo plan por días</span>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="recargaTipo" value="ambos">
+                    <span>Ambos (combo)</span>
+                  </label>
+                </div>
+                <small class="field-hint">Elige qué quieres asignar al usuario.</small>
+              </div>
+
+              <div class="form-field" id="recargaCreditosBlock">
+                <label for="recargaPaquete">Paquete de créditos</label>
+                <select id="recargaPaquete" class="admin-select">
+                  <option value="">— Selecciona un paquete —</option>
+                  <option value="custom">Personalizado</option>
+                </select>
+              </div>
+
+              <div class="form-field" id="recargaCustomField" hidden>
+                <label for="recargaCustom">Créditos</label>
+                <input type="number" id="recargaCustom" class="input" placeholder="Ej: 750" min="1">
+              </div>
+
+              <div class="form-field" id="recargaDiasBlock" hidden>
+                <label for="recargaSubPlan">Plan por días</label>
+                <select id="recargaSubPlan" class="admin-select">
+                  <option value="">— Selecciona un plan por días —</option>
+                </select>
+                <small class="field-hint">El usuario tendrá acceso por la cantidad de días del plan.</small>
+              </div>
+
+              <div class="form-field">
+                <label for="recargaMotivo">Motivo (opcional)</label>
+                <input type="text" id="recargaMotivo" class="input" placeholder="Regalo, compensación...">
+              </div>
+
+              <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">Abonar</button>
+                <button type="reset" class="btn-ghost">Limpiar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="block-card">
+            <div class="block-head">
+              <h2>Historial</h2>
+              <span class="block-tag" id="recargasCount">0 registros</span>
+            </div>
+            <ul class="entries-list" id="recargasList"></ul>
+            <div class="empty-state" id="recargasEmpty" hidden>
+              <p>Sin recargas aún.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PLANES -->
+      <section class="admin-view" id="adminView-plans" hidden>
+        <div class="plans-tabs">
+          <button class="plans-tab active" data-plans-tab="credits">Planes por créditos</button>
+          <button class="plans-tab" data-plans-tab="subs">Planes por días</button>
+        </div>
+
+        <!-- Créditos -->
+        <div class="plans-section" id="plansSection-credits">
+          <div class="plans-tier">
+            <div class="plans-tier-head">
+              <div class="plans-tier-badge profesional">Profesional</div>
+              <span class="plans-tier-sub">Paquetes de créditos básicos</span>
+            </div>
+            <div class="plans-grid" id="plansGridProfesional"></div>
+          </div>
+
+          <div class="plans-tier">
+            <div class="plans-tier-head">
+              <div class="plans-tier-badge business">Business</div>
+              <span class="plans-tier-sub">Paquetes de créditos premium</span>
+            </div>
+            <div class="plans-grid" id="plansGridBusiness"></div>
+          </div>
+        </div>
+
+        <!-- Suscripciones -->
+        <div class="plans-section" id="plansSection-subs" hidden>
+          <div class="plans-tier">
+            <div class="plans-tier-head">
+              <div class="plans-tier-badge profesional">Profesional</div>
+              <span class="plans-tier-sub">Acceso por días</span>
+            </div>
+            <div class="plans-grid" id="subsGridProfesional"></div>
+          </div>
+
+          <div class="plans-tier">
+            <div class="plans-tier-head">
+              <div class="plans-tier-badge profesional_plus">Profesional Plus</div>
+              <span class="plans-tier-sub">Incluye funciones Business</span>
+              <span class="plans-tier-premium-badge" style="display:inline-flex;align-items:center;margin-left:8px;padding:3px 10px;background:#141d1c;color:#8fc72e;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polygon points="6 3 18 3 22 9 12 22 2 9"/><line x1="11" y1="3" x2="8" y2="9"/><line x1="13" y1="3" x2="16" y2="9"/><line x1="2" y1="9" x2="22" y2="9"/></svg>Desbloquea Premium</span>
+            </div>
+            <div class="plans-grid" id="subsGridProfesionalPlus"></div>
+          </div>
+
+          <div class="plans-tier">
+            <div class="plans-tier-head">
+              <div class="plans-tier-badge business">Business</div>
+              <span class="plans-tier-sub">Acceso completo</span>
+              <span class="plans-tier-premium-badge" style="display:inline-flex;align-items:center;margin-left:8px;padding:3px 10px;background:#141d1c;color:#8fc72e;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polygon points="6 3 18 3 22 9 12 22 2 9"/><line x1="11" y1="3" x2="8" y2="9"/><line x1="13" y1="3" x2="16" y2="9"/><line x1="2" y1="9" x2="22" y2="9"/></svg>Desbloquea Premium</span>
+            </div>
+            <div class="plans-grid" id="subsGridBusiness"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MODAL EDITAR PLAN -->
+      <div class="modal" id="planEditModal" hidden>
+        <div class="modal-overlay" data-close="planEditModal"></div>
+        <div class="modal-panel">
+          <header class="modal-header">
+            <h2 id="planEditTitle">Editar plan</h2>
+            <button class="modal-close" type="button" data-close="planEditModal" aria-label="Cerrar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
-            <button onclick="saveReport()" title="Publicar" style="background:rgba(37,211,102,0.15); border:1px solid rgba(37,211,102,0.3); color:#25d366; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(37,211,102,0.25)'" onmouseout="this.style.background='rgba(37,211,102,0.15)'">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-            <button onclick="toggleSidebar()" title="Menú" style="position:relative; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); color:#e9edef; width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.2s; font-size:15px;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
-                <i class="fa-solid fa-bars"></i>
-                <span id="mobileCount" style="display:none; position:absolute; top:-6px; right:-6px; background:#ef4444; color:white; font-size:9px; min-width:18px; height:18px; border-radius:50px; text-align:center; line-height:18px; font-weight:800; border:2px solid #111b21; padding:0 4px;">0</span>
-            </button>
+          </header>
+          <form id="planEditForm">
+            <div class="modal-body" id="planEditBody"></div>
+            <footer class="modal-footer">
+              <button class="btn-ghost" type="button" data-close="planEditModal">Cancelar</button>
+              <button class="btn btn-primary" type="submit">Guardar</button>
+            </footer>
+          </form>
         </div>
+      </div>
+
+      <!-- COMPRAS -->
+      <section class="admin-view" id="adminView-compras" hidden>
+        <div class="admin-toolbar">
+          <div class="admin-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="comprasSearch" placeholder="Buscar por usuario...">
+          </div>
+          <select id="comprasMethodFilter" class="admin-select">
+            <option value="all">Todos los métodos</option>
+            <option value="yape">Yape</option>
+            <option value="plin">Plin</option>
+            <option value="visa">Visa/Mastercard</option>
+            <option value="transferencia">Transferencia</option>
+          </select>
+          <div class="admin-stats-inline">
+            <span>Total: <strong id="comprasTotalMonto">S/ 0</strong></span>
+            <span>Transacciones: <strong id="comprasTotalCount">0</strong></span>
+          </div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Fecha</th><th>Usuario</th><th>Paquete</th><th>Monto</th><th>Método</th><th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="comprasTableBody"></tbody>
+          </table>
+        </div>
+        <div class="admin-empty" id="comprasEmpty" hidden>Sin compras con estos filtros.</div>
+      </section>
+
+      <!-- CONSULTAS -->
+      <section class="admin-view" id="adminView-consultas" hidden>
+        <div class="admin-toolbar">
+          <div class="admin-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="consultasSearch" placeholder="Buscar por usuario o input...">
+          </div>
+          <select id="consultasModuleFilter" class="admin-select">
+            <option value="all">Todos los módulos</option>
+            <option value="vehiculos">Vehículos</option>
+            <option value="sunarp">Sunarp</option>
+            <option value="reniec">Reniec</option>
+            <option value="sunat">Sunat</option>
+            <option value="financiero">Financiero</option>
+            <option value="facial">Facial</option>
+            <option value="telefonia">Telefonía</option>
+            <option value="familiares">Familiares</option>
+            <option value="certificados">Certificados</option>
+            <option value="delitos">Delitos</option>
+            <option value="migraciones">Migraciones</option>
+            <option value="estudios">Estudios</option>
+          </select>
+          <div class="admin-stats-inline">
+            <span>Créditos: <strong id="consultasCredits">0</strong></span>
+            <span>Total: <strong id="consultasCount">0</strong></span>
+          </div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Fecha</th><th>Usuario</th><th>Módulo</th><th>Tipo</th><th>Input</th><th>Costo</th><th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="consultasTableBody"></tbody>
+          </table>
+        </div>
+        <div class="admin-empty" id="consultasEmpty" hidden>Sin consultas con estos filtros.</div>
+      </section>
+
+      <!-- MERCADO PAGO -->
+      <section class="admin-view" id="adminView-mercadopago" hidden>
+        <div class="mp-connection">
+          <div class="mp-conn-head">
+            <div class="mp-conn-logo">MP</div>
+            <div class="mp-conn-info">
+              <strong>Mercado Pago</strong>
+              <span id="mpConnStatus" class="chip chip-ok">Conectado · Sandbox</span>
+            </div>
+            <button class="btn-ghost" id="mpConfigBtn">Configurar</button>
+          </div>
+          <div class="mp-stats">
+            <div class="mp-stat"><span>Aprobadas</span><strong id="mpStatApproved">0</strong></div>
+            <div class="mp-stat"><span>Pendientes</span><strong id="mpStatPending">0</strong></div>
+            <div class="mp-stat"><span>Rechazadas</span><strong id="mpStatRejected">0</strong></div>
+            <div class="mp-stat"><span>Reembolsadas</span><strong id="mpStatRefunded">0</strong></div>
+            <div class="mp-stat"><span>Recaudado</span><strong id="mpStatTotal">S/ 0</strong></div>
+          </div>
+        </div>
+
+        <div class="admin-toolbar">
+          <div class="admin-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="mpSearch" placeholder="Buscar por MP ID o usuario...">
+          </div>
+          <select id="mpStatusFilter" class="admin-select">
+            <option value="all">Todos los estados</option>
+            <option value="approved">Aprobadas</option>
+            <option value="pending">Pendientes</option>
+            <option value="in_process">En proceso</option>
+            <option value="rejected">Rechazadas</option>
+            <option value="refunded">Reembolsadas</option>
+          </select>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Fecha</th><th>MP ID</th><th>Usuario</th><th>Monto</th><th>Método</th><th>Estado</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="mpTableBody"></tbody>
+          </table>
+        </div>
+        <div class="admin-empty" id="mpEmpty" hidden>Sin transacciones.</div>
+      </section>
+
+      <!-- WEBHOOKS -->
+      <section class="admin-view" id="adminView-webhooks" hidden>
+        <div class="admin-toolbar">
+          <select id="whStatusFilter" class="admin-select">
+            <option value="all">Todos los estados</option>
+            <option value="processed">Procesados</option>
+            <option value="pending">Pendientes</option>
+            <option value="failed">Fallidos</option>
+          </select>
+          <select id="whEventFilter" class="admin-select">
+            <option value="all">Todos los eventos</option>
+            <option value="payment.approved">payment.approved</option>
+            <option value="payment.rejected">payment.rejected</option>
+            <option value="payment.pending">payment.pending</option>
+            <option value="payment.refunded">payment.refunded</option>
+            <option value="payment.created">payment.created</option>
+            <option value="chargeback.created">chargeback.created</option>
+          </select>
+          <div class="admin-stats-inline">
+            <span>Total: <strong id="whTotalCount">0</strong></span>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Fecha</th><th>Evento</th><th>Fuente</th><th>Payload</th><th>Intentos</th><th>Estado</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="whTableBody"></tbody>
+          </table>
+        </div>
+        <div class="admin-empty" id="whEmpty" hidden>Sin eventos registrados.</div>
+      </section>
+
+      <!-- EQUIPO -->
+      <section class="admin-view" id="adminView-team" hidden>
+        <div class="admin-toolbar">
+          <div class="admin-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="teamSearch" placeholder="Buscar por nombre o correo...">
+          </div>
+          <select id="teamRoleFilter" class="admin-select">
+            <option value="all">Todos los roles</option>
+            <option value="super_admin">Super Admin</option>
+            <option value="admin">Admin</option>
+            <option value="soporte">Soporte</option>
+            <option value="developer">Developer</option>
+            <option value="auditor">Auditor</option>
+          </select>
+          <button class="btn btn-primary" id="teamInviteBtn">+ Invitar</button>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Miembro</th><th>Rol</th><th>2FA</th><th>Ãšltimo acceso</th><th>Estado</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="teamTableBody"></tbody>
+          </table>
+        </div>
+        <div class="admin-empty" id="teamEmpty" hidden>Sin miembros.</div>
+
+        <div class="admin-panel" style="margin-top:18px">
+          <header class="admin-panel-head">
+            <h2>Matriz de permisos</h2>
+            <span class="admin-panel-sub">Por rol</span>
+          </header>
+          <div class="admin-table-wrap" style="border:none">
+            <table class="admin-table perms-table">
+              <thead>
+                <tr>
+                  <th>Módulo</th>
+                  <th>Super Admin</th><th>Admin</th><th>Soporte</th><th>Developer</th><th>Auditor</th>
+                </tr>
+              </thead>
+              <tbody id="permsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- API KEYS -->
+      <section class="admin-view" id="adminView-apikeys" hidden>
+        <div class="admin-toolbar">
+          <div class="admin-stats-inline" style="margin-left:0">
+            <span>Usa estas claves para autenticar las APIs de Consultia.</span>
+          </div>
+          <button class="btn btn-primary" id="apikeysCreateBtn">+ Generar nueva clave</button>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nombre</th><th>Tipo</th><th>Clave</th><th>Ãšltimo uso</th><th>Creada</th><th>Estado</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="apikeysTableBody"></tbody>
+          </table>
+        </div>
+        <div class="admin-empty" id="apikeysEmpty" hidden>Sin API keys.</div>
+      </section>
+
+      <!-- ANTI-ABUSO -->
+      <section class="admin-view" id="adminView-antiabuse" hidden>
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-head">
+              <span class="kpi-label">Cuentas bloqueadas (total)</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="kpiAbuseTotal">0</strong>
+            <span class="kpi-trend">recibieron 0 créditos al registrarse</span>
+          </div>
+          <div class="kpi">
+            <div class="kpi-head">
+              <span class="kpi-label">Correos descartables</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="kpiAbuseDisposable">0</strong>
+            <span class="kpi-trend">mailinator, tempmail, etc.</span>
+          </div>
+          <div class="kpi">
+            <div class="kpi-head">
+              <span class="kpi-label">Emails duplicados</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="kpiAbuseDupEmail">0</strong>
+            <span class="kpi-trend">Gmail+alias / con puntos</span>
+          </div>
+          <div class="kpi">
+            <div class="kpi-head">
+              <span class="kpi-label">Dispositivos repetidos</span>
+              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+            </div>
+            <strong class="kpi-value" id="kpiAbuseDupDevice">0</strong>
+            <span class="kpi-trend">misma PC/navegador</span>
+          </div>
+        </div>
+
+        <div class="admin-panels">
+          <div class="admin-panel" style="grid-column: 1 / -1;">
+            <header class="admin-panel-head">
+              <h2>Cuentas marcadas como sospechosas</h2>
+              <span class="admin-panel-sub" id="abuseListCount">0 cuentas</span>
+            </header>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Correo</th>
+                    <th>Email normalizado</th>
+                    <th>Motivo</th>
+                    <th>Créditos</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody id="abuseListBody">
+                  <tr><td colspan="5" class="admin-empty">Cargando…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="admin-panel" style="grid-column: 1 / -1;">
+            <header class="admin-panel-head">
+              <h2>Dispositivos compartidos</h2>
+              <span class="admin-panel-sub" id="abuseDevicesCount">0 dispositivos</span>
+            </header>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th># cuentas</th>
+                    <th>Correos asociados</th>
+                    <th>Primera</th>
+                    <th>Ãšltima</th>
+                    <th>Fingerprint (hash)</th>
+                  </tr>
+                </thead>
+                <tbody id="abuseDevicesBody">
+                  <tr><td colspan="5" class="admin-empty">Cargando…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AUDITORÃA -->
+      <section class="admin-view" id="adminView-audit" hidden>
+        <div class="admin-toolbar">
+          <div class="admin-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="auditSearch" placeholder="Buscar acción, target o admin...">
+          </div>
+          <select id="auditActionFilter" class="admin-select">
+            <option value="all">Todas las acciones</option>
+            <option value="user">Usuarios</option>
+            <option value="recarga">Recargas</option>
+            <option value="apikey">API Keys</option>
+            <option value="admin">Equipo</option>
+            <option value="settings">Configuración</option>
+            <option value="webhook">Webhooks</option>
+            <option value="login">Accesos</option>
+          </select>
+          <button class="btn-ghost" id="auditExport">Exportar CSV</button>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Fecha</th><th>Admin</th><th>Acción</th><th>Target</th><th>Detalle</th><th>IP</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody"></tbody>
+          </table>
+        </div>
+        <div class="admin-empty" id="auditEmpty" hidden>Sin eventos en el log.</div>
+      </section>
+
+      <!-- ANUNCIOS (broadcast notifications) -->
+      <section class="admin-view" id="adminView-anuncios" hidden>
+        <div class="bc-grid">
+          <!-- Formulario -->
+          <div class="bc-card">
+            <header class="bc-card-head">
+              <h3>Nuevo anuncio</h3>
+              <p class="bc-help">Envía una notificación in-app a los usuarios. La verán en su campana ðŸ””, con badge y toast.</p>
+            </header>
+
+            <div class="form-field">
+              <label for="bcType">Tipo</label>
+              <select id="bcType" class="input">
+                <option value="info">Información general</option>
+                <option value="system">Sistema / mantenimiento</option>
+                <option value="promo">Promoción / descuento</option>
+                <option value="credits">Créditos / regalo</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="bcAudience">Audiencia</label>
+              <select id="bcAudience" class="input">
+                <option value="all">Todos los usuarios activos</option>
+                <option value="subscribers">Solo con suscripción activa</option>
+                <option value="with_credits">Solo con créditos disponibles</option>
+                <option value="paid">Solo usuarios que pagaron alguna vez</option>
+                <option value="active_30d">Activos en últimos 30 días</option>
+              </select>
+              <div class="bc-audience-info" id="bcAudienceInfo" style="margin-top:8px;font-size:12.5px;color:var(--c-muted);">Calculando destinatarios…</div>
+            </div>
+
+            <div class="form-field">
+              <label for="bcTitle">Título</label>
+              <input type="text" id="bcTitle" class="input" maxlength="200" placeholder="Ej: Nuevo módulo de SOAT disponible">
+              <div style="display:flex;justify-content:flex-end;font-size:11.5px;color:var(--c-muted);margin-top:4px;"><span id="bcTitleCount">0/200</span></div>
+            </div>
+
+            <div class="form-field">
+              <label for="bcBody">Mensaje</label>
+              <textarea id="bcBody" class="input" rows="5" maxlength="1000" placeholder="Cuéntale a tus usuarios la novedad. Soporta saltos de línea."></textarea>
+              <div style="display:flex;justify-content:flex-end;font-size:11.5px;color:var(--c-muted);margin-top:4px;"><span id="bcBodyCount">0/1000</span></div>
+            </div>
+
+            <div class="form-field">
+              <label for="bcImageInput">Imagen (opcional)</label>
+              <div class="bc-image-row">
+                <label class="bc-image-pick" for="bcImageInput">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  <span id="bcImagePickLabel">Elegir imagen</span>
+                </label>
+                <input type="file" id="bcImageInput" accept="image/*" hidden>
+                <button type="button" class="bc-image-remove" id="bcImageRemove" hidden>Quitar</button>
+              </div>
+              <div class="bc-image-hint">Cualquier formato (JPG, PNG, WEBP, GIF…). Máx 3 MB. Se muestra arriba del mensaje.</div>
+              <div id="bcImageThumbWrap" class="bc-image-thumb-wrap" hidden>
+                <img id="bcImageThumb" alt="Vista previa" />
+                <span id="bcImageMeta" class="bc-image-meta"></span>
+              </div>
+            </div>
+
+            <div id="bcError" class="auth-error" hidden style="margin-top:10px;"></div>
+
+            <footer class="bc-form-footer">
+              <button class="btn btn-outline" type="button" id="bcClear">Limpiar</button>
+              <button class="btn btn-primary" type="button" id="bcSendBtn">Vista previa y enviar</button>
+            </footer>
+          </div>
+
+          <!-- Vista previa en vivo -->
+          <div class="bc-card bc-preview-card">
+            <header class="bc-card-head">
+              <h3>Vista previa</h3>
+              <p class="bc-help">Así verán tus usuarios la notificación.</p>
+            </header>
+
+            <div class="bc-preview-mock">
+              <div class="bc-preview-toast" id="bcPreviewToast">
+                <div class="bc-preview-icon" id="bcPreviewIcon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div class="bc-preview-content">
+                  <strong id="bcPreviewTitle">Tu título aparecerá aquí</strong>
+                  <img id="bcPreviewImage" alt="" hidden />
+                  <p id="bcPreviewBody">Y tu mensaje aquí. Empieza a escribir para ver el resultado.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historial -->
+        <div class="admin-card" style="margin-top:24px;">
+          <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div>
+              <h3 style="margin:0;">Historial de anuncios</h3>
+              <p style="margin:4px 0 0;color:var(--c-muted);font-size:13px;">Ãšltimos 200 envíos con su tasa de lectura.</p>
+            </div>
+            <button class="btn-ghost" type="button" id="bcReloadHistory">Recargar</button>
+          </header>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Tipo</th>
+                  <th>Título</th>
+                  <th>Audiencia</th>
+                  <th>Enviadas</th>
+                  <th>Leídas</th>
+                  <th>%</th>
+                </tr>
+              </thead>
+              <tbody id="bcHistoryBody"></tbody>
+            </table>
+          </div>
+          <div class="admin-empty" id="bcHistoryEmpty" hidden>Aún no se han enviado anuncios.</div>
+        </div>
+      </section>
+
+      <!-- CONFIGURACIÃ“N -->
+      <section class="admin-view" id="adminView-settings" hidden>
+        <div class="settings-grid">
+          <div class="admin-panel">
+            <header class="admin-panel-head">
+              <h2>Empresa</h2>
+              <span class="admin-panel-sub">Datos fiscales</span>
+            </header>
+            <form id="settingsCompanyForm" class="recarga-form" autocomplete="off">
+              <div class="field">
+                <label for="setCompanyName">Nombre comercial</label>
+                <input type="text" id="setCompanyName" class="input" required>
+              </div>
+              <div class="field">
+                <label for="setLegalName">Razón social</label>
+                <input type="text" id="setLegalName" class="input" required>
+              </div>
+              <div class="field">
+                <label for="setRuc">RUC</label>
+                <input type="text" id="setRuc" class="input" pattern="\d{11}" maxlength="11" required>
+              </div>
+              <div class="field">
+                <label for="setSupportEmail">Correo de soporte</label>
+                <input type="email" id="setSupportEmail" class="input" required>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="admin-panel">
+            <header class="admin-panel-head">
+              <h2>Facturación</h2>
+              <span class="admin-panel-sub">Moneda e impuestos</span>
+            </header>
+            <form id="settingsBillingForm" class="recarga-form" autocomplete="off">
+              <div class="field">
+                <label for="setCurrency">Moneda</label>
+                <select id="setCurrency" class="admin-select" style="width:100%">
+                  <option value="PEN">Soles (PEN)</option>
+                  <option value="USD">Dólares (USD)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="setIgv">IGV (%)</label>
+                <input type="number" id="setIgv" class="input" min="0" max="100" step="0.01" required>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="admin-panel" style="grid-column:1/-1">
+            <header class="admin-panel-head">
+              <h2>Mercado Pago</h2>
+              <span class="admin-panel-sub" id="setMpModeLabel">Sandbox</span>
+            </header>
+            <form id="settingsMpForm" class="recarga-form" autocomplete="off">
+              <div class="field">
+                <label for="setMpMode">Modo</label>
+                <select id="setMpMode" class="admin-select" style="width:100%">
+                  <option value="sandbox">Sandbox (pruebas)</option>
+                  <option value="production">Producción</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="setMpPublicKey">Public Key</label>
+                <input type="text" id="setMpPublicKey" class="input" placeholder="TEST-... o APP_USR-...">
+              </div>
+              <div class="field">
+                <label for="setMpAccessToken">Access Token</label>
+                <input type="password" id="setMpAccessToken" class="input" placeholder="Solo últimos 4 caracteres visibles">
+                <div class="field-hint">Se almacena cifrado. Solo se muestran los últimos 4 caracteres.</div>
+              </div>
+              <div class="field">
+                <label for="setMpWebhook">URL del webhook</label>
+                <input type="url" id="setMpWebhook" class="input">
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar integración</button>
+                <button type="button" class="btn-ghost" id="setMpTest">Probar conexión</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
     </div>
+  </main>
+</div>
 
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-    <div class="sidebar" id="sidebar">
-        <a href="admin.html" class="side-logo" style="display:flex; align-items:center; gap:10px; margin-bottom:32px; text-decoration:none;">
-            <img src="assets/media/logopwa.png" alt="Logo" style="width:34px; height:34px; object-fit:contain;">
-            <div style="display:flex; flex-direction:column; line-height:1.1;">
-                <span style="font-size:14px; font-weight:700; letter-spacing:0.3px; color:#e9edef;">Filtro Vehicular+</span>
-                <span style="font-size:9px; font-weight:600; color:#25d366; letter-spacing:2px; text-transform:uppercase; text-align:right;">Gestor de Consultas</span>
-            </div>
-        </a>
-        <nav style="display: flex; flex-direction: column; gap: 4px;">
-            <a href="javascript:void(0)" onclick="showView('editor'); toggleSidebar(false)" class="nav-item active" id="nav-editor">
-                <i class="fa-solid fa-file-signature"></i> Nuevo Reporte
-            </a>
-            <a href="javascript:void(0)" onclick="showView('requests'); toggleSidebar(false)" class="nav-item" id="nav-requests" style="display: flex; align-items: center; width: 100%;">
-                <i class="fa-solid fa-list-check"></i> <span>Pendientes</span>
-                <span id="requestsCount" style="display: none; background: #ef4444; color: white; font-size: 12px; padding: 4px 10px; border-radius: 50px; font-weight: 800; margin-left: auto; min-width: 24px; text-align: center; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);">0</span>
-            </a>
-            <a href="javascript:void(0)" onclick="showView('history'); toggleSidebar(false)" class="nav-item" id="nav-history">
-                <i class="fa-solid fa-clock-rotate-left"></i> Historial
-            </a>
-            <a href="javascript:void(0)" onclick="showView('credits'); toggleSidebar(false)" class="nav-item" id="nav-credits">
-                <i class="fa-solid fa-coins"></i> Créditos
-            </a>
-            <a href="javascript:void(0)" onclick="showView('users'); toggleSidebar(false)" class="nav-item" id="nav-users">
-                <i class="fa-solid fa-users"></i> Usuarios
-            </a>
-            <a href="javascript:void(0)" onclick="showView('access'); toggleSidebar(false)" class="nav-item" id="nav-access">
-                <i class="fa-solid fa-unlock-keyhole"></i> Activar Acceso
-            </a>
-            <a href="javascript:void(0)" onclick="showView('activateEmail'); toggleSidebar(false)" class="nav-item" id="nav-activateEmail">
-                <i class="fa-solid fa-envelope-open-text"></i> Activar por Email
-            </a>
-        </nav>
-        
-        <!-- Configuración -->
-        <div style="margin-top:auto; padding:14px; border-top:1px solid rgba(255,255,255,0.06);">
-            <div style="font-size:10px; font-weight:600; color:#8696a0; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Telegram</div>
-            <input type="text" id="tgToken" placeholder="Token del Bot" style="width:100%; padding:7px 10px; font-size:11px; border:1px solid #2a3942; border-radius:6px; margin-bottom:5px; background:#1f2c34; color:#e9edef; outline:none;">
-            <input type="text" id="tgChatId" placeholder="Chat ID" style="width:100%; padding:7px 10px; font-size:11px; border:1px solid #2a3942; border-radius:6px; margin-bottom:8px; background:#1f2c34; color:#e9edef; outline:none;">
-            <div style="display:flex; gap:5px; margin-bottom:12px;">
-                <button onclick="saveTelegramSettings()" style="flex:1; padding:7px; background:#25d366; color:#fff; border:none; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer;">Guardar</button>
-                <button onclick="testTelegram()" style="flex:1; padding:7px; background:#1f2c34; color:#e9edef; border:1px solid #2a3942; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;"><i class="fa-solid fa-paper-plane" style="font-size:9px;"></i> Probar</button>
-            </div>
-
-            <div style="font-size:10px; font-weight:600; color:#8696a0; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.06);">WhatsApp Grupo</div>
-            <input type="text" id="whatsappGroupLink" placeholder="https://chat.whatsapp.com/..." style="width:100%; padding:7px 10px; font-size:11px; border:1px solid #2a3942; border-radius:6px; margin-bottom:8px; background:#1f2c34; color:#e9edef; outline:none;">
-            <button onclick="saveWhatsAppGroupLink()" style="width:100%; padding:7px; background:#25d366; color:#fff; border:none; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer; margin-bottom:12px;">Guardar</button>
-
-            <div style="padding-top:10px; border-top:1px solid rgba(255,255,255,0.06);">
-                <div style="font-size:10px; font-weight:600; color:#8696a0; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Push</div>
-                <button id="btnPushToggle" onclick="togglePushSubscription()" style="width:100%; padding:7px; background:#25d366; color:#fff; border:none; border-radius:6px; font-size:10px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;"><i class="fa-solid fa-bell" style="font-size:9px;"></i> Activar</button>
-            </div>
+<!-- MODAL INVITAR ADMIN -->
+<div class="modal" id="inviteAdminModal" hidden>
+  <div class="modal-overlay" data-close="inviteAdminModal"></div>
+  <div class="modal-panel">
+    <header class="modal-header">
+      <h2>Otorgar acceso de administrador</h2>
+      <button class="modal-close" type="button" data-close="inviteAdminModal" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </header>
+    <form id="inviteAdminForm">
+      <div class="modal-body">
+        <div class="field">
+          <label for="inviteEmail">Correo del usuario</label>
+          <input type="email" id="inviteEmail" class="input" placeholder="usuario@correo.com" required>
+          <div class="field-hint">El usuario debe estar previamente registrado en la plataforma. Se le otorgará acceso completo al panel de administración.</div>
         </div>
+      </div>
+      <footer class="modal-footer">
+        <button class="btn-ghost" type="button" data-close="inviteAdminModal">Cancelar</button>
+        <button class="btn btn-primary" type="submit">Otorgar acceso</button>
+      </footer>
+    </form>
+  </div>
+</div>
 
-        <a href="javascript:void(0)" onclick="if(typeof adminLogout==='function')adminLogout();" class="nav-item" style="color: rgba(255,255,255,0.7); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; margin-top: 20px;"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
-        <a href="index.html" class="nav-item" style="color: #64748b; padding-top: 6px;"><i class="fa-solid fa-house"></i> Volver al sitio</a>
-    </div>
+<!-- MODAL GENERAR API KEY -->
+<div class="modal" id="apiKeyModal" hidden>
+  <div class="modal-overlay" data-close="apiKeyModal"></div>
+  <div class="modal-panel">
+    <header class="modal-header">
+      <h2 id="apiKeyModalTitle">Generar API Key</h2>
+      <button class="modal-close" type="button" data-close="apiKeyModal" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </header>
+    <div class="modal-body" id="apiKeyModalBody"></div>
+    <footer class="modal-footer" id="apiKeyModalFooter"></footer>
+  </div>
+</div>
 
-    <div class="main-content">
-        <!-- VISTA DE CRÉDITOS -->
-        <div id="creditsView" style="display: none;">
-            <div style="max-width:500px;">
-                <!-- Header -->
-                <div style="background:#111b21; border-radius:12px; padding:20px 18px; margin-bottom:12px;">
-                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-                        <div style="width:36px; height:36px; background:#25d366; border-radius:10px; display:flex; align-items:center; justify-content:center;">
-                            <i class="fa-solid fa-coins" style="font-size:15px; color:#fff;"></i>
-                        </div>
-                        <div>
-                            <div style="font-size:14px; font-weight:600; color:#e9edef;">Recargar Créditos</div>
-                            <div style="font-size:10px; color:#8696a0; font-weight:400;">Asigna créditos a un cliente</div>
-                        </div>
-                    </div>
-                    <label style="display:block; margin-bottom:6px; font-size:9px; text-transform:uppercase; color:#8696a0; font-weight:500; letter-spacing:0.5px;">Correo del cliente</label>
-                    <input type="email" id="creditEmail" placeholder="cliente@ejemplo.com" style="width:100%; padding:10px 12px; border:1px solid #2a3942; border-radius:8px; font-size:13px; color:#e9edef; background:#1f2c34; outline:none; box-sizing:border-box; font-family:'Roboto',sans-serif; transition:border-color 0.2s;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#2a3942'">
-                </div>
+<!-- MODAL DETALLE USUARIO -->
+<div class="modal" id="userDetailModal" hidden>
+  <div class="modal-overlay" data-close="userDetailModal"></div>
+  <div class="modal-panel">
+    <header class="modal-header">
+      <h2 id="userDetailName">Detalle de usuario</h2>
+      <button class="modal-close" type="button" data-close="userDetailModal" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </header>
+    <div class="modal-body" id="userDetailBody"></div>
+    <footer class="modal-footer">
+      <button class="btn-ghost" type="button" data-close="userDetailModal">Cerrar</button>
+      <button class="btn-ghost" type="button" id="userDetailRecargar">Recargar</button>
+      <button class="btn btn-danger" type="button" id="userDetailDelete">Eliminar cuenta</button>
+      <button class="btn btn-primary" type="button" id="userDetailToggle">Suspender</button>
+    </footer>
+  </div>
+</div>
 
-                <!-- Paquetes de créditos -->
-                <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:16px 18px; margin-bottom:12px;">
-                    <label style="display:block; margin-bottom:10px; font-size:9px; text-transform:uppercase; color:#6b7280; font-weight:500; letter-spacing:0.5px;">Selecciona el paquete</label>
-                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;" id="creditPackages">
-                        <div onclick="selectCreditPack(this, 850)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
-                            <div style="font-size:16px; font-weight:700; color:#111b21;">850</div>
-                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">Avanzado</div>
-                            <div style="font-size:8px; color:#25d366; font-weight:600;">S/ 42</div>
-                        </div>
-                        <div onclick="selectCreditPack(this, 2000)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
-                            <div style="font-size:16px; font-weight:700; color:#111b21;">2,000</div>
-                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">Business</div>
-                            <div style="font-size:8px; color:#25d366; font-weight:600;">S/ 84</div>
-                        </div>
-                        <div onclick="selectCreditPack(this, 4000)" class="credit-pack" style="border:1px solid #e5e7eb; border-radius:10px; padding:12px 8px; text-align:center; cursor:pointer; transition:border-color 0.15s;">
-                            <div style="font-size:16px; font-weight:700; color:#111b21;">4,000</div>
-                            <div style="font-size:9px; color:#6b7280; margin-top:2px;">Profesional</div>
-                            <div style="font-size:8px; color:#25d366; font-weight:600;">S/ 140</div>
-                        </div>
-                    </div>
-                    <!-- Monto personalizado -->
-                    <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
-                        <input type="number" id="customCreditAmount" placeholder="Monto personalizado" min="1" style="flex:1; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; color:#111b21; outline:none;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'">
-                        <button onclick="var v=document.getElementById('customCreditAmount').value; if(v && parseInt(v)>0){selectCreditPack(null, parseInt(v));}" style="padding:10px 14px; background:#111b21; color:#fff; border:none; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer;">Aplicar</button>
-                    </div>
-                    <!-- Select oculto para compatibilidad -->
-                    <select id="creditAmount" style="display:none;">
-                        <option value="850">850</option>
-                        <option value="2000" selected>2000</option>
-                        <option value="4000">4000</option>
-                    </select>
-                </div>
+<!-- Toasts -->
+<div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-                <!-- creditCustom hidden para compatibilidad -->
-                <input type="hidden" id="creditCustom" value="">
+<!-- Scripts -->
+<!-- Supabase: auth compartida con la landing -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/shared/supabase-config.js"></script>
+<script src="js/shared/utils.js?v=2"></script>
+<script src="js/shared/auth.js"></script>
+<script src="js/modules/toasts.js"></script>
+<script src="js/modules/confirm-dialog.js"></script>
+<script src="js/shared/plans-data.js"></script>
+<script src="js/admin/data.js?v=22"></script>
+<script src="js/admin/auth.js?v=22"></script>
+<script src="js/admin/dashboard.js?v=23"></script>
+<script src="js/admin/revenue.js?v=23"></script>
+<script src="js/admin/users.js?v=23"></script>
+<script src="js/admin/addusers.js?v=22"></script>
+<script src="js/admin/recargas.js?v=22"></script>
+<script src="js/admin/plans.js?v=22"></script>
+<script src="js/admin/compras.js?v=23"></script>
+<script src="js/admin/consultas.js?v=23"></script>
+<script src="js/admin/mercadopago.js?v=23"></script>
+<script src="js/admin/webhooks.js?v=22"></script>
+<script src="js/admin/team.js?v=23"></script>
+<script src="js/admin/apikeys.js?v=23"></script>
+<script src="js/admin/anti-abuse.js?v=23"></script>
+<script src="js/admin/audit.js?v=23"></script>
+<script src="js/admin/broadcasts.js?v=23"></script>
+<script src="js/admin/settings.js?v=22"></script>
+<script src="js/admin/main.js?v=22"></script>
 
-                <!-- Botón -->
-                <button onclick="processCredit()" style="width:100%; padding:12px; background:#25d366; color:#fff; border:none; border-radius:10px; font-weight:600; cursor:pointer; transition:background 0.2s; font-size:13px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background='#1ebe5d'" onmouseout="this.style.background='#25d366'">
-                    <i class="fa-solid fa-circle-check" style="font-size:13px;"></i> Confirmar Recarga
-                </button>
-
-                <div style="margin-top:16px; padding-top:16px; border-top:1px solid #e5e7eb;">
-                    <button onclick="pagarPruebaMP()" style="width:100%; padding:12px; background:#111b21; color:#fff; border:none; border-radius:10px; font-weight:600; cursor:pointer; transition:background 0.2s; font-size:12px; display:flex; align-items:center; justify-content:center; gap:6px;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
-                        <i class="fa-solid fa-credit-card" style="font-size:12px;"></i> Pago de Prueba S/5 (MercadoPago)
-                    </button>
-                </div>
-            </div>
-
-            <script>
-                var selectedPack = 850;
-                function selectCreditPack(el, val) {
-                    selectedPack = val;
-                    var sel = document.getElementById('creditAmount');
-                    // Verificar si el valor existe en el select, si no, agregarlo
-                    var found = false;
-                    for (var i = 0; i < sel.options.length; i++) {
-                        if (sel.options[i].value == val) { sel.selectedIndex = i; found = true; break; }
-                    }
-                    if (!found) sel.innerHTML += '<option value="' + val + '" selected>' + val + '</option>';
-                    sel.value = val;
-                    // Deseleccionar todos los packs
-                    document.querySelectorAll('.credit-pack').forEach(function(p) {
-                        p.style.borderColor = '#e5e7eb';
-                        p.style.background = 'transparent';
-                    });
-                    if (el) {
-                        el.style.borderColor = '#25d366';
-                        el.style.background = 'rgba(37,211,102,0.06)';
-                    }
-                }
-                function deselectAllPacks() {
-                    document.querySelectorAll('.credit-pack').forEach(function(p) {
-                        p.style.borderColor = '#e5e7eb';
-                        p.style.background = 'transparent';
-                    });
-                }
-                function processCredit() {
-                    var customInput = document.getElementById('customCreditAmount').value;
-                    if (customInput && parseInt(customInput) > 0) {
-                        selectCreditPack(null, parseInt(customInput));
-                    }
-                    addCredits();
-                }
-            </script>
-        </div>
-
-        <!-- VISTA DE SOLICITUDES -->
-        <div id="requestsView" class="requests-panel">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-                <h2 style="margin:0; font-size:16px; font-weight:600; color:#111b21;">Solicitudes</h2>
-                <button onclick="promptDeleteAllRequests()" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; border:1px solid #e5e7eb; background:#ffffff; color:#ef4444; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#ef4444'" onmouseout="this.style.borderColor='#e5e7eb'" title="Eliminar pendientes">
-                    <i class="fa-solid fa-trash" style="font-size:12px;"></i> Limpiar
-                </button>
-            </div>
-            <div id="requestsList" class="request-list">
-                <div class="empty-req">Cargando solicitudes...</div>
-            </div>
-        </div>
-        
-        <!-- VISTA DE HISTORIAL -->
-        <div id="historyView" class="requests-panel" style="display: none;">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-                <h2 style="margin:0; font-size:16px; font-weight:600; color:#111b21;">Historial</h2>
-                <button type="button" id="btnClearHistory" onclick="promptDeleteAllHistory()" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; border:1px solid #e5e7eb; background:#ffffff; color:#ef4444; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#ef4444'" onmouseout="this.style.borderColor='#e5e7eb'" title="Vaciar historial">
-                    <i class="fa-solid fa-trash" style="font-size:12px;"></i> Limpiar
-                </button>
-            </div>
-            <div style="margin-bottom:12px;">
-                <div style="position:relative;">
-                    <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:12px;"></i>
-                    <input type="text" id="historySearchInput" placeholder="Buscar por correo o WhatsApp..." oninput="filtrarHistorial()" style="width:100%; padding:10px 12px 10px 34px; border:1px solid #e5e7eb; border-radius:10px; font-size:12px; font-family:'Roboto',sans-serif; color:#111b21; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e5e7eb'">
-                </div>
-            </div>
-            <div id="historyList" class="request-list">
-                <div class="empty-req">Cargando historial...</div>
-            </div>
-        </div>
-        
-        <!-- VISTA DE USUARIOS -->
-        <div id="usersView" class="requests-panel" style="display: none;">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-                <h2 style="margin:0; font-size:16px; font-weight:600; color:#111b21;">Usuarios</h2>
-                <div style="display:flex; gap:8px;">
-                    <button onclick="exportUsersToExcel()" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; border:1px solid #e5e7eb; background:#ffffff; color:#111b21; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#25d366'" onmouseout="this.style.borderColor='#e5e7eb'" title="Exportar contactos">
-                        <i class="fa-solid fa-download" style="font-size:12px; color:#25d366;"></i> Exportar
-                    </button>
-                    <button onclick="deleteFreeAccountsCloud()" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; border:1px solid #e5e7eb; background:#ffffff; color:#f59e0b; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='#e5e7eb'" title="Eliminar cuentas gratuitas">
-                        <i class="fa-solid fa-user-minus" style="font-size:12px;"></i> Gratuitas
-                    </button>
-                    <button onclick="deleteAllUsersCloud()" style="display:flex; align-items:center; gap:6px; padding:8px 14px; font-size:12px; font-weight:600; border-radius:8px; border:1px solid #e5e7eb; background:#ffffff; color:#ef4444; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='#ef4444'" onmouseout="this.style.borderColor='#e5e7eb'" title="Eliminar todos">
-                        <i class="fa-solid fa-trash" style="font-size:12px;"></i> Limpiar
-                    </button>
-                </div>
-            </div>
-            <div style="margin-bottom:12px;">
-                <div style="position:relative;">
-                    <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:12px;"></i>
-                    <input type="text" id="usersSearchInput" placeholder="Buscar por correo o WhatsApp..." oninput="filtrarUsuarios()" style="width:100%; padding:10px 12px 10px 34px; border:1px solid #e5e7eb; border-radius:10px; font-size:12px; font-family:'Roboto',sans-serif; color:#111b21; outline:none; transition:border-color 0.2s; box-sizing:border-box;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e5e7eb'">
-                </div>
-            </div>
-            <div id="usersList" class="request-list">
-                <div class="empty-req">Cargando base de datos de usuarios...</div>
-            </div>
-        </div>
-        
-        <!-- VISTA ACTIVAR ACCESO MANUAL -->
-        <div id="accessView" class="requests-panel" style="display: none;">
-            <h2 style="margin:0 0 12px; font-size:16px; font-weight:600; color:#111b21;">Activar Acceso</h2>
-
-            <div class="admin-card" style="margin-bottom:16px; padding:18px;">
-                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
-                    <div style="flex:1; min-width:200px;">
-                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Correo del cliente</label>
-                        <input type="email" id="accessEmail" placeholder="cliente@gmail.com"
-                            style="width:100%; padding:12px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none; transition:0.2s;"
-                            onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'"
-                            onkeydown="if(event.key==='Enter') activarAccesoManual()">
-                    </div>
-                    <button onclick="activarAccesoManual()" style="padding:12px 18px; background:#111b21; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#1f2c34'" onmouseout="this.style.background='#111b21'">
-                        <i class="fa-solid fa-check"></i> Activar
-                    </button>
-                </div>
-                <div id="accessFeedback" style="display:none; margin-top:12px; padding:10px 14px; border-radius:8px; font-size:12px; font-weight:600;"></div>
-            </div>
-
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <div style="font-size:13px; font-weight:700; color:#111b21;">Clientes activos</div>
-                <button onclick="renderAccessList()" style="background:#f8fafc; color:#64748b; border:1px solid #e2e8f0; border-radius:6px; padding:5px 10px; font-size:10px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:4px;">
-                    <i class="fa-solid fa-rotate" style="font-size:10px;"></i> Actualizar
-                </button>
-            </div>
-            <div id="accessList" class="request-list">
-                <div class="empty-req">Cargando...</div>
-            </div>
-        </div>
-
-        <!-- VISTA ACTIVAR POR EMAIL (clientes que vienen por WhatsApp) -->
-        <div id="activateEmailView" class="requests-panel" style="display: none;">
-            <h2 style="margin:0 0 4px; font-size:16px; font-weight:600; color:#111b21;">Activar por Email</h2>
-            <p style="font-size:11px; color:#6b7280; margin:0 0 16px; font-weight:400;">Crea una cuenta para un cliente que te contactó por WhatsApp y envíale sus credenciales.</p>
-
-            <div class="admin-card" style="padding:20px; margin-bottom:16px;">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                    <div style="grid-column: 1 / -1;">
-                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Correo del cliente *</label>
-                        <input type="email" id="actByEmail_email" placeholder="cliente@gmail.com" style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
-                    </div>
-                    <div>
-                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Nombre completo *</label>
-                        <input type="text" id="actByEmail_nombre" placeholder="Juan Pérez" style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
-                    </div>
-                    <div>
-                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">WhatsApp del cliente *</label>
-                        <input type="tel" id="actByEmail_whatsapp" maxlength="9" placeholder="987654321" style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
-                    </div>
-                    <div>
-                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Plan inicial</label>
-                        <select id="actByEmail_plan" onchange="actByEmail_updateCreditos()" style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none; background:white;">
-                            <option value="free" data-credits="0">Free (0 créditos)</option>
-                            <option value="advanced" data-credits="850" selected>Avanzado — S/42 (850 créditos)</option>
-                            <option value="business" data-credits="2000">Business — S/84 (2000 créditos)</option>
-                            <option value="premium" data-credits="4000">Profesional — S/140 (4000 créditos)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Créditos (editable)</label>
-                        <input type="number" id="actByEmail_creditos" value="850" min="0" style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
-                    </div>
-                    <div style="grid-column: 1 / -1;">
-                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Contraseña</label>
-                        <div style="display:flex; gap:8px;">
-                            <input type="text" id="actByEmail_pass" placeholder="Se genera automáticamente" style="flex:1; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none; font-family:monospace;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
-                            <button type="button" onclick="actByEmail_generarPass()" style="padding:11px 14px; background:#f8fafc; color:#111b21; border:1.5px solid #e2e8f0; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;"><i class="fa-solid fa-dice"></i> Generar</button>
-                        </div>
-                    </div>
-                    <div style="grid-column: 1 / -1;">
-                        <label style="display:block; margin-bottom:6px; font-size:11px; text-transform:uppercase; color:#64748b; font-weight:600; letter-spacing:0.5px;">Notas internas (opcional)</label>
-                        <input type="text" id="actByEmail_notas" placeholder="Ej: pagó por Yape, referido por..." style="width:100%; padding:11px 14px; font-size:14px; border:1.5px solid #e2e8f0; border-radius:10px; outline:none;" onfocus="this.style.borderColor='#111b21'" onblur="this.style.borderColor='#e2e8f0'">
-                    </div>
-                </div>
-
-                <div id="actByEmail_feedback" style="display:none; margin-top:14px; padding:10px 14px; border-radius:8px; font-size:12px; font-weight:600;"></div>
-
-                <div style="margin-top:16px; display:flex; justify-content:flex-end; gap:8px;">
-                    <button type="button" onclick="actByEmail_limpiar()" style="padding:11px 18px; background:#f8fafc; color:#64748b; border:1.5px solid #e2e8f0; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">Limpiar</button>
-                    <button type="button" onclick="actByEmail_crear()" style="padding:11px 22px; background:#25d366; color:#fff; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-user-plus"></i> Crear cuenta</button>
-                </div>
-            </div>
-
-            <!-- Resultado tras crear la cuenta -->
-            <div id="actByEmail_resultado" style="display:none;"></div>
-        </div>
-
-        <!-- VISTA DEL EDITOR -->
-        <div id="editorView">
-            <!-- Header -->
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-                <div>
-                    <h1 style="font-size:16px; font-weight:600; color:#111b21; margin:0 0 2px;">Panel de Control</h1>
-                    <p style="font-size:11px; color:#6b7280; margin:0; font-weight:400;">Auditoría y validación de solicitudes</p>
-                </div>
-                <button class="btn-floating-save" onclick="saveReport()" title="Publicar">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                </button>
-            </div>
-
-            <!-- Placa -->
-            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; margin-bottom:12px; padding:16px 20px;">
-                <div style="font-size:10px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Placa del vehículo</div>
-                <input type="text" id="targetPlate" placeholder="ABC-123" style="width:100%; border:none; outline:none; font-size:22px; font-weight:600; text-transform:uppercase; color:#111b21; letter-spacing:3px; background:transparent; padding:0; font-family:'Roboto',sans-serif;">
-            </div>
-
-            <!-- Fecha -->
-            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; margin-bottom:12px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between;">
-                <div>
-                    <div style="font-size:10px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Fecha del reporte</div>
-                    <input type="text" id="reportDateDisplay" readonly style="border:none; outline:none; font-size:15px; font-weight:500; color:#111b21; background:transparent; padding:0; cursor:pointer; font-family:'Roboto',sans-serif;">
-                    <input type="date" id="reportDate" style="position:absolute; opacity:0; width:0; height:0;">
-                </div>
-                <i class="fa-regular fa-calendar" style="font-size:16px; color:#25d366; cursor:pointer;" onclick="document.getElementById('reportDate').showPicker()"></i>
-            </div>
-            <script>
-                (function(){
-                    var d = new Date();
-                    var dd = String(d.getDate()).padStart(2,'0');
-                    var mm = String(d.getMonth()+1).padStart(2,'0');
-                    var yyyy = d.getFullYear();
-                    document.getElementById('reportDate').value = yyyy+'-'+mm+'-'+dd;
-                    document.getElementById('reportDateDisplay').value = dd+'/'+mm+'/'+yyyy;
-                    document.getElementById('reportDateDisplay').onclick = function(){ document.getElementById('reportDate').showPicker(); };
-                    document.getElementById('reportDate').onchange = function(){
-                        var v = this.value.split('-');
-                        document.getElementById('reportDateDisplay').value = v[2]+'/'+v[1]+'/'+v[0];
-                    };
-                })();
-            </script>
-
-            <!-- Resumen Ejecutivo -->
-            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; margin-bottom:20px; padding:16px 20px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
-                    <div style="font-size:10px; color:#6b7280; font-weight:500; text-transform:uppercase; letter-spacing:0.5px;">Resumen Ejecutivo</div>
-                    <div id="verdictButtons" style="display:flex; gap:5px;">
-                        <button type="button" onclick="selectVerdict('ok')" id="btnVerdictOk" style="background:transparent; color:#25d366; border:2px solid #25d366; padding:5px 12px; border-radius:6px; font-size:9px; font-weight:600; cursor:pointer; transition:all 0.15s;">Verde</button>
-                        <button type="button" onclick="selectVerdict('wa')" id="btnVerdictWa" style="background:transparent; color:#f59e0b; border:2px solid #f59e0b; padding:5px 12px; border-radius:6px; font-size:9px; font-weight:600; cursor:pointer; transition:all 0.15s;">Ámbar</button>
-                        <button type="button" onclick="selectVerdict('ko')" id="btnVerdictKo" style="background:transparent; color:#ef4444; border:2px solid #ef4444; padding:5px 12px; border-radius:6px; font-size:9px; font-weight:600; cursor:pointer; transition:all 0.15s;">Roja</button>
-                    </div>
-                    <script>
-                        function selectVerdict(type) {
-                            var btns = {ok: document.getElementById('btnVerdictOk'), wa: document.getElementById('btnVerdictWa'), ko: document.getElementById('btnVerdictKo')};
-                            var colors = {ok:'#25d366', wa:'#f59e0b', ko:'#ef4444'};
-                            for (var k in btns) {
-                                btns[k].style.background = 'transparent';
-                                btns[k].style.color = colors[k];
-                            }
-                            btns[type].style.background = colors[type];
-                            btns[type].style.color = '#ffffff';
-                            loadVerdictTemplate(type);
-                        }
-                    </script>
-                </div>
-                <textarea id="verdictText" rows="3" placeholder="Ej: Vehículo en excelentes condiciones legales. Sin deudas pendientes en Lima ni Callao..." style="width:100%; border:1px solid #e5e7eb; border-radius:8px; padding:10px 12px; font-size:12px; font-family:'Roboto',sans-serif; color:#111b21; background:#f9fafb; resize:vertical; outline:none; transition:border-color 0.2s; line-height:1.6; box-sizing:border-box;" onfocus="this.style.borderColor='#25d366'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
-            </div>
-
-            <!-- Semáforo oculto -->
-            <div id="globalStatus" style="display:none;">
-                <div class="status-dot-btn active" data-status="ok"></div>
-                <div class="status-dot-btn" data-status="wa"></div>
-                <div class="status-dot-btn" data-status="ko"></div>
-            </div>
-
-            <!-- Grid de categorías (acordeón) -->
-            <div class="form-grid" id="adminGrid"></div>
-        </div>
-    </div>
-
-    </div><!-- /#adminAppRoot -->
-
-    <script src="assets/js/session.js?v=2"></script>
-    <script src="assets/js/admin-gate.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="assets/js/supabase-config.js?v=2"></script>
-    <!-- PDF LIBS (para generar mismo PDF que el cliente) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-
-    <!-- Badging API: actualiza el número en el ícono de la PWA -->
-    
-
-    <!-- MANTENER SERVICE WORKER ACTIVO - Evita cierre automático de la PWA -->
-    
-
-    <!-- SISTEMA DE IMPRESIÓN PROFESIONAL -->
-    
-
-    <!-- MODAL DE IMPRESIÓN -->
-    <div id="printModal" class="modal-overlay" style="z-index:999999;">
-        <div class="modal-card" style="max-width:950px; max-height:90vh; overflow-y:auto;">
-            <div style="padding:22px 28px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:#ffffff; z-index:10; border-radius:16px 16px 0 0;">
-                <h3 style="margin:0; color:#111b21; font-size:18px; font-weight:800; letter-spacing:0.3px;">Vista Previa del Certificado</h3>
-                <button onclick="cerrarPrintModal()" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="printContent" style="padding: 24px;"></div>
-        </div>
-    </div>
-
-    
-    <script src="assets/js/admin.js?v=2"></script>
 </body>
-
 </html>

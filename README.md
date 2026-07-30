@@ -1,208 +1,97 @@
-# 🚗 Filtro Vehicular - Portal de Consultas
+# Filtro Vehicular+ — Plataforma de Consultas
 
-Portal profesional de consultas vehiculares y ciudadanas con integración de bots y métodos de pago.
+Plataforma web de consultas de datos peruanos (RENIEC, SUNARP, SUNAT, MTC, etc.) con autenticación, sistema de créditos, suscripciones y panel administrativo.
 
-## 🎯 Características
+## Stack
 
-- ✅ **Responsive Design** - Adaptable a móvil, tablet y desktop
-- ✅ **Tema Claro Minimalista** - UI limpia y profesional
-- ✅ **2 Módulos Principales**:
-  - 🚙 **Vehículos**: SUNARP, multas, verificaciones, SOAT
-  - 👤 **Consultas**: RENIEC, SUNAT, antecedentes, migraciones
-- ✅ **Integración con Bots** - Telegram, WhatsApp
-- ✅ **Métodos de Pago** - Stripe, MercadoPago
-- ✅ **API REST** - Backend escalable con TypeScript
-- ✅ **Base de Datos** - PostgreSQL + Redis
-- ✅ **Autenticación** - JWT + Roles de usuario
-- ✅ **Tiempo Real** - WebSockets para notificaciones
+- **Frontend:** HTML/CSS/JS vanilla (sin framework), modular ES con namespace `window.Consultia`.
+- **Backend de datos:** Supabase (PostgreSQL + Auth + RLS + Realtime + Edge Functions).
+- **Bridge de Telegram:** Node.js + Express + GramJS (repo separado: `filtro-bridge/`, deploy en Railway).
+- **Pagos:** Mercado Pago (Edge Function + webhook).
+- **Email transaccional:** Brevo (300 emails/día).
+- **PWA:** `manifest.json` + `sw.js`.
 
-## 🛠️ Stack Tecnológico
-
-### Frontend
-- React 18 + TypeScript
-- Vite (Build tool)
-- TailwindCSS (Styling)
-- Shadcn/ui (Componentes)
-- React Router (Navegación)
-- Zustand (Estado global)
-- React Query (Cache de datos)
-- Socket.io Client (WebSockets)
-
-### Backend
-- Node.js + Express + TypeScript
-- PostgreSQL (Base de datos)
-- Prisma ORM
-- Redis (Cache)
-- BullMQ (Colas de trabajo)
-- Socket.io (WebSockets)
-- JWT (Autenticación)
-- Zod (Validación)
-
-## 📦 Instalación
-
-### Requisitos Previos
-- Node.js >= 18.0.0
-- npm >= 9.0.0
-- Docker y Docker Compose (opcional)
-
-### Instalación Local
-
-1. **Clonar el repositorio**
-```bash
-git clone <repository-url>
-cd "Filtro Vehicular +"
-```
-
-2. **Instalar dependencias**
-```bash
-npm install
-```
-
-3. **Configurar variables de entorno**
-```bash
-cp .env.example .env
-# Editar .env con tus credenciales
-```
-
-4. **Iniciar servicios con Docker**
-```bash
-npm run docker:up
-```
-
-5. **Generar Prisma Client**
-```bash
-npm run prisma:generate
-```
-
-6. **Ejecutar migraciones**
-```bash
-npm run prisma:migrate
-```
-
-7. **Iniciar en modo desarrollo**
-```bash
-npm run dev
-```
-
-La aplicación estará disponible en:
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3000
-
-## 🚀 Scripts Disponibles
-
-```bash
-# Desarrollo
-npm run dev              # Inicia frontend y backend
-npm run dev:frontend     # Solo frontend
-npm run dev:backend      # Solo backend
-
-# Producción
-npm run build            # Build de todo el proyecto
-npm run build:frontend   # Build solo frontend
-npm run build:backend    # Build solo backend
-npm run start            # Inicia backend en producción
-
-# Docker
-npm run docker:up        # Inicia contenedores
-npm run docker:down      # Detiene contenedores
-
-# Base de datos
-npm run prisma:generate  # Genera Prisma Client
-npm run prisma:migrate   # Ejecuta migraciones
-```
-
-## 📁 Estructura del Proyecto
+## Estructura
 
 ```
-filtro-vehicular/
-├── frontend/                 # Aplicación React
-│   ├── src/
-│   │   ├── components/      # Componentes reutilizables
-│   │   │   ├── ui/          # Componentes base (shadcn)
-│   │   │   ├── layout/      # Header, Footer, Sidebar
-│   │   │   └── shared/      # Componentes compartidos
-│   │   ├── modules/         # Módulos principales
-│   │   │   ├── vehiculos/   # Módulo de vehículos
-│   │   │   └── consultas/   # Módulo de consultas
-│   │   ├── services/        # API calls
-│   │   ├── hooks/           # Custom hooks
-│   │   ├── store/           # Zustand stores
-│   │   ├── types/           # TypeScript types
-│   │   ├── utils/           # Utilidades
-│   │   └── App.tsx          # Componente principal
-│   └── package.json
-├── backend/                  # API Express
-│   ├── src/
-│   │   ├── routes/          # Rutas API
-│   │   ├── controllers/     # Controladores
-│   │   ├── services/        # Lógica de negocio
-│   │   │   ├── bots/        # Servicios de bots
-│   │   │   ├── payments/    # Servicios de pago
-│   │   │   └── scrapers/    # Scrapers externos
-│   │   ├── middleware/      # Middlewares
-│   │   ├── models/          # Modelos Prisma
-│   │   ├── utils/           # Utilidades
-│   │   └── server.ts        # Servidor principal
-│   ├── prisma/
-│   │   └── schema.prisma    # Schema de BD
-│   └── package.json
-├── docker-compose.yml        # Configuración Docker
-├── .env.example             # Variables de entorno
-└── package.json             # Root package.json
+FV+/
+├── index.html                  # Landing + app (sidebar + vistas)
+├── admin.html                  # Panel administrativo
+├── pago-exitoso.html           # Confirmación de pago MP
+├── pago-pendiente.html         # Pago MP en revisión
+├── manifest.json, sw.js        # PWA
+├── dev-server.js               # Servidor estático local (puerto 5500)
+│
+├── css/                        # 10 hojas de estilo modulares
+│   ├── base.css                # Variables, reset, tipografía
+│   ├── sidebar.css, topbar.css # Navegación
+│   ├── components.css          # Botones, inputs, cards, badges
+│   ├── views.css               # Vistas y resultados de consultas
+│   ├── plans-catalog.css       # Catálogo de planes / saldo
+│   ├── auth.css, overlays.css  # Auth + modales / cookies
+│   ├── polish.css              # Refinamientos visuales
+│   └── admin.css               # Panel admin
+│
+├── js/
+│   ├── main.js, sidebar.js, topbar.js, views.js, overlays.js
+│   ├── shared/                 # supabase-config, auth, plans-data,
+│   │                           # device-fingerprint, email-validator
+│   ├── modules/                # 1 archivo por categoría / feature
+│   │                           # (reniec, sunat, vehiculos, mtc, vip, etc.)
+│   └── admin/                  # 18 módulos del panel administrativo
+│
+├── supabase/                   # SQL versionado + Edge Functions
+│   ├── README.md               # Índice + orden de ejecución
+│   ├── schema/                 # Tablas core, RLS base, RPC (00_schema_inicial.sql, etc.)
+│   ├── anti_abuse/             # Trigger handle_new_user con anti-abuso + welcome restriction
+│   ├── admin/                  # Funciones / RLS / RPC del panel admin
+│   ├── seeds/                  # Catálogos: consultas, fuentes, planes premium
+│   ├── fixes/                  # Parches puntuales aplicados a tablas existentes
+│   ├── functions/              # Edge Functions (TypeScript / Deno)
+│   │   ├── bridge-proxy/       # Proxy autenticado al bridge de Telegram
+│   │   ├── consultar-docs/
+│   │   ├── crear-preferencia/  # Mercado Pago checkout
+│   │   ├── diagnose-payment/   # Debug de pagos
+│   │   └── webhook-mercadopago/
+│   └── email-templates/        # Plantillas Brevo (signup, magic-link, reset)
+│
+├── assets/                     # Iconos, regiones, servicios
+├── icons/                      # Favicons PWA
+│
+└── filtro-bridge/              # ⚠ REPO SEPARADO (gitignored del padre)
+                                # Bridge Telegram en Railway
 ```
 
-## 🔐 Autenticación
+## Cómo correr en local
 
-El sistema usa JWT para autenticación. Roles disponibles:
-- `USER` - Usuario básico
-- `PREMIUM` - Usuario premium con más consultas
-- `ADMIN` - Administrador del sistema
+**1) Bridge de Telegram (puerto 3030):**
 
-## 🤖 Integración con Bots
-
-### Telegram Bot
-Configurar `TELEGRAM_BOT_TOKEN` en `.env`
-
-### WhatsApp Bot
-Configurar `WHATSAPP_API_KEY` en `.env`
-
-## 💳 Métodos de Pago
-
-### Stripe
-```env
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_PUBLISHABLE_KEY=pk_test_...
+```powershell
+cd filtro-bridge
+npm start
 ```
 
-### MercadoPago
-```env
-MERCADOPAGO_ACCESS_TOKEN=APP_USR-...
+> ⚠️ Apaga el deploy de Railway antes para no chocar con la session de Telegram (`AUTH_KEY_DUPLICATED`).
+
+**2) Frontend (puerto 5500):**
+
+```powershell
+node dev-server.js
 ```
 
-## 📊 Base de Datos
+Abrir: **http://localhost:5500**
 
-El proyecto usa PostgreSQL con Prisma ORM. Para ver la base de datos:
+`index.html` detecta automáticamente `localhost` y apunta al bridge en `:3030`.
 
-```bash
-npx prisma studio
-```
+## Producción
 
-## 🧪 Testing
+- **Frontend:** hosting estático (dominio `filtrovehicularperu.com`).
+- **Bridge:** Railway → `https://filtro-bridge-production-6fd9.up.railway.app`.
+- **Supabase:** `https://kkqpayfyhvxatskkrqdg.supabase.co`.
 
-```bash
-# Frontend
-cd frontend
-npm run test
+## Notas
 
-# Backend
-cd backend
-npm run test
-```
-
-## 📝 Licencia
-
-Todos los derechos reservados © 2026
-
-## 👥 Soporte
-
-Para soporte, contactar a: soporte@consultaperu.com
+- El sidebar se despliega en accordion (solo una categoría abierta a la vez).
+- Todo el código JS usa scripts clásicos con namespace `window.Consultia` (sin bundler).
+- RLS activo en todas las tablas con datos sensibles; admins se identifican por `profiles.is_admin`.
+- Los archivos `*.md` de credenciales y notas personales están en `.gitignore`.

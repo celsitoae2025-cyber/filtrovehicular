@@ -1,0 +1,263 @@
+﻿/* ============================================================
+   TOPBAR — barra superior, breadcrumb, menú de usuario
+============================================================ */
+
+/* .main es el scroll container real — scroll interno, no el window.
+   Esto evita que cambios de 100dvh del sidebar afecten el layout
+   durante el scroll en móvil. */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+  height: 100%;
+  /* En X se contiene el rebote lateral, pero en Y se deja `auto`: con
+     `contain` el gesto de arrastrar hacia abajo muere en este contenedor
+     y el navegador nunca llega a disparar el "deslizar para actualizar".
+     Los ancestros no scrollean, asi que soltarlo no encadena scroll. */
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  scrollbar-width: none;
+}
+.main::-webkit-scrollbar { display: none; }
+
+
+.topbar {
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  /* Sin sombra ni transición — no debe llamar la atención al scrollear */
+  box-shadow: none;
+  flex-shrink: 0;
+}
+.topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
+
+.menu-btn {
+  display: none;
+  width: 36px; height: 36px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  align-items: center; justify-content: center;
+  color: var(--c-primary);
+  flex-shrink: 0;
+}
+.menu-btn svg { width: 22px; height: 22px; }
+
+/* Breadcrumb */
+.breadcrumb {
+  font-size: 15px;
+  color: var(--c-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+.breadcrumb .sep {
+  display: inline-flex;
+  color: var(--c-muted);
+  opacity: .55;
+}
+.breadcrumb .sep svg { width: 14px; height: 14px; }
+.breadcrumb .crumb { display: inline-flex; align-items: center; cursor: default; }
+.breadcrumb .crumb.current { color: var(--c-primary); font-weight: 600; }
+.breadcrumb .crumb-link {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--c-muted);
+  cursor: pointer;
+  transition: color .15s;
+}
+.breadcrumb .crumb-link:hover { color: var(--c-primary); }
+
+/* Avatar */
+.avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: #ffffff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 12px;
+}
+
+/* User menu */
+.user-menu { position: relative; flex-shrink: 0; }
+.user {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  padding: 4px 8px 4px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--c-primary);
+  transition: background .15s;
+}
+.user:hover { background: var(--c-bg); }
+.user-name { display: inline; font-weight: 500; }
+.user-chev { width: 14px; height: 14px; color: var(--c-muted); transition: transform .2s; }
+.user-menu.open .user-chev { transform: rotate(180deg); }
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 260px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 6px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity .15s, transform .15s, visibility .15s;
+  z-index: 60;
+}
+.user-menu.open .user-dropdown {
+  opacity: 1; visibility: visible; transform: translateY(0);
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px 12px;
+}
+.dropdown-user-info { display: flex; flex-direction: column; min-width: 0; }
+.dropdown-user-info strong { font-size: 13px; font-weight: 600; color: var(--c-primary); }
+.dropdown-user-info span {
+  font-size: 11.5px; color: var(--c-muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dropdown-divider {
+  height: 1px;
+  background: var(--c-border);
+  margin: 4px 0;
+}
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--c-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background .12s;
+}
+.dropdown-item:hover { background: var(--c-bg); }
+.dropdown-item svg { width: 17px; height: 17px; color: var(--c-muted); flex-shrink: 0; }
+.dropdown-hint {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--c-primary);
+  font-weight: 600;
+  background: var(--c-bg);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.dropdown-danger { color: #141d1c; }
+.dropdown-danger svg { color: #141d1c; }
+.dropdown-danger:hover { background: #f5f5f5; }
+
+.dropdown-admin { color: var(--c-accent); text-decoration: none; }
+.dropdown-admin svg { color: var(--c-accent); }
+.dropdown-admin:hover { background: #edf7d9; }
+
+@media (max-width: 768px) {
+  .menu-btn { display: inline-flex; }
+  .topbar { padding: 10px 16px; }
+  .user-name { display: none; }
+}
+
+/* ============================================================
+   Campana de notificaciones en el topbar
+   - Solo aparece cuando hay notificaciones sin leer
+   - Se ubica al lado del avatar (a la izquierda del menú de usuario)
+============================================================ */
+.topbar-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(245, 195, 0, .12);
+  border: 1px solid rgba(245, 195, 0, .35);
+  color: #141d1c;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 6px;
+  flex-shrink: 0;
+  transition: background .18s ease, border-color .18s ease, transform .15s ease;
+  animation: topbar-bell-in .35s ease both;
+}
+.topbar-bell svg {
+  width: 19px;
+  height: 19px;
+  transform-origin: 50% 15%;
+  animation: bell-ring 2.6s ease-in-out infinite;
+}
+.topbar-bell:hover {
+  background: rgba(245, 195, 0, .22);
+  border-color: rgba(245, 195, 0, .55);
+  transform: translateY(-1px);
+}
+.topbar-bell:active { transform: translateY(0); }
+.topbar-bell[hidden] { display: none !important; }
+
+.topbar-bell-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #141d1c;
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  border: 2px solid var(--c-surface, #fff);
+  box-shadow: none;
+  pointer-events: none;
+}
+.topbar-bell-badge[hidden] { display: none; }
+
+@keyframes topbar-bell-in {
+  from { opacity: 0; transform: scale(.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* En móvil: la campana queda al lado del avatar (mismo tamaño armónico) */
+@media (max-width: 768px) {
+  .topbar-bell {
+    width: 36px;
+    height: 36px;
+    margin-right: 4px;
+  }
+  .topbar-bell svg { width: 18px; height: 18px; }
+}

@@ -1,13 +1,14 @@
-# robots.txt - Filtro Vehicular+
-# https://filtrovehicularperu.com
+# robots.txt — Filtro Vehicular+
+# La app pública (app.html) es la página indexable. El resto de páginas
+# (index, pagos) usan <meta name="robots" content="noindex"> — por eso
+# deben quedar rastreables para que Google lea ese noindex.
 
 User-agent: *
 Allow: /
-Disallow: /admin.html
-Disallow: /pago-exitoso.html
-Disallow: /pago-pendiente.html
-Disallow: /assets/js/
-Disallow: /supabase/
 
-# Sitemap
+# Panel de administración — privado, no indexar
+Disallow: /admin
+Disallow: /admin.html
+
+# Sitemap oficial
 Sitemap: https://filtrovehicularperu.com/sitemap.xml
