@@ -2445,47 +2445,44 @@
     .privacy-meta { font-size:0.72rem;color:#8a7e5e;margin-top:18px;padding-top:14px;border-top:1px solid #efece4; }
 
     /* Auth modal */
-    .auth-overlay { display:none;position:fixed;inset:0;background:#eee5d0;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:10000000;align-items:center;justify-content:center;padding:20px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch; }
+    /* ===== Auth modal — paleta de marca: blanco / verde #8fc72e / turquesa #03a7a4 / oscuro #141d1c =====
+       Reskin de color y acabado sobre la MISMA estructura y los MISMOS
+       ids que usa el JS (authOverlay, authClose, authTitle, authSub,
+       authEmail, authPassWrap, authRegFields, authCodeStep, authError,
+       authSubmit, authToggle, authHelp, authWaHelp). No se renombra ni
+       se quita ningún elemento con id — solo apariencia.
+       Se retiran .auth-or / .auth-google / .auth-wa / .auth-install:
+       CSS sin ningún elemento HTML que las use (código muerto). */
+    .auth-overlay { display:none;position:fixed;inset:0;background:rgba(20,29,28,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:10000000;align-items:center;justify-content:center;padding:20px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch; }
     .auth-overlay.active { display:flex; }
-    /* ===== Auth modal estilo Anthropic (fondo crema) ===== */
     .auth-wrapper { width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px;align-items:stretch; }
-    .auth-modal { background:#f5f0e4;border:1px solid #e6dec8;border-radius:22px;padding:24px 22px 20px;position:relative; }
-    .auth-title-area { text-align:center;margin-bottom:18px;padding:4px 20px 0; }
-    .auth-title { font-family:'Source Serif 4', Georgia, 'Times New Roman', serif;font-size:2.25rem;font-weight:600;color:#1d1e1d;margin-bottom:14px;letter-spacing:-0.5px;line-height:1.15;font-variation-settings:"opsz" 60; }
-    .auth-sub { font-size:0.78rem;color:#8a7e5e;line-height:1.4; }
-    .auth-close { position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:transparent;border:none;cursor:pointer;color:#999;display:flex;align-items:center;justify-content:center;z-index:2; }
-    .auth-close:hover { background:rgba(0,0,0,0.06); }
+    .auth-modal { background:#ffffff;border:1px solid #a4b1b9;border-radius:22px;padding:26px 22px 20px;position:relative;overflow:hidden; }
+    .auth-modal::before { content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#03a7a4,#8fc72e); }
+    .auth-title-area { text-align:center;margin-bottom:18px;padding:8px 20px 0; }
+    .auth-title { font-family:inherit;font-size:1.7rem;font-weight:700;color:#141d1c;margin-bottom:8px;letter-spacing:-0.4px;line-height:1.2; }
+    .auth-sub { font-size:0.8rem;color:rgba(20,29,28,.6);line-height:1.4; }
+    .auth-close { position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:transparent;border:none;cursor:pointer;color:rgba(20,29,28,.5);display:flex;align-items:center;justify-content:center;z-index:2; }
+    .auth-close:hover { background:rgba(20,29,28,.06);color:#141d1c; }
     .auth-close i { font-size:14px; }
-    .auth-input { width:100%;padding:13px 16px;border:1px solid #d9d0b8;border-radius:12px;font-family:inherit;font-size:0.88rem;color:#1d1e1d;background:#fff;box-sizing:border-box;outline:none;transition:border-color 0.15s; }
-    .auth-input:focus { border-color:#8a7e5e; }
-    .auth-input::placeholder { color:#b5a890; }
+    .auth-input { width:100%;padding:13px 16px;border:1px solid #a4b1b9;border-radius:12px;font-family:inherit;font-size:0.88rem;color:#141d1c;background:#fff;box-sizing:border-box;outline:none;transition:border-color 0.15s; }
+    .auth-input:focus { border-color:#03a7a4; }
+    .auth-input::placeholder { color:#8a9198; }
     #authRegFields .auth-input, #authPassWrap .auth-input { margin-top:10px; }
-    .auth-btn { width:100%;padding:13px 16px;background:#1d1e1d;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:0.88rem;font-weight:600;cursor:pointer;margin-top:12px;letter-spacing:-0.1px;transition:opacity 0.15s; }
-    .auth-btn:hover { opacity:0.9; }
+    .auth-btn { width:100%;padding:14px 16px;background:#8fc72e;color:#141d1c;border:none;border-radius:12px;font-family:inherit;font-size:0.9rem;font-weight:700;cursor:pointer;margin-top:12px;letter-spacing:-0.1px;transition:background 0.15s; }
+    .auth-btn:hover { background:#7ab325; }
     .auth-btn:disabled { opacity:0.5;cursor:not-allowed; }
-    .auth-or { display:flex;align-items:center;gap:10px;margin:14px 0;font-size:0.72rem;color:#a89a78;font-weight:500;text-transform:uppercase;letter-spacing:0.6px; }
-    .auth-or::before, .auth-or::after { content:"";flex:1;height:1px;background:#e6dec8; }
-    .auth-google { width:100%;padding:13px 16px;background:#fff;color:#1d1e1d;border:1px solid #d9d0b8;border-radius:12px;font-family:inherit;font-size:0.86rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:background 0.15s; }
-    .auth-google:hover { background:#faf6ed; }
-    .auth-policy { font-size:0.7rem;color:#a89a78;text-align:center;margin-top:16px;line-height:1.5;padding:0 6px; }
-    .auth-policy a { color:#1d1e1d;text-decoration:underline;font-weight:500; }
-    .auth-policy-footer { position:absolute;bottom:16px;left:0;right:0;font-size:0.72rem;color:#8a7e5e;text-align:center;line-height:1.5;padding:8px 16px;pointer-events:auto; }
-    .auth-policy-footer a { color:#1d1e1d;text-decoration:underline;font-weight:500; }
-    .auth-toggle { text-align:center;margin-top:16px;font-size:0.82rem;color:#1d1e1d; }
-    .auth-toggle a { color:#1d1e1d;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:2px; }
+    .auth-policy { font-size:0.7rem;color:rgba(20,29,28,.55);text-align:center;margin-top:16px;line-height:1.5;padding:0 6px; }
+    .auth-policy a { color:#141d1c;text-decoration:underline;font-weight:500; }
+    .auth-policy-footer { position:absolute;bottom:16px;left:0;right:0;font-size:0.72rem;color:rgba(255,255,255,.8);text-align:center;line-height:1.5;padding:8px 16px;pointer-events:auto; }
+    .auth-policy-footer a { color:#fff;text-decoration:underline;font-weight:600; }
+    .auth-toggle { text-align:center;margin-top:16px;font-size:0.82rem;color:#141d1c; }
+    .auth-toggle a { color:#4e7519;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:2px; }
     .auth-toggle a:hover { opacity:0.75; }
     .auth-error { font-size:0.76rem;color:#c0392b;text-align:center;margin-top:10px;display:none;background:rgba(192,57,43,0.08);padding:8px 12px;border-radius:8px; }
-    /* .auth-wa y .auth-install comparten EXACTAMENTE el mismo tamaño:
-       ancho, alto, padding, border, borde-radius, texto, ícono, line-height.
-       La única diferencia permitida es el color del ícono de WhatsApp (verde). */
-    .auth-wa, .auth-install { width:100%;padding:13px 16px;background:#fff;color:#1d1e1d;border:1px solid #e6dec8;border-radius:14px;font-family:inherit;font-size:0.88rem;font-weight:600;line-height:1.2;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:background 0.15s;text-decoration:none;box-sizing:border-box;margin:0; }
-    .auth-wa:hover, .auth-install:hover { background:#faf6ed; }
-    .auth-wa i, .auth-install i { font-size:18px; line-height:1; }
-    .auth-wa i { color:#25d366; }
 
     /* Ayuda WhatsApp — link discreto al final del modal */
-    .auth-help { text-align:center;margin-top:14px;padding-top:12px;border-top:1px solid #e6dec8;font-size:0.76rem;color:#8a7e5e; }
-    .auth-help a { color:#1d1e1d;font-weight:600;text-decoration:underline;text-underline-offset:2px;margin-left:4px; }
+    .auth-help { text-align:center;margin-top:14px;padding-top:12px;border-top:1px solid #a4b1b9;font-size:0.76rem;color:rgba(20,29,28,.6); }
+    .auth-help a { color:#4e7519;font-weight:600;text-decoration:underline;text-underline-offset:2px;margin-left:4px; }
     .auth-help a:hover { opacity:0.75; }
 
     /* Mobile service modal */
@@ -3001,9 +2998,9 @@
 
         <!-- Paso de verificación por código (oculto hasta que se envíe el código) -->
         <div id="authCodeStep" style="display:none">
-          <div style="text-align:center;font-size:0.82rem;color:#5e5848;line-height:1.45;margin-bottom:12px;padding:10px 14px;background:#f5f0e4;border:1px solid #e6dec8;border-radius:10px">
-            <div style="font-weight:700;color:#1d1e1d;margin-bottom:4px">Verificación de correo</div>
-            Enviamos un código de 6 dígitos a <b id="authCodeEmail" style="color:#1d1e1d"></b>
+          <div style="text-align:center;font-size:0.82rem;color:rgba(20,29,28,.7);line-height:1.45;margin-bottom:12px;padding:10px 14px;background:rgba(3,167,164,.08);border:1px solid rgba(3,167,164,.3);border-radius:10px">
+            <div style="font-weight:700;color:#141d1c;margin-bottom:4px">Verificación de correo</div>
+            Enviamos un código de 6 dígitos a <b id="authCodeEmail" style="color:#141d1c"></b>
           </div>
           <input class="auth-input" id="authCode" placeholder="000000" maxlength="6" autocomplete="one-time-code" inputmode="numeric" style="text-align:center;letter-spacing:10px;font-size:1.3rem;font-weight:800;margin-top:8px" />
           <div style="text-align:center;margin-top:10px;font-size:0.78rem;color:#8a7e5e">
@@ -5496,15 +5493,16 @@
 
       var ov = document.createElement('div');
       ov.id = 'welcomeModal';
-      ov.style.cssText = 'position:fixed;inset:0;background:#eee5d0;z-index:10000001;display:flex;align-items:center;justify-content:center;padding:20px';
-      ov.innerHTML = '<div style="background:#f5f0e4;border:1px solid #e6dec8;border-radius:18px;max-width:380px;width:100%;padding:32px 28px;text-align:center">'
-        + '<div style="width:52px;height:52px;border-radius:50%;background:#1d1e1d;display:flex;align-items:center;justify-content:center;margin:0 auto 18px"><i class="ph ph-check" style="font-size:26px;color:#f5f0e4"></i></div>'
-        + '<div style="font-family:\'Source Serif 4\',serif;font-size:1.5rem;font-weight:600;color:#1d1e1d;margin-bottom:8px;letter-spacing:-0.5px">Cuenta creada</div>'
-        + '<div style="font-size:0.85rem;color:#5e5848;line-height:1.5;margin-bottom:24px">Hola ' + firstName + ', tu cuenta ha sido verificada correctamente. Para activar tu plan y empezar a consultar, comunicate con nuestro equipo.</div>'
+      ov.style.cssText = 'position:fixed;inset:0;background:rgba(20,29,28,.45);backdrop-filter:blur(4px);z-index:10000001;display:flex;align-items:center;justify-content:center;padding:20px';
+      ov.innerHTML = '<div style="background:#ffffff;border:1px solid #a4b1b9;border-radius:18px;max-width:380px;width:100%;padding:32px 28px;text-align:center;position:relative;overflow:hidden">'
+        + '<div style="position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#03a7a4,#8fc72e)"></div>'
+        + '<div style="width:52px;height:52px;border-radius:50%;background:#8fc72e;display:flex;align-items:center;justify-content:center;margin:18px auto 18px"><i class="ph ph-check" style="font-size:26px;color:#141d1c"></i></div>'
+        + '<div style="font-family:inherit;font-size:1.4rem;font-weight:700;color:#141d1c;margin-bottom:8px;letter-spacing:-0.4px">Cuenta creada</div>'
+        + '<div style="font-size:0.85rem;color:rgba(20,29,28,.65);line-height:1.5;margin-bottom:24px">Hola ' + firstName + ', tu cuenta ha sido verificada correctamente. Para activar tu plan y empezar a consultar, comunicate con nuestro equipo.</div>'
         + '<a href="' + waUrl + '" target="_blank" rel="noopener noreferrer" onclick="document.getElementById(\'welcomeModal\').remove()" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#25d366;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:0.92rem;font-weight:700;cursor:pointer;text-decoration:none;margin-bottom:10px">'
         + '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>'
         + 'Activar mi cuenta al 100%</a>'
-        + '<button onclick="document.getElementById(\'welcomeModal\').remove()" style="width:100%;padding:11px;background:transparent;color:#8a7e5e;border:1px solid #d9d0b8;border-radius:10px;font-family:inherit;font-size:0.82rem;font-weight:600;cursor:pointer">Explorar la plataforma</button>'
+        + '<button onclick="document.getElementById(\'welcomeModal\').remove()" style="width:100%;padding:11px;background:transparent;color:rgba(20,29,28,.6);border:1px solid #a4b1b9;border-radius:10px;font-family:inherit;font-size:0.82rem;font-weight:600;cursor:pointer">Explorar la plataforma</button>'
         + '</div>';
       document.body.appendChild(ov);
     }
