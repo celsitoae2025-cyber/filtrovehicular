@@ -1138,6 +1138,7 @@
 
 /* Result panels (Datos / Documentos) */
 .result-panel { padding: 0; overflow: visible; }
+.result-panel:has(.empty-query-state:not([hidden])) { display: none; }
 .result-header {
   display: flex;
   align-items: center;

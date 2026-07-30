@@ -1325,14 +1325,7 @@ button.btn-primary:hover,
 
 /* ── Tarjeta de saldo en el sidebar (llena el hueco entre nav y actions) ── */
 .sb-info-card {
-  margin: 12px 12px;
-  padding: 14px 14px 12px;
-  background: linear-gradient(135deg, #03a7a4 0%, #028f8c 100%);
-  border-radius: 12px;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: none !important;
 }
 .sb-info-card[hidden] { display: none !important; }
 .sb-info-header {

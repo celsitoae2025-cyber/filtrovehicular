@@ -695,12 +695,13 @@ body.confirm-dialog-open { overflow: hidden; }
 /* Cookie banner — cuadro chico abajo a la izquierda (desktop) */
 .cookie-banner {
   position: fixed;
-  left: 16px;
+  left: 0;
+  right: 0;
   bottom: 16px;
-  right: auto;
   z-index: 90;
-  width: 340px;
+  width: 520px;
   max-width: calc(100vw - 32px);
+  margin: 0 auto;
   animation: slide-up .3s cubic-bezier(.2, .8, .2, 1);
 }
 .cookie-banner[hidden] { display: none !important; }
