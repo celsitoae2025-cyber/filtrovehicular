@@ -184,7 +184,7 @@
 .plans-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 8px;
   align-items: start;
 }
 
@@ -193,8 +193,8 @@
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: 12px;
-  padding: 20px;
-  gap: 20px;
+  padding: 14px;
+  gap: 10px;
 }
 
 /* Título de sección */
@@ -205,14 +205,14 @@
   text-transform: uppercase;
   letter-spacing: .5px;
   margin: 0;
-  padding-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--c-border);
 }
 
 @media (max-width: 860px) {
   .plans-columns { grid-template-columns: 1fr; }
 }
-#view-saldo .plans-tier { gap: 14px; }
+#view-saldo .plans-tier { gap: 8px; }
 
 /* Tier header — elegante, con línea divisoria a la derecha */
 #view-saldo .plans-tier-head {

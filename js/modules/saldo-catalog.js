@@ -126,14 +126,14 @@
     return '<button type="button" class="pay-custom" data-open-pay="custom">' +
       '<span class="pay-custom-eyebrow">Elige tu propio monto</span>' +
       '<span class="pay-custom-title">Recarga personalizada</span>' +
-      '<span class="pay-custom-sub">Desde ' + CUSTOM_MIN + ' créditos. Paga solo lo que necesitas.</span>' +
+      '<span class="pay-custom-sub">Desde S/ ' + (CUSTOM_MIN * CUSTOM_RATE) + '. Paga solo lo que necesitas.</span>' +
       '<span class="pay-custom-cta">Configurar</span>' +
     '</button>';
   }
 
   // Tarifa por crédito para la recarga personalizada (basada en el paquete de 4000).
   var CUSTOM_RATE = 0.05;     // S/ por crédito
-  var CUSTOM_MIN  = 100;      // mínimo de créditos
+  var CUSTOM_MIN  = 400;      // mínimo de créditos (= S/ 20)
 
   // ── Modal minimalista para recarga personalizada ─────
   function customModalHTML() {
@@ -158,7 +158,7 @@
             '<span class="rx-summary-val" id="customTotal">S/ 0.00</span>' +
           '</div>' +
           '<a class="rx-cta" id="customPayCTA" href="#" target="_blank" rel="noopener" aria-disabled="true">Confirmar recarga</a>' +
-          '<p class="rx-foot-note">Mínimo ' + CUSTOM_MIN + ' créditos · Tarifa S/ ' + CUSTOM_RATE.toFixed(2) + ' por crédito</p>' +
+          '<p class="rx-foot-note">Mínimo S/ ' + (CUSTOM_MIN * CUSTOM_RATE) + ' (' + CUSTOM_MIN + ' créditos) · Tarifa S/ ' + CUSTOM_RATE.toFixed(2) + ' por crédito</p>' +
         '</div>' +
       '</div>' +
     '</div>';

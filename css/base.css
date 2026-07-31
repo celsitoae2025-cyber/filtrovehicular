@@ -206,14 +206,34 @@ body { background: #d4dade !important; }
 .consumo-row { display: none !important; }
 
 /* ── LAYOUT DE PLANES: 1 columna full width, grid interno adaptable ── */
+#view-saldo { gap: 0 !important; padding: 0 !important; }
+#view-saldo .plans-columns {
+  flex: 0 0 auto !important;
+  align-content: start !important;
+}
 .plans-columns {
   grid-template-columns: 1fr !important;
-  gap: 15px !important;
+  gap: 0 !important;
+}
+.plans-columns > .plans-section {
+  padding: 12px 14px !important;
+  gap: 8px !important;
+  border-radius: 0 !important;
+  border-bottom: none !important;
+}
+.plans-columns > .plans-section:first-child {
+  border-radius: 12px 12px 0 0 !important;
+}
+.plans-columns > .plans-section:last-of-type {
+  border-bottom: 1px solid var(--c-border) !important;
+}
+.plans-columns > .terms-notice {
+  border-radius: 0 0 12px 12px !important;
 }
 #catalogGridCredits {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 12px !important;
+  gap: 4px !important;
 }
 @media (max-width: 960px) {
   #catalogGridCredits { grid-template-columns: repeat(2, 1fr) !important; }
@@ -228,7 +248,7 @@ body { background: #d4dade !important; }
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 26px 20px;
+  padding: 18px 14px;
   background: #ffffff;
   border: 1px solid rgba(20,29,28,.1);
   border-radius: 12px;
@@ -280,7 +300,7 @@ body { background: #d4dade !important; }
   width: 24px;
   height: 1px;
   background: rgba(20,29,28,.15);
-  margin: 10px 0 4px;
+  margin: 6px 0 2px;
 }
 .pk-price {
   font-size: 16px;
@@ -336,7 +356,7 @@ body { background: #d4dade !important; }
   .content > .view:not([hidden]) > .panel.result-panel {
     flex: 1 0 auto !important;
   }
-  .plans-columns { gap: 10px !important; }
+  .plans-columns { gap: 0 !important; }
   .terms-notice { padding: 14px; gap: 10px; }
   .terms-notice-body strong { font-size: 13px; }
   .terms-notice-body p { font-size: 12px; }
@@ -374,7 +394,7 @@ body { background: #d4dade !important; }
   align-items: flex-start;
   gap: 4px;
   width: 100%;
-  padding: 22px 26px;
+  padding: 16px 18px;
   background: #ffffff;
   border: 1px dashed rgba(20,29,28,.2);
   border-radius: 12px;
