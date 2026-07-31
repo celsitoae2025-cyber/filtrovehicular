@@ -411,6 +411,56 @@
     });
   }
 
+  /* ── Marca de agua institucional ──────────────────────────────────
+     Sella la esquina inferior derecha de una foto biométrica con un
+     rectángulo del color institucional FV+ y el texto "Filtro
+     Vehicular+" encima — tapa la marca del proveedor de datos
+     original antes de mostrar/descargar la imagen. */
+  function applyWatermark(base64, mimeType) {
+    return new Promise(function (resolve) {
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var c = document.createElement('canvas');
+          c.width = img.naturalWidth;
+          c.height = img.naturalHeight;
+          var ctx = c.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          var w = c.width, h = c.height;
+          var boxW = Math.round(w * 0.45);
+          var boxH = Math.round(h * 0.065);
+          var bx = w - boxW, by = h - boxH;
+          ctx.fillStyle = '#141d1c';
+          ctx.fillRect(bx, by, boxW, boxH);
+          var fontSize = Math.max(13, Math.round(boxH * 0.55));
+          ctx.font = 'bold ' + fontSize + 'px sans-serif';
+          ctx.fillStyle = '#ffffff';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('Filtro Vehicular+', bx + boxW / 2, by + boxH / 2);
+          resolve(c.toDataURL('image/jpeg', 0.95).split(',')[1]);
+        } catch (e) {
+          resolve(base64);
+        }
+      };
+      img.onerror = function () { resolve(base64); };
+      img.src = 'data:' + (mimeType || 'image/jpeg') + ';base64,' + base64;
+    });
+  }
+
+  // Sella todas las fotos "biométricas" normales de medios (tipo photo,
+  // NO candidatos de reconocimiento facial — esos se muestran sin sellar,
+  // igual que en VeriNexo) mutando su base64 in-place. Se llama una vez
+  // antes de renderResultado() para que tanto la galería como el PDF
+  // autogenerado usen la versión ya sellada.
+  function applyWatermarksToPhotos(medios) {
+    var targets = (medios || []).filter(function (m) { return m.tipo === 'photo' && !m.esCandidato; });
+    if (!targets.length) return Promise.resolve();
+    return Promise.all(targets.map(function (m) {
+      return applyWatermark(m.base64, m.mimeType).then(function (b64) { m.base64 = b64; });
+    }));
+  }
+
   function renderGallery(titulo, photos) {
     var parts = [];
     if (titulo) parts.push('<div class="cr-tit">' + escapeHtml(titulo) + '</div>');
@@ -713,6 +763,62 @@
     return '<div class="cr-btn-layout">' + parts.join('') + '</div>';
   }
 
+  /* ── Galería de candidatos (reconocimiento facial) ────────────────
+     Cada botón/candidato con su propia foto extraída del PDF (ver
+     enrich.js del bridge). Reusa la clase .cr-btn-option para que
+     wireResultButtons() (category-view.js) enganche el click sin
+     cambios — solo se agrega la foto arriba del botón. */
+  function renderCandidateList(p, botones, candidatos) {
+    var parts = [];
+    if (p && p.titulo) parts.push('<div class="cr-tit">' + escapeHtml(p.titulo) + '</div>');
+    parts.push('<div class="cr-candidate-grid">');
+    botones.forEach(function (b, i) {
+      var foto = candidatos[i];
+      var src = foto ? ('data:' + (foto.mimeType || 'image/jpeg') + ';base64,' + foto.base64) : '';
+      parts.push('<div class="cr-candidate-card">');
+      parts.push(
+        foto
+          ? '<img class="cr-candidate-photo" src="' + src + '" alt="' + escapeHtml(b.text) + '" data-full="' + src + '">'
+          : '<div class="cr-candidate-photo cr-candidate-photo-empty"></div>'
+      );
+      parts.push('<div class="cr-candidate-body">');
+      parts.push('<span class="cr-candidate-label">' + escapeHtml(b.text) + '</span>');
+      parts.push(
+        '<button type="button" class="cr-btn-option cr-candidate-select" ' +
+          'data-msgid="' + escapeHtml(String(b.msgId)) + '" data-callback="' + escapeHtml(b.data) + '">' +
+          'Ver detalle</button>'
+      );
+      parts.push('</div></div>');
+    });
+    parts.push('</div>');
+    parts.push('<div class="cr-btn-result-area" hidden></div>');
+    return '<div class="cr-candidate-layout">' + parts.join('') + '</div>';
+  }
+
+  /* ── Lightbox simple para ampliar una foto a pantalla completa ────── */
+  function openLightbox(src) {
+    var el = document.getElementById('cr-lightbox');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'cr-lightbox';
+      el.className = 'cr-lightbox';
+      el.innerHTML = '<div class="cr-lightbox-backdrop"></div>' +
+        '<button type="button" class="cr-lightbox-close" aria-label="Cerrar">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+        '</button>' +
+        '<img class="cr-lightbox-img" alt="">';
+      document.body.appendChild(el);
+    }
+    el.querySelector('.cr-lightbox-img').src = src;
+    el.hidden = false;
+    document.body.classList.add('cr-lightbox-open');
+  }
+  function closeLightbox() {
+    var el = document.getElementById('cr-lightbox');
+    if (el) el.hidden = true;
+    document.body.classList.remove('cr-lightbox-open');
+  }
+
   /* â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   Consultia.RenderHelpers = {
     esErrorTecnico:          esErrorTecnico,
@@ -739,6 +845,9 @@
     renderDataWithMedia:     renderDataWithMedia,
     renderPdfPreview:        renderPdfPreview,
     renderButtonList:        renderButtonList,
+    applyWatermark:          applyWatermark,
+    applyWatermarksToPhotos: applyWatermarksToPhotos,
+    renderCandidateList:     renderCandidateList,
   };
 
   // Compat: category-view.js lo expone en Consultia.renderPdfIntoContainer
@@ -746,6 +855,13 @@
 
   /* â”€â”€ Delegación global: toggles "Ver detalles" / "Cerrar detalles" â”€â”€ */
   document.addEventListener('click', function (e) {
+    // Lightbox de candidatos faciales
+    var photo = e.target.closest('.cr-candidate-photo[data-full]');
+    if (photo) { openLightbox(photo.getAttribute('data-full')); return; }
+    if (e.target.closest('.cr-lightbox-close') || e.target.closest('.cr-lightbox-backdrop')) {
+      closeLightbox();
+      return;
+    }
     // Toggle abrir/cerrar
     var toggle = e.target.closest('.cr-btn-details-toggle');
     if (toggle) {

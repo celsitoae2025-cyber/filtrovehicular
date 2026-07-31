@@ -2331,6 +2331,73 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 .cr-gallery.cr-gallery-4-dni .cr-photo-face {
   min-height: 100%;
 }
+/* ===== Galería de candidatos (reconocimiento facial) ===== */
+.cr-candidate-layout { padding: 16px; }
+.cr-candidate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+.cr-candidate-card {
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--c-surface);
+  box-shadow: none;
+}
+.cr-candidate-photo {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+  background: var(--c-bg);
+  cursor: zoom-in;
+  display: block;
+}
+.cr-candidate-photo-empty { cursor: default; }
+.cr-candidate-body { padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; }
+.cr-candidate-label { font-size: 12.5px; font-weight: 700; color: var(--c-primary); }
+.cr-candidate-select { width: 100%; }
+
+/* ===== Lightbox — ampliar foto de candidato a pantalla completa ===== */
+.cr-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cr-lightbox[hidden] { display: none; }
+.cr-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 29, 28, .85);
+}
+.cr-lightbox-img {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: none;
+}
+.cr-lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: #141d1c;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+body.cr-lightbox-open { overflow: hidden; }
+
 .cr-docs { display: flex; flex-direction: column; gap: 8px; padding: 14px 40px 20px 60px; }
 .cr-pdf {
   display: inline-flex;

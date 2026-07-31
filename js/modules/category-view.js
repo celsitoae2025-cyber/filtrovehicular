@@ -50,6 +50,8 @@
   var renderButtonList        = H.renderButtonList;
   var applyDniLayout          = H.applyDniLayout;
   var mediaCountClass         = H.mediaCountClass;
+  var applyWatermarksToPhotos = H.applyWatermarksToPhotos;
+  var renderCandidateList     = H.renderCandidateList;
 
   function bindGlobalComboListeners() {
     if (_globalBound) return;
@@ -316,8 +318,10 @@
       // Liberar blob URLs de resultados anteriores
       revokeActiveBlobUrls();
       var p = resp.parsed || {};
-      var pdfs    = (p.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
-      var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
+      var pdfs       = (p.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
+      var allPhotos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
+      var candidatos = allPhotos.filter(function (m) { return m.esCandidato; });
+      var photos     = allPhotos.filter(function (m) { return !m.esCandidato; });
       var botones = p.botones || [];
       var hasData = (p.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
       var hasMedia = pdfs.length > 0 || photos.length > 0;
@@ -326,6 +330,8 @@
       var html;
       if (esErrorTecnicoRespuesta(p, resp)) {
         html = htmlMantenimiento();
+      } else if (botones.length > 0 && candidatos.length > 0) {
+        html = renderCandidateList(p, botones, candidatos);
       } else if (botones.length > 0 && !hasMedia) {
         html = renderButtonList(p, botones);
       } else if (pdfs.length > 0) {
@@ -355,7 +361,7 @@
 
       body.innerHTML = html;
       body.hidden = false;
-      if (botones.length > 0 && !hasMedia) wireResultButtons(body);
+      if (botones.length > 0 && (candidatos.length > 0 || !hasMedia)) wireResultButtons(body);
 
       // Auto-generar informe PDF y mostrar preview (sin texto crudo)
       var reportArea = document.getElementById(prefix + '-report-area');
@@ -622,6 +628,9 @@
         var resp = await Consultia.ConsultaRunner.ejecutarConsultaConCobro(
           user.id, currentConsulta, valor, photoOpts ? { photo: photoOpts } : undefined
         );
+        if (resp && resp.parsed && resp.parsed.medios) {
+          await applyWatermarksToPhotos(resp.parsed.medios);
+        }
         renderResultado(resp, valor);
         if (Consultia.SearchHistory && valor) Consultia.SearchHistory.add(valor, categoria);
         if (Consultia.Favorites && Consultia.Favorites.injectStar) {
