@@ -15,6 +15,7 @@ Datos que pueblan tablas de configuración (catálogo de consultas disponibles, 
 | `premium_catalog_seed.sql` | `consultas_catalog` | Datos finales del catálogo premium ya curado. |
 | `seed_ghostdataxxx.sql` | `consultas_catalog` | Reemplaza por completo reniec, familiares, telefonia, sunarp, sunat, financiero, delitos, migraciones, estudios, mtc y seeker con el catálogo de @GHOSTDATAXXX_BOT (bot_id='ghostdataxxx'). Vacía certificados, actas, vip y facial (sin reemplazo). No toca 'vehiculos' ni 'filter'. |
 | `seed_ghostdataxxx_extras.sql` | `consultas_catalog` | Corre DESPUÉS de `seed_ghostdataxxx.sql`. Elimina los tabs sueltos de estudios/seeker/mtc/migraciones y consolida todo (+ MTPE, SIS, Essalud) en un único tab `extras`, ubicado al final del sidebar (sin el submenú colapsable "Extras" que antes envolvía todas las categorías). |
+| `seed_ghostdataxxx_reniec_completo.sql` | `consultas_catalog` | Agrega "Reniec Datos Completos" (`/dnit`) al tope del tab Reniec (orden=5, antes de las demás). |
 
 ## Orden recomendado
 
