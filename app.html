@@ -289,11 +289,6 @@
           <span class="label">Vehículos</span>
         </button>
 
-        <button class="nav-item nav-category" data-nav="certificados" data-tooltip="Certificados" type="button">
-          <svg class="ico"><use href="#i-cert"/></svg>
-          <span class="label">Certificados</span>
-        </button>
-
         <button class="nav-item nav-category" data-nav="estudios" data-tooltip="Estudios" type="button">
           <svg class="ico"><use href="#i-graduation"/></svg>
           <span class="label">Estudios</span>
@@ -317,21 +312,6 @@
         <button class="nav-item nav-category" data-nav="mtc" data-tooltip="MTC" type="button">
           <svg class="ico"><use href="#i-license"/></svg>
           <span class="label">MTC</span>
-        </button>
-
-        <button class="nav-item nav-category" data-nav="actas" data-tooltip="Actas" type="button">
-          <svg class="ico"><use href="#i-scroll"/></svg>
-          <span class="label">Actas</span>
-        </button>
-
-        <button class="nav-item nav-category" data-nav="vip" data-tooltip="VIP" type="button">
-          <svg class="ico"><use href="#i-gem"/></svg>
-          <span class="label">VIP</span>
-        </button>
-
-        <button class="nav-item nav-category" data-nav="facial" data-tooltip="Reconocimiento facial" type="button">
-          <svg class="ico ico-bold"><use href="#i-face"/></svg>
-          <span class="label">Facial</span>
         </button>
 
         <button class="nav-item nav-category" data-nav="migraciones" data-tooltip="Internacional" type="button">
@@ -579,87 +559,6 @@
         </div>
 
       </aside>
-
-      <!-- VISTA: Reconocimiento facial -->
-      <section class="view" id="view-facial" hidden>
-        <div class="selector-card">
-          <span class="selector-label">Seleccione una opción</span>
-          <div class="combo" id="facialCombo">
-            <button class="combo-trigger" id="facialComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-              <span class="combo-text" id="facialComboText">Cargando consultas…</span>
-              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="combo-panel" id="facialComboPanel" role="listbox">
-              <div class="combo-empty">No hay consultas disponibles.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <p class="panel-desc" id="facial-desc">Selecciona una consulta para ver su descripción.</p>
-
-          <div class="consumo-row">
-            <span class="consumo-label">Consumo</span>
-            <span class="credits-badge credits-success">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
-              <span id="facial-credits">—</span>
-            </span>
-          </div>
-
-          <div class="facial-dropzone" id="facial-dropzone">
-            <input type="file" id="facial-file" accept="image/jpeg,image/png" hidden>
-            <div class="facial-dropzone-inner" id="facial-dropzone-placeholder">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <circle cx="9" cy="9" r="2"/>
-                <path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>
-              </svg>
-              <h4 class="facial-dropzone-title">Sube una foto</h4>
-              <p class="facial-dropzone-sub">Arrastra y suelta, o <span class="facial-dropzone-browse">haz click para elegir</span></p>
-              <p class="facial-dropzone-hint">Formatos aceptados: JPG o PNG</p>
-            </div>
-            <div class="facial-dropzone-preview" id="facial-dropzone-preview" hidden>
-              <img id="facial-preview-img" alt="Vista previa">
-              <div class="facial-dropzone-info">
-                <span class="facial-dropzone-filename" id="facial-preview-name">—</span>
-                <button type="button" class="facial-dropzone-remove" id="facial-remove-btn" aria-label="Quitar imagen">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <button class="btn btn-primary btn-block" type="button" id="facial-consultar" disabled>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              Consultar
-            </button>
-          </div>
-        </div>
-
-        <section class="panel result-panel">
-          <header class="result-header">
-            <div class="result-header-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <h3 id="facial-result-title">Resultado</h3>
-              <span class="status-chip status-empty" id="facialResultStatus">
-                <span class="status-dot"></span>
-                Esperando consulta
-              </span>
-            </div>
-          </header>
-
-          <div class="empty-query-state" id="facial-empty">
-            <h4 class="empty-title">Realice una consulta</h4>
-            <p class="empty-desc" id="facial-empty-desc">Sube una foto para realizar el reconocimiento.</p>
-            <span class="empty-chip">
-              <span id="facial-empty-credits">Selecciona una consulta para ver su costo.</span>
-            </span>
-          </div>
-
-          <div class="reniec-result-body" id="facial-result-body" hidden></div>
-        </section>
-      </section>
 
       <!-- VISTA: Vehículos -->
       <section class="view" id="view-vehiculos" hidden>
@@ -1188,65 +1087,6 @@
         </section>
       </section>
 
-      <!-- VISTA: VIP -->
-      <section class="view" id="view-vip" hidden>
-        <div class="selector-card">
-          <span class="selector-label">Seleccione una opción</span>
-          <div class="combo" id="vipCombo">
-            <button class="combo-trigger" id="vipComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-              <span class="combo-text" id="vipComboText">Cargando consultas…</span>
-              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="combo-panel" id="vipComboPanel" role="listbox">
-              <div class="combo-empty">No hay consultas disponibles.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <p class="panel-desc" id="vip-desc">Selecciona una consulta para ver su descripción.</p>
-
-          <div class="consumo-row">
-            <span class="consumo-label">Consumo</span>
-            <span class="credits-badge credits-success">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
-              <span id="vip-credits">—</span>
-            </span>
-          </div>
-
-          <div class="form-row">
-            <input type="text" class="input" id="vip-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
-            <button class="btn btn-primary" type="button" id="vip-consultar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              Consultar
-            </button>
-          </div>
-        </div>
-
-        <section class="panel result-panel">
-          <header class="result-header">
-            <div class="result-header-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gem"/></svg>
-              <h3 id="vip-result-title">Resultado</h3>
-              <span class="status-chip status-empty" id="vipResultStatus">
-                <span class="status-dot"></span>
-                Esperando consulta
-              </span>
-            </div>
-          </header>
-
-          <div class="empty-query-state" id="vip-empty">
-            <h4 class="empty-title">Consulta agregada premium</h4>
-            <p class="empty-desc" id="vip-empty-desc">Ingrese el DNI para obtener información cruzada de RENIEC, MINSA, OSIPTEL, SUNARP, SISFOH y SUNAT.</p>
-            <span class="empty-chip">
-              <span id="vip-empty-credits">Selecciona una consulta para ver su costo.</span>
-            </span>
-          </div>
-
-          <div class="reniec-result-body" id="vip-result-body" hidden></div>
-        </section>
-      </section>
-
       <!-- VISTA: Telefonía -->
       <section class="view" id="view-telefonia" hidden>
         <div class="selector-card">
@@ -1362,120 +1202,6 @@
           </div>
 
           <div class="reniec-result-body" id="familiares-result-body" hidden></div>
-        </section>
-      </section>
-
-      <!-- VISTA: Certificados -->
-      <section class="view" id="view-certificados" hidden>
-        <div class="selector-card">
-          <span class="selector-label">Seleccione una opción</span>
-          <div class="combo" id="certificadosCombo">
-            <button class="combo-trigger" id="certificadosComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-              <span class="combo-text" id="certificadosComboText">Cargando consultas…</span>
-              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="combo-panel" id="certificadosComboPanel" role="listbox">
-              <div class="combo-empty">No hay consultas disponibles.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <p class="panel-desc" id="certificados-desc">Selecciona una consulta para ver su descripción.</p>
-
-          <div class="consumo-row">
-            <span class="consumo-label">Consumo</span>
-            <span class="credits-badge credits-success">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
-              <span id="certificados-credits">—</span>
-            </span>
-          </div>
-
-          <div class="form-row">
-            <input type="text" class="input" id="certificados-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
-            <button class="btn btn-primary" type="button" id="certificados-consultar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              Consultar
-            </button>
-          </div>
-        </div>
-
-        <section class="panel result-panel">
-          <header class="result-header">
-            <div class="result-header-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <h3 id="certificados-result-title">Resultado</h3>
-              <span class="status-chip status-empty" id="certificadosResultStatus">
-                <span class="status-dot"></span>
-                Esperando consulta
-              </span>
-            </div>
-          </header>
-
-          <div class="empty-query-state" id="certificados-empty">
-            <h4 class="empty-title">Realice una consulta</h4>
-            <p class="empty-desc" id="certificados-empty-desc">Ingrese el DNI para obtener el certificado.</p>
-            <span class="empty-chip">
-              <span id="certificados-empty-credits">Selecciona una consulta para ver su costo.</span>
-            </span>
-          </div>
-
-          <div class="reniec-result-body" id="certificados-result-body" hidden></div>
-        </section>
-      </section>
-
-      <!-- VISTA: Actas -->
-      <section class="view" id="view-actas" hidden>
-        <div class="selector-card">
-          <span class="selector-label">Seleccione una opción</span>
-          <div class="combo" id="actasCombo">
-            <button class="combo-trigger" id="actasComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-              <span class="combo-text" id="actasComboText">Cargando consultas…</span>
-              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="combo-panel" id="actasComboPanel" role="listbox">
-              <div class="combo-empty">No hay consultas disponibles.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <p class="panel-desc" id="actas-desc">Selecciona una consulta para ver su descripción.</p>
-          <div class="consumo-row">
-            <span class="consumo-label">Consumo</span>
-            <span class="credits-badge credits-success">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
-              <span id="actas-credits">—</span>
-            </span>
-          </div>
-          <div class="form-row">
-            <input type="text" class="input" id="actas-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
-            <button class="btn btn-primary" type="button" id="actas-consultar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              Consultar
-            </button>
-          </div>
-        </div>
-
-        <section class="panel result-panel">
-          <header class="result-header">
-            <div class="result-header-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <h3 id="actas-result-title">Resultado</h3>
-              <span class="status-chip status-empty" id="actasResultStatus">
-                <span class="status-dot"></span>
-                Esperando consulta
-              </span>
-            </div>
-          </header>
-          <div class="empty-query-state" id="actas-empty">
-            <h4 class="empty-title">Realice una consulta</h4>
-            <p class="empty-desc" id="actas-empty-desc">Ingrese el DNI para obtener el acta.</p>
-            <span class="empty-chip">
-              <span id="actas-empty-credits">Selecciona una consulta para ver su costo.</span>
-            </span>
-          </div>
-          <div class="reniec-result-body" id="actas-result-body" hidden></div>
         </section>
       </section>
 
@@ -2011,10 +1737,6 @@
             <p class="anon-cats-sub">Más de 60 consultas oficiales. Crea tu cuenta y recibe <strong>5 créditos gratis</strong> para probar.</p>
           </header>
           <div class="anon-cats-grid">
-            <button class="anon-cat-card" type="button" data-nav="facial">
-              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span>
-              <span class="anon-cat-text"><strong>Facial</strong><span>Reconocimiento por foto</span></span>
-            </button>
             <button class="anon-cat-card" type="button" data-nav="vehiculos">
               <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l2-6h14l2 6"/><circle cx="7" cy="16" r="2"/><circle cx="17" cy="16" r="2"/><path d="M5 16h-2v-3h2"/><path d="M19 16h2v-3h-2"/></svg></span>
               <span class="anon-cat-text"><strong>Vehículos</strong><span>Datos por placa</span></span>
@@ -2046,14 +1768,6 @@
             <button class="anon-cat-card" type="button" data-nav="familiares">
               <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M14 20a4 4 0 0 1 7 0"/></svg></span>
               <span class="anon-cat-text"><strong>Familiares</strong><span>Árbol genealógico</span></span>
-            </button>
-            <button class="anon-cat-card" type="button" data-nav="certificados">
-              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l4 4v16H6z"/><path d="M9 13l2 2 4-4"/></svg></span>
-              <span class="anon-cat-text"><strong>Certificados</strong><span>Antecedentes penales</span></span>
-            </button>
-            <button class="anon-cat-card" type="button" data-nav="actas">
-              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span>
-              <span class="anon-cat-text"><strong>Actas</strong><span>Nacimiento, matrimonio</span></span>
             </button>
             <button class="anon-cat-card" type="button" data-nav="delitos">
               <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z"/><path d="M12 8v4M12 16h.01"/></svg></span>
@@ -2572,16 +2286,12 @@
 <script src="js/modules/estudios.js"></script>
 <script src="js/modules/mtc.js"></script>
 <script src="js/modules/seeker.js"></script>
-<script src="js/modules/vip.js"></script>
 <script src="js/modules/telefonia.js"></script>
 <script src="js/modules/familiares.js"></script>
-<script src="js/modules/certificados.js"></script>
-<script src="js/modules/actas.js"></script>
 <script src="js/modules/delitos.js"></script>
 <script src="js/modules/laboral.js"></script>
 <script src="js/modules/vehiculos.js"></script>
 <script src="js/modules/sunarp.js"></script>
-<script src="js/modules/facial.js"></script>
 <script src="js/modules/migraciones.js"></script>
 <script src="js/modules/extras.js"></script>
 <script src="js/modules/premium.js?v=4"></script>
