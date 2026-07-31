@@ -575,17 +575,15 @@
       var blobUrl = base64ToBlobUrl(m.base64, mime);
       var fn = m.filename || ('documento-' + (i + 1) + '.pdf');
       var titulo = pdfs.length > 1 ? ('Documento ' + (i + 1)) : 'Documento adjunto';
-      var cid = (uniqPrefix || 'rh') + '-doc-' + Date.now() + '-' + i;
       parts.push(
         '<div class="cr-doccard">' +
           '<div class="cr-doccard-head">' +
             '<span class="cr-doccard-tit">' + escapeHtml(titulo) + '</span>' +
             '<div class="cr-doccard-actions">' +
-              '<button type="button" class="cr-doccard-view" data-target="' + cid + '" data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '">Visualizar</button>' +
+              '<button type="button" class="cr-doccard-view" data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '">Visualizar</button>' +
               '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">Descargar</a>' +
             '</div>' +
           '</div>' +
-          '<div class="cr-doccard-viewer" id="' + cid + '" hidden></div>' +
         '</div>'
       );
     });
@@ -960,6 +958,48 @@
     document.body.classList.remove('cr-lightbox-open');
   }
 
+  /* ── Modal flotante para ver el PDF completo (visor nativo del navegador) ── */
+  function openPdfModal(src, fileName) {
+    var el = document.getElementById('cr-pdf-modal');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'cr-pdf-modal';
+      el.className = 'cr-pdf-modal';
+      el.innerHTML = '<div class="cr-pdf-modal-backdrop"></div>' +
+        '<div class="cr-pdf-modal-panel">' +
+          '<div class="cr-pdf-modal-header">' +
+            '<span class="cr-pdf-modal-name"></span>' +
+            '<div class="cr-pdf-modal-actions">' +
+              '<a class="cr-pdf-modal-dl" download="">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+                '<span>Descargar</span>' +
+              '</a>' +
+              '<button type="button" class="cr-pdf-modal-close" aria-label="Cerrar">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+                '<span>Cerrar</span>' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+          '<iframe class="cr-pdf-modal-frame" title="Documento PDF"></iframe>' +
+        '</div>';
+      document.body.appendChild(el);
+    }
+    el.querySelector('.cr-pdf-modal-frame').src = src;
+    var dlBtn = el.querySelector('.cr-pdf-modal-dl');
+    dlBtn.href = src;
+    dlBtn.download = fileName || 'documento.pdf';
+    el.querySelector('.cr-pdf-modal-name').textContent = fileName || 'Documento PDF';
+    el.hidden = false;
+    document.body.classList.add('cr-lightbox-open');
+  }
+  function closePdfModal() {
+    var el = document.getElementById('cr-pdf-modal');
+    if (!el) return;
+    el.hidden = true;
+    el.querySelector('.cr-pdf-modal-frame').src = 'about:blank';
+    document.body.classList.remove('cr-lightbox-open');
+  }
+
   /* â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   Consultia.RenderHelpers = {
     esErrorTecnico:          esErrorTecnico,
@@ -1006,20 +1046,15 @@
       closeLightbox();
       return;
     }
-    // Tarjeta de documento: "Visualizar" abre/cierra un visor lazy (solo
-    // renderiza el PDF con PDF.js la primera vez que se abre).
+    // Tarjeta de documento: "Visualizar" abre el PDF completo en un modal
+    // flotante (visor nativo del navegador vía iframe).
     var docToggle = e.target.closest('.cr-doccard-view');
     if (docToggle) {
-      var dtid = docToggle.getAttribute('data-target');
-      var dbody = document.getElementById(dtid);
-      if (!dbody) return;
-      var dopen = dbody.hidden;
-      dbody.hidden = !dopen;
-      docToggle.textContent = dopen ? 'Ocultar' : 'Visualizar';
-      if (dopen && !dbody.dataset.rendered) {
-        dbody.dataset.rendered = '1';
-        renderPdfIntoContainer(dbody, docToggle.getAttribute('data-blob'), docToggle.getAttribute('data-fn'));
-      }
+      openPdfModal(docToggle.getAttribute('data-blob'), docToggle.getAttribute('data-fn'));
+      return;
+    }
+    if (e.target.closest('.cr-pdf-modal-close') || e.target.closest('.cr-pdf-modal-backdrop')) {
+      closePdfModal();
       return;
     }
     // Toggle abrir/cerrar

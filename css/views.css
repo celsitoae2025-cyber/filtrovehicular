@@ -1193,8 +1193,6 @@
   background: var(--c-primary); text-decoration: none;
   padding: 8px 16px; border-radius: 4px;
 }
-.cr-doccard-viewer { border-top: 1px solid var(--c-border); min-height: 200px; }
-.cr-doccard-viewer[hidden] { display: none; }
 
 /* Lista de datos */
 .data-list { display: flex; flex-direction: column; margin: 0; padding: 0; }
@@ -2488,6 +2486,82 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   cursor: pointer;
 }
 body.cr-lightbox-open { overflow: hidden; }
+
+/* ===== Modal PDF — visor flotante con el navegador nativo ===== */
+.cr-pdf-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.cr-pdf-modal[hidden] { display: none; }
+.cr-pdf-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 29, 28, .85);
+}
+.cr-pdf-modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  height: 100%;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: none;
+}
+.cr-pdf-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--c-primary);
+  flex-shrink: 0;
+}
+.cr-pdf-modal-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cr-pdf-modal-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.cr-pdf-modal-dl,
+.cr-pdf-modal-close {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  font-family: inherit;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.cr-pdf-modal-dl svg,
+.cr-pdf-modal-close svg { width: 15px; height: 15px; flex-shrink: 0; }
+.cr-pdf-modal-dl { background: var(--c-accent); color: #ffffff; }
+.cr-pdf-modal-close { background: rgba(255,255,255,.12); color: #ffffff; }
+.cr-pdf-modal-frame {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: #525659;
+}
+@media (max-width: 640px) {
+  .cr-pdf-modal { padding: 0; }
+  .cr-pdf-modal-panel { max-width: none; max-height: none; border-radius: 0; }
+}
 
 .cr-docs { display: flex; flex-direction: column; gap: 8px; padding: 14px 40px 20px 60px; }
 .cr-pdf {
