@@ -52,6 +52,7 @@
   var mediaCountClass         = H.mediaCountClass;
   var renderFacialHero        = H.renderFacialHero;
   var renderTabla             = H.renderTabla;
+  var renderDocumentCard      = H.renderDocumentCard;
 
   function bindGlobalComboListeners() {
     if (_globalBound) return;
@@ -341,12 +342,17 @@
         html = renderTabla(p.tabla);
       } else if (botones.length > 0 && !hasMedia) {
         html = renderButtonList(p, botones);
-      } else if (pdfs.length > 0) {
-        html = renderPdfPreview(p, pdfs, hasData, prefix);
       } else if (hasData || photos.length > 0) {
-        // Datos visibles de inmediato (tabla + fotos al costado); el PDF
+        // Datos visibles de inmediato (tabla + fotos al costado); si además
+        // vino un PDF, se agrega como tarjeta "Documento adjunto" debajo
+        // (Visualizar/Descargar) — igual que VeriNexo, nunca se esconden
+        // los datos detrás del visor de PDF. El PDF propio (autogenerado)
         // se genera aparte, en segundo plano, sin bloquear la vista.
-        html = renderDataWithMedia(p, photos);
+        html = renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
+      } else if (pdfs.length > 0) {
+        // Sin datos parseables: el PDF es todo el contenido, mostrar el
+        // visor completo embebido.
+        html = renderPdfPreview(p, pdfs, hasData, prefix);
       } else {
         var rawText = (p.raw || '').trim();
         rawText = rawText.replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();

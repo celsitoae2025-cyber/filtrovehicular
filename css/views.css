@@ -1175,6 +1175,27 @@
 .cr-download-report-btn svg { width: 15px; height: 15px; }
 .cr-download-report-btn:hover { background: #7ab324; }
 
+/* ===== Tarjeta "Documento adjunto" (Visualizar/Descargar) ===== */
+.cr-doccards { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+.cr-doccard { border: 1px solid var(--c-border); border-radius: 8px; overflow: hidden; background: var(--c-surface); box-shadow: none; }
+.cr-doccard-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; flex-wrap: wrap; }
+.cr-doccard-tit { font-size: 13px; font-weight: 700; color: var(--c-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cr-doccard-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.cr-doccard-view {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 400; color: var(--c-primary);
+  background: #ffffff; border: 1px solid var(--c-primary);
+  cursor: pointer; padding: 8px 16px; border-radius: 4px;
+}
+.cr-doccard-dl {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 400; color: #ffffff;
+  background: var(--c-primary); text-decoration: none;
+  padding: 8px 16px; border-radius: 4px;
+}
+.cr-doccard-viewer { border-top: 1px solid var(--c-border); min-height: 200px; }
+.cr-doccard-viewer[hidden] { display: none; }
+
 /* Lista de datos */
 .data-list { display: flex; flex-direction: column; margin: 0; padding: 0; }
 .data-row {

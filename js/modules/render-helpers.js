@@ -561,6 +561,38 @@
     return parts.join('');
   }
 
+  // Tarjeta simple "Documento adjunto" — Visualizar (visor lazy, colapsable)
+  // + Descargar. Se usa cuando YA hay datos mostrados como filas/tabla y el
+  // PDF es solo un adjunto extra, no el contenido principal — mismo patrón
+  // que VeriNexo (tarjeta "Documento PDF" con Visualizar/Descargar, en vez
+  // del visor grande embebido de renderPdfPreview).
+  function renderDocumentCard(pdfs, uniqPrefix) {
+    if (!pdfs || !pdfs.length) return '';
+    var parts = [];
+    parts.push('<div class="cr-doccards">');
+    pdfs.forEach(function (m, i) {
+      var mime = m.mimeType || 'application/pdf';
+      var blobUrl = base64ToBlobUrl(m.base64, mime);
+      var fn = m.filename || ('documento-' + (i + 1) + '.pdf');
+      var titulo = pdfs.length > 1 ? ('Documento ' + (i + 1)) : 'Documento adjunto';
+      var cid = (uniqPrefix || 'rh') + '-doc-' + Date.now() + '-' + i;
+      parts.push(
+        '<div class="cr-doccard">' +
+          '<div class="cr-doccard-head">' +
+            '<span class="cr-doccard-tit">' + escapeHtml(titulo) + '</span>' +
+            '<div class="cr-doccard-actions">' +
+              '<button type="button" class="cr-doccard-view" data-target="' + cid + '" data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '">Visualizar</button>' +
+              '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">Descargar</a>' +
+            '</div>' +
+          '</div>' +
+          '<div class="cr-doccard-viewer" id="' + cid + '" hidden></div>' +
+        '</div>'
+      );
+    });
+    parts.push('</div>');
+    return parts.join('');
+  }
+
   function renderPdfPreview(p, pdfs, hasData, uniqPrefix) {
     var parts = [];
     var wrapClass = hasData ? 'cr-pdf-split' : 'cr-pdf-nosplit';
@@ -958,6 +990,7 @@
     applyWatermarksToPhotos: applyWatermarksToPhotos,
     renderFacialHero:        renderFacialHero,
     renderTabla:             renderTabla,
+    renderDocumentCard:      renderDocumentCard,
     columnaValor:            columnaValor,
   };
 
@@ -971,6 +1004,22 @@
     if (photo) { openLightbox(photo.getAttribute('data-full')); return; }
     if (e.target.closest('.cr-lightbox-close') || e.target.closest('.cr-lightbox-backdrop')) {
       closeLightbox();
+      return;
+    }
+    // Tarjeta de documento: "Visualizar" abre/cierra un visor lazy (solo
+    // renderiza el PDF con PDF.js la primera vez que se abre).
+    var docToggle = e.target.closest('.cr-doccard-view');
+    if (docToggle) {
+      var dtid = docToggle.getAttribute('data-target');
+      var dbody = document.getElementById(dtid);
+      if (!dbody) return;
+      var dopen = dbody.hidden;
+      dbody.hidden = !dopen;
+      docToggle.textContent = dopen ? 'Ocultar' : 'Visualizar';
+      if (dopen && !dbody.dataset.rendered) {
+        dbody.dataset.rendered = '1';
+        renderPdfIntoContainer(dbody, docToggle.getAttribute('data-blob'), docToggle.getAttribute('data-fn'));
+      }
       return;
     }
     // Toggle abrir/cerrar
