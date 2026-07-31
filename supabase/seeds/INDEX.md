@@ -13,6 +13,7 @@ Datos que pueblan tablas de configuración (catálogo de consultas disponibles, 
 | `seed_all_missing.sql` | `consultas_catalog` | Re-inserta cualquier consulta del catálogo que se haya perdido (usado tras refactors). |
 | `premium_catalog_template.sql` | `consultas_catalog` | Plantilla base de las consultas premium (las que requieren plan Profesional Plus / Business). |
 | `premium_catalog_seed.sql` | `consultas_catalog` | Datos finales del catálogo premium ya curado. |
+| `seed_ghostdataxxx.sql` | `consultas_catalog` | Reemplaza por completo reniec, familiares, telefonia, sunarp, sunat, financiero, delitos, migraciones, estudios, mtc y seeker con el catálogo de @GHOSTDATAXXX_BOT (bot_id='ghostdataxxx'). Vacía certificados, actas, vip y facial (sin reemplazo). No toca 'vehiculos' ni 'filter'. |
 
 ## Orden recomendado
 
