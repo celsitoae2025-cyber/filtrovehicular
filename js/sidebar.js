@@ -51,30 +51,6 @@
       });
     }
 
-    // ===== Toggle de la pestaña "Extras" =====
-    const extrasBtn = document.getElementById('extrasToggle');
-    const extrasMenu = document.getElementById('extrasSubmenu');
-    if (extrasBtn && extrasMenu) {
-      const openExtras = () => {
-        extrasMenu.hidden = false;
-        extrasBtn.classList.add('is-open');
-        extrasBtn.setAttribute('aria-expanded', 'true');
-      };
-      const closeExtras = () => {
-        extrasMenu.hidden = true;
-        extrasBtn.classList.remove('is-open');
-        extrasBtn.setAttribute('aria-expanded', 'false');
-      };
-      extrasBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        extrasBtn.classList.contains('is-open') ? closeExtras() : openExtras();
-      });
-      // Si el usuario navega a una categoría, mantener el submenú abierto
-      // (útil cuando la vista activa está dentro de Extras).
-      const activeCat = document.querySelector('.nav-submenu .nav-item.active');
-      if (activeCat) openExtras();
-    }
-
     return { close, collapse, expand };
   };
 })();

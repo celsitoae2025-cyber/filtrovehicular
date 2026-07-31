@@ -241,84 +241,50 @@
         <svg class="ico"><use href="#i-dashboard"/></svg>
         <span class="label">Dashboard</span>
       </button>
-      <!-- ============================================================
-           Grupo Extras: todas las categorías dentro de una pestaña
-           expandible. Al clic muestra/oculta el submenú.
-      ============================================================ -->
-      <button class="nav-item nav-parent" id="extrasToggle" data-toggle-extras type="button" aria-expanded="false" aria-controls="extrasSubmenu">
-        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="7" height="7" rx="1"/>
-          <rect x="14" y="3" width="7" height="7" rx="1"/>
-          <rect x="3" y="14" width="7" height="7" rx="1"/>
-          <rect x="14" y="14" width="7" height="7" rx="1"/>
-        </svg>
-        <span class="label">Extras</span>
-        <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
+      <button class="nav-item nav-category" data-nav="reniec" data-tooltip="Reniec" type="button">
+        <svg class="ico"><use href="#i-id"/></svg>
+        <span class="label">Reniec</span>
       </button>
 
-      <div class="nav-submenu" id="extrasSubmenu" hidden>
-        <button class="nav-item nav-category" data-nav="reniec" data-tooltip="Reniec" type="button">
-          <svg class="ico"><use href="#i-id"/></svg>
-          <span class="label">Reniec</span>
-        </button>
+      <button class="nav-item nav-category" data-nav="familiares" data-tooltip="Familia" type="button">
+        <svg class="ico"><use href="#i-users"/></svg>
+        <span class="label">Familia</span>
+      </button>
 
-        <button class="nav-item nav-category" data-nav="telefonia" data-tooltip="Telefonía" type="button">
-          <svg class="ico"><use href="#i-phone"/></svg>
-          <span class="label">Telefonía</span>
-        </button>
+      <button class="nav-item nav-category" data-nav="telefonia" data-tooltip="Telefonía" type="button">
+        <svg class="ico"><use href="#i-phone"/></svg>
+        <span class="label">Telefonía</span>
+      </button>
 
-        <button class="nav-item nav-category" data-nav="delitos" data-tooltip="Justicia" type="button">
-          <svg class="ico"><use href="#i-shield-alert"/></svg>
-          <span class="label">Justicia</span>
-        </button>
+      <button class="nav-item nav-category" data-nav="sunarp" data-tooltip="Sunarp" type="button">
+        <svg class="ico"><use href="#i-building"/></svg>
+        <span class="label">Sunarp</span>
+      </button>
 
-        <button class="nav-item nav-category" data-nav="sunat" data-tooltip="Sunat" type="button">
-          <svg class="ico"><use href="#i-receipt"/></svg>
-          <span class="label">Sunat</span>
-        </button>
+      <button class="nav-item nav-category" data-nav="vehiculos" data-tooltip="Vehículos" type="button">
+        <svg class="ico"><use href="#i-car"/></svg>
+        <span class="label">Vehículos</span>
+      </button>
 
-        <button class="nav-item nav-category" data-nav="sunarp" data-tooltip="Sunarp" type="button">
-          <svg class="ico"><use href="#i-building"/></svg>
-          <span class="label">Sunarp</span>
-        </button>
+      <button class="nav-item nav-category" data-nav="sunat" data-tooltip="Sunat" type="button">
+        <svg class="ico"><use href="#i-receipt"/></svg>
+        <span class="label">Sunat</span>
+      </button>
 
-        <button class="nav-item nav-category" data-nav="vehiculos" data-tooltip="Vehículos" type="button">
-          <svg class="ico"><use href="#i-car"/></svg>
-          <span class="label">Vehículos</span>
-        </button>
+      <button class="nav-item nav-category" data-nav="financiero" data-tooltip="Financiero" type="button">
+        <svg class="ico"><use href="#i-bank"/></svg>
+        <span class="label">Financiero</span>
+      </button>
 
-        <button class="nav-item nav-category" data-nav="estudios" data-tooltip="Estudios" type="button">
-          <svg class="ico"><use href="#i-graduation"/></svg>
-          <span class="label">Estudios</span>
-        </button>
+      <button class="nav-item nav-category" data-nav="delitos" data-tooltip="Justicia" type="button">
+        <svg class="ico"><use href="#i-shield-alert"/></svg>
+        <span class="label">Justicia</span>
+      </button>
 
-        <button class="nav-item nav-category" data-nav="familiares" data-tooltip="Familia" type="button">
-          <svg class="ico"><use href="#i-users"/></svg>
-          <span class="label">Familia</span>
-        </button>
-
-        <button class="nav-item nav-category" data-nav="financiero" data-tooltip="Financiero" type="button">
-          <svg class="ico"><use href="#i-bank"/></svg>
-          <span class="label">Financiero</span>
-        </button>
-
-        <button class="nav-item nav-category" data-nav="seeker" data-tooltip="Seeker" type="button">
-          <svg class="ico"><use href="#i-seeker"/></svg>
-          <span class="label">Seeker</span>
-        </button>
-
-        <button class="nav-item nav-category" data-nav="mtc" data-tooltip="MTC" type="button">
-          <svg class="ico"><use href="#i-license"/></svg>
-          <span class="label">MTC</span>
-        </button>
-
-        <button class="nav-item nav-category" data-nav="migraciones" data-tooltip="Internacional" type="button">
-          <svg class="ico ico-bold"><use href="#i-plane"/></svg>
-          <span class="label">Internacional</span>
-        </button>
-      </div>
+      <button class="nav-item nav-category" data-nav="extras" data-tooltip="Extras" type="button">
+        <svg class="ico"><use href="#i-sparkles"/></svg>
+        <span class="label">Extras</span>
+      </button>
     </div>
 
     <div class="sb-info-card" id="sidebarInfoCard" hidden>
@@ -910,183 +876,6 @@
         </section>
       </section>
 
-      <!-- VISTA: Estudios -->
-      <section class="view" id="view-estudios" hidden>
-        <div class="selector-card">
-          <span class="selector-label">Seleccione una opción</span>
-          <div class="combo" id="estudiosCombo">
-            <button class="combo-trigger" id="estudiosComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-              <span class="combo-text" id="estudiosComboText">Cargando consultas…</span>
-              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="combo-panel" id="estudiosComboPanel" role="listbox">
-              <div class="combo-empty">No hay consultas disponibles.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <p class="panel-desc" id="estudios-desc">Selecciona una consulta para ver su descripción.</p>
-
-          <div class="consumo-row">
-            <span class="consumo-label">Consumo</span>
-            <span class="credits-badge credits-success">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
-              <span id="estudios-credits">—</span>
-            </span>
-          </div>
-
-          <div class="form-row">
-            <input type="text" class="input" id="estudios-input" placeholder="Ingresa el DNI (8 dígitos)" autocomplete="one-time-code">
-            <button class="btn btn-primary" type="button" id="estudios-consultar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              Consultar
-            </button>
-          </div>
-        </div>
-
-        <section class="panel result-panel">
-          <header class="result-header">
-            <div class="result-header-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <h3 id="estudios-result-title">Resultado</h3>
-              <span class="status-chip status-empty" id="estudiosResultStatus">
-                <span class="status-dot"></span>
-                Esperando consulta
-              </span>
-            </div>
-          </header>
-
-          <div class="empty-query-state" id="estudios-empty">
-            <h4 class="empty-title">Realice una consulta</h4>
-            <p class="empty-desc" id="estudios-empty-desc">Ingrese el DNI del estudiante para obtener la información.</p>
-            <span class="empty-chip">
-              <span id="estudios-empty-credits">Selecciona una consulta para ver su costo.</span>
-            </span>
-          </div>
-
-          <div class="reniec-result-body" id="estudios-result-body" hidden></div>
-        </section>
-      </section>
-
-      <!-- VISTA: MTC -->
-      <section class="view" id="view-mtc" hidden>
-        <div class="selector-card">
-          <span class="selector-label">Seleccione una opción</span>
-          <div class="combo" id="mtcCombo">
-            <button class="combo-trigger" id="mtcComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-              <span class="combo-text" id="mtcComboText">Cargando consultas…</span>
-              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="combo-panel" id="mtcComboPanel" role="listbox">
-              <div class="combo-empty">No hay consultas disponibles.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <p class="panel-desc" id="mtc-desc">Selecciona una consulta para ver su descripción.</p>
-
-          <div class="consumo-row">
-            <span class="consumo-label">Consumo</span>
-            <span class="credits-badge credits-success">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
-              <span id="mtc-credits">—</span>
-            </span>
-          </div>
-
-          <div class="form-row">
-            <input type="text" class="input" id="mtc-input" placeholder="Ingresa el DNI o la placa" autocomplete="one-time-code">
-            <button class="btn btn-primary" type="button" id="mtc-consultar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              Consultar
-            </button>
-          </div>
-        </div>
-
-        <section class="panel result-panel">
-          <header class="result-header">
-            <div class="result-header-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-license"/></svg>
-              <h3 id="mtc-result-title">Resultado</h3>
-              <span class="status-chip status-empty" id="mtcResultStatus">
-                <span class="status-dot"></span>
-                Esperando consulta
-              </span>
-            </div>
-          </header>
-
-          <div class="empty-query-state" id="mtc-empty">
-            <h4 class="empty-title">Realice una consulta</h4>
-            <p class="empty-desc" id="mtc-empty-desc">Ingrese el DNI o placa para obtener información de licencia, revisión técnica, SOAT o papeletas.</p>
-            <span class="empty-chip">
-              <span id="mtc-empty-credits">Selecciona una consulta para ver su costo.</span>
-            </span>
-          </div>
-
-          <div class="reniec-result-body" id="mtc-result-body" hidden></div>
-        </section>
-      </section>
-
-      <!-- VISTA: Seeker -->
-      <section class="view" id="view-seeker" hidden>
-        <div class="selector-card">
-          <span class="selector-label">Seleccione una opción</span>
-          <div class="combo" id="seekerCombo">
-            <button class="combo-trigger" id="seekerComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-              <span class="combo-text" id="seekerComboText">Cargando consultas…</span>
-              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="combo-panel" id="seekerComboPanel" role="listbox">
-              <div class="combo-empty">No hay consultas disponibles.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <p class="panel-desc" id="seeker-desc">Selecciona una consulta para ver su descripción.</p>
-
-          <div class="consumo-row">
-            <span class="consumo-label">Consumo</span>
-            <span class="credits-badge credits-success">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
-              <span id="seeker-credits">—</span>
-            </span>
-          </div>
-
-          <div class="form-row">
-            <input type="text" class="input" id="seeker-input" placeholder="Ingresa el DNI (8 dígitos) o teléfono (9 dígitos)" autocomplete="one-time-code">
-            <button class="btn btn-primary" type="button" id="seeker-consultar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              Consultar
-            </button>
-          </div>
-        </div>
-
-        <section class="panel result-panel">
-          <header class="result-header">
-            <div class="result-header-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-seeker"/></svg>
-              <h3 id="seeker-result-title">Resultado</h3>
-              <span class="status-chip status-empty" id="seekerResultStatus">
-                <span class="status-dot"></span>
-                Esperando consulta
-              </span>
-            </div>
-          </header>
-
-          <div class="empty-query-state" id="seeker-empty">
-            <h4 class="empty-title">Realice una consulta</h4>
-            <p class="empty-desc" id="seeker-empty-desc">Ingrese el DNI o teléfono para hacer una búsqueda Seeker integral.</p>
-            <span class="empty-chip">
-              <span id="seeker-empty-credits">Selecciona una consulta para ver su costo.</span>
-            </span>
-          </div>
-
-          <div class="reniec-result-body" id="seeker-result-body" hidden></div>
-        </section>
-      </section>
-
       <!-- VISTA: Telefonía -->
       <section class="view" id="view-telefonia" hidden>
         <div class="selector-card">
@@ -1264,65 +1053,6 @@
         </section>
       </section>
 
-      <!-- VISTA: Migraciones -->
-      <section class="view" id="view-migraciones" hidden>
-        <div class="selector-card">
-          <span class="selector-label">Seleccione una opción</span>
-          <div class="combo" id="migracionesCombo">
-            <button class="combo-trigger" id="migracionesComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-              <span class="combo-text" id="migracionesComboText">Cargando consultas…</span>
-              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="combo-panel" id="migracionesComboPanel" role="listbox">
-              <div class="combo-empty">No hay consultas disponibles.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <p class="panel-desc" id="migraciones-desc">Selecciona una consulta para ver su descripción.</p>
-
-          <div class="consumo-row">
-            <span class="consumo-label">Consumo</span>
-            <span class="credits-badge credits-success">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
-              <span id="migraciones-credits">—</span>
-            </span>
-          </div>
-
-          <div class="form-row">
-            <input type="text" class="input" id="migraciones-input" placeholder="Ingresa el DNI o pasaporte" autocomplete="one-time-code">
-            <button class="btn btn-primary" type="button" id="migraciones-consultar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              Consultar
-            </button>
-          </div>
-        </div>
-
-        <section class="panel result-panel">
-          <header class="result-header">
-            <div class="result-header-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <h3 id="migraciones-result-title">Resultado</h3>
-              <span class="status-chip status-empty" id="migracionesResultStatus">
-                <span class="status-dot"></span>
-                Esperando consulta
-              </span>
-            </div>
-          </header>
-
-          <div class="empty-query-state" id="migraciones-empty">
-            <h4 class="empty-title">Realice una consulta</h4>
-            <p class="empty-desc" id="migraciones-empty-desc">Ingrese el dato para consultar movimientos migratorios.</p>
-            <span class="empty-chip">
-              <span id="migraciones-empty-credits">Selecciona una consulta para ver su costo.</span>
-            </span>
-          </div>
-
-          <div class="reniec-result-body" id="migraciones-result-body" hidden></div>
-        </section>
-      </section>
-
       <!-- VISTA: Extras -->
       <section class="view" id="view-extras" hidden>
         <div class="selector-card">
@@ -1358,7 +1088,7 @@
           </div>
         </div>
 
-        <section class="panel result-panel" hidden>
+        <section class="panel result-panel">
           <header class="result-header">
             <div class="result-header-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1757,10 +1487,6 @@
               <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-6 9 6"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
               <span class="anon-cat-text"><strong>Financiero</strong><span>Sentinel, deudas</span></span>
             </button>
-            <button class="anon-cat-card" type="button" data-nav="estudios">
-              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1 3 3 6 3s6-2 6-3v-5"/></svg></span>
-              <span class="anon-cat-text"><strong>Estudios</strong><span>Títulos académicos</span></span>
-            </button>
             <button class="anon-cat-card" type="button" data-nav="telefonia">
               <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></span>
               <span class="anon-cat-text"><strong>Telefonía</strong><span>Titular de número</span></span>
@@ -1776,10 +1502,6 @@
             <button class="anon-cat-card" type="button" data-nav="laboral">
               <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg></span>
               <span class="anon-cat-text"><strong>Laboral</strong><span>EsSalud, AFP, empleos</span></span>
-            </button>
-            <button class="anon-cat-card" type="button" data-nav="migraciones">
-              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l9-9 4 4-9 9-4-4z"/><path d="M14 7l3 3"/><path d="M11 21l10-10"/></svg></span>
-              <span class="anon-cat-text"><strong>Migraciones</strong><span>Movimientos migratorios</span></span>
             </button>
             <button class="anon-cat-card" type="button" data-nav="extras">
               <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2 5 5 1-3.5 3.5L17 18l-5-3-5 3 1.5-5.5L5 9l5-1z"/></svg></span>
@@ -2283,16 +2005,12 @@
 <script src="js/modules/reniec.js"></script>
 <script src="js/modules/sunat.js"></script>
 <script src="js/modules/financiero.js"></script>
-<script src="js/modules/estudios.js"></script>
-<script src="js/modules/mtc.js"></script>
-<script src="js/modules/seeker.js"></script>
 <script src="js/modules/telefonia.js"></script>
 <script src="js/modules/familiares.js"></script>
 <script src="js/modules/delitos.js"></script>
 <script src="js/modules/laboral.js"></script>
 <script src="js/modules/vehiculos.js"></script>
 <script src="js/modules/sunarp.js"></script>
-<script src="js/modules/migraciones.js"></script>
 <script src="js/modules/extras.js"></script>
 <script src="js/modules/premium.js?v=4"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
