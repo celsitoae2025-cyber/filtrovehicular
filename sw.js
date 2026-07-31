@@ -12,7 +12,7 @@
 
 // IMPORTANTE: incrementar CACHE_VERSION en cada deploy para que los usuarios
 // reciban las actualizaciones de JS/CSS/HTML automáticamente.
-const CACHE_VERSION = "v1.0.8-20260730b";
+const CACHE_VERSION = "v1.0.9-20260731";
 const SHELL_CACHE = "fv-shell-" + CACHE_VERSION;
 const ASSETS_CACHE = "fv-assets-" + CACHE_VERSION;
 const IMG_CACHE = "fv-img-" + CACHE_VERSION;
