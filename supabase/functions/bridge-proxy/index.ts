@@ -124,18 +124,20 @@ serve(async (req: Request) => {
   if (!active) return json({ error: "Cuenta no activa" }, 403, req);
 
   // Validar tamaño del body (defensa frente a abuso).
-  // Siempre verificar el content-length (obligatorio en POST requests).
-  const contentLength = parseInt(req.headers.get("content-length") || "0", 10);
-  if (contentLength === 0) {
-    return json({ error: "Content-Length requerido" }, 400, req);
+  // No confiamos en el header Content-Length: algunos navegadores/proxies
+  // no lo reenvían de forma confiable (compresión, chunked encoding), lo
+  // que rechazaba peticiones legítimas. Medimos el body ya leído.
+  const rawBody = await req.text();
+  if (!rawBody) {
+    return json({ error: "Body vacío" }, 400, req);
   }
-  if (contentLength > MAX_BODY_BYTES) {
+  if (rawBody.length > MAX_BODY_BYTES) {
     return json({ error: "Body demasiado grande" }, 413, req);
   }
 
   let body: unknown;
   try {
-    body = await req.json();
+    body = JSON.parse(rawBody);
   } catch {
     return json({ error: "Body JSON inválido" }, 400, req);
   }
