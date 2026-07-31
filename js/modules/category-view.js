@@ -50,8 +50,8 @@
   var renderButtonList        = H.renderButtonList;
   var applyDniLayout          = H.applyDniLayout;
   var mediaCountClass         = H.mediaCountClass;
-  var applyWatermarksToPhotos = H.applyWatermarksToPhotos;
-  var renderCandidateList     = H.renderCandidateList;
+  var renderFacialHero        = H.renderFacialHero;
+  var renderTabla             = H.renderTabla;
 
   function bindGlobalComboListeners() {
     if (_globalBound) return;
@@ -323,20 +323,22 @@
       var prevActions = prevHeader && prevHeader.querySelector('.result-header-actions');
       if (prevActions) prevActions.remove();
       var p = resp.parsed || {};
-      var pdfs       = (p.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
-      var allPhotos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
-      var candidatos = allPhotos.filter(function (m) { return m.esCandidato; });
-      var photos     = allPhotos.filter(function (m) { return !m.esCandidato; });
+      var pdfs    = (p.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
+      var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
       var botones = p.botones || [];
       var hasData = (p.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
       var hasMedia = pdfs.length > 0 || photos.length > 0;
+      var hasFacial = p.facial && p.facial.length > 0;
+      var hasTabla  = p.tabla && p.tabla.filas && p.tabla.filas.length > 0;
 
       var body = $(bodyId());
       var html;
       if (esErrorTecnicoRespuesta(p, resp)) {
         html = htmlMantenimiento();
-      } else if (botones.length > 0 && candidatos.length > 0) {
-        html = renderCandidateList(p, botones, candidatos);
+      } else if (hasFacial) {
+        html = renderFacialHero(p.facial);
+      } else if (hasTabla) {
+        html = renderTabla(p.tabla);
       } else if (botones.length > 0 && !hasMedia) {
         html = renderButtonList(p, botones);
       } else if (pdfs.length > 0) {
@@ -363,23 +365,37 @@
 
       body.innerHTML = html;
       body.hidden = false;
-      if (botones.length > 0 && (candidatos.length > 0 || !hasMedia)) wireResultButtons(body);
+      if (botones.length > 0 && !hasMedia && !hasFacial && !hasTabla) wireResultButtons(body);
 
       // Generar el informe PDF en segundo plano, SIN bloquear la vista de
       // datos ya mostrada arriba — igual que VeriNexo: los datos se ven de
       // inmediato, el botón "Descargar informe" aparece en la cabecera del
-      // panel recién cuando el PDF termina de armarse.
-      if ((hasData || photos.length > 0) && Consultia.ReportGenerator) {
+      // panel recién cuando el PDF termina de armarse. El generador a usar
+      // depende del tipo de resultado (facial/tabla/policial/general) —
+      // mismo criterio de VeriNexo (generarPdfFacial/Tabla/Policial/Pdf).
+      var esPolicial = currentConsulta && /^\/policia\b/i.test(currentConsulta.comando || '');
+      if ((hasFacial || hasTabla || esPolicial || hasData || photos.length > 0) && Consultia.ReportGenerator) {
         (async function () {
           try {
-            var result = Consultia.ReportGenerator.generate(p, {
-              consultaNombre: currentConsulta ? currentConsulta.nombre : '',
-              valor: valorConsultado || '',
-              fecha: new Date().toLocaleDateString('es-PE', {
-                day: '2-digit', month: 'short', year: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-              })
-            }, photos);
+            var result;
+            if (hasFacial) {
+              result = await Consultia.ReportGenerator.generateFacial(p.facial, valorConsultado || '');
+            } else if (hasTabla) {
+              result = Consultia.ReportGenerator.generateTabla(p.tabla, valorConsultado || '', currentConsulta ? currentConsulta.nombre : '');
+            } else if (esPolicial) {
+              var camposFlat = [];
+              (p.secciones || []).forEach(function (s) { (s.campos || []).forEach(function (c) { camposFlat.push(c); }); });
+              result = await Consultia.ReportGenerator.generatePolicial(camposFlat, valorConsultado || '', photos);
+            } else {
+              result = Consultia.ReportGenerator.generate(p, {
+                consultaNombre: currentConsulta ? currentConsulta.nombre : '',
+                valor: valorConsultado || '',
+                fecha: new Date().toLocaleDateString('es-PE', {
+                  day: '2-digit', month: 'short', year: 'numeric',
+                  hour: '2-digit', minute: '2-digit'
+                })
+              }, photos);
+            }
             if (!result) return;
 
             var header = body.closest('.result-panel').querySelector('.result-header');

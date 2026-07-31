@@ -300,6 +300,428 @@
     return { blobUrl: blobUrl, base64: base64, filename: filename };
   }
 
+  // ── Verificación Policial: escudo PNP + foto del titular + bloques
+  //    de info personal/policial. Portado de generarPdfPolicial de
+  //    VeriNexo, colores propios de FV+. ─────────────────────────────
+  function generatePolicial(campos, valorConsultado, photos) {
+    if (!window.jspdf || !window.jspdf.jsPDF) return null;
+    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var W = doc.internal.pageSize.getWidth();
+    var M = 22;
+    var GRIS_CLARO = [235, 237, 240];
+
+    var ahora = new Date();
+    var fechaStr = ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    var horaStr = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+    var fechaFile = ahora.getFullYear() + String(ahora.getMonth() + 1).padStart(2, '0') + String(ahora.getDate()).padStart(2, '0');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor.apply(doc, C_PRIMARY);
+    doc.text('Filtro Vehicular+', M, 16);
+    doc.setFillColor.apply(doc, C_ACCENT);
+    doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 1.6, 13.8, 0.7, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6.3);
+    doc.setTextColor.apply(doc, C_KEY);
+    doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', M, 20);
+    doc.text(fechaStr + '  ·  ' + horaStr, W - M, 16, { align: 'right' });
+    doc.setDrawColor.apply(doc, C_ACCENT);
+    doc.setLineWidth(0.35);
+    doc.line(M, 24, W - M, 24);
+
+    return loadPngDataUrl('icons/pnp-logo.png').then(function (logoDataUrl) {
+      var y = 38;
+      if (logoDataUrl) {
+        var logoW = 15, logoH = logoW / 0.816;
+        doc.addImage(logoDataUrl, 'PNG', W / 2 - logoW / 2, y, logoW, logoH, undefined, 'FAST');
+        y += logoH + 6;
+      }
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(15);
+      doc.setTextColor.apply(doc, C_PRIMARY);
+      doc.text('Verificación Policial', W / 2, y, { align: 'center' });
+      y += 5.5;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor.apply(doc, C_KEY);
+      doc.text('Fecha de consulta: ' + fechaStr + ' ' + horaStr, W / 2, y, { align: 'center' });
+      y += 10;
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor.apply(doc, C_PRIMARY);
+      var textoConfirm = 'Es miembro de la Policía Nacional del Perú';
+      var textW = doc.getTextWidth(textoConfirm);
+      var checkH = 3.6, gap = 2.6;
+      var startX = W / 2 - (checkH + gap + textW) / 2;
+      var baseY = y;
+      doc.setDrawColor.apply(doc, C_PRIMARY);
+      doc.setLineWidth(0.7);
+      doc.line(startX, baseY - 1.2, startX + checkH * 0.35, baseY + 0.4);
+      doc.line(startX + checkH * 0.35, baseY + 0.4, startX + checkH, baseY - 2.2);
+      doc.text(textoConfirm, startX + checkH + gap, baseY, { align: 'left' });
+      y += 5;
+      doc.setDrawColor.apply(doc, GRIS_CLARO);
+      doc.setLineWidth(0.3);
+      doc.line(W / 2 - 45, y, W / 2 + 45, y);
+      y += 11;
+
+      var fotoPromise = Promise.resolve();
+      var foto = photos && photos[0];
+      if (foto) {
+        var fotoSrc = 'data:' + (foto.mimeType || 'image/jpeg') + ';base64,' + foto.base64;
+        fotoPromise = new Promise(function (resolve) {
+          var im = new Image();
+          im.onload = function () {
+            var fotoH = 34;
+            var fotoW = fotoH * ((im.naturalWidth || 100) / (im.naturalHeight || 100));
+            var fx = W / 2 - fotoW / 2;
+            doc.setDrawColor.apply(doc, GRIS_CLARO);
+            doc.setLineWidth(0.4);
+            doc.rect(fx - 0.8, y - 0.8, fotoW + 1.6, fotoH + 1.6);
+            try {
+              var fmt = (foto.mimeType || 'image/jpeg').indexOf('png') !== -1 ? 'PNG' : 'JPEG';
+              doc.addImage(fotoSrc, fmt, fx, y, fotoW, fotoH, undefined, 'FAST');
+            } catch (e) { /* noop */ }
+            y += fotoH + 12;
+            resolve();
+          };
+          im.onerror = function () { resolve(); };
+          im.src = fotoSrc;
+        });
+      }
+
+      return fotoPromise.then(function () {
+        var mapa = {};
+        (campos || []).forEach(function (f) { if (f.campo) mapa[String(f.campo).trim().toLowerCase()] = f.valor; });
+        function val(k) { return mapa[k.toLowerCase()] || ''; }
+
+        function dibujarBloque(titulo, pares) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(8);
+          doc.setTextColor.apply(doc, C_PRIMARY);
+          doc.text(titulo.toUpperCase(), M, y);
+          y += 2.2;
+          doc.setDrawColor.apply(doc, C_PRIMARY);
+          doc.setLineWidth(0.5);
+          doc.line(M, y, M + 16, y);
+          y += 6;
+          pares.forEach(function (pair) {
+            var campo = pair[0], valor = pair[1];
+            if (!valor) return;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7.5);
+            doc.setTextColor.apply(doc, C_KEY);
+            doc.text(campo.toUpperCase(), M, y);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.setTextColor.apply(doc, C_TEXT);
+            doc.text(valor, M + 50, y);
+            y += 4.5;
+            doc.setDrawColor.apply(doc, GRIS_CLARO);
+            doc.setLineWidth(0.2);
+            doc.line(M, y, W - M, y);
+            y += 5.5;
+          });
+          y += 6;
+        }
+
+        dibujarBloque('Información personal', [
+          ['DNI', val('DNI')], ['Nombre Completo', val('Nombre Completo')],
+          ['Fecha de Nacimiento', val('Fecha de Nacimiento')], ['Edad', val('Edad')], ['Sexo', val('Sexo')],
+        ]);
+        dibujarBloque('Información policial', [
+          ['CIP', val('CIP')], ['Grado', val('Grado')], ['Estado', val('Estado')],
+          ['Situación', val('Situación') || val('Situacion')], ['Parentesco', val('Parentesco')],
+          ['Fecha de Caducidad', val('Fecha de Caducidad')], ['Unidad', val('Unidad')],
+        ]);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(6.5);
+        doc.setTextColor.apply(doc, C_KEY);
+        doc.text('Generado por Filtro Vehicular+ · Información extraída de fuentes oficiales.', W / 2, 285, { align: 'center' });
+
+        var blob = doc.output('blob');
+        var blobUrl = URL.createObjectURL(blob);
+        var nombre = 'VerificacionPolicial-' + (valorConsultado || '').replace(/[^a-zA-Z0-9]/g, '') + '-' + fechaFile + '.pdf';
+        return { blobUrl: blobUrl, base64: doc.output('datauristring').split(',')[1], filename: nombre };
+      });
+    });
+  }
+
+  // Carga un PNG local y lo convierte a data URL vía canvas (jsPDF
+  // necesita base64/data URL, no una ruta de archivo).
+  function loadPngDataUrl(path) {
+    return new Promise(function (resolve) {
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var c = document.createElement('canvas');
+          c.width = img.naturalWidth; c.height = img.naturalHeight;
+          var ctx = c.getContext('2d');
+          if (!ctx) { resolve(null); return; }
+          ctx.drawImage(img, 0, 0);
+          resolve(c.toDataURL('image/png'));
+        } catch (e) { resolve(null); }
+      };
+      img.onerror = function () { resolve(null); };
+      img.src = path;
+    });
+  }
+
+  // ── Reconocimiento Facial: mejor coincidencia destacada + tabla con
+  //    foto por candidato. Portado de generarPdfFacial de VeriNexo. ──
+  function generateFacial(candidatos, valorConsultado) {
+    if (!window.jspdf || !window.jspdf.jsPDF) return null;
+    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var W = doc.internal.pageSize.getWidth();
+    var H = doc.internal.pageSize.getHeight();
+    var M = 18;
+    var VERDE = [78, 117, 25];       // #4e7519 — contraste AA sobre blanco
+    var VERDE_BG = [235, 248, 220];
+    var GRIS_CLARO = [226, 232, 240];
+
+    var ahora = new Date();
+    var fechaStr = ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    var horaStr = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+    var fechaFile = ahora.getFullYear() + String(ahora.getMonth() + 1).padStart(2, '0') + String(ahora.getDate()).padStart(2, '0');
+
+    function dibujarEncabezado() {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10.5);
+      doc.setTextColor.apply(doc, C_PRIMARY);
+      doc.text('Filtro Vehicular+', M, 16);
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 1.6, 13.8, 0.7, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6.3);
+      doc.setTextColor.apply(doc, C_KEY);
+      doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', M, 20);
+      doc.text(fechaStr + '  ·  ' + horaStr, W - M, 16, { align: 'right' });
+      doc.setDrawColor.apply(doc, C_ACCENT);
+      doc.setLineWidth(0.35);
+      doc.line(M, 24, W - M, 24);
+    }
+    function dibujarPie() {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6.5);
+      doc.setTextColor.apply(doc, C_KEY);
+      doc.text('Generado por Filtro Vehicular+', W / 2, H - 10, { align: 'center' });
+    }
+    function pctNum(s) { var n = parseFloat(String(s || '').replace(/[^\d.]/g, '')); return isNaN(n) ? 0 : n; }
+
+    var ratioPromises = candidatos.map(function (c) {
+      if (!c.foto || !c.foto.base64) return Promise.resolve(null);
+      return new Promise(function (resolve) {
+        var im = new Image();
+        im.onload = function () { resolve((im.naturalWidth || 1) / (im.naturalHeight || 1)); };
+        im.onerror = function () { resolve(null); };
+        im.src = 'data:' + (c.foto.mime || 'image/jpeg') + ';base64,' + c.foto.base64;
+      });
+    });
+
+    return Promise.all(ratioPromises).then(function (ratios) {
+      var idxMax = 0;
+      candidatos.forEach(function (c, i) { if (pctNum(c.similitud) > pctNum(candidatos[idxMax].similitud)) idxMax = i; });
+      var mejor = candidatos[idxMax];
+
+      dibujarEncabezado();
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(15);
+      doc.setTextColor.apply(doc, C_PRIMARY);
+      doc.text('Reconocimiento Facial', M, 34);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor.apply(doc, C_KEY);
+      doc.text('Análisis biométrico  ·  ' + candidatos.length + ' coincidencias  ·  ' + fechaStr + ' ' + horaStr, M, 39);
+
+      var boxY = 44, boxH = 30;
+      doc.setFillColor.apply(doc, VERDE_BG);
+      doc.setDrawColor.apply(doc, VERDE);
+      doc.setLineWidth(0.4);
+      doc.roundedRect(M, boxY, W - M * 2, boxH, 2, 2, 'FD');
+
+      var bfBoxW = 20, bfBoxH = boxH - 8;
+      var bfRatio = ratios[idxMax] || 0.78;
+      var bfW = bfBoxW, bfH = bfW / bfRatio;
+      if (bfH > bfBoxH) { bfH = bfBoxH; bfW = bfH * bfRatio; }
+      var bfX = M + 5, bfY = boxY + (boxH - bfH) / 2;
+      if (mejor.foto && mejor.foto.base64) {
+        try { doc.addImage('data:' + (mejor.foto.mime || 'image/jpeg') + ';base64,' + mejor.foto.base64, 'JPEG', bfX, bfY, bfW, bfH, undefined, 'FAST'); } catch (e) { /* noop */ }
+      }
+
+      var infoX = M + 5 + bfBoxW + 6;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7);
+      doc.setTextColor.apply(doc, VERDE);
+      doc.text('MEJOR COINCIDENCIA', infoX, boxY + 7);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor.apply(doc, C_PRIMARY);
+      doc.text(String(mejor.nombres || '—'), infoX, boxY + 14, { maxWidth: W - M * 2 - bfBoxW - 55 });
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor.apply(doc, C_TEXT);
+      var li = [mejor.dni && ('DNI: ' + mejor.dni), mejor.edad && ('Edad: ' + mejor.edad), mejor.confianza && ('Confianza: ' + mejor.confianza)].filter(Boolean).join('     ');
+      doc.text(li, infoX, boxY + 20);
+      if (mejor.ubigeo) doc.text(mejor.ubigeo, infoX, boxY + 25, { maxWidth: W - M * 2 - bfBoxW - 55 });
+
+      var badgeW = 34, badgeH = 16;
+      var badgeX = W - M - badgeW - 4, badgeY = boxY + (boxH - badgeH) / 2;
+      doc.setFillColor.apply(doc, VERDE);
+      doc.roundedRect(badgeX, badgeY, badgeW, badgeH, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(255, 255, 255);
+      doc.text(String(mejor.similitud || ''), badgeX + badgeW / 2, badgeY + 8, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6);
+      doc.text('SIMILITUD', badgeX + badgeW / 2, badgeY + 12.5, { align: 'center' });
+
+      var tablaTitY = boxY + boxH + 8;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor.apply(doc, C_PRIMARY);
+      doc.text('TODAS LAS COINCIDENCIAS', M, tablaTitY);
+      doc.setDrawColor.apply(doc, C_PRIMARY);
+      doc.setLineWidth(0.5);
+      doc.line(M, tablaTitY + 1.8, M + 32, tablaTitY + 1.8);
+
+      var colFotoW = 15, fotoBoxH = 16, rowHpx = fotoBoxH + 3;
+      var head = [['#', 'FOTO', 'DNI', 'NOMBRES', 'EDAD', 'UBIGEO', 'CONFIANZA', 'SIMILITUD']];
+      var bodyRows = candidatos.map(function (c) { return [String(c.num), '', c.dni, c.nombres, c.edad, c.ubigeo, c.confianza, c.similitud]; });
+
+      doc.autoTable({
+        startY: tablaTitY + 5,
+        head: head, body: bodyRows,
+        margin: { left: M, right: M, top: 30, bottom: 14 },
+        tableWidth: W - M * 2,
+        didDrawPage: function () { dibujarEncabezado(); dibujarPie(); },
+        headStyles: { fillColor: C_PRIMARY, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7, cellPadding: { top: 2, bottom: 2, left: 2, right: 2 }, halign: 'left' },
+        bodyStyles: { fontSize: 7, textColor: C_TEXT, cellPadding: { top: 1.5, bottom: 1.5, left: 2, right: 2 }, minCellHeight: rowHpx, valign: 'middle', lineWidth: 0.1, lineColor: GRIS_CLARO },
+        alternateRowStyles: { fillColor: [247, 249, 251] },
+        columnStyles: {
+          0: { cellWidth: 8, halign: 'center', textColor: C_KEY }, 1: { cellWidth: colFotoW, halign: 'center' },
+          2: { cellWidth: 20 }, 3: { cellWidth: 'auto', fontStyle: 'bold', textColor: C_PRIMARY },
+          4: { cellWidth: 12, halign: 'center' }, 5: { cellWidth: 'auto' },
+          6: { cellWidth: 20 }, 7: { cellWidth: 18, halign: 'right', fontStyle: 'bold' },
+        },
+        didParseCell: function (data) {
+          if (data.section === 'body' && data.column.index === 7 && data.row.index === idxMax) data.cell.styles.textColor = VERDE;
+        },
+        didDrawCell: function (data) {
+          if (data.section === 'body' && data.column.index === 1) {
+            var c = candidatos[data.row.index];
+            if (c && c.foto && c.foto.base64) {
+              var ratio = ratios[data.row.index] || 0.78;
+              var boxW = colFotoW - 3;
+              var boxH2 = Math.min(fotoBoxH, data.cell.height - 2);
+              var dW = boxW, dH = dW / ratio;
+              if (dH > boxH2) { dH = boxH2; dW = dH * ratio; }
+              var cx = data.cell.x + (data.cell.width - dW) / 2;
+              var cy = data.cell.y + (data.cell.height - dH) / 2;
+              try { doc.addImage('data:' + (c.foto.mime || 'image/jpeg') + ';base64,' + c.foto.base64, 'JPEG', cx, cy, dW, dH, undefined, 'FAST'); } catch (e) { /* noop */ }
+            }
+          }
+        },
+      });
+
+      var blob = doc.output('blob');
+      var blobUrl = URL.createObjectURL(blob);
+      var idBase = (mejor.nombres || mejor.dni || valorConsultado || 'resultado').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40);
+      var nombre = 'ReconocimientoFacial_' + idBase + '_' + fechaFile + '.pdf';
+      return { blobUrl: blobUrl, base64: doc.output('datauristring').split(',')[1], filename: nombre };
+    });
+  }
+
+  // ── Tabla (árbol genealógico / homónimos): tabla completa con
+  //    cabecera institucional. Portado de generarPdfTabla de VeriNexo. ─
+  function generateTabla(tabla, valorConsultado, etiquetaConsulta) {
+    if (!window.jspdf || !window.jspdf.jsPDF) return null;
+    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var W = doc.internal.pageSize.getWidth();
+    var H = doc.internal.pageSize.getHeight();
+    var M = 8;
+    var bottomBandTop = H - 13;
+
+    var ahora = new Date();
+    var fechaStr = ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    var horaStr = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+    var fechaFile = ahora.getFullYear() + String(ahora.getMonth() + 1).padStart(2, '0') + String(ahora.getDate()).padStart(2, '0');
+
+    function drawTopBandT() {
+      doc.setFillColor.apply(doc, C_PRIMARY);
+      doc.rect(0, 0, W, 22, 'F');
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(0, 22, W, 1, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(19);
+      doc.setTextColor(255, 255, 255);
+      doc.text('Filtro Vehicular+', M, 13);
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 2.2, 11.2, 0.9, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor.apply(doc, C_SUBHEAD);
+      doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', M, 18);
+      doc.text(fechaStr + '  ·  ' + horaStr, W - M, 14, { align: 'right' });
+    }
+    function drawBottomBandT() {
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(0, bottomBandTop - 1, W, 1, 'F');
+      doc.setFillColor.apply(doc, C_PRIMARY);
+      doc.rect(0, bottomBandTop, W, H - bottomBandTop, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6.8);
+      doc.setTextColor.apply(doc, C_SUBHEAD);
+      doc.text('Documento generado por Filtro Vehicular+ · Información extraída de fuentes oficiales.', M, bottomBandTop + 7.5);
+    }
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor.apply(doc, C_TEXT);
+    doc.text(etiquetaConsulta || tabla.titulo || 'Resultados', M, 34);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor.apply(doc, C_KEY);
+    var subtitulo = valorConsultado ? ('Consulta: ' + valorConsultado + '  ·  Total: ' + tabla.total + ' resultados') : ('Total: ' + tabla.total + ' resultados');
+    doc.text(subtitulo, M, 39.5);
+
+    var columnaValor = Consultia.RenderHelpers.columnaValor;
+    var head = [tabla.columnas];
+    var bodyRows = tabla.filas.map(function (f) { return tabla.columnas.map(function (col) { return columnaValor(col, f); }); });
+
+    var ANCHO_COL = {
+      '#': { cellWidth: 10, halign: 'center' }, 'RELACIÓN': { cellWidth: 'auto' }, 'TIPO': { cellWidth: 'auto' },
+      'DNI': { cellWidth: 24 }, 'NOMBRES': { cellWidth: 'auto' }, 'APELLIDOS': { cellWidth: 'auto' },
+      'NACIMIENTO': { cellWidth: 26 }, 'EDAD': { cellWidth: 22 }, 'GÉNERO': { cellWidth: 28 }, 'GENERO': { cellWidth: 28 },
+    };
+    var columnStyles = {};
+    tabla.columnas.forEach(function (col, i) { columnStyles[i] = ANCHO_COL[col.trim().toUpperCase()] || { cellWidth: 'auto' }; });
+
+    var MARGEN_TABLA = 8;
+    doc.autoTable({
+      startY: 45, head: head, body: bodyRows,
+      tableWidth: W - MARGEN_TABLA * 2,
+      margin: { left: MARGEN_TABLA, right: MARGEN_TABLA, top: 26, bottom: 16 },
+      didDrawPage: function () { drawTopBandT(); drawBottomBandT(); },
+      headStyles: { fillColor: C_PRIMARY, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7, cellPadding: 1.5 },
+      bodyStyles: { fontSize: 7, textColor: C_TEXT, cellPadding: 1.3, lineWidth: 0, valign: 'middle' },
+      alternateRowStyles: { fillColor: [245, 247, 250] },
+      columnStyles: columnStyles,
+      styles: { overflow: 'linebreak', lineWidth: 0 },
+    });
+
+    var blob = doc.output('blob');
+    var blobUrl = URL.createObjectURL(blob);
+    var slug = (etiquetaConsulta || tabla.titulo || 'Resultados').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_áéíóúÁÉÍÓÚñÑ]/g, '');
+    var nombre = slug + '_' + (valorConsultado || '').replace(/[^a-zA-Z0-9]/g, '') + '_' + fechaFile + '.pdf';
+    return { blobUrl: blobUrl, base64: doc.output('datauristring').split(',')[1], filename: nombre };
+  }
+
   function download(result) {
     if (!result || !result.blobUrl) return;
     var a = document.createElement('a');
@@ -311,5 +733,11 @@
     setTimeout(function () { document.body.removeChild(a); }, 200);
   }
 
-  Consultia.ReportGenerator = { generate: generate, download: download };
+  Consultia.ReportGenerator = {
+    generate: generate,
+    generatePolicial: generatePolicial,
+    generateFacial: generateFacial,
+    generateTabla: generateTabla,
+    download: download,
+  };
 })();

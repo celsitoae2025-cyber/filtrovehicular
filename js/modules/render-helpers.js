@@ -507,6 +507,60 @@
     '</div>';
   }
 
+  // Mapea el NOMBRE de columna al campo correspondiente de la fila —
+  // portado 1:1 de VeriNexo (page.tsx columnaValor). Las tablas del bot
+  // llegan con nombres de campo en minúscula (dni, nombres, tipo...)
+  // pero las columnas mostradas están en mayúscula.
+  function columnaValor(col, f) {
+    var upper = (col || '').trim().toUpperCase();
+    if (upper === '#' || upper === 'N°' || upper === 'Nº' || upper === 'N' || upper === 'NO' || upper === 'NRO') return String(f.num != null ? f.num : '');
+    if (upper === 'RELACIÓN' || upper === 'TIPO' || upper === 'PARENTESCO') return String(f.tipo || '');
+    if (upper === 'DNI') return f.dni || '';
+    if (upper === 'NOMBRES') return f.nombres || '';
+    if (upper === 'APELLIDOS') return f.apellidos || '';
+    if (upper === 'NACIMIENTO') return f.nacimiento || '';
+    if (upper === 'EDAD') return f.edad || '';
+    if (upper === 'NÚMERO' || upper === 'NUMERO') return f.numero || '';
+    if (upper === 'OPERADOR') return f.operador || '';
+    if (upper === 'PERÍODO' || upper === 'PERIODO') return f.periodo || '';
+    if (upper === 'GÉNERO' || upper === 'GENERO' || upper === 'SEXO') {
+      var g = (f.genero || '').trim().toUpperCase();
+      if (g === 'M' || g === 'MASCULINO') return 'MASCULINO';
+      if (g === 'F' || g === 'FEMENINO') return 'FEMENINO';
+      return f.genero || '';
+    }
+    return String(f[col] != null ? f[col] : (f[(col || '').toLowerCase()] || ''));
+  }
+
+  // Tabla real de resultados (árbol genealógico / homónimos) — mismo
+  // diseño que VeriNexo: header con fondo oscuro institucional, filas
+  // alternadas, ancho completo, scroll horizontal si no entra.
+  function renderTabla(tabla) {
+    if (!tabla || !tabla.filas || !tabla.filas.length) return '';
+    var parts = [];
+    parts.push('<div class="cr-tabla-wrap">');
+    parts.push('<div class="cr-tabla-head">');
+    parts.push('<span class="cr-tabla-tit">' + escapeHtml(tabla.titulo || 'Resultados') + '</span>');
+    parts.push('<span class="cr-tabla-total">' + (tabla.total || tabla.filas.length) + ' resultados</span>');
+    parts.push('</div>');
+    parts.push('<div class="cr-tabla-scroll"><table class="cr-tabla">');
+    parts.push('<thead><tr>');
+    (tabla.columnas || []).forEach(function (col) {
+      parts.push('<th>' + escapeHtml(col) + '</th>');
+    });
+    parts.push('</tr></thead><tbody>');
+    tabla.filas.forEach(function (f, fi) {
+      parts.push('<tr class="' + (fi % 2 === 0 ? 'cr-tabla-even' : 'cr-tabla-odd') + '">');
+      (tabla.columnas || []).forEach(function (col) {
+        parts.push('<td>' + escapeHtml(columnaValor(col, f)) + '</td>');
+      });
+      parts.push('</tr>');
+    });
+    parts.push('</tbody></table></div>');
+    parts.push('</div>');
+    return parts.join('');
+  }
+
   function renderPdfPreview(p, pdfs, hasData, uniqPrefix) {
     var parts = [];
     var wrapClass = hasData ? 'cr-pdf-split' : 'cr-pdf-nosplit';
@@ -779,36 +833,75 @@
     return '<div class="cr-btn-layout">' + parts.join('') + '</div>';
   }
 
-  /* ── Galería de candidatos (reconocimiento facial) ────────────────
-     Cada botón/candidato con su propia foto extraída del PDF (ver
-     enrich.js del bridge). Reusa la clase .cr-btn-option para que
-     wireResultButtons() (category-view.js) enganche el click sin
-     cambios — solo se agrega la foto arriba del botón. */
-  function renderCandidateList(p, botones, candidatos) {
+  // Devuelve el % numérico de un string tipo "85.7%" para poder ordenar.
+  function pctNum(s) {
+    var n = parseFloat(String(s || '').replace(/[^\d.]/g, ''));
+    return isNaN(n) ? 0 : n;
+  }
+
+  /* ── Reconocimiento facial: mejor coincidencia destacada + resto en
+     tarjetas — mismo diseño que VeriNexo, con la paleta institucional
+     de FV+ (sin sombras, solo bold/normal). Consume parsed.facial
+     (candidatos con dni/nombres/edad/ubigeo/confianza/foto), extraído
+     directo del PDF del bot por enrich.js — no depende de botones. */
+  function renderFacialHero(facial) {
+    if (!facial || !facial.length) return '';
+    var ordenados = facial.slice().sort(function (a, b) { return pctNum(b.similitud) - pctNum(a.similitud); });
+    var mejor = ordenados[0];
+    var resto = ordenados.slice(1);
     var parts = [];
-    if (p && p.titulo) parts.push('<div class="cr-tit">' + escapeHtml(p.titulo) + '</div>');
-    parts.push('<div class="cr-candidate-grid">');
-    botones.forEach(function (b, i) {
-      var foto = candidatos[i];
-      var src = foto ? ('data:' + (foto.mimeType || 'image/jpeg') + ';base64,' + foto.base64) : '';
-      parts.push('<div class="cr-candidate-card">');
-      parts.push(
-        foto
-          ? '<img class="cr-candidate-photo" src="' + src + '" alt="' + escapeHtml(b.text) + '" data-full="' + src + '">'
-          : '<div class="cr-candidate-photo cr-candidate-photo-empty"></div>'
-      );
-      parts.push('<div class="cr-candidate-body">');
-      parts.push('<span class="cr-candidate-label">' + escapeHtml(b.text) + '</span>');
-      parts.push(
-        '<button type="button" class="cr-btn-option cr-candidate-select" ' +
-          'data-msgid="' + escapeHtml(String(b.msgId)) + '" data-callback="' + escapeHtml(b.data) + '">' +
-          'Ver detalle</button>'
-      );
-      parts.push('</div></div>');
+
+    parts.push('<div class="cr-facial-layout">');
+    parts.push('<div class="cr-facial-eyebrow">Reconocimiento facial</div>');
+    parts.push('<div class="cr-facial-headrow">');
+    parts.push('<h3 class="cr-facial-title">Coincidencias encontradas</h3>');
+    parts.push('<span class="cr-facial-count">' + facial.length + ' candidatos</span>');
+    parts.push('</div>');
+
+    // Tarjeta destacada — mejor coincidencia
+    parts.push('<div class="cr-facial-hero">');
+    var heroSrc = mejor.foto ? ('data:' + (mejor.foto.mime || 'image/jpeg') + ';base64,' + mejor.foto.base64) : '';
+    parts.push('<div class="cr-facial-hero-row">');
+    parts.push(
+      mejor.foto
+        ? '<div class="cr-facial-hero-photo" data-full="' + heroSrc + '"><img src="' + heroSrc + '" alt="' + escapeHtml(mejor.nombres || 'Candidato') + '"></div>'
+        : '<div class="cr-facial-hero-photo cr-facial-photo-empty"></div>'
+    );
+    parts.push('<div class="cr-facial-hero-info">');
+    parts.push('<div class="cr-facial-badge">Mejor coincidencia</div>');
+    if (mejor.nombres) parts.push('<div class="cr-facial-hero-name">' + escapeHtml(mejor.nombres) + '</div>');
+    parts.push('<div class="cr-facial-hero-sim"><span class="cr-facial-sim-num">' + escapeHtml(mejor.similitud || '') + '</span><span class="cr-facial-sim-label">Similitud</span></div>');
+    parts.push('</div></div>');
+    parts.push('<div class="cr-facial-hero-fields">');
+    [['DNI', mejor.dni], ['Edad', mejor.edad], ['Confianza', mejor.confianza], ['Ubigeo', mejor.ubigeo]].forEach(function (pair) {
+      if (!pair[1]) return;
+      parts.push('<div><div class="cr-facial-field-k">' + pair[0] + '</div><div class="cr-facial-field-v">' + escapeHtml(pair[1]) + '</div></div>');
     });
     parts.push('</div>');
-    parts.push('<div class="cr-btn-result-area" hidden></div>');
-    return '<div class="cr-candidate-layout">' + parts.join('') + '</div>';
+    parts.push('</div>');
+
+    // Resto de coincidencias — galería de tarjetas
+    if (resto.length > 0) {
+      parts.push('<div class="cr-facial-rest-tit">Otras coincidencias</div>');
+      parts.push('<div class="cr-facial-rest-grid">');
+      resto.forEach(function (c) {
+        var src = c.foto ? ('data:' + (c.foto.mime || 'image/jpeg') + ';base64,' + c.foto.base64) : '';
+        parts.push('<div class="cr-facial-card">');
+        parts.push('<div class="cr-facial-card-photo' + (c.foto ? '' : ' cr-facial-photo-empty') + '"' + (c.foto ? ' data-full="' + src + '"' : '') + '>');
+        if (c.foto) parts.push('<img src="' + src + '" alt="' + escapeHtml(c.nombres || 'Candidato') + '">');
+        parts.push('<span class="cr-facial-card-sim">' + escapeHtml(c.similitud || '') + '</span>');
+        parts.push('</div>');
+        parts.push('<div class="cr-facial-card-body">');
+        if (c.nombres) parts.push('<div class="cr-facial-card-name">' + escapeHtml(c.nombres) + '</div>');
+        if (c.dni) parts.push('<div class="cr-facial-card-row"><span>DNI</span>' + escapeHtml(c.dni) + '</div>');
+        if (c.edad) parts.push('<div class="cr-facial-card-row"><span>Edad</span>' + escapeHtml(c.edad) + '</div>');
+        if (c.ubigeo) parts.push('<div class="cr-facial-card-ubigeo">' + escapeHtml(c.ubigeo) + '</div>');
+        parts.push('</div></div>');
+      });
+      parts.push('</div>');
+    }
+    parts.push('</div>');
+    return parts.join('');
   }
 
   /* ── Lightbox simple para ampliar una foto a pantalla completa ────── */
@@ -863,7 +956,9 @@
     renderButtonList:        renderButtonList,
     applyWatermark:          applyWatermark,
     applyWatermarksToPhotos: applyWatermarksToPhotos,
-    renderCandidateList:     renderCandidateList,
+    renderFacialHero:        renderFacialHero,
+    renderTabla:             renderTabla,
+    columnaValor:            columnaValor,
   };
 
   // Compat: category-view.js lo expone en Consultia.renderPdfIntoContainer
@@ -872,7 +967,7 @@
   /* â”€â”€ Delegación global: toggles "Ver detalles" / "Cerrar detalles" â”€â”€ */
   document.addEventListener('click', function (e) {
     // Lightbox: candidatos faciales y fotos biométricas
-    var photo = e.target.closest('.cr-candidate-photo[data-full], .cr-bio-tile[data-full]');
+    var photo = e.target.closest('.cr-facial-hero-photo[data-full], .cr-facial-card-photo[data-full], .cr-bio-tile[data-full]');
     if (photo) { openLightbox(photo.getAttribute('data-full')); return; }
     if (e.target.closest('.cr-lightbox-close') || e.target.closest('.cr-lightbox-backdrop')) {
       closeLightbox();
