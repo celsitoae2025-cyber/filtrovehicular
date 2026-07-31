@@ -45,7 +45,7 @@
   var validarValor            = H.validarValor;
   var renderDataRows          = H.renderDataRows;
   var renderGallery           = H.renderGallery;
-  var renderDataWithMedia     = H.renderDataWithMedia;
+  var renderDataWithMedia     = H.renderDataWithMedia; // ya estaba aliasado, ahora sí se usa
   var renderPdfPreview        = H.renderPdfPreview;
   var renderButtonList        = H.renderButtonList;
   var applyDniLayout          = H.applyDniLayout;
@@ -317,6 +317,11 @@
     function renderResultado(resp, valorConsultado) {
       // Liberar blob URLs de resultados anteriores
       revokeActiveBlobUrls();
+      // Limpiar botón "Descargar informe" heredado de un render previo
+      var prevHeader = $(prefix + '-result-title');
+      prevHeader = prevHeader && prevHeader.closest('.result-header');
+      var prevActions = prevHeader && prevHeader.querySelector('.result-header-actions');
+      if (prevActions) prevActions.remove();
       var p = resp.parsed || {};
       var pdfs       = (p.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
       var allPhotos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
@@ -337,12 +342,9 @@
       } else if (pdfs.length > 0) {
         html = renderPdfPreview(p, pdfs, hasData, prefix);
       } else if (hasData || photos.length > 0) {
-        html = '<div class="cr-report-bar cr-report-bar-auto" id="' + prefix + '-report-area">' +
-          '<div class="cr-report-loading">' +
-            '<div class="cr-spinner"></div>' +
-            '<div class="cr-report-loading-text">Generando informe…</div>' +
-          '</div>' +
-        '</div>';
+        // Datos visibles de inmediato (tabla + fotos al costado); el PDF
+        // se genera aparte, en segundo plano, sin bloquear la vista.
+        html = renderDataWithMedia(p, photos);
       } else {
         var rawText = (p.raw || '').trim();
         rawText = rawText.replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
@@ -363,9 +365,11 @@
       body.hidden = false;
       if (botones.length > 0 && (candidatos.length > 0 || !hasMedia)) wireResultButtons(body);
 
-      // Auto-generar informe PDF y mostrar preview (sin texto crudo)
-      var reportArea = document.getElementById(prefix + '-report-area');
-      if (reportArea && Consultia.ReportGenerator) {
+      // Generar el informe PDF en segundo plano, SIN bloquear la vista de
+      // datos ya mostrada arriba — igual que VeriNexo: los datos se ven de
+      // inmediato, el botón "Descargar informe" aparece en la cabecera del
+      // panel recién cuando el PDF termina de armarse.
+      if ((hasData || photos.length > 0) && Consultia.ReportGenerator) {
         (async function () {
           try {
             var result = Consultia.ReportGenerator.generate(p, {
@@ -376,40 +380,28 @@
                 hour: '2-digit', minute: '2-digit'
               })
             }, photos);
-            if (!result) throw new Error('No se pudo generar');
+            if (!result) return;
 
-            reportArea.innerHTML =
-              '<div class="cr-report-preview">' +
-                '<div class="cr-report-canvas-wrap">' +
-                  '<div class="cr-report-canvas" id="' + prefix + '-report-canvas"></div>' +
-                '</div>' +
-              '</div>';
-
-            // Limpiar cualquier botón rojo de descarga heredado de renders previos:
-            // ahora el thumbnail completo es clickeable y muestra "Click para descargar".
-            var oldActions = reportArea.closest('.result-panel').querySelector('.result-header-actions');
-            if (oldActions) oldActions.remove();
-
-            var canvasEl = document.getElementById(prefix + '-report-canvas');
-            if (canvasEl && Consultia.renderPdfIntoContainer) {
-              try {
-                await Consultia.renderPdfIntoContainer(canvasEl, result.blobUrl, result.filename, result.base64);
-              } catch (pe) {
-                console.warn('[report] preview falló:', pe);
-                canvasEl.innerHTML = '<div class="cr-pdf-loading">Vista previa no disponible.</div>';
-              }
+            var header = body.closest('.result-panel').querySelector('.result-header');
+            if (!header) return;
+            var actions = header.querySelector('.result-header-actions');
+            if (!actions) {
+              actions = document.createElement('div');
+              actions.className = 'result-header-actions';
+              header.appendChild(actions);
             }
-            // El thumbnail entero también descarga al hacer click
-            var wrap = reportArea.querySelector('.cr-report-canvas-wrap');
-            if (wrap) {
-              wrap.addEventListener('click', function () {
-                Consultia.ReportGenerator.download(result);
-              });
-            }
+            actions.innerHTML =
+              '<button type="button" class="cr-download-report-btn">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+                'Descargar informe' +
+              '</button>';
+            actions.querySelector('.cr-download-report-btn').addEventListener('click', function () {
+              Consultia.ReportGenerator.download(result);
+            });
           } catch (e) {
             console.error('[report-generator]', e);
-            // Fallback: mostrar los datos en HTML cuando el PDF falla
-            reportArea.innerHTML = '<div class="cr-txt-layout"><div class="cr-txt-data">' + renderDataRows(p) + '</div></div>';
+            // Silencioso: los datos ya están visibles en pantalla, el informe
+            // descargable es un extra — su fallo no debe interrumpir nada.
           }
         })();
       }

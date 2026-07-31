@@ -1158,6 +1158,22 @@
   letter-spacing: .2px;
 }
 .result-header-actions { display: flex; gap: 4px; }
+.cr-download-report-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  background: #8fc72e;
+  color: #141d1c;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: none;
+}
+.cr-download-report-btn svg { width: 15px; height: 15px; }
+.cr-download-report-btn:hover { background: #7ab324; }
 
 /* Lista de datos */
 .data-list { display: flex; flex-direction: column; margin: 0; padding: 0; }
