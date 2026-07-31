@@ -475,13 +475,29 @@
   }
 
   // Render de datos + fotos al costado (cuando el bot manda texto + imagen)
+  // Columna de imágenes biométricas — mismo criterio de VeriNexo:
+  // documento escaneado (DNI) => columna más ancha; anverso+reverso (2
+  // imágenes de documento) => el doble de ancho en 2 columnas; caso por
+  // defecto (foto+firma+huellas) => columna angosta de una sola foto por
+  // fila, apiladas en el orden en que llegan.
   function renderDataWithMedia(p, photos) {
     var mediaParts = [];
     if (photos.length) {
-      var gridClass = ('cr-media-grid ' + mediaCountClass('cr-media', photos.length)).trim();
-      mediaParts.push('<div class="' + gridClass + '">');
+      var esDniDoc = /dni/i.test((photos[0] && photos[0].filename) || '');
+      var esAnversoReverso = esDniDoc && photos.length === 2;
+      var colW = esAnversoReverso ? 620 : esDniDoc ? 320 : 160;
+      var tileH = esAnversoReverso ? 240 : esDniDoc ? 200 : 150;
+      var gridCols = esAnversoReverso ? 'repeat(2, 1fr)' : '1fr';
+      mediaParts.push(
+        '<div class="cr-bio-col" style="width:' + colW + 'px;max-width:100%;display:grid;grid-template-columns:' + gridCols + ';gap:12px;">'
+      );
       photos.forEach(function (m, i) {
-        mediaParts.push('<img src="data:' + (m.mimeType || 'image/jpeg') + ';base64,' + m.base64 + '" alt="Foto ' + (i + 1) + '">');
+        var src = 'data:' + (m.mimeType || 'image/jpeg') + ';base64,' + m.base64;
+        mediaParts.push(
+          '<div class="cr-bio-tile" style="height:' + tileH + 'px;" data-full="' + src + '">' +
+            '<img src="' + src + '" alt="Foto ' + (i + 1) + '">' +
+          '</div>'
+        );
       });
       mediaParts.push('</div>');
     }
@@ -855,8 +871,8 @@
 
   /* â”€â”€ Delegación global: toggles "Ver detalles" / "Cerrar detalles" â”€â”€ */
   document.addEventListener('click', function (e) {
-    // Lightbox de candidatos faciales
-    var photo = e.target.closest('.cr-candidate-photo[data-full]');
+    // Lightbox: candidatos faciales y fotos biométricas
+    var photo = e.target.closest('.cr-candidate-photo[data-full], .cr-bio-tile[data-full]');
     if (photo) { openLightbox(photo.getAttribute('data-full')); return; }
     if (e.target.closest('.cr-lightbox-close') || e.target.closest('.cr-lightbox-backdrop')) {
       closeLightbox();

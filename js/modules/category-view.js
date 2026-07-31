@@ -620,9 +620,6 @@
         var resp = await Consultia.ConsultaRunner.ejecutarConsultaConCobro(
           user.id, currentConsulta, valor, photoOpts ? { photo: photoOpts } : undefined
         );
-        if (resp && resp.parsed && resp.parsed.medios) {
-          await applyWatermarksToPhotos(resp.parsed.medios);
-        }
         renderResultado(resp, valor);
         if (Consultia.SearchHistory && valor) Consultia.SearchHistory.add(valor, categoria);
         if (Consultia.Favorites && Consultia.Favorites.injectStar) {
