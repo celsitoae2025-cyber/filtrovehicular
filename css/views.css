@@ -913,22 +913,17 @@
   .nm-fields .btn { width: 100%; }
 }
 
-/* Resultados de búsqueda por nombre (/nm) */
-.nm-results { display: flex; flex-direction: column; gap: 8px; padding: 4px; }
-.nm-results-count { font-size: 13px; color: #999; padding: 0 4px; }
-.nm-card { border: 1px solid #E2E8F0; border-radius: 6px; overflow: hidden; }
-.nm-card-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #141d1c; color: #ffffff; }
-.nm-card-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #8fc72e; color: #141d1c; font-size: 12px; font-weight: bold; flex-shrink: 0; }
-.nm-card-name { font-weight: bold; font-size: 14px; flex: 1; }
-.nm-card-age { font-size: 12px; opacity: .8; flex-shrink: 0; }
-.nm-card-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 4px; padding: 10px 14px; }
-.nm-card-field { display: flex; flex-direction: column; gap: 2px; }
-.nm-card-k { font-size: 11px; color: #999; text-transform: uppercase; }
-.nm-card-v { font-size: 13px; font-weight: bold; }
-.nm-download { margin: 8px auto 4px; display: inline-flex; align-items: center; gap: 6px; }
-@media (max-width: 640px) {
-  .nm-card-body { grid-template-columns: 1fr 1fr; }
-}
+/* Resultados de búsqueda por nombre (/nm) — tabla */
+.nm-results { padding: 4px; }
+.nm-section-title { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
+.nm-results-count { font-size: 13px; font-style: italic; color: #999; text-align: right; margin-bottom: 4px; }
+.nm-table-wrap { overflow-x: auto; }
+.nm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.nm-table thead th { background: #141d1c; color: #ffffff; font-weight: bold; font-size: 11px; text-transform: uppercase; padding: 8px 10px; text-align: left; white-space: nowrap; }
+.nm-table tbody td { padding: 6px 10px; border-bottom: 1px solid #E2E8F0; white-space: nowrap; }
+.nm-table tbody tr:nth-child(even) { background: #f8f9fa; }
+.nm-download { margin: 10px 0 4px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #E2E8F0; background: #ffffff; color: #141d1c; padding: 6px 14px; border-radius: 4px; font-size: 13px; cursor: pointer; }
+.nm-download:hover { background: #f0f0f0; }
 
 /* Botón full-width (para el "Consultar" de facial) */
 .btn.btn-block { width: 100%; justify-content: center; }

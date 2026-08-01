@@ -1096,7 +1096,15 @@
 
     var parts = [];
     parts.push('<div class="nm-results">');
-    parts.push('<div class="nm-results-count">' + personas.length + ' resultado' + (personas.length === 1 ? '' : 's') + ' encontrado' + (personas.length === 1 ? '' : 's') + '</div>');
+    parts.push('<div class="nm-section-title">REGISTROS</div>');
+    parts.push('<div class="nm-results-count">' + personas.length + ' resultado' + (personas.length === 1 ? '' : 's') + '</div>');
+
+    parts.push('<div class="nm-table-wrap">');
+    parts.push('<table class="nm-table">');
+    parts.push('<thead><tr>');
+    parts.push('<th>Nº</th><th>Nº DNI</th><th>NOMBRES</th><th>AP. PATERNO</th><th>AP. MATERNO</th><th>EDAD</th><th>SEXO</th><th>DPTO</th><th>PROVINCIA</th><th>DISTRITO</th>');
+    parts.push('</tr></thead>');
+    parts.push('<tbody>');
 
     personas.forEach(function (per, idx) {
       var dni = per['Nº Dni'] || per['N° Dni'] || '';
@@ -1108,33 +1116,33 @@
       var dpto = per['Dpto'] || '';
       var prov = per['Provincia'] || '';
       var dist = per['Distrito'] || '';
-      var fullName = [nombres, apPat, apMat].filter(Boolean).join(' ');
 
-      parts.push('<div class="nm-card">');
-      parts.push('<div class="nm-card-header">');
-      parts.push('<span class="nm-card-num">' + (idx + 1) + '</span>');
-      parts.push('<span class="nm-card-name">' + escapeHtml(fullName) + '</span>');
-      if (edad) parts.push('<span class="nm-card-age">' + escapeHtml(edad) + ' años</span>');
-      parts.push('</div>');
-      parts.push('<div class="nm-card-body">');
-      if (dni) parts.push('<div class="nm-card-field"><span class="nm-card-k">DNI</span><span class="nm-card-v">' + escapeHtml(dni) + '</span></div>');
-      if (genero) parts.push('<div class="nm-card-field"><span class="nm-card-k">Género</span><span class="nm-card-v">' + escapeHtml(genero) + '</span></div>');
-      if (dpto) parts.push('<div class="nm-card-field"><span class="nm-card-k">Departamento</span><span class="nm-card-v">' + escapeHtml(dpto) + '</span></div>');
-      if (prov) parts.push('<div class="nm-card-field"><span class="nm-card-k">Provincia</span><span class="nm-card-v">' + escapeHtml(prov) + '</span></div>');
-      if (dist) parts.push('<div class="nm-card-field"><span class="nm-card-k">Distrito</span><span class="nm-card-v">' + escapeHtml(dist) + '</span></div>');
-      parts.push('</div>');
-      parts.push('</div>');
+      parts.push('<tr>');
+      parts.push('<td>' + (idx + 1) + '</td>');
+      parts.push('<td>' + escapeHtml(dni) + '</td>');
+      parts.push('<td>' + escapeHtml(nombres) + '</td>');
+      parts.push('<td>' + escapeHtml(apPat) + '</td>');
+      parts.push('<td>' + escapeHtml(apMat) + '</td>');
+      parts.push('<td>' + escapeHtml(edad) + '</td>');
+      parts.push('<td>' + escapeHtml(genero) + '</td>');
+      parts.push('<td>' + escapeHtml(dpto) + '</td>');
+      parts.push('<td>' + escapeHtml(prov) + '</td>');
+      parts.push('<td>' + escapeHtml(dist) + '</td>');
+      parts.push('</tr>');
     });
+
+    parts.push('</tbody></table>');
+    parts.push('</div>');
 
     var dlBtn = (botones || []).filter(function (b) { return /descargar/i.test(b.text); });
     if (dlBtn.length > 0) {
       var b = dlBtn[0];
       parts.push(
-        '<button type="button" class="btn btn-primary nm-download cr-btn-option" ' +
+        '<button type="button" class="btn nm-download cr-btn-option" ' +
           'data-msgid="' + escapeHtml(String(b.msgId)) + '" ' +
           'data-callback="' + escapeHtml(b.data) + '">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
-          ' Descargar' +
+          ' Descargar TXT' +
         '</button>'
       );
     }
