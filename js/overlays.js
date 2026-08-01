@@ -99,17 +99,7 @@
     const btnReject = document.getElementById('cookieReject');
 
     if (banner) {
-      const consent = localStorage.getItem(COOKIE_KEY);
-      if (!consent) {
-        // Mostrar con un pequeño delay para que no aparezca en el mismo frame
-        setTimeout(() => { banner.hidden = false; }, 400);
-      }
-      const save = value => {
-        localStorage.setItem(COOKIE_KEY, value);
-        banner.hidden = true;
-      };
-      if (btnAccept) btnAccept.addEventListener('click', () => save('all'));
-      if (btnReject) btnReject.addEventListener('click', () => save('essential'));
+      banner.hidden = true;
     }
   };
 })();
