@@ -167,7 +167,7 @@
     var mo = new MutationObserver(function () {
       // Ignorar cuando es estado de carga
       if (body.querySelector(".cr-loading")) return;
-      injectResultActions(body);
+      // injectResultActions(body);
     });
     mo.observe(body, { childList: true, subtree: false });
   }

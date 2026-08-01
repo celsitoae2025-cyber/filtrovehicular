@@ -29,6 +29,8 @@
   var renderDataRows          = H.renderDataRows;
   var renderPdfPreview        = H.renderPdfPreview;
   var renderButtonList        = H.renderButtonList;
+  var renderDataWithMedia     = H.renderDataWithMedia;
+  var renderDocumentCard      = H.renderDocumentCard;
 
   /* â”€â”€ Catálogo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   async function cargarCatalogo() {
@@ -278,7 +280,7 @@
             if (RH.esErrorTecnicoRespuesta(rp, resp)) {
               resultArea.innerHTML = RH.htmlMantenimiento();
             } else if (pdfs.length > 0) {
-              resultArea.innerHTML = RH.renderPdfPreview(rp, pdfs, false, 'filter');
+              resultArea.innerHTML = RH.renderDocumentCard(pdfs, 'filter');
             } else if (hasDataR) {
               var duid = 'cr-cb-det-' + Date.now();
               resultArea.innerHTML =
@@ -299,6 +301,8 @@
                 '</div></div>';
             } else {
               var rawText = (rp.raw || '').trim().replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
+              var _rawH2 = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
+              rawText = rawText.split(/\r?\n/).filter(function (l) { var t = l.replace(/\[\s*[^\]]*\]\s*/g, '').trim(); return t && !_rawH2.test(t); }).join('\n').trim();
               if (rawText.length > 5 && !RH.esErrorTecnico(rawText)) {
                 resultArea.innerHTML = '<div style="white-space:pre-wrap;font-family:monospace;font-size:13px;line-height:1.5;padding:16px;">' + RH.escapeHtml(rawText) + '</div>';
               } else {
@@ -355,7 +359,15 @@
     var pdfs    = (p.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
     var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
     var botones = p.botones || [];
-    var hasData = (p.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
+    var _metaRe = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;
+    var _valRe = /^(la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|obteniendo|consultando|buscando|procesando|generando|cargando|#\w+|∞|♾)/i;
+    var hasData = (p.secciones || []).some(function (s) {
+      return (s.campos || []).some(function (c) {
+        if (c.campo && _metaRe.test(c.campo.trim())) return false;
+        if (!c.campo && c.valor && _valRe.test(c.valor.trim())) return false;
+        return !!(c.campo || (c.valor && c.valor.trim()));
+      });
+    });
     var hasMedia = pdfs.length > 0 || photos.length > 0;
 
     var body = $('filter-result-body');
@@ -365,18 +377,14 @@
       html = htmlMantenimiento();
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
-    } else if (pdfs.length > 0) {
-      html = renderPdfPreview(p, pdfs, hasData, 'fl');
     } else if (hasData || photos.length > 0) {
-      html =
-        '<div class="cr-report-bar cr-report-bar-auto" id="filter-report-area">' +
-          '<div class="cr-report-loading">' +
-            '<div class="cr-spinner"></div>' +
-            '<div class="cr-report-loading-text">Generando informe…</div>' +
-          '</div>' +
-        '</div>';
+      html = renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl');
+    } else if (pdfs.length > 0) {
+      html = renderDocumentCard(pdfs, 'fl');
     } else {
       var rawText = (p.raw || '').trim();
+      var _rawH3 = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
+      rawText = rawText.split(/\r?\n/).filter(function (l) { var t = l.replace(/\[\s*[^\]]*\]\s*/g, '').trim(); return t && !_rawH3.test(t); }).join('\n').trim();
       var doc = (p.medios || []).find(function (m) { return m.tipo === 'document' && m.filename && m.filename.endsWith('.txt'); });
       if (doc && doc.base64) {
         try { rawText += '\n\n' + decodeURIComponent(escape(atob(doc.base64))); } catch (e) { rawText += '\n\n' + atob(doc.base64); }

@@ -322,7 +322,15 @@
       var pdfs    = (p.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
       var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
       var botones = p.botones || [];
-      var hasData = (p.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
+      var _metaRe = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;
+      var _valRe = /^(la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|obteniendo|consultando|buscando|procesando|generando|cargando|#\w+|∞|♾)/i;
+      var hasData = (p.secciones || []).some(function (s) {
+        return (s.campos || []).some(function (c) {
+          if (c.campo && _metaRe.test(c.campo.trim())) return false;
+          if (!c.campo && c.valor && _valRe.test(c.valor.trim())) return false;
+          return !!(c.campo || (c.valor && c.valor.trim()));
+        });
+      });
       var hasMedia = pdfs.length > 0 || photos.length > 0;
       var hasFacial = p.facial && p.facial.length > 0;
       var hasTabla  = p.tabla && p.tabla.filas && p.tabla.filas.length > 0;
@@ -345,12 +353,15 @@
         // se genera aparte, en segundo plano, sin bloquear la vista.
         html = renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
       } else if (pdfs.length > 0) {
-        // Sin datos parseables: el PDF es todo el contenido, mostrar el
-        // visor completo embebido.
-        html = renderPdfPreview(p, pdfs, hasData, prefix);
+        html = renderDocumentCard(pdfs, prefix);
       } else {
         var rawText = (p.raw || '').trim();
         rawText = rawText.replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
+        var _rawHide = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
+        rawText = rawText.split(/\r?\n/).filter(function (l) {
+          var t = l.replace(/\[\s*[^\]]*\]\s*/g, '').trim();
+          return t && !_rawHide.test(t);
+        }).join('\n').trim();
         var doc = (p.medios || []).find(function (m) { return m.tipo === 'document' && m.filename && m.filename.endsWith('.txt'); });
         if (doc && doc.base64) {
           try { rawText += '\n\n' + decodeURIComponent(escape(atob(doc.base64))); } catch (e) { rawText += '\n\n' + atob(doc.base64); }
@@ -447,7 +458,7 @@
               if (RH.esErrorTecnicoRespuesta(rp, resp)) {
                 resultArea.innerHTML = RH.htmlMantenimiento();
               } else if (pdfs.length > 0) {
-                resultArea.innerHTML = RH.renderPdfPreview(rp, pdfs, false, prefix);
+                resultArea.innerHTML = RH.renderDocumentCard(pdfs, prefix);
               } else if (hasDataR) {
                 var duid = 'cr-cb-det-' + Date.now();
                 resultArea.innerHTML =

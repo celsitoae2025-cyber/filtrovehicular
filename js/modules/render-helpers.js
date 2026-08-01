@@ -241,11 +241,26 @@
     return false;
   }
 
+  function cleanTitle(t) {
+    if (!t) return t;
+    return t
+      .replace(/\s*ONLINE\s*/gi, ' ')
+      .replace(/\s*NV\s*\d+\s*/gi, ' ')
+      .replace(/\s*\b(PREMIUM|GOLD|EST[AÁ]NDAR|STANDARD|FREE|BASIC|B[AÁ]SICO|PRO|VIP|PLUS)\b\s*/gi, ' ')
+      .replace(/\s*#\w+/g, '')
+      .replace(/\s*\[.*?\]\s*/g, ' ')
+      .replace(/\s*-\s*$/g, '')
+      .replace(/^\s*-\s*/g, '')
+      .replace(/\s*-\s*-\s*/g, ' - ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   function renderDataRows(p) {
     var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
     var toTitleCase = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.toTitleCase : function (s) { return s; };
     var dataHtml = [];
-    if (p.titulo) dataHtml.push('<div class="cr-tit">' + escapeHtml(p.titulo) + '</div>');
+    if (p.titulo) dataHtml.push('<div class="cr-tit">' + escapeHtml(cleanTitle(p.titulo)) + '</div>');
 
     // Dedup secciones idénticas
     var seenSec = Object.create(null);
@@ -257,7 +272,11 @@
       uniqSec.push(s);
     });
 
+    var _botMeta = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;
+    var _botValText = /^(la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|obteniendo|consultando|buscando|procesando|generando|cargando|#\w+|∞|♾)/i;
     function renderCampo(c) {
+      if (c.campo && _botMeta.test(c.campo.trim())) return '';
+      if (!c.campo && c.valor && _botValText.test(c.valor.trim())) return '';
       if (c.campo && isEmptyValue(c.valor)) return '';
       if (c.campo) return '<div class="cr-row"><span class="cr-k">' + escapeHtml(prettyLabel(c.campo)) + '</span><span class="cr-v">' + escapeHtml(c.valor) + '</span></div>';
       if (c.valor && !isEmptyValue(c.valor)) return '<div class="cr-row"><span class="cr-v">' + escapeHtml(c.valor) + '</span></div>';
@@ -757,7 +776,7 @@
   function renderButtonList(p, botones) {
     var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
     var parts = [];
-    if (p && p.titulo) parts.push('<div class="cr-tit">' + escapeHtml(p.titulo) + '</div>');
+    if (p && p.titulo) parts.push('<div class="cr-tit">' + escapeHtml(cleanTitle(p.titulo)) + '</div>');
 
     // Separar campos cabecera de registros individuales
     var headerCampos = [];

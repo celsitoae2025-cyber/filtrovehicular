@@ -1159,7 +1159,7 @@
 }
 /* ===== Tarjeta "Documento adjunto" (Visualizar/Descargar) ===== */
 .cr-doccards {
-  padding: 0 40px 20px;
+  padding: 0 80px 20px;
   display: flex; flex-direction: column; gap: 12px;
 }
 .cr-doccard { border: 1px solid var(--c-border); border-radius: 8px; overflow: hidden; background: var(--c-surface); box-shadow: none; }
@@ -2107,9 +2107,9 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 :root {
   /* Layout datos + fotos */
   --cr-padding-top: 20px;
-  --cr-padding-right: 40px;
+  --cr-padding-right: 80px;
   --cr-padding-bottom: 20px;
-  --cr-padding-left: 40px;
+  --cr-padding-left: 80px;
   --cr-gap: 20px;
   --cr-data-max: 100%;
   --cr-media-width: 220px;
@@ -2165,21 +2165,20 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 
 .cr-layout {
   display: grid;
-  grid-template-columns: minmax(auto, var(--cr-data-max)) 1fr var(--cr-media-width);
+  grid-template-columns: 1fr;
   gap: var(--cr-gap);
   align-items: start;
-  max-width: var(--cr-max-width);
   padding: var(--cr-padding-top) var(--cr-padding-right) var(--cr-padding-bottom) var(--cr-padding-left);
 }
-.cr-layout:has(.cr-media:empty) {
-  grid-template-columns: 1fr;
+.cr-layout:has(.cr-media:not(:empty)) {
+  grid-template-columns: 1fr var(--cr-media-width);
 }
 .cr-data {
   grid-column: 1;
   transform: translate(var(--cr-data-offset-left), var(--cr-data-offset-top));
 }
 .cr-media {
-  grid-column: 3;
+  grid-column: 2;
   transform: translate(var(--cr-media-margin-left), var(--cr-media-margin-top));
 }
 .cr-data { min-width: 0; }
@@ -2200,9 +2199,9 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   justify-content: center;
   overflow: hidden;
   cursor: zoom-in;
-  background: var(--c-bg);
-  border: 1px solid var(--c-border);
-  border-radius: 8px;
+  background: #ffffff;
+  border: none;
+  border-radius: 0;
 }
 .cr-bio-tile img {
   max-width: 100%;
@@ -2255,6 +2254,7 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   color: var(--c-muted);
   white-space: nowrap;
   font-size: 12px;
+  text-transform: uppercase;
 }
 .cr-row .cr-k::after { content: ""; }
 .cr-row .cr-v {
@@ -2262,6 +2262,7 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   color: var(--c-primary);
   word-break: break-word;
   font-size: 12.5px;
+  text-transform: uppercase;
 }
 /* Layout texto puro — espaciado más compacto */
 .cr-txt-data .cr-row { padding: 6px 0; font-size: 13.5px; line-height: 1.55; }
