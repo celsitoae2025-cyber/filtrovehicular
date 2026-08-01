@@ -865,6 +865,54 @@
   .form-row .btn { width: 100%; flex: 0 0 44px; }
 }
 
+.nm-hint {
+  font-size: 13px;
+  color: #999;
+  margin: 0 0 6px 0;
+  width: 100%;
+}
+/* 3 campos para búsqueda por nombre (/nm) */
+.nm-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+.nm-inputs {
+  flex: 1 1 0;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+.nm-input {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 44px;
+}
+.nm-fields .btn {
+  flex: 0 0 auto;
+  height: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.nm-fields .btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+@media (min-width: 768px) {
+  .nm-input { height: 40px; }
+  .nm-fields .btn { height: 40px; min-height: 40px; }
+}
+@media (max-width: 640px) {
+  .nm-inputs { flex-direction: column; }
+  .nm-input { width: 100%; height: 44px; }
+  .nm-fields { flex-direction: column; align-items: stretch; }
+  .nm-fields .btn { width: 100%; }
+}
+
 /* Botón full-width (para el "Consultar" de facial) */
 .btn.btn-block { width: 100%; justify-content: center; }
 

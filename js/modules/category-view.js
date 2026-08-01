@@ -153,42 +153,49 @@
       }
     }
 
-    // Renderiza un hint visual cuando el comando activo requiere formato especial.
+    // Muestra/oculta los 3 campos de búsqueda por nombre cuando el comando es /nm
     function renderCommandHint(c) {
       var hostId = prefix + '-hint';
       var existing = $(hostId);
       if (existing) existing.remove();
-      if (!c || !c.comando) return;
 
-      // /nm: búsqueda por nombres
-      if (c.comando.indexOf('/nm') === 0) {
-        var input = $(prefix + '-input');
-        if (!input) return;
-        var panelParent = input.closest('.panel');
-        if (!panelParent) return;
-        var hint = document.createElement('div');
-        hint.id = hostId;
-        hint.className = 'cr-cmd-hint';
-        hint.innerHTML =
-          '<div class="cr-cmd-hint-title">Usa el formato correcto</div>' +
-          '<ul class="cr-cmd-hint-list">' +
-            '<li>Apellido paterno y apellido materno son <b>requeridos</b>.</li>' +
-            '<li>Si un apellido tiene más de una palabra, une con <b>+</b>. Ej: <code>del+sol</code></li>' +
-            '<li>Si los nombres tienen más de una palabra, sepáralos con <b>,</b>. Ej: <code>juan,manuel</code></li>' +
-          '</ul>' +
-          '<div class="cr-cmd-hint-title cr-cmd-hint-sub">Formato</div>' +
-          '<code class="cr-cmd-hint-code">nombres|apellido paterno|apellido materno</code>' +
-          '<div class="cr-cmd-hint-title cr-cmd-hint-sub">Ejemplos</div>' +
-          '<ul class="cr-cmd-hint-examples">' +
-            '<li><code>juan|perez|lopez</code></li>' +
-            '<li><code>juan|del+sol|lopez</code></li>' +
-            '<li><code>juan,manuel|perez|lopez</code></li>' +
-            '<li><code>|perez|lopez</code> <span>(sin nombre)</span></li>' +
-          '</ul>';
-        // Insertar justo antes del form-row (debajo del consumo-row)
-        var formRow = panelParent.querySelector('.form-row');
-        if (formRow) panelParent.insertBefore(hint, formRow);
-        else panelParent.appendChild(hint);
+      var formRow = document.querySelector('#' + prefix + '-input')
+        ? document.querySelector('#' + prefix + '-input').closest('.form-row')
+        : null;
+      var nmRow = $(prefix + '-nm-row');
+
+      if (c && c.comando && c.comando.indexOf('/nm') === 0) {
+        if (formRow) formRow.style.display = 'none';
+        if (!nmRow) {
+          var panelParent = formRow ? formRow.parentNode : null;
+          if (!panelParent) return;
+          nmRow = document.createElement('div');
+          nmRow.id = prefix + '-nm-row';
+          nmRow.className = 'nm-fields';
+          nmRow.innerHTML =
+            '<p class="nm-hint">Completa al menos 2 campos: nombre + apellido, o ambos apellidos.</p>' +
+            '<div class="nm-inputs">' +
+              '<input type="text" class="input nm-input" id="' + prefix + '-nm-nombres" placeholder="Nombres" autocomplete="off">' +
+              '<input type="text" class="input nm-input" id="' + prefix + '-nm-appat" placeholder="Apellido paterno" autocomplete="off">' +
+              '<input type="text" class="input nm-input" id="' + prefix + '-nm-apmat" placeholder="Apellido materno" autocomplete="off">' +
+            '</div>' +
+            '<button class="btn btn-primary" type="button" id="' + prefix + '-nm-consultar">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>' +
+              ' Consultar' +
+            '</button>';
+          if (formRow) panelParent.insertBefore(nmRow, formRow.nextSibling);
+          else panelParent.appendChild(nmRow);
+          var nmBtn = $(prefix + '-nm-consultar');
+          if (nmBtn) nmBtn.addEventListener('click', ejecutar);
+          nmRow.querySelectorAll('.nm-input').forEach(function (inp) {
+            inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') ejecutar(); });
+          });
+        }
+        nmRow.style.display = '';
+        nmRow.querySelectorAll('.nm-input').forEach(function (inp) { inp.value = ''; });
+      } else {
+        if (formRow) formRow.style.display = '';
+        if (nmRow) nmRow.style.display = 'none';
       }
     }
 
@@ -207,8 +214,9 @@
         var nombres = partes[0];
         var apPat = partes[1];
         var apMat = partes[2];
-        if (!apPat || !apMat) {
-          return { error: 'Ambos apellidos son obligatorios (apellido paterno y apellido materno).' };
+        var filled = (nombres ? 1 : 0) + (apPat ? 1 : 0) + (apMat ? 1 : 0);
+        if (filled < 2) {
+          return { error: 'Completa al menos 2 de los 3 campos.' };
         }
         // Espacios internos: , para nombres, + para apellidos
         nombres = nombres.replace(/\s+/g, ',');
@@ -542,6 +550,22 @@
         }
         valor = selectedFile.name;
         photoOpts = { base64: selectedFileBase64, filename: selectedFile.name };
+      } else if (currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0) {
+        var nmNombres = $(prefix + '-nm-nombres');
+        var nmApPat = $(prefix + '-nm-appat');
+        var nmApMat = $(prefix + '-nm-apmat');
+        var apPat = (nmApPat ? nmApPat.value : '').trim();
+        var apMat = (nmApMat ? nmApMat.value : '').trim();
+        var nombres = (nmNombres ? nmNombres.value : '').trim();
+        var filledCount = (nombres ? 1 : 0) + (apPat ? 1 : 0) + (apMat ? 1 : 0);
+        if (filledCount < 2) {
+          if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Faltan datos', message: 'Completa al menos 2 de los 3 campos.' });
+          return;
+        }
+        nombres = nombres.replace(/\s+/g, ',');
+        apPat = apPat.replace(/\s+/g, '+');
+        apMat = apMat.replace(/\s+/g, '+');
+        valor = nombres + '|' + apPat + '|' + apMat;
       } else {
         var input = $(prefix + '-input');
         valor = input.value.trim();
