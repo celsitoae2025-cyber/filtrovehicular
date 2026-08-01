@@ -913,6 +913,23 @@
   .nm-fields .btn { width: 100%; }
 }
 
+/* Resultados de búsqueda por nombre (/nm) */
+.nm-results { display: flex; flex-direction: column; gap: 8px; padding: 4px; }
+.nm-results-count { font-size: 13px; color: #999; padding: 0 4px; }
+.nm-card { border: 1px solid #E2E8F0; border-radius: 6px; overflow: hidden; }
+.nm-card-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #141d1c; color: #ffffff; }
+.nm-card-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #8fc72e; color: #141d1c; font-size: 12px; font-weight: bold; flex-shrink: 0; }
+.nm-card-name { font-weight: bold; font-size: 14px; flex: 1; }
+.nm-card-age { font-size: 12px; opacity: .8; flex-shrink: 0; }
+.nm-card-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 4px; padding: 10px 14px; }
+.nm-card-field { display: flex; flex-direction: column; gap: 2px; }
+.nm-card-k { font-size: 11px; color: #999; text-transform: uppercase; }
+.nm-card-v { font-size: 13px; font-weight: bold; }
+.nm-download { margin: 8px auto 4px; display: inline-flex; align-items: center; gap: 6px; }
+@media (max-width: 640px) {
+  .nm-card-body { grid-template-columns: 1fr 1fr; }
+}
+
 /* Botón full-width (para el "Consultar" de facial) */
 .btn.btn-block { width: 100%; justify-content: center; }
 
@@ -2113,7 +2130,7 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   line-height: 1.5;
 }
 
-/* â”€â”€ Mensaje de mantenimiento / error técnico â”€â”€ */
+/* â"€â"€ Mensaje de mantenimiento / error técnico â"€â"€ */
 .cr-mantenimiento {
   display: flex;
   flex-direction: column;
@@ -2752,7 +2769,7 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-btn-result-area[hidden] { display: none; }
 .cr-btn-result-area .cr-pdf-layout { padding: 0; }
 
-/* â”€â”€ Reorganización cuando hay un PDF dentro del flujo de botones â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/* â"€â"€ Reorganización cuando hay un PDF dentro del flujo de botones â"€â"€â"€â"€â"€â"€â"€â"€â"€
    Cuando el bot devuelve una lista de opciones (Ver detalles, Elige
    opción...) y al elegir una se renderiza un PDF, el layout pasa a 2
    columnas: contenido a la izquierda, thumbnail PDF a la derecha.
@@ -2760,7 +2777,7 @@ body.cr-lightbox-open { overflow: hidden; }
    Usa container queries (Chrome 105+, Safari 16+, Firefox 110+) para
    medir el contenedor REAL — el viewport puede ser ancho pero con el
    right-panel visible el contenido central queda ~540px.
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 .reniec-result-body { container-type: inline-size; }
 
 /* Default: stack vertical (mobile-first y cuando el contenedor es angosto) */
@@ -3099,7 +3116,7 @@ body.cr-lightbox-open { overflow: hidden; }
   display: none !important;
 }
 
-/* â”€â”€ Panel de datos junto al PDF — diseño stacked profesional â”€â”€ */
+/* â"€â"€ Panel de datos junto al PDF — diseño stacked profesional â"€â"€ */
 .cr-pdf-data .cr-tit {
   font-size: 12px;
   font-weight: 700;

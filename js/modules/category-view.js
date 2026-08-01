@@ -53,6 +53,7 @@
   var renderFacialHero        = H.renderFacialHero;
   var renderTabla             = H.renderTabla;
   var renderDocumentCard      = H.renderDocumentCard;
+  var renderNmPersonas        = H.renderNmPersonas;
 
   function bindGlobalComboListeners() {
     if (_globalBound) return;
@@ -351,6 +352,8 @@
         html = renderFacialHero(p.facial);
       } else if (hasTabla) {
         html = renderTabla(p.tabla);
+      } else if (currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0) {
+        html = renderNmPersonas(p, botones);
       } else if (botones.length > 0 && !hasMedia) {
         html = renderButtonList(p, botones);
       } else if (hasData || photos.length > 0) {
@@ -385,7 +388,8 @@
 
       body.innerHTML = html;
       body.hidden = false;
-      if (botones.length > 0 && !hasMedia && !hasFacial && !hasTabla) wireResultButtons(body);
+      var isNm = currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0;
+      if ((botones.length > 0 && !hasMedia && !hasFacial && !hasTabla) || isNm) wireResultButtons(body);
 
       var empty = $(emptyId());
       if (empty) empty.hidden = true;
@@ -393,7 +397,7 @@
       var status = $(statusId());
       if (status) {
         status.classList.remove('status-empty', 'status-loading');
-        if (botones.length > 0 && !hasMedia) {
+        if (botones.length > 0 && !hasMedia && !isNm) {
           status.classList.remove('status-ok');
           status.classList.add('status-empty');
           status.innerHTML = '<span class="status-dot"></span> Elige una opción';
@@ -434,7 +438,7 @@
           var data = btn.dataset.callback;
           if (!msgId || !data) return;
 
-          // â”€â”€ Modo nuevo: renderizar en el área de resultado sin reemplazar botones â”€â”€
+          // â"€â"€ Modo nuevo: renderizar en el área de resultado sin reemplazar botones â"€â"€
           if (resultArea) {
             if (illust) illust.hidden = true;
             btns.forEach(function (b) { b.disabled = true; b.classList.remove('is-selected'); });
@@ -519,7 +523,7 @@
             return;
           }
 
-          // â”€â”€ Fallback: comportamiento original (sin cr-btn-result-area) â”€â”€
+          // â"€â"€ Fallback: comportamiento original (sin cr-btn-result-area) â"€â"€
           var savedHtml = container.innerHTML;
           btns.forEach(function (b) { b.disabled = true; });
           btn.classList.add('is-loading');

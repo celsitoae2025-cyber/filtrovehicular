@@ -11,7 +11,7 @@
   'use strict';
   window.Consultia = window.Consultia || {};
 
-  /* â”€â”€ Error detection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* â"€â"€ Error detection â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   var ERROR_TECNICO_RE = /ECONN|ETIMEDOUT|ENOTFOUND|socket hang|network error|error en la consulta|no se pudo extraer|error al procesar|timeout|connection reset/i;
 
   function esErrorTecnico(texto) {
@@ -42,7 +42,7 @@
     ].join('');
   }
 
-  /* â”€â”€ Text helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* â"€â"€ Text helpers â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   // Quita emojis y caracteres decorativos del texto visible al usuario
   var EMOJI_RE = /[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2190}-\u{21FF}\u{1F100}-\u{1F1FF}\u{1F200}-\u{1F2FF}\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FAFF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
 
@@ -56,7 +56,7 @@
     });
   }
 
-  /* â”€â”€ Input helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* â"€â"€ Input helpers â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   function placeholderFor(t) {
     if (t === 'dni')      return 'Ingresa el DNI (8 dígitos)';
     if (t === 'placa')    return 'Ingresa la placa';
@@ -88,7 +88,7 @@
     return null;
   }
 
-  /* â”€â”€ Blob URL tracking â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* â"€â"€ Blob URL tracking â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   var activeBlobUrls = [];
   var _pdfBase64Map = {};
 
@@ -109,7 +109,7 @@
     activeBlobUrls = [];
   }
 
-  /* â”€â”€ PDF fallback UI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* â"€â"€ PDF fallback UI â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   function pdfFallbackUI(blobUrl, dataUrl, fileName) {
     return '<div class="cr-pdf-fallback">' +
       '<div class="cr-pdf-fallback-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg></div>' +
@@ -121,7 +121,7 @@
     '</div>';
   }
 
-  /* â”€â”€ PDF.js renderer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* â"€â"€ PDF.js renderer â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   async function renderPdfIntoContainer(container, blobUrl, fileName, base64) {
     var dataUrl = base64 ? ('data:application/pdf;base64,' + base64) : blobUrl;
     if (!window.pdfjsLib) {
@@ -196,13 +196,13 @@
     }
   }
 
-  /* â”€â”€ Record splitting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* â"€â"€ Record splitting â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   function isRecordStart(cu) {
     if (!cu) return false;
     if (cu === 'DNI' || cu === 'NUMERO' || cu === 'NÃšMERO' ||
         cu.indexOf('DNI ') === 0 || cu.indexOf('DNI(') === 0) return true;
     // Campos tipo "NÂº DENUNCIA", "N° EXPEDIENTE", "NRO CASO", etc.
-    if (/^N[°ÂºRO.]*\s*(DENUNCIA|EXPEDIENTE|CASO|PARTIDA|ORDEN|REGISTRO|RESOLUCI[OÃ“]N)/i.test(cu)) return true;
+    if (/^N[°ÂºRO.]*\s*(DENUNCIA|EXPEDIENTE|CASO|PARTIDA|ORDEN|REGISTRO|RESOLUCI[OÃ"]N)/i.test(cu)) return true;
     return false;
   }
 
@@ -225,7 +225,7 @@
     });
   }
 
-  /* â”€â”€ Data row rendering â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* â"€â"€ Data row rendering â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   function isEmptyValue(v) {
     if (!v) return true;
     var t = v.trim().toUpperCase();
@@ -347,7 +347,7 @@
     return dataHtml.join('');
   }
 
-  /* â”€â”€ Media helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* â"€â"€ Media helpers â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   // Devuelve el sufijo de clase segun la cantidad de fotos.
   // El CSS define layouts específicos para 1..4 fotos; 5+ usa un grid auto-fit.
   function mediaCountClass(prefix, n) {
@@ -805,9 +805,9 @@
           var tip = '', fecha = '';
           rec.forEach(function (c) {
             var cf = (c.campo || '').toUpperCase().trim();
-            if (!tip && (cf.indexOf('TIPIFICACION') !== -1 || cf.indexOf('TIPIFICACIÃ“N') !== -1 ||
+            if (!tip && (cf.indexOf('TIPIFICACION') !== -1 || cf.indexOf('TIPIFICACIÃ"N') !== -1 ||
                 cf === 'TIPO' || cf === 'DELITO' || cf.indexOf('DESCRIPCION') !== -1 ||
-                cf.indexOf('DESCRIPCIÃ“N') !== -1 || cf === 'MOTIVO' || cf === 'CONCEPTO')) {
+                cf.indexOf('DESCRIPCIÃ"N') !== -1 || cf === 'MOTIVO' || cf === 'CONCEPTO')) {
               tip = c.valor || '';
             }
             if (!fecha && (cf.indexOf('FECHA') !== -1 || cf.indexOf('F.') !== -1 || cf === 'F. REGISTRO' || cf === 'REGISTRO')) {
@@ -1056,7 +1056,94 @@
     document.body.classList.remove('cr-lightbox-open');
   }
 
-  /* â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* ── Búsqueda por nombre (/nm): tarjetas de persona ── */
+  var NM_FIELDS = ['Nº Dni', 'N° Dni', 'Prenombres', 'Apellido Paterno', 'Apellido Materno', 'Edad', 'Género', 'Genero', 'Dpto', 'Provincia', 'Distrito'];
+  var NM_FIELD_RE = new RegExp('(' + NM_FIELDS.map(function (f) { return f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')\\s+', 'gi');
+
+  function parseNmPersonas(rawText) {
+    var text = rawText.replace(/Mensaje\s+La consulta se hizo.*$/i, '').trim();
+    var chunks = text.split(/Persona\s+\d+/i).filter(function (c) { return c.trim(); });
+    return chunks.map(function (chunk) {
+      var persona = {};
+      var remaining = chunk.trim();
+      var matches = [];
+      var m;
+      var re = new RegExp('(' + NM_FIELDS.map(function (f) { return f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')\\s+', 'gi');
+      while ((m = re.exec(remaining)) !== null) {
+        matches.push({ field: m[1], index: m.index, endIndex: re.lastIndex });
+      }
+      for (var i = 0; i < matches.length; i++) {
+        var field = matches[i].field;
+        var start = matches[i].endIndex;
+        var end = (i + 1 < matches.length) ? matches[i + 1].index : remaining.length;
+        persona[field] = remaining.substring(start, end).trim();
+      }
+      return persona;
+    });
+  }
+
+  function renderNmPersonas(p, botones) {
+    var rawText = (p.raw || '').trim();
+    if (!rawText) {
+      (p.secciones || []).forEach(function (s) {
+        (s.campos || []).forEach(function (c) {
+          rawText += (c.campo ? c.campo + ' ' : '') + (c.valor || '') + '  ';
+        });
+      });
+    }
+    var personas = parseNmPersonas(rawText);
+    if (!personas.length) return '';
+
+    var parts = [];
+    parts.push('<div class="nm-results">');
+    parts.push('<div class="nm-results-count">' + personas.length + ' resultado' + (personas.length === 1 ? '' : 's') + ' encontrado' + (personas.length === 1 ? '' : 's') + '</div>');
+
+    personas.forEach(function (per, idx) {
+      var dni = per['Nº Dni'] || per['N° Dni'] || '';
+      var nombres = per['Prenombres'] || '';
+      var apPat = per['Apellido Paterno'] || '';
+      var apMat = per['Apellido Materno'] || '';
+      var edad = per['Edad'] || '';
+      var genero = per['Género'] || per['Genero'] || '';
+      var dpto = per['Dpto'] || '';
+      var prov = per['Provincia'] || '';
+      var dist = per['Distrito'] || '';
+      var fullName = [nombres, apPat, apMat].filter(Boolean).join(' ');
+
+      parts.push('<div class="nm-card">');
+      parts.push('<div class="nm-card-header">');
+      parts.push('<span class="nm-card-num">' + (idx + 1) + '</span>');
+      parts.push('<span class="nm-card-name">' + escapeHtml(fullName) + '</span>');
+      if (edad) parts.push('<span class="nm-card-age">' + escapeHtml(edad) + ' años</span>');
+      parts.push('</div>');
+      parts.push('<div class="nm-card-body">');
+      if (dni) parts.push('<div class="nm-card-field"><span class="nm-card-k">DNI</span><span class="nm-card-v">' + escapeHtml(dni) + '</span></div>');
+      if (genero) parts.push('<div class="nm-card-field"><span class="nm-card-k">Género</span><span class="nm-card-v">' + escapeHtml(genero) + '</span></div>');
+      if (dpto) parts.push('<div class="nm-card-field"><span class="nm-card-k">Departamento</span><span class="nm-card-v">' + escapeHtml(dpto) + '</span></div>');
+      if (prov) parts.push('<div class="nm-card-field"><span class="nm-card-k">Provincia</span><span class="nm-card-v">' + escapeHtml(prov) + '</span></div>');
+      if (dist) parts.push('<div class="nm-card-field"><span class="nm-card-k">Distrito</span><span class="nm-card-v">' + escapeHtml(dist) + '</span></div>');
+      parts.push('</div>');
+      parts.push('</div>');
+    });
+
+    var dlBtn = (botones || []).filter(function (b) { return /descargar/i.test(b.text); });
+    if (dlBtn.length > 0) {
+      var b = dlBtn[0];
+      parts.push(
+        '<button type="button" class="btn btn-primary nm-download cr-btn-option" ' +
+          'data-msgid="' + escapeHtml(String(b.msgId)) + '" ' +
+          'data-callback="' + escapeHtml(b.data) + '">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+          ' Descargar' +
+        '</button>'
+      );
+    }
+
+    parts.push('</div>');
+    return parts.join('');
+  }
+
+  /* â"€â"€ Public API â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   Consultia.RenderHelpers = {
     esErrorTecnico:          esErrorTecnico,
     esErrorTecnicoRespuesta: esErrorTecnicoRespuesta,
@@ -1088,12 +1175,13 @@
     renderTabla:             renderTabla,
     renderDocumentCard:      renderDocumentCard,
     columnaValor:            columnaValor,
+    renderNmPersonas:        renderNmPersonas,
   };
 
   // Compat: category-view.js lo expone en Consultia.renderPdfIntoContainer
   Consultia.renderPdfIntoContainer = renderPdfIntoContainer;
 
-  /* â”€â”€ Delegación global: toggles "Ver detalles" / "Cerrar detalles" â”€â”€ */
+  /* â"€â"€ Delegación global: toggles "Ver detalles" / "Cerrar detalles" â"€â"€ */
   document.addEventListener('click', function (e) {
     // Lightbox: candidatos faciales y fotos biométricas
     var photo = e.target.closest('.cr-facial-hero-photo[data-full], .cr-facial-card-photo[data-full], .cr-bio-tile[data-full], .cr-dni-card[data-full]');
