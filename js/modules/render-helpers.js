@@ -960,8 +960,13 @@
     document.body.classList.remove('cr-lightbox-open');
   }
 
-  /* ── Modal flotante para ver el PDF completo (todas las páginas, scroll) ── */
+  /* ── Modal flotante para ver PDF (iframe con visor nativo de Chrome) ── */
   function openPdfModal(src, fileName) {
+    var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.open(src, '_blank');
+      return;
+    }
     var el = document.getElementById('cr-pdf-modal');
     if (!el) {
       el = document.createElement('div');
@@ -972,7 +977,6 @@
           '<div class="cr-pdf-modal-header">' +
             '<span class="cr-pdf-modal-name"></span>' +
             '<div class="cr-pdf-modal-actions">' +
-              '<span class="cr-pdf-modal-pages"></span>' +
               '<a class="cr-pdf-modal-dl" download="">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
                 '<span>Descargar</span>' +
@@ -984,64 +988,29 @@
             '</div>' +
           '</div>' +
           '<div class="cr-pdf-modal-body"></div>' +
+          '<div class="cr-pdf-modal-fallback">' +
+            '<span>¿No se ve el documento? </span>' +
+            '<a class="cr-pdf-modal-fallback-link">Ábrelo o descárgalo aquí</a>' +
+          '</div>' +
         '</div>';
       document.body.appendChild(el);
     }
     var body = el.querySelector('.cr-pdf-modal-body');
-    body.innerHTML = '<div class="cr-pdf-modal-loading">Cargando documento…</div>';
+    body.innerHTML = '';
+    var iframe = document.createElement('iframe');
+    iframe.src = src;
+    iframe.title = fileName || 'Documento PDF';
+    iframe.style.cssText = 'width:100%;height:100%;border:none';
+    body.appendChild(iframe);
     var dlBtn = el.querySelector('.cr-pdf-modal-dl');
     dlBtn.href = src;
     dlBtn.download = fileName || 'documento.pdf';
     el.querySelector('.cr-pdf-modal-name').textContent = fileName || 'Documento PDF';
-    el.querySelector('.cr-pdf-modal-pages').textContent = '';
+    var fallbackLink = el.querySelector('.cr-pdf-modal-fallback-link');
+    fallbackLink.href = src;
+    fallbackLink.download = fileName || 'documento.pdf';
     el.hidden = false;
     document.body.classList.add('cr-lightbox-open');
-    var b64 = _pdfBase64Map[src] || null;
-    _renderAllPdfPages(body, src, b64, el.querySelector('.cr-pdf-modal-pages'));
-  }
-
-  async function _renderAllPdfPages(container, blobUrl, base64, pagesLabel) {
-    if (!window.pdfjsLib) {
-      container.innerHTML = '<div class="cr-pdf-modal-loading">PDF.js no disponible</div>';
-      return;
-    }
-    try {
-      var docInput;
-      if (base64) {
-        var binary = atob(base64);
-        var bytes = new Uint8Array(binary.length);
-        for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-        docInput = { data: bytes };
-      } else {
-        docInput = blobUrl;
-      }
-      var pdf = await pdfjsLib.getDocument(docInput).promise;
-      var total = pdf.numPages;
-      if (pagesLabel) pagesLabel.textContent = total + (total === 1 ? ' pagina' : ' paginas');
-      container.innerHTML = '';
-      for (var p = 1; p <= total; p++) {
-        var page = await pdf.getPage(p);
-        var dpr = Math.min(window.devicePixelRatio || 1, 2);
-        var baseVp = page.getViewport({ scale: 1 });
-        var displayW = Math.min(container.clientWidth - 32, 900);
-        var cssScale = displayW / baseVp.width;
-        var renderScale = cssScale * dpr;
-        var pixels = baseVp.width * renderScale * baseVp.height * renderScale;
-        if (pixels > 6e6) renderScale = renderScale * Math.sqrt(6e6 / pixels);
-        var vp = page.getViewport({ scale: renderScale });
-        var canvas = document.createElement('canvas');
-        canvas.className = 'cr-pdf-modal-page';
-        canvas.width = vp.width;
-        canvas.height = vp.height;
-        canvas.style.width = displayW + 'px';
-        canvas.style.height = (displayW * baseVp.height / baseVp.width) + 'px';
-        container.appendChild(canvas);
-        await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
-      }
-    } catch (err) {
-      console.error('PDF modal render error:', err);
-      container.innerHTML = '<div class="cr-pdf-modal-loading">No se pudo cargar el documento</div>';
-    }
   }
 
   function closePdfModal() {
