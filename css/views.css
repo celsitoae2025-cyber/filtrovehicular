@@ -914,7 +914,7 @@
 }
 
 /* Resultados de búsqueda por nombre (/nm) — tabla */
-.nm-results { padding: 4px; }
+.nm-results { padding: 0; }
 .nm-section-title { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
 .nm-results-count { font-size: 13px; font-style: italic; color: #999; text-align: right; margin-bottom: 4px; }
 .nm-table-wrap { overflow-x: auto; }
@@ -922,7 +922,7 @@
 .nm-table thead th { background: #141d1c; color: #ffffff; font-weight: bold; font-size: 11px; text-transform: uppercase; padding: 8px 10px; text-align: left; white-space: nowrap; }
 .nm-table tbody td { padding: 6px 10px; border-bottom: 1px solid #E2E8F0; white-space: nowrap; }
 .nm-table tbody tr:nth-child(even) { background: #f8f9fa; }
-.nm-download { margin: 10px 0 4px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #E2E8F0; background: #ffffff; color: #141d1c; padding: 6px 14px; border-radius: 4px; font-size: 13px; cursor: pointer; }
+.nm-download { margin: 8px 0 4px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid #E2E8F0; background: #ffffff; color: #141d1c; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
 .nm-download:hover { background: #f0f0f0; }
 
 /* Botón full-width (para el "Consultar" de facial) */
