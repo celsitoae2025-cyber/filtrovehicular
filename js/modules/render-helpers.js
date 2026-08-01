@@ -502,15 +502,31 @@
   // defecto (foto+firma+huellas) => columna angosta de una sola foto por
   // fila, apiladas en el orden en que llegan.
   function renderDataWithMedia(p, photos) {
+    var esDniDoc = photos.length > 0 && /dni/i.test((photos[0] && photos[0].filename) || '');
+    var esAnversoReverso = esDniDoc && photos.length === 2;
+
+    if (esAnversoReverso) {
+      var dniParts = [];
+      dniParts.push('<div class="cr-dni-pair">');
+      photos.forEach(function (m, i) {
+        var src = 'data:' + (m.mimeType || 'image/jpeg') + ';base64,' + m.base64;
+        dniParts.push(
+          '<div class="cr-dni-card" data-full="' + src + '">' +
+            '<img src="' + src + '" alt="' + (i === 0 ? 'Anverso' : 'Reverso') + '">' +
+          '</div>'
+        );
+      });
+      dniParts.push('</div>');
+      return dniParts.join('') +
+        '<div class="cr-layout"><div class="cr-data">' + renderDataRows(p) + '</div><div class="cr-media"></div></div>';
+    }
+
     var mediaParts = [];
     if (photos.length) {
-      var esDniDoc = /dni/i.test((photos[0] && photos[0].filename) || '');
-      var esAnversoReverso = esDniDoc && photos.length === 2;
-      var colW = esAnversoReverso ? 620 : esDniDoc ? 320 : 160;
-      var tileH = esAnversoReverso ? 240 : esDniDoc ? 200 : 150;
-      var gridCols = esAnversoReverso ? 'repeat(2, 1fr)' : '1fr';
+      var colW = esDniDoc ? 320 : 160;
+      var tileH = esDniDoc ? 200 : 150;
       mediaParts.push(
-        '<div class="cr-bio-col" style="width:' + colW + 'px;max-width:100%;display:grid;grid-template-columns:' + gridCols + ';gap:12px;">'
+        '<div class="cr-bio-col" style="width:' + colW + 'px;max-width:100%;display:grid;grid-template-columns:1fr;gap:12px;">'
       );
       photos.forEach(function (m, i) {
         var src = 'data:' + (m.mimeType || 'image/jpeg') + ';base64,' + m.base64;
@@ -1080,7 +1096,7 @@
   /* â”€â”€ Delegación global: toggles "Ver detalles" / "Cerrar detalles" â”€â”€ */
   document.addEventListener('click', function (e) {
     // Lightbox: candidatos faciales y fotos biométricas
-    var photo = e.target.closest('.cr-facial-hero-photo[data-full], .cr-facial-card-photo[data-full], .cr-bio-tile[data-full]');
+    var photo = e.target.closest('.cr-facial-hero-photo[data-full], .cr-facial-card-photo[data-full], .cr-bio-tile[data-full], .cr-dni-card[data-full]');
     if (photo) { openLightbox(photo.getAttribute('data-full')); return; }
     if (e.target.closest('.cr-lightbox-close') || e.target.closest('.cr-lightbox-backdrop')) {
       closeLightbox();
