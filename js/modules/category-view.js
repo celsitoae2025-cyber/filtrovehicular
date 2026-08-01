@@ -318,11 +318,6 @@
     function renderResultado(resp, valorConsultado) {
       // Liberar blob URLs de resultados anteriores
       revokeActiveBlobUrls();
-      // Limpiar botón "Descargar informe" heredado de un render previo
-      var prevHeader = $(prefix + '-result-title');
-      prevHeader = prevHeader && prevHeader.closest('.result-header');
-      var prevActions = prevHeader && prevHeader.querySelector('.result-header-actions');
-      if (prevActions) prevActions.remove();
       var p = resp.parsed || {};
       var pdfs    = (p.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
       var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
@@ -372,61 +367,6 @@
       body.innerHTML = html;
       body.hidden = false;
       if (botones.length > 0 && !hasMedia && !hasFacial && !hasTabla) wireResultButtons(body);
-
-      // Generar el informe PDF en segundo plano, SIN bloquear la vista de
-      // datos ya mostrada arriba — igual que VeriNexo: los datos se ven de
-      // inmediato, el botón "Descargar informe" aparece en la cabecera del
-      // panel recién cuando el PDF termina de armarse. El generador a usar
-      // depende del tipo de resultado (facial/tabla/policial/general) —
-      // mismo criterio de VeriNexo (generarPdfFacial/Tabla/Policial/Pdf).
-      var esPolicial = currentConsulta && /^\/policia\b/i.test(currentConsulta.comando || '');
-      if ((hasFacial || hasTabla || esPolicial || hasData || photos.length > 0) && Consultia.ReportGenerator) {
-        (async function () {
-          try {
-            var result;
-            if (hasFacial) {
-              result = await Consultia.ReportGenerator.generateFacial(p.facial, valorConsultado || '');
-            } else if (hasTabla) {
-              result = Consultia.ReportGenerator.generateTabla(p.tabla, valorConsultado || '', currentConsulta ? currentConsulta.nombre : '');
-            } else if (esPolicial) {
-              var camposFlat = [];
-              (p.secciones || []).forEach(function (s) { (s.campos || []).forEach(function (c) { camposFlat.push(c); }); });
-              result = await Consultia.ReportGenerator.generatePolicial(camposFlat, valorConsultado || '', photos);
-            } else {
-              result = Consultia.ReportGenerator.generate(p, {
-                consultaNombre: currentConsulta ? currentConsulta.nombre : '',
-                valor: valorConsultado || '',
-                fecha: new Date().toLocaleDateString('es-PE', {
-                  day: '2-digit', month: 'short', year: 'numeric',
-                  hour: '2-digit', minute: '2-digit'
-                })
-              }, photos);
-            }
-            if (!result) return;
-
-            var header = body.closest('.result-panel').querySelector('.result-header');
-            if (!header) return;
-            var actions = header.querySelector('.result-header-actions');
-            if (!actions) {
-              actions = document.createElement('div');
-              actions.className = 'result-header-actions';
-              header.appendChild(actions);
-            }
-            actions.innerHTML =
-              '<button type="button" class="cr-download-report-btn">' +
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
-                'Descargar informe' +
-              '</button>';
-            actions.querySelector('.cr-download-report-btn').addEventListener('click', function () {
-              Consultia.ReportGenerator.download(result);
-            });
-          } catch (e) {
-            console.error('[report-generator]', e);
-            // Silencioso: los datos ya están visibles en pantalla, el informe
-            // descargable es un extra — su fallo no debe interrumpir nada.
-          }
-        })();
-      }
 
       var empty = $(emptyId());
       if (empty) empty.hidden = true;
