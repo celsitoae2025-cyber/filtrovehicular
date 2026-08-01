@@ -353,7 +353,7 @@
       } else if (hasTabla) {
         html = renderTabla(p.tabla);
       } else if (currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0) {
-        html = renderNmPersonas(p, botones);
+        html = renderNmPersonas(p, botones, valorConsultado);
       } else if (botones.length > 0 && !hasMedia) {
         html = renderButtonList(p, botones);
       } else if (hasData || photos.length > 0) {

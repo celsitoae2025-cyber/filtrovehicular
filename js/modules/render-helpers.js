@@ -1061,7 +1061,7 @@
   var NM_FIELD_RE = new RegExp('(' + NM_FIELDS.map(function (f) { return f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')\\s+', 'gi');
 
   function parseNmPersonas(rawText) {
-    var text = rawText.replace(/Mensaje\s+La consulta se hizo.*$/i, '').trim();
+    var text = rawText.replace(/Total\s+Resultados\s+\d+/i, '').replace(/Mensaje\s+La consulta se hizo.*$/i, '').trim();
     var chunks = text.split(/Persona\s+\d+/i).filter(function (c) { return c.trim(); });
     return chunks.map(function (chunk) {
       var persona = {};
@@ -1082,7 +1082,7 @@
     });
   }
 
-  function renderNmPersonas(p, botones) {
+  function renderNmPersonas(p, botones, valorConsultado) {
     var rawText = (p.raw || '').trim();
     if (!rawText) {
       (p.secciones || []).forEach(function (s) {
@@ -1094,15 +1094,22 @@
     var personas = parseNmPersonas(rawText);
     if (!personas.length) return '';
 
+    var totalMatch = rawText.match(/Total\s+Resultados\s+(\d+)/i);
+    var totalResultados = totalMatch ? totalMatch[1] : String(personas.length);
+    var queryLabel = (valorConsultado || '').replace(/\|/g, ' ').replace(/[+,]/g, ' ').trim().toUpperCase() || 'NOMBRE';
+
     var parts = [];
     parts.push('<div class="nm-results">');
-    parts.push('<div class="nm-section-title">REGISTROS</div>');
-    parts.push('<div class="nm-results-count">' + personas.length + ' resultado' + (personas.length === 1 ? '' : 's') + '</div>');
+
+    parts.push('<div class="nm-header">DATOS DEL TITULAR</div>');
+    parts.push('<div class="nm-query-bar">BÚSQUEDAS PERSONAS – ' + escapeHtml(queryLabel) + ' –</div>');
+    parts.push('<div class="nm-meta"><span>TOTAL RESULTADOS</span><span>' + escapeHtml(totalResultados) + '</span></div>');
+    parts.push('<div class="nm-meta"><span class="nm-meta-bold">REGISTROS</span><span class="nm-meta-italic">' + personas.length + ' resultados</span></div>');
 
     parts.push('<div class="nm-table-wrap">');
     parts.push('<table class="nm-table">');
     parts.push('<thead><tr>');
-    parts.push('<th>Nº</th><th>Nº DNI</th><th>NOMBRES</th><th>AP. PATERNO</th><th>AP. MATERNO</th><th>EDAD</th><th>SEXO</th><th>DPTO</th><th>PROVINCIA</th><th>DISTRITO</th>');
+    parts.push('<th>Nº</th><th>PERSONA</th><th>Nº DNI</th><th>NOMBRES</th><th>AP. PATERNO</th><th>AP. MATERNO</th><th>EDAD</th><th>SEXO</th><th>DPTO</th><th>PROVINCIA</th><th>DISTRITO</th>');
     parts.push('</tr></thead>');
     parts.push('<tbody>');
 
@@ -1118,6 +1125,7 @@
       var dist = per['Distrito'] || '';
 
       parts.push('<tr>');
+      parts.push('<td>' + (idx + 1) + '</td>');
       parts.push('<td>' + (idx + 1) + '</td>');
       parts.push('<td>' + escapeHtml(dni) + '</td>');
       parts.push('<td>' + escapeHtml(nombres) + '</td>');
@@ -1138,10 +1146,10 @@
     if (dlBtn.length > 0) {
       var b = dlBtn[0];
       parts.push(
-        '<button type="button" class="btn nm-download cr-btn-option" ' +
+        '<button type="button" class="nm-download cr-btn-option" ' +
           'data-msgid="' + escapeHtml(String(b.msgId)) + '" ' +
           'data-callback="' + escapeHtml(b.data) + '">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
           ' Descargar' +
         '</button>'
       );

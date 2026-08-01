@@ -914,12 +914,15 @@
 }
 
 /* Resultados de búsqueda por nombre (/nm) — tabla */
-.nm-results { padding: 0; }
-.nm-section-title { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
-.nm-results-count { font-size: 13px; font-style: italic; color: #999; text-align: right; margin-bottom: 4px; }
+.nm-results { padding: 8px; }
+.nm-header { font-weight: bold; font-size: 14px; color: #141d1c; margin-bottom: 4px; }
+.nm-query-bar { background: #141d1c; color: #ffffff; font-weight: normal; font-size: 13px; padding: 6px 10px; margin-bottom: 4px; }
+.nm-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #141d1c; padding: 2px 0; }
+.nm-meta-bold { font-weight: bold; }
+.nm-meta-italic { font-style: italic; color: #999; }
 .nm-table-wrap { overflow-x: auto; }
 .nm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.nm-table thead th { background: #141d1c; color: #ffffff; font-weight: bold; font-size: 11px; text-transform: uppercase; padding: 8px 10px; text-align: left; white-space: nowrap; }
+.nm-table thead th { background: #141d1c; color: #ffffff; font-weight: normal; font-size: 11px; text-transform: uppercase; padding: 8px 10px; text-align: left; white-space: nowrap; }
 .nm-table tbody td { padding: 6px 10px; border-bottom: 1px solid #E2E8F0; white-space: nowrap; }
 .nm-table tbody tr:nth-child(even) { background: #f8f9fa; }
 .nm-download { margin: 8px 0 4px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid #E2E8F0; background: #ffffff; color: #141d1c; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
