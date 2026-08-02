@@ -729,9 +729,9 @@
     if (!regs || !regs.length) return null;
     meta = meta || {};
 
-    var doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-    var W = doc.internal.pageSize.getWidth();   // 297
-    var H = doc.internal.pageSize.getHeight();  // 210
+    var doc = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    var W = doc.internal.pageSize.getWidth();   // 210
+    var H = doc.internal.pageSize.getHeight();  // 297
     var M = 8;
     var bottomBandTop = H - 12;
 
@@ -783,35 +783,37 @@
       M, 37
     );
 
-    var head = [['Nº', 'PERSONA', 'Nº DNI', 'NOMBRES', 'AP. PATERNO', 'AP. MATERNO', 'EDAD', 'SEXO', 'DPTO', 'PROVINCIA', 'DISTRITO']];
+    // Sin columna "PERSONA": duplicaba el índice que ya da "Nº" (mismo
+    // criterio que la tabla en pantalla).
+    var head = [['Nº', 'Nº DNI', 'NOMBRES', 'AP. PATERNO', 'AP. MATERNO', 'EDAD', 'SEXO', 'DPTO', 'PROVINCIA', 'DISTRITO']];
     var body = regs.map(function (r, i) {
       return [
-        String(i + 1), r.persona || String(i + 1), r.dni || '', r.nombres || '',
+        String(i + 1), r.dni || '', r.nombres || '',
         r.apPat || '', r.apMat || '', r.edad || '', r.sexo || '',
         r.dpto || '', r.prov || '', r.dist || ''
       ];
     });
 
+    // Anchos recalculados para A4 vertical: 210mm - 2*8 de margen = 194mm.
     doc.autoTable({
       startY: 42, head: head, body: body,
       tableWidth: W - M * 2,
       margin: { left: M, right: M, top: 26, bottom: 15 },
       didDrawPage: bandas,
-      headStyles: { fillColor: C_PRIMARY, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7, cellPadding: 1.6 },
-      bodyStyles: { fontSize: 7.2, textColor: C_TEXT, cellPadding: 1.4, lineWidth: 0, valign: 'middle' },
+      headStyles: { fillColor: C_PRIMARY, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 6, cellPadding: 1.2 },
+      bodyStyles: { fontSize: 6.3, textColor: C_TEXT, cellPadding: 1.1, lineWidth: 0, valign: 'middle' },
       alternateRowStyles: { fillColor: [245, 247, 250] },
       columnStyles: {
-        0: { cellWidth: 9,  halign: 'center' },
-        1: { cellWidth: 16, halign: 'center' },
-        2: { cellWidth: 22 },
-        3: { cellWidth: 44 },
-        4: { cellWidth: 32 },
-        5: { cellWidth: 38 },
-        6: { cellWidth: 12, halign: 'center' },
-        7: { cellWidth: 20 },
-        8: { cellWidth: 26 },
-        9: { cellWidth: 28 },
-        10: { cellWidth: 'auto' }
+        0: { cellWidth: 8,  halign: 'center' },
+        1: { cellWidth: 18 },
+        2: { cellWidth: 28 },
+        3: { cellWidth: 22 },
+        4: { cellWidth: 24 },
+        5: { cellWidth: 9,  halign: 'center' },
+        6: { cellWidth: 15 },
+        7: { cellWidth: 18 },
+        8: { cellWidth: 19 },
+        9: { cellWidth: 'auto' }
       },
       styles: { overflow: 'linebreak', lineWidth: 0 },
     });
@@ -827,9 +829,9 @@
     if (!regs || !regs.length) return null;
     meta = meta || {};
 
-    var doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-    var W = doc.internal.pageSize.getWidth();
-    var H = doc.internal.pageSize.getHeight();
+    var doc = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    var W = doc.internal.pageSize.getWidth();   // 210
+    var H = doc.internal.pageSize.getHeight();  // 297
     var M = 8;
     var bottomBandTop = H - 12;
 
@@ -884,22 +886,23 @@
       return [String(i + 1), r.dni || '', r.nombres || '', r.apellidos || '', r.edad || '', r.sexo || '', r.relacion || '', r.verificacion || ''];
     });
 
+    // Anchos recalculados para A4 vertical: 210mm - 2*8 de margen = 194mm.
     doc.autoTable({
       startY: 42, head: head, body: body,
       tableWidth: W - M * 2,
       margin: { left: M, right: M, top: 26, bottom: 15 },
       didDrawPage: bandas,
-      headStyles: { fillColor: C_PRIMARY, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7, cellPadding: 1.6 },
-      bodyStyles: { fontSize: 7.2, textColor: C_TEXT, cellPadding: 1.4, lineWidth: 0, valign: 'middle' },
+      headStyles: { fillColor: C_PRIMARY, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 6.4, cellPadding: 1.3 },
+      bodyStyles: { fontSize: 6.8, textColor: C_TEXT, cellPadding: 1.2, lineWidth: 0, valign: 'middle' },
       alternateRowStyles: { fillColor: [245, 247, 250] },
       columnStyles: {
-        0: { cellWidth: 9,  halign: 'center' },
-        1: { cellWidth: 24 },
-        2: { cellWidth: 42 },
-        3: { cellWidth: 42 },
-        4: { cellWidth: 16, halign: 'center' },
-        5: { cellWidth: 26 },
-        6: { cellWidth: 34 },
+        0: { cellWidth: 8,  halign: 'center' },
+        1: { cellWidth: 20 },
+        2: { cellWidth: 34 },
+        3: { cellWidth: 36 },
+        4: { cellWidth: 10, halign: 'center' },
+        5: { cellWidth: 18 },
+        6: { cellWidth: 30 },
         7: { cellWidth: 'auto' }
       },
       styles: { overflow: 'linebreak', lineWidth: 0 },
