@@ -14,9 +14,9 @@
      xs/sm no se tocan (ya están cerca del mínimo legible); md/lg/xl
      se reducen para pantallas chicas. */
   :root {
-    --fs-md: 15px;
-    --fs-lg: 18px;
-    --fs-xl: 24px;
+    --fs-md: 16px;
+    --fs-lg: 19px;
+    --fs-xl: 26px;
   }
 
   /* === Content padding === */

@@ -32,11 +32,11 @@
   /* Escala tipográfica — únicos 5 tamaños permitidos en la app de
      consultas. xs/sm se mantienen fijos en móvil (ya están cerca del
      mínimo legible); md/lg/xl se reducen en el breakpoint de 768px. */
-  --fs-xs: 11px;
-  --fs-sm: 13px;
-  --fs-md: 16px;
-  --fs-lg: 20px;
-  --fs-xl: 28px;
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-md: 17px;
+  --fs-lg: 21px;
+  --fs-xl: 30px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
