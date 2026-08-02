@@ -385,7 +385,7 @@
         if (rawText.length > 5) {
           html = esErrorTecnico(rawText)
             ? htmlMantenimiento()
-            : '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding: 16px;"><div style="white-space: pre-wrap; font-family: monospace; font-size: 13px; line-height: 1.5;">' + escapeHtml(rawText) + '</div></div></div>';
+            : '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding: 16px;"><div style="white-space: pre-wrap; font-family: monospace; font-size: var(--fs-sm); line-height: 1.5;">' + escapeHtml(rawText) + '</div></div></div>';
         } else {
           html = '<div class="cr-loading"><div class="cr-loading-text">No se encontraron datos para mostrar.</div></div>';
         }
@@ -632,7 +632,7 @@
               } else {
                 var rawText = (rp.raw || '').trim().replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
                 if (rawText.length > 5 && !RH.esErrorTecnico(rawText)) {
-                  resultArea.innerHTML = '<div style="white-space:pre-wrap;font-family:monospace;font-size:13px;line-height:1.5;padding:16px;">' + RH.escapeHtml(rawText) + '</div>';
+                  resultArea.innerHTML = '<div style="white-space:pre-wrap;font-family:monospace;font-size: var(--fs-sm);line-height:1.5;padding:16px;">' + RH.escapeHtml(rawText) + '</div>';
                 } else if (RH.esErrorTecnico(rawText)) {
                   resultArea.innerHTML = RH.htmlMantenimiento();
                 } else {

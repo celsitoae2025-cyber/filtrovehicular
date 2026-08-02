@@ -10,6 +10,15 @@
 ============================================================ */
 @media (max-width: 768px) {
 
+  /* === Escala tipográfica compacta ===
+     xs/sm no se tocan (ya están cerca del mínimo legible); md/lg/xl
+     se reducen para pantallas chicas. */
+  :root {
+    --fs-md: 15px;
+    --fs-lg: 18px;
+    --fs-xl: 24px;
+  }
+
   /* === Content padding === */
   .content {
     padding: 14px !important;
@@ -20,8 +29,8 @@
     padding: 10px 14px;
     gap: 8px;
   }
-  .breadcrumb { font-size: 13px; }
-  .breadcrumb .crumb-link { font-size: 13px; }
+  .breadcrumb { font-size: var(--fs-sm); }
+  .breadcrumb .crumb-link { font-size: var(--fs-sm); }
 
   /* === Heros más compactos === */
   .hero { padding: 14px 0; margin-bottom: 14px; }
@@ -30,12 +39,12 @@
     line-height: 1.15;
     letter-spacing: -.4px;
   }
-  .hero-eyebrow { font-size: 10px; margin-bottom: 6px; }
-  .hero-sub { font-size: 13px; }
+  .hero-eyebrow { font-size: var(--fs-xs); margin-bottom: 6px; }
+  .hero-sub { font-size: var(--fs-sm); }
 
   .regiones-title { font-size: clamp(22px, 6vw, 28px); }
-  .regiones-sub { font-size: 12.5px; }
-  .simple-title { font-size: 20px; }
+  .regiones-sub { font-size: var(--fs-sm); }
+  .simple-title { font-size: var(--fs-lg); }
 
   /* === Paneles unificados === */
   .panel {
@@ -46,8 +55,8 @@
     gap: 12px;
     margin-bottom: 12px;
   }
-  .panel-head h3 { font-size: 14px; }
-  .panel-head p { font-size: 12px; }
+  .panel-head h3 { font-size: var(--fs-sm); }
+  .panel-head p { font-size: var(--fs-sm); }
   .panel-icon {
     width: 32px;
     height: 32px;
@@ -61,7 +70,7 @@
     flex-wrap: wrap;
     gap: 10px;
   }
-  .section-title { font-size: 14px; }
+  .section-title { font-size: var(--fs-sm); }
 
   /* === Selectores y combos === */
   .selector-card {
@@ -69,7 +78,7 @@
     margin-bottom: 12px;
   }
   .selector-label {
-    font-size: 10.5px;
+    font-size: var(--fs-xs);
     margin-bottom: 6px;
   }
 
@@ -82,7 +91,7 @@
   .form-row .input {
     width: 100%;
     height: 44px;
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
   .form-row .btn {
     width: 100%;
@@ -96,7 +105,7 @@
     flex-wrap: nowrap;
     gap: 8px;
   }
-  .result-header h3 { font-size: 13.5px; }
+  .result-header h3 { font-size: var(--fs-sm); }
   .result-header-left { min-width: 0; flex: 1; }
   .result-header-actions {
     flex-shrink: 0;
@@ -109,11 +118,11 @@
     gap: 4px;
   }
   .data-row dt {
-    font-size: 11px;
+    font-size: var(--fs-xs);
     letter-spacing: .4px;
     text-transform: uppercase;
   }
-  .data-row dd { font-size: 13.5px; }
+  .data-row dd { font-size: var(--fs-sm); }
 
   /* === Result card limpio === */
   #filter-preview-data { padding: 14px 16px 16px; }
@@ -124,11 +133,11 @@
     padding: 12px 0 10px;
   }
   .result-k {
-    font-size: 10.5px;
+    font-size: var(--fs-xs);
     letter-spacing: 1px;
   }
   .result-v {
-    font-size: 14px;
+    font-size: var(--fs-sm);
     text-align: left;
     width: 100%;
   }
@@ -142,10 +151,10 @@
     padding: 14px 14px 12px;
     border-radius: 10px;
   }
-  .catalog-card-title { font-size: 14px; }
-  .catalog-card-desc { font-size: 12px; }
+  .catalog-card-title { font-size: var(--fs-sm); }
+  .catalog-card-desc { font-size: var(--fs-sm); }
   .catalog-card-price {
-    font-size: 11px;
+    font-size: var(--fs-xs);
     padding: 2px 8px;
   }
 
@@ -160,20 +169,20 @@
     border-radius: 8px;
   }
   .notif-icon svg { width: 16px; height: 16px; }
-  .notif-head strong { font-size: 13px; }
-  .notif-when { font-size: 10.5px; }
-  .notif-body p { font-size: 12.5px; }
+  .notif-head strong { font-size: var(--fs-sm); }
+  .notif-when { font-size: var(--fs-xs); }
+  .notif-body p { font-size: var(--fs-sm); }
 
   /* === Transactions === */
   .tx-row {
     padding: 12px 14px;
     gap: 10px;
   }
-  .tx-title { font-size: 12px; }
-  .tx-tipo { font-size: 11px; }
-  .tx-date { font-size: 10.5px; }
+  .tx-title { font-size: var(--fs-sm); }
+  .tx-tipo { font-size: var(--fs-xs); }
+  .tx-date { font-size: var(--fs-xs); }
   .tx-amount {
-    font-size: 10.5px;
+    font-size: var(--fs-xs);
     min-width: 70px;
   }
 
@@ -190,8 +199,8 @@
     padding: 24px 16px;
     min-height: 160px;
   }
-  .empty-title { font-size: 14px; }
-  .empty-desc { font-size: 12.5px; }
+  .empty-title { font-size: var(--fs-sm); }
+  .empty-desc { font-size: var(--fs-sm); }
 
   /* === Dropzones === */
   .dropzone {
@@ -203,8 +212,8 @@
     height: 44px;
   }
   .dz-icon svg { width: 22px; height: 22px; }
-  .dz-title { font-size: 14px; }
-  .dz-sub { font-size: 12px; }
+  .dz-title { font-size: var(--fs-sm); }
+  .dz-sub { font-size: var(--fs-sm); }
 
   /* === Stats panel del dashboard === */
   .stats-panel,
@@ -213,7 +222,7 @@
     padding: 14px 16px;
   }
   .credits-header { margin-bottom: 12px; }
-  .credits-header h3 { font-size: 13px; }
+  .credits-header h3 { font-size: var(--fs-sm); }
   .credits-body { gap: 12px; }
 
   /* === User dropdown === */
@@ -236,15 +245,15 @@
   /* === Dashboard plan card === */
   .plan-cover { height: 90px; }
   .plan-avatar { margin-top: -42px; }
-  .plan-avatar .avatar { width: 80px; height: 80px; font-size: 24px; }
+  .plan-avatar .avatar { width: 80px; height: 80px; font-size: var(--fs-xl); }
   .plan-name {
-    font-size: 14px;
+    font-size: var(--fs-sm);
     margin: 8px 0 4px;
     letter-spacing: .8px;
   }
-  .plan-sub-status { font-size: 11px; padding: 3px 9px; }
+  .plan-sub-status { font-size: var(--fs-xs); padding: 3px 9px; }
   .plan-email {
-    font-size: 12px;
+    font-size: var(--fs-sm);
     margin-bottom: 14px;
     padding: 0 16px;
     word-break: break-all;
@@ -254,13 +263,13 @@
     padding: 0 16px;
     margin-bottom: 14px;
   }
-  .plan-stat strong { font-size: 20px; }
-  .plan-stat span { font-size: 10.5px; }
+  .plan-stat strong { font-size: var(--fs-lg); }
+  .plan-stat span { font-size: var(--fs-xs); }
   .plan-cta {
     margin: 0 16px 16px;
     width: calc(100% - 32px);
     padding: 10px 16px;
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   /* === Promo card === */
@@ -272,8 +281,8 @@
   }
   .promo-icon { width: 40px; height: 40px; }
   .promo-icon svg { width: 18px; height: 18px; }
-  .promo-text strong { font-size: 13px; }
-  .promo-text p { font-size: 12px; }
+  .promo-text strong { font-size: var(--fs-sm); }
+  .promo-text p { font-size: var(--fs-sm); }
   .promo-card .btn { width: 100%; }
 
   /* === Quick actions del dashboard === */
@@ -289,7 +298,7 @@
   }
   .quick-compact svg { width: 18px; height: 18px; }
   .quick-compact span {
-    font-size: 11px;
+    font-size: var(--fs-xs);
     line-height: 1.2;
     text-align: center;
   }
@@ -304,31 +313,31 @@
     letter-spacing: -.5px;
   }
   .saldo-label {
-    font-size: 10.5px;
+    font-size: var(--fs-xs);
     letter-spacing: .5px;
   }
-  .saldo-credits { font-size: 12.5px; }
+  .saldo-credits { font-size: var(--fs-sm); }
 
   /* === Settings rows === */
   .setting-row {
     padding: 14px 0;
     gap: 14px;
   }
-  .setting-info strong { font-size: 13.5px; }
-  .setting-info span { font-size: 12px; }
+  .setting-info strong { font-size: var(--fs-sm); }
+  .setting-info span { font-size: var(--fs-sm); }
 
   /* === Modules list (consumo por módulo) === */
   .module-row {
     grid-template-columns: 20px auto 1fr 24px;
     gap: 8px;
-    font-size: 12px;
+    font-size: var(--fs-sm);
   }
   .module-name {
     min-width: 0;
-    font-size: 12px;
+    font-size: var(--fs-sm);
   }
   .module-count {
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   /* === Result actions toolbar === */
@@ -338,7 +347,7 @@
   }
   .result-action-btn {
     padding: 7px 12px;
-    font-size: 12px;
+    font-size: var(--fs-sm);
   }
 
   /* === Banner alerta saldo bajo === */
@@ -346,7 +355,7 @@
   .lba-content {
     flex-wrap: wrap;
     gap: 8px;
-    font-size: 12px;
+    font-size: var(--fs-sm);
   }
   .lba-content span {
     flex: 1 1 100%;
@@ -355,7 +364,7 @@
   .lba-action {
     flex: 1;
     padding: 7px 10px;
-    font-size: 11.5px;
+    font-size: var(--fs-xs);
   }
 }
 
@@ -369,7 +378,7 @@
 
   /* === Topbar reducido === */
   .topbar { padding: 10px 12px; }
-  .breadcrumb { font-size: 12.5px; }
+  .breadcrumb { font-size: var(--fs-sm); }
   .topbar-bell { width: 34px; height: 34px; }
   .topbar-bell svg { width: 17px; height: 17px; }
 
@@ -378,12 +387,12 @@
     font-size: clamp(22px, 8vw, 30px);
     line-height: 1.12;
   }
-  .regiones-title { font-size: 22px; }
-  .simple-title { font-size: 18px; }
+  .regiones-title { font-size: var(--fs-lg); }
+  .simple-title { font-size: var(--fs-md); }
 
   /* === Avatares más pequeños === */
-  .avatar { width: 30px; height: 30px; font-size: 11px; }
-  .avatar-lg { width: 80px; height: 80px; font-size: 26px; }
+  .avatar { width: 30px; height: 30px; font-size: var(--fs-xs); }
+  .avatar-lg { width: 80px; height: 80px; font-size: var(--fs-xl); }
 
   /* === User menu === */
   .user { padding: 4px 6px; }
@@ -415,7 +424,7 @@
     gap: 6px;
   }
   .result-header-left { flex: 1; min-width: 0; }
-  .result-header h3 { font-size: 12.5px; }
+  .result-header h3 { font-size: var(--fs-sm); }
   .result-header-actions {
     flex-shrink: 0;
   }
@@ -445,10 +454,10 @@
     padding: 10px 12px;
   }
   .tx-meta { flex: 1; min-width: 0; }
-  .tx-title { font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tx-date { font-size: 10px; }
+  .tx-title { font-size: var(--fs-xs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx-date { font-size: var(--fs-xs); }
   .tx-amount {
-    font-size: 10px;
+    font-size: var(--fs-xs);
     min-width: 0;
     text-align: right;
     white-space: nowrap;
@@ -496,7 +505,7 @@
     grid-template-columns: 1fr;
     gap: 6px;
   }
-  .pcv2-btn { padding: 10px 8px; font-size: 12.5px; }
+  .pcv2-btn { padding: 10px 8px; font-size: var(--fs-sm); }
 
   /* === Modal y dialogs full screen === */
   .cd-panel {
@@ -513,25 +522,25 @@
 
   .content { padding: 10px !important; }
 
-  .hero-title { font-size: 22px; }
-  .simple-title { font-size: 17px; }
+  .hero-title { font-size: var(--fs-lg); }
+  .simple-title { font-size: var(--fs-md); }
 
   /* === Panel padding mínimo === */
   .panel { padding: 12px 13px; }
 
   /* === Avatar más pequeño === */
-  .avatar-lg { width: 72px; height: 72px; font-size: 22px; }
+  .avatar-lg { width: 72px; height: 72px; font-size: var(--fs-lg); }
 
   /* === Plan card === */
   .plan-cover { height: 80px; }
   .plan-avatar { margin-top: -36px; }
-  .plan-avatar .avatar { width: 68px; height: 68px; font-size: 20px; }
-  .plan-name { font-size: 13px; letter-spacing: .5px; }
-  .plan-stat strong { font-size: 18px; }
-  .plan-cta { font-size: 12px; padding: 9px 14px; }
+  .plan-avatar .avatar { width: 68px; height: 68px; font-size: var(--fs-lg); }
+  .plan-name { font-size: var(--fs-sm); letter-spacing: .5px; }
+  .plan-stat strong { font-size: var(--fs-md); }
+  .plan-cta { font-size: var(--fs-sm); padding: 9px 14px; }
 
   /* === Saldo === */
-  .saldo-value { font-size: 32px; }
+  .saldo-value { font-size: var(--fs-xl); }
   .saldo-panel { padding: 20px 12px; }
 
   /* === Selector / inputs === */
@@ -540,15 +549,15 @@
   .form-row .btn { height: 42px; min-height: 42px; }
 
   /* === Catalogo === */
-  .catalog-card-title { font-size: 13px; }
-  .catalog-card-desc { font-size: 11.5px; }
+  .catalog-card-title { font-size: var(--fs-sm); }
+  .catalog-card-desc { font-size: var(--fs-xs); }
 
   /* === Quick actions más densas === */
   .quick-compact {
     padding: 9px 4px;
     min-height: 58px;
   }
-  .quick-compact span { font-size: 10px; }
+  .quick-compact span { font-size: var(--fs-xs); }
   .quick-compact svg { width: 16px; height: 16px; }
 }
 

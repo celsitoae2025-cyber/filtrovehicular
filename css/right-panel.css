@@ -23,7 +23,7 @@
 }
 
 .rp-card-title {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   text-transform: uppercase; /* micro-label OK a 11px */
   letter-spacing: .5px;
@@ -32,7 +32,7 @@
 
 /* â”€â”€ PLAN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .rp-plan {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--c-muted);
   letter-spacing: .4px;
@@ -46,17 +46,17 @@
   gap: 2px;
 }
 .rp-credits-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
   font-weight: 400;
 }
 .rp-credits-num {
-  font-size: 26px;
+  font-size: var(--fs-xl);
   font-weight: 700;
   color: var(--c-primary);
   line-height: 1.1;
 }
-.rp-buy-btn { width: 100%; font-size: 13px; }
+.rp-buy-btn { width: 100%; font-size: var(--fs-sm); }
 
 /* Card del gauge */
 .rp-gauge-card { align-items: center; }
@@ -78,13 +78,13 @@
   pointer-events: none;
 }
 .rp-gauge-text strong {
-  font-size: 17px;
+  font-size: var(--fs-md);
   font-weight: 700;
   color: var(--c-primary);
   line-height: 1;
 }
 .rp-gauge-text span {
-  font-size: 9px;
+  font-size: var(--fs-xs);
   font-weight: 500;
   color: var(--c-muted);
   text-transform: uppercase;
@@ -96,7 +96,7 @@
   background: none;
   border: none;
   padding: 0;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 500;
   color: var(--c-accent);
   cursor: pointer;
@@ -122,13 +122,13 @@
   padding: 10px 6px;
 }
 .rp-stat-num {
-  font-size: 18px;
+  font-size: var(--fs-md);
   font-weight: 700;
   color: var(--c-primary);
   line-height: 1;
 }
 .rp-stat-label {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
   text-align: center;
   font-weight: 500;
@@ -150,7 +150,7 @@
   border-radius: 9px;
   background: var(--c-bg);
   color: var(--c-secondary);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 500;
   cursor: pointer;
   transition: background .13s, color .13s;
@@ -191,7 +191,7 @@
 .rp-expiry-fill.is-warning { background: #141d1c; }
 .rp-expiry-fill.is-danger  { background: var(--c-danger); }
 .rp-expiry-text {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
   font-weight: 500;
 }
@@ -212,7 +212,7 @@
   gap: 2px;
 }
 .rp-lq-value {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--c-primary);
   overflow: hidden;
@@ -220,13 +220,13 @@
   white-space: nowrap;
 }
 .rp-lq-cat {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
   font-weight: 500;
   text-transform: capitalize;
 }
 .rp-lq-time {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
 }
 .rp-lq-repeat {
@@ -277,7 +277,7 @@
   font-family: inherit;
 }
 .rp-fav-q {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--c-primary);
   overflow: hidden;
@@ -285,7 +285,7 @@
   white-space: nowrap;
 }
 .rp-fav-cat {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
   font-weight: 500;
 }
@@ -317,11 +317,11 @@
 @media (max-width: 600px) {
   /* Cards más compactas en móvil */
   .rp-card { padding: 14px; gap: 10px; }
-  .rp-credits-num { font-size: 22px; }
+  .rp-credits-num { font-size: var(--fs-lg); }
   .rp-stats { gap: 6px; }
   .rp-stat { padding: 8px 4px; }
-  .rp-stat-num { font-size: 16px; }
+  .rp-stat-num { font-size: var(--fs-md); }
   .rp-quick { gap: 5px; }
-  .rp-quick-btn { padding: 8px 4px; font-size: 10px; }
+  .rp-quick-btn { padding: 8px 4px; font-size: var(--fs-xs); }
   .rp-gauge-wrap, .rp-gauge-svg { width: 90px; height: 90px; }
 }

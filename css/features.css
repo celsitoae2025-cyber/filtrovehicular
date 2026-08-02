@@ -13,7 +13,7 @@
   background: #f5f5f5;
   border-bottom: 1px solid #f5f5f5;
   padding: 10px 20px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: #141d1c;
 }
 .lba-content {
@@ -31,7 +31,7 @@
   border: none;
   padding: 6px 14px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -39,7 +39,7 @@
 .lba-close {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: var(--fs-lg);
   color: #141d1c;
   cursor: pointer;
   padding: 0 4px;
@@ -67,7 +67,7 @@
   border: none;
   background: transparent;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-primary);
   cursor: pointer;
   text-align: left;
@@ -112,13 +112,13 @@
   margin-bottom: 4px;
 }
 .ob-title {
-  font-size: 20px;
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: var(--c-primary);
   letter-spacing: -.3px;
 }
 .ob-text {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: var(--c-muted);
   line-height: 1.6;
   max-width: 340px;
@@ -145,7 +145,7 @@
   flex: 1;
   padding: 12px 20px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   cursor: pointer;
   border: 1px solid var(--c-border);
@@ -161,7 +161,7 @@
 .ob-skip {
   background: none;
   border: none;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--c-muted);
   cursor: pointer;
   margin-top: 4px;
@@ -171,8 +171,8 @@
 
 @media (max-width: 480px) {
   .onboarding-card { padding: 28px 22px 24px; }
-  .ob-title { font-size: 18px; }
-  .ob-text { font-size: 13px; }
+  .ob-title { font-size: var(--fs-md); }
+  .ob-text { font-size: var(--fs-sm); }
 }
 
 /* â”€â”€ Escáner de placas â”€â”€ */
@@ -215,7 +215,7 @@
     border: 1.5px dashed var(--c-muted);
     background: var(--c-surface);
     color: var(--c-primary);
-    font-size: 13px;
+    font-size: var(--fs-sm);
     font-weight: 600;
     letter-spacing: .3px;
     gap: 8px;
@@ -265,13 +265,13 @@
 }
 .ps-close svg { width: 16px; height: 16px; }
 .ps-title {
-  font-size: 17px;
+  font-size: var(--fs-md);
   font-weight: 600;
   color: var(--c-primary);
   margin: 0 0 6px;
 }
 .ps-hint {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-muted);
   line-height: 1.5;
   margin: 0 0 18px;
@@ -286,7 +286,7 @@
   border-radius: 10px;
   background: var(--c-primary);
   color: #fff;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   cursor: pointer;
 }
@@ -312,7 +312,7 @@
   justify-content: center;
   gap: 10px;
   padding: 12px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-primary);
 }
 .ps-spinner {
@@ -334,7 +334,7 @@
 }
 .ps-result-label {
   display: block;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
   text-transform: uppercase;
   letter-spacing: .8px;
@@ -342,7 +342,7 @@
 }
 .ps-result-value {
   display: block;
-  font-size: 26px;
+  font-size: var(--fs-xl);
   font-weight: 700;
   color: var(--c-primary);
   letter-spacing: 2px;
@@ -357,7 +357,7 @@
   flex: 1;
   padding: 11px 14px;
   border-radius: 8px;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   cursor: pointer;
   border: 1px solid var(--c-border);
@@ -377,7 +377,7 @@
   padding: 14px 16px;
 }
 .ps-manual-text {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-muted);
   margin: 0 0 10px;
 }
@@ -386,7 +386,7 @@
   height: 44px;
   margin-bottom: 12px;
   text-transform: uppercase;
-  font-size: 16px;
+  font-size: var(--fs-md);
   font-weight: 600;
   letter-spacing: 1.5px;
   text-align: center;
@@ -418,7 +418,7 @@ body.ps-open { overflow: hidden; }
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-secondary);
 }
 .dash-summary-item svg {
@@ -492,12 +492,12 @@ body.ps-open { overflow: hidden; }
   transition: height .4s ease;
 }
 .chart-bar-label {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
   font-weight: 500;
 }
 .chart-bar-value {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--c-primary);
 }

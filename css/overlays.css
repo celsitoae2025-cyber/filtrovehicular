@@ -62,13 +62,13 @@ body.modal-open { overflow: hidden; }
 .cd-close:hover { background: var(--c-bg); color: var(--c-primary); }
 .cd-close svg { width: 14px; height: 14px; }
 .cd-title {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--c-primary);
   margin: 0 0 6px 0;
 }
 .cd-message {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-muted);
   line-height: 1.45;
   margin: 0 0 16px 0;
@@ -78,7 +78,7 @@ body.modal-open { overflow: hidden; }
   gap: 8px;
   justify-content: flex-end;
 }
-.cd-actions .btn { padding: 7px 14px; font-size: 13px; }
+.cd-actions .btn { padding: 7px 14px; font-size: var(--fs-sm); }
 .cd-confirm-danger {
   background: #141d1c;
   color: #ffffff;
@@ -213,7 +213,7 @@ body.confirm-dialog-open { overflow: hidden; }
   gap: 1px;
 }
 .ip-bar-text {
-  font-size: 14.5px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--c-primary, #141d1c);
   letter-spacing: -.015em;
@@ -223,7 +223,7 @@ body.confirm-dialog-open { overflow: hidden; }
   text-overflow: ellipsis;
 }
 .ip-bar-sub {
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   font-weight: 500;
   color: var(--c-muted, #6b7672);
   letter-spacing: -.005em;
@@ -237,7 +237,7 @@ body.confirm-dialog-open { overflow: hidden; }
   position: relative;
   flex-shrink: 0;
   padding: 9px 18px;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   letter-spacing: -.005em;
   border: none;
@@ -305,13 +305,13 @@ body.confirm-dialog-open { overflow: hidden; }
 }
 .ip-step-icon svg { width: 16px; height: 16px; }
 .ip-step > div { display: flex; flex-direction: column; gap: 1px; }
-.ip-step strong { font-size: 12.5px; color: var(--c-text, #141d1c); font-weight: 600; }
+.ip-step strong { font-size: var(--fs-sm); color: var(--c-text, #141d1c); font-weight: 600; }
 .ip-step em { font-style: normal; color: var(--c-accent, #141d1c); font-weight: 600; }
-.ip-step span { font-size: 11.5px; color: var(--c-muted); line-height: 1.4; }
+.ip-step span { font-size: var(--fs-xs); color: var(--c-muted); line-height: 1.4; }
 .ip-confirm {
   align-self: stretch;
   padding: 8px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   border: none;
   border-radius: 8px;
@@ -360,7 +360,7 @@ body.confirm-dialog-open { overflow: hidden; }
 }
 .modal-header h2 {
   font-family: "Poppins", sans-serif;
-  font-size: 22px;
+  font-size: var(--fs-lg);
   font-weight: 400;
   color: var(--c-primary);
   margin: 0;
@@ -386,11 +386,11 @@ body.confirm-dialog-open { overflow: hidden; }
   overflow-y: auto;
   flex: 1;
   color: var(--c-primary);
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   line-height: 1.6;
 }
 .modal-body .modal-lead {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--c-muted);
   margin: 0 0 16px;
   font-style: italic;
@@ -429,7 +429,7 @@ body.confirm-dialog-open { overflow: hidden; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   letter-spacing: 1.1px;
   text-transform: uppercase;
@@ -478,7 +478,7 @@ body.confirm-dialog-open { overflow: hidden; }
 .maint-icon svg { width: 28px; height: 28px; }
 .maint-title {
   font-family: "Poppins", sans-serif;
-  font-size: 20px;
+  font-size: var(--fs-lg);
   font-weight: 600;
   color: var(--c-primary);
   margin: 0 0 10px;
@@ -486,7 +486,7 @@ body.confirm-dialog-open { overflow: hidden; }
   letter-spacing: -.3px;
 }
 .maint-text {
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: var(--c-muted);
   line-height: 1.6;
   margin: 0 0 18px;
@@ -510,13 +510,13 @@ body.confirm-dialog-open { overflow: hidden; }
 }
 .maint-guarantee p {
   margin: 0;
-  font-size: 12.5px;
+  font-size: var(--fs-sm);
   color: var(--c-primary);
   line-height: 1.55;
   font-weight: 600;
 }
 .maint-sub {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-muted);
   line-height: 1.55;
   margin: 0 0 12px;
@@ -535,7 +535,7 @@ body.confirm-dialog-open { overflow: hidden; }
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-primary);
   line-height: 1.45;
 }
@@ -554,7 +554,7 @@ body.confirm-dialog-open { overflow: hidden; }
   border-radius: 9px;
   background: #8fc72e;
   color: #fff;
-  font-size: 14.5px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   text-decoration: none;
   transition: background .15s;
@@ -565,14 +565,14 @@ body.confirm-dialog-open { overflow: hidden; }
   padding: 12px 22px;
   border-top: 1px solid var(--c-border);
   background: var(--c-bg);
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
   text-align: center;
   flex-shrink: 0;
 }
 @media (max-width: 480px) {
   .maint-body { padding: 22px 18px 20px; }
-  .maint-title { font-size: 18px; }
+  .maint-title { font-size: var(--fs-md); }
   .maint-header { padding-left: 18px; }
 }
 
@@ -594,7 +594,7 @@ body.confirm-dialog-open { overflow: hidden; }
   width: 100%;
   padding: 8px 12px 8px 36px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-primary);
   background: var(--c-bg);
   border: 1px solid transparent;
@@ -651,13 +651,13 @@ body.confirm-dialog-open { overflow: hidden; }
   flex: 1;
 }
 .region-info strong {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--c-primary);
   line-height: 1.2;
 }
 .region-info small {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--c-muted);
   line-height: 1.3;
   white-space: nowrap;
@@ -670,7 +670,7 @@ body.confirm-dialog-open { overflow: hidden; }
   .region-card { padding: 12px 14px; }
 }
 .modal-body h3 {
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--c-primary);
   margin: 20px 0 6px;
@@ -740,14 +740,14 @@ body.confirm-dialog-open { overflow: hidden; }
 }
 .cookie-text strong {
   display: block;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--c-primary);
   margin-bottom: 2px;
 }
 .cookie-text p {
   margin: 0;
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
   line-height: 1.45;
 }
@@ -760,7 +760,7 @@ body.confirm-dialog-open { overflow: hidden; }
 .cookie-actions .btn {
   flex: 1 1 0;
   padding: 8px 12px;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   min-height: auto;
   white-space: nowrap;
 }
@@ -792,11 +792,11 @@ body.confirm-dialog-open { overflow: hidden; }
     width: 30px; height: 30px;
   }
   .cookie-icon svg { width: 16px; height: 16px; }
-  .cookie-text strong { font-size: 12.5px; }
-  .cookie-text p { font-size: 11px; line-height: 1.4; }
+  .cookie-text strong { font-size: var(--fs-sm); }
+  .cookie-text p { font-size: var(--fs-xs); line-height: 1.4; }
   .cookie-actions .btn {
     padding: 7px 10px;
-    font-size: 11.5px;
+    font-size: var(--fs-xs);
   }
-  .modal-header h2 { font-size: 20px; }
+  .modal-header h2 { font-size: var(--fs-lg); }
 }

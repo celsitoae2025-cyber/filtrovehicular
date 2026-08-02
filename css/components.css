@@ -24,14 +24,14 @@
   flex-shrink: 0;
 }
 .card-icon svg { width: 20px; height: 20px; }
-.card h2 { font-size: 15.5px; font-weight: 600; color: var(--c-primary); letter-spacing: -.1px; }
-.card-desc { color: var(--c-muted); font-size: 13px; margin-bottom: 20px; }
+.card h2 { font-size: var(--fs-md); font-weight: 600; color: var(--c-primary); letter-spacing: -.1px; }
+.card-desc { color: var(--c-muted); font-size: var(--fs-sm); margin-bottom: 20px; }
 
 /* Formularios */
 .field { margin-bottom: 14px; }
 .field label {
   display: block;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 500;
   color: var(--c-primary);
   margin-bottom: 6px;
@@ -39,7 +39,7 @@
 .input, .textarea, .select {
   width: 100%;
   padding: 10px 12px;
-  font-size: 16px;
+  font-size: var(--fs-md);
   color: var(--c-primary);
   background: var(--c-surface);
   border: 1px solid var(--c-border);
@@ -59,7 +59,7 @@
 /* Botones */
 .btn {
   padding: 11px 20px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 500;
   border: 1px solid transparent;
   border-radius: 7px;
@@ -144,7 +144,7 @@
 .combo.open .combo-trigger { border-color: var(--c-primary); }
 .combo-text {
   flex: 1;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 500;
   letter-spacing: .4px;
   text-transform: uppercase;
@@ -190,7 +190,7 @@
 .combo-option.selected { background: var(--c-bg); color: var(--c-primary); }
 .combo-opt-text {
   flex: 1;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 500;
   color: var(--c-primary);
   text-transform: uppercase;
@@ -200,7 +200,7 @@
 /* Encabezado de grupo en el combo (subcategoria) */
 .combo-group-header {
   padding: 8px 12px 4px;
-  font-size: 9px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--c-accent);
@@ -237,7 +237,7 @@
   border-radius: 4px;
   background: #8fc72e;
   color: #ffffff;
-  font-size: 10.5px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: .5px;
   text-transform: uppercase;
@@ -253,7 +253,7 @@
   padding: 4px 11px;
   background: var(--c-primary);
   color: #ffffff;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   border-radius: 999px;
   white-space: nowrap;
@@ -268,7 +268,7 @@
 
 /* Combo group header (separador de módulos en dropdown) */
 .combo-group {
-  font-size: 10.5px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--c-muted);
   letter-spacing: .8px;
@@ -285,7 +285,7 @@
   gap: 6px;
   padding: 3px 10px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   letter-spacing: .4px;
   text-transform: uppercase;
@@ -327,7 +327,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-primary);
   animation: toast-in .28s cubic-bezier(.2, .8, .2, 1);
 }
@@ -342,8 +342,8 @@
 }
 .toast-icon svg { width: 18px; height: 18px; }
 .toast-body { flex: 1; line-height: 1.45; }
-.toast-body strong { display: block; font-weight: 600; font-size: 13px; margin-bottom: 1px; }
-.toast-body span { color: var(--c-muted); font-size: 12.5px; }
+.toast-body strong { display: block; font-weight: 600; font-size: var(--fs-sm); margin-bottom: 1px; }
+.toast-body span { color: var(--c-muted); font-size: var(--fs-sm); }
 .toast-close {
   width: 22px; height: 22px;
   background: transparent;
@@ -404,13 +404,13 @@
   color: var(--c-muted);
 }
 .empty-state h3 {
-  font-size: 15px;
+  font-size: var(--fs-md);
   font-weight: 600;
   color: var(--c-primary);
   margin: 0 0 6px;
 }
 .empty-state p {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--c-muted);
   margin: 0 auto 18px;
   max-width: 360px;
@@ -427,7 +427,7 @@
   box-shadow: none !important;
 }
 .field-hint {
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   color: var(--c-muted);
   margin-top: 6px;
   min-height: 16px;
@@ -436,8 +436,8 @@
 .field-hint.is-ok { color: var(--c-success); }
 
 @media (min-width: 768px) {
-  .input, .textarea, .select { font-size: 13px; padding: 9px 12px; }
-  .btn { flex: 0 0 auto; padding: 10px 18px; min-height: auto; font-size: 13px; }
+  .input, .textarea, .select { font-size: var(--fs-sm); padding: 9px 12px; }
+  .btn { flex: 0 0 auto; padding: 10px 18px; min-height: auto; font-size: var(--fs-sm); }
 }
 @media (max-width: 480px) {
   .grid { grid-template-columns: 1fr; }
@@ -446,8 +446,8 @@
   .toast { min-width: 0; max-width: none; }
 }
 @media (max-width: 640px) {
-  .combo-text { font-size: 12.5px; }
-  .combo-opt-text { font-size: 12px; }
+  .combo-text { font-size: var(--fs-sm); }
+  .combo-opt-text { font-size: var(--fs-sm); }
 }
 
 /* ==========================================================

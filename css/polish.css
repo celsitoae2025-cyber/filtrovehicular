@@ -51,7 +51,7 @@
   padding: 6px 12px;
   border-radius: 999px;
   background: rgba(0, 0, 0, .04);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 500;
   color: var(--c-muted, #6b7280);
   letter-spacing: .2px;
@@ -118,7 +118,7 @@
   border-radius: 999px;
   border: 1px solid var(--c-border, rgba(0,0,0,.10));
   background: #fff;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 500;
   color: var(--c-text, #141d1c);
   cursor: pointer;
@@ -207,8 +207,8 @@
 
   /* Hero compacto */
   .hero { padding: 16px 0; }
-  .simple-title { font-size: 20px !important; }
-  .hero-sub { font-size: 13px; }
+  .simple-title { font-size: var(--fs-lg) !important; }
+  .hero-sub { font-size: var(--fs-sm); }
 
   /* Form rows en columna */
   .form-row { flex-wrap: wrap; gap: 8px; }
@@ -217,15 +217,15 @@
 
   /* Result panel header */
   .result-header { flex-wrap: wrap; gap: 8px; }
-  .result-header h3 { font-size: 14px; }
+  .result-header h3 { font-size: var(--fs-sm); }
 }
 
 @media (max-width: 480px) {
   /* Cards de consulta más compactas */
   .selector-card { padding: 12px; }
-  .panel-desc { font-size: 13px; }
+  .panel-desc { font-size: var(--fs-sm); }
 
   /* Empty state más pequeño */
-  .empty-title { font-size: 15px; }
-  .empty-desc { font-size: 12px; }
+  .empty-title { font-size: var(--fs-md); }
+  .empty-desc { font-size: var(--fs-sm); }
 }

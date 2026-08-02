@@ -304,7 +304,7 @@
               var _rawH2 = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
               rawText = rawText.split(/\r?\n/).filter(function (l) { var t = l.replace(/\[\s*[^\]]*\]\s*/g, '').trim(); return t && !_rawH2.test(t); }).join('\n').trim();
               if (rawText.length > 5 && !RH.esErrorTecnico(rawText)) {
-                resultArea.innerHTML = '<div style="white-space:pre-wrap;font-family:monospace;font-size:13px;line-height:1.5;padding:16px;">' + RH.escapeHtml(rawText) + '</div>';
+                resultArea.innerHTML = '<div style="white-space:pre-wrap;font-family:monospace;font-size: var(--fs-sm);line-height:1.5;padding:16px;">' + RH.escapeHtml(rawText) + '</div>';
               } else {
                 resultArea.innerHTML = '<div class="cr-loading"><div class="cr-loading-text">No se encontraron datos.</div></div>';
               }
@@ -392,7 +392,7 @@
       if (rawText.length > 5) {
         html = esErrorTecnico(rawText)
           ? htmlMantenimiento()
-          : '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding: 16px;"><div style="white-space: pre-wrap; font-family: monospace; font-size: 13px; line-height: 1.5;">' + escapeHtml(rawText) + '</div></div></div>';
+          : '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding: 16px;"><div style="white-space: pre-wrap; font-family: monospace; font-size: var(--fs-sm); line-height: 1.5;">' + escapeHtml(rawText) + '</div></div></div>';
       } else {
         html = '<div class="cr-loading"><div class="cr-loading-text">No se encontraron datos para mostrar.</div></div>';
       }
