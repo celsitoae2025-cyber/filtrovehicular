@@ -60,9 +60,9 @@ values
  'familiares', 'dni', 'ghostdataxxx', '/ag {valor}',
  5, 5, null, '{"texto": true, "pdf": false}'::jsonb, 10, true),
 
-('Árbol Genealógico VP', 'Datos genealogico via Reniec online.',
+('Árbol Genealógico Visual', 'Arbol genealogico visual (PDF) via Reniec online.',
  'familiares', 'dni', 'ghostdataxxx', '/agvp {valor}',
- 10, 10, null, '{"texto": true, "pdf": false}'::jsonb, 20, true),
+ 10, 10, null, '{"texto": true, "pdf": true}'::jsonb, 20, true),
 
 ('Sisfoh', 'Datos integrantes via Sisfoh online.',
  'familiares', 'dni', 'ghostdataxxx', '/hogar {valor}',

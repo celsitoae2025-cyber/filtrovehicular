@@ -1357,7 +1357,7 @@
     return total;
   }
 
-  var NM_COLS = ['persona', 'dni', 'nombres', 'apPat', 'apMat', 'edad', 'sexo', 'dpto', 'prov', 'dist'];
+  var NM_COLS = ['dni', 'nombres', 'apPat', 'apMat', 'edad', 'sexo', 'dpto', 'prov', 'dist'];
 
   // Tabla de resultados. `regs` son registros ya normalizados (nmRecord).
   function renderNmTabla(regs, opts) {
@@ -1376,7 +1376,7 @@
     parts.push('<div class="nm-table-wrap">');
     parts.push('<table class="nm-table">');
     parts.push('<thead><tr>');
-    parts.push('<th>Nº</th><th>PERSONA</th><th>Nº DNI</th><th>NOMBRES</th><th>AP. PATERNO</th><th>AP. MATERNO</th><th>EDAD</th><th>SEXO</th><th>DPTO</th><th>PROVINCIA</th><th>DISTRITO</th>');
+    parts.push('<th>Nº</th><th>Nº DNI</th><th>NOMBRES</th><th>AP. PATERNO</th><th>AP. MATERNO</th><th>EDAD</th><th>SEXO</th><th>DPTO</th><th>PROVINCIA</th><th>DISTRITO</th>');
     parts.push('</tr></thead>');
     parts.push('<tbody>');
     regs.forEach(function (r, idx) {
@@ -1423,6 +1423,85 @@
     });
   }
 
+  /* ── Árbol genealógico (/ag): el bot manda varios mensajes de Telegram
+     que el bridge concatena en un solo texto. Cada persona trae DNI y Edad
+     en la MISMA línea ("DNI ➾ 123 Edad ➾ 45"), separada de la siguiente
+     por línea en blanco; entre bloques se cuela el aviso de "ESTADO DE
+     CUENTA" y el encabezado del bot repetido en cada mensaje — hay que
+     descartar ambos antes de separar por personas. ── */
+  var ARBOL_SEP_RE = '(?::{1,2}|→|➾|➤|►|»)';
+
+  function parseArbolGenealogico(rawText) {
+    var text = String(rawText || '');
+    // Quita el bloque "[⚡] ESTADO DE CUENTA … USUARIO ➾ …" que el bot
+    // intercala entre mensajes.
+    text = text.replace(/\[?⚡\]?\s*ESTADO\s+DE\s+CUENTA[\s\S]*?USUARIO[^\n]*\n?/gi, '\n');
+    // Quita las líneas de encabezado/branding del bot (se repiten por mensaje).
+    text = text.split(/\r?\n/).filter(function (line) {
+      var t = line.trim();
+      if (!t) return true;
+      if (/ARBOL\s+GENEALOGICO/i.test(t)) return false;
+      if (/^\[?#[A-Z_]+\]?/i.test(t)) return false;
+      return true;
+    }).join('\n');
+
+    var bloques = text.split(/\n\s*\n/);
+    var campo = function (etiqueta, str) {
+      var re = new RegExp('(?:' + etiqueta + ')\\s*' + ARBOL_SEP_RE + '\\s*([^\\n]+)', 'i');
+      var m = str.match(re);
+      return m ? m[1].trim() : '';
+    };
+
+    var regs = [];
+    bloques.forEach(function (bloque) {
+      var b = bloque.trim();
+      if (!b) return;
+      var dniLinea = b.match(/DNI\s*(?::{1,2}|→|➾|➤|►|»)\s*(\d{7,9})/i);
+      if (!dniLinea) return;
+      regs.push({
+        dni: dniLinea[1],
+        edad: campo('EDAD', b),
+        nombres: campo('NOMBRES', b),
+        apellidos: campo('APELLIDOS', b),
+        sexo: campo('SEXO|GENERO', b),
+        relacion: campo('RELACION', b),
+        verificacion: campo('VERIFICACION', b)
+      });
+    });
+    return regs;
+  }
+
+  function renderArbolGenealogico(p, valorConsultado) {
+    var regs = parseArbolGenealogico((p && p.raw) || '');
+    if (!regs.length) return '';
+
+    var parts = [];
+    parts.push('<div class="nm-results">');
+    parts.push('<div class="nm-header">ÁRBOL GENEALÓGICO</div>');
+    parts.push('<div class="nm-query-bar">FAMILIARES – ' + escapeHtml((valorConsultado || '').toUpperCase()) + ' –</div>');
+    parts.push('<div class="nm-meta"><span class="nm-meta-bold">REGISTROS</span><span class="nm-meta-italic">' + regs.length + ' resultados</span></div>');
+
+    parts.push('<div class="nm-table-wrap">');
+    parts.push('<table class="nm-table">');
+    parts.push('<thead><tr>');
+    parts.push('<th>Nº</th><th>Nº DNI</th><th>NOMBRES</th><th>APELLIDOS</th><th>EDAD</th><th>SEXO</th><th>RELACIÓN</th><th>VERIFICACIÓN</th>');
+    parts.push('</tr></thead>');
+    parts.push('<tbody>');
+    regs.forEach(function (r, idx) {
+      parts.push('<tr>');
+      parts.push('<td>' + (idx + 1) + '</td>');
+      ['dni', 'nombres', 'apellidos', 'edad', 'sexo', 'relacion', 'verificacion'].forEach(function (k) {
+        parts.push('<td>' + escapeHtml(r[k] || '') + '</td>');
+      });
+      parts.push('</tr>');
+    });
+    parts.push('</tbody></table>');
+    parts.push('</div>');
+    parts.push('<button type="button" class="nm-download cr-btn-arbol-pdf">' + NM_ICON_DL + ' Descargar PDF</button>');
+    parts.push('</div>');
+    return parts.join('');
+  }
+
   /* â"€â"€ Public API â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   Consultia.RenderHelpers = {
     esErrorTecnico:          esErrorTecnico,
@@ -1460,6 +1539,8 @@
     parseNmTexto:            parseNmTexto,
     nmRegistros:             nmRegistros,
     nmBotonPdf:              nmBotonPdf,
+    parseArbolGenealogico:   parseArbolGenealogico,
+    renderArbolGenealogico:  renderArbolGenealogico,
   };
 
   // Compat: category-view.js lo expone en Consultia.renderPdfIntoContainer

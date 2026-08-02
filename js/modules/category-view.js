@@ -54,6 +54,7 @@
   var renderTabla             = H.renderTabla;
   var renderDocumentCard      = H.renderDocumentCard;
   var renderNmPersonas        = H.renderNmPersonas;
+  var renderArbolGenealogico  = H.renderArbolGenealogico;
 
   function bindGlobalComboListeners() {
     if (_globalBound) return;
@@ -343,6 +344,8 @@
       var hasMedia = pdfs.length > 0 || photos.length > 0;
       var hasFacial = p.facial && p.facial.length > 0;
       var hasTabla  = p.tabla && p.tabla.filas && p.tabla.filas.length > 0;
+      var esArbol = currentConsulta && currentConsulta.comando && /^\/ag\s/i.test(currentConsulta.comando);
+      var htmlArbol = esArbol ? renderArbolGenealogico(p, valorConsultado) : '';
 
       var body = $(bodyId());
       var html;
@@ -354,6 +357,8 @@
         html = renderTabla(p.tabla);
       } else if (currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0) {
         html = renderNmPersonas(p, botones, valorConsultado);
+      } else if (htmlArbol) {
+        html = htmlArbol;
       } else if (botones.length > 0 && !hasMedia) {
         html = renderButtonList(p, botones);
       } else if (hasData || photos.length > 0) {
@@ -390,6 +395,7 @@
       body.hidden = false;
       var isNm = currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0;
       if (isNm) wireNmButtons(body, valorConsultado);
+      else if (html === htmlArbol) { body.__arbolRaw = p.raw || ''; wireArbolButtons(body, valorConsultado); }
       else if (botones.length > 0 && !hasMedia && !hasFacial && !hasTabla) wireResultButtons(body);
 
       var empty = $(emptyId());
@@ -537,6 +543,22 @@
           txtBtn.innerHTML = textoOriginal;
           txtBtn.disabled = false;
         }
+      });
+    }
+
+    // Árbol genealógico (/ag): el bot manda todo en una sola respuesta, así
+    // que el PDF se arma al vuelo con lo que ya está en pantalla — sin
+    // callback adicional al bridge.
+    function wireArbolButtons(container, valorConsultado) {
+      var pdfBtn = container.querySelector('.cr-btn-arbol-pdf');
+      if (!pdfBtn) return;
+      pdfBtn.addEventListener('click', function () {
+        var RH = Consultia.RenderHelpers;
+        var regs = RH.parseArbolGenealogico(container.__arbolRaw || '');
+        if (!regs.length) return;
+        var res = Consultia.ReportGenerator.generateArbol(regs, { valor: valorConsultado });
+        if (res) Consultia.ReportGenerator.download(res);
+        else if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo generar el PDF' });
       });
     }
 
