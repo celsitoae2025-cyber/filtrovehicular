@@ -1368,6 +1368,7 @@
 
     var parts = [];
     parts.push('<div class="nm-results">');
+    if (opts.pie) parts.push(opts.pie);
     parts.push('<div class="nm-header">DATOS DEL TITULAR</div>');
     parts.push('<div class="nm-query-bar">BÚSQUEDAS PERSONAS – ' + escapeHtml(queryLabel) + ' –</div>');
     parts.push('<div class="nm-meta"><span>TOTAL RESULTADOS</span><span>' + escapeHtml(total) + '</span></div>');
@@ -1389,7 +1390,6 @@
     });
     parts.push('</tbody></table>');
     parts.push('</div>');
-    if (opts.pie) parts.push(opts.pie);
     parts.push('</div>');
     return parts.join('');
   }
@@ -1411,6 +1411,13 @@
   // Botón que arma el PDF con los registros ya cargados en pantalla
   function nmBotonPdf() {
     return '<button type="button" class="nm-download cr-btn-nm-pdf">' + NM_ICON_DL + ' Descargar PDF</button>';
+  }
+
+  // Botón "Descargar PDF" genérico, para cualquier vista de resultado que
+  // todavía no tenga uno propio (facial, tabla, datos con/sin foto). Se
+  // antepone al contenido para que quede siempre arriba.
+  function renderPdfTopButton() {
+    return '<button type="button" class="nm-download cr-btn-pdf-generic">' + NM_ICON_DL + ' Descargar PDF</button>';
   }
 
   function renderNmPersonas(p, botones, valorConsultado) {
@@ -1477,6 +1484,7 @@
 
     var parts = [];
     parts.push('<div class="nm-results">');
+    parts.push('<button type="button" class="nm-download cr-btn-arbol-pdf">' + NM_ICON_DL + ' Descargar PDF</button>');
     parts.push('<div class="nm-header">ÁRBOL GENEALÓGICO</div>');
     parts.push('<div class="nm-query-bar">FAMILIARES – ' + escapeHtml((valorConsultado || '').toUpperCase()) + ' –</div>');
     parts.push('<div class="nm-meta"><span class="nm-meta-bold">REGISTROS</span><span class="nm-meta-italic">' + regs.length + ' resultados</span></div>');
@@ -1497,7 +1505,6 @@
     });
     parts.push('</tbody></table>');
     parts.push('</div>');
-    parts.push('<button type="button" class="nm-download cr-btn-arbol-pdf">' + NM_ICON_DL + ' Descargar PDF</button>');
     parts.push('</div>');
     return parts.join('');
   }
@@ -1539,6 +1546,7 @@
     parseNmTexto:            parseNmTexto,
     nmRegistros:             nmRegistros,
     nmBotonPdf:              nmBotonPdf,
+    renderPdfTopButton:      renderPdfTopButton,
     parseArbolGenealogico:   parseArbolGenealogico,
     renderArbolGenealogico:  renderArbolGenealogico,
   };

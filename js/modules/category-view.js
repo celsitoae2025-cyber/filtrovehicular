@@ -55,6 +55,7 @@
   var renderDocumentCard      = H.renderDocumentCard;
   var renderNmPersonas        = H.renderNmPersonas;
   var renderArbolGenealogico  = H.renderArbolGenealogico;
+  var renderPdfTopButton      = H.renderPdfTopButton;
 
   function bindGlobalComboListeners() {
     if (_globalBound) return;
@@ -352,9 +353,9 @@
       if (esErrorTecnicoRespuesta(p, resp)) {
         html = htmlMantenimiento();
       } else if (hasFacial) {
-        html = renderFacialHero(p.facial);
+        html = renderPdfTopButton() + renderFacialHero(p.facial);
       } else if (hasTabla) {
-        html = renderTabla(p.tabla);
+        html = renderPdfTopButton() + renderTabla(p.tabla);
       } else if (currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0) {
         html = renderNmPersonas(p, botones, valorConsultado);
       } else if (htmlArbol) {
@@ -365,9 +366,9 @@
         // Datos visibles de inmediato (tabla + fotos al costado); si además
         // vino un PDF, se agrega como tarjeta "Documento adjunto" debajo
         // (Visualizar/Descargar) — igual que VeriNexo, nunca se esconden
-        // los datos detrás del visor de PDF. El PDF propio (autogenerado)
-        // se genera aparte, en segundo plano, sin bloquear la vista.
-        html = renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
+        // los datos detrás del visor de PDF. El botón de arriba genera
+        // nuestro propio PDF a partir de lo que ya está en pantalla.
+        html = renderPdfTopButton() + renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
       } else if (pdfs.length > 0) {
         html = renderDocumentCard(pdfs, prefix);
       } else {
@@ -397,6 +398,7 @@
       if (isNm) wireNmButtons(body, valorConsultado);
       else if (html === htmlArbol) { body.__arbolRaw = p.raw || ''; wireArbolButtons(body, valorConsultado); }
       else if (botones.length > 0 && !hasMedia && !hasFacial && !hasTabla) wireResultButtons(body);
+      wireGenericPdfButton(body, p, valorConsultado, photos);
 
       var empty = $(emptyId());
       if (empty) empty.hidden = true;
@@ -557,6 +559,36 @@
         var regs = RH.parseArbolGenealogico(container.__arbolRaw || '');
         if (!regs.length) return;
         var res = Consultia.ReportGenerator.generateArbol(regs, { valor: valorConsultado });
+        if (res) Consultia.ReportGenerator.download(res);
+        else if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo generar el PDF' });
+      });
+    }
+
+    // Botón "Descargar PDF" genérico (facial, tabla, datos con/sin foto):
+    // arma el informe al vuelo con los datos ya parseados en pantalla,
+    // eligiendo el generador según el tipo de resultado.
+    function wireGenericPdfButton(container, p, valorConsultado, photos) {
+      var btn = container.querySelector('.cr-btn-pdf-generic');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var res;
+        try {
+          if (p.facial && p.facial.length > 0) {
+            res = Consultia.ReportGenerator.generateFacial(p.facial, valorConsultado);
+          } else if (p.tabla && p.tabla.filas && p.tabla.filas.length > 0) {
+            res = Consultia.ReportGenerator.generateTabla(p.tabla, valorConsultado, currentConsulta ? currentConsulta.nombre : '');
+          } else {
+            res = Consultia.ReportGenerator.generate(p, {
+              consultaNombre: currentConsulta ? currentConsulta.nombre : 'Consulta',
+              valor: valorConsultado || '',
+              fecha: new Date().toLocaleDateString('es-PE', {
+                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+              })
+            }, photos);
+          }
+        } catch (e) {
+          console.error('Error generando PDF:', e);
+        }
         if (res) Consultia.ReportGenerator.download(res);
         else if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo generar el PDF' });
       });
