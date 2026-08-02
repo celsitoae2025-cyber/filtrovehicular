@@ -1060,11 +1060,237 @@
   var NM_FIELDS = ['Nº Dni', 'N° Dni', 'Prenombres', 'Apellido Paterno', 'Apellido Materno', 'Edad', 'Género', 'Genero', 'Dpto', 'Provincia', 'Distrito'];
   var NM_FIELD_RE = new RegExp('(' + NM_FIELDS.map(function (f) { return f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')\\s+', 'gi');
 
-  function parseNmPersonas(rawText) {
-    var text = rawText.replace(/Total\s+Resultados\s+\d+/i, '').replace(/Mensaje\s+La consulta se hizo.*$/i, '').trim();
+  // Normaliza un nombre de campo: sin tildes, sin símbolos, en mayúsculas.
+  // "Nº Dni" / "N° DNI" / "nro. dni" → "NDNI"; "Género" / "SEXO" → "GENERO" / "SEXO"
+  function nmNorm(s) {
+    return String(s || '')
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toUpperCase().replace(/[^A-Z0-9]/g, '');
+  }
+
+  // Orden posicional de respaldo (solo si los valores llegan sin nombre de campo)
+  var NM_SLOTS = [
+    { key: 'dni',    re: /DNI|DOCUMENTO/ },
+    { key: 'nombre', re: /^(PRENOMBRES?|NOMBRES?|NOMBRESCOMPLETOS?)$/ },
+    { key: 'apPat',  re: /PATERNO/ },
+    { key: 'apMat',  re: /MATERNO/ },
+    { key: 'edad',   re: /^EDAD$/ },
+    { key: 'sexo',   re: /GENERO|SEXO/ },
+    { key: 'dpto',   re: /^(DPTO|DEPARTAMENTO|DEPTO|REGION)$/ },
+    { key: 'prov',   re: /PROVINCIA/ },
+    { key: 'dist',   re: /DISTRITO/ }
+  ];
+
+  // Metadata del bot / del usuario que consulta — nunca son datos de la persona.
+  var NM_SKIP_RE = /^(TOTALRESULTADOS|RESULTADOS|PAGINASTOTALES|PAGINAS|PAGINA|MENSAJE|CONSULTA|CONSULTADOPOR|COMANDO|USUARIO|USER|USERNAME|CREDITOS|CREDITS|MONEDAS|ID|PLAN|NOMBRE|ESTADO|COSTO|FUENTE)$/;
+
+  // Línea de la respuesta que no aporta datos (branding, separadores, cabeceras)
+  function nmIsRuido(linea) {
+    var t = String(linea || '').trim();
+    if (!t) return true;
+    if (/^[\s\-─━=_·.•▫◆*|]+$/.test(t)) return true;          // separadores
+    if (/^\[?#[A-Z_]+/i.test(t)) return true;                  // [#LAIN_DATA] ➤ #NOMBRES
+    if (/B[UÚ]SQUEDAS?\s+PERSONAS/i.test(t)) return true;      // cabecera
+    if (/^P[aá]ginas?\s+totales/i.test(t)) return true;
+    if (/^CONSULTADO\s+POR/i.test(t)) return true;
+    if (/^MENSAJE\s*:/i.test(t)) return true;
+    return false;
+  }
+
+  function nmSplitApellidos(s) {
+    var t = String(s || '').trim().replace(/\s+/g, ' ');
+    if (!t) return ['', ''];
+    var parts = t.split(' ');
+    if (parts.length === 1) return [parts[0], ''];
+    return [parts[0], parts.slice(1).join(' ')];
+  }
+
+  // "PIURA - MORROPON - MORROPON" → [dpto, provincia, distrito]
+  function nmSplitUbigeo(s) {
+    var t = String(s || '').trim();
+    if (!t) return ['', '', ''];
+    var parts = t.split(/\s+-\s+/).map(function (x) {
+      x = x.trim();
+      return /^-*$/.test(x) ? '' : x;
+    });
+    if (parts.length > 3) parts = parts.slice(parts.length - 3);
+    while (parts.length < 3) parts.unshift('');
+    return parts;
+  }
+
+  function nmField(per, re) {
+    var keys = Object.keys((per && per.f) || {});
+    for (var i = 0; i < keys.length; i++) {
+      if (re.test(keys[i])) return String(per.f[keys[i]] || '').trim();
+    }
+    return '';
+  }
+
+  // Convierte una persona cruda en el registro de 9 columnas de la tabla.
+  // Acepta tanto campos separados (Apellido Paterno / Dpto) como los
+  // combinados que manda el bot real (APELLIDOS / UBIGEO).
+  function nmRecord(per, idx) {
+    var dni     = nmField(per, /DNI|DOCUMENTO/);
+    var nombres = nmField(per, /^(PRENOMBRES?|NOMBRES)$/);
+    var apPat   = nmField(per, /PATERNO/);
+    var apMat   = nmField(per, /MATERNO/);
+    if (!apPat && !apMat) {
+      var ap = nmField(per, /^APELLIDOS?$/);
+      if (ap) { var sp = nmSplitApellidos(ap); apPat = sp[0]; apMat = sp[1]; }
+    }
+    var edad = nmField(per, /^EDAD$/);
+    var sexo = nmField(per, /GENERO|SEXO/);
+    var dpto = nmField(per, /^(DPTO|DEPARTAMENTO|DEPTO|REGION)$/);
+    var prov = nmField(per, /PROVINCIA/);
+    var dist = nmField(per, /DISTRITO/);
+    if (!dpto && !prov && !dist) {
+      var ub = nmField(per, /UBIGEO|UBICACION|DOMICILIO/);
+      if (ub) { var u3 = nmSplitUbigeo(ub); dpto = u3[0]; prov = u3[1]; dist = u3[2]; }
+    }
+
+    var rec = {
+      persona: (per && per.persona) || String(idx + 1),
+      dni: dni, nombres: nombres, apPat: apPat, apMat: apMat,
+      edad: edad, sexo: sexo, dpto: dpto, prov: prov, dist: dist
+    };
+
+    // Respaldo posicional: valores sin nombre de campo, alineados desde el DNI
+    if (!dni && !nombres && per && per.loose && per.loose.length) {
+      var l = per.loose.slice();
+      for (var j = 0; j < l.length && j < 3; j++) {
+        if (/^\d{7,9}$/.test(String(l[j]).trim())) { l = l.slice(j); break; }
+      }
+      var order = ['dni', 'nombres', 'apPat', 'apMat', 'edad', 'sexo', 'dpto', 'prov', 'dist'];
+      order.forEach(function (k, i) { if (!rec[k]) rec[k] = l[i] || ''; });
+    }
+    return rec;
+  }
+
+  function nmNewPersona() { return { f: {}, loose: [] }; }
+
+  function nmAddCampo(per, campo, valor) {
+    if (!per) return;
+    var key = nmNorm(campo);
+    if (!key) {
+      // Valor suelto: puede seguir siendo "CAMPO: valor" si el bridge no
+      // reconoció el separador (p.ej. "➤ TOTAL RESULTADOS: 17").
+      var fm = String(valor || '').match(/^(.{2,40}?)\s*(?::{1,2}|→|➾|➤|►|»)\s*(.*)$/);
+      if (fm) {
+        var k2 = nmNorm(fm[1]);
+        if (k2 && !NM_SKIP_RE.test(k2)) per.f[k2] = fm[2].trim();
+        return;
+      }
+      if (valor) per.loose.push(valor);
+      return;
+    }
+    if (NM_SKIP_RE.test(key)) return;
+    per.f[key] = valor;
+  }
+
+  // ¿Este campo marca el inicio de una persona nueva? (el DNI se repite por persona)
+  function nmIsRepeatedDni(per, campo) {
+    if (!per) return false;
+    var key = nmNorm(campo);
+    return /DNI|DOCUMENTO/.test(key) && per.f[key] !== undefined;
+  }
+
+  function nmHasData(per) {
+    return per && (Object.keys(per.f).length > 0 || per.loose.length > 0);
+  }
+
+  function parseNmFromSecciones(secciones) {
+    var personas = [];
+    var current = null;
+    var push = function () { if (nmHasData(current)) personas.push(current); };
+
+    (secciones || []).forEach(function (s) {
+      if (/PERSONA\s*\d+/i.test((s.titulo || '').trim())) {
+        push();
+        current = nmNewPersona();
+      }
+      (s.campos || []).forEach(function (c) {
+        var val = (c.valor || '').trim();
+        var campo = (c.campo || '').trim();
+        // Marcador de persona: "PERSONA: 1" (campo) o "Persona 1" (línea suelta)
+        if (nmNorm(campo) === 'PERSONA') {
+          push();
+          current = nmNewPersona();
+          current.persona = val;
+          return;
+        }
+        if (!campo && /^PERSONA\s*:?\s*\d+$/i.test(val)) {
+          push();
+          current = nmNewPersona();
+          current.persona = (val.match(/\d+/) || [''])[0];
+          return;
+        }
+        if (!campo && (!val || nmIsRuido(val))) return;
+        if (campo && NM_SKIP_RE.test(nmNorm(campo))) return;
+        if (!current) current = nmNewPersona();
+        if (nmIsRepeatedDni(current, campo)) {
+          push();
+          current = nmNewPersona();
+        }
+        nmAddCampo(current, campo, val);
+      });
+    });
+    push();
+    return personas;
+  }
+
+  function parseNmFromRaw(rawText) {
+    var text = String(rawText || '')
+      .replace(/Total\s+Resultados\s*[:→➾]?\s*\d+/i, '')
+      .replace(/Mensaje\s*[:→➾]?\s*La consulta se hizo.*$/i, '')
+      .trim();
+    if (!text) return [];
+
+    var personas = [];
+    var current = null;
+    var push = function () { if (nmHasData(current)) personas.push(current); };
+    var lines = text.split(/\r?\n/);
+
+    if (lines.length > 1) {
+      lines.forEach(function (line) {
+        // Quita prefijos decorativos del bot: "  ⌞ ", "➤ ", "[ ☑️ ] ", viñetas
+        var t = String(line)
+          .replace(/^[\s⌞⌜⌝⌟┌┐└┘├┤│▫•·►➤➾→]+/, '')
+          .replace(/^\[[^\]]{0,6}\]\s*/, '')
+          .trim();
+        if (!t || nmIsRuido(t)) return;
+
+        var fm = t.match(/^(.{2,40}?)\s*(?::{1,2}|→|➾|➤|►|»)\s*(.*)$/);
+        var campo = fm ? fm[1].trim() : '';
+        var val = fm ? fm[2].trim() : '';
+
+        // Marcador de persona: "PERSONA: 1" o "Persona 1"
+        if ((campo && nmNorm(campo) === 'PERSONA') || (!fm && /^PERSONA\s*\d+$/i.test(t))) {
+          push();
+          current = nmNewPersona();
+          current.persona = fm ? val : (t.match(/\d+/) || [''])[0];
+          return;
+        }
+        if (!current) current = nmNewPersona();
+        if (fm) {
+          if (NM_SKIP_RE.test(nmNorm(campo))) return;
+          if (nmIsRepeatedDni(current, campo)) {
+            push();
+            current = nmNewPersona();
+          }
+          nmAddCampo(current, campo, val);
+        } else {
+          current.loose.push(t);
+        }
+      });
+      push();
+      if (personas.length > 0) return personas;
+      current = null;
+    }
+
+    // Último recurso: texto continuo "Persona 1  Nº Dni 123  Prenombres ..."
     var chunks = text.split(/Persona\s+\d+/i).filter(function (c) { return c.trim(); });
     return chunks.map(function (chunk) {
-      var persona = {};
+      var per = nmNewPersona();
       var remaining = chunk.trim();
       var matches = [];
       var m;
@@ -1073,38 +1299,79 @@
         matches.push({ field: m[1], index: m.index, endIndex: re.lastIndex });
       }
       for (var i = 0; i < matches.length; i++) {
-        var field = matches[i].field;
         var start = matches[i].endIndex;
         var end = (i + 1 < matches.length) ? matches[i + 1].index : remaining.length;
-        persona[field] = remaining.substring(start, end).trim();
+        nmAddCampo(per, matches[i].field, remaining.substring(start, end).trim());
       }
-      return persona;
-    });
+      return per;
+    }).filter(nmHasData);
   }
 
-  function renderNmPersonas(p, botones, valorConsultado) {
-    var rawText = (p.raw || '').trim();
-    if (!rawText) {
-      (p.secciones || []).forEach(function (s) {
-        (s.campos || []).forEach(function (c) {
-          rawText += (c.campo ? c.campo + ' ' : '') + (c.valor || '') + '  ';
+  // Extrae los registros de una respuesta del bot (secciones o texto crudo).
+  function nmRegistros(p) {
+    var personas = parseNmFromSecciones(p && p.secciones);
+    if (!personas.length) {
+      var rawText = ((p && p.raw) || '').trim();
+      if (!rawText && p && p.secciones) {
+        p.secciones.forEach(function (s) {
+          (s.campos || []).forEach(function (c) {
+            rawText += (c.campo ? c.campo + ': ' : '') + (c.valor || '') + '\n';
+          });
         });
-      });
+      }
+      personas = parseNmFromRaw(rawText);
     }
-    var personas = parseNmPersonas(rawText);
-    if (!personas.length) return '';
+    return personas.map(nmRecord).filter(nmRegistroValido);
+  }
 
-    var totalMatch = rawText.match(/Total\s+Resultados\s+(\d+)/i);
-    var totalResultados = totalMatch ? totalMatch[1] : String(personas.length);
-    var queryLabel = (valorConsultado || '').replace(/\|/g, ' ').replace(/[+,]/g, ' ').trim().toUpperCase() || 'NOMBRE';
+  // Una fila sin DNI ni nombres es basura de cabecera, no una persona.
+  function nmRegistroValido(r) {
+    return !!(r && ((r.dni && /\d/.test(r.dni)) || r.nombres));
+  }
+
+  // Parsea el TXT completo que devuelve el bot al pulsar "Descargar".
+  function parseNmTexto(texto) {
+    return parseNmFromRaw(String(texto || '')).map(nmRecord).filter(nmRegistroValido);
+  }
+
+  function nmTotalResultados(p, fallback) {
+    var total = '';
+    ((p && p.secciones) || []).forEach(function (s) {
+      (s.campos || []).forEach(function (c) {
+        if (total) return;
+        if (nmNorm(c.campo) === 'TOTALRESULTADOS') {
+          total = (c.valor || '').trim();
+          return;
+        }
+        // También puede venir sin separador reconocido: "TOTAL RESULTADOS: 17"
+        if (!c.campo) {
+          var lm = String(c.valor || '').match(/TOTAL\s+RESULTADOS\s*[:→➾]?\s*(\d+)/i);
+          if (lm) total = lm[1];
+        }
+      });
+    });
+    if (!total) {
+      var tm = String((p && p.raw) || '').match(/TOTAL\s+RESULTADOS\s*[:→➾]?\s*(\d+)/i);
+      total = tm ? tm[1] : String(fallback);
+    }
+    return total;
+  }
+
+  var NM_COLS = ['persona', 'dni', 'nombres', 'apPat', 'apMat', 'edad', 'sexo', 'dpto', 'prov', 'dist'];
+
+  // Tabla de resultados. `regs` son registros ya normalizados (nmRecord).
+  function renderNmTabla(regs, opts) {
+    opts = opts || {};
+    if (!regs || !regs.length) return '';
+    var queryLabel = (opts.valor || '').replace(/\|/g, ' ').replace(/[+,]/g, ' ').trim().toUpperCase() || 'NOMBRE';
+    var total = opts.total || String(regs.length);
 
     var parts = [];
     parts.push('<div class="nm-results">');
-
     parts.push('<div class="nm-header">DATOS DEL TITULAR</div>');
     parts.push('<div class="nm-query-bar">BÚSQUEDAS PERSONAS – ' + escapeHtml(queryLabel) + ' –</div>');
-    parts.push('<div class="nm-meta"><span>TOTAL RESULTADOS</span><span>' + escapeHtml(totalResultados) + '</span></div>');
-    parts.push('<div class="nm-meta"><span class="nm-meta-bold">REGISTROS</span><span class="nm-meta-italic">' + personas.length + ' resultados</span></div>');
+    parts.push('<div class="nm-meta"><span>TOTAL RESULTADOS</span><span>' + escapeHtml(total) + '</span></div>');
+    parts.push('<div class="nm-meta"><span class="nm-meta-bold">REGISTROS</span><span class="nm-meta-italic">' + regs.length + ' resultados</span></div>');
 
     parts.push('<div class="nm-table-wrap">');
     parts.push('<table class="nm-table">');
@@ -1112,51 +1379,48 @@
     parts.push('<th>Nº</th><th>PERSONA</th><th>Nº DNI</th><th>NOMBRES</th><th>AP. PATERNO</th><th>AP. MATERNO</th><th>EDAD</th><th>SEXO</th><th>DPTO</th><th>PROVINCIA</th><th>DISTRITO</th>');
     parts.push('</tr></thead>');
     parts.push('<tbody>');
-
-    personas.forEach(function (per, idx) {
-      var dni = per['Nº Dni'] || per['N° Dni'] || '';
-      var nombres = per['Prenombres'] || '';
-      var apPat = per['Apellido Paterno'] || '';
-      var apMat = per['Apellido Materno'] || '';
-      var edad = per['Edad'] || '';
-      var genero = per['Género'] || per['Genero'] || '';
-      var dpto = per['Dpto'] || '';
-      var prov = per['Provincia'] || '';
-      var dist = per['Distrito'] || '';
-
+    regs.forEach(function (r, idx) {
       parts.push('<tr>');
       parts.push('<td>' + (idx + 1) + '</td>');
-      parts.push('<td>' + (idx + 1) + '</td>');
-      parts.push('<td>' + escapeHtml(dni) + '</td>');
-      parts.push('<td>' + escapeHtml(nombres) + '</td>');
-      parts.push('<td>' + escapeHtml(apPat) + '</td>');
-      parts.push('<td>' + escapeHtml(apMat) + '</td>');
-      parts.push('<td>' + escapeHtml(edad) + '</td>');
-      parts.push('<td>' + escapeHtml(genero) + '</td>');
-      parts.push('<td>' + escapeHtml(dpto) + '</td>');
-      parts.push('<td>' + escapeHtml(prov) + '</td>');
-      parts.push('<td>' + escapeHtml(dist) + '</td>');
+      NM_COLS.forEach(function (k) {
+        parts.push('<td>' + escapeHtml(r[k] || '') + '</td>');
+      });
       parts.push('</tr>');
     });
-
     parts.push('</tbody></table>');
     parts.push('</div>');
-
-    var dlBtn = (botones || []).filter(function (b) { return /descargar/i.test(b.text); });
-    if (dlBtn.length > 0) {
-      var b = dlBtn[0];
-      parts.push(
-        '<button type="button" class="nm-download cr-btn-option" ' +
-          'data-msgid="' + escapeHtml(String(b.msgId)) + '" ' +
-          'data-callback="' + escapeHtml(b.data) + '">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
-          ' Descargar' +
-        '</button>'
-      );
-    }
-
+    if (opts.pie) parts.push(opts.pie);
     parts.push('</div>');
     return parts.join('');
+  }
+
+  var NM_ICON_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+
+  // Botón que pide al bot el TXT con TODOS los resultados (la vista inicial viene paginada)
+  function nmBotonDescargar(botones) {
+    var dl = (botones || []).filter(function (b) { return /descargar/i.test(b.text); });
+    if (!dl.length) return '';
+    var b = dl[0];
+    return '<button type="button" class="nm-download cr-btn-nm-txt" ' +
+        'data-msgid="' + escapeHtml(String(b.msgId)) + '" ' +
+        'data-callback="' + escapeHtml(b.data) + '">' +
+        NM_ICON_DL + ' Descargar' +
+      '</button>';
+  }
+
+  // Botón que arma el PDF con los registros ya cargados en pantalla
+  function nmBotonPdf() {
+    return '<button type="button" class="nm-download cr-btn-nm-pdf">' + NM_ICON_DL + ' Descargar PDF</button>';
+  }
+
+  function renderNmPersonas(p, botones, valorConsultado) {
+    var regs = nmRegistros(p);
+    if (!regs.length) return '';
+    return renderNmTabla(regs, {
+      valor: valorConsultado,
+      total: nmTotalResultados(p, regs.length),
+      pie: nmBotonDescargar(botones)
+    });
   }
 
   /* â"€â"€ Public API â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
@@ -1192,6 +1456,10 @@
     renderDocumentCard:      renderDocumentCard,
     columnaValor:            columnaValor,
     renderNmPersonas:        renderNmPersonas,
+    renderNmTabla:           renderNmTabla,
+    parseNmTexto:            parseNmTexto,
+    nmRegistros:             nmRegistros,
+    nmBotonPdf:              nmBotonPdf,
   };
 
   // Compat: category-view.js lo expone en Consultia.renderPdfIntoContainer

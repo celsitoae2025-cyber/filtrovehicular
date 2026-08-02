@@ -925,7 +925,7 @@
 .nm-table thead th { background: #141d1c; color: #ffffff; font-weight: normal; font-size: 11px; text-transform: uppercase; padding: 8px 10px; text-align: left; white-space: nowrap; }
 .nm-table tbody td { padding: 6px 10px; border-bottom: 1px solid #E2E8F0; white-space: nowrap; }
 .nm-table tbody tr:nth-child(even) { background: #f8f9fa; }
-.nm-download { margin: 8px 0 4px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid #E2E8F0; background: #ffffff; color: #141d1c; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.nm-download { margin: 8px 0 4px; display: inline-flex; width: auto; max-width: max-content; align-self: flex-start; justify-content: center; align-items: center; gap: 4px; border: 1px solid #E2E8F0; background: #ffffff; color: #141d1c; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
 .nm-download:hover { background: #f0f0f0; }
 
 /* Botón full-width (para el "Consultar" de facial) */

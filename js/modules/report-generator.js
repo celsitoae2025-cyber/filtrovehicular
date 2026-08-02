@@ -722,6 +722,105 @@
     return { blobUrl: blobUrl, base64: doc.output('datauristring').split(',')[1], filename: nombre };
   }
 
+  // ── Búsqueda por nombre (/nm): tabla de personas en horizontal ──
+  // `regs` son los registros normalizados por RenderHelpers (nmRecord).
+  function generateNm(regs, meta) {
+    if (!window.jspdf || !window.jspdf.jsPDF) return null;
+    if (!regs || !regs.length) return null;
+    meta = meta || {};
+
+    var doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    var W = doc.internal.pageSize.getWidth();   // 297
+    var H = doc.internal.pageSize.getHeight();  // 210
+    var M = 8;
+    var bottomBandTop = H - 12;
+
+    var ahora = new Date();
+    var fechaStr = ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    var horaStr = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+    var fechaFile = ahora.getFullYear() + String(ahora.getMonth() + 1).padStart(2, '0') + String(ahora.getDate()).padStart(2, '0');
+
+    function bandas() {
+      doc.setFillColor.apply(doc, C_PRIMARY);
+      doc.rect(0, 0, W, 20, 'F');
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(0, 20, W, 1, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(17);
+      doc.setTextColor(255, 255, 255);
+      doc.text('Filtro Vehicular+', M, 12);
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 2, 10.3, 0.85, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor.apply(doc, C_SUBHEAD);
+      doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', M, 17);
+      doc.text(fechaStr + '  ·  ' + horaStr, W - M, 13, { align: 'right' });
+
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(0, bottomBandTop - 1, W, 1, 'F');
+      doc.setFillColor.apply(doc, C_PRIMARY);
+      doc.rect(0, bottomBandTop, W, H - bottomBandTop, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6.5);
+      doc.setTextColor.apply(doc, C_SUBHEAD);
+      doc.text('Documento generado por Filtro Vehicular+ · Información extraída de fuentes oficiales.', M, bottomBandTop + 7);
+    }
+
+    var valor = (meta.valor || '').replace(/\|/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
+    var total = meta.total || String(regs.length);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor.apply(doc, C_TEXT);
+    doc.text('BÚSQUEDA DE PERSONAS POR NOMBRE', M, 31);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor.apply(doc, C_KEY);
+    doc.text(
+      (valor ? 'Consulta: ' + valor + '  ·  ' : '') +
+      'Total resultados: ' + total + '  ·  Registros en este informe: ' + regs.length,
+      M, 37
+    );
+
+    var head = [['Nº', 'PERSONA', 'Nº DNI', 'NOMBRES', 'AP. PATERNO', 'AP. MATERNO', 'EDAD', 'SEXO', 'DPTO', 'PROVINCIA', 'DISTRITO']];
+    var body = regs.map(function (r, i) {
+      return [
+        String(i + 1), r.persona || String(i + 1), r.dni || '', r.nombres || '',
+        r.apPat || '', r.apMat || '', r.edad || '', r.sexo || '',
+        r.dpto || '', r.prov || '', r.dist || ''
+      ];
+    });
+
+    doc.autoTable({
+      startY: 42, head: head, body: body,
+      tableWidth: W - M * 2,
+      margin: { left: M, right: M, top: 26, bottom: 15 },
+      didDrawPage: bandas,
+      headStyles: { fillColor: C_PRIMARY, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7, cellPadding: 1.6 },
+      bodyStyles: { fontSize: 7.2, textColor: C_TEXT, cellPadding: 1.4, lineWidth: 0, valign: 'middle' },
+      alternateRowStyles: { fillColor: [245, 247, 250] },
+      columnStyles: {
+        0: { cellWidth: 9,  halign: 'center' },
+        1: { cellWidth: 16, halign: 'center' },
+        2: { cellWidth: 22 },
+        3: { cellWidth: 44 },
+        4: { cellWidth: 32 },
+        5: { cellWidth: 38 },
+        6: { cellWidth: 12, halign: 'center' },
+        7: { cellWidth: 20 },
+        8: { cellWidth: 26 },
+        9: { cellWidth: 28 },
+        10: { cellWidth: 'auto' }
+      },
+      styles: { overflow: 'linebreak', lineWidth: 0 },
+    });
+
+    var blob = doc.output('blob');
+    var nombre = 'Busqueda_Personas_' + (valor.replace(/[^A-Z0-9]/g, '') || 'NOMBRE') + '_' + fechaFile + '.pdf';
+    return { blobUrl: URL.createObjectURL(blob), base64: doc.output('datauristring').split(',')[1], filename: nombre };
+  }
+
   function download(result) {
     if (!result || !result.blobUrl) return;
     var a = document.createElement('a');
@@ -738,6 +837,7 @@
     generatePolicial: generatePolicial,
     generateFacial: generateFacial,
     generateTabla: generateTabla,
+    generateNm: generateNm,
     download: download,
   };
 })();

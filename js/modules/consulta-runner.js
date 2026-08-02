@@ -229,15 +229,19 @@
   // consulta: fila del catálogo (para bot_id)
   // msgId: id del mensaje de Telegram que tiene el botón
   // data: callback_data serializado como base64
-  async function ejecutarCallback(consulta, msgId, data) {
+  // opts.timeoutMs: espera máxima en el bridge (algunos bots tardan >60s en
+  // generar el archivo completo; el fetch corta 15s después).
+  async function ejecutarCallback(consulta, msgId, data, opts) {
+    opts = opts || {};
+    var esperaBridge = opts.timeoutMs || 60000;
     var body = {
       bot: consulta.bot_id,
       msgId: msgId,
       data: data,
-      timeoutMs: 60000,
+      timeoutMs: esperaBridge,
     };
     var controller = new AbortController();
-    var fetchTimeout = setTimeout(function () { controller.abort(); }, 70000);
+    var fetchTimeout = setTimeout(function () { controller.abort(); }, esperaBridge + 15000);
     var bridgeReq;
     try {
       bridgeReq = await resolveBridgeRequest('callback');
@@ -262,6 +266,9 @@
     if (!res.ok) {
       var errData = {};
       try { errData = await res.json(); } catch (_) {}
+      // El detalle técnico no se le muestra al usuario, pero queda en consola
+      // para diagnosticar (timeout del bot, callback vencido, etc).
+      console.error('[callback] bridge respondió ' + res.status + ':', errData && errData.error);
       throw new Error(safeError(errData, "Error " + res.status + " del bridge"));
     }
     return await res.json();
