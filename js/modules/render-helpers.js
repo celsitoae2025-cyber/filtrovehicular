@@ -209,9 +209,21 @@
   function splitIntoRecords(campos) {
     var list = campos || [];
     var recs = [], cur = [];
+    var vistos = Object.create(null);
     list.forEach(function (c) {
       var cu = (c.campo || '').toUpperCase().trim();
-      if (isRecordStart(cu) && cur.length > 0) { recs.push(cur); cur = []; }
+      // Corta un registro nuevo si el campo es un "arranque" conocido
+      // (DNI, N° expediente/denuncia, etc.) O si este campo YA apareció
+      // en el registro actual — señal de que el bot volvió a repetir el
+      // mismo bloque (ej. varios TELEFONO/OPERADOR/PERIODO seguidos en
+      // /telp), sin necesidad de conocer de antemano el nombre del campo.
+      var esRepetido = cu && vistos[cu];
+      if ((isRecordStart(cu) || esRepetido) && cur.length > 0) {
+        recs.push(cur);
+        cur = [];
+        vistos = Object.create(null);
+      }
+      if (cu) vistos[cu] = true;
       cur.push(c);
     });
     if (cur.length > 0) recs.push(cur);
@@ -283,7 +295,56 @@
       return '';
     }
 
-    uniqSec.forEach(function (s, idx) {
+    // Detecta "corridas" de secciones consecutivas que repiten exactamente
+    // el mismo conjunto de campos (ej. 3 secciones de TELEFONO/OPERADOR/
+    // PERIODO/EMPRESA en /telp, una por número). El bot ya las separó con
+    // líneas en blanco — cada una llega como su propia sección sin título
+    // — así que sin esto se apilan como bloques idénticos sin distinguir
+    // dónde empieza cada registro. Se muestran como tabla, mismo estilo
+    // que /nm y /ag.
+    function fieldSetKey(campos) {
+      return (campos || [])
+        .map(function (c) { return (c.campo || '').toUpperCase().trim(); })
+        .filter(Boolean).sort().join('|');
+    }
+    function renderSeccionesTable(secciones) {
+      var cols = (secciones[0].campos || []).filter(function (c) { return c.campo; }).map(function (c) { return c.campo; });
+      var parts = ['<div class="nm-table-wrap"><table class="nm-table"><thead><tr><th>Nº</th>'];
+      cols.forEach(function (col) { parts.push('<th>' + escapeHtml(prettyLabel(col)) + '</th>'); });
+      parts.push('</tr></thead><tbody>');
+      secciones.forEach(function (s, idx) {
+        var map = Object.create(null);
+        (s.campos || []).forEach(function (c) { if (c.campo) map[c.campo.toUpperCase().trim()] = c.valor; });
+        parts.push('<tr><td>' + (idx + 1) + '</td>');
+        cols.forEach(function (col) {
+          var v = map[col.toUpperCase().trim()] || '';
+          parts.push('<td>' + escapeHtml(isEmptyValue(v) ? '' : v) + '</td>');
+        });
+        parts.push('</tr>');
+      });
+      parts.push('</tbody></table></div>');
+      return parts.join('');
+    }
+    var runKeyOf = uniqSec.map(function (s) { return fieldSetKey(s.campos); });
+
+    var idx = 0;
+    while (idx < uniqSec.length) {
+      var key = runKeyOf[idx];
+      var runEnd = idx + 1;
+      if (key) {
+        while (runEnd < uniqSec.length && runKeyOf[runEnd] === key) runEnd++;
+      }
+      if (key && runEnd - idx >= 2) {
+        dataHtml.push('<div class="cr-sect">');
+        dataHtml.push(renderSeccionesTable(uniqSec.slice(idx, runEnd)));
+        dataHtml.push('</div>');
+        idx = runEnd;
+        continue;
+      }
+      renderSeccionIndividual(uniqSec[idx], idx);
+      idx++;
+    }
+    function renderSeccionIndividual(s, idx) {
       var isFirst = idx === 0 && (s.titulo === 'General' || s.titulo === 'Datos principales');
       var campos = s.campos || [];
       if (!campos.length) return;
@@ -343,7 +404,7 @@
       }
       if (!isFirst) dataHtml.push('</div>');
       dataHtml.push('</div>');
-    });
+    }
     return dataHtml.join('');
   }
 
