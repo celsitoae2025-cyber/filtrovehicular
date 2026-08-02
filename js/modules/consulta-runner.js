@@ -370,6 +370,7 @@
     /consulta\s+sin\s+resultad/i,
     /persona\s+no\s+registrad/i,
     /vehiculo\s+no\s+registrad/i,
+    /no\s+cuenta\s+con/i,
   ];
 
   function collectResponseText(p) {
@@ -400,6 +401,11 @@
     if (!text) return false;
     var s = String(text).trim();
     if (!s) return false;
+    // El bot marca sus respuestas negativas (sin datos) con "[✖️]" al
+    // inicio, a diferencia de "[☑️]" cuando sí hay resultados. Detectar
+    // ese marcador es más confiable que tratar de cubrir cada frase
+    // posible en español ("no cuenta con...", "no tiene...", etc.).
+    if (/^\[?\s*✖/.test(s)) return true;
     // Frases de error explícitas del bot que indican fallo → no cobrar
     var ERROR_PATTERNS = [
       /error\s+en\s+la\s+consulta/i,
