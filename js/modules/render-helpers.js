@@ -1410,14 +1410,14 @@
 
   // Botón que arma el PDF con los registros ya cargados en pantalla
   function nmBotonPdf() {
-    return '<button type="button" class="nm-download cr-btn-nm-pdf">' + NM_ICON_DL + ' Descargar PDF</button>';
+    return '<button type="button" class="nm-download cr-btn-nm-pdf">' + NM_ICON_DL + ' Descargar</button>';
   }
 
   // Botón "Descargar PDF" genérico, para cualquier vista de resultado que
   // todavía no tenga uno propio (facial, tabla, datos con/sin foto). Se
   // antepone al contenido para que quede siempre arriba.
   function renderPdfTopButton() {
-    return '<button type="button" class="nm-download cr-btn-pdf-generic">' + NM_ICON_DL + ' Descargar PDF</button>';
+    return '<button type="button" class="nm-download cr-btn-pdf-generic">' + NM_ICON_DL + ' Descargar</button>';
   }
 
   function renderNmPersonas(p, botones, valorConsultado) {
@@ -1484,7 +1484,7 @@
 
     var parts = [];
     parts.push('<div class="nm-results">');
-    parts.push('<button type="button" class="nm-download cr-btn-arbol-pdf">' + NM_ICON_DL + ' Descargar PDF</button>');
+    parts.push('<button type="button" class="nm-download cr-btn-arbol-pdf">' + NM_ICON_DL + ' Descargar</button>');
     parts.push('<div class="nm-header">ÁRBOL GENEALÓGICO</div>');
     parts.push('<div class="nm-query-bar">FAMILIARES – ' + escapeHtml((valorConsultado || '').toUpperCase()) + ' –</div>');
     parts.push('<div class="nm-meta"><span class="nm-meta-bold">REGISTROS</span><span class="nm-meta-italic">' + regs.length + ' resultados</span></div>');

@@ -155,12 +155,13 @@ body { background: #d4dade !important; }
   gap: 8px !important;
 }
 
-/* Logo del sidebar — 40% más grande (17 → 24px) */
+/* Logo del sidebar — tamaño fijo, no forma parte de la escala de 5
+   tamaños de contenido (no debe moverse si --fs-xl cambia). */
 .brand-name,
 .sidebar-brand,
 .sidebar .brand strong,
 .sidebar .brand-title {
-  font-size: var(--fs-xl) !important;
+  font-size: 24px !important;
   font-weight: 700 !important;
   line-height: 1.2 !important;
   letter-spacing: .1px !important;
