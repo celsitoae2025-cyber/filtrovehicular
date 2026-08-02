@@ -925,9 +925,77 @@
 .nm-table thead th { background: #141d1c; color: #ffffff; font-weight: normal; font-size: var(--fs-xs); text-transform: uppercase; padding: 8px 10px; text-align: left; white-space: nowrap; }
 .nm-table tbody td { padding: 6px 10px; white-space: nowrap; }
 .nm-table tbody tr:nth-child(even) { background: #f8f9fa; }
-.nm-download { margin: 0 0 12px auto; display: flex; width: auto; max-width: max-content; justify-content: center; align-items: center; gap: 5px; border: none; background: #8fc72e; color: #ffffff; padding: 5px 12px; border-radius: 6px; font-family: inherit; font-size: var(--fs-xs); font-weight: normal; cursor: pointer; }
+.nm-download { margin: 0 0 12px auto; display: flex; width: auto; max-width: max-content; justify-content: center; align-items: center; gap: 8px; border: none; background: #8fc72e; color: #ffffff; padding: 10px 20px; border-radius: 8px; font-family: inherit; font-size: var(--fs-sm); font-weight: normal; line-height: 1; cursor: pointer; transition: background var(--t-fast); }
+.nm-download svg { width: 17px; height: 17px; flex-shrink: 0; }
 .nm-download:hover { background: #7ab325; }
 .nm-download:disabled { opacity: .65; cursor: not-allowed; }
+
+/* ============================================================
+   Overlay de descarga — círculo animado centrado en pantalla
+   mientras el bot genera el archivo (puede tardar >1 min).
+============================================================ */
+.dl-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: rgba(20, 29, 28, .72);
+}
+.dl-overlay[hidden] { display: none !important; }
+.dl-ring {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Aro de fondo + arco que gira */
+.dl-ring::before,
+.dl-ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, .18);
+}
+.dl-ring::after {
+  border-color: #8fc72e transparent transparent transparent;
+  animation: dl-spin 1s linear infinite;
+}
+/* Flecha de descarga con rebote sutil */
+.dl-ring svg {
+  width: 38px;
+  height: 38px;
+  color: #ffffff;
+  animation: dl-bounce 1.4s ease-in-out infinite;
+}
+@keyframes dl-spin { to { transform: rotate(360deg); } }
+@keyframes dl-bounce {
+  0%, 100% { transform: translateY(-3px); }
+  50%      { transform: translateY(3px); }
+}
+.dl-title {
+  font-size: var(--fs-md);
+  font-weight: bold;
+  color: #ffffff;
+  text-align: center;
+}
+.dl-sub {
+  font-size: var(--fs-sm);
+  color: rgba(255, 255, 255, .75);
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.5;
+}
+.dl-timer { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) {
+  .dl-ring::after, .dl-ring svg { animation: none; }
+}
 
 /* Botón full-width (para el "Consultar" de facial) */
 .btn.btn-block { width: 100%; justify-content: center; }

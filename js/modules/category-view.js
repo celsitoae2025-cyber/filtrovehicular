@@ -446,6 +446,28 @@
       }
     }
 
+    // Arma un PDF mostrando el overlay de descarga. jsPDF es síncrono y
+    // bloquea el hilo, así que cedemos un frame antes de generar para que
+    // el overlay alcance a pintarse (si no, no se vería nada hasta el final).
+    function descargarPdfConOverlay(generar) {
+      var cerrar = Consultia.RenderHelpers.openDownloadOverlay({
+        titulo: 'Generando el PDF',
+        detalle: 'Estamos armando el informe con los datos de la consulta.'
+      });
+      setTimeout(function () {
+        var res = null;
+        try {
+          res = generar();
+        } catch (e) {
+          console.error('Error generando PDF:', e);
+        } finally {
+          cerrar();
+        }
+        if (res) Consultia.ReportGenerator.download(res);
+        else if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo generar el PDF' });
+      }, 60);
+    }
+
     function wireNmButtons(container, valorConsultado) {
       var RH = Consultia.RenderHelpers;
 
@@ -455,12 +477,12 @@
         pdfBtn.addEventListener('click', function () {
           var regs = container.__nmRegs || [];
           if (!regs.length) return;
-          var res = Consultia.ReportGenerator.generateNm(regs, {
-            valor: valorConsultado,
-            total: container.__nmTotal || String(regs.length)
+          descargarPdfConOverlay(function () {
+            return Consultia.ReportGenerator.generateNm(regs, {
+              valor: valorConsultado,
+              total: container.__nmTotal || String(regs.length)
+            });
           });
-          if (res) Consultia.ReportGenerator.download(res);
-          else if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo generar el PDF' });
         });
       }
 
@@ -476,12 +498,14 @@
 
         txtBtn.disabled = true;
         var textoOriginal = txtBtn.innerHTML;
-        var t0 = Date.now();
-        txtBtn.innerHTML = 'Generando… 0s';
-        var tick = setInterval(function () {
-          txtBtn.innerHTML = 'Generando… ' + Math.round((Date.now() - t0) / 1000) + 's';
-        }, 1000);
-        var detener = function () { clearInterval(tick); };
+        // El bot arma el archivo con TODOS los resultados y puede tardar
+        // más de un minuto: overlay a pantalla completa con contador para
+        // que se vea que sigue trabajando.
+        var detener = RH.openDownloadOverlay({
+          titulo: 'Generando el archivo',
+          detalle: 'Estamos pidiendo al proveedor el listado completo. Puede tardar hasta un par de minutos.',
+          contador: true
+        });
 
         try {
           // El bot arma el archivo con todos los resultados: puede tardar más
@@ -558,9 +582,9 @@
         var RH = Consultia.RenderHelpers;
         var regs = RH.parseArbolGenealogico(container.__arbolRaw || '');
         if (!regs.length) return;
-        var res = Consultia.ReportGenerator.generateArbol(regs, { valor: valorConsultado });
-        if (res) Consultia.ReportGenerator.download(res);
-        else if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo generar el PDF' });
+        descargarPdfConOverlay(function () {
+          return Consultia.ReportGenerator.generateArbol(regs, { valor: valorConsultado });
+        });
       });
     }
 
@@ -571,26 +595,21 @@
       var btn = container.querySelector('.cr-btn-pdf-generic');
       if (!btn) return;
       btn.addEventListener('click', function () {
-        var res;
-        try {
+        descargarPdfConOverlay(function () {
           if (p.facial && p.facial.length > 0) {
-            res = Consultia.ReportGenerator.generateFacial(p.facial, valorConsultado);
-          } else if (p.tabla && p.tabla.filas && p.tabla.filas.length > 0) {
-            res = Consultia.ReportGenerator.generateTabla(p.tabla, valorConsultado, currentConsulta ? currentConsulta.nombre : '');
-          } else {
-            res = Consultia.ReportGenerator.generate(p, {
-              consultaNombre: currentConsulta ? currentConsulta.nombre : 'Consulta',
-              valor: valorConsultado || '',
-              fecha: new Date().toLocaleDateString('es-PE', {
-                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-              })
-            }, photos);
+            return Consultia.ReportGenerator.generateFacial(p.facial, valorConsultado);
           }
-        } catch (e) {
-          console.error('Error generando PDF:', e);
-        }
-        if (res) Consultia.ReportGenerator.download(res);
-        else if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo generar el PDF' });
+          if (p.tabla && p.tabla.filas && p.tabla.filas.length > 0) {
+            return Consultia.ReportGenerator.generateTabla(p.tabla, valorConsultado, currentConsulta ? currentConsulta.nombre : '');
+          }
+          return Consultia.ReportGenerator.generate(p, {
+            consultaNombre: currentConsulta ? currentConsulta.nombre : 'Consulta',
+            valor: valorConsultado || '',
+            fecha: new Date().toLocaleDateString('es-PE', {
+              day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            })
+          }, photos);
+        });
       });
     }
 

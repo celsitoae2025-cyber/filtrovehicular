@@ -1056,6 +1056,62 @@
     document.body.classList.remove('cr-lightbox-open');
   }
 
+  /* ── Overlay de descarga ──────────────────────────────────────────
+     Círculo animado centrado en pantalla mientras se genera/descarga
+     un archivo. Algunas descargas (el TXT completo de /nm) dependen de
+     que el bot arme el archivo y tardan más de un minuto, así que el
+     overlay lleva un contador para que no parezca colgado.
+     Devuelve una función para cerrarlo. */
+  var DL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+
+  function openDownloadOverlay(opts) {
+    opts = opts || {};
+    var el = document.getElementById('dl-overlay');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'dl-overlay';
+      el.className = 'dl-overlay';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      el.innerHTML =
+        '<div class="dl-ring">' + DL_ICON + '</div>' +
+        '<div class="dl-title"></div>' +
+        '<div class="dl-sub"></div>';
+      document.body.appendChild(el);
+    }
+    var titleEl = el.querySelector('.dl-title');
+    var subEl = el.querySelector('.dl-sub');
+    var baseTitulo = opts.titulo || 'Preparando la descarga';
+    titleEl.textContent = baseTitulo;
+    subEl.innerHTML = opts.detalle
+      ? escapeHtml(opts.detalle)
+      : 'Esto puede tardar un momento. No cierres esta ventana.';
+    el.hidden = false;
+    document.body.classList.add('modal-open');
+
+    // Contador en vivo: solo si se pide (descargas largas del bot).
+    var tick = null;
+    if (opts.contador) {
+      var t0 = Date.now();
+      var pintar = function () {
+        var s = Math.round((Date.now() - t0) / 1000);
+        titleEl.innerHTML = escapeHtml(baseTitulo) + ' <span class="dl-timer">' + s + 's</span>';
+      };
+      pintar();
+      tick = setInterval(pintar, 1000);
+    }
+
+    var cerrado = false;
+    return function cerrar() {
+      if (cerrado) return;
+      cerrado = true;
+      if (tick) clearInterval(tick);
+      var node = document.getElementById('dl-overlay');
+      if (node) node.hidden = true;
+      document.body.classList.remove('modal-open');
+    };
+  }
+
   /* ── Modal flotante para ver PDF (iframe con visor nativo de Chrome) ── */
   function openPdfModal(src, fileName) {
     var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -1608,6 +1664,7 @@
     nmRegistros:             nmRegistros,
     nmBotonPdf:              nmBotonPdf,
     renderPdfTopButton:      renderPdfTopButton,
+    openDownloadOverlay:     openDownloadOverlay,
     parseArbolGenealogico:   parseArbolGenealogico,
     renderArbolGenealogico:  renderArbolGenealogico,
   };
