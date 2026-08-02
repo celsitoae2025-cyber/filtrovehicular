@@ -1511,30 +1511,38 @@
     return parts.join('');
   }
 
-  var NM_ICON_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  // Sin tamaño inline: lo controla .nm-download svg en views.css
+  var NM_ICON_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
 
   // Botón que pide al bot el TXT con TODOS los resultados (la vista inicial viene paginada)
   function nmBotonDescargar(botones) {
     var dl = (botones || []).filter(function (b) { return /descargar/i.test(b.text); });
     if (!dl.length) return '';
     var b = dl[0];
-    return '<button type="button" class="nm-download cr-btn-nm-txt" ' +
+    return '<div class="cr-dl-bar cr-dl-bar-tabla">' +
+      '<button type="button" class="nm-download cr-btn-nm-txt" ' +
         'data-msgid="' + escapeHtml(String(b.msgId)) + '" ' +
         'data-callback="' + escapeHtml(b.data) + '">' +
         NM_ICON_DL + ' Descargar' +
-      '</button>';
+      '</button>' +
+    '</div>';
   }
 
   // Botón que arma el PDF con los registros ya cargados en pantalla
   function nmBotonPdf() {
-    return '<button type="button" class="nm-download cr-btn-nm-pdf">' + NM_ICON_DL + ' Descargar</button>';
+    return '<div class="cr-dl-bar cr-dl-bar-tabla">' +
+      '<button type="button" class="nm-download cr-btn-nm-pdf">' + NM_ICON_DL + ' Descargar</button>' +
+    '</div>';
   }
 
-  // Botón "Descargar PDF" genérico, para cualquier vista de resultado que
-  // todavía no tenga uno propio (facial, tabla, datos con/sin foto). Se
-  // antepone al contenido para que quede siempre arriba.
+  // Botón "Descargar" genérico, para cualquier vista de resultado que
+  // todavía no tenga uno propio (facial, tabla, datos con/sin foto). Va
+  // dentro de .cr-dl-bar para que respete el mismo margen lateral que el
+  // contenido de abajo y no quede pegado al borde del panel.
   function renderPdfTopButton() {
-    return '<button type="button" class="nm-download cr-btn-pdf-generic">' + NM_ICON_DL + ' Descargar</button>';
+    return '<div class="cr-dl-bar">' +
+      '<button type="button" class="nm-download cr-btn-pdf-generic">' + NM_ICON_DL + ' Descargar</button>' +
+    '</div>';
   }
 
   function renderNmPersonas(p, botones, valorConsultado) {
@@ -1601,7 +1609,9 @@
 
     var parts = [];
     parts.push('<div class="nm-results">');
-    parts.push('<button type="button" class="nm-download cr-btn-arbol-pdf">' + NM_ICON_DL + ' Descargar</button>');
+    parts.push('<div class="cr-dl-bar cr-dl-bar-tabla">' +
+      '<button type="button" class="nm-download cr-btn-arbol-pdf">' + NM_ICON_DL + ' Descargar</button>' +
+    '</div>');
     parts.push('<div class="nm-header">ÁRBOL GENEALÓGICO</div>');
     parts.push('<div class="nm-query-bar">FAMILIARES – ' + escapeHtml((valorConsultado || '').toUpperCase()) + ' –</div>');
     parts.push('<div class="nm-meta"><span class="nm-meta-bold">REGISTROS</span><span class="nm-meta-italic">' + regs.length + ' resultados</span></div>');
