@@ -196,24 +196,17 @@
       });
     });
 
-    // ── AUTO-FIT: elegir fuente/padding para entrar en 1 hoja ─────────
-    var candidatosFuentes = [
-      { font: 10, pad: 2.7 }, { font: 9.5, pad: 2.4 }, { font: 9, pad: 2.1 },
-      { font: 8.5, pad: 1.8 }, { font: 8, pad: 1.5 }, { font: 7.5, pad: 1.3 }, { font: 7, pad: 1.0 },
-    ];
-    function rowH(c) { return c.font * 0.3528 * 1.15 + c.pad * 2; }
-    var numFilas = Math.max(rows.length, 1);
-    var elegido = candidatosFuentes[candidatosFuentes.length - 1];
-    for (var ci = 0; ci < candidatosFuentes.length; ci++) {
-      if (rowH(candidatosFuentes[ci]) * numFilas <= availableTableH) { elegido = candidatosFuentes[ci]; break; }
-    }
-    var fontBody = elegido.font;
-    var cellPad = elegido.pad;
+    // Tamaño de texto fijo (12pt); si el contenido no entra en una hoja,
+    // jsPDF-autotable pagina solo (didDrawPage ya redibuja las franjas en
+    // cada página nueva) — no hace falta encoger la fuente para "caber".
+    var fontBody = 12;
+    var cellPad = 3.4;
+    function rowH(font, pad) { return font * 0.3528 * 1.15 + pad * 2; }
 
-    // ── TABLA (plana, sin bordes; secciones en negrita) ───────────────
+    // ── TABLA (separador fino entre filas; secciones en negrita) ──────
     var body = rows.map(function (r) {
       if (r.tipo === 'seccion') {
-        return [{ content: r.campo, colSpan: 2, styles: { fontStyle: 'bold', textColor: C_TEXT, cellPadding: { top: cellPad + 1.6, bottom: cellPad, left: 0, right: 0 } } }];
+        return [{ content: r.campo, colSpan: 2, styles: { fontStyle: 'bold', textColor: C_TEXT, cellPadding: { top: cellPad + 1.6, bottom: cellPad, left: 0, right: 0 }, lineWidth: 0 } }];
       }
       if (r.tipo === 'info') {
         return [{ content: r.campo, colSpan: 2, styles: { fontStyle: 'italic', textColor: C_KEY, cellPadding: { top: cellPad + 0.5, bottom: cellPad + 0.5, left: 0, right: 0 } } }];
@@ -222,19 +215,29 @@
     });
 
     if (body.length) {
+      // Centrado vertical: si el contenido (estimado a fontBody) entra
+      // holgado en el espacio disponible, se empieza más abajo para que
+      // el bloque quede centrado en la hoja en vez de pegado arriba.
+      var altoEstimado = rowH(fontBody, cellPad) * body.length;
+      var startY = tableTop;
+      if (altoEstimado < availableTableH) {
+        startY = tableTop + (availableTableH - altoEstimado) / 2;
+      }
+
       doc.autoTable({
-        startY: tableTop,
+        startY: startY,
         body: body,
+        theme: 'plain',
         margin: { left: M, right: M, top: 26, bottom: 16 },
         tableLineWidth: 0,
         didDrawPage: function () { drawTopBand(doc, pageW, fecha); drawBottomBand(doc, pageW, pageH, bottomBandTop); },
         bodyStyles: {
           fontSize: fontBody, textColor: C_TEXT,
           cellPadding: { top: cellPad, bottom: cellPad, left: 0, right: 5 },
-          lineWidth: 0, fillColor: C_WHITE, valign: 'middle',
+          lineWidth: { bottom: 0.2 }, lineColor: C_BORDER, fillColor: C_WHITE, valign: 'middle',
         },
-        columnStyles: { 0: { cellWidth: 52, textColor: C_KEY }, 1: { cellWidth: 'auto' } },
-        styles: { overflow: 'linebreak', lineWidth: 0 },
+        columnStyles: { 0: { cellWidth: 55, textColor: C_KEY }, 1: { cellWidth: 'auto' } },
+        styles: { overflow: 'linebreak', lineWidth: { bottom: 0.2 }, lineColor: C_BORDER },
       });
     } else {
       // Sin filas de datos: igual dibujamos las franjas de la página 1.
