@@ -196,20 +196,20 @@
       });
     });
 
-    // Tamaño de texto fijo (12pt); si el contenido no entra en una hoja,
+    // Tamaño de texto fijo (10pt); si el contenido no entra en una hoja,
     // jsPDF-autotable pagina solo (didDrawPage ya redibuja las franjas en
     // cada página nueva) — no hace falta encoger la fuente para "caber".
-    var fontBody = 12;
-    var cellPad = 3.4;
+    var fontBody = 10;
+    var cellPad = 2.8;
     function rowH(font, pad) { return font * 0.3528 * 1.15 + pad * 2; }
 
     // ── TABLA (separador fino entre filas; secciones en negrita) ──────
     var body = rows.map(function (r) {
       if (r.tipo === 'seccion') {
-        return [{ content: r.campo, colSpan: 2, styles: { fontStyle: 'bold', textColor: C_TEXT, cellPadding: { top: cellPad + 1.6, bottom: cellPad, left: 0, right: 0 }, lineWidth: 0 } }];
+        return [{ content: r.campo, colSpan: 2, styles: { fontStyle: 'bold', textColor: C_TEXT, cellPadding: { top: cellPad + 1.6, bottom: cellPad, left: 3, right: 0 }, lineWidth: 0, fillColor: C_WHITE } }];
       }
       if (r.tipo === 'info') {
-        return [{ content: r.campo, colSpan: 2, styles: { fontStyle: 'italic', textColor: C_KEY, cellPadding: { top: cellPad + 0.5, bottom: cellPad + 0.5, left: 0, right: 0 } } }];
+        return [{ content: r.campo, colSpan: 2, styles: { fontStyle: 'italic', textColor: C_KEY, cellPadding: { top: cellPad + 0.5, bottom: cellPad + 0.5, left: 3, right: 0 } } }];
       }
       return [r.campo, r.valor];
     });
@@ -227,15 +227,15 @@
       doc.autoTable({
         startY: startY,
         body: body,
-        theme: 'plain',
         margin: { left: M, right: M, top: 26, bottom: 16 },
         tableLineWidth: 0,
         didDrawPage: function () { drawTopBand(doc, pageW, fecha); drawBottomBand(doc, pageW, pageH, bottomBandTop); },
         bodyStyles: {
           fontSize: fontBody, textColor: C_TEXT,
-          cellPadding: { top: cellPad, bottom: cellPad, left: 0, right: 5 },
-          lineWidth: { bottom: 0.2 }, lineColor: C_BORDER, fillColor: C_WHITE, valign: 'middle',
+          cellPadding: { top: cellPad, bottom: cellPad, left: 3, right: 5 },
+          lineWidth: { bottom: 0.2 }, lineColor: C_BORDER, valign: 'middle',
         },
+        alternateRowStyles: { fillColor: [245, 247, 250] },
         columnStyles: { 0: { cellWidth: 55, textColor: C_KEY }, 1: { cellWidth: 'auto' } },
         styles: { overflow: 'linebreak', lineWidth: { bottom: 0.2 }, lineColor: C_BORDER },
       });
@@ -712,10 +712,10 @@
       margin: { left: MARGEN_TABLA, right: MARGEN_TABLA, top: 26, bottom: 16 },
       didDrawPage: function () { drawTopBandT(); drawBottomBandT(); },
       headStyles: { fillColor: C_PRIMARY, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 7, cellPadding: 1.5 },
-      bodyStyles: { fontSize: 7, textColor: C_TEXT, cellPadding: 1.3, lineWidth: 0, valign: 'middle' },
+      bodyStyles: { fontSize: 7, textColor: C_TEXT, cellPadding: 1.3, lineWidth: { bottom: 0.15 }, lineColor: C_BORDER, valign: 'middle' },
       alternateRowStyles: { fillColor: [245, 247, 250] },
       columnStyles: columnStyles,
-      styles: { overflow: 'linebreak', lineWidth: 0 },
+      styles: { overflow: 'linebreak', lineWidth: { bottom: 0.15 }, lineColor: C_BORDER },
     });
 
     var blob = doc.output('blob');
@@ -804,7 +804,7 @@
       margin: { left: M, right: M, top: 26, bottom: 15 },
       didDrawPage: bandas,
       headStyles: { fillColor: C_PRIMARY, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 6, cellPadding: 1.2 },
-      bodyStyles: { fontSize: 6.3, textColor: C_TEXT, cellPadding: 1.1, lineWidth: 0, valign: 'middle' },
+      bodyStyles: { fontSize: 6.3, textColor: C_TEXT, cellPadding: 1.1, lineWidth: { bottom: 0.15 }, lineColor: C_BORDER, valign: 'middle' },
       alternateRowStyles: { fillColor: [245, 247, 250] },
       columnStyles: {
         0: { cellWidth: 8,  halign: 'center' },
@@ -818,7 +818,7 @@
         8: { cellWidth: 19 },
         9: { cellWidth: 'auto' }
       },
-      styles: { overflow: 'linebreak', lineWidth: 0 },
+      styles: { overflow: 'linebreak', lineWidth: { bottom: 0.15 }, lineColor: C_BORDER },
     });
 
     var blob = doc.output('blob');
@@ -896,7 +896,7 @@
       margin: { left: M, right: M, top: 26, bottom: 15 },
       didDrawPage: bandas,
       headStyles: { fillColor: C_PRIMARY, textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 6.4, cellPadding: 1.3 },
-      bodyStyles: { fontSize: 6.8, textColor: C_TEXT, cellPadding: 1.2, lineWidth: 0, valign: 'middle' },
+      bodyStyles: { fontSize: 6.8, textColor: C_TEXT, cellPadding: 1.2, lineWidth: { bottom: 0.15 }, lineColor: C_BORDER, valign: 'middle' },
       alternateRowStyles: { fillColor: [245, 247, 250] },
       columnStyles: {
         0: { cellWidth: 8,  halign: 'center' },
@@ -908,7 +908,7 @@
         6: { cellWidth: 30 },
         7: { cellWidth: 'auto' }
       },
-      styles: { overflow: 'linebreak', lineWidth: 0 },
+      styles: { overflow: 'linebreak', lineWidth: { bottom: 0.15 }, lineColor: C_BORDER },
     });
 
     var blob = doc.output('blob');
