@@ -12,6 +12,7 @@
 
   var catalog = [];
   var currentConsulta = null;
+  var catalogReadyPromise = null;
 
   function $(id) { return document.getElementById(id); }
 
@@ -31,6 +32,32 @@
   var renderButtonList        = H.renderButtonList;
   var renderDataWithMedia     = H.renderDataWithMedia;
   var renderDocumentCard      = H.renderDocumentCard;
+  var isEmptyValue            = H.isEmptyValue;
+
+  // Render dedicado para "Reporte Completo" (/metapla): filas simples,
+  // sin título del bot, sin duplicar campos repetidos y sin el partido en
+  // 2 columnas que usa renderDataRows para listas de varios registros
+  // (ese modo no aplica acá — /metapla es un solo vehículo).
+  function renderMetaplaData(p) {
+    var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
+    var seen = Object.create(null);
+    var rows = [];
+    (p.secciones || []).forEach(function (s) {
+      (s.campos || []).forEach(function (c) {
+        if (!c.campo) return;
+        var key = c.campo.toUpperCase().trim();
+        if (seen[key]) return; // el bot a veces repite el mismo campo 2 veces
+        seen[key] = true;
+        if (isEmptyValue(c.valor)) return;
+        rows.push(
+          '<div class="cr-row"><span class="cr-k">' + escapeHtml(prettyLabel(c.campo)) +
+          '</span><span class="cr-v">' + escapeHtml(c.valor) + '</span></div>'
+        );
+      });
+    });
+    if (!rows.length) return '';
+    return '<div class="cr-sect"><div class="cr-sect-body">' + rows.join('') + '</div></div>';
+  }
 
   /* â”€â”€ Catálogo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   async function cargarCatalogo() {
@@ -370,17 +397,27 @@
     });
     var hasMedia = pdfs.length > 0 || photos.length > 0;
 
+    // El "Reporte Completo" (/metapla) pide su propio texto en el botón de
+    // descarga; el resto de consultas mantiene el genérico "Descargar".
+    var esMetapla = currentConsulta && currentConsulta.comando &&
+      currentConsulta.comando.indexOf('/metapla') === 0;
+    var docOpts = esMetapla ? { downloadLabel: 'Descargar Reporte PDF' } : undefined;
+
     var body = $('filter-result-body');
     var html;
 
     if (esErrorTecnicoRespuesta(p, resp)) {
       html = htmlMantenimiento();
+    } else if (esMetapla) {
+      // Sin título del bot, sin "Ver detalles" ni botón "Siguiente" — el
+      // bridge ya hizo ese clic automático (auto_click en el catálogo).
+      html = renderMetaplaData(p) + renderDocumentCard(pdfs, 'fl', docOpts);
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
     } else if (hasData || photos.length > 0) {
-      html = renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl');
+      html = renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl', docOpts);
     } else if (pdfs.length > 0) {
-      html = renderDocumentCard(pdfs, 'fl');
+      html = renderDocumentCard(pdfs, 'fl', docOpts);
     } else {
       var rawText = (p.raw || '').trim();
       var _rawH3 = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
@@ -510,10 +547,24 @@
     if (btn)   btn.addEventListener('click', ejecutar);
     if (input) input.addEventListener('keydown', function (e) { if (e.key === 'Enter') ejecutar(); });
 
-    cargarCatalogo();
+    catalogReadyPromise = cargarCatalogo();
+
+    // CTA "Obtén tu reporte": selecciona /metapla (Reporte Completo) y deja
+    // el campo de placa listo. Ya estamos en view-filter, no hay que navegar.
+    var ctaBtn = $('ctaReporteBtn');
+    if (ctaBtn) {
+      ctaBtn.addEventListener('click', async function () {
+        try { await catalogReadyPromise; } catch (_) {}
+        var item = catalog.find(function (c) {
+          return c.comando && c.comando.indexOf('/metapla') === 0;
+        });
+        if (item) selectByOptionId(item.id);
+        if (input) { input.value = ''; input.focus(); }
+      });
+    }
   };
 
-  Consultia.setFilterOption = function (optionId) {
+  function selectByOptionId(optionId) {
     if (!optionId || !catalog.length) return;
     var c = catalog.find(function (x) { return x.id === optionId; });
     if (!c) return;
@@ -524,5 +575,13 @@
         o.classList.toggle('selected', o.dataset.id === optionId);
       });
     }
+  }
+
+  Consultia.setFilterOption = selectByOptionId;
+
+  // API pública para otros módulos (ej. CTAs) que necesiten leer el catálogo.
+  Consultia.FilterView = {
+    getCatalog: function () { return catalog; },
+    whenReady: function () { return catalogReadyPromise || Promise.resolve(); },
   };
 })();

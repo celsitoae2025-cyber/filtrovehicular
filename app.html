@@ -51,7 +51,7 @@
 <link rel="stylesheet" href="css/sidebar.css?v=2">
 <link rel="stylesheet" href="css/topbar.css?v=3">
 <link rel="stylesheet" href="css/components.css?v=4">
-<link rel="stylesheet" href="css/views.css?v=17">
+<link rel="stylesheet" href="css/views.css?v=21">
 <link rel="stylesheet" href="css/service-cards.css?v=2">
 <link rel="stylesheet" href="css/plans-catalog.css?v=4">
 <link rel="stylesheet" href="css/auth.css?v=29">
@@ -1115,6 +1115,22 @@
 
       <!-- VISTA: Filtra tu vehículo (vista principal) -->
       <section class="view" id="view-filter" hidden>
+        <!-- CTA principal: reporte vehicular completo en un solo clic (/metapla) -->
+        <button class="btn btn-primary cta-reporte-btn" type="button" id="ctaReporteBtn">
+          <svg class="cta-reporte-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <path d="M9 13h6M9 17h4"/>
+          </svg>
+          <span class="cta-reporte-text">
+            <strong>Obtén tu reporte</strong>
+            <small>Con un solo clic</small>
+          </span>
+          <svg class="cta-reporte-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </button>
+
         <section class="filter-search-box">
         <div class="selector-card">
           <span class="selector-label">Tipo de consulta</span>
@@ -2001,7 +2017,7 @@
 <script src="js/modules/consulta-runner.js?v=5"></script>
 <script src="js/modules/subscription.js?v=2"></script>
 <script src="js/modules/subscription-gate.js?v=5"></script>
-<script src="js/modules/render-helpers.js?v=9"></script>
+<script src="js/modules/render-helpers.js?v=10"></script>
 <script src="js/modules/category-view.js?v=13"></script>
 <script src="js/modules/reniec.js"></script>
 <script src="js/modules/sunat.js"></script>
@@ -2031,7 +2047,7 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="js/modules/report-generator.js?v=10"></script>
-<script src="js/modules/filter.js?v=5"></script>
+<script src="js/modules/filter.js?v=7"></script>
 <script src="js/modules/polish.js"></script>
 <script src="js/modules/services-uploader.js"></script>
 <script src="js/modules/saldo-catalog.js?v=3"></script>

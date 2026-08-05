@@ -764,6 +764,58 @@
 }
 
 /* ==========================================================
+   CTA "Obtén tu reporte" — vista principal (Consultar Placa)
+   Lleva a Vehículos con /metapla preseleccionado y la placa
+   lista para escribir. Debe ser lo primero y más visible.
+========================================================== */
+#ctaReporteBtn.cta-reporte-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  background: #03a7a4 !important;
+  border-color: #03a7a4 !important;
+  color: #ffffff !important;
+}
+.cta-reporte-ico {
+  flex: none;
+  width: 26px;
+  height: 26px;
+}
+.cta-reporte-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.2;
+}
+.cta-reporte-text strong {
+  font-size: var(--fs-lg, 17px);
+  font-weight: 700;
+}
+.cta-reporte-text small {
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  opacity: .85;
+}
+.cta-reporte-arrow {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 720px) {
+  .cta-reporte-btn { padding: 14px 16px; margin-bottom: 14px; }
+  .cta-reporte-text strong { font-size: var(--fs-md, 15px); }
+}
+
+/* ==========================================================
    Caja de búsqueda rápida (Inicio / Consultar Placa)
    Contenedor transparente que agrupa el selector + el panel.
    NO es sticky: scrollea con el resto del contenido para evitar
@@ -2426,7 +2478,8 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 .cr-row .cr-k {
   font-weight: 400;
   color: var(--c-muted);
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
   font-size: var(--fs-sm);
   text-transform: uppercase;
 }

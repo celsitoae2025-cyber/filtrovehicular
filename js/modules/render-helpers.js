@@ -664,8 +664,9 @@
   // PDF es solo un adjunto extra, no el contenido principal — mismo patrón
   // que VeriNexo (tarjeta "Documento PDF" con Visualizar/Descargar, en vez
   // del visor grande embebido de renderPdfPreview).
-  function renderDocumentCard(pdfs, uniqPrefix) {
+  function renderDocumentCard(pdfs, uniqPrefix, opts) {
     if (!pdfs || !pdfs.length) return '';
+    var dlLabel = (opts && opts.downloadLabel) || 'Descargar';
     var parts = [];
     parts.push('<div class="cr-doccards">');
     pdfs.forEach(function (m, i) {
@@ -679,7 +680,7 @@
             '<span class="cr-doccard-tit">' + escapeHtml(titulo) + '</span>' +
             '<div class="cr-doccard-actions">' +
               '<button type="button" class="cr-doccard-view" data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '">Visualizar</button>' +
-              '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">Descargar</a>' +
+              '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">' + escapeHtml(dlLabel) + '</a>' +
             '</div>' +
           '</div>' +
         '</div>'

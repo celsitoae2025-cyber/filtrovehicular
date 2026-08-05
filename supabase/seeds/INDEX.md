@@ -17,6 +17,8 @@ Datos que pueblan tablas de configuración (catálogo de consultas disponibles, 
 | `seed_ghostdataxxx_extras.sql` | `consultas_catalog` | Corre DESPUÉS de `seed_ghostdataxxx.sql`. Elimina los tabs sueltos de estudios/seeker/mtc/migraciones y consolida todo (+ MTPE, SIS, Essalud) en un único tab `extras`, ubicado al final del sidebar (sin el submenú colapsable "Extras" que antes envolvía todas las categorías). |
 | `seed_ghostdataxxx_reniec_completo.sql` | `consultas_catalog` | Agrega "Reniec Datos Completos" (`/dnit`) al tope del tab Reniec (orden=5, antes de las demás). |
 
+**Nota:** el botón "Obtén tu reporte" (CTA de `view-filter`) dispara la consulta "Reporte Completo" (`/metapla`, bot_id='fuentesdata', categoria='filter', 20 créditos, texto+PDF). Ya existe en la base real — no requiere seed.
+
 ## Orden recomendado
 
 1. `consultas_catalog.sql` (estructura)
