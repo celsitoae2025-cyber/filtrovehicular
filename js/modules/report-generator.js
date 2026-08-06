@@ -916,6 +916,201 @@
     return { blobUrl: URL.createObjectURL(blob), base64: doc.output('datauristring').split(',')[1], filename: nombre };
   }
 
+  // ── METAPLA: Reporte Vehicular Integral rediseñado por completo ────
+  // Toma los datos estructurados (p.secciones) y las fotos (p.medios
+  // tipo photo) y construye un PDF profesional desde cero con nuestro
+  // diseño institucional. Cada sección tiene encabezado numerado, datos
+  // en tabla limpia y fotos a tamaño real.
+  function generateMetapla(p, meta, photos) {
+    if (!window.jspdf || !window.jspdf.jsPDF) return null;
+
+    var valor = (meta && meta.valor) || '';
+    var fecha = (meta && meta.fecha) || new Date().toLocaleDateString('es-PE', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+    var fechaFile = (function () {
+      var d = new Date();
+      return d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+    })();
+
+    var doc   = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var W     = doc.internal.pageSize.getWidth();   // 210
+    var H     = doc.internal.pageSize.getHeight();  // 297
+    var M     = 18;
+    var bandaInf = H - 13;
+
+    // ── Franjas (se redibujan en cada página) ──
+    function bandas() {
+      drawTopBand(doc, W, fecha);
+      drawBottomBand(doc, W, H, bandaInf);
+    }
+
+    // ── Helpers de geometría ──
+    var curY = 0;
+    function ensureSpace(need) {
+      if (curY + need > bandaInf - 6) {
+        doc.addPage();
+        bandas();
+        curY = 30;
+      }
+    }
+    function sectionGap() { curY += 6; }
+
+    // ── Título del reporte ──
+    bandas();
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor.apply(doc, C_TEXT);
+    doc.text('REPORTE VEHICULAR INTEGRAL', M, 34);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor.apply(doc, C_KEY);
+    if (valor) doc.text('Placa consultada: ' + valor.toUpperCase(), M, 40);
+    doc.text('Generado: ' + fecha, M, valor ? 45 : 40);
+    curY = valor ? 52 : 47;
+
+    // ── Procesar secciones ──
+    var secciones = p.secciones || [];
+    var romanos = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV'];
+    var secIdx = 0;
+
+    // Identificar secciones duplicadas (el bot a veces repite datos)
+    var seenSigs = Object.create(null);
+
+    secciones.forEach(function (s) {
+      var campos = (s.campos || []).filter(function (c) {
+        return (c.campo && String(c.campo).trim()) || (c.valor != null && String(c.valor).trim());
+      });
+      if (!campos.length) return;
+
+      // Deduplicar secciones con los mismos campos
+      var sig = campos.map(function (c) { return (c.campo || '') + '::' + (c.valor || ''); }).join('|');
+      if (seenSigs[sig]) return;
+      seenSigs[sig] = true;
+
+      var titulo = cleanText(s.titulo || '');
+      var isMain = !titulo || /^(general|datos principales)$/i.test(titulo);
+
+      // ── Encabezado de sección ──
+      if (!isMain) {
+        ensureSpace(16);
+        var roman = romanos[secIdx] || String(secIdx + 1);
+        secIdx++;
+        doc.setFillColor.apply(doc, C_ACCENT);
+        doc.rect(M, curY - 1, 1.5, 5, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.setTextColor.apply(doc, C_TEXT);
+        doc.text(roman + '.  ' + titulo.toUpperCase(), M + 4, curY + 2.5);
+        curY += 10;
+      }
+
+      // ── Filas de datos con autoTable ──
+      var filas = [];
+      campos.forEach(function (c) {
+        var k = c.campo ? prettyLabel(c.campo) : null;
+        var v = cleanText(c.valor);
+        if (k && isEmptyVal(v)) return;
+        if (!k && isEmptyVal(v)) return;
+        if (k) {
+          filas.push([k, v]);
+        } else if (v) {
+          var col = v.indexOf(':');
+          if (col > 0 && col < 35) {
+            var pk = v.slice(0, col).trim();
+            var pv = v.slice(col + 1).trim();
+            if (pk && pv && !isEmptyVal(pv)) {
+              filas.push([prettyLabel(pk), pv]);
+              return;
+            }
+          }
+          filas.push([{ content: v, colSpan: 2, styles: { fontStyle: 'italic', textColor: C_KEY } }]);
+        }
+      });
+
+      if (filas.length) {
+        doc.autoTable({
+          startY: curY,
+          body: filas,
+          margin: { left: M, right: M, top: 26, bottom: 18 },
+          tableLineWidth: 0,
+          didDrawPage: bandas,
+          bodyStyles: {
+            fontSize: 8.5, textColor: C_TEXT,
+            cellPadding: { top: 2.2, bottom: 2.2, left: 3, right: 3 },
+            lineWidth: 0, valign: 'middle',
+          },
+          alternateRowStyles: { fillColor: [245, 247, 250] },
+          columnStyles: {
+            0: { cellWidth: 55, textColor: C_KEY, fontStyle: 'normal' },
+            1: { cellWidth: 'auto', fontStyle: 'normal' },
+          },
+          styles: { overflow: 'linebreak', lineWidth: 0 },
+        });
+        curY = (doc.lastAutoTable && doc.lastAutoTable.finalY) || curY;
+        curY += 4;
+      }
+    });
+
+    // ── Fotos biométricas (a tamaño real, como en generate()) ──
+    if (photos && photos.length) {
+      var imgInfos = photos.map(function (ph) { return getImgDims(doc, ph); });
+      var labels = ['Foto', 'Firma', 'Huella derecha', 'Huella izquierda'];
+
+      // Calcular alto necesario para las fotos
+      var bioMaxH = 42;
+      var bioBlockH = 8 + bioMaxH + 7;
+      ensureSpace(bioBlockH);
+
+      // Título
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(M, curY - 1, 1.5, 5, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor.apply(doc, C_TEXT);
+      doc.text('ARCHIVOS BIOMÉTRICOS', M + 4, curY + 2.5);
+      curY += 10;
+
+      var baseline = curY + bioMaxH;
+      var usableW = W - M * 2;
+      var slotW = usableW / imgInfos.length;
+      var cellMaxW = slotW - 8;
+
+      imgInfos.forEach(function (info, i) {
+        var cx = M + slotW * i + slotW / 2;
+        var scale = Math.min(cellMaxW / info.w, bioMaxH / info.h);
+        var dW = info.w * scale;
+        var dH = info.h * scale;
+        var x = cx - dW / 2;
+        var y = baseline - dH;
+        try {
+          doc.addImage(photos[i].base64, info.fmt, x, y, dW, dH, undefined, 'FAST');
+        } catch (e) {
+          console.warn('[generateMetapla] imagen', i, e);
+        }
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7);
+        doc.setTextColor.apply(doc, C_KEY);
+        doc.text(labels[i] || ('Imagen ' + (i + 1)), cx, baseline + 5, { align: 'center' });
+      });
+      curY = baseline + 10;
+    }
+
+    // ── Pie en la última página ──
+    var totalPages = typeof doc.getNumberOfPages === 'function' ? doc.getNumberOfPages() : 1;
+    doc.setPage(totalPages);
+    drawBottomBand(doc, W, H, bandaInf);
+
+    // ── Generar blob ──
+    var placaSlug = valor.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 12);
+    var filename = 'FiltroVehicular-Reporte' + (placaSlug ? '-' + placaSlug : '') + '-' + fechaFile + '.pdf';
+    var blob    = doc.output('blob');
+    var blobUrl = URL.createObjectURL(blob);
+    var base64  = doc.output('datauristring').split(',')[1];
+    return { blobUrl: blobUrl, base64: base64, filename: filename };
+  }
+
   function download(result) {
     if (!result || !result.blobUrl) return;
     var a = document.createElement('a');
@@ -929,6 +1124,7 @@
 
   Consultia.ReportGenerator = {
     generate: generate,
+    generateMetapla: generateMetapla,
     generatePolicial: generatePolicial,
     generateFacial: generateFacial,
     generateTabla: generateTabla,
