@@ -809,6 +809,11 @@
   width: 20px;
   height: 20px;
 }
+/* Estado antispam: botón bloqueado durante el enfriamiento de 60 s */
+#ctaReporteBtn.cta-reporte-btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
 
 @media (max-width: 720px) {
   .cta-reporte-btn { padding: 14px 16px; margin-bottom: 14px; }

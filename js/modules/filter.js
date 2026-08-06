@@ -551,9 +551,34 @@
 
     // CTA "Obtén tu reporte": selecciona /metapla (Reporte Completo) y deja
     // el campo de placa listo. Ya estamos en view-filter, no hay que navegar.
+    // Antispam: tras cada clic el botón queda bloqueado 60 s con cuenta regresiva.
     var ctaBtn = $('ctaReporteBtn');
     if (ctaBtn) {
+      var CTA_COOLDOWN = 60; // segundos
+      var ctaTimer = null;
+      var ctaSmall = ctaBtn.querySelector('.cta-reporte-text small');
+      var ctaSmallText = ctaSmall ? ctaSmall.textContent : '';
+
+      function ctaCooldown() {
+        var restante = CTA_COOLDOWN;
+        ctaBtn.disabled = true;
+        if (ctaSmall) ctaSmall.textContent = 'Espera ' + restante + ' s';
+        ctaTimer = setInterval(function () {
+          restante -= 1;
+          if (restante <= 0) {
+            clearInterval(ctaTimer);
+            ctaTimer = null;
+            ctaBtn.disabled = false;
+            if (ctaSmall) ctaSmall.textContent = ctaSmallText;
+            return;
+          }
+          if (ctaSmall) ctaSmall.textContent = 'Espera ' + restante + ' s';
+        }, 1000);
+      }
+
       ctaBtn.addEventListener('click', async function () {
+        if (ctaBtn.disabled) return; // antispam: bloqueado durante el enfriamiento
+        ctaCooldown();
         try { await catalogReadyPromise; } catch (_) {}
         var item = catalog.find(function (c) {
           return c.comando && c.comando.indexOf('/metapla') === 0;
