@@ -116,55 +116,77 @@
     try { return canvas.toDataURL('image/jpeg', 0.92); } catch (e) { return null; }
   }
 
-  // Recupera un objeto de pdf.js que puede aún no estar resuelto.
-  function getObjAsync(page, name) {
-    return new Promise(function (resolve) {
-      var done = false;
-      var finish = function (v) { if (!done) { done = true; resolve(v || null); } };
-      try {
-        if (page.objs.has && page.objs.has(name)) { finish(page.objs.get(name)); return; }
-        page.objs.get(name, finish);
-      } catch (e) { finish(null); }
-      setTimeout(function () { finish(null); }, 3000);
-    });
+  // Lee un objeto ya resuelto por pdf.js. Tras renderizar la página los
+  // datos están en memoria, así que no hay que esperar por ellos.
+  function getObjSync(page, name) {
+    try {
+      if (page.objs.has && !page.objs.has(name)) return null;
+      return page.objs.get(name) || null;
+    } catch (e) { return null; }
   }
 
-  async function extractPageImages(page, viewport) {
-    var out = [];
+  // Localiza en el flujo de dibujo dónde y a qué tamaño va cada imagen.
+  // Sólo lee la lista de operaciones: no toca los píxeles, así que es
+  // barato y nos dice de antemano si la página trae imágenes.
+  function scanImageOps(opList) {
     var OPS = window.pdfjsLib.OPS;
-    var opList;
-    try { opList = await page.getOperatorList(); } catch (e) { return out; }
-
+    var refs = [];
     var ctm = [1, 0, 0, 1, 0, 0];
     var stack = [];
     var fns = opList.fnArray, args = opList.argsArray;
 
     for (var i = 0; i < fns.length; i++) {
       var fn = fns[i];
-      if (fn === OPS.save) {
-        stack.push(ctm.slice());
-      } else if (fn === OPS.restore) {
-        if (stack.length) ctm = stack.pop();
-      } else if (fn === OPS.transform) {
-        ctm = matMul(ctm, args[i]);
-      } else if (fn === OPS.paintImageXObject || fn === OPS.paintJpegXObject) {
-        var name = args[i][0];
-        var obj = await getObjAsync(page, name);
-        var dataUrl = imgObjToDataUrl(obj);
-        if (!dataUrl) continue;
-        // La imagen ocupa el cuadrado unitario transformado por la CTM.
-        var rw = Math.hypot(ctm[0], ctm[1]);
-        var rh = Math.hypot(ctm[2], ctm[3]);
-        out.push({
-          dataUrl: dataUrl,
-          px: obj.width, py: obj.height,
-          w: rw, h: rh,
+      if (fn === OPS.save) stack.push(ctm.slice());
+      else if (fn === OPS.restore) { if (stack.length) ctm = stack.pop(); }
+      else if (fn === OPS.transform) ctm = matMul(ctm, args[i]);
+      else if (fn === OPS.paintImageXObject || fn === OPS.paintJpegXObject) {
+        refs.push({
+          name: args[i][0],
+          // La imagen ocupa el cuadrado unitario transformado por la CTM.
+          w: Math.hypot(ctm[0], ctm[1]),
+          h: Math.hypot(ctm[2], ctm[3]),
           x: ctm[4],
-          // convertir a "top" (origen arriba) para ordenar visualmente
-          top: viewport.height - (ctm[5] + rh)
+          ty: ctm[5]
         });
       }
     }
+    return refs;
+  }
+
+  async function extractPageImages(page, viewport) {
+    var out = [];
+    var opList;
+    try { opList = await page.getOperatorList(); } catch (e) { return out; }
+
+    var refs = scanImageOps(opList);
+    if (!refs.length) return out;
+
+    // pdf.js entrega los píxeles al hilo principal recién al pintar la
+    // página. Se renderiza en miniatura — sólo para que los objetos
+    // queden disponibles — y así leerlos sin esperas.
+    try {
+      var vp = page.getViewport({ scale: 0.2 });
+      var tmp = document.createElement('canvas');
+      tmp.width = Math.max(1, Math.ceil(vp.width));
+      tmp.height = Math.max(1, Math.ceil(vp.height));
+      await page.render({ canvasContext: tmp.getContext('2d'), viewport: vp }).promise;
+    } catch (e) { /* si el render falla, se intenta leer igual */ }
+
+    refs.forEach(function (r) {
+      var obj = getObjSync(page, r.name);
+      var dataUrl = imgObjToDataUrl(obj);
+      if (!dataUrl) return;
+      out.push({
+        dataUrl: dataUrl,
+        px: obj.width, py: obj.height,
+        w: r.w, h: r.h,
+        x: r.x,
+        // convertir a "top" (origen arriba) para ordenar visualmente
+        top: viewport.height - (r.ty + r.h)
+      });
+    });
+
     // Orden visual: de arriba a abajo, de izquierda a derecha
     out.sort(function (a, b) {
       if (Math.abs(a.top - b.top) > 8) return a.top - b.top;
@@ -219,16 +241,19 @@
     }).filter(function (r) { return r.cells.length > 0; });
   }
 
-  async function extractFromPdf(base64) {
+  async function extractFromPdf(base64, onProgress) {
     var pdf = await window.pdfjsLib.getDocument({ data: base64ToUint8(base64) }).promise;
     var pages = [];
     for (var n = 1; n <= pdf.numPages; n++) {
+      if (onProgress) onProgress(n, pdf.numPages);
       var page = await pdf.getPage(n);
       var viewport = page.getViewport({ scale: 1 });
       var tc = await page.getTextContent();
       var lines = pageLines(tc, viewport);
       var images = await extractPageImages(page, viewport);
       pages.push({ num: n, lines: lines, images: images });
+      // Cede el hilo entre páginas para que la interfaz no se congele.
+      await new Promise(function (r) { setTimeout(r, 0); });
     }
     return pages;
   }
@@ -688,15 +713,25 @@
   /* ══════════════════════════════════════════════════════════
      API pública
      ══════════════════════════════════════════════════════════ */
-  async function generate(pdfBase64, meta) {
+  async function generate(pdfBase64, meta, onProgress) {
     if (!window.pdfjsLib) throw new Error('pdf.js no disponible');
     if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF no disponible');
     if (!pdfBase64) throw new Error('Sin PDF de origen');
 
-    var pages = await extractFromPdf(pdfBase64);
-    var secciones = parseSections(pages);
-    if (!secciones.length) throw new Error('No se pudo leer el contenido del PDF');
-    return buildPdf(secciones, meta || {});
+    // Tope de seguridad: si la lectura se atasca, se corta y el llamador
+    // muestra el PDF original en vez de dejar al usuario esperando.
+    var vencido = new Promise(function (_, reject) {
+      setTimeout(function () { reject(new Error('Tiempo de generación agotado')); }, 60000);
+    });
+
+    var trabajo = (async function () {
+      var pages = await extractFromPdf(pdfBase64, onProgress);
+      var secciones = parseSections(pages);
+      if (!secciones.length) throw new Error('No se pudo leer el contenido del PDF');
+      return buildPdf(secciones, meta || {});
+    })();
+
+    return Promise.race([trabajo, vencido]);
   }
 
   Consultia.MetaplaReport = {

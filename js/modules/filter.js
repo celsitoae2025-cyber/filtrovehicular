@@ -477,6 +477,9 @@
                 day: '2-digit', month: 'short', year: 'numeric',
                 hour: '2-digit', minute: '2-digit'
               })
+            }, function (n, total) {
+              metaplaPdfArea.innerHTML =
+                '<div class="cr-pdf-loading">Generando reporte PDF… ' + n + ' de ' + total + '</div>';
             });
             if (!result) throw new Error('MetaplaReport devolvió null');
             var rfn = escapeHtml(result.filename || 'reporte.pdf');
