@@ -464,38 +464,41 @@
 
     if (botones.length > 0 && !hasMedia) wireResultButtons(body);
 
-    // /metapla: generar PDF rediseñado con nuestro estilo institucional
+    // /metapla: rediseñar por completo el PDF del bot con el estilo FV+
+    // (extrae texto + imágenes del original y arma un documento nuevo).
     var metaplaPdfArea = document.getElementById('metapla-pdf-area');
-    if (metaplaPdfArea && esMetapla && Consultia.ReportGenerator && Consultia.ReportGenerator.generateMetapla) {
-      (function (parsedRef, valorRef, photosRef) {
-        try {
-          var meta = {
-            valor: valorRef || '',
-            fecha: new Date().toLocaleDateString('es-PE', {
-              day: '2-digit', month: 'short', year: 'numeric',
-              hour: '2-digit', minute: '2-digit'
-            })
-          };
-          var result = Consultia.ReportGenerator.generateMetapla(parsedRef, meta, photosRef);
-          if (!result) throw new Error('generateMetapla devolvió null');
-          var rfn = escapeHtml(result.filename || 'reporte.pdf');
-          metaplaPdfArea.innerHTML =
-            '<div class="cr-doccards">' +
-              '<div class="cr-doccard">' +
-                '<div class="cr-doccard-head">' +
-                  '<span class="cr-doccard-tit">Reporte Vehicular</span>' +
-                  '<div class="cr-doccard-actions">' +
-                    '<button type="button" class="cr-doccard-view" data-blob="' + result.blobUrl + '" data-fn="' + rfn + '">Visualizar</button>' +
-                    '<a class="cr-doccard-dl" href="' + result.blobUrl + '" download="' + rfn + '">Descargar Reporte PDF</a>' +
+    if (metaplaPdfArea && esMetapla && pdfs.length && pdfs[0].base64 && Consultia.MetaplaReport) {
+      (function (pdfsRef, valorRef) {
+        (async function () {
+          try {
+            var result = await Consultia.MetaplaReport.generate(pdfsRef[0].base64, {
+              valor: valorRef || '',
+              fecha: new Date().toLocaleDateString('es-PE', {
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+              })
+            });
+            if (!result) throw new Error('MetaplaReport devolvió null');
+            var rfn = escapeHtml(result.filename || 'reporte.pdf');
+            metaplaPdfArea.innerHTML =
+              '<div class="cr-doccards">' +
+                '<div class="cr-doccard">' +
+                  '<div class="cr-doccard-head">' +
+                    '<span class="cr-doccard-tit">Reporte Vehicular</span>' +
+                    '<div class="cr-doccard-actions">' +
+                      '<button type="button" class="cr-doccard-view" data-blob="' + result.blobUrl + '" data-fn="' + rfn + '">Visualizar</button>' +
+                      '<a class="cr-doccard-dl" href="' + result.blobUrl + '" download="' + rfn + '">Descargar Reporte PDF</a>' +
+                    '</div>' +
                   '</div>' +
                 '</div>' +
-              '</div>' +
-            '</div>';
-        } catch (e) {
-          console.error('[metapla-pdf]', e);
-          metaplaPdfArea.innerHTML = renderDocumentCard(pdfs, 'fl', { downloadLabel: 'Descargar Reporte PDF' });
-        }
-      })(p, $('filter-input') ? $('filter-input').value.trim() : '', photos);
+              '</div>';
+          } catch (e) {
+            console.error('[metapla-report]', e);
+            // Fallback: el PDF original del bot, para no dejar al usuario sin documento.
+            metaplaPdfArea.innerHTML = renderDocumentCard(pdfsRef, 'fl', { downloadLabel: 'Descargar Reporte PDF' });
+          }
+        })();
+      })(pdfs, $('filter-input') ? $('filter-input').value.trim() : '');
     }
 
     var empty = $('filter-empty');
