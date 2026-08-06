@@ -14,6 +14,15 @@
   var currentConsulta = null;
   var catalogReadyPromise = null;
 
+  // Antispam del reporte /metapla: tras entregar la información hay que
+  // esperar 60 s antes de poder pedir otro reporte. Aplica sólo a /metapla.
+  var METAPLA_COOLDOWN_MS = 60 * 1000;
+  var metaplaCooldownUntil = 0;
+
+  function esMetapla(c) {
+    return !!(c && c.comando && c.comando.indexOf('/metapla') === 0);
+  }
+
   function $(id) { return document.getElementById(id); }
 
   // Alias de render helpers
@@ -214,6 +223,20 @@
       return;
     }
 
+    // Antispam: sólo el reporte /metapla queda en enfriamiento tras entregarse.
+    if (esMetapla(currentConsulta)) {
+      var restanteMs = metaplaCooldownUntil - Date.now();
+      if (restanteMs > 0) {
+        var restanteS = Math.ceil(restanteMs / 1000);
+        if (Consultia.toast) Consultia.toast({
+          type: 'warning',
+          title: 'Espera un momento',
+          message: 'Podrás pedir otro reporte en ' + restanteS + ' s.'
+        });
+        return;
+      }
+    }
+
     var user = await Consultia.Auth.getUser();
     if (!user) {
       if (Consultia.AuthModals) Consultia.AuthModals.openLogin();
@@ -229,6 +252,8 @@
     try {
       var resp = await Consultia.ConsultaRunner.ejecutarConsultaConCobro(user.id, currentConsulta, valor);
       renderResultado(resp);
+      // La información ya se entregó: arrancar el enfriamiento de 60 s del reporte.
+      if (esMetapla(currentConsulta)) metaplaCooldownUntil = Date.now() + METAPLA_COOLDOWN_MS;
       if (Consultia.SearchHistory) Consultia.SearchHistory.add(valor, currentConsulta && currentConsulta.categoria);
       if (Consultia.Favorites && Consultia.Favorites.injectStar) {
         var _rp = document.getElementById('filter-result-panel');
@@ -551,34 +576,9 @@
 
     // CTA "Obtén tu reporte": selecciona /metapla (Reporte Completo) y deja
     // el campo de placa listo. Ya estamos en view-filter, no hay que navegar.
-    // Antispam: tras cada clic el botón queda bloqueado 60 s con cuenta regresiva.
     var ctaBtn = $('ctaReporteBtn');
     if (ctaBtn) {
-      var CTA_COOLDOWN = 60; // segundos
-      var ctaTimer = null;
-      var ctaSmall = ctaBtn.querySelector('.cta-reporte-text small');
-      var ctaSmallText = ctaSmall ? ctaSmall.textContent : '';
-
-      function ctaCooldown() {
-        var restante = CTA_COOLDOWN;
-        ctaBtn.disabled = true;
-        if (ctaSmall) ctaSmall.textContent = 'Espera ' + restante + ' s';
-        ctaTimer = setInterval(function () {
-          restante -= 1;
-          if (restante <= 0) {
-            clearInterval(ctaTimer);
-            ctaTimer = null;
-            ctaBtn.disabled = false;
-            if (ctaSmall) ctaSmall.textContent = ctaSmallText;
-            return;
-          }
-          if (ctaSmall) ctaSmall.textContent = 'Espera ' + restante + ' s';
-        }, 1000);
-      }
-
       ctaBtn.addEventListener('click', async function () {
-        if (ctaBtn.disabled) return; // antispam: bloqueado durante el enfriamiento
-        ctaCooldown();
         try { await catalogReadyPromise; } catch (_) {}
         var item = catalog.find(function (c) {
           return c.comando && c.comando.indexOf('/metapla') === 0;
