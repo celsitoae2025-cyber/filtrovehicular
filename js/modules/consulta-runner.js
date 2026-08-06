@@ -188,13 +188,21 @@
 
     // Auto-click de botón inline: si el catálogo indica que el bot responde con botones,
     // pasamos el matcher al bridge para que lo clickee automáticamente tras la respuesta.
+    // Ojo: en el bridge esto son DOS esperas independientes que se encadenan (menú
+    // inicial + resultado tras el click), cada una con su propio presupuesto de
+    // "timeoutMs" — el peor caso real puede llegar a 2× ese valor. El resultado
+    // además suele ser un reporte que junta varias fuentes (SUNARP, denuncias,
+    // papeletas, SOAT…), así que la segunda espera puede tardar bastante.
     var formato = consulta.respuesta_formato || {};
-    if (formato.auto_click) {
-      body.autoClick = formato.auto_click;
-      body.timeoutMs = Math.max(body.timeoutMs, 60000);
-    }
+    if (formato.auto_click) body.autoClick = formato.auto_click;
+
     var controller = new AbortController();
-    var fetchTimeout = setTimeout(function () { controller.abort(); }, body.timeoutMs + 10000);
+    // Presupuesto del fetch en el cliente: para auto_click cubrimos el peor caso
+    // de las dos fases encadenadas del bridge, con margen extra.
+    var clientAbortMs = formato.auto_click
+      ? (body.timeoutMs * 2) + 20000
+      : body.timeoutMs + 10000;
+    var fetchTimeout = setTimeout(function () { controller.abort(); }, clientAbortMs);
     var res;
     var bridgeReq;
     try {

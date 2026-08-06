@@ -1337,6 +1337,7 @@
 /* Result panels (Datos / Documentos) */
 .result-panel { padding: 0; overflow: visible; }
 .result-header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2913,6 +2914,10 @@ body.cr-lightbox-open { overflow: hidden; }
    right-panel visible el contenido central queda ~540px.
 â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 .reniec-result-body { container-type: inline-size; }
+/* El .result-panel tiene padding:0 (para que la barra multicolor del header
+   toque los bordes), así que el cuerpo de datos aporta su propio padding
+   lateral. Sin esto las etiquetas quedaban pegadas al borde del cuadro. */
+.result-panel > .reniec-result-body { padding: 0 20px 16px; }
 
 /* Default: stack vertical (mobile-first y cuando el contenedor es angosto) */
 .cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) {
