@@ -505,9 +505,9 @@
     var W = doc.internal.pageSize.getWidth();   // 210
     var H = doc.internal.pageSize.getHeight();  // 297
     var M = 20;                 // margen lateral, retícula amplia
-    var HEAD_Y = 15;            // línea base del membrete
-    var TOP = 30;               // inicio del área de contenido
-    var FOOT = H - 16;          // filete del pie
+    var HEAD_Y = 14;            // línea base del membrete
+    var TOP = 32;               // inicio del área de contenido
+    var FOOT = H - 20;          // filete del pie
     var COLW = W - M * 2;
 
     var valor = (meta && meta.valor ? String(meta.valor) : '').toUpperCase();
@@ -529,31 +529,46 @@
       if (decoradas[pn]) return;
       decoradas[pn] = true;
 
+      // ── Encabezado: distintivo de acento, marca y referencia ──
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(M, HEAD_Y - 3.6, 1.4, 4.6, 'F');
+
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
+      doc.setFontSize(11);
       doc.setTextColor.apply(doc, C_INK);
-      doc.text('Filtro Vehicular', M, HEAD_Y);
+      doc.text('Filtro Vehicular', M + 3.6, HEAD_Y);
       var wm = doc.getTextWidth('Filtro Vehicular');
       doc.setTextColor.apply(doc, C_ACCENT);
-      doc.text('+', M + wm + 0.6, HEAD_Y);
+      doc.text('+', M + 3.6 + wm + 0.6, HEAD_Y);
 
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.4);
+      doc.setTextColor.apply(doc, C_MUTED);
+      doc.text('REPORTE VEHICULAR INTEGRAL', W - M, HEAD_Y - 2.4, { align: 'right' });
       if (valor) {
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8);
-        doc.setTextColor.apply(doc, C_MUTED);
-        doc.text('Reporte vehicular · ' + valor, W - M, HEAD_Y, { align: 'right' });
+        doc.setFontSize(7.6);
+        doc.setTextColor.apply(doc, C_INK);
+        doc.text('Placa ' + valor, W - M, HEAD_Y + 1.8, { align: 'right' });
       }
-      hairline(HEAD_Y + 3);
-      // Acento corto sobre el filete, como marca de agua del membrete
+      hairline(HEAD_Y + 4.5);
       doc.setDrawColor.apply(doc, C_ACCENT);
       doc.setLineWidth(0.7);
-      doc.line(M, HEAD_Y + 3, M + 16, HEAD_Y + 3);
+      doc.line(M, HEAD_Y + 4.5, M + 22, HEAD_Y + 4.5);
 
+      // ── Pie: marca, procedencia y fecha de emisión ──
       hairline(FOOT);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.4);
+      doc.setTextColor.apply(doc, C_INK);
+      doc.text('Filtro Vehicular+', M, FOOT + 4.6);
+      var fw = doc.getTextWidth('Filtro Vehicular+');
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.6);
       doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('Filtro Vehicular+ · Información obtenida de fuentes oficiales', M, FOOT + 5);
+      doc.text('· Plataforma de consultas vehiculares', M + fw + 1.6, FOOT + 4.6);
+      doc.setFontSize(6);
+      doc.text('Información obtenida de fuentes oficiales · Emitido el ' + fecha,
+               M, FOOT + 8.4);
     }
 
     var y = TOP;
@@ -843,9 +858,12 @@
     for (var pn = 1; pn <= total; pn++) {
       doc.setPage(pn);
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.6);
+      doc.setFontSize(6.4);
       doc.setTextColor.apply(doc, C_MUTED);
-      doc.text(pn + ' / ' + total, W - M, FOOT + 5, { align: 'right' });
+      doc.text('PÁGINA', W - M, FOOT + 4.6, { align: 'right' });
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor.apply(doc, C_INK);
+      doc.text(pn + ' de ' + total, W - M, FOOT + 8.4, { align: 'right' });
     }
 
     var slug = valor.replace(/[^A-Z0-9]/g, '').slice(0, 12);
