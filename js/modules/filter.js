@@ -436,7 +436,9 @@
     } else if (esMetapla) {
       // Sin título del bot, sin "Ver detalles" ni botón "Siguiente" — el
       // bridge ya hizo ese clic automático (auto_click en el catálogo).
-      html = renderMetaplaData(p) + renderDocumentCard(pdfs, 'fl', docOpts);
+      // El PDF NO se muestra como tarjeta cruda: se reencuadra con nuestra
+      // marca (pdf-lib) y aparece en filter-report-area más abajo.
+      html = renderMetaplaData(p);
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
     } else if (hasData || photos.length > 0) {
@@ -468,17 +470,30 @@
     // Auto-generar informe PDF para respuestas de datos/fotos
     var filterReportArea = document.getElementById('filter-report-area');
     if (filterReportArea && Consultia.ReportGenerator) {
-      (function (consultaRef, valorRef, photosRef) {
+      (function (consultaRef, valorRef, photosRef, pdfsRef, esMetaplaRef) {
         (async function () {
           try {
-            var result = Consultia.ReportGenerator.generate(p, {
+            var meta = {
               consultaNombre: consultaRef ? consultaRef.nombre : 'Consulta',
               valor: valorRef || '',
               fecha: new Date().toLocaleDateString('es-PE', {
                 day: '2-digit', month: 'short', year: 'numeric',
                 hour: '2-digit', minute: '2-digit'
               })
-            }, photosRef);
+            };
+            var result;
+            // /metapla: reencuadrar el PDF crudo del bot con nuestra marca
+            // (conserva texto e imágenes; solo agrega franjas FV+). Si por
+            // algo falla, caemos al informe generado desde los datos.
+            if (esMetaplaRef && pdfsRef && pdfsRef.length && pdfsRef[0].base64 && Consultia.PdfReframe) {
+              try {
+                result = await Consultia.PdfReframe.reframe(pdfsRef[0].base64, meta);
+              } catch (re) {
+                console.warn('[filter-report] reframe falló, uso informe generado:', re);
+                result = null;
+              }
+            }
+            if (!result) result = Consultia.ReportGenerator.generate(p, meta, photosRef);
             if (!result) throw new Error('No se pudo generar');
 
             filterReportArea.innerHTML =
@@ -513,7 +528,7 @@
             filterReportArea.innerHTML = '<div class="cr-txt-layout"><div class="cr-txt-data">' + renderDataRows(p) + '</div></div>';
           }
         })();
-      })(currentConsulta, $('filter-input') ? $('filter-input').value.trim() : '', photos);
+      })(currentConsulta, $('filter-input') ? $('filter-input').value.trim() : '', photos, pdfs, esMetapla);
     }
 
     var empty = $('filter-empty');
