@@ -434,11 +434,10 @@
     if (esErrorTecnicoRespuesta(p, resp)) {
       html = htmlMantenimiento();
     } else if (esMetapla) {
-      // Sin título del bot, sin "Ver detalles" ni botón "Siguiente" — el
-      // bridge ya hizo ese clic automático (auto_click en el catálogo).
-      // El PDF NO se muestra como tarjeta cruda: se reencuadra con nuestra
-      // marca (pdf-lib) y aparece en filter-report-area más abajo.
-      html = renderMetaplaData(p);
+      // Sin título del bot, sin "Ver detalles" ni botón "Siguiente".
+      // Los datos van como tabla + un placeholder para el PDF reencuadrado
+      // (botones Visualizar/Descargar se inyectan async más abajo).
+      html = renderMetaplaData(p) + '<div id="metapla-reframe-area"><div class="cr-pdf-loading">Preparando reporte...</div></div>';
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
     } else if (hasData || photos.length > 0) {
@@ -467,80 +466,41 @@
 
     if (botones.length > 0 && !hasMedia) wireResultButtons(body);
 
-    // Auto-generar informe PDF para respuestas de datos/fotos
-    var filterReportArea = document.getElementById('filter-report-area');
-    if (filterReportArea && Consultia.ReportGenerator) {
-      (function (consultaRef, valorRef, photosRef, pdfsRef, esMetaplaRef) {
+    // /metapla: reencuadrar el PDF crudo del bot con nuestras franjas FV+
+    // e inyectar los botones Visualizar / Descargar en metapla-reframe-area.
+    var reframeArea = document.getElementById('metapla-reframe-area');
+    if (reframeArea && esMetapla && pdfs.length && pdfs[0].base64 && Consultia.PdfReframe) {
+      (function (pdfsRef, valorRef) {
         (async function () {
           try {
             var meta = {
-              consultaNombre: consultaRef ? consultaRef.nombre : 'Consulta',
               valor: valorRef || '',
               fecha: new Date().toLocaleDateString('es-PE', {
                 day: '2-digit', month: 'short', year: 'numeric',
                 hour: '2-digit', minute: '2-digit'
               })
             };
-            var result;
-            // /metapla: reencuadrar el PDF crudo del bot con nuestra marca
-            // (conserva texto e imágenes; solo agrega franjas FV+). Si por
-            // algo falla, caemos al informe generado desde los datos.
-            if (esMetaplaRef && pdfsRef && pdfsRef.length && pdfsRef[0].base64 && Consultia.PdfReframe) {
-              try {
-                result = await Consultia.PdfReframe.reframe(pdfsRef[0].base64, meta);
-              } catch (re) {
-                console.warn('[filter-report] reframe falló, uso informe generado:', re);
-                result = null;
-              }
-            }
-            if (!result) result = Consultia.ReportGenerator.generate(p, meta, photosRef);
-            if (!result) throw new Error('No se pudo generar');
-
-            var rfn = result.filename || 'reporte.pdf';
-            filterReportArea.innerHTML =
-              '<div class="cr-report-preview">' +
-                '<div class="cr-report-canvas-wrap">' +
-                  '<div class="cr-report-canvas" id="filter-report-canvas"></div>' +
-                '</div>' +
-                '<div class="cr-doccards" style="margin-top:8px">' +
-                  '<div class="cr-doccard">' +
-                    '<div class="cr-doccard-head">' +
-                      '<span class="cr-doccard-tit">Reporte Vehicular</span>' +
-                      '<div class="cr-doccard-actions">' +
-                        '<button type="button" class="cr-doccard-view" data-blob="' + result.blobUrl + '" data-fn="' + escapeHtml(rfn) + '">Visualizar</button>' +
-                        '<a class="cr-doccard-dl" href="' + result.blobUrl + '" download="' + escapeHtml(rfn) + '">Descargar Reporte PDF</a>' +
-                      '</div>' +
+            var result = await Consultia.PdfReframe.reframe(pdfsRef[0].base64, meta);
+            if (!result) throw new Error('Reframe devolvió null');
+            var rfn = escapeHtml(result.filename || 'reporte.pdf');
+            reframeArea.innerHTML =
+              '<div class="cr-doccards">' +
+                '<div class="cr-doccard">' +
+                  '<div class="cr-doccard-head">' +
+                    '<span class="cr-doccard-tit">Reporte Vehicular</span>' +
+                    '<div class="cr-doccard-actions">' +
+                      '<button type="button" class="cr-doccard-view" data-blob="' + result.blobUrl + '" data-fn="' + rfn + '">Visualizar</button>' +
+                      '<a class="cr-doccard-dl" href="' + result.blobUrl + '" download="' + rfn + '">Descargar Reporte PDF</a>' +
                     '</div>' +
                   '</div>' +
                 '</div>' +
               '</div>';
-
-            // Limpiar cualquier botón rojo de descarga heredado de renders previos:
-            // ahora el thumbnail completo es clickeable y muestra "Click para descargar".
-            var oldActions = filterReportArea.closest('.result-panel').querySelector('.result-header-actions');
-            if (oldActions) oldActions.remove();
-
-            var canvasEl = document.getElementById('filter-report-canvas');
-            if (canvasEl && Consultia.renderPdfIntoContainer) {
-              try {
-                await Consultia.renderPdfIntoContainer(canvasEl, result.blobUrl, result.filename, result.base64);
-              } catch (pe) {
-                canvasEl.innerHTML = '<div class="cr-pdf-loading">Vista previa no disponible.</div>';
-              }
-            }
-            // El thumbnail entero también descarga al hacer click
-            var wrap = filterReportArea.querySelector('.cr-report-canvas-wrap');
-            if (wrap) {
-              wrap.addEventListener('click', function () {
-                Consultia.ReportGenerator.download(result);
-              });
-            }
           } catch (e) {
-            console.error('[filter-report]', e);
-            filterReportArea.innerHTML = '<div class="cr-txt-layout"><div class="cr-txt-data">' + renderDataRows(p) + '</div></div>';
+            console.warn('[metapla-reframe]', e);
+            reframeArea.innerHTML = renderDocumentCard(pdfsRef, 'fl', { downloadLabel: 'Descargar Reporte PDF' });
           }
         })();
-      })(currentConsulta, $('filter-input') ? $('filter-input').value.trim() : '', photos, pdfs, esMetapla);
+      })(pdfs, $('filter-input') ? $('filter-input').value.trim() : '');
     }
 
     var empty = $('filter-empty');
