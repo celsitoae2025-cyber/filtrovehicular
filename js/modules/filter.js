@@ -496,10 +496,22 @@
             if (!result) result = Consultia.ReportGenerator.generate(p, meta, photosRef);
             if (!result) throw new Error('No se pudo generar');
 
+            var rfn = result.filename || 'reporte.pdf';
             filterReportArea.innerHTML =
               '<div class="cr-report-preview">' +
                 '<div class="cr-report-canvas-wrap">' +
                   '<div class="cr-report-canvas" id="filter-report-canvas"></div>' +
+                '</div>' +
+                '<div class="cr-doccards" style="margin-top:8px">' +
+                  '<div class="cr-doccard">' +
+                    '<div class="cr-doccard-head">' +
+                      '<span class="cr-doccard-tit">Reporte Vehicular</span>' +
+                      '<div class="cr-doccard-actions">' +
+                        '<button type="button" class="cr-doccard-view" data-blob="' + result.blobUrl + '" data-fn="' + escapeHtml(rfn) + '">Visualizar</button>' +
+                        '<a class="cr-doccard-dl" href="' + result.blobUrl + '" download="' + escapeHtml(rfn) + '">Descargar Reporte PDF</a>' +
+                      '</div>' +
+                    '</div>' +
+                  '</div>' +
                 '</div>' +
               '</div>';
 
