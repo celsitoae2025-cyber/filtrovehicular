@@ -312,11 +312,13 @@
     }
     var sb = getSB();
     var res = await sb.from("profiles")
-      .select("credits_balance, subscription_expires_at")
+      .select("credits_balance, subscription_expires_at, is_admin")
       .eq("id", userId)
       .single();
     if (res.error) throw res.error;
     if (!res.data) return false;
+    // Administrador ⇒ acceso total, sin límite de saldo
+    if (res.data.is_admin) return true;
     // Suscripción vigente ⇒ pasa
     if (res.data.subscription_expires_at) {
       var exp = new Date(res.data.subscription_expires_at).getTime();
