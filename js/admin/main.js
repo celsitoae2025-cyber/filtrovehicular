@@ -52,6 +52,7 @@
     if (viewKey === 'antiabuse'   && A.renderAntiAbuse)   A.renderAntiAbuse();
     if (viewKey === 'audit'       && A.renderAudit)       A.renderAudit();
     if (viewKey === 'settings'    && A.renderSettings)    A.renderSettings();
+    if (viewKey === 'settings'    && A.renderMaintenance) A.renderMaintenance();
   }
 
   function initNav() {
@@ -98,6 +99,7 @@
       if (A.initApiKeys)     A.initApiKeys();
       if (A.initAudit)       A.initAudit();
       if (A.initSettings)    A.initSettings();
+      if (A.initMaintenance) A.initMaintenance();
       initNav();
       initMobileToggle();
       switchView('dashboard');

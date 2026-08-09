@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="css/overlays.css">
 <link rel="stylesheet" href="css/plans-catalog.css">
 <link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="css/maintenance.css">
 </head>
 <body>
 
@@ -1090,6 +1091,36 @@
       <!-- CONFIGURACIÃ“N -->
       <section class="admin-view" id="adminView-settings" hidden>
         <div class="settings-grid">
+          <div class="admin-panel" style="grid-column:1/-1">
+            <header class="admin-panel-head">
+              <h2>Modo mantenimiento</h2>
+              <span class="admin-panel-sub" id="mntStateLabel">Servicio operativo</span>
+            </header>
+            <div class="mnt-admin">
+              <div class="mnt-admin-state" id="mntStateBox">
+                <span class="mnt-admin-dot" id="mntStateDot"></span>
+                <div>
+                  <strong id="mntStateTitle">Servicio operativo</strong>
+                  <p id="mntStateDesc">Los usuarios pueden consultar con normalidad.</p>
+                </div>
+              </div>
+              <div class="field">
+                <label for="mntMessage">Mensaje para los usuarios</label>
+                <textarea id="mntMessage" class="input" rows="3"
+                  placeholder="Estamos realizando tareas de mejora en la plataforma. El servicio se restablecerá en breve."></textarea>
+                <div class="field-hint">Si lo dejas vacío se muestra el mensaje por defecto.</div>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-primary" id="mntToggleBtn">Activar mantenimiento</button>
+                <button type="button" class="btn-ghost" id="mntSaveMsgBtn">Guardar mensaje</button>
+              </div>
+              <p class="mnt-admin-foot">
+                Mientras esté activo, los usuarios verán un aviso a pantalla completa y no podrán
+                ejecutar consultas. Los administradores siguen operando con normalidad.
+              </p>
+            </div>
+          </div>
+
           <div class="admin-panel">
             <header class="admin-panel-head">
               <h2>Empresa</h2>
@@ -1271,6 +1302,7 @@
 <script src="js/admin/audit.js?v=23"></script>
 <script src="js/admin/broadcasts.js?v=23"></script>
 <script src="js/admin/settings.js?v=22"></script>
+<script src="js/admin/maintenance.js?v=1"></script>
 <script src="js/admin/main.js?v=22"></script>
 
 </body>

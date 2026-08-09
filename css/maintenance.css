@@ -1,0 +1,216 @@
+/* ==========================================================
+   MODO MANTENIMIENTO
+   Aviso a pantalla completa para usuarios y cinta para el
+   administrador. Diseño plano, sin sombras, paleta institucional.
+   ========================================================== */
+
+/* Mientras el aviso está puesto, la página de fondo no se desplaza */
+html.mnt-locked,
+html.mnt-locked body {
+  overflow: hidden;
+}
+
+/* ── Aviso a pantalla completa ── */
+.mnt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--c-primary, #141d1c);
+}
+
+.mnt-card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--c-surface, #ffffff);
+  border: 1px solid var(--c-border, #DCDCDC);
+  border-radius: 14px;
+  padding: 36px 32px;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Marca */
+.mnt-mark {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 1px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-primary, #141d1c);
+  letter-spacing: -0.2px;
+}
+.mnt-mark-plus { color: var(--c-accent, #8fc72e); }
+
+/* Filete bicolor: verde + turquesa, el acento de la marca */
+.mnt-rule {
+  width: 56px;
+  height: 3px;
+  margin: 14px auto 22px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--c-accent, #8fc72e) 0 50%,
+    #00B4D8 50% 100%
+  );
+}
+
+.mnt-icon {
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 16px;
+  color: var(--c-accent, #8fc72e);
+}
+.mnt-icon svg { width: 100%; height: 100%; display: block; }
+
+.mnt-title {
+  margin: 0 0 10px;
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--c-primary, #141d1c);
+  line-height: 1.25;
+}
+
+.mnt-text {
+  margin: 0 0 20px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--c-muted, #5A6B6A);
+}
+
+.mnt-note {
+  padding: 12px 14px;
+  margin-bottom: 22px;
+  border-radius: 10px;
+  background: #F6F8F5;
+  border-left: 3px solid #00B4D8;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--c-muted, #5A6B6A);
+  text-align: left;
+}
+
+.mnt-retry {
+  width: 100%;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--c-primary, #141d1c);
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mnt-retry:hover { background: #1e2b2a; }
+
+/* ── Cinta del administrador ── */
+.mnt-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 16px;
+  background: var(--c-primary, #141d1c);
+  border-bottom: 2px solid var(--c-accent, #8fc72e);
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  text-align: center;
+}
+.mnt-banner strong { font-weight: 700; }
+.mnt-banner span:not(.mnt-banner-dot) { color: rgba(255, 255, 255, 0.75); }
+
+.mnt-banner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c-accent, #8fc72e);
+  flex: none;
+}
+
+/* Deja sitio a la cinta para no tapar la barra superior */
+html.mnt-with-banner body { padding-top: 34px; }
+
+@media (max-width: 480px) {
+  .mnt-card { padding: 28px 22px; }
+  .mnt-title { font-size: 19px; }
+  html.mnt-with-banner body { padding-top: 48px; }
+}
+
+/* ==========================================================
+   PANEL DE ADMINISTRACIÓN — bloque de mantenimiento
+   ========================================================== */
+.mnt-admin { display: flex; flex-direction: column; gap: 16px; }
+
+.mnt-admin-state {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #F6F8F5;
+  border-left: 3px solid var(--c-accent, #8fc72e);
+}
+.mnt-admin-state.is-on { border-left-color: #00B4D8; }
+
+.mnt-admin-state strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-primary, #141d1c);
+  margin-bottom: 2px;
+}
+.mnt-admin-state p {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--c-muted, #5A6B6A);
+}
+
+.mnt-admin-dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--c-accent, #8fc72e);
+  flex: none;
+}
+.mnt-admin-dot.is-on { background: #00B4D8; }
+
+.mnt-admin-foot {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--c-muted, #5A6B6A);
+}
+
+/* Botón de desactivación: oscuro institucional, no rojo de alarma */
+.btn-danger {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--c-primary, #141d1c);
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-danger:hover { background: #1e2b2a; }
+.btn-danger:disabled { opacity: .6; cursor: not-allowed; }
