@@ -22,10 +22,23 @@
 
   // ── Paleta ─────────────────────────────────────────────────
   var C_INK    = [20, 29, 28];     // #141d1c — texto principal
-  var C_ACCENT = [143, 199, 46];   // #8fc72e — acento institucional
+  var C_ACCENT = [143, 199, 46];   // #8fc72e — verde institucional
+  var C_TURQ   = [0, 180, 216];    // #00b4d8 — turquesa, segundo acento
   var C_MUTED  = [122, 130, 128];  // etiquetas y textos secundarios
   var C_HAIR   = [223, 227, 222];  // filetes y separadores
   var C_SOFT   = [248, 250, 247];  // fondos muy tenues
+
+  // El color del índice cambia según el nivel de riesgo: verde = bajo,
+  // turquesa = medio, oscuro institucional = alto. Se combinan así los
+  // tres colores de marca sin recurrir a rojos ni ámbares.
+  function riskColor(nivel, score) {
+    var n = String(nivel || '').toUpperCase();
+    if (/BAJO/.test(n)) return C_ACCENT;
+    if (/MEDIO|MODERAD/.test(n)) return C_TURQ;
+    if (/ALTO/.test(n)) return C_INK;
+    var s = +score || 0;                 // sin nivel, se decide por puntaje
+    return s >= 75 ? C_ACCENT : (s >= 45 ? C_TURQ : C_INK);
+  }
 
   var ROMANS = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
                 'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX'];
@@ -521,7 +534,35 @@
       doc.line(x0 === undefined ? M : x0, y, x1 === undefined ? W - M : x1, y);
     }
 
-    /* ── Membrete y pie: filetes finos, sin masas de color ── */
+    // Filete corto de dos tramos (verde + turquesa): el acento recurrente
+    // que hila la identidad a lo largo del documento.
+    function fileteBicolor(x, yy, largo, grosor) {
+      var mitad = largo / 2;
+      doc.setLineWidth(grosor || 0.8);
+      doc.setDrawColor.apply(doc, C_ACCENT);
+      doc.line(x, yy, x + mitad, yy);
+      doc.setDrawColor.apply(doc, C_TURQ);
+      doc.line(x + mitad, yy, x + largo, yy);
+    }
+
+    // Arco de círculo trazado por segmentos (jsPDF no tiene arcos): base
+    // del medidor de riesgo circular. Ángulos en radianes, 0 = arriba.
+    function arco(cx, cy, r, a0, a1, color, grosor) {
+      doc.setDrawColor.apply(doc, color);
+      doc.setLineWidth(grosor);
+      try { doc.setLineCap('round'); } catch (e) {}
+      var pasos = Math.max(10, Math.ceil(Math.abs(a1 - a0) / (Math.PI / 60)));
+      var px, py;
+      for (var i = 0; i <= pasos; i++) {
+        var t = a0 + (a1 - a0) * i / pasos;
+        var x = cx + r * Math.sin(t), yv = cy - r * Math.cos(t);
+        if (i > 0) doc.line(px, py, x, yv);
+        px = x; py = yv;
+      }
+      try { doc.setLineCap('butt'); } catch (e) {}
+    }
+
+    /* ── Membrete y pie: monograma, marca y filete bicolor ── */
     var decoradas = {};
     function cromo() {
       var pn = 1;
@@ -529,46 +570,61 @@
       if (decoradas[pn]) return;
       decoradas[pn] = true;
 
-      // ── Encabezado: distintivo de acento, marca y referencia ──
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.rect(M, HEAD_Y - 3.6, 1.4, 4.6, 'F');
+      // ── Monograma: cuadro oscuro con "+" verde y esquina turquesa ──
+      var bx = M, by = HEAD_Y - 6.2, bs = 7.4;
+      doc.setFillColor.apply(doc, C_INK);
+      doc.roundedRect(bx, by, bs, bs, 1.5, 1.5, 'F');
+      doc.setFillColor.apply(doc, C_TURQ);
+      doc.roundedRect(bx + bs - 2.4, by, 2.4, 2.4, 1.1, 1.1, 'F'); // esquina turquesa
+      doc.setDrawColor.apply(doc, C_ACCENT);       // "+" verde
+      doc.setLineWidth(0.9);
+      var mx = bx + bs / 2, my = by + bs / 2 + 0.4;
+      doc.line(mx - 1.7, my, mx + 1.7, my);
+      doc.line(mx, my - 1.7, mx, my + 1.7);
 
+      // ── Marca ──
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(11);
       doc.setTextColor.apply(doc, C_INK);
-      doc.text('Filtro Vehicular', M + 3.6, HEAD_Y);
+      doc.text('Filtro Vehicular', bx + bs + 3, HEAD_Y - 1);
       var wm = doc.getTextWidth('Filtro Vehicular');
       doc.setTextColor.apply(doc, C_ACCENT);
-      doc.text('+', M + 3.6 + wm + 0.6, HEAD_Y);
-
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(6.4);
+      doc.text('+', bx + bs + 3 + wm + 0.6, HEAD_Y - 1);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(5.6);
       doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('REPORTE VEHICULAR INTEGRAL', W - M, HEAD_Y - 2.4, { align: 'right' });
-      if (valor) {
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(7.6);
-        doc.setTextColor.apply(doc, C_INK);
-        doc.text('Placa ' + valor, W - M, HEAD_Y + 1.8, { align: 'right' });
-      }
-      hairline(HEAD_Y + 4.5);
-      doc.setDrawColor.apply(doc, C_ACCENT);
-      doc.setLineWidth(0.7);
-      doc.line(M, HEAD_Y + 4.5, M + 22, HEAD_Y + 4.5);
+      doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', bx + bs + 3, HEAD_Y + 2.4);
 
-      // ── Pie: marca, procedencia y fecha de emisión ──
+      // ── Referencia a la derecha ──
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.2);
+      doc.setTextColor.apply(doc, C_TURQ);
+      doc.text('REPORTE VEHICULAR INTEGRAL', W - M, HEAD_Y - 3, { align: 'right' });
+      if (valor) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8.4);
+        doc.setTextColor.apply(doc, C_INK);
+        doc.text(valor, W - M, HEAD_Y + 1.6, { align: 'right' });
+      }
+
+      // ── Filete bajo el membrete: tramo bicolor + hairline ──
+      hairline(HEAD_Y + 4.8);
+      fileteBicolor(M, HEAD_Y + 4.8, 26, 0.8);
+
+      // ── Pie ──
       hairline(FOOT);
+      fileteBicolor(M, FOOT, 26, 0.8);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(6.4);
       doc.setTextColor.apply(doc, C_INK);
-      doc.text('Filtro Vehicular+', M, FOOT + 4.6);
+      doc.text('Filtro Vehicular+', M, FOOT + 4.8);
       var fw = doc.getTextWidth('Filtro Vehicular+');
       doc.setFont('helvetica', 'normal');
       doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('· Plataforma de consultas vehiculares', M + fw + 1.6, FOOT + 4.6);
+      doc.text('· Plataforma de consultas vehiculares', M + fw + 1.6, FOOT + 4.8);
       doc.setFontSize(6);
       doc.text('Información obtenida de fuentes oficiales · Emitido el ' + fecha,
-               M, FOOT + 8.4);
+               M, FOOT + 8.6);
     }
 
     var y = TOP;
@@ -613,10 +669,8 @@
     doc.setFontSize(30);
     doc.setTextColor.apply(doc, C_INK);
     doc.text(placa || '—', M, y + 9);
-    var placaW = doc.getTextWidth(placa || '—');
-    doc.setDrawColor.apply(doc, C_ACCENT);
-    doc.setLineWidth(1.1);
-    doc.line(M, y + 12.5, M + Math.max(placaW, 24), y + 12.5);
+    var placaW = Math.max(doc.getTextWidth(placa || '—'), 24);
+    fileteBicolor(M, y + 12.5, placaW, 1.1);
 
     var attrs = [
       ['Marca y modelo', marca], ['Año', anio], ['Color', color],
@@ -641,62 +695,71 @@
     y += 6;
     hairline(y); y += 10;
 
-    /* ── Índice de riesgo ── */
+    /* ── Índice de riesgo: medidor circular a color ── */
     var R = secciones.resumen || {};
     if (R.score) {
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.8);
-      doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('ÍNDICE DE RIESGO VEHICULAR', M, y);
+      var rc = riskColor(R.nivel, R.score);
+      var pct = Math.max(0, Math.min(100, +R.score)) / 100;
 
+      var ringR = 15, ringW = 3.4;
+      var cx = M + ringR, cy = y + ringR;
+
+      // Aro base tenue + arco de progreso en el color del nivel
+      arco(cx, cy, ringR, 0, Math.PI * 2, C_HAIR, ringW);
+      if (pct > 0) arco(cx, cy, ringR, 0, Math.PI * 2 * pct, rc, ringW);
+
+      // Cifra centrada dentro del aro
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(19);
       doc.setTextColor.apply(doc, C_INK);
-      doc.text(String(R.score), M, y + 10);
-      var sw = doc.getTextWidth(String(R.score));
+      doc.text(String(R.score), cx, cy + 1.5, { align: 'center' });
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
+      doc.setFontSize(6);
       doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('/ 100', M + sw + 2, y + 10);
+      doc.text('DE 100', cx, cy + 6, { align: 'center' });
+
+      // Bloque de texto a la derecha del aro
+      var tx = cx + ringR + 12;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.6);
+      doc.setTextColor.apply(doc, C_MUTED);
+      doc.text('ÍNDICE DE RIESGO VEHICULAR', tx, y + 5);
 
       if (R.nivel) {
+        // Chip del nivel con el color correspondiente
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(8);
-        doc.setTextColor.apply(doc, C_INK);
-        doc.text('RIESGO ' + R.nivel, W - M, y + 10, { align: 'right' });
+        doc.setFontSize(13);
+        doc.setTextColor.apply(doc, rc);
+        doc.text('Riesgo ' + R.nivel.charAt(0) + R.nivel.slice(1).toLowerCase(), tx, y + 13);
       }
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.4);
+      doc.setTextColor.apply(doc, C_MUTED);
+      doc.text('Evaluación consolidada de antecedentes, deudas y vigencias del vehículo.',
+               tx, y + 19, { maxWidth: W - M - tx });
 
-      // Barra fina: recorrido tenue + tramo alcanzado en acento
-      var barY = y + 13.5;
-      doc.setDrawColor.apply(doc, C_HAIR);
-      doc.setLineWidth(1.6);
-      doc.line(M, barY, W - M, barY);
-      doc.setDrawColor.apply(doc, C_ACCENT);
-      doc.setLineWidth(1.6);
-      var pct = Math.max(0, Math.min(100, +R.score)) / 100;
-      if (pct > 0) doc.line(M, barY, M + COLW * pct, barY);
-      y = barY + 10;
+      y = cy + ringR + 10;
     }
 
-    /* ── Indicadores ── */
+    /* ── Indicadores: filete lateral que rota entre los tres colores ── */
     if (R.indEtiquetas && R.indValores && R.indEtiquetas.length === R.indValores.length) {
       var n = R.indEtiquetas.length;
-      var gap = 4, cardW = (COLW - (n - 1) * gap) / n, cardH = 16;
+      var ciclo = [C_ACCENT, C_TURQ, C_INK];
+      var gap = 4, cardW = (COLW - (n - 1) * gap) / n, cardH = 17;
       for (var ci = 0; ci < n; ci++) {
         var cx0 = M + ci * (cardW + gap);
         doc.setFillColor.apply(doc, C_SOFT);
         doc.rect(cx0, y, cardW, cardH, 'F');
-        doc.setDrawColor.apply(doc, C_ACCENT);
-        doc.setLineWidth(0.7);
-        doc.line(cx0, y, cx0, y + cardH);   // filete lateral, no barra superior
+        doc.setFillColor.apply(doc, ciclo[ci % ciclo.length]);
+        doc.rect(cx0, y, 1.4, cardH, 'F');   // filete lateral a color
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(10);
+        doc.setFontSize(10.5);
         doc.setTextColor.apply(doc, C_INK);
-        doc.text(String(R.indValores[ci] || '—'), cx0 + 3.5, y + 7, { maxWidth: cardW - 6 });
+        doc.text(String(R.indValores[ci] || '—'), cx0 + 4, y + 7.5, { maxWidth: cardW - 7 });
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(5.6);
         doc.setTextColor.apply(doc, C_MUTED);
-        doc.text(String(R.indEtiquetas[ci] || ''), cx0 + 3.5, y + 12, { maxWidth: cardW - 6 });
+        doc.text(String(R.indEtiquetas[ci] || ''), cx0 + 4, y + 12.5, { maxWidth: cardW - 7 });
       }
       y += cardH + 12;
     }
@@ -712,16 +775,21 @@
       numSec++;
       need(26);
 
-      // Encabezado: número en acento, título en tinta, filete debajo
+      // Encabezado: número en acento (alterna verde/turquesa), título en
+      // tinta, filete debajo con un tramo del mismo acento.
+      var acc = (numSec % 2) ? C_ACCENT : C_TURQ;
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(7.5);
-      doc.setTextColor.apply(doc, C_ACCENT);
+      doc.setTextColor.apply(doc, acc);
       doc.text(('0' + numSec).slice(-2), M, y);
       doc.setFontSize(11);
       doc.setTextColor.apply(doc, C_INK);
       doc.text(sec.titulo, M + 9, y, { maxWidth: COLW - 9 });
       y += 3.5;
       hairline(y);
+      doc.setDrawColor.apply(doc, acc);
+      doc.setLineWidth(0.8);
+      doc.line(M, y, M + 14, y);
       y += 7;
 
       // Campos: etiqueta tenue a la izquierda, valor en tinta
@@ -826,8 +894,9 @@
         }
 
         // Documentos: a página ancha, con su pie tomado del original
+        var caps = sec.caps || [];
         grandes.forEach(function (im, gi) {
-          var cap = sec.caps[gi] || '';
+          var cap = caps[gi] || '';
           var maxH = FOOT - TOP - 14;
           var esc = Math.min(COLW / im.px, maxH / im.py);
           var dw = im.px * esc, dh = im.py * esc;
