@@ -302,8 +302,28 @@
     return res.data; // uuid de la consulta creada
   }
 
+  // --- ¿La cuenta es administradora? ---
+  // El acceso ilimitado se concede por rol (profiles.is_admin), nunca por
+  // un correo escrito en el código, para que valga igual para cualquier
+  // administrador. Se cachea por sesión: se consulta en cada compra de
+  // créditos y no vale la pena repetir el viaje.
+  var adminCache = Object.create(null);
+  async function esAdmin(userId) {
+    if (!userId) return false;
+    if (userId in adminCache) return adminCache[userId];
+    try {
+      var sb = getSB();
+      var res = await sb.from("profiles").select("is_admin").eq("id", userId).single();
+      adminCache[userId] = !!(res.data && res.data.is_admin);
+    } catch (err) {
+      adminCache[userId] = false; // ante la duda, se cobra
+    }
+    return adminCache[userId];
+  }
+
   // --- Verificar saldo suficiente ---
   // Devuelve true si:
+  //   - la cuenta es administradora (acceso ilimitado), o
   //   - el usuario tiene suscripción activa (consultas ilimitadas), o
   //   - tiene créditos suficientes para el precio.
   async function verificarSaldo(userId, precio) {
@@ -318,7 +338,11 @@
     if (res.error) throw res.error;
     if (!res.data) return false;
     // Administrador ⇒ acceso total, sin límite de saldo
-    if (res.data.is_admin) return true;
+    if (res.data.is_admin) {
+      adminCache[userId] = true;
+      return true;
+    }
+    adminCache[userId] = false;
     // Suscripción vigente ⇒ pasa
     if (res.data.subscription_expires_at) {
       var exp = new Date(res.data.subscription_expires_at).getTime();
@@ -492,7 +516,14 @@
       throw e;
     }
 
-    // 4) Como fue exitosa, recién aquí descontamos los créditos
+    // 4) Como fue exitosa, recién aquí descontamos los créditos.
+    //    Los administradores no pagan: se omite el cobro por completo, así
+    //    la consulta no depende de su saldo ni del tope por categoría.
+    if (await esAdmin(userId)) {
+      resp.costo_deducido = 0;
+      return resp;
+    }
+
     var consultaId = await cobrarCreditos(userId, consulta, valor);
     await confirmConsulta(consultaId);
 
@@ -512,6 +543,7 @@
     refundConsulta: refundConsulta,
     confirmConsulta: confirmConsulta,
     verificarSaldo: verificarSaldo,
+    esAdmin: esAdmin,
     esRespuestaVacia: esRespuestaVacia,
     prettyLabel: prettyLabel,
     toTitleCase: toTitleCase,
