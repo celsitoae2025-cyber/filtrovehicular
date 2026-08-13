@@ -517,18 +517,16 @@
     }
 
     // 4) Como fue exitosa, recién aquí descontamos los créditos.
-    //    Los administradores no pagan: se omite el cobro por completo, así
-    //    la consulta no depende de su saldo ni del tope por categoría.
-    if (await esAdmin(userId)) {
-      resp.costo_deducido = 0;
-      return resp;
-    }
-
+    //    Los administradores no pagan: consume_credits ya bypassa el cobro
+    //    por rol (costo 0, sin restricción de categoría) y de todas formas
+    //    registra la consulta, para que quede en su historial y en las
+    //    métricas del panel admin en vez de desaparecer sin dejar rastro.
+    var esCuentaAdmin = await esAdmin(userId);
     var consultaId = await cobrarCreditos(userId, consulta, valor);
     await confirmConsulta(consultaId);
 
     // Inyectamos el costo para que la UI lo muestre
-    resp.costo_deducido = consulta.precio_venta;
+    resp.costo_deducido = esCuentaAdmin ? 0 : consulta.precio_venta;
 
     return resp;
   }
