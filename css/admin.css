@@ -3,74 +3,6 @@
    Usa: --c-primary, --c-accent, --c-surface, --c-bg, --c-border, --c-muted
 ============================================================ */
 
-/* ============ LOGIN ============ */
-.admin-login {
-  position: fixed;
-  inset: 0;
-  background: var(--c-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 100;
-}
-.admin-login-card {
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 12px;
-  padding: 36px 32px 28px;
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-}
-.admin-login-logo {
-  width: 48px; height: 48px;
-  border-radius: 10px;
-  background: var(--c-primary);
-  color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 16px;
-}
-.admin-login-logo svg { width: 24px; height: 24px; }
-.admin-login-card h1 {
-  font-family: "Poppins", sans-serif;
-  font-size: 26px;
-  font-weight: 400;
-  color: var(--c-primary);
-  margin: 0 0 4px;
-  letter-spacing: -.3px;
-}
-.admin-login-sub {
-  font-size: 13px;
-  color: var(--c-muted);
-  margin: 0 0 22px;
-}
-.admin-login-form { text-align: left; }
-.admin-login-form .field { margin-bottom: 12px; }
-.admin-login-form .field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--c-primary);
-  margin-bottom: 6px;
-}
-.admin-login-error {
-  background: #f5f5f5;
-  border: 1px solid #DCDCDC;
-  color: #141d1c;
-  padding: 10px 12px;
-  border-radius: 7px;
-  font-size: 13px;
-  margin-bottom: 12px;
-}
-.admin-login-btn { width: 100%; margin-top: 4px; }
-.admin-login-hint {
-  text-align: center;
-  margin: 14px 0 0;
-  font-size: 12px;
-  color: var(--c-muted);
-}
-.admin-login-hint strong { color: var(--c-primary); font-weight: 600; }
 
 /* ============ LAYOUT ============ */
 .admin-app {
@@ -1487,17 +1419,22 @@ button.kpi.kpi-clickable:focus-visible {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: var(--c-bg, #F3F3F3);
+  /* Mismo turquesa que el fondo de la app (base.css), para que el acceso
+     al panel no parezca de otra plataforma. La tarjeta se queda blanca
+     y plana: solo cambia el lienzo. */
+  background: #03a7a4;
 }
 .admin-login[hidden] { display: none; }
 
+/* Sin borde a proposito: .admin-login-card figura en la regla de diseno
+   plano de base.css (border/box-shadow: none !important). Declararlo aqui
+   seria codigo muerto. Sobre el turquesa la tarjeta se recorta sola. */
 .admin-login-card {
   width: 100%;
   max-width: 380px;
   display: flex;
   flex-direction: column;
   padding: 32px 28px 28px;
-  border: 1px solid var(--c-border, #DCDCDC);
   border-radius: 14px;
   background: #ffffff;
   text-align: center;
