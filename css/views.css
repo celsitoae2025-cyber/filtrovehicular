@@ -765,18 +765,20 @@
 
 /* ==========================================================
    CTA "Obtén tu reporte" — flotante (Consultar Placa)
-   Fijo sobre el viewport para que siga visible al hacer scroll,
-   en la esquina inferior IZQUIERDA (la derecha la ocupa el FAB
-   de WhatsApp — .wa-fab, bottom:80px/right:24px — para que nunca
-   choquen). Se reserva espacio al fondo de la vista para que el
-   último panel no quede tapado detrás del botón.
+   Fijo sobre el viewport para que siga visible al hacer scroll.
+   Va abajo a la izquierda, pero DENTRO del área de contenido: en
+   escritorio se corre el ancho del sidebar, que si no queda encima
+   de "Configuración" y del pie legal. La esquina inferior derecha
+   no se usa porque ahí vive el FAB de WhatsApp (.wa-fab).
+   Se reserva espacio al fondo de la vista para que el último panel
+   no quede tapado detrás del botón.
 ========================================================== */
-#view-filter { padding-bottom: 76px; }
+#view-filter { padding-bottom: 88px; }
 
 #ctaReporteBtn.cta-reporte-btn {
   position: fixed;
-  left: 20px;
-  bottom: 20px;
+  left: calc(var(--sidebar-w) + 20px);
+  bottom: 34px;
   right: auto;
   width: auto;
   max-width: 240px;
@@ -821,7 +823,9 @@
   height: 16px;
 }
 
-@media (max-width: 720px) {
+/* Desde aquí el sidebar es off-canvas (ver sidebar.css), así que el
+   botón ya no necesita esquivarlo y se pega al borde izquierdo. */
+@media (max-width: 768px) {
   #view-filter { padding-bottom: 70px; }
   #ctaReporteBtn.cta-reporte-btn {
     left: 12px;
