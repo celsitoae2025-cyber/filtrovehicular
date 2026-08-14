@@ -1037,42 +1037,11 @@ body { background: #d4dade !important; }
   border-radius: 50%;
   background: #8fc72e;
 }
-/* Fallback corto (una sola línea) — solo se usa si por algún motivo
-   la lista no cupiera; normalmente queda oculto porque la portada
-   móvil ahora ocupa toda la pantalla y sí tiene espacio para la lista. */
-.auth-brand-tagline-mobile {
-  display: none;
-  font-size: var(--fs-sm);
-  color: rgba(255,255,255,.85);
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* Botón CTA de la portada — solo visible en móvil/tablet */
-.auth-brand-cta {
-  display: none;
-  margin-top: 18px;
-  padding: 13px 18px;
-  background: #8fc72e;
-  color: #141d1c;
-  border: none;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  cursor: pointer;
-  width: 100%;
-}
-.auth-brand-cta:active { transform: scale(.98); }
-
-/* Cabeceras y barra de acción móviles — ocultas en desktop.
-   El bloque responsive completo vive al final del archivo para que
-   ninguna regla posterior (p.ej. `.auth-brand-foot { margin:0 }`)
-   lo pise por orden de cascada. */
-.auth-form-mh,
-.auth-brand-mh,
-.auth-brand-actions,
-.auth-brand-sources { display: none; }
+/* Encabezado del formulario — oculto en desktop, donde la marca ya vive
+   en el lado oscuro. El bloque responsive completo vive al final del
+   archivo para que ninguna regla posterior (p.ej.
+   `.auth-brand-foot { margin:0 }`) lo pise por orden de cascada. */
+.auth-form-mh { display: none; }
 
 /* Enlaces verdes sobre blanco: #8fc72e da 2.0:1 de contraste, muy por
    debajo del 4.5:1 exigible para texto pequeno. Se oscurece el mismo
@@ -1583,24 +1552,18 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
 }
 
 /* ============================================================
-   AUTH MOVIL (<=768px) — diseño de tres bandas de color
+   AUTH MOVIL (<=768px) — el login, y nada mas
    ------------------------------------------------------------
-   Cada color de la marca ocupa una banda estructural propia:
+   Antes habia dos pasos: una portada con la marca, la rejilla de
+   servicios y un boton de acceso, y solo despues el formulario.
+   Se retiro entera: en el movil se entra directo al login.
 
-     TURQUESA #03a7a4 -> banda superior (identidad)
-     OSCURO   #141d1c -> cuerpo y pie
-     VERDE    #8fc72e -> acentos y barra de accion
+   Queda una sola pantalla: banda verde arriba, marca con la barra
+   cuatricolor, la tarjeta del formulario centrada y el pie legal
+   anclado abajo.
 
-   Paso 1: portada (.auth-brand-side)
-   Paso 2: formulario (.form-revealed -> .auth-form-side)
-
-   Reparto vertical por flex: cabecera y pie con flex:0 0 auto,
-   cuerpo con flex:1 1 auto + min-height:0 (sin este ultimo un
-   hijo flex no baja de su alto intrinseco y no scrollea).
-
-   Bloque situado al FINAL del archivo a proposito: reglas como
-   .auth-brand-foot { margin:0 !important } aparecen mas arriba y
-   con igual especificidad ganarian por orden de cascada.
+   Bloque situado al FINAL del archivo a proposito: reglas de mas
+   arriba con igual especificidad ganarian por orden de cascada.
 ============================================================ */
 @media (max-width: 768px) {
 
@@ -1653,8 +1616,10 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     background: rgba(20,29,28,.06) !important;
   }
 
-  /* ---------- Encabezado (comun a los dos pasos) ---------- */
-  .auth-brand-mh,
+  /* ---------- Encabezado del login ----------
+     La portada movil (marca + fichas de servicios + boton de acceso) se
+     retiro: en el movil se entra directo al formulario. De ella solo
+     sobrevive este encabezado, que es la marca sobre la tarjeta. */
   .auth-form-mh {
     display: flex !important;
     flex-direction: column !important;
@@ -1662,24 +1627,6 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     flex: 0 0 auto !important;
     background: transparent !important;
     color: #141d1c !important;
-  }
-  /* El padding superior deja pasar la banda verde: con 20px el texto
-     quedaba por debajo de ella y se recortaba. */
-  .auth-brand-mh {
-    padding: calc(var(--auth-bar-h) / 2 + 20px) 20px 18px !important;
-    align-items: center !important;
-    text-align: center !important;
-    /* Cabecera fija: marca y barra cuatricolor. Las fichas van debajo y
-       son lo unico que scrollea; el boton de entrar ya no vive aqui,
-       flota sobre WhatsApp. La linea cierra la cabecera. */
-    order: 0 !important;
-    border-bottom: 1px solid #a4b1b9 !important;
-  }
-  /* Encabezado del formulario: no es una barra superior, viaja dentro
-     del area centrada y se apoya justo encima de la tarjeta blanca,
-     alineado con su borde izquierdo. El margin-top:auto es la mitad
-     de arriba del centrado; la otra mitad la pone la tarjeta. */
-  .auth-form-mh {
     /* Dos margenes auto aqui, mas uno en la tarjeta, reparten el
        espacio sobrante en tres partes iguales: arriba del encabezado,
        entre encabezado y tarjeta, y debajo de la tarjeta. El resultado
@@ -1690,18 +1637,14 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
        contenedor scrollea, en lugar de recortarse. */
     margin: auto 0 !important;
     padding: 0 4px 18px !important;
-    background: transparent !important;
     align-items: center !important;
     text-align: center !important;
   }
 
-  /* Barra cuatricolor de la plataforma, tambien en los modales de auth.
-     Una sola por pantalla y bajo la marca — sirve en los tres casos:
-     portada, login y registro. Se reusa --accent-gradient para que
-     siga cualquier cambio de la paleta en el resto de la app.
-     Ancho acotado, no a sangre: los encabezados van centrados y una
-     barra de borde a borde partiria la pantalla en dos. */
-  .auth-brand-mh::after,
+  /* Barra cuatricolor de la plataforma, bajo la marca. Se reusa
+     --accent-gradient para que siga cualquier cambio de la paleta.
+     Ancho acotado, no a sangre: el encabezado va centrado y una barra
+     de borde a borde partiria la pantalla en dos. */
   .auth-form-mh::after {
     content: '' !important;
     display: block !important;
@@ -1724,193 +1667,13 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     color: #8fc72e !important;
     margin-left: 1px !important;
   }
-  .mh-sub {
-    font-size: var(--fs-sm) !important;
-    font-weight: 400 !important;
-    line-height: 1.45 !important;
-    color: rgba(20,29,28,.6) !important;
-    max-width: 280px !important;
-  }
 
-  /* ---------- Cuerpo (scroll) ---------- */
-  .auth-brand-side {
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 1 auto !important;
-    order: 0 !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    background: #ffffff !important;
-    text-align: left !important;
-  }
-  /* La identidad vive en el encabezado */
-  .auth-brand-logo,
-  .auth-brand-title,
-  .auth-brand-tagline,
-  .auth-brand-tagline-mobile { display: none !important; }
+  /* Lado de marca: no se muestra en movil. Con el fuera, la portada,
+     sus fichas y el boton flotante de acceso dejan de existir aqui. */
+  .auth-brand-side { display: none !important; }
 
-  .auth-brand-content {
-    display: block !important;
-    flex: 1 1 auto !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior: contain !important;
-    scrollbar-width: none !important;
-    margin: 0 !important;
-    /* Debajo de la cabecera. El sobrante de abajo despeja los dos
-       botones flotantes de la esquina derecha: el de entrar empieza a
-       154px del borde inferior del contenido, asi que con 160px la
-       ultima ficha queda por encima al llegar al final del scroll. */
-    order: 1 !important;
-    padding: 18px 20px 160px !important;
-  }
-  .auth-brand-content::-webkit-scrollbar { display: none !important; }
-
-  /* Servicios en rejilla de fichas, no en lista corrida */
-  .auth-brand-list {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 8px !important;
-    align-items: stretch !important;
-    max-height: none !important;
-    overflow: visible !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  /* Fichas blancas con borde, igual que la tarjeta del login */
-  .auth-brand-list li {
-    display: flex !important;
-    align-items: center !important;
-    /* justify-content centra la caja; text-align hace falta ademas
-       para las fichas cuyo texto ocupa dos lineas. */
-    justify-content: center !important;
-    text-align: center !important;
-    padding: 11px 12px !important;
-    background: #ffffff !important;
-    border: 1px solid #a4b1b9 !important;
-    border-radius: 8px !important;
-    font-size: var(--fs-xs) !important;
-    font-weight: 400 !important;
-    line-height: 1.35 !important;
-    color: #141d1c !important;
-    /* En mayusculas por CSS y no en el HTML: el texto original queda
-       legible en el codigo y las tildes se conservan (Á, Ó, Í). */
-    text-transform: uppercase !important;
-    letter-spacing: .3px !important;
-  }
-  .auth-brand-list li::before { display: none !important; }
-  /* El ultimo item cierra la rejilla a lo ancho. Verde oscurecido:
-     el #8fc72e sobre blanco solo daria 2.0:1. */
-  .auth-brand-list li:last-child {
-    grid-column: 1 / -1 !important;
-    justify-content: center !important;
-    color: #4e7519 !important;
-    font-weight: 700 !important;
-  }
-
-  /* Entidades consultadas — misma rejilla y misma ficha que los servicios */
-  .auth-brand-sources {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 8px !important;
-    align-items: stretch !important;
-    /* Separado del bloque de servicios: son entidades, no consultas */
-    margin-top: 20px !important;
-    padding-top: 20px !important;
-    border-top: 1px solid #a4b1b9 !important;
-  }
-  .auth-brand-sources span {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    padding: 11px 12px !important;
-    background: #ffffff !important;
-    border: 1px solid #a4b1b9 !important;
-    border-radius: 8px !important;
-    font-size: var(--fs-xs) !important;
-    font-weight: 400 !important;
-    line-height: 1.35 !important;
-    color: #141d1c !important;
-    text-transform: uppercase !important;
-    letter-spacing: .3px !important;
-  }
-
-  /* ---------- Accion verde + pie blanco ----------
-     El boton flota sobre el FAB de WhatsApp, en la misma columna de la
-     derecha: WhatsApp ocupa de 70 a 129px desde abajo (components.css),
-     asi que este arranca en 141 y quedan 12px entre los dos.
-
-     z-index 502 porque con la app bloqueada WhatsApp sube a 501
-     (css/auth.css) y si no quedaria por debajo. Va fixed, fuera del
-     flujo: la portada vuelve a ser cabecera, fichas y pie. */
-  .auth-brand-actions {
-    display: block !important;
-    position: fixed !important;
-    right: 16px !important;
-    bottom: 141px !important;
-    left: auto !important;
-    width: auto !important;
-    padding: 0 !important;
-    border: none !important;
-    z-index: 502 !important;
-  }
-  /* Boton de acceso: circulo del mismo tamaño que el FAB de WhatsApp
-     (59px, ver css/components.css) con el icono de encendido. Sin texto
-     a la vista; lo dice el aria-label y el title.
-     En rojo, con el icono en blanco: 4.9:1 de contraste, y asi no se
-     confunde con el verde de WhatsApp que tiene justo debajo. */
-  .auth-brand-cta {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 59px !important;
-    height: 59px !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    border-radius: 50% !important;
-    background: #d92d20 !important;
-    color: #ffffff !important;
-    line-height: 1 !important;
-  }
-  .auth-brand-cta-ico { width: 30px !important; height: 30px !important; }
-  .auth-brand-cta-text { display: none !important; }
-  .auth-brand-cta:active { background: #b3231a !important; }
-
-  /* Mismo pie que el login: blanco, linea gris arriba y el mismo alto */
-  .auth-brand-foot {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex: 0 0 auto !important;
-    order: 2 !important;
-    margin: 0 !important;
-    height: calc(var(--auth-bar-h) + env(safe-area-inset-bottom)) !important;
-    padding: 0 20px env(safe-area-inset-bottom) !important;
-    border-top: 1px solid #a4b1b9 !important;
-    background: #ffffff !important;
-    text-align: center !important;
-    font-size: var(--fs-xs) !important;
-    letter-spacing: .7px !important;
-    color: rgba(20,29,28,.55) !important;
-  }
-
-  .auth-modal-panel.auth-split:not(.form-revealed) .auth-form-side {
-    display: none !important;
-  }
-
-  /* ---------- PASO 2 · Formulario ---------- */
-  .auth-modal-panel.auth-split.form-revealed .auth-brand-side {
-    display: none !important;
-  }
-  .auth-modal-panel.auth-split.form-revealed .auth-form-side {
+  /* ---------- Formulario (unica pantalla en movil) ---------- */
+  .auth-modal-panel.auth-split .auth-form-side {
     display: flex !important;
     flex-direction: column !important;
     flex: 1 1 auto !important;
@@ -1920,7 +1683,7 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     background: #ffffff !important;  /* solo el login; la portada sigue oscura */
     position: relative !important;   /* ancla del pie legal */
   }
-  .auth-modal-panel.auth-split.form-revealed .auth-form-wrap {
+  .auth-modal-panel.auth-split .auth-form-wrap {
     display: flex !important;
     flex-direction: column !important;
     flex: 1 1 auto !important;
@@ -1944,7 +1707,7 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
      alto (registro) nunca se recorta por arriba al scrollear. */
   /* Blanco sobre blanco no se recorta solo: el borde es lo que separa
      la tarjeta del lienzo (sin sombra, segun la guia del proyecto). */
-  .auth-modal-panel.auth-split.form-revealed .auth-form-card {
+  .auth-modal-panel.auth-split .auth-form-card {
     background: #ffffff !important;
     border: 1px solid #a4b1b9 !important;   /* 2.2:1, se distingue sin pesar */
     border-radius: 14px !important;
@@ -1954,7 +1717,7 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
   }
 
   /* Pie legal anclado al fondo: enlaces en turquesa y filo verde arriba */
-  body.auth-modal-open .auth-modal-panel.auth-split.form-revealed .auth-legal-foot {
+  body.auth-modal-open .auth-modal-panel.auth-split .auth-legal-foot {
     position: absolute !important;
     left: 0 !important;
     right: 0 !important;
@@ -1969,10 +1732,10 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     font-size: var(--fs-xs) !important;
     color: #141d1c !important;
   }
-  body.auth-modal-open .auth-modal-panel.auth-split.form-revealed .auth-legal-foot a {
+  body.auth-modal-open .auth-modal-panel.auth-split .auth-legal-foot a {
     color: #141d1c !important;
   }
-  body.auth-modal-open .auth-modal-panel.auth-split.form-revealed .auth-legal-foot .dot {
+  body.auth-modal-open .auth-modal-panel.auth-split .auth-legal-foot .dot {
     color: rgba(20,29,28,.4) !important;
   }
 }

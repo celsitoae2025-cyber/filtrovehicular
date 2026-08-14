@@ -12,9 +12,6 @@
   var MAIL_SVG = '<svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>';
   var PHONE_SVG = '<svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/></svg>';
   var LOCK_SVG = '<svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
-  // Icono de encendido del botón de acceso de la portada móvil, donde el
-  // botón es un círculo sin texto (ver css/base.css, bloque de ≤768px).
-  var POWER_SVG = '<svg class="auth-brand-cta-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v9"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg>';
 
   var MODAL_HTML = [
     // ========== Registro (split) ==========
@@ -59,7 +56,6 @@
     '      </div>',
     '    </div>',
     '    <div class="auth-brand-side">',
-    '      <div class="auth-brand-mh"><span class="mh-brand">Plataforma Filtro Vehicular<span class="mh-plus">+</span></span><span class="mh-sub">Consultas vehiculares oficiales al instante</span></div>',
     '      <div class="auth-brand-logo"><svg><use href="#i-logo"/></svg></div>',
     '      <div class="auth-brand-content">',
     '        <h3 class="auth-brand-title">Filtro Vehicular<span class="brand-plus-lg">+</span></h3>',
@@ -81,12 +77,7 @@
     '          <li>Medidas Cautelares</li>',
     '          <li>Y mucho más</li>',
     '        </ul>',
-    '        <div class="auth-brand-sources">',
-    '          <span>RENIEC</span><span>OSIPTEL</span><span>MIGRACIONES</span><span>MTC</span><span>MINEDU</span><span>SUNEDU</span><span>SUNAT</span><span>DENUNCIAS</span>',
-    '        </div>',
-    '        <p class="auth-brand-tagline-mobile">Accede a Reniec, Sunarp, SUNAT y más desde un solo lugar.</p>',
     '      </div>',
-    '      <div class="auth-brand-actions"><button type="button" class="auth-brand-cta" data-auth-reveal-form aria-label="Crear cuenta" title="Crear cuenta">' + POWER_SVG + '<span class="auth-brand-cta-text">Crear cuenta</span></button></div>',
     '      <div class="auth-brand-foot">© 2026 Filtro Vehicular+ Perú</div>',
     '    </div>',
     '  </div>',
@@ -128,7 +119,6 @@
     '      </div>',
     '    </div>',
     '    <div class="auth-brand-side">',
-    '      <div class="auth-brand-mh"><span class="mh-brand">Plataforma Filtro Vehicular<span class="mh-plus">+</span></span><span class="mh-sub">Consultas vehiculares oficiales al instante</span></div>',
     '      <div class="auth-brand-logo"><svg><use href="#i-logo"/></svg></div>',
     '      <div class="auth-brand-content">',
     '        <h3 class="auth-brand-title">Filtro Vehicular<span class="brand-plus-lg">+</span></h3>',
@@ -150,12 +140,7 @@
     '          <li>Medidas Cautelares</li>',
     '          <li>Y mucho más</li>',
     '        </ul>',
-    '        <div class="auth-brand-sources">',
-    '          <span>RENIEC</span><span>OSIPTEL</span><span>MIGRACIONES</span><span>MTC</span><span>MINEDU</span><span>SUNEDU</span><span>SUNAT</span><span>DENUNCIAS</span>',
-    '        </div>',
-    '        <p class="auth-brand-tagline-mobile">Accede a Reniec, Sunarp, SUNAT y más desde un solo lugar.</p>',
     '      </div>',
-    '      <div class="auth-brand-actions"><button type="button" class="auth-brand-cta" data-auth-reveal-form aria-label="Iniciar sesión" title="Iniciar sesión">' + POWER_SVG + '<span class="auth-brand-cta-text">Iniciar sesión</span></button></div>',
     '      <div class="auth-brand-foot">© 2026 Filtro Vehicular+ Perú</div>',
     '    </div>',
     '  </div>',
@@ -354,10 +339,6 @@
     if (!el) return;
     el.hidden = false;
     document.body.classList.add('auth-modal-open');
-    // En móvil el modal arranca mostrando la portada (marca + lista),
-    // no el formulario — se revela al tocar el botón de la portada.
-    var panel = el.querySelector('.auth-modal-panel');
-    if (panel) panel.classList.remove('form-revealed');
     setTimeout(function () {
       var focus = el.querySelector('input, button');
       if (focus) focus.focus();
@@ -400,18 +381,6 @@
   function bind() {
     // Cerrar modales (overlay, botón X, botón "Entendido")
     document.addEventListener('click', function (e) {
-      // Portada móvil (marca + lista): al tocar el CTA se revela el
-      // formulario. En desktop este botón no se muestra (CSS).
-      var revealBtn = e.target.closest('[data-auth-reveal-form]');
-      if (revealBtn) {
-        var panel = revealBtn.closest('.auth-modal-panel');
-        if (panel) panel.classList.add('form-revealed');
-        setTimeout(function () {
-          var input = panel && panel.querySelector('.auth-form-side input');
-          if (input) input.focus();
-        }, 350);
-        return;
-      }
 
       // Cerrar SOLO modal legal (sin afectar al modal de registro detrás)
       var legalClose = e.target.closest('[data-legal-close]');
