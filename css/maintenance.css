@@ -200,6 +200,63 @@ html.mnt-with-banner body { padding-top: 34px; }
   color: var(--c-muted, #5A6B6A);
 }
 
+/* ==========================================================
+   Interruptor en la barra superior del admin
+   Siempre a la vista, en cualquier seccion del panel: el
+   mantenimiento se activa justo cuando algo va mal y no es
+   momento de ir a buscarlo dentro de Configuracion.
+   ========================================================== */
+.mnt-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  padding: 7px 12px;
+  border: 1px solid var(--c-border, #DCDCDC);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--c-primary, #141d1c);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.mnt-bar:hover { background: #F6F8F5; border-color: #a4b1b9; }
+.mnt-bar:disabled { opacity: .6; cursor: not-allowed; }
+
+.mnt-bar-dot {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--c-accent, #8fc72e);
+}
+.mnt-bar-text { font-weight: 700; }
+
+/* La accion es lo que va a pasar al pulsar, no el estado actual */
+.mnt-bar-action {
+  padding-left: 8px;
+  border-left: 1px solid var(--c-border, #DCDCDC);
+  color: var(--c-muted, #5A6B6A);
+}
+
+/* Mantenimiento activo: turquesa, el mismo aviso que ve el usuario */
+.mnt-bar.is-on { border-color: #00B4D8; background: #F2FBFD; }
+.mnt-bar.is-on .mnt-bar-dot { background: #00B4D8; }
+.mnt-bar.is-on .mnt-bar-action { border-left-color: #b8e6f2; }
+
+/* Pantallas estrechas: se queda el estado, se cae la accion */
+@media (max-width: 900px) {
+  .mnt-bar-action { display: none; }
+}
+@media (max-width: 640px) {
+  .mnt-bar { padding: 7px 10px; }
+  .mnt-bar-text { display: none; }
+}
+
 /* Botón de desactivación: oscuro institucional, no rojo de alarma */
 .btn-danger {
   padding: 10px 18px;

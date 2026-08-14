@@ -55,6 +55,15 @@
     }
     // No se pisa lo que el admin esté escribiendo
     if (msg && document.activeElement !== msg) msg.value = estado.message || '';
+
+    // Interruptor de la barra superior (visible en todas las secciones)
+    var bar    = $('mntBarBtn');
+    var barTx  = $('mntBarText');
+    var barAct = $('mntBarAction');
+    if (bar) bar.classList.toggle('is-on', activo);
+    if (barTx) barTx.textContent = activo ? 'Mantenimiento activo' : 'Servicio operativo';
+    // La etiqueta anuncia lo que ocurrirá al pulsar, no el estado actual
+    if (barAct) barAct.textContent = activo ? 'Desactivar' : 'Activar mantenimiento';
   }
 
   async function cargar() {
@@ -114,8 +123,11 @@
       if (!ok) return;
     }
 
+    // Se bloquean los dos mandos: son el mismo interruptor en dos sitios
     var btn = $('mntToggleBtn');
+    var bar = $('mntBarBtn');
     if (btn) btn.disabled = true;
+    if (bar) bar.disabled = true;
     try {
       await guardar(activar, texto);
       if (A.logAudit) {
@@ -130,6 +142,7 @@
             (e && e.message) || 'Revisa que la migración esté ejecutada.');
     } finally {
       if (btn) btn.disabled = false;
+      if (bar) bar.disabled = false;
     }
   }
 
@@ -152,6 +165,9 @@
     if (btn) btn.addEventListener('click', alternar);
     var save = $('mntSaveMsgBtn');
     if (save) save.addEventListener('click', guardarMensaje);
+    // Mismo interruptor desde la barra superior
+    var bar = $('mntBarBtn');
+    if (bar) bar.addEventListener('click', alternar);
     cargar();
   };
 })();

@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="css/overlays.css">
 <link rel="stylesheet" href="css/plans-catalog.css">
 <link rel="stylesheet" href="css/admin.css">
-<link rel="stylesheet" href="css/maintenance.css">
+<link rel="stylesheet" href="css/maintenance.css?v=2">
 </head>
 <body>
 
@@ -125,6 +125,15 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <h1 class="admin-h1" id="adminPageTitle">Dashboard</h1>
+      <!-- Interruptor de mantenimiento: vive en la barra para poder
+           activarlo desde cualquier seccion, sin entrar a Configuracion.
+           Comparte estado y logica con el panel de Configuracion. -->
+      <button class="mnt-bar" id="mntBarBtn" type="button"
+              title="Activar o desactivar el modo mantenimiento">
+        <span class="mnt-bar-dot"></span>
+        <span class="mnt-bar-text" id="mntBarText">Servicio operativo</span>
+        <span class="mnt-bar-action" id="mntBarAction">Activar mantenimiento</span>
+      </button>
       <div class="admin-user">
         <span class="avatar" id="adminAvatar">AD</span>
         <span id="adminUserName">Admin</span>
@@ -1302,7 +1311,7 @@
 <script src="js/admin/audit.js?v=23"></script>
 <script src="js/admin/broadcasts.js?v=23"></script>
 <script src="js/admin/settings.js?v=22"></script>
-<script src="js/admin/maintenance.js?v=1"></script>
+<script src="js/admin/maintenance.js?v=2"></script>
 <script src="js/admin/main.js?v=22"></script>
 
 </body>
