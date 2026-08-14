@@ -192,6 +192,18 @@ html.mnt-with-banner body { padding-top: 34px; }
 }
 .mnt-admin-dot.is-on { background: #00B4D8; }
 
+/* Mismo latido que el interruptor de la barra: es el mismo estado
+   contado en dos sitios y debe leerse igual en los dos. */
+.mnt-admin-dot { position: relative; }
+.mnt-admin-dot.is-on::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #00B4D8;
+  animation: mnt-latido 1.9s ease-out infinite;
+}
+
 .mnt-admin-foot {
   margin: 0;
   font-size: 12px;
@@ -247,6 +259,29 @@ html.mnt-with-banner body { padding-top: 34px; }
 .mnt-bar.is-on { border-color: #00B4D8; background: #F2FBFD; }
 .mnt-bar.is-on .mnt-bar-dot { background: #00B4D8; }
 .mnt-bar.is-on .mnt-bar-action { border-left-color: #b8e6f2; }
+
+/* Latido mientras el mantenimiento esta activo.
+   Solo late cuando esta encendido: en reposo el panel debe quedarse
+   quieto. Un aro que sale del punto y se desvanece, sin sombras, que
+   la plataforma es de diseno plano. Se apaga solo con
+   prefers-reduced-motion (regla global en base.css). */
+.mnt-bar-dot { position: relative; transition: background .15s; }
+.mnt-bar.is-on .mnt-bar-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #00B4D8;
+  animation: mnt-latido 1.9s ease-out infinite;
+}
+@keyframes mnt-latido {
+  0%        { transform: scale(1);   opacity: .5; }
+  70%, 100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Respuesta al pulsar, igual que el resto de botones de la plataforma */
+.mnt-bar:active { transform: scale(.98); }
+.mnt-bar:disabled:active { transform: none; }
 
 /* Pantallas estrechas: se queda el estado, se cae la accion */
 @media (max-width: 900px) {
