@@ -107,8 +107,14 @@
         try {
           var res = await window.Consultia.Auth.signIn(email.trim(), pass, true);
           if (res && res.error) throw res.error;
-          // Ya hay sesión: se vuelve a validar el rol desde el principio.
-          await A.initAuth(onLoginSuccess);
+          // Se recarga en vez de re-inicializar aquí mismo. onLoginSuccess
+          // monta quince módulos con sus oyentes y sus suscripciones;
+          // volver a ejecutarlo sobre la misma página los dejaría por
+          // duplicado y cada clic acabaría disparando dos veces. Con la
+          // recarga el panel se monta una sola vez, exactamente igual que
+          // en una visita normal con la sesión ya abierta.
+          window.location.reload();
+          return;
         } catch (err) {
           mostrarError(enEspanol(err && err.message));
         } finally {
@@ -155,8 +161,8 @@
       if (nameEl) nameEl.textContent = cachedSession.name;
       if (avatarEl) avatarEl.textContent = A.userInitials(cachedSession.name);
 
-      // Los oyentes se conectan una sola vez: initAuth se vuelve a llamar
-      // después de iniciar sesión y si no se duplicarían.
+      // Los oyentes se conectan una sola vez, por si initAuth llegara a
+      // ejecutarse de nuevo sobre la misma página.
       var logoutBtn = document.getElementById('adminLogout');
       if (logoutBtn && !logoutBtn.dataset.wired) {
         logoutBtn.dataset.wired = '1';
