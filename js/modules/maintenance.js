@@ -98,17 +98,34 @@
           'Vuelve a intentarlo en unos minutos.' +
         '</div>' +
         '<button type="button" class="mnt-retry" id="mntRetry">Reintentar</button>' +
+        // Sin esta puerta el aviso es una trampa: tapa el modal de login,
+        // y admin.html devuelve a la app si no hay sesión. El administrador
+        // se quedaba fuera sin forma de apagar el mantenimiento.
+        '<button type="button" class="mnt-admin-access" id="mntAdminAccess">' +
+          'Ingresar como administrador' +
+        '</button>' +
       '</div>';
     document.body.appendChild(el);
     document.documentElement.classList.add('mnt-locked');
 
     var btn = document.getElementById('mntRetry');
     if (btn) btn.addEventListener('click', function () { window.location.reload(); });
+
+    var acceso = document.getElementById('mntAdminAccess');
+    if (acceso) acceso.addEventListener('click', function () {
+      // Solo al pedirlo se levanta el login por encima del aviso: a un
+      // visitante normal le toca ver el aviso, no un formulario.
+      document.documentElement.classList.add('mnt-auth');
+      if (Consultia.AuthModals && Consultia.AuthModals.openLogin) {
+        Consultia.AuthModals.openLogin();
+      }
+    });
   }
 
   function ocultarAviso() {
     quitar(OVERLAY_ID);
     document.documentElement.classList.remove('mnt-locked');
+    document.documentElement.classList.remove('mnt-auth');
   }
 
   /* ── Cinta para el administrador ── */

@@ -110,6 +110,34 @@ html.mnt-locked body {
 }
 .mnt-retry:hover { background: #1e2b2a; }
 
+/* ── Puerta del administrador ──
+   El aviso se dibuja en z-index 99999 y el modal de login en 500, asi
+   que el aviso lo tapaba: el administrador no podia identificarse ni,
+   por tanto, apagar el mantenimiento (admin.html devuelve a la app
+   cuando no hay sesion). Este boton abre el login por encima.
+   Discreto a proposito: al visitante no le interesa. */
+.mnt-admin-access {
+  width: 100%;
+  margin-top: 8px;
+  padding: 11px 18px;
+  border: 1px solid var(--c-border, #DCDCDC);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--c-muted, #5A6B6A);
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+}
+.mnt-admin-access:hover {
+  border-color: var(--c-primary, #141d1c);
+  color: var(--c-primary, #141d1c);
+}
+
+/* El login se pone por encima del aviso SOLO cuando se pidio entrar.
+   Sin la clase, el visitante sigue viendo el aviso y no el formulario. */
+html.mnt-auth .auth-modal { z-index: 100000; }
+
 /* ── Cinta del administrador ── */
 .mnt-banner {
   position: fixed;
