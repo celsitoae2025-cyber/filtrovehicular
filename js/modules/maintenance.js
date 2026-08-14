@@ -37,21 +37,31 @@
   }
 
   // ── ¿La sesión actual es de un administrador? ──
-  var adminConocido = null;
+  // El resultado se guarda POR USUARIO, nunca "en general". La primera
+  // revisión ocurre al cargar la página, normalmente antes de que
+  // Supabase haya restaurado la sesión: si ese "todavía no hay usuario"
+  // se guardaba como "no es administrador", el admin quedaba encerrado
+  // tras su propio aviso y ya no salía de ahí ni iniciando sesión.
+  //
+  // Por eso solo se guarda una respuesta del servidor sobre un usuario
+  // concreto. Sin sesión, o si la consulta falla, se responde que no
+  // pero sin recordarlo, y la próxima revisión vuelve a preguntar.
+  var adminPorUsuario = Object.create(null);
   async function esAdmin() {
-    if (adminConocido !== null) return adminConocido;
     try {
       var c = sb();
       if (!c) return false;
       var u = await c.auth.getUser();
       var user = u && u.data && u.data.user;
-      if (!user) { adminConocido = false; return false; }
+      if (!user) return false;
+      if (user.id in adminPorUsuario) return adminPorUsuario[user.id];
       var res = await c.from('profiles').select('is_admin').eq('id', user.id).single();
-      adminConocido = !!(res.data && res.data.is_admin);
+      if (res.error) return false;
+      adminPorUsuario[user.id] = !!(res.data && res.data.is_admin);
+      return adminPorUsuario[user.id];
     } catch (e) {
-      adminConocido = false;
+      return false;
     }
-    return adminConocido;
   }
 
   function quitar(id) {
@@ -172,6 +182,15 @@
     document.addEventListener('visibilitychange', function () {
       if (!document.hidden) check();
     });
+    // Y en cuanto cambia la sesión, sin esperar al siguiente sondeo: si
+    // quien acaba de entrar es administrador, el aviso tiene que
+    // levantarse ya, no un minuto después.
+    try {
+      var c = sb();
+      if (c && c.auth && c.auth.onAuthStateChange) {
+        c.auth.onAuthStateChange(function () { check(); });
+      }
+    } catch (e) {}
   }
 
   if (document.readyState === 'loading') {
