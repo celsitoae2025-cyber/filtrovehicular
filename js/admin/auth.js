@@ -34,18 +34,53 @@
     }
     cachedSession = null;
     cachedLoggedIn = false;
-    window.location.href = 'app.html';
+    // Se queda en el acceso del panel. Mandar a app.html seria un problema
+    // con el mantenimiento encendido: alli el aviso tapa el login.
+    window.location.reload();
   };
 
   function redirectToLanding(reason) {
     window.location.href = 'app.html';
   }
 
+  // Pide las credenciales aquí en vez de mandar a app.html. Con el modo
+  // mantenimiento encendido, alli el aviso tapa el login y el
+  // administrador se quedaba sin forma de entrar ni de apagarlo.
+  function mostrarLogin(mensaje) {
+    var pantalla = document.getElementById('adminLogin');
+    var app = document.getElementById('adminApp');
+    if (app) app.hidden = true;
+    if (!pantalla) { redirectToLanding('sin pantalla de acceso'); return; }
+    pantalla.hidden = false;
+    if (mensaje) mostrarError(mensaje);
+    var email = document.getElementById('adminLoginEmail');
+    if (email) email.focus();
+  }
+
+  // Supabase responde en inglés; aquí se lee en español.
+  function enEspanol(mensaje) {
+    var m = String(mensaje || '');
+    if (/invalid login credentials/i.test(m)) return 'Correo o contraseña incorrectos.';
+    if (/email not confirmed/i.test(m))       return 'Tu correo aún no está confirmado.';
+    if (/too many requests|rate limit/i.test(m)) {
+      return 'Demasiados intentos seguidos. Espera un momento y vuelve a probar.';
+    }
+    if (/network|failed to fetch/i.test(m))   return 'Sin conexión con el servidor. Revisa tu internet.';
+    return m || 'No se pudo iniciar sesión.';
+  }
+
+  function mostrarError(texto) {
+    var err = document.getElementById('adminLoginError');
+    if (!err) return;
+    if (!texto) { err.hidden = true; err.textContent = ''; return; }
+    err.textContent = texto;
+    err.hidden = false;
+  }
+
   A.initAuth = async function (onLoginSuccess) {
     var loginScreen = document.getElementById('adminLogin');
     var app = document.getElementById('adminApp');
 
-    // El login local ya no se usa — siempre oculto
     if (loginScreen) loginScreen.hidden = true;
 
     if (!window.Consultia || !window.Consultia.Auth) {
@@ -54,24 +89,56 @@
       return;
     }
 
+    // Envío del formulario de acceso. Solo se conecta una vez.
+    var form = document.getElementById('adminLoginForm');
+    if (form && !form.dataset.wired) {
+      form.dataset.wired = '1';
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        mostrarError('');
+        var email = (document.getElementById('adminLoginEmail') || {}).value || '';
+        var pass  = (document.getElementById('adminLoginPass')  || {}).value || '';
+        var btn   = document.getElementById('adminLoginBtn');
+        if (!email.trim() || !pass) {
+          mostrarError('Escribe tu correo y tu contraseña.');
+          return;
+        }
+        if (btn) { btn.disabled = true; btn.textContent = 'Entrando…'; }
+        try {
+          var res = await window.Consultia.Auth.signIn(email.trim(), pass, true);
+          if (res && res.error) throw res.error;
+          // Ya hay sesión: se vuelve a validar el rol desde el principio.
+          await A.initAuth(onLoginSuccess);
+        } catch (err) {
+          mostrarError(enEspanol(err && err.message));
+        } finally {
+          if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
+        }
+      });
+    }
+
     try {
       var user = await window.Consultia.Auth.getUser();
       if (!user) {
-        redirectToLanding('sin sesión');
+        mostrarLogin('');
         return;
       }
 
       var profile = await window.Consultia.Auth.getProfile();
       if (!profile) {
-        redirectToLanding('perfil no encontrado');
+        mostrarLogin('No se pudo leer tu perfil. Intenta de nuevo.');
         return;
       }
 
       if (!profile.is_admin) {
-        alert('No tienes permisos de administrador.');
-        redirectToLanding('no admin');
+        // Se cierra la sesión recién abierta: no es una cuenta de admin.
+        try { await window.Consultia.Auth.signOut(); } catch (e) {}
+        mostrarLogin('Esa cuenta no tiene permisos de administrador.');
         return;
       }
+
+      if (loginScreen) loginScreen.hidden = true;
+      mostrarError('');
 
       cachedSession = {
         email: user.email,
@@ -88,22 +155,31 @@
       if (nameEl) nameEl.textContent = cachedSession.name;
       if (avatarEl) avatarEl.textContent = A.userInitials(cachedSession.name);
 
+      // Los oyentes se conectan una sola vez: initAuth se vuelve a llamar
+      // después de iniciar sesión y si no se duplicarían.
       var logoutBtn = document.getElementById('adminLogout');
-      if (logoutBtn) logoutBtn.addEventListener('click', A.logout);
+      if (logoutBtn && !logoutBtn.dataset.wired) {
+        logoutBtn.dataset.wired = '1';
+        logoutBtn.addEventListener('click', A.logout);
+      }
 
-      // Si cierra sesión en otra pestaña, redirigir
-      window.Consultia.Auth.onAuthChange(function (event) {
-        if (event === 'SIGNED_OUT') {
-          cachedSession = null;
-          cachedLoggedIn = false;
-          redirectToLanding('signed out');
-        }
-      });
+      if (!A._authChangeWired) {
+        A._authChangeWired = true;
+        // Si cierra sesión en otra pestaña, se vuelve al acceso de aquí y
+        // no a la app: con el mantenimiento encendido, alli no podria entrar.
+        window.Consultia.Auth.onAuthChange(function (event) {
+          if (event === 'SIGNED_OUT') {
+            cachedSession = null;
+            cachedLoggedIn = false;
+            mostrarLogin('Tu sesión se cerró. Vuelve a entrar.');
+          }
+        });
+      }
 
       if (typeof onLoginSuccess === 'function') onLoginSuccess();
     } catch (err) {
       console.error('Admin auth error:', err);
-      redirectToLanding('error inesperado');
+      mostrarLogin('Ocurrió un error al validar tu acceso. Intenta de nuevo.');
     }
   };
 })();

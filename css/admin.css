@@ -1467,3 +1467,99 @@ button.kpi.kpi-clickable:focus-visible {
   outline: 2px solid var(--c-accent, #141d1c);
   outline-offset: 2px;
 }
+
+/* ============================================================
+   ACCESO AL PANEL — pantalla propia de admin.html
+
+   Antes esta pagina devolvia a app.html cuando no habia sesion.
+   Con el mantenimiento encendido eso dejaba al administrador
+   fuera: alli el aviso a pantalla completa tapa el login. Ahora
+   las credenciales se piden aqui, en una pagina que el cliente
+   no visita y que nunca muestra el aviso.
+
+   Diseno plano, sin sombras, paleta institucional.
+============================================================ */
+.admin-login {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--c-bg, #F3F3F3);
+}
+.admin-login[hidden] { display: none; }
+
+.admin-login-card {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 28px 28px;
+  border: 1px solid var(--c-border, #DCDCDC);
+  border-radius: 14px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.admin-login-mark {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -.4px;
+  color: #141d1c;
+}
+.admin-login-plus { color: #8fc72e; margin-left: 1px; }
+
+/* Misma barra cuatricolor que el resto de la plataforma */
+.admin-login-rule {
+  width: 120px;
+  height: 5px;
+  margin: 10px auto 22px;
+  border-radius: 2px;
+  background: var(--accent-gradient);
+}
+
+.admin-login-title {
+  margin: 0 0 6px;
+  font-size: 19px;
+  font-weight: 700;
+  color: #141d1c;
+}
+.admin-login-sub {
+  margin: 0 0 22px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--c-muted, #5A6B6A);
+}
+
+.admin-login-label {
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  color: #141d1c;
+}
+.admin-login-card .input { margin-bottom: 14px; width: 100%; }
+
+.admin-login-error {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border-left: 3px solid #141d1c;
+  background: #F6F8F5;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+  color: #141d1c;
+}
+.admin-login-error[hidden] { display: none; }
+
+.admin-login-btn { width: 100%; margin-top: 4px; }
+
+@media (max-width: 480px) {
+  .admin-login { padding: 16px; }
+  .admin-login-card { padding: 28px 20px 22px; }
+}
