@@ -974,6 +974,11 @@ body { background: #d4dade !important; }
   display: flex !important;
   flex-direction: column !important;
   gap: 12px !important;
+  /* Crece con el panel para que la lista disponga del alto real.
+     min-height:0 es imprescindible: sin él un hijo flex no baja de su
+     alto intrínseco y la lista no podría repartirse el espacio. */
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
 }
 .auth-brand-title {
   font-size: var(--fs-xl) !important;
@@ -994,8 +999,14 @@ body { background: #d4dade !important; }
   max-width: 340px !important;
   margin: 0 0 4px !important;
 }
-/* Lista vertical de consultas — solo visible en desktop, donde el
-   panel de marca tiene alto fijo (680px) y espacio de sobra. */
+/* Lista vertical de consultas — solo visible en desktop, donde el panel
+   de marca tiene alto fijo (680px) y espacio de sobra.
+
+   Ocupa el espacio libre en vez de un alto fijo. Con los 340px que tenía
+   antes se recortaban 38px de lista —"Medidas Cautelares" a media línea
+   y "Y mucho más" entero— mientras quedaban 128px vacíos justo debajo:
+   escondía contenido y desperdiciaba sitio a la vez. Ahora se reparte el
+   alto real y solo scrollea si de verdad no cabe. */
 .auth-brand-list {
   list-style: none;
   margin: 0;
@@ -1003,7 +1014,8 @@ body { background: #d4dade !important; }
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-height: 340px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   scrollbar-width: none;
 }
