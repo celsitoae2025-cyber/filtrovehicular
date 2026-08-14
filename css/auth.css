@@ -52,9 +52,12 @@ body.auth-modal-open { overflow: hidden; }
    Layout split (login + signup): form izquierda, marca derecha
    Altura fija para que login y signup se vean del mismo tamaño.
 ============================================================ */
+/* Alto ajustado al contenido real: la lista de servicios necesita 378px
+   y el resto del lado de marca (titulo, bajada y pie) ronda los 120px.
+   Con 620px entra entera sin scroll y el cuadro no queda holgado. */
 .auth-modal-panel.auth-split {
-  max-width: 816px;
-  height: 680px;
+  max-width: 740px;
+  height: 620px;
   max-height: 92vh;
   padding: 0;
   display: flex;
@@ -62,7 +65,7 @@ body.auth-modal-open { overflow: hidden; }
 }
 .auth-form-side {
   flex: 1 1 50%;
-  padding: 28px 40px;
+  padding: 26px 34px;
   min-width: 0;
   overflow-y: auto;
   display: flex;
@@ -228,16 +231,18 @@ body.auth-modal-open { overflow: hidden; }
 /* ============================================================
    FORM — labels arriba de inputs, botón dark
 ============================================================ */
+/* Espaciado ajustado para que el registro —el formulario mas largo, con
+   cuatro campos mas los terminos— entre sin scroll en el cuadro. */
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 9px;
 }
 
 .auth-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 .auth-field > label {
   font-size: 13px;
@@ -248,7 +253,7 @@ body.auth-modal-open { overflow: hidden; }
 
 .auth-input {
   width: 100%;
-  padding: 13px 14px;
+  padding: 11px 14px;
   font-family: inherit;
   font-size: 14px;
   color: var(--c-primary);
