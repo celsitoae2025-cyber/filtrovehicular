@@ -18,22 +18,27 @@
     return window.location.origin + window.location.pathname;
   }
 
-  // ===== "Recordarme por 30 días" =====
-  // Si se marca: guardamos REMEMBER_KEY=1 + timestamp de vencimiento a 30d.
-  // Si no: no guardamos nada → Supabase mantiene la sesión con su default
-  // (también persiste, pero al menos no expira a los 30d de forma forzada).
+  // ===== "Recordarme" =====
+  // Marcado:    los tokens van a localStorage y la sesión sobrevive a
+  //             cerrar el navegador.
+  // Sin marcar: van a sessionStorage y mueren al cerrarlo.
+  // El reparto lo hace supabase-config.js leyendo REMEMBER_KEY.
+  //
+  // Ya no se fuerza un vencimiento a 30 días: la casilla dice "Recordarme"
+  // y eso es lo que hace. Quien cierra la sesión por tiempo es el módulo de
+  // inactividad (js/modules/idle-logout.js), a los 5 minutos sin uso.
   var REMEMBER_KEY = 'consultia_remember';
-  var EXPIRES_KEY  = 'consultia_session_exp';
-  var THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+  var EXPIRES_KEY  = 'consultia_session_exp';   // heredado: solo se limpia
 
   function setRememberFlags(remember) {
     if (remember) {
       localStorage.setItem(REMEMBER_KEY, '1');
-      localStorage.setItem(EXPIRES_KEY, String(Date.now() + THIRTY_DAYS_MS));
     } else {
       localStorage.removeItem(REMEMBER_KEY);
-      localStorage.removeItem(EXPIRES_KEY);
     }
+    // Resto de la versión anterior: se borra siempre para no dejar
+    // vencimientos viejos capaces de cerrar sesiones sin motivo.
+    localStorage.removeItem(EXPIRES_KEY);
   }
 
   function clearRememberFlags() {
@@ -56,20 +61,13 @@
       });
     },
 
-    // ===== Recordarme — aplica solo el vencimiento de 30 días =====
-    // Nota: antes tenía lógica de "cerrar sesión si se reabre el navegador"
-    // basada en sessionStorage, pero rompía el flujo de abrir admin.html en
-    // otra pestaña. Ahora solo forzamos logout cuando la sesión marcada con
-    // 'Recordarme 30 días' vence, sin tocar la sesión por defecto.
+    // ===== Recordarme =====
+    // Ya no vence a los 30 días: "Recordarme" solo decide dónde viven los
+    // tokens. Se conserva la función porque auth-ui la llama en cada
+    // refresco, y aprovecha para barrer el vencimiento de la versión
+    // anterior, que si no seguiría cerrando sesiones por su cuenta.
     enforceRememberMe: async function () {
-      var remember = localStorage.getItem(REMEMBER_KEY);
-      if (remember !== '1') return;
-
-      var exp = parseInt(localStorage.getItem(EXPIRES_KEY) || '0', 10);
-      if (exp && Date.now() > exp) {
-        await sb.auth.signOut();
-        clearRememberFlags();
-      }
+      localStorage.removeItem(EXPIRES_KEY);
     },
 
     // ===== Registro =====

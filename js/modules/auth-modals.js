@@ -113,7 +113,7 @@
     '          </div>',
     '        </div>',
     '        <div class="auth-row">',
-    '          <label class="auth-checkbox"><input type="checkbox" name="remember"><span>Recordarme por 30 días</span></label>',
+    '          <label class="auth-checkbox"><input type="checkbox" name="remember"><span>Recordarme</span></label>',
     '          <button type="button" class="auth-forgot" data-auth-switch="forgot">¿Olvidaste tu contraseña?</button>',
     '        </div>',
     '        <div class="auth-error" id="loginError" hidden></div>',

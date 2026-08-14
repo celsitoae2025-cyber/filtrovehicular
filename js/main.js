@@ -87,7 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
   if (Consultia.initSearchHistory) Consultia.initSearchHistory();
   if (Consultia.initFavorites) Consultia.initFavorites();
   if (Consultia.initCreditsCounter) Consultia.initCreditsCounter();
-  if (Consultia.initPlateScanner) Consultia.initPlateScanner();
   // Alerta saldo bajo: revisar tras carga del usuario
   setTimeout(function () {
     if (Consultia.checkLowBalance) Consultia.checkLowBalance();

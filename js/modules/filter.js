@@ -130,16 +130,6 @@
       input.maxLength   = maxLenFor(c.tipo_dato);
       input.inputMode   = inputModeFor(c.tipo_dato);
       input.value       = '';
-
-      // Mostrar/ocultar escáner de placa según tipo de consulta
-      var existingBtn = (input.closest('.ps-input-wrap') || input.parentNode).querySelector('.ps-trigger');
-      if (c.tipo_dato === 'placa') {
-        if (!existingBtn && Consultia.PlateScanner) Consultia.PlateScanner.attach(input);
-      } else if (existingBtn) {
-        existingBtn.style.display = 'none';
-        input.style.paddingRight = '';
-      }
-      if (existingBtn && c.tipo_dato === 'placa') existingBtn.style.display = '';
     }
 
     var emptyDesc = $('filter-empty-desc');
