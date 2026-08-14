@@ -1849,21 +1849,29 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     padding: 0 20px 16px !important;
     border-bottom: 1px solid #a4b1b9 !important;
   }
+  /* Boton de acceso: circulo del mismo tamaño que el FAB de WhatsApp
+     (59px, ver css/components.css) con el icono de encendido. Sin texto
+     a la vista; lo dice el aria-label y el title. */
   .auth-brand-cta {
-    display: block !important;
-    width: 100% !important;
-    max-width: 250px !important;     /* mas angosto, centrado */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 59px !important;
+    height: 59px !important;
+    max-width: none !important;
     margin: 0 auto !important;
-    padding: 13px 18px !important;   /* mas bajo */
+    padding: 0 !important;
     border: none !important;
-    border-radius: 10px !important;
+    border-radius: 50% !important;
     background: #8fc72e !important;
     color: #141d1c !important;
-    font-size: var(--fs-md) !important;
-    font-weight: 700 !important;
     line-height: 1 !important;
   }
+  .auth-brand-cta-ico { width: 30px !important; height: 30px !important; }
+  .auth-brand-cta-text { display: none !important; }
   .auth-brand-cta:active { background: #7ab325 !important; }
+  /* El contenedor centra el circulo, que ya no ocupa todo el ancho */
+  .auth-brand-actions { text-align: center !important; }
 
   /* Mismo pie que el login: blanco, linea gris arriba y el mismo alto */
   .auth-brand-foot {

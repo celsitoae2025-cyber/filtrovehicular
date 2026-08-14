@@ -24,21 +24,31 @@
   text-transform: uppercase;
 }
 
-/* ── GRID con FLEXBOX para control total del subpixel ────── */
+/* ── GRID adaptable ─────────────────────────────────────
+   Antes eran tres columnas fijas con calc(), a cualquier ancho. En un
+   monitor de 1920 cada tarjeta acababa midiendo 625px para una sola
+   linea de texto, con el hueco vacio en medio.
+
+   Con auto-fill el numero de columnas lo decide el ancho disponible:
+   tres en un portatil, cuatro o cinco en un monitor grande, y las
+   tarjetas mantienen un tamaño legible. auto-fill y no auto-fit a
+   proposito: si la ultima fila va incompleta, las tarjetas conservan el
+   ancho de su columna en vez de estirarse a lo ancho de la fila. */
 .services-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 8px;
   contain: layout style;
   /* GPU layer para scroll suave */
   transform: translateZ(0);
 }
 
-/* ── CARD: dimensiones EXACTAS con calc() ──────────────── */
+/* ── CARD ───────────────────────────────────────────────
+   El ancho lo pone la columna del grid. min-width:0 es necesario para
+   que el texto largo se recorte dentro de la tarjeta en vez de ensanchar
+   la columna. */
 .service-card {
-  /* 3 columnas: (100% - 2 gaps de 8px) / 3 */
-  flex: 0 0 calc((100% - 16px) / 3);
-  width: calc((100% - 16px) / 3);
+  min-width: 0;
   height: 64px;
   box-sizing: border-box;
   display: flex;
@@ -209,18 +219,16 @@ body.is-anonymous .service-card.is-locked-anon::after {
 /* ── RESPONSIVE ────────────────────────────────────── */
 /* Tablet — 2 columnas */
 @media (max-width: 900px) {
-  .service-card {
-    flex: 0 0 calc((100% - 8px) / 2);
-    width: calc((100% - 8px) / 2);
-  }
+  .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* Móvil — 2 columnas más compactas */
 @media (max-width: 640px) {
-  .services-grid { gap: 6px; }
+  .services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
   .service-card {
-    flex: 0 0 calc((100% - 6px) / 2);
-    width: calc((100% - 6px) / 2);
     height: 56px;
     padding: 0 10px;
     gap: 10px;
