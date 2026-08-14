@@ -95,7 +95,7 @@
 }
 
 /* User menu */
-.user-menu { position: relative; flex-shrink: 0; }
+.user-menu { position: relative; flex-shrink: 0; display: flex; align-items: center; gap: 4px; }
 .user {
   display: flex; align-items: center; gap: 10px;
   font-size: var(--fs-sm);
@@ -108,8 +108,26 @@
   transition: background .15s;
 }
 .user:hover { background: var(--c-bg); }
-.user-name { display: inline; font-weight: 500; }
 .user-chev { width: 14px; height: 14px; color: var(--c-muted); transition: transform .2s; }
+
+/* Insignia "Mejora tu plan" — reemplaza el nombre junto al avatar,
+   lleva directo a Mi saldo (planes y recargas). */
+.user-plan-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--c-accent);
+  color: var(--c-primary);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s;
+}
+.user-plan-badge:hover { background: var(--c-accent-hover); }
 .user-menu.open .user-chev { transform: rotate(180deg); }
 
 .user-dropdown {
@@ -187,7 +205,7 @@
 @media (max-width: 768px) {
   .menu-btn { display: inline-flex; }
   .topbar { padding: 10px 16px; }
-  .user-name { display: none; }
+  .user-plan-badge { padding: 5px 10px; font-size: 11px; }
 }
 
 /* ============================================================

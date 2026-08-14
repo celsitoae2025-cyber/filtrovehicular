@@ -764,29 +764,40 @@
 }
 
 /* ==========================================================
-   CTA "Obtén tu reporte" — vista principal (Consultar Placa)
-   Lleva a Vehículos con /metapla preseleccionado y la placa
-   lista para escribir. Debe ser lo primero y más visible.
+   CTA "Obtén tu reporte" — flotante (Consultar Placa)
+   Fijo sobre el viewport para que siga visible al hacer scroll,
+   en la esquina inferior IZQUIERDA (la derecha la ocupa el FAB
+   de WhatsApp — .wa-fab, bottom:80px/right:24px — para que nunca
+   choquen). Se reserva espacio al fondo de la vista para que el
+   último panel no quede tapado detrás del botón.
 ========================================================== */
+#view-filter { padding-bottom: 76px; }
+
 #ctaReporteBtn.cta-reporte-btn {
-  width: 100%;
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  right: auto;
+  width: auto;
+  max-width: 240px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
-  border-radius: 12px;
-  border: none;
+  gap: 9px;
+  padding: 11px 15px;
+  margin: 0;
+  border-radius: 10px;
+  border: 2px solid #028f8c;
   cursor: pointer;
   text-align: left;
   background: #03a7a4 !important;
-  border-color: #03a7a4 !important;
+  border-color: #028f8c !important;
   color: #ffffff !important;
+  z-index: 45;
 }
 .cta-reporte-ico {
   flex: none;
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
 }
 .cta-reporte-text {
   flex: 1;
@@ -796,23 +807,31 @@
   line-height: 1.2;
 }
 .cta-reporte-text strong {
-  font-size: var(--fs-lg, 17px);
+  font-size: var(--fs-md, 15px);
   font-weight: 700;
 }
 .cta-reporte-text small {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   font-weight: 400;
   opacity: .85;
 }
 .cta-reporte-arrow {
   flex: none;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
 }
 
 @media (max-width: 720px) {
-  .cta-reporte-btn { padding: 14px 16px; margin-bottom: 14px; }
-  .cta-reporte-text strong { font-size: var(--fs-md, 15px); }
+  #view-filter { padding-bottom: 70px; }
+  #ctaReporteBtn.cta-reporte-btn {
+    left: 12px;
+    bottom: 14px;
+    right: auto;
+    width: auto;
+    max-width: 210px;
+    padding: 10px 13px;
+  }
+  .cta-reporte-text strong { font-size: var(--fs-sm, 14px); }
 }
 
 /* ==========================================================
