@@ -1651,9 +1651,13 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
   /* El padding superior deja pasar la banda verde: con 20px el texto
      quedaba por debajo de ella y se recortaba. */
   .auth-brand-mh {
-    padding: calc(var(--auth-bar-h) / 2 + 22px) 20px 20px !important;
+    padding: calc(var(--auth-bar-h) / 2 + 20px) 20px 16px !important;
     align-items: center !important;
     text-align: center !important;
+    /* Cabecera fija: marca, barra cuatricolor y, debajo, el boton de
+       entrar (.auth-brand-actions, order 1). Las fichas van despues y
+       son lo unico que scrollea. */
+    order: 0 !important;
   }
   /* Encabezado del formulario: no es una barra superior, viaja dentro
      del area centrada y se apoya justo encima de la tarjeta blanca,
@@ -1742,7 +1746,9 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     overscroll-behavior: contain !important;
     scrollbar-width: none !important;
     margin: 0 !important;
-    padding: 18px 20px 20px !important;
+    /* Debajo de la cabecera y su boton (order 0 y 1) */
+    order: 2 !important;
+    padding: 18px 20px 22px !important;
   }
   .auth-brand-content::-webkit-scrollbar { display: none !important; }
 
@@ -1817,12 +1823,16 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
   }
 
   /* ---------- Accion verde + pie blanco ---------- */
+  /* El boton vive en la cabecera, justo bajo la barra cuatricolor: es
+     lo primero que se ve y no hay que recorrer las fichas para llegar
+     a el. La linea inferior cierra la cabecera y la separa del cuerpo
+     que scrollea. */
   .auth-brand-actions {
     display: block !important;
     flex: 0 0 auto !important;
-    /* El padding inferior es lo que lo despega del pie: subirlo sube
-       el boton. Arriba se deja aire para que no pegue con las fichas. */
-    padding: 18px 20px 60px !important;
+    order: 1 !important;
+    padding: 0 20px 16px !important;
+    border-bottom: 1px solid #a4b1b9 !important;
   }
   .auth-brand-cta {
     display: block !important;
@@ -1846,6 +1856,7 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     align-items: center !important;
     justify-content: center !important;
     flex: 0 0 auto !important;
+    order: 3 !important;
     margin: 0 !important;
     height: calc(var(--auth-bar-h) + env(safe-area-inset-bottom)) !important;
     padding: 0 20px env(safe-area-inset-bottom) !important;
