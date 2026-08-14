@@ -1666,13 +1666,14 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
   /* El padding superior deja pasar la banda verde: con 20px el texto
      quedaba por debajo de ella y se recortaba. */
   .auth-brand-mh {
-    padding: calc(var(--auth-bar-h) / 2 + 20px) 20px 16px !important;
+    padding: calc(var(--auth-bar-h) / 2 + 20px) 20px 18px !important;
     align-items: center !important;
     text-align: center !important;
-    /* Cabecera fija: marca, barra cuatricolor y, debajo, el boton de
-       entrar (.auth-brand-actions, order 1). Las fichas van despues y
-       son lo unico que scrollea. */
+    /* Cabecera fija: marca y barra cuatricolor. Las fichas van debajo y
+       son lo unico que scrollea; el boton de entrar ya no vive aqui,
+       flota sobre WhatsApp. La linea cierra la cabecera. */
     order: 0 !important;
+    border-bottom: 1px solid #a4b1b9 !important;
   }
   /* Encabezado del formulario: no es una barra superior, viaja dentro
      del area centrada y se apoya justo encima de la tarjeta blanca,
@@ -1761,9 +1762,12 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     overscroll-behavior: contain !important;
     scrollbar-width: none !important;
     margin: 0 !important;
-    /* Debajo de la cabecera y su boton (order 0 y 1) */
-    order: 2 !important;
-    padding: 18px 20px 22px !important;
+    /* Debajo de la cabecera. El sobrante de abajo despeja los dos
+       botones flotantes de la esquina derecha: el de entrar empieza a
+       154px del borde inferior del contenido, asi que con 160px la
+       ultima ficha queda por encima al llegar al final del scroll. */
+    order: 1 !important;
+    padding: 18px 20px 160px !important;
   }
   .auth-brand-content::-webkit-scrollbar { display: none !important; }
 
@@ -1837,21 +1841,30 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     letter-spacing: .3px !important;
   }
 
-  /* ---------- Accion verde + pie blanco ---------- */
-  /* El boton vive en la cabecera, justo bajo la barra cuatricolor: es
-     lo primero que se ve y no hay que recorrer las fichas para llegar
-     a el. La linea inferior cierra la cabecera y la separa del cuerpo
-     que scrollea. */
+  /* ---------- Accion verde + pie blanco ----------
+     El boton flota sobre el FAB de WhatsApp, en la misma columna de la
+     derecha: WhatsApp ocupa de 70 a 129px desde abajo (components.css),
+     asi que este arranca en 141 y quedan 12px entre los dos.
+
+     z-index 502 porque con la app bloqueada WhatsApp sube a 501
+     (css/auth.css) y si no quedaria por debajo. Va fixed, fuera del
+     flujo: la portada vuelve a ser cabecera, fichas y pie. */
   .auth-brand-actions {
     display: block !important;
-    flex: 0 0 auto !important;
-    order: 1 !important;
-    padding: 0 20px 16px !important;
-    border-bottom: 1px solid #a4b1b9 !important;
+    position: fixed !important;
+    right: 16px !important;
+    bottom: 141px !important;
+    left: auto !important;
+    width: auto !important;
+    padding: 0 !important;
+    border: none !important;
+    z-index: 502 !important;
   }
   /* Boton de acceso: circulo del mismo tamaño que el FAB de WhatsApp
      (59px, ver css/components.css) con el icono de encendido. Sin texto
-     a la vista; lo dice el aria-label y el title. */
+     a la vista; lo dice el aria-label y el title.
+     En rojo, con el icono en blanco: 4.9:1 de contraste, y asi no se
+     confunde con el verde de WhatsApp que tiene justo debajo. */
   .auth-brand-cta {
     display: inline-flex !important;
     align-items: center !important;
@@ -1859,19 +1872,17 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     width: 59px !important;
     height: 59px !important;
     max-width: none !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
     padding: 0 !important;
     border: none !important;
     border-radius: 50% !important;
-    background: #8fc72e !important;
-    color: #141d1c !important;
+    background: #d92d20 !important;
+    color: #ffffff !important;
     line-height: 1 !important;
   }
   .auth-brand-cta-ico { width: 30px !important; height: 30px !important; }
   .auth-brand-cta-text { display: none !important; }
-  .auth-brand-cta:active { background: #7ab325 !important; }
-  /* El contenedor centra el circulo, que ya no ocupa todo el ancho */
-  .auth-brand-actions { text-align: center !important; }
+  .auth-brand-cta:active { background: #b3231a !important; }
 
   /* Mismo pie que el login: blanco, linea gris arriba y el mismo alto */
   .auth-brand-foot {
@@ -1879,7 +1890,7 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     align-items: center !important;
     justify-content: center !important;
     flex: 0 0 auto !important;
-    order: 3 !important;
+    order: 2 !important;
     margin: 0 !important;
     height: calc(var(--auth-bar-h) + env(safe-area-inset-bottom)) !important;
     padding: 0 20px env(safe-area-inset-bottom) !important;
