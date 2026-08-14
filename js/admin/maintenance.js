@@ -56,14 +56,17 @@
     // No se pisa lo que el admin esté escribiendo
     if (msg && document.activeElement !== msg) msg.value = estado.message || '';
 
-    // Interruptor de la barra superior (visible en todas las secciones)
-    var bar    = $('mntBarBtn');
-    var barTx  = $('mntBarText');
-    var barAct = $('mntBarAction');
-    if (bar) bar.classList.toggle('is-on', activo);
-    if (barTx) barTx.textContent = activo ? 'Mantenimiento activo' : 'Servicio operativo';
-    // La etiqueta anuncia lo que ocurrirá al pulsar, no el estado actual
-    if (barAct) barAct.textContent = activo ? 'Desactivar' : 'Activar mantenimiento';
+    // Interruptor de la barra superior (visible en todas las secciones).
+    // Sin textos: verde encendido, rojo apagado. El title y el aria
+    // cuentan el estado a quien pasa el ratón y a los lectores.
+    var bar = $('mntBarBtn');
+    if (bar) {
+      bar.classList.toggle('is-on', activo);
+      bar.setAttribute('aria-checked', activo ? 'true' : 'false');
+      bar.title = activo
+        ? 'Mantenimiento activo — pulsa para desactivarlo'
+        : 'Servicio operativo — pulsa para activar el mantenimiento';
+    }
   }
 
   async function cargar() {

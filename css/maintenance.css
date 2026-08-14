@@ -203,83 +203,49 @@ html.mnt-with-banner body { padding-top: 34px; }
 }
 
 /* ==========================================================
-   Interruptor en la barra superior del admin
+   Interruptor de mantenimiento — barra superior del admin
    Siempre a la vista, en cualquier seccion del panel: el
    mantenimiento se activa justo cuando algo va mal y no es
    momento de ir a buscarlo dentro de Configuracion.
+
+   Solo el interruptor, sin etiquetas: verde encendido, rojo
+   apagado. Lo que hace se explica en el title y en el
+   aria-label, para el raton y para el lector de pantalla.
    ========================================================== */
-.mnt-bar {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.mnt-switch {
+  position: relative;
   flex: none;
-  padding: 7px 12px;
-  border: 1px solid var(--c-border, #DCDCDC);
-  border-radius: 8px;
-  background: #ffffff;
-  color: var(--c-primary, #141d1c);
-  font-family: inherit;
-  font-size: 12.5px;
-  font-weight: 400;
-  line-height: 1;
-  white-space: nowrap;
+  width: 52px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: #d92d20;                  /* apagado */
   cursor: pointer;
-  transition: background .15s, border-color .15s;
+  transition: background .2s ease;
 }
-.mnt-bar:hover { background: #F6F8F5; border-color: #a4b1b9; }
-.mnt-bar:disabled { opacity: .6; cursor: not-allowed; }
+.mnt-switch.is-on { background: #8fc72e; }   /* encendido */
+.mnt-switch:disabled { opacity: .6; cursor: not-allowed; }
 
-.mnt-bar-dot {
-  width: 9px;
-  height: 9px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--c-accent, #8fc72e);
-}
-.mnt-bar-text { font-weight: 700; }
-
-/* La accion es lo que va a pasar al pulsar, no el estado actual */
-.mnt-bar-action {
-  padding-left: 8px;
-  border-left: 1px solid var(--c-border, #DCDCDC);
-  color: var(--c-muted, #5A6B6A);
-}
-
-/* Mantenimiento activo: turquesa, el mismo aviso que ve el usuario */
-.mnt-bar.is-on { border-color: #00B4D8; background: #F2FBFD; }
-.mnt-bar.is-on .mnt-bar-dot { background: #00B4D8; }
-.mnt-bar.is-on .mnt-bar-action { border-left-color: #b8e6f2; }
-
-/* Latido mientras el mantenimiento esta activo.
-   Solo late cuando esta encendido: en reposo el panel debe quedarse
-   quieto. Un aro que sale del punto y se desvanece, sin sombras, que
-   la plataforma es de diseno plano. Se apaga solo con
-   prefers-reduced-motion (regla global en base.css). */
-.mnt-bar-dot { position: relative; transition: background .15s; }
-.mnt-bar.is-on .mnt-bar-dot::after {
-  content: '';
+/* El pomo se desplaza de un extremo al otro: esa es la animacion
+   del interruptor, sin sombras, acorde al diseno plano. */
+.mnt-switch-thumb {
   position: absolute;
-  inset: 0;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: #00B4D8;
-  animation: mnt-latido 1.9s ease-out infinite;
+  background: #ffffff;
+  transition: transform .2s ease;
 }
+.mnt-switch.is-on .mnt-switch-thumb { transform: translateX(24px); }
+
+/* Latido del punto de Configuracion mientras esta activo.
+   Se apaga solo con prefers-reduced-motion (regla en base.css). */
 @keyframes mnt-latido {
   0%        { transform: scale(1);   opacity: .5; }
   70%, 100% { transform: scale(2.2); opacity: 0; }
-}
-
-/* Respuesta al pulsar, igual que el resto de botones de la plataforma */
-.mnt-bar:active { transform: scale(.98); }
-.mnt-bar:disabled:active { transform: none; }
-
-/* Pantallas estrechas: se queda el estado, se cae la accion */
-@media (max-width: 900px) {
-  .mnt-bar-action { display: none; }
-}
-@media (max-width: 640px) {
-  .mnt-bar { padding: 7px 10px; }
-  .mnt-bar-text { display: none; }
 }
 
 /* Botón de desactivación: oscuro institucional, no rojo de alarma */
