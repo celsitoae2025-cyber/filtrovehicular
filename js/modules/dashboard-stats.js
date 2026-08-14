@@ -99,14 +99,18 @@
       .select('credits_balance')
       .eq('id', user.id)
       .single();
-    var saldoActual = (profRes && profRes.data) ? (parseFloat(profRes.data.credits_balance) || 0) : 0;
+    // Si la lectura falla, el saldo queda desconocido: no es lo mismo que
+    // cero. Dándolo por cero, el anillo pintaba "100% usado" a alguien con
+    // créditos de sobra cada vez que fallaba la red.
+    var saldoLeido = !!(profRes && !profRes.error && profRes.data);
+    var saldoActual = saldoLeido ? (parseFloat(profRes.data.credits_balance) || 0) : 0;
 
     // Total histórico = saldo actual + lo ya consumido
     var totalHistorico = saldoActual + totalConsumed;
 
     var percentRaw = 0;
     var percent = 0;
-    if (totalHistorico > 0) {
+    if (saldoLeido && totalHistorico > 0) {
       percentRaw = (totalConsumed / totalHistorico) * 100;
       if (percentRaw > 100) percentRaw = 100;
       percent = Math.round(percentRaw);

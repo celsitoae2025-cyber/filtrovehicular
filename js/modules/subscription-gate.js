@@ -93,22 +93,25 @@
     var nombre = (consulta && consulta.nombre) || 'Esta consulta';
     var precio = (consulta && consulta.precio_venta) || 0;
 
-    var saldo = 0;
+    // Saldo desconocido (null) no es lo mismo que saldo cero: si la lectura
+    // falla no se le puede decir a alguien que ya gastó todos sus créditos.
+    var saldo = null;
     try {
       var sb = Consultia.supabase;
       var user = await Consultia.Auth.getUser();
       if (sb && user) {
         var res = await sb.from('profiles').select('credits_balance').eq('id', user.id).single();
-        if (res.data) saldo = res.data.credits_balance || 0;
+        if (!res.error && res.data) saldo = res.data.credits_balance || 0;
       }
     } catch (_) {}
 
     var plans = getPlans();
     var cheapest = plans.length > 0 ? plans.reduce(function (a, b) { return a.price < b.price ? a : b; }) : null;
 
-    var msgSaldo = saldo > 0
-      ? 'Tienes <strong>' + saldo + ' crédito' + (saldo === 1 ? '' : 's') + '</strong>, pero '
-      : 'Ya usaste todos tus créditos. ';
+    var msgSaldo;
+    if (saldo === null)     msgSaldo = '';                       // no se pudo leer
+    else if (saldo > 0)     msgSaldo = 'Tienes <strong>' + saldo + ' crédito' + (saldo === 1 ? '' : 's') + '</strong>, pero ';
+    else                    msgSaldo = 'Ya usaste todos tus créditos. ';
     var msgPrecio = '<strong>' + escapeHtml(nombre) + '</strong> requiere ' + precio +
       ' crédito' + (precio === 1 ? '' : 's') + '.';
 

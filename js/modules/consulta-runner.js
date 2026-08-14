@@ -314,9 +314,15 @@
     try {
       var sb = getSB();
       var res = await sb.from("profiles").select("is_admin").eq("id", userId).single();
+      // .single() no lanza: los fallos llegan en res.error, no al catch.
+      // Si la consulta falló no se guarda nada — antes se guardaba "no es
+      // admin" y un corte de red dejaba al administrador pagando créditos
+      // el resto de la sesión, hasta recargar. Sin guardar, la siguiente
+      // consulta vuelve a preguntar.
+      if (res.error) return false;
       adminCache[userId] = !!(res.data && res.data.is_admin);
     } catch (err) {
-      adminCache[userId] = false; // ante la duda, se cobra
+      return false;
     }
     return adminCache[userId];
   }
