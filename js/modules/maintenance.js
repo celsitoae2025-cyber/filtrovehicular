@@ -22,6 +22,12 @@
   var BANNER_ID  = 'maintenanceBanner';
   var POLL_MS    = 60000;
 
+  // Petición de acceso del administrador por dirección (#admin o ?admin).
+  // Se lee aquí, al ejecutarse el script, y no cuando se pinta el aviso:
+  // el router de vistas (js/views.js) reescribe la URL al arrancar y se
+  // lleva por delante el hash, así que para entonces ya no estaría.
+  var PIDE_ADMIN = /(^|[#&?])admin\b/i.test(location.hash + location.search);
+
   var MENSAJE_POR_DEFECTO =
     'Estamos realizando tareas de mejora en la plataforma. ' +
     'El servicio se restablecerá en breve.';
@@ -98,12 +104,6 @@
           'Vuelve a intentarlo en unos minutos.' +
         '</div>' +
         '<button type="button" class="mnt-retry" id="mntRetry">Reintentar</button>' +
-        // Sin esta puerta el aviso es una trampa: tapa el modal de login,
-        // y admin.html devuelve a la app si no hay sesión. El administrador
-        // se quedaba fuera sin forma de apagar el mantenimiento.
-        '<button type="button" class="mnt-admin-access" id="mntAdminAccess">' +
-          'Ingresar como administrador' +
-        '</button>' +
       '</div>';
     document.body.appendChild(el);
     document.documentElement.classList.add('mnt-locked');
@@ -111,15 +111,34 @@
     var btn = document.getElementById('mntRetry');
     if (btn) btn.addEventListener('click', function () { window.location.reload(); });
 
-    var acceso = document.getElementById('mntAdminAccess');
-    if (acceso) acceso.addEventListener('click', function () {
-      // Solo al pedirlo se levanta el login por encima del aviso: a un
-      // visitante normal le toca ver el aviso, no un formulario.
-      document.documentElement.classList.add('mnt-auth');
-      if (Consultia.AuthModals && Consultia.AuthModals.openLogin) {
-        Consultia.AuthModals.openLogin();
-      }
+    // ── Entrada del administrador ──
+    // Sin nada a la vista: el cliente no tiene por qué ver un acceso de
+    // administración ni saber por dónde se entra. Hacen falta las dos
+    // vías porque el aviso tapa el modal de login (99999 contra 500) y
+    // admin.html devuelve a la app cuando no hay sesión.
+    //
+    //   a) abrir  app.html#admin
+    //   b) cinco toques seguidos sobre la marca del aviso (para el móvil,
+    //      donde escribir la dirección es incómodo)
+    if (PIDE_ADMIN) abrirLoginAdmin();
+
+    var marca = el.querySelector('.mnt-mark');
+    var toques = 0, ultimo = 0;
+    if (marca) marca.addEventListener('click', function () {
+      var ahora = Date.now();
+      toques = (ahora - ultimo > 1200) ? 1 : toques + 1;   // seguidos, no sueltos
+      ultimo = ahora;
+      if (toques >= 5) { toques = 0; abrirLoginAdmin(); }
     });
+  }
+
+  // Levanta el login por encima del aviso. La clase se pone solo aquí:
+  // mientras nadie la pida, el visitante ve el aviso y no un formulario.
+  function abrirLoginAdmin() {
+    document.documentElement.classList.add('mnt-auth');
+    if (Consultia.AuthModals && Consultia.AuthModals.openLogin) {
+      Consultia.AuthModals.openLogin();
+    }
   }
 
   function ocultarAviso() {
