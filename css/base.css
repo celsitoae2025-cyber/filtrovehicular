@@ -952,9 +952,12 @@ body { background: #d4dade !important; }
   .center-notice-title { font-size: var(--fs-md) !important; }
 }
 
-/* Fondo TURQUESA plano, sin textura */
+/* Fondo GRIS plano, sin textura. El turquesa competia con la tarjeta
+   blanca del formulario y con la barra cuatricolor de la marca; sobre
+   gris la tarjeta se lee sola. Mismo gris que el resto de la app
+   (--c-bg) y que el acceso al panel de administrador. */
 .auth-modal-overlay {
-  background-color: #03a7a4 !important;
+  background-color: var(--c-bg, #F3F3F3) !important;
   background-image: none !important;
 }
 

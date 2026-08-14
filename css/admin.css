@@ -1419,10 +1419,9 @@ button.kpi.kpi-clickable:focus-visible {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  /* Mismo turquesa que el fondo de la app (base.css), para que el acceso
-     al panel no parezca de otra plataforma. La tarjeta se queda blanca
-     y plana: solo cambia el lienzo. */
-  background: #03a7a4;
+  /* Mismo gris que el login principal de la app: los dos accesos se ven
+     igual. La tarjeta blanca y plana se recorta sola sobre el. */
+  background: var(--c-bg, #F3F3F3);
 }
 .admin-login[hidden] { display: none; }
 
