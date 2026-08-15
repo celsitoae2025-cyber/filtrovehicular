@@ -476,6 +476,66 @@
   flex-shrink: 0;
 }
 
+/* ── Lista de opciones del FAB ──
+   Se abre encima del botón. Cada opción escribe al bot pidiendo ya
+   esa opción, para que el cliente no tenga que elegir dos veces.
+   En claro, con los mismos tokens que el resto de la interfaz. */
+.wa-menu {
+  position: fixed;
+  bottom: 152px;
+  right: 24px;
+  z-index: 451;
+  width: 262px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+}
+.wa-menu[hidden] { display: none; }
+
+.wa-menu-titulo {
+  margin: 0;
+  padding: 8px 10px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+
+.wa-menu-opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 13.5px;
+  text-decoration: none;
+}
+.wa-menu-opcion:hover { background: var(--c-teal-soft); }
+
+.wa-menu-n {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--c-accent);
+  color: var(--c-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+/* La última opción manda a un humano: se marca en turquesa para que se
+   distinga de las cinco que resuelve el bot solo. */
+.wa-menu-opcion:last-child .wa-menu-n { background: #00B4D8; }
+
+.wa-menu-txt { flex: 1; }
+
 @media (max-width: 720px) {
   .wa-fab {
     width: 59px;
@@ -484,4 +544,13 @@
     right: 16px;
   }
   .wa-fab-icon { width: 30px; height: 30px; }
+
+  /* En móvil el menú se ancla al ancho de la pantalla: con 262px fijos
+     se salía por el borde en los teléfonos angostos. */
+  .wa-menu {
+    bottom: 137px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
 }
