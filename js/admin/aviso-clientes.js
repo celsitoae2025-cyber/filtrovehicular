@@ -134,6 +134,8 @@
     var cm = $('avcMensajeCount');
     if (ct) ct.textContent = titulo.length + '/' + MAX_TITULO;
     if (cm) cm.textContent = mensaje.length + '/' + MAX_MENSAJE;
+
+    marcarSeleccionada();
   }
 
   /* ── Pintar el estado ── */
@@ -331,12 +333,18 @@
   }
 
   /* ── Plantillas ── */
+  // Se pinta el TEXTO COMPLETO de cada plantilla, no solo su nombre: con
+  // un rótulo suelto ("Directa", "Formal") no hay forma de elegir sin ir
+  // probando una por una a ciegas.
   function pintarPlantillas() {
     var cont = $('avcPlantillas');
     if (!cont) return;
     cont.innerHTML = PLANTILLAS.map(function (p, i) {
       return '<button type="button" class="avc-plantilla" data-i="' + i + '">' +
-             esc(p.etiqueta) + '</button>';
+               '<span class="avc-plantilla-etq">' + esc(p.etiqueta) + '</span>' +
+               '<strong class="avc-plantilla-tit">' + esc(p.titulo) + '</strong>' +
+               '<span class="avc-plantilla-msg">' + esc(p.mensaje) + '</span>' +
+             '</button>';
     }).join('');
 
     cont.addEventListener('click', function (e) {
@@ -348,9 +356,22 @@
       var elMsg = $('avcMensaje');
       if (elTit) elTit.value = p.titulo;
       if (elMsg) elMsg.value = p.mensaje;
+      marcarSeleccionada();
       mostrarError('');
       pintarPrevia();
-      if (elMsg) elMsg.focus();
+    });
+  }
+
+  // Resalta la plantilla que coincide con lo que hay ahora en el
+  // formulario, para no perder de vista cuál está puesta.
+  function marcarSeleccionada() {
+    var tit = (($('avcTitulo')  || {}).value || '').trim();
+    var msg = (($('avcMensaje') || {}).value || '').trim();
+    var cont = $('avcPlantillas');
+    if (!cont) return;
+    [].forEach.call(cont.querySelectorAll('.avc-plantilla'), function (b) {
+      var p = PLANTILLAS[Number(b.dataset.i)];
+      b.classList.toggle('is-sel', !!p && p.titulo === tit && p.mensaje === msg);
     });
   }
 

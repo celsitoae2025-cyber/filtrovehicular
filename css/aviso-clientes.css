@@ -205,27 +205,62 @@
 }
 .avc-admin-dot.is-on { background: #00B4D8; }
 
-/* Plantillas: un clic deja el aviso escrito y listo para encender */
+/* Plantillas: se ve el TEXTO COMPLETO de cada una, no solo su nombre.
+   Con un rótulo suelto no hay forma de elegir sin ir probando una por
+   una; aquí se leen las ocho de un vistazo y un clic la deja puesta. */
 .avc-plantillas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 10px;
 }
+
 .avc-plantilla {
-  padding: 7px 13px;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 13px 15px;
   border: 1px solid var(--c-border, #DCDCDC);
-  border-radius: 999px;
+  border-radius: 10px;
   background: var(--c-surface, #ffffff);
   color: var(--c-text, #141d1c);
   font-family: inherit;
-  font-size: 12.5px;
-  font-weight: 400;
   cursor: pointer;
   transition: border-color .15s ease, background .15s ease;
 }
 .avc-plantilla:hover {
   border-color: var(--c-accent, #8fc72e);
   background: var(--c-teal-soft, #edf7d9);
+}
+/* La que está puesta ahora mismo en el formulario */
+.avc-plantilla.is-sel {
+  border-color: var(--c-accent, #8fc72e);
+  background: var(--c-teal-soft, #edf7d9);
+}
+
+.avc-plantilla-etq {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--c-muted, #5A6B6A);
+  margin-bottom: 6px;
+}
+.avc-plantilla.is-sel .avc-plantilla-etq { color: #141d1c; }
+
+.avc-plantilla-tit {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.avc-plantilla-msg {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--c-muted, #5A6B6A);
 }
 
 /* Vista previa: exactamente lo que va a ver el cliente */
