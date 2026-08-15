@@ -32,65 +32,70 @@ html.avc-abierto body {
   overflow: hidden;
 }
 
-/* ── El cuadro ── */
-.avc-modal {
+/* ── El cuadro ──
+   Es EXACTAMENTE la cinta de siempre: fondo oscuro, icono pequeño a la
+   izquierda, texto al lado y el botón verde. Lo único que cambia es
+   dónde vive — antes arriba del contenido, ahora flotando en el centro.
+   Nada de tarjetas blancas ni iconos gigantes. */
+.avc {
   position: relative;
   width: 100%;
-  max-width: 440px;
-  background: var(--c-surface, #ffffff);
-  border: 1px solid var(--c-border, #DCDCDC);
-  border-radius: 14px;
-  padding: 34px 30px 26px;
-  text-align: center;
+  max-width: 560px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: var(--c-primary, #141d1c);
+  color: #ffffff;
   font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
+/* Icono discreto y en blanco: es un detalle al lado del texto, no el
+   protagonista. Sin colores que no pinten nada en un aviso. */
 .avc-icono {
-  width: 52px;
-  height: 52px;
-  margin: 0 auto 14px;
-  color: #00B4D8;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  color: #ffffff;
 }
 .avc-icono svg { width: 100%; height: 100%; display: block; }
 
+.avc-texto { flex: 1; min-width: 0; }
+
 .avc-titulo {
   margin: 0;
-  font-size: 19px;
+  font-size: 15px;
   font-weight: 700;
-  line-height: 1.35;
-  color: var(--c-text, #141d1c);
+  color: #ffffff;
 }
 
 .avc-mensaje {
-  margin: 10px 0 0;
-  font-size: 14.5px;
+  margin: 0;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 1.6;
-  color: var(--c-muted, #5A6B6A);
+  color: #d7dedd;
   /* Los saltos de línea que escriba el administrador se respetan */
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+.avc-titulo + .avc-mensaje { margin-top: 2px; }
 
-.avc-acciones {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 24px;
-}
-
-/* Botón a soporte: verde de marca, la acción principal */
+/* Botón a soporte: verde de marca, el único elemento accionable
+   destacado del cuadro. */
 .avc-cta {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 9px;
-  padding: 13px 18px;
-  border-radius: 10px;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
   background: var(--c-accent, #8fc72e);
   color: var(--c-primary, #141d1c);
   font-family: inherit;
-  font-size: 14.5px;
+  font-size: 13.5px;
   font-weight: 700;
   text-decoration: none;
   border: 0;
@@ -98,47 +103,43 @@ html.avc-abierto body {
   transition: background .15s ease;
 }
 .avc-cta:hover { background: var(--c-accent-hover, #7ab325); }
-.avc-cta svg { width: 18px; height: 18px; flex-shrink: 0; }
+.avc-cta svg { width: 17px; height: 17px; flex-shrink: 0; }
 
-/* Cerrar y seguir usando la plataforma */
-.avc-ok {
-  padding: 12px 18px;
-  border: 1px solid var(--c-border, #DCDCDC);
-  border-radius: 10px;
-  background: var(--c-surface, #ffffff);
-  color: var(--c-text, #141d1c);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background .15s ease;
-}
-.avc-ok:hover { background: var(--c-bg, #F3F3F3); }
-
-/* La equis de la esquina hace lo mismo que "Entendido" */
 .avc-cerrar {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: var(--c-muted, #5A6B6A);
-  font-size: 24px;
+  color: #8b9a98;
+  font-size: 22px;
   line-height: 1;
   cursor: pointer;
   font-family: inherit;
   transition: background .15s ease, color .15s ease;
 }
-.avc-cerrar:hover { background: var(--c-bg, #F3F3F3); color: var(--c-text, #141d1c); }
+.avc-cerrar:hover { background: #24322f; color: #ffffff; }
 
+/* En móvil el cuadro se apila: el texto arriba, las acciones abajo y a
+   lo ancho, que es donde el pulgar llega sin estirarse. */
 @media (max-width: 640px) {
   .avc-fondo { padding: 18px; }
-  .avc-modal { padding: 30px 22px 22px; }
-  .avc-icono { width: 46px; height: 46px; }
-  .avc-titulo { font-size: 17.5px; }
+  .avc {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 15px;
+  }
+  .avc-icono { width: 22px; height: 22px; }
+  .avc-texto { flex: 1 1 calc(100% - 80px); }
+  .avc-cerrar { order: 2; margin-left: auto; }
+  .avc-cta {
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: center;
+    padding: 11px 16px;
+    font-size: 14px;
+  }
 }
 
 

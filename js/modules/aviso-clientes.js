@@ -118,50 +118,44 @@
     if (titulo) el.setAttribute('aria-label', titulo);
 
     el.innerHTML =
-      '<div class="avc-modal">' +
-        '<button type="button" class="avc-cerrar" aria-label="Cerrar aviso">&times;</button>' +
+      '<div class="avc">' +
         '<span class="avc-icono" aria-hidden="true">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" ' +
                'stroke-linecap="round" stroke-linejoin="round">' +
             '<path d="M10.3 3.6 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z"/>' +
             '<line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' +
           '</svg>' +
         '</span>' +
-        (titulo ? '<h2 class="avc-titulo">' + esc(titulo) + '</h2>' : '') +
-        '<p class="avc-mensaje">' + esc(mensaje) + '</p>' +
-        '<div class="avc-acciones">' +
-          (url
-            ? '<a class="avc-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' +
-                '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
-                  '<path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm5.8 14.1c-.2.7-1.2 1.3-1.9 1.4-.5.1-1.1.2-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.2-1.6-1.2-3.1s.8-2.2 1.1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.5-.3.4c-.1.1-.2.3 0 .6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.6-.1l.8-1c.2-.2.3-.2.6-.1l2 1c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/>' +
-                '</svg>' +
-                'Escribir a soporte' +
-              '</a>'
-            : '') +
-          '<button type="button" class="avc-ok">Entendido</button>' +
+        '<div class="avc-texto">' +
+          (titulo ? '<p class="avc-titulo">' + esc(titulo) + '</p>' : '') +
+          '<p class="avc-mensaje">' + esc(mensaje) + '</p>' +
         '</div>' +
+        (url
+          ? '<a class="avc-cta" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' +
+              '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+                '<path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm5.8 14.1c-.2.7-1.2 1.3-1.9 1.4-.5.1-1.1.2-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.2-1.6-1.2-3.1s.8-2.2 1.1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.5-.3.4c-.1.1-.2.3 0 .6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.6-.1l.8-1c.2-.2.3-.2.6-.1l2 1c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/>' +
+              '</svg>' +
+              'Escribir a soporte' +
+            '</a>'
+          : '') +
+        '<button type="button" class="avc-cerrar" aria-label="Cerrar aviso">&times;</button>' +
       '</div>';
 
     document.body.appendChild(el);
     document.documentElement.classList.add('avc-abierto');
 
     var version = estado.version;
-    el.querySelector('.avc-cerrar').addEventListener('click', function () {
-      cerrarYRecordar(version);
-    });
-    el.querySelector('.avc-ok').addEventListener('click', function () {
-      cerrarYRecordar(version);
-    });
+    var cerrar = el.querySelector('.avc-cerrar');
+    cerrar.addEventListener('click', function () { cerrarYRecordar(version); });
     // Un clic fuera del cuadro también cierra
     el.addEventListener('click', function (e) {
       if (e.target === el) cerrarYRecordar(version);
     });
     document.addEventListener('keydown', alPulsarTecla);
 
-    // El foco va al botón de cerrar: quien navegue con teclado sale de
-    // aquí con una pulsación, sin tener que buscar.
-    var ok = el.querySelector('.avc-ok');
-    if (ok) { try { ok.focus(); } catch (e) {} }
+    // El foco va a la equis: quien navegue con teclado sale de aquí con
+    // una pulsación, sin tener que buscar.
+    try { cerrar.focus(); } catch (e) {}
   }
 
   /* ── Pintar un estado ── */

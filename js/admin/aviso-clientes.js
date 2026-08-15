@@ -106,30 +106,29 @@
     var mensaje = (($('avcMensaje') || {}).value || '').trim();
     var conCta  = ($('avcCta') || {}).checked !== false;
 
-    // El mismo cuadro que verá el cliente en el centro de su pantalla.
+    // El mismo cuadro que verá el cliente flotando en su pantalla.
     caja.innerHTML =
-      '<div class="avc-modal">' +
-        '<span class="avc-cerrar" aria-hidden="true">&times;</span>' +
+      '<div class="avc">' +
         '<span class="avc-icono" aria-hidden="true">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" ' +
                'stroke-linecap="round" stroke-linejoin="round">' +
             '<path d="M10.3 3.6 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z"/>' +
             '<line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' +
           '</svg>' +
         '</span>' +
-        (titulo ? '<h2 class="avc-titulo">' + esc(titulo) + '</h2>' : '') +
-        '<p class="avc-mensaje">' +
-          (mensaje ? esc(mensaje) : 'Escribe el mensaje y aquí verás lo que va a leer el cliente.') +
-        '</p>' +
-        '<div class="avc-acciones">' +
-          (conCta
-            ? '<span class="avc-cta">' +
-                '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
-                  '<path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm5.8 14.1c-.2.7-1.2 1.3-1.9 1.4-.5.1-1.1.2-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.2-1.6-1.2-3.1s.8-2.2 1.1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.5-.3.4c-.1.1-.2.3 0 .6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.6-.1l.8-1c.2-.2.3-.2.6-.1l2 1c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/>' +
-                '</svg>Escribir a soporte</span>'
-            : '') +
-          '<span class="avc-ok">Entendido</span>' +
+        '<div class="avc-texto">' +
+          (titulo ? '<p class="avc-titulo">' + esc(titulo) + '</p>' : '') +
+          '<p class="avc-mensaje">' +
+            (mensaje ? esc(mensaje) : 'Escribe el mensaje y aquí verás lo que va a leer el cliente.') +
+          '</p>' +
         '</div>' +
+        (conCta
+          ? '<span class="avc-cta">' +
+              '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+                '<path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm5.8 14.1c-.2.7-1.2 1.3-1.9 1.4-.5.1-1.1.2-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.2-1.6-1.2-3.1s.8-2.2 1.1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.5-.3.4c-.1.1-.2.3 0 .6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.6-.1l.8-1c.2-.2.3-.2.6-.1l2 1c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/>' +
+              '</svg>Escribir a soporte</span>'
+          : '') +
+        '<span class="avc-cerrar" aria-hidden="true">&times;</span>' +
       '</div>';
 
     var ct = $('avcTituloCount');
