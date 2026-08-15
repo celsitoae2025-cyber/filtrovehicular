@@ -67,13 +67,15 @@ html.avc-abierto body {
   overflow-wrap: anywhere;
 }
 
-/* Manos estrechándose, justo encima del botón: dice "aquí te atienden"
-   antes de que nadie lea el texto del botón. Centrado y a tamaño
-   discreto — es un apoyo, no el protagonista. */
+/* Auriculares de atención, justo encima del botón: dice "aquí te
+   atienden" antes de que nadie lea el texto del botón.
+   Se eligió por cómo dibuja: dos trazos largos y limpios que a 40px se
+   leen enteros. El apretón de manos que había antes tenía cinco trazos
+   diminutos y a ese tamaño se emborronaba. */
 .avc-manos {
   display: block;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   margin: 24px auto 0;
   color: #ffffff;
 }

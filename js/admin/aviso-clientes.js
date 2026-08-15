@@ -116,13 +116,10 @@
         '</p>' +
         (conCta
           ? '<span class="avc-manos" aria-hidden="true">' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" ' +
                    'stroke-linecap="round" stroke-linejoin="round">' +
-                '<path d="m11 17 2 2a1 1 0 1 0 3-3"/>' +
-                '<path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/>' +
-                '<path d="m21 3 1 11h-2"/>' +
-                '<path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/>' +
-                '<path d="M3 4h8"/>' +
+                '<path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5a9 9 0 0 1 18 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>' +
+                '<path d="M21 16v2a4 4 0 0 1-4 4h-5"/>' +
               '</svg>' +
             '</span>' +
             '<span class="avc-cta">Escribir a soporte</span>'
