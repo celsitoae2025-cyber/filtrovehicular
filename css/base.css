@@ -1175,16 +1175,15 @@ header.compact-hero { display: none !important; }
    Aplicada de forma sutil y consistente: solo debajo de los títulos
    principales de panel/vista, no en cada input. */
 :root {
+  /* Un solo tramo por color. Antes la secuencia se repetía dos veces
+     (ocho tramos del 12.5%) y la barra se leía como un patrón repetido
+     en vez de como cuatro colores de marca. */
   --accent-gradient: linear-gradient(
     to right,
-    #00bcd4 0%,      #00bcd4 12.5%,
-    #8fc72e 12.5%,   #8fc72e 25%,
-    #ffb020 25%,     #ffb020 37.5%,
-    #e53935 37.5%,   #e53935 50%,
-    #00bcd4 50%,     #00bcd4 62.5%,
-    #8fc72e 62.5%,   #8fc72e 75%,
-    #ffb020 75%,     #ffb020 87.5%,
-    #e53935 87.5%,   #e53935 100%
+    #00bcd4 0%,    #00bcd4 25%,
+    #8fc72e 25%,   #8fc72e 50%,
+    #ffb020 50%,   #ffb020 75%,
+    #e53935 75%,   #e53935 100%
   );
 }
 /* La barra cuatricolor se coloca DENTRO del panel, justo debajo del
