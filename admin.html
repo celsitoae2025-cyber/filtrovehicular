@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="css/plans-catalog.css">
 <link rel="stylesheet" href="css/admin.css?v=5">
 <link rel="stylesheet" href="css/maintenance.css?v=7">
+<link rel="stylesheet" href="css/aviso-clientes.css?v=1">
 </head>
 <body>
 
@@ -1160,6 +1161,73 @@
             </div>
           </div>
 
+          <!-- AVISO A LOS CLIENTES
+               Interruptor aparte del modo mantenimiento: este NO apaga nada,
+               solo pone una cinta informativa dentro de la aplicación con un
+               botón para escribir a soporte. -->
+          <div class="admin-panel" style="grid-column:1/-1">
+            <header class="admin-panel-head">
+              <h2>Aviso a los clientes</h2>
+              <span class="admin-panel-sub" id="avcStateLabel">Sin aviso</span>
+            </header>
+            <div class="avc-admin">
+              <div class="avc-admin-state" id="avcStateBox">
+                <span class="avc-admin-dot" id="avcStateDot"></span>
+                <div>
+                  <strong id="avcStateTitle">Sin aviso</strong>
+                  <p id="avcStateDesc">Los clientes no ven ninguna cinta en la aplicación.</p>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Plantillas</label>
+                <div class="avc-plantillas" id="avcPlantillas"></div>
+                <div class="field-hint">Un clic deja el aviso escrito. Puedes editarlo antes de encenderlo.</div>
+              </div>
+
+              <div class="field">
+                <label for="avcTitulo">Título <span class="avc-contador" id="avcTituloCount">0/90</span></label>
+                <input type="text" id="avcTitulo" class="input" maxlength="90"
+                       placeholder="¿Tuviste algún problema con una consulta?">
+              </div>
+
+              <div class="field">
+                <label for="avcMensaje">Mensaje <span class="avc-contador" id="avcMensajeCount">0/400</span></label>
+                <textarea id="avcMensaje" class="input" rows="4" maxlength="400"
+                  placeholder="Explica qué pasó y qué debe hacer el cliente."></textarea>
+                <div class="field-hint">Se respetan los saltos de línea. Sé concreto: qué falló y qué tiene que hacer.</div>
+              </div>
+
+              <div class="field">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                  <input type="checkbox" id="avcCta" checked>
+                  Mostrar el botón «Escribir a soporte»
+                </label>
+                <div class="field-hint">Abre WhatsApp con el mensaje listo y el bot lo pasa directo a un asesor.</div>
+              </div>
+
+              <div class="avc-previa-wrap">
+                <span class="avc-previa-label">Así lo verá el cliente</span>
+                <div class="avc-previa" id="avcPreview"></div>
+              </div>
+
+              <div id="avcError" class="auth-error" hidden></div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-primary" id="avcToggleBtn">Encender aviso</button>
+                <button type="button" class="btn-ghost" id="avcSaveBtn">Guardar mensaje</button>
+              </div>
+
+              <p class="avc-admin-foot">
+                La cinta aparece arriba del contenido en la aplicación de todos los clientes.
+                <strong>No bloquea nada</strong>: pueden seguir consultando con normalidad — para
+                eso está el modo mantenimiento, que es el interruptor de arriba.
+                Cada cliente puede cerrarla, y le vuelve a salir en cuanto cambies el texto o la
+                vuelvas a encender.
+              </p>
+            </div>
+          </div>
+
           <div class="admin-panel">
             <header class="admin-panel-head">
               <h2>Empresa</h2>
@@ -1342,6 +1410,7 @@
 <script src="js/admin/broadcasts.js?v=23"></script>
 <script src="js/admin/settings.js?v=22"></script>
 <script src="js/admin/maintenance.js?v=3"></script>
+<script src="js/admin/aviso-clientes.js?v=1"></script>
 <script src="js/modules/idle-logout.js?v=1"></script>
 <script src="js/admin/main.js?v=22"></script>
 

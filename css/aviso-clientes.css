@@ -1,0 +1,203 @@
+/* ==========================================================
+   AVISO A LOS CLIENTES
+   Cinta informativa dentro de la aplicación + tarjeta del
+   panel de administración. Diseño plano, sin sombras, paleta
+   institucional (#141d1c, #8fc72e, blanco y turquesa #00B4D8).
+
+   Es un aviso, no un bloqueo: la aplicación sigue usándose con
+   la cinta puesta. El muro a pantalla completa es el modo
+   mantenimiento, que vive en maintenance.css.
+   ========================================================== */
+
+/* ── Cinta en la aplicación ──
+   Se inserta como primer hijo de <main class="content">, que es una
+   columna flex: se coloca sola encima de la vista sin tocar el resto
+   del maquetado. */
+.avc {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--c-primary, #141d1c);
+  border-left: 4px solid #00B4D8;
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.avc-icono {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  color: #00B4D8;
+}
+.avc-icono svg { width: 100%; height: 100%; display: block; }
+
+.avc-texto { flex: 1; min-width: 0; }
+
+.avc-titulo {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.avc-mensaje {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #d7dedd;
+  /* Los saltos de línea que escriba el administrador se respetan */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.avc-titulo + .avc-mensaje { margin-top: 2px; }
+
+/* Botón a soporte: verde de marca, el único elemento accionable
+   destacado de la cinta. */
+.avc-cta {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--c-accent, #8fc72e);
+  color: var(--c-primary, #141d1c);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.avc-cta:hover { background: var(--c-accent-hover, #7ab325); }
+.avc-cta svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+.avc-cerrar {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #8b9a98;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s ease, color .15s ease;
+}
+.avc-cerrar:hover { background: #24322f; color: #ffffff; }
+
+/* En móvil la cinta se apila: el texto arriba, las acciones abajo y a
+   lo ancho, que es donde el pulgar llega sin estirarse. */
+@media (max-width: 640px) {
+  .avc {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 13px 14px;
+  }
+  .avc-icono { width: 22px; height: 22px; }
+  .avc-texto { flex: 1 1 calc(100% - 80px); }
+  .avc-cerrar { order: 2; margin-left: auto; }
+  .avc-cta {
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: center;
+    padding: 11px 16px;
+    font-size: 14px;
+  }
+}
+
+
+/* ==========================================================
+   TARJETA DEL PANEL DE ADMINISTRACIÓN
+   ========================================================== */
+
+.avc-admin { display: flex; flex-direction: column; gap: 16px; }
+
+/* Estado actual, en una línea que se lee de un vistazo */
+.avc-admin-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--c-border, #DCDCDC);
+  border-radius: 10px;
+  background: var(--c-bg, #F3F3F3);
+}
+.avc-admin-state.is-on {
+  border-color: #00B4D8;
+  background: #edf7d9;
+}
+.avc-admin-state strong { display: block; font-size: 14px; font-weight: 700; }
+.avc-admin-state p {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--c-muted, #5A6B6A);
+}
+
+.avc-admin-dot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c-muted, #5A6B6A);
+}
+.avc-admin-dot.is-on { background: #00B4D8; }
+
+/* Plantillas: un clic deja el aviso escrito y listo para encender */
+.avc-plantillas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.avc-plantilla {
+  padding: 7px 13px;
+  border: 1px solid var(--c-border, #DCDCDC);
+  border-radius: 999px;
+  background: var(--c-surface, #ffffff);
+  color: var(--c-text, #141d1c);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+.avc-plantilla:hover {
+  border-color: var(--c-accent, #8fc72e);
+  background: var(--c-teal-soft, #edf7d9);
+}
+
+/* Vista previa: exactamente lo que va a ver el cliente */
+.avc-previa-wrap { display: flex; flex-direction: column; gap: 8px; }
+.avc-previa-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  color: var(--c-muted, #5A6B6A);
+}
+.avc-previa {
+  padding: 14px;
+  border: 1px dashed var(--c-border, #DCDCDC);
+  border-radius: 10px;
+  background: var(--c-bg, #F3F3F3);
+}
+/* Dentro de la previa la cinta va tal cual, sin recortes */
+.avc-previa .avc { margin: 0; }
+
+.avc-admin-foot {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--c-muted, #5A6B6A);
+  line-height: 1.6;
+}
+
+.avc-contador {
+  font-size: 11.5px;
+  color: var(--c-muted, #5A6B6A);
+}

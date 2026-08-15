@@ -100,6 +100,7 @@
       if (A.initAudit)       A.initAudit();
       if (A.initSettings)    A.initSettings();
       if (A.initMaintenance) A.initMaintenance();
+      if (A.initAvisoClientes) A.initAvisoClientes();
       initNav();
       initMobileToggle();
       switchView('dashboard');
