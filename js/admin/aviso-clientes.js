@@ -154,16 +154,27 @@
     var elMsg = $('avcMensaje');
     var elCta = $('avcCta');
 
-    if (box) box.classList.toggle('is-on', activo);
-    if (dot) dot.classList.toggle('is-on', activo);
+    // Tres estados, no dos. El del medio —mensaje guardado pero apagado—
+    // es el que se presta a confusión: se elige una plantilla, se pulsa
+    // "Guardar mensaje" y parece que ya está hecho, cuando en realidad no
+    // lo ve nadie. Aquí se dice con todas las letras.
+    var hayMensaje = !!(estado.mensaje || '').trim();
 
-    if (tit)   tit.textContent   = activo ? 'Aviso encendido' : 'Sin aviso';
-    if (label) label.textContent = activo ? 'Aviso encendido' : 'Sin aviso';
+    if (box) box.classList.toggle('is-on', activo);
+    if (box) box.classList.toggle('is-listo', !activo && hayMensaje);
+    if (dot) dot.classList.toggle('is-on', activo);
+    if (dot) dot.classList.toggle('is-listo', !activo && hayMensaje);
+
+    var rotulo = activo ? 'Aviso encendido' : (hayMensaje ? 'Apagado — nadie lo ve' : 'Sin aviso');
+    if (tit)   tit.textContent   = rotulo;
+    if (label) label.textContent = rotulo;
     if (desc) {
       desc.textContent = activo
         ? ('Todos los clientes lo están viendo' +
            (estado.activado_en ? '. Desde ' + fechaLegible(estado.activado_en) : '.'))
-        : 'Los clientes no ven ninguna cinta en la aplicación.';
+        : (hayMensaje
+            ? 'Tienes un mensaje guardado, pero el aviso está apagado y no lo ve ningún cliente. Pulsa «Encender aviso».'
+            : 'Los clientes no ven ningún aviso en la aplicación.');
     }
     if (btn) {
       btn.textContent = activo ? 'Apagar aviso' : 'Encender aviso';
@@ -321,10 +332,11 @@
     if (btn) btn.disabled = true;
     try {
       await guardar(estado.enabled, f.titulo, f.mensaje, f.cta);
-      aviso('success', 'Mensaje guardado',
+      aviso(estado.enabled ? 'success' : 'info',
+            estado.enabled ? 'Mensaje guardado' : 'Guardado, pero el aviso sigue APAGADO',
             estado.enabled
               ? 'Los clientes ya ven el texto nuevo.'
-              : 'Se usará cuando enciendas el aviso.');
+              : 'Todavía no lo ve ningún cliente. Pulsa «Encender aviso» para publicarlo.');
     } catch (e) {
       var msg = (e && e.message) || 'Intenta de nuevo.';
       mostrarError(msg);
