@@ -114,6 +114,60 @@
 
 
 /* ==========================================================
+   INTERRUPTOR DE LA BARRA SUPERIOR (admin)
+
+   Va al lado del de mantenimiento y NO puede parecerse a él: aquel
+   es un interruptor pelado sin texto; este es una pastilla con punto
+   y la palabra "Aviso". Confundirlos significaría apagar la
+   plataforma entera creyendo que solo se manda un mensaje.
+   ========================================================== */
+
+.avc-switch {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 14px 0 11px;
+  border: 1px solid var(--c-border, #DCDCDC);
+  border-radius: 999px;
+  background: var(--c-surface, #ffffff);
+  color: var(--c-muted, #5A6B6A);
+  font-family: "Poppins", sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+.avc-switch:hover { border-color: #00B4D8; }
+.avc-switch:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Encendido: turquesa, el color que la cinta lleva en la aplicación.
+   El de mantenimiento usa verde/rojo — no se pisan. */
+.avc-switch.is-on {
+  background: #00B4D8;
+  border-color: #00B4D8;
+  color: #ffffff;
+}
+
+.avc-switch-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c-border, #DCDCDC);
+  transition: background .2s ease;
+}
+.avc-switch.is-on .avc-switch-dot { background: #ffffff; }
+
+/* En pantallas estrechas se queda solo el punto: la barra ya va justa
+   y el título de la sección tiene prioridad. */
+@media (max-width: 720px) {
+  .avc-switch { padding: 0 10px; }
+  .avc-switch-txt { display: none; }
+}
+
+
+/* ==========================================================
    TARJETA DEL PANEL DE ADMINISTRACIÓN
    ========================================================== */
 

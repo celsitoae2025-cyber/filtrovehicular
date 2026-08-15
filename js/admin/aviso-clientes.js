@@ -151,6 +151,18 @@
     if (elMsg && document.activeElement !== elMsg) elMsg.value = estado.mensaje || '';
     if (elCta) elCta.checked = estado.cta !== false;
 
+    // Interruptor de la barra superior (visible en todas las secciones)
+    var bar = $('avcBarBtn');
+    if (bar) {
+      bar.classList.toggle('is-on', activo);
+      bar.setAttribute('aria-checked', activo ? 'true' : 'false');
+      bar.title = activo
+        ? 'Aviso encendido — pulsa para apagarlo'
+        : (estado.mensaje
+            ? 'Aviso apagado — pulsa para encenderlo'
+            : 'Aviso a los clientes — falta escribir el mensaje');
+    }
+
     pintarPrevia();
   }
 
@@ -216,9 +228,15 @@
     mostrarError('');
 
     if (encender && !f.mensaje) {
+      // Sin mensaje no se publica nada: se lleva al administrador a
+      // escribirlo. Encender una cinta vacía en la aplicación de todos
+      // los clientes sería peor que no encender nada.
       mostrarError('Escribe el mensaje antes de encender el aviso.');
+      if (A.irAConfiguracion) A.irAConfiguracion();
       var elMsg = $('avcMensaje');
-      if (elMsg) elMsg.focus();
+      if (elMsg) { elMsg.scrollIntoView({ block: 'center' }); elMsg.focus(); }
+      aviso('info', 'Falta el mensaje',
+            'Elige una plantilla o escribe el aviso, y vuelve a encenderlo.');
       return;
     }
 
@@ -235,8 +253,11 @@
       if (!ok) return;
     }
 
+    // Se bloquean los dos mandos: son el mismo interruptor en dos sitios
     var btn = $('avcToggleBtn');
+    var bar = $('avcBarBtn');
     if (btn) btn.disabled = true;
+    if (bar) bar.disabled = true;
     try {
       await guardar(encender, f.titulo, f.mensaje, f.cta);
       if (A.logAudit) {
@@ -257,6 +278,7 @@
       aviso('error', 'No se pudo cambiar el aviso', msg);
     } finally {
       if (btn) btn.disabled = false;
+      if (bar) bar.disabled = false;
     }
   }
 
@@ -327,6 +349,9 @@
     if (btn) btn.addEventListener('click', alternar);
     var save = $('avcSaveBtn');
     if (save) save.addEventListener('click', guardarTexto);
+    // Mismo interruptor desde la barra superior
+    var bar = $('avcBarBtn');
+    if (bar) bar.addEventListener('click', alternar);
 
     cargar();
   };

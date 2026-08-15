@@ -53,7 +53,12 @@
     if (viewKey === 'audit'       && A.renderAudit)       A.renderAudit();
     if (viewKey === 'settings'    && A.renderSettings)    A.renderSettings();
     if (viewKey === 'settings'    && A.renderMaintenance) A.renderMaintenance();
+    if (viewKey === 'settings'    && A.renderAvisoClientes) A.renderAvisoClientes();
   }
+
+  // El interruptor de aviso de la barra necesita poder traer aquí al
+  // administrador cuando falta escribir el mensaje.
+  A.irAConfiguracion = function () { switchView('settings'); };
 
   function initNav() {
     document.querySelectorAll('[data-admin-view]').forEach(function (btn) {
