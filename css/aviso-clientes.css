@@ -13,6 +13,9 @@
    Se inserta como primer hijo de <main class="content">, que es una
    columna flex: se coloca sola encima de la vista sin tocar el resto
    del maquetado. */
+/* SIN FRANJAS. Nada de barras de color en un borde: el aviso se
+   distingue por su fondo oscuro y su icono, que ya es suficiente.
+   Una franja de acento no aporta nada y ensucia el diseño plano. */
 .avc {
   display: flex;
   align-items: center;
@@ -20,7 +23,6 @@
   padding: 14px 16px;
   border-radius: 12px;
   background: var(--c-primary, #141d1c);
-  border-left: 4px solid #00B4D8;
   color: #ffffff;
   font-family: "Poppins", sans-serif;
   font-size: 14px;

@@ -46,33 +46,60 @@
      hace falta cuando algo se acaba de caer. */
   var PLANTILLAS = [
     {
-      etiqueta: 'Incidencia en el servicio',
-      titulo: '¿Tuviste algún problema con una consulta?',
-      mensaje: 'Estamos al tanto de una incidencia que afectó a algunas consultas. ' +
-               'Si la tuya no devolvió resultado o los créditos no se te acreditaron, ' +
-               'escríbenos a soporte y lo resolvemos. Ten a la mano la placa o el DNI ' +
-               'que consultaste y la hora aproximada.'
+      etiqueta: 'Inconveniente con la plataforma',
+      titulo: '¿Tuviste algún inconveniente con la plataforma?',
+      mensaje: 'Si algo no te funcionó como esperabas, escríbenos a soporte y lo ' +
+               'resolvemos contigo. Cuéntanos qué intentabas hacer y a qué hora: con ' +
+               'eso lo ubicamos rápido.'
     },
     {
-      etiqueta: 'Servicio restablecido',
-      titulo: 'Servicio restablecido',
-      mensaje: 'Ya está todo funcionando con normalidad. Si tu consulta sigue fallando ' +
-               'o notas créditos descontados sin resultado, escríbenos a soporte y lo ' +
-               'revisamos contigo.'
+      etiqueta: 'Consultas fallando',
+      titulo: '¿Tu consulta no devolvió resultado?',
+      mensaje: 'Estamos al tanto de una incidencia que afectó a algunas consultas. Si ' +
+               'la tuya no devolvió resultado, escríbenos a soporte con la placa o el ' +
+               'DNI que consultaste y la hora aproximada, y lo revisamos enseguida.'
+    },
+    {
+      etiqueta: 'Créditos no acreditados',
+      titulo: '¿Pagaste y no ves tus créditos?',
+      mensaje: 'Si hiciste una recarga y el saldo todavía no aparece en tu cuenta, no ' +
+               'vuelvas a pagar. Escríbenos a soporte con la captura de tu comprobante ' +
+               'y te acreditamos los créditos el mismo día.'
+    },
+    {
+      etiqueta: 'Créditos descontados sin resultado',
+      titulo: '¿Te descontaron créditos sin recibir resultado?',
+      mensaje: 'No debería pasar y te los devolvemos. Escríbenos a soporte indicando qué ' +
+               'consultaste y a qué hora, y te reponemos los créditos en tu cuenta.'
     },
     {
       etiqueta: 'Lentitud puntual',
-      titulo: 'Las consultas pueden tardar más de lo normal',
+      titulo: 'Las consultas están tardando más de lo normal',
       mensaje: 'Las fuentes oficiales están respondiendo con lentitud, así que algunas ' +
-               'consultas pueden demorar más de lo habitual. No repitas la consulta: ' +
-               'si no obtienes resultado, no se te cobran créditos.'
+               'consultas pueden demorar más de lo habitual. No hace falta que repitas ' +
+               'la consulta: si no hay resultado, no se te cobran créditos. Si te quedas ' +
+               'sin respuesta, escríbenos a soporte.'
+    },
+    {
+      etiqueta: 'Un servicio caído',
+      titulo: 'Un servicio está temporalmente fuera de línea',
+      mensaje: 'La fuente oficial de uno de nuestros servicios no está respondiendo. ' +
+               'Estamos pendientes y avisamos aquí mismo en cuanto vuelva. El resto de ' +
+               'consultas funciona con normalidad; cualquier duda, escríbenos a soporte.'
     },
     {
       etiqueta: 'Mantenimiento programado',
       titulo: 'Mantenimiento programado esta noche',
       mensaje: 'Hoy de 11:00 p. m. a 1:00 a. m. haremos mejoras en la plataforma. ' +
-               'Durante ese rato el servicio puede interrumpirse por momentos. ' +
-               'Cualquier problema, escríbenos a soporte.'
+               'Durante ese rato el servicio puede interrumpirse por momentos. Si algo ' +
+               'te queda a medias, escríbenos a soporte y lo resolvemos.'
+    },
+    {
+      etiqueta: 'Todo restablecido',
+      titulo: 'Todo funcionando con normalidad',
+      mensaje: 'Ya está resuelto y la plataforma opera con normalidad. Si a ti todavía ' +
+               'te falla algo, o quedó alguna consulta sin resultado, escríbenos a ' +
+               'soporte y lo vemos caso por caso.'
     }
   ];
 
