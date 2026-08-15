@@ -67,6 +67,19 @@ html.avc-abierto body {
   overflow-wrap: anywhere;
 }
 
+/* Manos estrechándose, justo encima del botón: dice "aquí te atienden"
+   antes de que nadie lea el texto del botón. Centrado y a tamaño
+   discreto — es un apoyo, no el protagonista. */
+.avc-manos {
+  display: block;
+  width: 38px;
+  height: 38px;
+  margin: 24px auto 0;
+  color: #ffffff;
+}
+.avc-manos svg { width: 100%; height: 100%; display: block; }
+.avc-manos + .avc-cta { margin-top: 14px; }
+
 /* Botón a soporte: única acción, a todo el ancho y separada del texto */
 .avc-cta {
   display: flex;
