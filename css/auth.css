@@ -892,3 +892,20 @@ body.auth-locked .wa-fab {
   z-index: 501;
 }
 
+/* …Y TAMBIÉN EL MENÚ QUE ABRE ESE BOTÓN.
+   Subir solo el botón no sirve de nada: el modal de login (.auth-modal,
+   z-index 500) ocupa la pantalla entera, así que el menú —451 en
+   escritorio, 470 en móvil— se abría DEBAJO. Cada toque en una opción
+   aterrizaba en un campo del formulario de login. Desde fuera se veía
+   exactamente como un botón de WhatsApp que no hace nada, que es como
+   estaba la página principal: ahí nadie ha iniciado sesión todavía, así
+   que el modal siempre está puesto.
+
+   El orden entre ellos se conserva: botón, fondo y menú encima. */
+body.auth-locked .wa-backdrop {
+  z-index: 502;
+}
+body.auth-locked .wa-menu {
+  z-index: 503;
+}
+
