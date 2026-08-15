@@ -33,69 +33,78 @@ html.avc-abierto body {
 }
 
 /* ── El cuadro ──
-   Es EXACTAMENTE la cinta de siempre: fondo oscuro, icono pequeño a la
-   izquierda, texto al lado y el botón verde. Lo único que cambia es
-   dónde vive — antes arriba del contenido, ahora flotando en el centro.
-   Nada de tarjetas blancas ni iconos gigantes. */
+   Los mismos materiales de siempre —fondo oscuro, icono blanco pequeño,
+   botón verde— pero puestos en orden de lectura: primero qué pasa
+   (icono + título), después la explicación, y al final la única acción.
+
+   Tres detalles que lo mantienen ordenado:
+     · el mensaje arranca alineado con el título, no bajo el icono;
+     · la equis no compite: va arriba a la derecha y reserva su hueco;
+     · una sola acción, a todo el ancho, sin nada que la acompañe. */
 .avc {
   position: relative;
   width: 100%;
-  max-width: 560px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
-  border-radius: 12px;
+  max-width: 460px;
+  padding: 26px 28px 24px;
+  border-radius: 14px;
   background: var(--c-primary, #141d1c);
   color: #ffffff;
   font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
 }
 
-/* Icono discreto y en blanco: es un detalle al lado del texto, no el
-   protagonista. Sin colores que no pinten nada en un aviso. */
+/* Cabecera: icono y título en la misma línea óptica */
+.avc-cab {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-right: 30px;          /* hueco de la equis, para que nunca se toquen */
+}
+
 .avc-icono {
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;              /* alinea el icono con la primera línea del título */
   color: #ffffff;
 }
 .avc-icono svg { width: 100%; height: 100%; display: block; }
 
-.avc-texto { flex: 1; min-width: 0; }
-
 .avc-titulo {
   margin: 0;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
+  line-height: 1.35;
   color: #ffffff;
 }
 
+/* El sangrado (22 del icono + 12 del hueco) deja el mensaje colgando
+   justo debajo del título, no debajo del icono. */
 .avc-mensaje {
-  margin: 0;
-  font-size: 14px;
+  margin: 12px 0 0;
+  padding-left: 34px;
+  font-size: 14.5px;
   font-weight: 400;
-  color: #d7dedd;
+  line-height: 1.6;
+  color: #a9b6b4;
   /* Los saltos de línea que escriba el administrador se respetan */
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.avc-titulo + .avc-mensaje { margin-top: 2px; }
 
-/* Botón a soporte: verde de marca, el único elemento accionable
-   destacado del cuadro. */
+/* Botón a soporte: única acción, a todo el ancho y separada del texto */
 .avc-cta {
-  flex-shrink: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 16px;
-  border-radius: 999px;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  margin-top: 22px;
+  padding: 13px 20px;
+  border-radius: 10px;
   background: var(--c-accent, #8fc72e);
   color: var(--c-primary, #141d1c);
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: 14.5px;
   font-weight: 700;
   text-decoration: none;
   border: 0;
@@ -103,10 +112,12 @@ html.avc-abierto body {
   transition: background .15s ease;
 }
 .avc-cta:hover { background: var(--c-accent-hover, #7ab325); }
-.avc-cta svg { width: 17px; height: 17px; flex-shrink: 0; }
+.avc-cta svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 .avc-cerrar {
-  flex-shrink: 0;
+  position: absolute;
+  top: 14px;
+  right: 14px;
   width: 30px;
   height: 30px;
   border: 0;
@@ -121,25 +132,13 @@ html.avc-abierto body {
 }
 .avc-cerrar:hover { background: #24322f; color: #ffffff; }
 
-/* En móvil el cuadro se apila: el texto arriba, las acciones abajo y a
-   lo ancho, que es donde el pulgar llega sin estirarse. */
+/* En móvil se quita el sangrado: el ancho es oro y el texto necesita
+   toda la caja. El orden de lectura no cambia. */
 @media (max-width: 640px) {
   .avc-fondo { padding: 18px; }
-  .avc {
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 14px 15px;
-  }
-  .avc-icono { width: 22px; height: 22px; }
-  .avc-texto { flex: 1 1 calc(100% - 80px); }
-  .avc-cerrar { order: 2; margin-left: auto; }
-  .avc-cta {
-    order: 3;
-    flex: 1 1 100%;
-    justify-content: center;
-    padding: 11px 16px;
-    font-size: 14px;
-  }
+  .avc { padding: 22px 20px 20px; }
+  .avc-titulo { font-size: 16px; }
+  .avc-mensaje { padding-left: 0; font-size: 14px; }
 }
 
 
