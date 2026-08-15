@@ -30,25 +30,49 @@
   var arrastre = 0;
   var tirando = false;  // ya se decidió que esto es un tirón, no un scroll
 
-  function contenedor() {
+  /* ── Qué scrollea bajo el dedo ──
+     No se puede dar por hecho que sea `.main`: según dónde toques puede
+     ser el formulario de acceso, un panel o una lista. Se busca el
+     primer antecesor que scrollee de verdad, y si no hay ninguno se cae
+     a `.main`, que es el scroller de la aplicación. */
+  function scrollerDe(nodo) {
+    var el = nodo;
+    while (el && el.nodeType === 1 && el !== document.body && el !== document.documentElement) {
+      var s = getComputedStyle(el);
+      if ((s.overflowY === 'auto' || s.overflowY === 'scroll') &&
+          el.scrollHeight > el.clientHeight + 2) {
+        return el;
+      }
+      el = el.parentElement;
+    }
     return document.querySelector('.main') ||
            document.scrollingElement ||
            document.documentElement;
   }
 
+  function scrollDe(el) {
+    return (el === document.documentElement || el === document.body)
+      ? (window.scrollY || document.documentElement.scrollTop || 0)
+      : el.scrollTop;
+  }
+
   /* ── Situaciones en las que NO se toca el gesto ──
-     Con un modal encima, el menú abierto o el login puesto, el dedo está
-     haciendo otra cosa. Recargar ahí sería una interrupción, no una ayuda. */
+     Solo cuando hay algo ENCIMA de la aplicación: un modal, el menú
+     lateral abierto. Ahí el dedo está haciendo otra cosa y recargar
+     sería una interrupción.
+
+     La pantalla de acceso NO entra en esta lista: es la aplicación
+     entera, no una capa encima, y recargar ahí es tan normal como en
+     cualquier otra página. Bloquearla dejaba el gesto muerto justo para
+     quien todavía no ha iniciado sesión. */
   function bloqueado() {
     var h = document.documentElement.classList;
     var b = document.body.classList;
-    return h.contains('avc-abierto') ||     // aviso a clientes
-           h.contains('mnt-locked') ||      // modo mantenimiento
-           b.contains('auth-locked') ||     // sin sesión
-           b.contains('auth-modal-open') ||
-           b.contains('sidebar-open') ||
+    return h.contains('avc-abierto') ||       // aviso a clientes
+           h.contains('mnt-locked') ||        // modo mantenimiento
+           b.contains('sidebar-open') ||      // menú lateral
            b.contains('admin-sidebar-open') ||
-           b.contains('wa-abierto');        // menú de WhatsApp
+           b.contains('wa-abierto');          // menú de WhatsApp
   }
 
   function crearIndicador() {
@@ -90,12 +114,9 @@
 
   function alEmpezar(e) {
     if (bloqueado() || e.touches.length !== 1) { y0 = null; return; }
-    cont = contenedor();
-    // Solo cuenta si ya estamos arriba del todo
-    var arriba = (cont === document.documentElement || cont === document.body)
-      ? (window.scrollY || document.documentElement.scrollTop) <= 0
-      : cont.scrollTop <= 0;
-    y0 = arriba ? e.touches[0].clientY : null;
+    cont = scrollerDe(e.target);
+    // Solo cuenta si eso que hay bajo el dedo ya está arriba del todo
+    y0 = scrollDe(cont) <= 0 ? e.touches[0].clientY : null;
     arrastre = 0;
     tirando = false;
   }
@@ -111,10 +132,11 @@
     }
 
     // Si mientras tanto el contenedor se movió, esto era un scroll
-    var st = (cont === document.documentElement || cont === document.body)
-      ? (window.scrollY || document.documentElement.scrollTop)
-      : cont.scrollTop;
-    if (st > 0) { y0 = null; if (tirando) { tirando = false; recoger(); } return; }
+    if (scrollDe(cont) > 0) {
+      y0 = null;
+      if (tirando) { tirando = false; recoger(); }
+      return;
+    }
 
     // Umbral pequeño para no confundir un scroll con un tirón
     if (!tirando && dy < 8) return;
