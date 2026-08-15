@@ -536,21 +536,93 @@
 
 .wa-menu-txt { flex: 1; }
 
-@media (max-width: 720px) {
+/* En escritorio el menú es un desplegable pegado al botón: no lleva fondo
+   ni botón de cerrar, que se sale con un clic fuera o con Escape. */
+.wa-backdrop,
+.wa-menu-cerrar,
+.wa-menu-asa { display: none; }
+
+@media (max-width: 768px) {
   .wa-fab {
     width: 59px;
     height: 59px;
-    bottom: 70px;
+    /* Apoyado en la misma línea que el CTA "Obtén tu reporte" (views.css),
+       para que los dos queden a la misma altura y no escalonados. */
+    bottom: 16px;
     right: 16px;
   }
   .wa-fab-icon { width: 30px; height: 30px; }
 
-  /* En móvil el menú se ancla al ancho de la pantalla: con 262px fijos
-     se salía por el borde en los teléfonos angostos. */
-  .wa-menu {
-    bottom: 137px;
-    right: 16px;
-    left: 16px;
-    width: auto;
+  /* ── En móvil el menú deja de ser un desplegable y pasa a ser un modal:
+     hoja inferior sobre el contenido desenfocado. En una pantalla de
+     teléfono un desplegable colgando del botón queda apretado y se toca
+     mal; a pantalla completa las seis opciones se leen y se pulsan bien. */
+  .wa-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 460;
+    background: rgba(20, 29, 28, .45);
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
   }
+  .wa-backdrop[hidden] { display: none; }
+
+  .wa-menu {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    z-index: 470;
+    gap: 4px;
+    padding: 4px 12px 12px;
+    border-radius: 18px;
+  }
+
+  /* Asa superior: la señal de "esto se cierra deslizando" que la gente ya
+     reconoce de las hojas inferiores del sistema. */
+  .wa-menu-asa {
+    display: block;
+    width: 38px;
+    height: 4px;
+    margin: 8px auto 4px;
+    border-radius: 2px;
+    background: var(--c-border);
+  }
+
+  .wa-menu-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 0 6px;
+  }
+  .wa-menu-titulo { flex: 1; padding: 0; font-size: 14px; }
+
+  .wa-menu-cerrar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  /* Objetivos de toque más grandes: en el teléfono se pulsa con el pulgar. */
+  .wa-menu-opcion {
+    padding: 13px 12px;
+    font-size: 14.5px;
+    border-radius: 10px;
+  }
+  .wa-menu-n { width: 25px; height: 25px; font-size: 12.5px; }
+
+  /* Con el modal abierto no se scrollea lo de detrás. */
+  body.wa-abierto { overflow: hidden; }
 }

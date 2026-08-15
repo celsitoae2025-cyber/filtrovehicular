@@ -778,35 +778,43 @@
 #ctaReporteBtn.cta-reporte-btn {
   position: fixed;
   left: calc(var(--sidebar-w) + 20px);
-  bottom: 34px;
+  bottom: 24px;
   right: auto;
   width: auto;
-  max-width: 240px;
+  max-width: 250px;
+  min-height: 64px;
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 11px 15px;
+  gap: 11px;
+  padding: 12px 16px;
   margin: 0;
-  border-radius: 10px;
-  border: 2px solid #028f8c;
+  border-radius: 14px;
+  border: none;
   cursor: pointer;
   text-align: left;
-  background: #03a7a4 !important;
-  border-color: #028f8c !important;
+  /* Turquesa institucional. Antes era un verde-azulado suelto (#03a7a4) que
+     no salía de la paleta y desentonaba con el resto. */
+  background: #00B4D8 !important;
   color: #ffffff !important;
   z-index: 45;
 }
+
+/* El icono en su propio disco translúcido: separa el símbolo del texto sin
+   necesidad de una línea divisoria ni de sombra. */
 .cta-reporte-ico {
   flex: none;
-  width: 20px;
-  height: 20px;
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .18);
 }
 .cta-reporte-text {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 .cta-reporte-text strong {
   font-size: var(--fs-md, 15px);
@@ -815,26 +823,35 @@
 .cta-reporte-text small {
   font-size: var(--fs-xs);
   font-weight: 400;
-  opacity: .85;
+  opacity: .9;
 }
 .cta-reporte-arrow {
   flex: none;
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
+  opacity: .9;
 }
+#ctaReporteBtn.cta-reporte-btn:hover { background: #0098b7 !important; }
 
 /* Desde aquí el sidebar es off-canvas (ver sidebar.css), así que el
    botón ya no necesita esquivarlo y se pega al borde izquierdo. */
 @media (max-width: 768px) {
-  #view-filter { padding-bottom: 70px; }
+  #view-filter { padding-bottom: 84px; }
   #ctaReporteBtn.cta-reporte-btn {
-    left: 12px;
-    bottom: 14px;
+    left: 16px;
+    /* Misma línea de base que el FAB de WhatsApp (ver components.css): los dos
+       apoyados en 16px, para que no queden a distinta altura. */
+    bottom: 16px;
     right: auto;
     width: auto;
-    max-width: 210px;
-    padding: 10px 13px;
+    /* Deja libre la esquina donde vive el FAB: 59px del botón + 16px de margen
+       derecho + 12px de aire. */
+    max-width: calc(100% - 103px);
+    min-height: 59px;
+    padding: 10px 14px;
+    gap: 10px;
   }
+  .cta-reporte-ico { width: 30px; height: 30px; padding: 6px; }
   .cta-reporte-text strong { font-size: var(--fs-sm, 14px); }
 }
 

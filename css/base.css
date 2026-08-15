@@ -257,8 +257,8 @@ body { background: #d4dade !important; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 18px 14px;
+  gap: 2px;
+  padding: 20px 14px 16px;
   background: #ffffff;
   border: 1px solid rgba(20,29,28,.1);
   border-radius: 12px;
@@ -272,8 +272,9 @@ body { background: #d4dade !important; }
 .pay-kard:focus-visible,
 .pay-kard:active,
 .pay-kard.is-selected {
-  border-color: #03a7a4 !important;
-  background: #03a7a4 !important;
+  /* Turquesa institucional. Antes era #03a7a4, fuera de paleta. */
+  border-color: #00B4D8 !important;
+  background: #00B4D8 !important;
   color: #ffffff !important;
   outline: none;
 }
@@ -288,34 +289,65 @@ body { background: #d4dade !important; }
 .pay-kard:hover .pk-credits-unit,
 .pay-kard:focus-visible .pk-credits-unit,
 .pay-kard:active .pk-credits-unit,
-.pay-kard.is-selected .pk-credits-unit { color: rgba(255,255,255,.85) !important; }
+.pay-kard.is-selected .pk-credits-unit,
+.pay-kard:hover .pk-cur,
+.pay-kard:focus-visible .pk-cur,
+.pay-kard:active .pk-cur,
+.pay-kard.is-selected .pk-cur,
+.pay-kard:hover .pk-unit-price,
+.pay-kard:focus-visible .pk-unit-price,
+.pay-kard:active .pk-unit-price,
+.pay-kard.is-selected .pk-unit-price { color: rgba(255,255,255,.85) !important; }
 .pay-kard:hover .pk-divider,
 .pay-kard:focus-visible .pk-divider,
 .pay-kard:active .pk-divider,
 .pay-kard.is-selected .pk-divider { background: rgba(255,255,255,.4) !important; }
+
+/* Jerarquía: primero cuánto recibes, después cuánto cuesta, y al final el
+   precio unitario en pequeño. Antes los tres pesaban igual y la tarjeta se
+   leía como una lista sin orden. */
 .pk-credits-num {
   font-size: var(--fs-xl);
+  font-weight: 700;
+  color: #141d1c;
+  line-height: 1;
+  letter-spacing: -.5px;
+  font-variant-numeric: tabular-nums;
+}
+.pk-credits-unit {
+  font-size: var(--fs-xs);
+  color: rgba(20,29,28,.55);
   font-weight: 400;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+.pk-divider {
+  width: 28px;
+  height: 1px;
+  background: rgba(20,29,28,.15);
+  margin: 10px 0 8px;
+}
+.pk-price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  font-size: var(--fs-md);
+  font-weight: 700;
   color: #141d1c;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
-.pk-credits-unit {
-  font-size: var(--fs-sm);
+/* La moneda no compite con la cifra: más chica y en peso normal. */
+.pk-cur {
+  font-size: var(--fs-xs);
+  font-weight: 400;
   color: rgba(20,29,28,.55);
-  font-weight: 400;
-  letter-spacing: .2px;
 }
-.pk-divider {
-  width: 24px;
-  height: 1px;
-  background: rgba(20,29,28,.15);
-  margin: 6px 0 2px;
-}
-.pk-price {
-  font-size: var(--fs-md);
+.pk-unit-price {
+  margin-top: 5px;
+  font-size: 11px;
   font-weight: 400;
-  color: #141d1c;
+  color: rgba(20,29,28,.45);
   font-variant-numeric: tabular-nums;
 }
 
@@ -323,17 +355,20 @@ body { background: #d4dade !important; }
 .terms-notice {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 16px 18px;
-  background: #03a7a4;
+  gap: 13px;
+  padding: 18px;
+  /* Turquesa institucional, igual que el resto de la interfaz. */
+  background: #00B4D8;
   border-radius: 12px;
   color: #ffffff;
 }
 .terms-notice-icon {
-  width: 24px; height: 24px;
+  width: 34px; height: 34px;
   flex-shrink: 0;
+  padding: 6px;
+  border-radius: 9px;
+  background: rgba(255,255,255,.18);
   color: #ffffff;
-  margin-top: 2px;
 }
 .terms-notice-body { flex: 1; min-width: 0; }
 .terms-notice-body strong {
@@ -384,9 +419,11 @@ body { background: #d4dade !important; }
     gap: 2px !important;
   }
   .pk-credits-num { font-size: var(--fs-lg) !important; }
-  .pk-credits-unit { font-size: var(--fs-xs) !important; }
-  .pk-divider { margin: 6px 0 2px !important; width: 18px !important; }
-  .pk-price { font-size: var(--fs-sm) !important; }
+  .pk-credits-unit { font-size: 10.5px !important; }
+  .pk-divider { margin: 8px 0 6px !important; width: 22px !important; }
+  .pk-price { font-size: var(--fs-md) !important; }
+  .pk-cur { font-size: 10.5px !important; }
+  .pk-unit-price { font-size: 10.5px !important; margin-top: 4px !important; }
   #plansSection-credits, #plansSection-custom {
     padding: 14px !important;
   }
@@ -398,56 +435,61 @@ body { background: #d4dade !important; }
 }
 
 /* ── HERO DE RECARGA PERSONALIZADA (LIMPIO, SIN OSCUROS) ─ */
+/* Caja sólida, no punteada: el borde discontinuo la hacía parecer un hueco
+   por rellenar en vez de una opción de compra más. */
 .pay-custom {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 0;
   width: 100%;
-  padding: 16px 18px;
+  padding: 18px;
   background: #ffffff;
-  border: 1px dashed rgba(20,29,28,.2);
+  border: 1px solid rgba(20,29,28,.1);
   border-radius: 12px;
   cursor: pointer;
   font-family: inherit;
   text-align: left;
   color: inherit;
-  transition: border-color .15s, background .15s;
+  transition: border-color .15s;
   position: relative;
 }
-.pay-custom:hover {
-  border-color: #8fc72e;
-  border-style: solid;
-  background: #fbfffa;
+.pay-custom:hover,
+.pay-custom:focus-visible {
+  border-color: #00B4D8;
+  outline: none;
 }
 .pay-custom-eyebrow {
-  font-size: var(--fs-xs);
-  color: rgba(20,29,28,.55);
-  letter-spacing: .3px;
-  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(20,29,28,.5);
+  letter-spacing: .5px;
+  text-transform: uppercase;
 }
 .pay-custom-title {
   font-size: var(--fs-md) !important;
-  font-weight: 400 !important;
+  font-weight: 700 !important;
   color: #141d1c !important;
-  margin: 0 !important;
+  margin: 5px 0 0 !important;
   line-height: 1.2;
 }
 .pay-custom-sub {
   font-size: var(--fs-sm);
   color: rgba(20,29,28,.6);
-  line-height: 1.4;
-  margin: 4px 0 12px;
+  line-height: 1.5;
+  margin: 4px 0 14px;
 }
 .pay-custom-cta {
-  align-self: flex-start;
-  padding: 10px 20px;
+  align-self: stretch;
+  padding: 11px 20px;
   background: #8fc72e;
   color: #ffffff;
   border-radius: 8px;
   font-size: var(--fs-sm);
-  font-weight: 400;
+  font-weight: 700;
+  text-align: center;
 }
+.pay-custom:hover .pay-custom-cta { background: #7ab325; }
 
 /* ── HERO DE RECARGA PERSONALIZADA ─────────────────────── */
 .custom-plan-hero {

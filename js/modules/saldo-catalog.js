@@ -75,11 +75,17 @@
   }
 
   function creditCardHTML(p) {
+    // El precio por crédito se calcula, no se escribe a mano: así la tarjeta
+    // nunca puede contradecir al precio real. Es además lo que deja ver de un
+    // vistazo que los paquetes grandes salen más baratos.
+    var unitario = (p.price / p.credits).toFixed(3);
+
     return '<button type="button" class="pay-kard" data-open-pay="' + p.id + '">' +
       '<span class="pk-credits-num">' + p.credits.toLocaleString('es-PE') + '</span>' +
       '<span class="pk-credits-unit">créditos</span>' +
       '<span class="pk-divider" aria-hidden="true"></span>' +
-      '<span class="pk-price">S/ ' + p.price + '</span>' +
+      '<span class="pk-price"><span class="pk-cur">S/</span>' + p.price + '</span>' +
+      '<span class="pk-unit-price">S/ ' + unitario + ' c/u</span>' +
     '</button>';
   }
 

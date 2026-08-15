@@ -28,8 +28,15 @@
     return 'https://wa.me/' + Consultia.WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
   }
 
+  // El asa y el botón de cerrar solo se ven en móvil (ver components.css),
+  // donde el menú se muestra como modal. En escritorio sobran: se cierra con
+  // un clic fuera o con Escape.
   function pintar(menu) {
-    var h = '<p class="wa-menu-titulo">¿En qué te ayudamos?</p>';
+    var h = '<span class="wa-menu-asa" aria-hidden="true"></span>' +
+            '<div class="wa-menu-cabecera">' +
+              '<p class="wa-menu-titulo">¿En qué te ayudamos?</p>' +
+              '<button type="button" class="wa-menu-cerrar" aria-label="Cerrar">&times;</button>' +
+            '</div>';
     OPCIONES.forEach(function (o) {
       h += '<a class="wa-menu-opcion" href="' + enlace(o.pide) + '"' +
            ' target="_blank" rel="noopener noreferrer">' +
@@ -42,6 +49,7 @@
   Consultia.initWhatsappSupport = function () {
     var fab = document.getElementById('waSupport');
     var menu = document.getElementById('waMenu');
+    var fondo = document.getElementById('waBackdrop');
     if (!fab || !menu) return;
 
     pintar(menu);
@@ -55,11 +63,15 @@
       // por si la pestaña lleva horas abierta.
       pintar(menu);
       menu.hidden = false;
+      if (fondo) fondo.hidden = false;
+      document.body.classList.add('wa-abierto');
       fab.setAttribute('aria-expanded', 'true');
     }
 
     function cerrar() {
       menu.hidden = true;
+      if (fondo) fondo.hidden = true;
+      document.body.classList.remove('wa-abierto');
       fab.setAttribute('aria-expanded', 'false');
     }
 
@@ -80,10 +92,13 @@
       if (e.key === 'Escape' && abierto()) cerrar();
     });
 
+    // En móvil, tocar el fondo desenfocado cierra el modal.
+    if (fondo) fondo.addEventListener('click', cerrar);
+
     // Al elegir una opción se abre WhatsApp en otra pestaña; el menú no
-    // tiene por qué quedarse abierto detrás.
+    // tiene por qué quedarse abierto detrás. La X cierra igual.
     menu.addEventListener('click', function (e) {
-      if (e.target.closest('.wa-menu-opcion')) cerrar();
+      if (e.target.closest('.wa-menu-opcion') || e.target.closest('.wa-menu-cerrar')) cerrar();
     });
   };
 })();
