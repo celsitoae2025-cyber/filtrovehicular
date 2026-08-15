@@ -33,55 +33,31 @@ html.avc-abierto body {
 }
 
 /* ── El cuadro ──
-   Los mismos materiales de siempre —fondo oscuro, icono blanco pequeño,
-   botón verde— pero puestos en orden de lectura: primero qué pasa
-   (icono + título), después la explicación, y al final la única acción.
-
-   Tres detalles que lo mantienen ordenado:
-     · el mensaje arranca alineado con el título, no bajo el icono;
-     · la equis no compite: va arriba a la derecha y reserva su hueco;
-     · una sola acción, a todo el ancho, sin nada que la acompañe. */
+   Sin iconos de ningún tipo y todo centrado: título, mensaje y la única
+   acción, uno debajo de otro sobre el mismo eje. Fondo oscuro, texto
+   blanco, botón verde. Nada más. */
 .avc {
   position: relative;
   width: 100%;
-  max-width: 460px;
-  padding: 26px 28px 24px;
+  max-width: 440px;
+  padding: 34px 30px 26px;
   border-radius: 14px;
   background: var(--c-primary, #141d1c);
   color: #ffffff;
   font-family: "Poppins", sans-serif;
+  text-align: center;
 }
-
-/* Cabecera: icono y título en la misma línea óptica */
-.avc-cab {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding-right: 30px;          /* hueco de la equis, para que nunca se toquen */
-}
-
-.avc-icono {
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  margin-top: 2px;              /* alinea el icono con la primera línea del título */
-  color: #ffffff;
-}
-.avc-icono svg { width: 100%; height: 100%; display: block; }
 
 .avc-titulo {
   margin: 0;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.4;
   color: #ffffff;
 }
 
-/* El sangrado (22 del icono + 12 del hueco) deja el mensaje colgando
-   justo debajo del título, no debajo del icono. */
 .avc-mensaje {
   margin: 12px 0 0;
-  padding-left: 34px;
   font-size: 14.5px;
   font-weight: 400;
   line-height: 1.6;
@@ -96,9 +72,8 @@ html.avc-abierto body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
   width: 100%;
-  margin-top: 22px;
+  margin-top: 26px;
   padding: 13px 20px;
   border-radius: 10px;
   background: var(--c-accent, #8fc72e);
@@ -112,12 +87,11 @@ html.avc-abierto body {
   transition: background .15s ease;
 }
 .avc-cta:hover { background: var(--c-accent-hover, #7ab325); }
-.avc-cta svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 .avc-cerrar {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   width: 30px;
   height: 30px;
   border: 0;
@@ -132,13 +106,11 @@ html.avc-abierto body {
 }
 .avc-cerrar:hover { background: #24322f; color: #ffffff; }
 
-/* En móvil se quita el sangrado: el ancho es oro y el texto necesita
-   toda la caja. El orden de lectura no cambia. */
 @media (max-width: 640px) {
   .avc-fondo { padding: 18px; }
-  .avc { padding: 22px 20px 20px; }
-  .avc-titulo { font-size: 16px; }
-  .avc-mensaje { padding-left: 0; font-size: 14px; }
+  .avc { padding: 30px 22px 22px; }
+  .avc-titulo { font-size: 17px; }
+  .avc-mensaje { font-size: 14px; }
 }
 
 
