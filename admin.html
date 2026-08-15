@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="css/plans-catalog.css">
 <link rel="stylesheet" href="css/admin.css?v=5">
 <link rel="stylesheet" href="css/maintenance.css?v=7">
-<link rel="stylesheet" href="css/aviso-clientes.css?v=4">
+<link rel="stylesheet" href="css/aviso-clientes.css?v=5">
 </head>
 <body>
 
@@ -1223,6 +1223,7 @@
               <div class="avc-previa-wrap">
                 <span class="avc-previa-label">Así lo verá el cliente</span>
                 <div class="avc-previa" id="avcPreview"></div>
+                <div class="field-hint">Le sale en el centro de la pantalla al entrar a su cuenta, con el resto desenfocado. Al cerrarlo, la plataforma vuelve a funcionar con normalidad.</div>
               </div>
 
               <div id="avcError" class="auth-error" hidden></div>
@@ -1233,11 +1234,12 @@
               </div>
 
               <p class="avc-admin-foot">
-                La cinta aparece arriba del contenido en la aplicación de todos los clientes.
-                <strong>No bloquea nada</strong>: pueden seguir consultando con normalidad — para
-                eso está el modo mantenimiento, que es el interruptor de arriba.
-                Cada cliente puede cerrarla, y le vuelve a salir en cuanto cambies el texto o la
-                vuelvas a encender.
+                El cuadro le sale a cada cliente <strong>al entrar a su cuenta</strong>, en el centro
+                de la pantalla y con el resto desenfocado. Lo lee, lo cierra y la plataforma vuelve
+                a funcionar con normalidad — no es el modo mantenimiento, que sí deja todo
+                inutilizable y es el interruptor de arriba.
+                A cada cliente se le muestra una sola vez; le vuelve a salir en cuanto cambies el
+                texto o lo vuelvas a encender.
               </p>
             </div>
           </div>
@@ -1424,7 +1426,7 @@
 <script src="js/admin/broadcasts.js?v=23"></script>
 <script src="js/admin/settings.js?v=22"></script>
 <script src="js/admin/maintenance.js?v=3"></script>
-<script src="js/admin/aviso-clientes.js?v=5"></script>
+<script src="js/admin/aviso-clientes.js?v=6"></script>
 <script src="js/modules/idle-logout.js?v=1"></script>
 <script src="js/admin/main.js?v=23"></script>
 
