@@ -154,8 +154,23 @@
     function subirAlResultado(vista) {
       var scroller = vista.closest('.main') || document.querySelector('.main');
       if (!scroller) return;
-      try { scroller.scrollTo({ top: 0, behavior: 'smooth' }); }
-      catch (e) { scroller.scrollTop = 0; }   // navegadores sin scrollTo con opciones
+
+      function arriba() {
+        try { scroller.scrollTo({ top: 0, behavior: 'smooth' }); }
+        catch (e) { scroller.scrollTop = 0; }  // navegadores sin scrollTo con opciones
+      }
+
+      arriba();
+      /* Y otra vez pasado un instante. La primera corre con el HTML
+         recien puesto pero antes de que las fotos ocupen su sitio: al
+         crecer el bloque, el navegador reajusta el desplazamiento y la
+         ficha se queda a medias. Repetirlo cuando ya esta todo medido
+         deja la pagina donde tiene que estar.
+         El guard es porque en esos 120ms el cliente pudo cambiar de
+         vista y esta ya no estar en pantalla. */
+      setTimeout(function () {
+        if (vista.isConnected && !vista.hidden) arriba();
+      }, 120);
     }
 
     function ponerBotonNuevaConsulta(vista) {
@@ -505,11 +520,13 @@
         }
       }
 
-      setTimeout(function () {
-        // Guard: el usuario pudo cambiar de vista en estos 80ms y `body`
-        // puede haber salido del DOM.
-        if (body && body.isConnected) body.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 80);
+      /* Aqui habia un `body.scrollIntoView()` a los 80ms que llevaba al
+         CUERPO del resultado, o sea por debajo de la cabecera del panel.
+         Tenia sentido cuando el selector y el formulario seguian arriba y
+         habia que bajar hasta la ficha. Ahora esos dos se esconden y el
+         resultado queda en lo alto, asi que ese salto dejaba la pagina a
+         media ficha — y encima pisaba la subida de `subirAlResultado`,
+         que corre antes. De la subida se encarga ahora esa funcion. */
     }
 
     // ── Búsqueda por nombre (/nm) ──────────────────────────────────────
