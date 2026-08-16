@@ -12,8 +12,17 @@
    corre en modo `standalone`, donde Chrome desactiva el gesto nativo.
 
    Así que se implementa sobre el contenedor real: se detecta el arrastre
-   hacia abajo estando arriba del todo, se enseña el indicador siguiendo
-   el dedo y, si se pasa del umbral, se recarga.
+   hacia abajo estando arriba del todo y, si se pasa del umbral, se
+   recarga.
+
+   NO PINTA NADA. Hubo un indicador —un círculo verde con una flecha que
+   seguía al dedo— y se retiró entero: el gesto actualiza y punto. Si
+   alguien lo echa de menos, está en el historial de git; no se vuelve a
+   añadir sin pedirlo.
+
+   Va de la mano de `overscroll-behavior-y: contain` en html y body
+   (base.css), que apaga el círculo que el propio navegador saca al
+   deslizar. Si se quita aquello, vuelven a salir dos cosas a la vez.
 
    Solo actúa con el dedo (touch). Con ratón no se toca nada.
 ============================================================ */
@@ -25,7 +34,6 @@
   var RESIST   = 0.5;   // el arrastre se siente con resistencia, como en el sistema
 
   var cont = null;      // contenedor que scrollea
-  var ind = null;       // indicador
   var y0 = null;        // dónde empezó el dedo
   var arrastre = 0;
   var tirando = false;  // ya se decidió que esto es un tirón, no un scroll
@@ -75,42 +83,14 @@
            b.contains('wa-abierto');          // menú de WhatsApp
   }
 
-  function crearIndicador() {
-    if (ind) return ind;
-    ind = document.createElement('div');
-    ind.className = 'ptr';
-    ind.setAttribute('aria-hidden', 'true');
-    ind.innerHTML =
-      '<span class="ptr-circulo">' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
-             'stroke-linecap="round" stroke-linejoin="round">' +
-          '<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>' +
-        '</svg>' +
-      '</span>';
-    document.body.appendChild(ind);
-    return ind;
-  }
+  /* SIN INDICADOR.
 
-  function pintar(px) {
-    var el = crearIndicador();
-    var p = Math.min(px / UMBRAL, 1);
-    el.style.transform = 'translate(-50%, ' + px + 'px)';
-    el.style.opacity = String(Math.min(p * 1.4, 1));
-    el.classList.toggle('ptr-listo', px >= UMBRAL);
-    // El icono gira acompañando al dedo: la señal de que algo va a pasar
-    var c = el.querySelector('.ptr-circulo');
-    if (c) c.style.transform = 'rotate(' + (p * 270) + 'deg)';
-  }
+     Aqui se dibujaba un circulo verde con una flecha que seguia al dedo
+     y giraba. Se retiro por completo: el gesto tiene que actualizar y
+     nada mas, sin nada que aparezca en pantalla. Por eso este modulo ya
+     no necesita `css/pull-refresh.css` y esa hoja no se carga.
 
-  function recoger() {
-    if (!ind) return;
-    ind.classList.add('ptr-volviendo');
-    ind.style.transform = 'translate(-50%, 0)';
-    ind.style.opacity = '0';
-    setTimeout(function () {
-      if (ind) ind.classList.remove('ptr-volviendo', 'ptr-listo');
-    }, 220);
-  }
+     Lo unico que se ve es la propia recarga de la pagina. */
 
   function alEmpezar(e) {
     if (bloqueado() || e.touches.length !== 1) { y0 = null; return; }
@@ -126,7 +106,7 @@
 
     var dy = e.touches[0].clientY - y0;
     if (dy <= 0) {                 // se fue hacia arriba: es un scroll normal
-      if (tirando) { tirando = false; recoger(); }
+      if (tirando) tirando = false;
       y0 = null;
       return;
     }
@@ -134,7 +114,7 @@
     // Si mientras tanto el contenedor se movió, esto era un scroll
     if (scrollDe(cont) > 0) {
       y0 = null;
-      if (tirando) { tirando = false; recoger(); }
+      if (tirando) tirando = false;
       return;
     }
 
@@ -143,7 +123,6 @@
     tirando = true;
 
     arrastre = Math.min(dy * RESIST, TOPE);
-    pintar(arrastre);
     // Se corta el scroll del contenedor mientras se tira
     if (e.cancelable) e.preventDefault();
   }
@@ -153,17 +132,7 @@
     tirando = false;
     y0 = null;
 
-    if (arrastre >= UMBRAL) {
-      if (ind) {
-        ind.classList.add('ptr-girando');
-        ind.style.transform = 'translate(-50%, ' + UMBRAL + 'px)';
-        ind.style.opacity = '1';
-      }
-      // Un respiro para que se vea el giro antes de que la página se vaya
-      setTimeout(function () { window.location.reload(); }, 180);
-    } else {
-      recoger();
-    }
+    if (arrastre >= UMBRAL) window.location.reload();
     arrastre = 0;
   }
 
@@ -175,7 +144,7 @@
     document.addEventListener('touchmove', alMover, { passive: false });
     document.addEventListener('touchend', alSoltar, { passive: true });
     document.addEventListener('touchcancel', function () {
-      if (tirando) { tirando = false; recoger(); }
+      tirando = false;
       y0 = null;
     }, { passive: true });
   }
