@@ -33,6 +33,11 @@
   --c-danger: #141d1c;
   --c-warning: #141d1c;
   --sidebar-w: 260px;
+  /* Valor de arranque, no la verdad. El alto real de la barra lo mide
+     footer.js y lo reescribe aquí en cuanto la página se pinta, porque
+     cambia con la pantalla: en móvil la barra lleva menos relleno, y
+     además crece con el tamaño de letra del sistema. Este 71px es solo
+     lo que vale durante los primeros milisegundos. */
   --topbar-h: 71px;
 
   --t-fast: .12s ease;
