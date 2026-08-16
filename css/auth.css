@@ -1166,8 +1166,7 @@ body.auth-locked .wa-menu {
      El margen de abajo lo sube sobre el centro exacto. Los márgenes
      automáticos reparten lo que sobra DESPUÉS de descontar los fijos,
      así que estos 90px se traducen en 45px de subida — la mitad, porque
-     la otra mitad se la queda el hueco de arriba. Centrado del todo, el
-     bloque quedaba bajo: el ojo lo lee mejor un punto por encima.
+     la otra mitad se la queda el hueco de arriba.
 
      El margen automático va en el RETRATO y no en la tarjeta: el retrato
      es ahora el primero del grupo, y dejándolo en la tarjeta el hueco se
@@ -1177,6 +1176,26 @@ body.auth-locked .wa-menu {
   /* Solo en el acceso. El registro es tan largo que ya arranca arriba, y
      forzarle el mismo margen lo hacía scrollear en pantallas normales. */
   #authModalLogin .auth-form-card { margin-bottom: 90px; }
+
+  /* El retrato sube SOLO ÉL. Se desplaza al pintarlo, sin salir del
+     flujo ni mover un píxel del formulario: el hueco que deja sigue
+     ocupado, así que los campos, el botón y el pie legal se quedan
+     exactamente donde estaban.
+
+     El desplazamiento se apaga solo en pantallas bajas. Ahí el bloque ya
+     está pegado a la marca porque no sobra espacio que repartir, y subir
+     el disco lo montaría encima del nombre. Por debajo de 780px de alto
+     vale 0 y de ahí sube medio píxel por cada uno que crece la ventana,
+     hasta los 60.
+
+     Y solo en el ACCESO. El registro lleva cuatro campos más y los
+     términos, así que su bloque ya arranca arriba aunque la ventana sea
+     alta: medido en 1920×950, subirlo 60px le metía el disco 18px por
+     encima del nombre de la marca. */
+  #authModalLogin .auth-avatar {
+    position: relative;
+    top: calc(-1 * clamp(0px, (100vh - 780px) / 2, 60px));
+  }
 
   /* El pie legal vuelve al flujo. En base.css va fijo al fondo del
      viewport y centrado, que con la pantalla partida lo dejaba sobre la
