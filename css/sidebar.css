@@ -168,19 +168,25 @@
   outline: none;
 }
 
-/* Dónde estás: fondo del verde de marca al 12% e icono en verde. Antes
-   era un bloque de blanco al 12% que competía con la propia marca y
-   obligaba a leer para saber dónde estabas; en verde se ve sin leer.
-   Sin barra lateral de acento: la guía del proyecto no admite franjas. */
+/* Dónde estás: un gris suave, no el verde de marca. Estuvo en verde al
+   12% y cantaba demasiado sobre el oscuro del sidebar — sobre todo con
+   el grupo de categorías abierto, donde el recuadro de color quedaba en
+   medio de la lista tirando de la vista.
+
+   Un blanco al 9% basta para señalarlo: se distingue del hover (4%) y
+   la negrita y el icono en blanco terminan de marcarlo. Sin barra
+   lateral de acento: la guía del proyecto no admite franjas. */
 .nav-item.active {
-  background: rgba(143, 199, 46, .12);
+  background: rgba(255, 255, 255, .09);
   color: #ffffff;
   font-weight: 700;
 }
 .nav-item .ico { width: 20px; height: 20px; flex-shrink: 0; color: rgba(255,255,255,.55); }
 .nav-item .ico.ico-bold { width: 24px; height: 24px; }
 .nav-item:hover .ico { color: #ffffff; }
-.nav-item.active .ico { color: var(--c-accent); }
+/* El icono de la activa, en blanco. Iba en el verde de marca y era la
+   otra mitad del recuadro verde que se retiró arriba. */
+.nav-item.active .ico { color: #ffffff; }
 .nav-item .label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nav-item .chev {
   width: 14px; height: 14px;
