@@ -1675,23 +1675,18 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
        manteniendo la proporcion. */
     --auth-bar-h: 46px;
   }
-  /* Banda verde superior: la mitad de alto que el pie */
+  /* Sin banda verde arriba. En este proyecto no se usan franjas de acento
+     en ningun panel, y aqui ademas robaba la primera pulgada de pantalla
+     al formulario. --auth-bar-h se queda: lo siguen usando el relleno del
+     contenedor y el boton de cerrar como medida de referencia. */
   #authModalLogin  .auth-modal-panel.auth-split::before,
   #authModalSignup .auth-modal-panel.auth-split::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: calc(var(--auth-bar-h) / 2) !important;
-    background: #8fc72e !important;
-    z-index: 4 !important;
+    content: none !important;
   }
-  /* Boton cerrar: por debajo de la banda verde para que no lo tape
-     (la banda va en z-index 4) y en oscuro, ahora que el fondo es blanco */
+  /* Boton cerrar, en oscuro sobre el fondo claro */
   #authModalLogin  .auth-modal-close,
   #authModalSignup .auth-modal-close {
-    top: calc(var(--auth-bar-h) / 2 + 12px) !important;
+    top: 14px !important;
     right: 16px !important;
     z-index: 5 !important;
     color: rgba(20,29,28,.5) !important;
@@ -1721,16 +1716,25 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
        Si no sobra espacio, los margenes auto valen 0: en pantallas
        cortas (o en el registro, mas largo) todo se compacta y el
        contenedor scrollea, en lugar de recortarse. */
-    margin: auto 0 !important;
+    /* Arriba del todo y a la izquierda, igual que en el ordenador. Antes
+       llevaba `margin: auto 0`, que lo dejaba flotando centrado en el
+       hueco sobrante; ahora solo el margen de abajo es automatico, asi
+       que el bloque se apoya en lo alto y el sobrante cae por debajo. */
+    margin: 0 0 auto !important;
     padding: 0 4px 18px !important;
+    /* El encabezado entero va CENTRADO: la barra de colores y cualquier
+       cosa que se sume aqui quedan en el medio de la pantalla.
+       La unica excepcion es el nombre, que se alinea a la izquierda por
+       su cuenta mas abajo. */
     align-items: center !important;
     text-align: center !important;
   }
 
   /* Barra cuatricolor de la plataforma, bajo la marca. Se reusa
      --accent-gradient para que siga cualquier cambio de la paleta.
-     Ancho acotado, no a sangre: el encabezado va centrado y una barra
-     de borde a borde partiria la pantalla en dos. */
+     Ancho acotado, no a sangre: una barra de borde a borde partiria la
+     pantalla en dos. Se alinea sola a la izquierda con el nombre — el
+     align-items del encabezado la arrastra. */
   .auth-form-mh::after {
     content: '' !important;
     display: block !important;
@@ -1766,7 +1770,7 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     min-height: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
-    background: #ffffff !important;  /* solo el login; la portada sigue oscura */
+    background: #f8f8f8 !important;  /* gris del fondo del acceso */
     position: relative !important;   /* ancla del pie legal */
   }
   .auth-modal-panel.auth-split .auth-form-wrap {
@@ -1778,11 +1782,12 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior: contain !important;
     scrollbar-width: none !important;
-    /* Los dos margenes se derivan de los elementos que deben despejar,
-       no de numeros fijos: arriba la banda verde, abajo el pie anclado.
-       Asi siguen cuadrando si cambia --auth-bar-h o el alto del equipo. */
-    padding: calc(var(--auth-bar-h) / 2 + 18px) 16px
-             calc(var(--auth-bar-h) + 20px) !important;
+    /* Relleno normal por los cuatro costados. Antes se derivaba de dos
+       cosas que ya no existen —la banda verde arriba y el pie legal
+       anclado abajo—, y sin ellas dejaba 41px de hueco muerto arriba y
+       66px abajo. El respiro de la barra de gestos lo pone ahora
+       .auth-form-side. */
+    padding: 18px 16px 20px !important;
     background: transparent !important;
   }
   .auth-form-wrap::-webkit-scrollbar { display: none !important; }
@@ -1802,26 +1807,21 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     flex: 0 0 auto !important;
   }
 
-  /* Pie legal anclado al fondo: enlaces en turquesa y filo verde arriba */
+  /* Pie legal FUERA en celular. Estaba anclado al fondo ocupando una
+     banda fija, y en pantallas cortas era justo lo que empujaba el
+     formulario fuera del alto util y obligaba a scrollear. Los enlaces
+     no se pierden: siguen en el pie de la aplicacion una vez dentro.
+
+     Se quita con display:none y no bajandole el alto: asi no reserva
+     nada, ni su borde ni el hueco del safe-area. */
   body.auth-modal-open .auth-modal-panel.auth-split .auth-legal-foot {
-    position: absolute !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    margin: 0 !important;
-    /* Mismo alto que la banda verde. Con box-sizing:border-box el
-       padding del safe-area no engorda el area util. */
-    height: calc(var(--auth-bar-h) + env(safe-area-inset-bottom)) !important;
-    padding: 0 20px env(safe-area-inset-bottom) !important;
-    background: #ffffff !important;
-    border-top: 1px solid #a4b1b9 !important;   /* mismo gris que la tarjeta */
-    font-size: var(--fs-xs) !important;
-    color: #141d1c !important;
+    display: none !important;
   }
-  body.auth-modal-open .auth-modal-panel.auth-split .auth-legal-foot a {
-    color: #141d1c !important;
-  }
-  body.auth-modal-open .auth-modal-panel.auth-split .auth-legal-foot .dot {
-    color: rgba(20,29,28,.4) !important;
+
+  /* El hueco de la barra del sistema lo llevaba el pie legal. Al quitarlo
+     hay que devolverlo aqui, o en un movil con barra de gestos la ultima
+     linea queda debajo de ella. Vale 0 en los que no la tienen. */
+  body.auth-modal-open .auth-modal-panel.auth-split .auth-form-side {
+    padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
   }
 }

@@ -93,7 +93,7 @@
     '    <button class="auth-modal-close" type="button" aria-label="Cerrar" data-auth-close>' + CLOSE_SVG + '</button>',
     '    <div class="auth-form-side">',
     '      <div class="auth-form-wrap">',
-    '      <div class="auth-form-mh"><span class="mh-brand">Plataforma Filtro Vehicular<span class="mh-plus">+</span></span></div>',
+    '      <div class="auth-form-mh"><span class="mh-brand">Plataforma Filtro<br>Vehicular<span class="mh-plus">+</span></span></div>',
     /* El retrato va FUERA de la tarjeta, entre el encabezado de marca y
        ella. En móvil la tarjeta es un cuadro blanco con filete y el
        disco tiene que quedar encima, bajo la barra de colores, no
@@ -102,7 +102,6 @@
     '      <div class="auth-avatar" aria-hidden="true">' + AVATAR_SVG + '</div>',
     '      <div class="auth-form-card">',
     '      <h2 class="auth-modal-title">Crea tu cuenta</h2>',
-    '      <p class="auth-modal-sub">Regístrate gratis y recibe <strong>5 créditos</strong> para probar el servicio.</p>',
     '      <form class="auth-form" id="signupForm" novalidate>',
     '        <div class="auth-field">',
     '          <label>Nombre de usuario</label>',
@@ -122,7 +121,6 @@
     '            <input class="auth-input has-icon" type="password" name="password" required autocomplete="new-password" minlength="8">',
     '            <button type="button" class="auth-pass-toggle" aria-label="Mostrar/ocultar contraseña" tabindex="-1">' + EYE_SVG + '</button>',
     '          </div>',
-    '          <span class="auth-hint">Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.</span>',
     '        </div>',
     '        <label class="auth-checkbox"><input type="checkbox" name="terms" required><span>Acepto los <a href="#" data-modal="terms">términos y condiciones</a></span></label>',
     '        <div class="auth-turnstile" id="tsSignup"></div>',
@@ -145,7 +143,7 @@
     '    <button class="auth-modal-close" type="button" aria-label="Cerrar" data-auth-close>' + CLOSE_SVG + '</button>',
     '    <div class="auth-form-side">',
     '      <div class="auth-form-wrap">',
-    '      <div class="auth-form-mh"><span class="mh-brand">Plataforma Filtro Vehicular<span class="mh-plus">+</span></span></div>',
+    '      <div class="auth-form-mh"><span class="mh-brand">Plataforma Filtro<br>Vehicular<span class="mh-plus">+</span></span></div>',
     /* El retrato va FUERA de la tarjeta, entre el encabezado de marca y
        ella. En móvil la tarjeta es un cuadro blanco con filete y el
        disco tiene que quedar encima, bajo la barra de colores, no

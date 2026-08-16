@@ -205,12 +205,35 @@ body.auth-modal-open { overflow: hidden; }
     margin: 0 !important;
   }
 
+  /* El nombre crece en proporción a la pantalla: de los 18px de un móvil
+     estrecho a los 22px de una tableta.
+
+     El corte en dos líneas lo hace un <br> del marcado, no un tope
+     de ancho. Es la diferencia entre centrado y descentrado: con el tope,
+     la caja medía los 10em enteros y el texto, pegado a su izquierda,
+     caía ~18px a la izquierda del centro de la pantalla. Con el <br> la
+     caja mide exactamente «Plataforma Filtro» y su centro es el centro.
+
+     El `!important` del tamaño no es adorno: base.css marca `.mh-brand`
+     con `font-size: var(--fs-lg) !important` y sin él gana ese, por mucha
+     especificidad que tenga esta regla. */
+  .auth-modal-panel.auth-split .mh-brand {
+    font-size: clamp(18px, 4.6vw, 22px) !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -.4px !important;
+    color: #141d1c !important;
+    max-width: none !important;
+    /* SOLO el nombre va a la izquierda: las dos líneas arrancan a la
+       misma altura entre sí, como en el ordenador. */
+    text-align: left !important;
+  }
+
   /* Y arriba se recorta el relleno del contenedor para ganar unos
-     píxeles más. No puede bajar de la mitad de --auth-bar-h: esa es la
-     banda verde del borde superior, y por debajo de ese valor el
-     contenido se le metería debajo. */
+     píxeles más. Ya no hay banda verde que despejar, así que el valor
+     es libre. */
   .auth-modal .auth-modal-panel.auth-split .auth-form-wrap {
-    padding-top: calc(var(--auth-bar-h) / 2 + 9px) !important;
+    padding-top: 14px !important;
   }
 }
 
@@ -309,6 +332,15 @@ body.auth-modal-open { overflow: hidden; }
   text-align: left;
   letter-spacing: -.5px;
   line-height: 1.2;
+}
+
+/* El registro se quedó sin bajada, así que el titular es lo único que hay
+   entre el retrato y el primer campo. Va centrado —el retrato también lo
+   está, y alineado a la izquierda quedaba descolgado de él— y recupera
+   por abajo el aire que aportaba la bajada retirada. */
+#authModalSignup .auth-modal-title {
+  text-align: center;
+  margin-bottom: 22px;
 }
 
 .auth-modal-sub {
@@ -704,7 +736,7 @@ body.auth-modal-open { overflow: hidden; }
 /* ---- Celular: modal edge-to-edge, fondo blanco, proporcional ---- */
 @media (max-width: 480px) {
   .auth-modal { padding: 0; align-items: stretch; }
-  .auth-modal-overlay { background: #fff; }
+  .auth-modal-overlay { background: #f8f8f8; }
   .auth-modal-panel,
   .auth-modal-panel.auth-split {
     max-width: 100vw;
@@ -1109,9 +1141,14 @@ body.auth-locked .wa-menu {
   #authModalLogin  .auth-form-side,
   #authModalSignup .auth-form-side {
     order: 2;
-    flex: 0 0 clamp(400px, 33%, 520px);
-    padding: 34px clamp(30px, 2.6vw, 48px) 24px;
-    background-color: #ffffff;
+    /* Un punto más ancha que antes: con el nombre a tamaño de titular,
+       a 400px la marca y los campos se rozaban. */
+    flex: 0 0 clamp(430px, 34%, 560px);
+    padding: clamp(28px, 3.4vh, 44px) clamp(34px, 3vw, 60px) 24px;
+    /* El mismo gris que se respira dentro de la plataforma (base.css lo
+       fija en body, .main y .content). Así el acceso y lo que hay detrás
+       de la puerta son el mismo sitio, no dos productos distintos. */
+    background-color: #f8f8f8;
     background-image: var(--auth-tex-dots);
     background-size: 18px 18px;
     background-repeat: repeat;
@@ -1125,25 +1162,48 @@ body.auth-locked .wa-menu {
   #authModalLogin  .auth-form-mh,
   #authModalSignup .auth-form-mh {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    /* En columna, no en fila: la franja de colores va DEBAJO del nombre,
+       y en fila se le habría puesto al lado. Alineado a la izquierda,
+       que es donde vive la marca en esta pantalla. */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
     flex: 0 0 auto;
     /* Separación mínima garantizada. El margen automático de la tarjeta
        vale 0 cuando no sobra espacio —el registro es largo— y sin esto
        el retrato quedaba pegado a la marca. */
     padding-bottom: 14px;
   }
+  /* El nombre manda en esta columna: es lo único que la identifica, así
+     que va al tamaño de un titular pequeño y no al de una etiqueta. El
+     ancho lo parte en dos líneas a propósito —«Plataforma Filtro» /
+     «Vehicular+»— y así ancla la esquina en vez de irse de largo. */
   #authModalLogin  .mh-brand,
   #authModalSignup .mh-brand {
-    font-size: var(--fs-sm);
+    font-size: clamp(19px, 1.35vw, 24px);
     font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -.1px;
+    line-height: 1.2;
+    letter-spacing: -.4px;
     color: #141d1c;
-    max-width: 140px;
+    max-width: 240px;
   }
   #authModalLogin  .mh-plus,
   #authModalSignup .mh-plus { color: #8fc72e; }
+
+  /* La misma franja cuatricolor que en celular, ahora también aquí,
+     bajo el nombre. Ancho acotado y a la izquierda: cruzar la columna
+     de lado a lado la partiría en dos justo donde empieza a leerse.
+     Reusa --accent-gradient para que siga cualquier cambio de paleta. */
+  #authModalLogin  .auth-form-mh::after,
+  #authModalSignup .auth-form-mh::after {
+    content: '';
+    display: block;
+    width: 132px;
+    height: 5px;
+    margin-top: 10px;
+    border-radius: 2px;
+    background: var(--accent-gradient);
+  }
 
   /* El título del formulario se esconde: el saludo lo da el panel de
      arte. Sigue en el marcado porque en móvil ese panel no existe. */
@@ -1151,14 +1211,9 @@ body.auth-locked .wa-menu {
   #authModalSignup .auth-form-card > .auth-modal-title { display: none; }
 
   /* El acceso va sin bajada: entre el retrato y los campos no hacía
-     falta explicar que se entra a la cuenta. En el registro se queda,
-     porque ahí sí dice algo que no está en ningún otro sitio —los 5
-     créditos de bienvenida—, y va centrada bajo el retrato. */
+     falta explicar que se entra a la cuenta. La del registro se retiró
+     del marcado, así que aquí ya no hay nada que ocultar por su lado. */
   #authModalLogin .auth-form-card > .auth-modal-sub { display: none; }
-  #authModalSignup .auth-modal-sub {
-    text-align: center;
-    margin-bottom: 20px;
-  }
 
   /* Centrado vertical sin números fijos: este margen automático y el de
      .auth-legal-foot se reparten el sobrante a partes iguales.
@@ -1283,4 +1338,46 @@ body.auth-locked .wa-menu {
   /* El botón de cerrar NO necesita retoque de color: con el formulario a
      la derecha, la esquina superior derecha es blanca y el gris de
      siempre se lee bien. */
+}
+
+/* ============================================================
+   EFECTO — la franja de colores del encabezado
+
+   Es el único efecto del acceso y del registro. Hubo más —entradas
+   escalonadas, el botón que subía al pasar por encima, subrayados que
+   crecían— y se quitaron todos a propósito: un formulario que se usa
+   a diario no debe moverse cada vez que se abre.
+
+   El disparador es `:not([hidden])`. Los modales se abren quitando ese
+   atributo, y el salto de `display:none` a visible reinicia la
+   animación solo: se ve cada vez que se abre, sin una clase extra ni
+   una línea de JavaScript.
+============================================================ */
+
+/* Se abre desde su centro hacia los dos lados hasta cuadrar con su
+   ancho final. `transform-origin` va al centro por defecto, así que
+   crece a izquierda y derecha a la vez. Se anima con scaleX y no con
+   el ancho: escalar no rehace la maqueta en cada fotograma, animar
+   `width` sí. */
+@keyframes authFranja {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+#authModalLogin:not([hidden])  .auth-form-mh::after,
+#authModalSignup:not([hidden]) .auth-form-mh::after {
+  /* La curva arranca rápido y frena largo: el movimiento se acaba antes
+     que la animación y el último tramo solo asienta. Es lo que quita la
+     sensación de golpe. */
+  animation: authFranja .6s cubic-bezier(.16, 1, .3, 1) both;
+  animation-delay: .12s;
+}
+
+/* Quien pide menos movimiento no ve ninguno. */
+@media (prefers-reduced-motion: reduce) {
+  #authModalLogin:not([hidden])  .auth-form-mh::after,
+  #authModalSignup:not([hidden]) .auth-form-mh::after {
+    animation: none !important;
+    transform: none !important;
+  }
 }
