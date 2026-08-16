@@ -2398,9 +2398,13 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 :root {
   /* Layout datos + fotos */
   --cr-padding-top: 20px;
-  --cr-padding-right: 80px;
+  /* 80px a cada lado dejaban la ficha en una columna estrecha en medio
+     de una tarjeta ancha: mucho aire muerto y los valores lejos de sus
+     etiquetas. A 24px la informacion llega casi al borde y se lee de
+     una pasada. */
+  --cr-padding-right: 24px;
   --cr-padding-bottom: 20px;
-  --cr-padding-left: 80px;
+  --cr-padding-left: 24px;
   --cr-gap: 20px;
   --cr-data-max: 100%;
   --cr-media-width: 220px;
@@ -2430,10 +2434,10 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 
   /* Layout solo texto (SUNAT, financiero, etc.) */
   --cr-txt-padding-top: 24px;
-  --cr-txt-padding-right: 32px;
-  --cr-txt-padding-bottom: 40px;
-  --cr-txt-padding-left: 32px;
-  --cr-txt-max-width: 720px;
+  --cr-txt-padding-right: 20px;
+  --cr-txt-padding-bottom: 32px;
+  --cr-txt-padding-left: 20px;
+  --cr-txt-max-width: 980px;
   --cr-txt-offset-top: 0px;
   --cr-txt-offset-left: 0px;
 
@@ -2964,7 +2968,10 @@ body.cr-lightbox-open { overflow: hidden; }
 /* Desktop: columna única centrada con max-width para mejor lectura */
 @media (min-width: 721px) {
   .cr-txt-data {
-    max-width: 720px;
+    /* Antes 720px. El limite existe para que una linea larga no se lea
+       de punta a punta de un monitor, pero a 720 sobraba tarjeta por los
+       dos lados y la ficha parecia perdida en el medio. */
+    max-width: 980px;
   }
   .cr-txt-data .cr-tit {
     margin-bottom: 14px;
@@ -3981,13 +3988,14 @@ body.cr-lightbox-open { overflow: hidden; }
   .reniec-result-body { padding: 0; }
   /* El wrapper .panel.result-panel en móvil achica su padding para
      que el contenido tenga todo el ancho disponible */
-  .result-panel { padding: 12px !important; }
+  .result-panel { padding: 10px !important; }
   /* Reset de variables en móvil por si quedó algo guardado del editor */
   :root {
     --cr-padding-top: 14px;
-    --cr-padding-right: 14px;
+    /* Casi al borde: la tarjeta ya aporta su propio relleno. */
+    --cr-padding-right: 4px;
     --cr-padding-bottom: 12px;
-    --cr-padding-left: 14px;
+    --cr-padding-left: 4px;
     --cr-gap: 14px;
     --cr-data-max: 100%;
     --cr-media-width: 100%;
@@ -5484,8 +5492,21 @@ body.is-logged-in .anon-cats { display: none; }
    Al anadir una categoria nueva no hay que tocar nada aqui.
 ============================================================ */
 .view.tiene-resultado > .selector-card,
-.view.tiene-resultado > .panel:not(.result-panel) {
+.view.tiene-resultado > .panel:not(.result-panel),
+/* «Consulta Vehicular» anida los suyos dentro de .filter-search-box en
+   vez de colgarlos de la vista, asi que hay que nombrarlos aparte. Su
+   modulo es filter.js, que no sale de la fabrica de categorias pero
+   pone la misma clase. */
+.view.tiene-resultado > .filter-search-box > .selector-card,
+.view.tiene-resultado > .filter-search-box > .panel:not(.result-panel) {
   display: none !important;
+}
+
+/* En «Consulta Vehicular» no hay cabecera de resultado donde colgar la
+   salida, asi que el boton va suelto al principio del cuerpo. */
+.cr-nueva.cr-nueva-suelta {
+  display: block;
+  margin: 0 0 14px auto;
 }
 
 /* La salida. Sin este boton, escondidos los dos cuadros, el cliente se
