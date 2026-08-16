@@ -18,13 +18,32 @@
    aparecían flotando sobre el fondo oscuro.
    Mientras .content era el único hijo no se notaba —no había nada debajo
    sobre lo que derramarse—; el pie lo destapó. */
-.main > .content { flex-shrink: 0; }
+.main > .content {
+  flex-shrink: 0;
+  /* Y se le quita el min-height de base.css (100vh - topbar, "llena el
+     viewport"). Tenía sentido cuando .content era lo último de la página;
+     con el pie debajo obliga al contenido a ocupar la ventana entera
+     aunque le sobre, y dejaba un vacío enorme entre las tarjetas y el pie
+     en pantallas grandes. Ahora .content mide lo que mide su contenido y
+     el pie sube detrás. */
+  min-height: 0;
+}
 
 .site-footer {
   background: var(--c-primary);
   color: #ffffff;
-  margin-top: 48px;
+  margin-top: 24px;
   flex-shrink: 0;
+}
+
+/* Los botones flotantes se frenan encima del pie en vez de montarse sobre
+   él. --fv-lift lo calcula footer.js: es cuánto pie asoma dentro de la
+   ventana. Al restarlo, cada botón conserva su propia separación (el CTA
+   sus 24px, el de WhatsApp sus 80px) pero medida contra el borde del pie.
+   El valor por defecto es 0px, así que sin JS todo queda como estaba. */
+#ctaReporteBtn.cta-reporte-btn,
+.wa-fab {
+  transform: translateY(calc(-1 * var(--fv-lift, 0px)));
 }
 
 /* ---------- Zona superior: marca + columnas ---------- */
@@ -134,24 +153,17 @@
 .foot-links button:hover { color: #ffffff; }
 
 /* ---------- Barra inferior ---------- */
-/* Va CENTRADA y con hueco abajo, y las dos cosas son por el mismo motivo:
-   el CTA "Obtén tu reporte" (esquina inferior izquierda) y el botón de
-   WhatsApp (esquina inferior derecha) son position:fixed, así que al
-   llegar al final de la página se quedan flotando sobre el pie. Tapaban
-   el copyright y los enlaces legales, que además dejaban de poder pulsarse.
-
-   Centrarla la aleja de las dos esquinas —el de WhatsApp llega a 144px de
-   alto en escritorio, y despejarlo solo por abajo exigía un pegote de
-   150px de vacío oscuro—, y el relleno inferior remata la separación
-   vertical con el CTA. */
+/* Ya no necesita hueco extra abajo: los botones flotantes se frenan sobre
+   el pie (ver --fv-lift), así que no llegan a tapar el copyright ni los
+   enlaces legales. Antes llevaba 100px de relleno inferior justo por eso. */
 .foot-bar {
   border-top: 1px solid rgba(255, 255, 255, .10);
-  padding: 18px 32px 100px;
+  padding: 18px 32px 22px;
   max-width: 1180px;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 8px 20px;
   flex-wrap: wrap;
 }
@@ -200,10 +212,8 @@
     padding: 30px 18px 24px;
   }
   .foot-tagline { max-width: none; }
-  /* En móvil los dos flotantes se apoyan abajo del todo (16px) y miden
-     59px, así que basta con 88px de hueco. Se apila y se centra. */
   .foot-bar {
-    padding: 16px 18px 88px;
+    padding: 16px 18px 20px;
     flex-direction: column;
     align-items: center;
     text-align: center;

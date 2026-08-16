@@ -773,7 +773,12 @@
    Se reserva espacio al fondo de la vista para que el último panel
    no quede tapado detrás del botón.
 ========================================================== */
-#view-filter { padding-bottom: 88px; }
+/* Sin hueco reservado abajo. Estos 88px existían para que el CTA flotante
+   "Obtén tu reporte" no tapara las últimas tarjetas cuando la vista era lo
+   último de la página. Ahora hay pie debajo —que ya hace de colchón— y
+   además el CTA se frena sobre él (ver --fv-lift en footer.js), así que el
+   hueco solo dejaba un vacío enorme entre las tarjetas y el pie. */
+#view-filter { padding-bottom: 0; }
 
 #ctaReporteBtn.cta-reporte-btn {
   position: fixed;
@@ -838,7 +843,7 @@
 /* Desde aquí el sidebar es off-canvas (ver sidebar.css), así que el
    botón ya no necesita esquivarlo y se pega al borde izquierdo. */
 @media (max-width: 768px) {
-  #view-filter { padding-bottom: 84px; }
+  #view-filter { padding-bottom: 0; }
   #ctaReporteBtn.cta-reporte-btn {
     left: 16px;
     /* Misma línea de base que el FAB de WhatsApp (ver components.css): los dos
