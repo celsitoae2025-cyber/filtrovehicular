@@ -38,6 +38,10 @@
       sep.hidden = false;
       curr.hidden = false;
       curr.textContent = label;
+      // En pantallas estrechas el nombre se recorta con puntos suspensivos
+      // (ver .breadcrumb .crumb.current en topbar.css). El title deja
+      // leerlo entero al posar el cursor sin ocupar sitio en la barra.
+      curr.title = label;
     } else {
       sep.hidden = true;
       curr.hidden = true;

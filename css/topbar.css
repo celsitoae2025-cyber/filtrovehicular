@@ -57,13 +57,14 @@
 .breadcrumb {
   font-size: var(--fs-md);
   color: var(--c-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: flex;
   align-items: center;
   gap: 6px;
-  font-weight: 500;
+  /* Permite encoger dentro de .topbar-left en vez de empujar el resto de
+     la barra fuera de la pantalla. */
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 400;
 }
 .breadcrumb .sep {
   display: inline-flex;
@@ -72,7 +73,44 @@
 }
 .breadcrumb .sep svg { width: 14px; height: 14px; }
 .breadcrumb .crumb { display: inline-flex; align-items: center; cursor: default; }
-.breadcrumb .crumb.current { color: var(--c-primary); font-weight: 600; }
+
+/* "Inicio" y la flecha nunca ceden espacio: son cortos y son la referencia
+   para volver atrás. Si se encogieran, se cortaría lo que no debe. */
+.breadcrumb .crumb-link,
+.breadcrumb .sep { flex-shrink: 0; }
+
+/* El tramo actual es el ÚNICO que cede, y cede con puntos suspensivos.
+   OJO — el fallo que había aquí: `text-overflow: ellipsis` estaba puesto
+   sobre `.breadcrumb`, que es un contenedor flex, y ahí NO hace nada. Sus
+   hijos son elementos flex, no texto que desborde. Quedaba solo el
+   `overflow: hidden`, que corta a hachazos: por eso los nombres largos se
+   partían a media letra ("FAMILIA|R").
+   La elipsis tiene que ir sobre el elemento de texto, en `display: block`
+   y con `min-width: 0` para poder encoger por debajo de su contenido —
+   un elemento flex no baja de su tamaño mínimo sin esto. */
+.breadcrumb .crumb.current {
+  display: block;
+  /* Un suelo, no cero. `min-width: auto` (lo que traen los elementos flex)
+     impide encoger por debajo del contenido y provoca el corte; pero
+     dejarlo en 0 va al otro extremo y el nombre desaparecía entero en
+     móvil. Con 6ch siempre quedan unas letras y los puntos suspensivos. */
+  min-width: 6ch;
+  flex: 0 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--c-primary);
+  font-weight: 700;
+}
+
+/* En pantallas estrechas no caben los dos tramos: la barra lleva además el
+   botón de menú, la insignia de plan, el avatar y el desplegable. Se
+   sacrifica "Inicio" —volver al inicio ya está en el menú lateral— y el
+   nombre de la vista se queda con toda la píldora, que es el dato útil. */
+@media (max-width: 720px) {
+  .breadcrumb .crumb-link,
+  .breadcrumb .sep { display: none; }
+}
 .breadcrumb .crumb-link {
   background: transparent;
   border: none;

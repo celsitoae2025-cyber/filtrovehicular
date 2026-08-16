@@ -79,6 +79,8 @@ document.addEventListener('DOMContentLoaded', function () {
   if (Consultia.initAuthUI) Consultia.initAuthUI();
   if (Consultia.initNotifications) Consultia.initNotifications();
   if (Consultia.initWhatsappSupport) Consultia.initWhatsappSupport();
+  // Después del soporte de WhatsApp: el botón del pie reutiliza su flotante.
+  if (Consultia.initFooter) Consultia.initFooter();
   if (Consultia.initValidation) Consultia.initValidation();
   // scroll-reveal desactivado — eliminado
   if (Consultia.RightPanel) Consultia.RightPanel.init();

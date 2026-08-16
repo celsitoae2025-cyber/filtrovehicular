@@ -1,0 +1,189 @@
+/* ============================================================
+   PIE DE PÁGINA — app de consultas
+
+   Fondo oscuro institucional (#141d1c), el mismo del sidebar, para que
+   cierre la página sin competir con el contenido. Los acentos verde y
+   turquesa se usan con cuentagotas: en el "+" de la marca y en el estado
+   :hover. Sin sombras y sin franjas de color, como el resto del proyecto.
+
+   Vive dentro de .main (el contenedor con scroll real), después de
+   .content, así que baja con la página en vez de quedarse fijo.
+============================================================ */
+
+.site-footer {
+  background: var(--c-primary);
+  color: #ffffff;
+  margin-top: 48px;
+  flex-shrink: 0;
+}
+
+/* ---------- Zona superior: marca + columnas ---------- */
+.foot-main {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 1fr 1fr;
+  gap: 40px 32px;
+  padding: 44px 32px 36px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* ---------- Bloque de marca ---------- */
+.foot-brand-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.foot-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.foot-logo svg {
+  width: 19px;
+  height: 19px;
+  color: #ffffff;
+}
+.foot-name {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: -.2px;
+  line-height: 1.2;
+}
+/* El "+" en verde lima, igual que en el resto de la marca. */
+.foot-plus { color: var(--c-accent); }
+
+.foot-tagline {
+  margin: 0 0 20px;
+  font-size: var(--fs-sm);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, .62);
+  max-width: 34ch;
+}
+
+/* Botón de soporte — delineado, no macizo: en un pie oscuro un botón
+   relleno pesa demasiado y roba atención al contenido de arriba. */
+.foot-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 9px;
+  background: transparent;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  cursor: pointer;
+  transition: border-color var(--t-fast), color var(--t-fast);
+}
+.foot-wa svg { width: 17px; height: 17px; flex-shrink: 0; }
+.foot-wa:hover {
+  border-color: #03a7a4;
+  color: #03a7a4;
+}
+
+/* ---------- Columnas de enlaces ---------- */
+.foot-col { min-width: 0; }
+
+.foot-title {
+  margin: 0 0 14px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .45);
+}
+
+.foot-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.foot-links button {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: rgba(255, 255, 255, .72);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--t-fast);
+}
+.foot-links button:hover { color: #ffffff; }
+
+/* ---------- Barra inferior ---------- */
+.foot-bar {
+  border-top: 1px solid rgba(255, 255, 255, .10);
+  padding: 18px 32px;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.foot-copy {
+  margin: 0;
+  font-size: var(--fs-xs);
+  color: rgba(255, 255, 255, .5);
+}
+.foot-legal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-xs);
+}
+.foot-legal a {
+  color: rgba(255, 255, 255, .62);
+  text-decoration: none;
+  transition: color var(--t-fast);
+}
+.foot-legal a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+.foot-sep { color: rgba(255, 255, 255, .28); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .foot-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 24px;
+    padding: 36px 22px 30px;
+  }
+  /* La marca ocupa la fila entera: su texto necesita más ancho que un
+     listado de enlaces y partido en dos columnas se lee mal. */
+  .foot-brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 560px) {
+  .site-footer { margin-top: 32px; }
+  /* Se mantienen DOS columnas en el móvil. Apilarlo todo en una dejaba un
+     pie de 855 px — una pantalla entera solo para el pie. Las etiquetas
+     son cortas y las que no lo son parten en dos líneas sin estorbar. */
+  .foot-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 26px 18px;
+    padding: 30px 18px 24px;
+  }
+  .foot-tagline { max-width: none; }
+  .foot-bar {
+    padding: 16px 18px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

@@ -884,6 +884,7 @@ body.auth-locked .topbar,
 body.auth-locked .sidebar,
 body.auth-locked .views,
 body.auth-locked .app-shell,
+body.auth-locked .site-footer,
 body.auth-locked .install-prompt,
 body.auth-locked #appPreloader {
   display: none !important;
