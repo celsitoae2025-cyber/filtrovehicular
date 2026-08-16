@@ -659,8 +659,16 @@
 
        `env(safe-area-inset-bottom)` vale lo que mida esa barra en cada
        telefono y 0 en los que no la tienen, asi que la separacion real
-       es la misma en todos. */
-    bottom: calc(26px + env(safe-area-inset-bottom));
+       es la misma en todos.
+
+       Los 44px no son capricho. Un elemento `fixed` se coloca contra el
+       viewport de MAQUETA, no contra lo que se ve: en el movil ese
+       viewport se mete por debajo de la barra del navegador, asi que
+       una separacion corta deja el boton medio tapado aunque la cuenta
+       parezca correcta. El `env` cubre la barra de gestos del sistema y
+       estos 44px, la del navegador. Han estado en 16 y en 26 y en las
+       dos el circulo salia recortado; no bajarlos otra vez. */
+    bottom: calc(44px + env(safe-area-inset-bottom));
     right: 16px;
   }
   .wa-fab-icon { width: 30px; height: 30px; }
