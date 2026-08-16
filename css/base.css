@@ -58,6 +58,21 @@
 html, body { height: 100%; }
 html { -webkit-text-size-adjust: 100%; }
 
+/* Sin tirar-para-recargar. El del navegador —el circulo con la flecha
+   que sale al deslizar hacia abajo estando arriba del todo— se apaga
+   con `overscroll-behavior-y: contain`, que corta ese gesto sin tocar
+   el desplazamiento normal ni el rebote de dentro de los paneles.
+
+   Va en html Y en body porque el navegador mira el elemento que
+   desplaza la pagina, y cual de los dos es depende del caso; puesto en
+   uno solo, en algunos moviles seguia saliendo.
+
+   La aplicacion se refresca sola: no hay ningun gesto que reponer. */
+html,
+body {
+  overscroll-behavior-y: contain;
+}
+
 [hidden] { display: none !important; }
 
 body {
