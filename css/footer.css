@@ -41,13 +41,15 @@
    variable CSS en :root: eso obligaba a recalcular el estilo de todo el
    documento en cada fotograma y el scroll se veía a tirones.
 
-   will-change los deja en su propia capa del compositor desde el principio,
-   para que el primer movimiento no tenga que crearla sobre la marcha —
-   que es justo cuando se nota el tirón. */
-#ctaReporteBtn.cta-reporte-btn,
-.wa-fab {
-  will-change: transform;
-}
+   OJO — aquí hubo un `will-change: transform` sobre estos dos botones y se
+   quitó: hacía parpadear el CTA al pasarle el ratón por encima. Un elemento
+   position:fixed con will-change vive permanentemente en su propia capa del
+   compositor; al repintarla el :hover, la capa y el hilo principal
+   discrepaban sobre su posición y el botón saltaba entre el sitio elevado y
+   el original, sin parar.
+
+   Y no compensaba: medido, aporta 16.7ms de media frente a 17.4ms sin él.
+   Menos de un milisegundo a cambio de un botón que parpadea. */
 
 /* ---------- Zona superior: marca + columnas ---------- */
 .foot-main {
