@@ -47,6 +47,7 @@
     '          <span class="auth-hint">Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.</span>',
     '        </div>',
     '        <label class="auth-checkbox"><input type="checkbox" name="terms" required><span>Acepto los <a href="#" data-modal="terms">términos y condiciones</a></span></label>',
+    '        <div class="auth-turnstile" id="tsSignup"></div>',
     '        <div class="auth-error" id="signupError" hidden></div>',
     '        <button type="submit" class="auth-submit">Crear cuenta</button>',
     '      </form>',
@@ -110,6 +111,7 @@
     '          <label class="auth-checkbox"><input type="checkbox" name="remember"><span>Recordarme</span></label>',
     '          <button type="button" class="auth-forgot" data-auth-switch="forgot">¿Olvidaste tu contraseña?</button>',
     '        </div>',
+    '        <div class="auth-turnstile" id="tsLogin"></div>',
     '        <div class="auth-error" id="loginError" hidden></div>',
     '        <button type="submit" class="auth-submit">Iniciar sesión</button>',
     '      </form>',
@@ -164,6 +166,7 @@
     '          <label>Correo electrónico</label>',
     '          <div class="auth-input-wrap">' + MAIL_SVG + '<input class="auth-input has-icon" type="email" name="email" required autocomplete="email"></div>',
     '        </div>',
+    '        <div class="auth-turnstile" id="tsForgot"></div>',
     '        <div class="auth-error" id="forgotEmailError" hidden></div>',
     '        <button type="submit" class="auth-submit">Enviar código</button>',
     '      </form>',
@@ -193,6 +196,10 @@
     '            <button type="button" class="auth-pass-toggle" aria-label="Mostrar/ocultar" tabindex="-1">' + EYE_SVG + '</button>',
     '          </div>',
     '        </div>',
+    // Vacío hasta que el usuario toque "Reenviar código": ese reenvío
+    // también pasa por el CAPTCHA, pero no tiene sentido enseñar el
+    // widget de entrada en un paso donde casi nadie lo va a necesitar.
+    '        <div class="auth-turnstile" id="tsForgotResend"></div>',
     '        <div class="auth-error" id="forgotResetError" hidden></div>',
     '        <button type="submit" class="auth-submit" id="forgotResetSubmit" disabled>Cambiar contraseña</button>',
     '      </form>',
@@ -221,6 +228,10 @@
     '        <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="one-time-code" aria-label="Dígito 5">',
     '        <input class="otp-digit" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="one-time-code" aria-label="Dígito 6">',
     '      </div>',
+    // Vacío hasta que toquen "Reenviar código". Supabase exige CAPTCHA
+    // también en el reenvío, pero verificar el código NO lo necesita, así
+    // que el widget solo aparece si hace falta.
+    '      <div class="auth-turnstile" id="tsOtpResend"></div>',
     '      <div class="auth-error" id="otpError" hidden></div>',
     '      <button type="submit" class="auth-submit" id="otpSubmit" disabled>Verificar cuenta</button>',
     '    </form>',
@@ -333,16 +344,42 @@
     document.body.appendChild(container);
   }
 
+  // Qué widget de Turnstile le toca a cada modal. Se monta al abrir, no
+  // al cargar la página: el token vence a los 5 minutos y así llega
+  // fresco al momento de enviar el formulario.
+  var TURNSTILE_POR_MODAL = {
+    authModalSignup: 'tsSignup',
+    authModalLogin:  'tsLogin',
+    authModalForgot: 'tsForgot'
+  };
+
   function openModal(id) {
     closeAll();
     var el = document.getElementById(id);
     if (!el) return;
     el.hidden = false;
     document.body.classList.add('auth-modal-open');
+
+    var ts = TURNSTILE_POR_MODAL[id];
+    if (ts && Consultia.Turnstile) Consultia.Turnstile.render(ts);
+
     setTimeout(function () {
       var focus = el.querySelector('input, button');
       if (focus) focus.focus();
     }, 50);
+  }
+
+  // Pide el token del widget y, si no hay forma de conseguirlo, devuelve
+  // null. No bloqueamos el envío: si Supabase tiene el CAPTCHA encendido
+  // contestará con un error que traduceError() explica en cristiano, y si
+  // lo tiene apagado el registro sale igual.
+  function tokenCaptcha(containerId) {
+    if (!Consultia.Turnstile) return Promise.resolve(null);
+    return Consultia.Turnstile.getToken(containerId);
+  }
+
+  function resetCaptcha(containerId) {
+    if (Consultia.Turnstile) Consultia.Turnstile.reset(containerId);
   }
 
   function closeAll() {
@@ -486,13 +523,17 @@
       }
 
       setLoading(form, true);
+      var captchaToken = await tokenCaptcha('tsSignup');
       var res = await Consultia.Auth.signUp({
         email: email,
         password: password,
         full_name: fd.get('full_name').trim(),
-        phone: fd.get('phone').trim()
+        phone: fd.get('phone').trim(),
+        captchaToken: captchaToken
       });
       setLoading(form, false);
+      // El token es de un solo uso: se quema salga bien o mal.
+      resetCaptcha('tsSignup');
       if (res.error) {
         setError('signupError', traduceError(res.error.message));
         return;
@@ -605,7 +646,10 @@
       btn.disabled = true;
       btn.textContent = 'Enviando…';
       try {
-        var res = await Consultia.Auth.resendVerification(pendingSignupEmail);
+        // El widget se monta recién ahora, con el modal ya a la vista.
+        var captchaToken = await tokenCaptcha('tsOtpResend');
+        var res = await Consultia.Auth.resendVerification(pendingSignupEmail, captchaToken);
+        resetCaptcha('tsOtpResend');
         if (res.error) {
           setError('otpError', traduceOtpError(res.error.message));
           return;
@@ -627,6 +671,9 @@
     function traduceOtpError(msg) {
       if (!msg) return 'Error desconocido.';
       var lower = msg.toLowerCase();
+      // Va primero: el aviso de CAPTCHA de Supabase contiene "invalid" en
+      // algunas variantes y si no acabaría disfrazado de "código incorrecto".
+      if (lower.indexOf('captcha') !== -1) return 'No se pudo completar la verificación de seguridad. Recarga la página e inténtalo otra vez.';
       if (lower.indexOf('invalid') !== -1 || lower.indexOf('otp') !== -1) return 'El código es incorrecto o venció. Pide uno nuevo.';
       if (lower.indexOf('expired') !== -1) return 'El código venció. Pide uno nuevo.';
       if (lower.indexOf('rate limit') !== -1) return 'Demasiados intentos. Espera unos minutos.';
@@ -641,8 +688,10 @@
       setLoading(form, true);
       var fd = new FormData(form);
       var remember = !!fd.get('remember');
-      var res = await Consultia.Auth.signIn(fd.get('email').trim(), fd.get('password'), remember);
+      var captchaToken = await tokenCaptcha('tsLogin');
+      var res = await Consultia.Auth.signIn(fd.get('email').trim(), fd.get('password'), remember, captchaToken);
       setLoading(form, false);
+      resetCaptcha('tsLogin');
       if (res.error) {
         setError('loginError', traduceError(res.error.message));
         return;
@@ -727,8 +776,10 @@
           return;
         }
         setLoading(emailForm, true);
-        var res = await Consultia.Auth.requestPasswordReset(email);
+        var captchaToken = await tokenCaptcha('tsForgot');
+        var res = await Consultia.Auth.requestPasswordReset(email, captchaToken);
         setLoading(emailForm, false);
+        resetCaptcha('tsForgot');
         if (res && res.error) {
           console.error('[auth] requestPasswordReset error:', res.error);
           var msg = (res.error.message || '').toLowerCase();
@@ -842,7 +893,12 @@
         resendBtn.disabled = true;
         var original = resendBtn.textContent;
         resendBtn.textContent = 'Enviando…';
-        var rr = await Consultia.Auth.requestPasswordReset(forgotState.email);
+        // El widget de este paso se monta recién ahora, con el modal ya
+        // visible. Montarlo oculto no sirve: Turnstile necesita estar a
+        // la vista para resolver el reto.
+        var captchaToken = await tokenCaptcha('tsForgotResend');
+        var rr = await Consultia.Auth.requestPasswordReset(forgotState.email, captchaToken);
+        resetCaptcha('tsForgotResend');
         if (rr && rr.error) {
           console.error('[auth] resend error:', rr.error);
           setError('forgotResetError', 'No se pudo reenviar. Intenta en un minuto.');
@@ -923,6 +979,10 @@
     if (lower.indexOf('network') !== -1)             return 'Error de conexión. Revisa tu internet.';
     if (lower.indexOf('invalid email') !== -1)       return 'El correo no es válido.';
     if (lower.indexOf('signup is disabled') !== -1)  return 'Los registros están temporalmente desactivados.';
+    // Turnstile: el token no llegó, venció o ya se había usado. Suele pasar
+    // con un bloqueador de anuncios o si el formulario estuvo abierto más de
+    // 5 minutos. Recargar es lo único que lo arregla desde el lado del usuario.
+    if (lower.indexOf('captcha') !== -1)             return 'No se pudo completar la verificación de seguridad. Recarga la página e inténtalo otra vez; si usas un bloqueador de anuncios, desactívalo para este sitio.';
     return msg;
   }
 

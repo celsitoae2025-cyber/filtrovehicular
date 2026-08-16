@@ -72,7 +72,11 @@
 
     // ===== Registro =====
     signUp: async function (data) {
-      // data: { email, password, full_name, phone }
+      // data: { email, password, full_name, phone, captchaToken }
+      // captchaToken: token de Turnstile. Mientras el CAPTCHA esté APAGADO
+      // en el panel de Supabase, mandarlo es inofensivo — el servidor lo
+      // ignora. Por eso se despliega este código ANTES de encender el
+      // interruptor allá: al revés, cada registro fallaría.
       // Anti-abuso: capturamos device_fingerprint (FingerprintJS) y user_agent
       // para que el trigger DB pueda detectar cuentas duplicadas / descartables
       // y otorgar 0 créditos en vez de 5 cuando corresponda.
@@ -93,7 +97,8 @@
             device_fingerprint: deviceFp || '',
             user_agent: (navigator && navigator.userAgent) ? navigator.userAgent.slice(0, 500) : ''
           },
-          emailRedirectTo: redirectUrl()
+          emailRedirectTo: redirectUrl(),
+          captchaToken: data.captchaToken || undefined
         }
       });
       return res; // { data, error }
@@ -104,13 +109,17 @@
     // así el storage dinámico (supabase-config.js) decide si los tokens van
     // a localStorage (recordar 30d) o a sessionStorage (vive solo mientras
     // el navegador está abierto).
-    signIn: async function (email, password, remember) {
+    signIn: async function (email, password, remember, captchaToken) {
       if (remember) {
         setRememberFlags(true);
       } else {
         clearRememberFlags();
       }
-      var res = await sb.auth.signInWithPassword({ email: email, password: password });
+      var res = await sb.auth.signInWithPassword({
+        email: email,
+        password: password,
+        options: { captchaToken: captchaToken || undefined }
+      });
       if (res.error) {
         // Si falló el login, dejamos los flags como estaban antes (limpios)
         if (!remember) clearRememberFlags();
@@ -126,9 +135,10 @@
     },
 
     // ===== Recuperar contraseña — pide email =====
-    requestPasswordReset: async function (email) {
+    requestPasswordReset: async function (email, captchaToken) {
       return await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: redirectUrl() + '?recovery=1'
+        redirectTo: redirectUrl() + '?recovery=1',
+        captchaToken: captchaToken || undefined
       });
     },
 
@@ -160,11 +170,14 @@
     },
 
     // ===== Reenviar email de verificación =====
-    resendVerification: async function (email) {
+    resendVerification: async function (email, captchaToken) {
       return await sb.auth.resend({
         type: 'signup',
         email: email,
-        options: { emailRedirectTo: redirectUrl() }
+        options: {
+          emailRedirectTo: redirectUrl(),
+          captchaToken: captchaToken || undefined
+        }
       });
     },
 

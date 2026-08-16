@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/overlays.css">
 <link rel="stylesheet" href="css/plans-catalog.css">
-<link rel="stylesheet" href="css/admin.css?v=5">
+<link rel="stylesheet" href="css/admin.css?v=6">
 <link rel="stylesheet" href="css/maintenance.css?v=7">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=12">
 </head>
@@ -45,6 +45,12 @@
     <label class="admin-login-label" for="adminLoginPass">Contraseña</label>
     <input class="input" type="password" id="adminLoginPass" name="password"
            autocomplete="current-password" required>
+
+    <!-- Verificación anti-bot. Va aquí igual que en la app: cuando el
+         CAPTCHA está encendido en Supabase, aplica a TODOS los accesos,
+         y sin este widget el panel de administración quedaría cerrado
+         hasta para el dueño. -->
+    <div class="auth-turnstile" id="tsAdminLogin"></div>
 
     <div class="admin-login-error" id="adminLoginError" hidden></div>
 
@@ -1403,12 +1409,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/shared/supabase-config.js"></script>
 <script src="js/shared/utils.js?v=2"></script>
-<script src="js/shared/auth.js?v=22"></script>
+<script src="js/shared/turnstile.js?v=1"></script>
+<script src="js/shared/auth.js?v=23"></script>
 <script src="js/modules/toasts.js"></script>
 <script src="js/modules/confirm-dialog.js"></script>
 <script src="js/shared/plans-data.js"></script>
 <script src="js/admin/data.js?v=22"></script>
-<script src="js/admin/auth.js?v=25"></script>
+<script src="js/admin/auth.js?v=26"></script>
 <script src="js/admin/dashboard.js?v=23"></script>
 <script src="js/admin/revenue.js?v=23"></script>
 <script src="js/admin/users.js?v=23"></script>

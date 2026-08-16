@@ -12,7 +12,7 @@
 
 // IMPORTANTE: incrementar CACHE_VERSION en cada deploy para que los usuarios
 // reciban las actualizaciones de JS/CSS/HTML automáticamente.
-const CACHE_VERSION = "v1.7.0-20260815";
+const CACHE_VERSION = "v1.8.0-20260816";
 const SHELL_CACHE = "fv-shell-" + CACHE_VERSION;
 const ASSETS_CACHE = "fv-assets-" + CACHE_VERSION;
 const IMG_CACHE = "fv-img-" + CACHE_VERSION;
@@ -41,6 +41,9 @@ const NEVER_CACHE_HOSTS = [
   "filtro-bridge",
   "railway.app",
   "telegram.org",
+  // Turnstile: el script y el reto caducan solos y se firman por sesión.
+  // Servir una copia vieja del caché rompe la verificación del acceso.
+  "challenges.cloudflare.com",
 ];
 
 // ---------- INSTALL ----------

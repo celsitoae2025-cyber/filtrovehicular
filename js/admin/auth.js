@@ -52,6 +52,11 @@
     if (app) app.hidden = true;
     if (!pantalla) { redirectToLanding('sin pantalla de acceso'); return; }
     pantalla.hidden = false;
+    // El widget se monta recién ahora, con la pantalla ya visible:
+    // Turnstile no resuelve el reto dentro de un elemento oculto.
+    if (window.Consultia && window.Consultia.Turnstile) {
+      window.Consultia.Turnstile.render('tsAdminLogin');
+    }
     if (mensaje) mostrarError(mensaje);
     var email = document.getElementById('adminLoginEmail');
     if (email) email.focus();
@@ -66,6 +71,9 @@
       return 'Demasiados intentos seguidos. Espera un momento y vuelve a probar.';
     }
     if (/network|failed to fetch/i.test(m))   return 'Sin conexión con el servidor. Revisa tu internet.';
+    if (/captcha/i.test(m)) {
+      return 'No se pudo completar la verificación de seguridad. Recarga la página; si usas un bloqueador de anuncios, desactívalo para este sitio.';
+    }
     return m || 'No se pudo iniciar sesión.';
   }
 
@@ -105,7 +113,13 @@
         }
         if (btn) { btn.disabled = true; btn.textContent = 'Entrando…'; }
         try {
-          var res = await window.Consultia.Auth.signIn(email.trim(), pass, true);
+          var captchaToken = null;
+          if (window.Consultia.Turnstile) {
+            captchaToken = await window.Consultia.Turnstile.getToken('tsAdminLogin');
+          }
+          var res = await window.Consultia.Auth.signIn(email.trim(), pass, true, captchaToken);
+          // El token es de un solo uso: se quema aunque el acceso falle.
+          if (window.Consultia.Turnstile) window.Consultia.Turnstile.reset('tsAdminLogin');
           if (res && res.error) throw res.error;
           // Se recarga en vez de re-inicializar aquí mismo. onLoginSuccess
           // monta quince módulos con sus oyentes y sus suscripciones;

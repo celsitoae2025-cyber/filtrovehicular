@@ -393,6 +393,20 @@ body.auth-modal-open { overflow: hidden; }
   margin-top: -2px;
 }
 
+/* Verificación anti-bot (Turnstile de Cloudflare)
+   El widget es un iframe de Cloudflare: no se le puede dar estilo por
+   dentro, solo colocarlo. Mientras está vacío se saca del flujo con
+   :empty, porque el formulario es flex con gap y un div vacío igual
+   dejaría un hueco de 9px. */
+.auth-turnstile {
+  display: flex;
+  justify-content: center;
+}
+
+.auth-turnstile:empty {
+  display: none;
+}
+
 /* Mensaje de error */
 .auth-error {
   padding: 11px 14px;

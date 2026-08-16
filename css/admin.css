@@ -1439,6 +1439,18 @@ button.kpi.kpi-clickable:focus-visible {
   text-align: center;
 }
 
+/* Verificación anti-bot (Turnstile). La regla gemela vive en auth.css
+   para la app; se repite aquí porque admin.html no carga esa hoja. */
+.admin-login-card .auth-turnstile {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.admin-login-card .auth-turnstile:empty {
+  display: none;
+}
+
 .admin-login-mark {
   font-size: 17px;
   font-weight: 700;
