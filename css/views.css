@@ -316,6 +316,46 @@
   font-size: var(--fs-sm);
   min-height: auto;
 }
+
+/* Botón «Descargar PDF» del historial.
+
+   Ojo con el icono: en este proyecto NO hay una regla general que
+   dimensione los `svg` dentro de `.btn` —solo las hay acotadas a
+   `.form-row` y a `.nm-fields`—, así que un svg sin `width`/`height`
+   se estira hasta llenar el botón. Aquí se fija por las dos vías, en
+   el atributo del marcado y en el CSS, para que no vuelva a pasar.
+
+   Y no se estira a lo ancho: `.btn-sm` pasa a `width: 100%` por debajo
+   de 640px, que en la fila del encabezado lo convertía en un bloque. */
+#historialPdfBtn {
+  /* `.btn` no es flex, así que el icono y el texto irían como contenido
+     en línea y el `gap` no valdría nada. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  /* `.btn` trae `flex: 1 1 auto`, que dentro del encabezado —que sí es
+     flex— lo hacía crecer hasta comerse la fila. */
+  flex: 0 0 auto;
+  width: auto !important;
+  white-space: nowrap;
+  /* Oscuro institucional, no verde. base.css pinta TODOS los
+     `.btn-primary` de verde lima con `!important` (ahí está la regla,
+     buscar «Botón primario en verde lima»), así que la única forma de
+     salirse es por identificador y con `!important` tambien. */
+  background: #141d1c !important;
+  border-color: #141d1c !important;
+  color: #ffffff !important;
+}
+#historialPdfBtn:hover:not(:disabled) {
+  background: #0e1312 !important;
+  border-color: #0e1312 !important;
+}
+#historialPdfBtn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
 .credits-ring {
   position: relative;
   width: 110px;
