@@ -649,9 +649,18 @@
   .wa-fab {
     width: 59px;
     height: 59px;
-    /* Apoyado en la misma línea que el CTA "Obtén tu reporte" (views.css),
-       para que los dos queden a la misma altura y no escalonados. */
-    bottom: 16px;
+    /* Sube, y sube CONTANDO la barra del sistema.
+
+       Estaba en 16px secos. Ese valor venia de alinearlo con el CTA
+       «Obten tu reporte», que ya no flota —vive dentro de la caja de
+       busqueda—, asi que no queda nada con lo que alinearse. Y a 16px
+       el boton caia sobre la barra de gestos de los telefonos sin
+       marco: se veia cortado por abajo.
+
+       `env(safe-area-inset-bottom)` vale lo que mida esa barra en cada
+       telefono y 0 en los que no la tienen, asi que la separacion real
+       es la misma en todos. */
+    bottom: calc(26px + env(safe-area-inset-bottom));
     right: 16px;
   }
   .wa-fab-icon { width: 30px; height: 30px; }
