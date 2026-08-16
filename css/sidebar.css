@@ -515,3 +515,75 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
   width: 16px;
   height: 16px;
 }
+/* ============================================================
+   EFECTOS DEL SIDEBAR
+
+   Todo es opacidad, desplazamiento y color. Ni una sombra: el proyecto
+   es plano. Y nada toca el relleno ni los huecos, que estan fijados a
+   4px y no se mueven.
+
+   El grupo de categorias y los submenus pasan de `display: none` a
+   `display: flex`, asi que no hay transicion posible sobre el propio
+   contenedor —`display` no se puede animar—. Lo que se anima son los
+   HIJOS: ese salto de oculto a visible reinicia sus animaciones solo,
+   cada vez que se abre, sin una clase extra ni una linea de JS.
+============================================================ */
+
+@keyframes navEntra {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* La escalera. 26ms entre uno y otro: lo justo para que se lea como un
+   despliegue en orden y no como una lista que tarda en aparecer. Nueve
+   categorias salen en 0,21s de diferencia entre la primera y la ultima,
+   y el ultimo termina antes de medio segundo. */
+.nav-group.open > .nav-item,
+.submenu.open > a {
+  animation: navEntra .34s cubic-bezier(.16, 1, .3, 1) both;
+}
+.nav-group.open > .nav-item:nth-child(1),
+.submenu.open > a:nth-child(1)  { animation-delay: 0s; }
+.nav-group.open > .nav-item:nth-child(2),
+.submenu.open > a:nth-child(2)  { animation-delay: .026s; }
+.nav-group.open > .nav-item:nth-child(3),
+.submenu.open > a:nth-child(3)  { animation-delay: .052s; }
+.nav-group.open > .nav-item:nth-child(4),
+.submenu.open > a:nth-child(4)  { animation-delay: .078s; }
+.nav-group.open > .nav-item:nth-child(5),
+.submenu.open > a:nth-child(5)  { animation-delay: .104s; }
+.nav-group.open > .nav-item:nth-child(6),
+.submenu.open > a:nth-child(6)  { animation-delay: .13s; }
+.nav-group.open > .nav-item:nth-child(7),
+.submenu.open > a:nth-child(7)  { animation-delay: .156s; }
+.nav-group.open > .nav-item:nth-child(8),
+.submenu.open > a:nth-child(8)  { animation-delay: .182s; }
+/* A partir del noveno se deja de escalonar y entran todos juntos. Un
+   submenu largo con retraso creciente acabaria haciendo esperar al
+   ultimo mas de lo que nadie aguanta mirando un menu. */
+.nav-group.open > .nav-item:nth-child(n+9),
+.submenu.open > a:nth-child(n+9) { animation-delay: .208s; }
+
+/* El chevron giraba de golpe: el `transform: rotate(180deg)` no tenia
+   transicion. Se le suma aqui, con la misma curva. */
+.nav-item .chev {
+  transition: opacity .18s ease, transform .25s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* Los enlaces del submenu cambiaban de fondo y de color de golpe: eran
+   los unicos del sidebar sin transicion —`.nav-item` y `.sb-action` ya
+   la traian—. Se animan esas dos propiedades y ninguna mas: el relleno
+   esta fijado y no se toca. */
+.submenu a {
+  transition: background-color .16s ease, color .16s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-group.open > .nav-item,
+  .submenu.open > a {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .nav-item .chev { transition: none; }
+}
