@@ -96,6 +96,44 @@
     var selectedFile = null;        // File seleccionado (para tipo_dato="foto")
     var selectedFileBase64 = null;  // base64 del archivo sin el prefijo data:
 
+    /* ── Modo resultado ──
+       Con el resultado a la vista sobran el selector de consulta y el
+       formulario del DNI: ya se uso, y en el movil empujaban la ficha
+       media pantalla hacia abajo. Se esconden poniendo una clase en la
+       vista y se recuperan al volver al estado inicial.
+
+       Va por clase en la vista y no ocultando cada tarjeta a mano
+       porque TODAS las categorias comparten esta misma estructura
+       (.view > .selector-card > .panel > .panel.result-panel): una
+       regla en views.css las cubre a todas y no hay que acordarse de
+       ninguna al anadir una categoria nueva.
+
+       Y se inyecta un boton «Nueva consulta» en la cabecera del
+       resultado. Sin el, escondidos los dos cuadros, el cliente se
+       queda encerrado mirando la ficha sin forma de pedir otra. */
+    function vistaEl() {
+      var body = $(bodyId());
+      return body ? body.closest('.view') : null;
+    }
+
+    function marcarConResultado(hay) {
+      var vista = vistaEl();
+      if (!vista) return;
+      vista.classList.toggle('tiene-resultado', !!hay);
+      if (hay) ponerBotonNuevaConsulta(vista);
+    }
+
+    function ponerBotonNuevaConsulta(vista) {
+      var cab = vista.querySelector('.result-panel .result-header');
+      if (!cab || cab.querySelector('.cr-nueva')) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cr-nueva';
+      btn.textContent = 'Nueva consulta';
+      btn.addEventListener('click', function () { volverEstadoInicial(); });
+      cab.appendChild(btn);
+    }
+
     function bodyId()   { return prefix + '-result-body'; }
     function emptyId()  { return prefix + '-empty'; }
     function statusId() { return prefix + 'ResultStatus'; }
@@ -285,6 +323,7 @@
 
       var empty = $(emptyId());
       var body = $(bodyId());
+      marcarConResultado(false);
       if (empty) empty.hidden = false;
       if (body) { body.hidden = true; body.innerHTML = ''; }
       var status = $(statusId());
@@ -321,6 +360,7 @@
     function volverEstadoInicial() {
       var body = $(bodyId());
       var empty = $(emptyId());
+      marcarConResultado(false);
       if (body) { body.hidden = true; body.innerHTML = ''; }
       if (empty) empty.hidden = false;
       var status = $(statusId());
@@ -407,6 +447,7 @@
 
       var empty = $(emptyId());
       if (empty) empty.hidden = true;
+      marcarConResultado(true);
 
       var status = $(statusId());
       if (status) {

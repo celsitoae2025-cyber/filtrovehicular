@@ -118,7 +118,12 @@
   }
 
   var LABEL_MAP = {
-    "DNI": "Documento nacional de identidad",
+    // DNI se queda en DNI. Estuvo desplegado a "Documento nacional de
+    // identidad" y ocupaba una linea entera él solo, dejando el número
+    // colgando debajo. Todo el mundo aquí lo llama DNI.
+    "DNI": "DNI",
+    "DOCUMENTO NACIONAL DE IDENTIDAD": "DNI",
+    "DOCUMENTO": "DNI",
     "APELLIDOS": "Apellidos",
     "APELLIDO PATERNO": "Apellido Paterno",
     "APELLIDO MATERNO": "Apellido Materno",

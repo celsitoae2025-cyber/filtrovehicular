@@ -1083,9 +1083,9 @@
 .cr-dl-bar-tabla { padding: 4px 0 12px; }
 .cr-dl-bar .nm-download { margin: 0; }
 
-.nm-download { margin: 0 0 12px auto; display: flex; width: auto; max-width: max-content; justify-content: center; align-items: center; gap: 8px; border: none; background: #8fc72e; color: #ffffff; padding: 10px 20px; border-radius: 8px; font-family: inherit; font-size: var(--fs-sm); font-weight: normal; line-height: 1; cursor: pointer; transition: background var(--t-fast); }
+.nm-download { margin: 0 0 12px auto; display: flex; width: auto; max-width: max-content; justify-content: center; align-items: center; gap: 8px; border: none; background: #141d1c; color: #ffffff; padding: 10px 20px; border-radius: 8px; font-family: inherit; font-size: var(--fs-sm); font-weight: normal; line-height: 1; cursor: pointer; transition: background var(--t-fast); }
 .nm-download svg { width: 17px; height: 17px; flex-shrink: 0; }
-.nm-download:hover { background: #7ab325; }
+.nm-download:hover { background: #0e1312; }
 .nm-download:disabled { opacity: .65; cursor: not-allowed; }
 
 /* ============================================================
@@ -2655,15 +2655,21 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 /* ===== Layout DNI (4 fotos clasificadas: rostro + firma + 2 huellas) =====
    Activado por JS (applyDniLayout) cuando detecta el patron tipico:
    rostro grande a la izquierda, firma arriba der, huellas medio/abajo der. */
+/* DOS ARRIBA Y DOS ABAJO. Antes era el rostro alto a la izquierda y las
+   otras tres apiladas a su derecha: en el movil, con la columna
+   estrecha, la firma y las dos huellas salian minusculas y en fila
+   india, y la ficha se estiraba a lo largo. En cuadricula las cuatro
+   miden lo mismo y el bloque ocupa la mitad de alto.
+
+   Arriba rostro y firma, abajo las dos huellas. */
 .cr-media-grid.cr-media-4-dni,
 .cr-gallery.cr-gallery-4-dni {
   display: grid;
-  grid-template-columns: 1.6fr 1fr;
-  grid-template-rows: auto auto auto;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
   grid-template-areas:
     "face sign"
-    "face fp1"
-    "face fp2";
+    "fp1  fp2";
   gap: 12px;
   align-items: stretch;
 }
@@ -2686,10 +2692,13 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   background: transparent;
   border-radius: 0;
 }
-/* El rostro ocupa el alto completo de las 3 filas */
-.cr-media-grid.cr-media-4-dni .cr-photo-face,
-.cr-gallery.cr-gallery-4-dni .cr-photo-face {
-  min-height: 100%;
+/* Las cuatro celdas al mismo alto, para que la cuadricula quede pareja
+   aunque las imagenes vengan con proporciones distintas. El
+   `object-fit: contain` de arriba las encaja sin recortar nada. */
+.cr-media-grid.cr-media-4-dni > *,
+.cr-gallery.cr-gallery-4-dni > * {
+  min-height: 0;
+  aspect-ratio: 1 / 1;
 }
 /* ===== Tabla real (árbol genealógico / homónimos) ===== */
 .cr-tabla-wrap { padding: 16px; width: 100%; box-sizing: border-box; }
@@ -3861,11 +3870,21 @@ body.cr-lightbox-open { overflow: hidden; }
   .cr-media-grid.cr-media-4-dni,
   .cr-gallery.cr-gallery-4-dni { gap: 8px; }
   .cr-media-grid.cr-media-4-dni img,
-  .cr-gallery.cr-gallery-4-dni img { max-height: 360px; }
+  .cr-gallery.cr-gallery-4-dni img { max-height: none; }
+  /* Etiqueta y valor EN LA MISMA LÍNEA, también en el móvil.
+
+     Estaban a una columna (`1fr`), es decir el valor debajo de su
+     etiqueta: cada dato ocupaba dos renglones y una ficha de Reniec se
+     iba a tres pantallas de scroll. A dos columnas se lee de un vistazo
+     y ocupa la mitad.
+
+     La etiqueta se lleva el 38%, con un suelo de 96px para que no se
+     estruje en pantallas estrechas; el valor se queda el resto. */
   .cr-row {
-    grid-template-columns: 1fr !important;
-    gap: 2px !important;
-    padding: 9px 0;
+    grid-template-columns: minmax(96px, 38%) 1fr !important;
+    gap: 10px !important;
+    align-items: baseline;
+    padding: 8px 0;
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
   }
   .cr-row:last-child { border-bottom: none; }
@@ -3877,11 +3896,15 @@ body.cr-lightbox-open { overflow: hidden; }
   .cr-row .cr-k {
     font-size: var(--fs-xs);
     color: var(--c-muted);
-    font-weight: 500;
-    letter-spacing: .6px;
+    /* 400, no 500: en este proyecto solo se usan 400 y 700. */
+    font-weight: 400;
+    letter-spacing: .4px;
     text-transform: uppercase;
     white-space: normal;
-    margin-bottom: 2px;
+    overflow-wrap: break-word;
+    /* Sin margen inferior: era la separación de cuando el valor iba
+       debajo, y ahora va al lado. */
+    margin-bottom: 0;
   }
   .cr-row .cr-k::after { content: ""; }
   .cr-row .cr-v {
@@ -5392,3 +5415,50 @@ body.is-logged-in .anon-cats { display: none; }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ============================================================
+   MODO RESULTADO — solo la ficha en pantalla
+
+   Cuando hay resultado, el selector de consulta y el formulario del
+   dato ya cumplieron y sobran: en el movil empujaban la ficha media
+   pantalla hacia abajo y obligaban a deslizar para ver lo que se acaba
+   de pedir.
+
+   La clase la pone category-view.js en la propia vista, y esta regla
+   vale para TODAS las categorias de golpe porque todas comparten la
+   misma estructura:  .view > .selector-card
+                      .view > .panel            (el formulario)
+                      .view > .panel.result-panel
+   Al anadir una categoria nueva no hay que tocar nada aqui.
+============================================================ */
+.view.tiene-resultado > .selector-card,
+.view.tiene-resultado > .panel:not(.result-panel) {
+  display: none !important;
+}
+
+/* La salida. Sin este boton, escondidos los dos cuadros, el cliente se
+   queda mirando la ficha sin forma de pedir otra consulta. Va a la
+   derecha de la cabecera del resultado, discreto y en linea. */
+.cr-nueva {
+  margin-left: auto;
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--c-primary);
+  font-family: inherit;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.cr-nueva:hover {
+  background: #f1f3f3;
+  border-color: #a4b1b9;
+}
+/* Solo tiene sentido con el resultado puesto: sin el, los dos cuadros
+   estan a la vista y no hay a donde volver. */
+.view:not(.tiene-resultado) .cr-nueva { display: none; }
