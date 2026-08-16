@@ -34,6 +34,12 @@
     const sep = document.getElementById('breadcrumbSep');
     const curr = document.getElementById('currentCrumb');
     if (!sep || !curr) return;
+
+    // Marca si hay nombre de vista. En móvil el CSS oculta "Inicio" solo
+    // cuando esta clase está puesta: la pantalla de inicio tiene etiqueta
+    // vacía, y sin esto la píldora se quedaba pintada y sin nada dentro.
+    const bc = document.getElementById('breadcrumb');
+    if (bc) bc.classList.toggle('has-current', !!label);
     if (label) {
       sep.hidden = false;
       curr.hidden = false;

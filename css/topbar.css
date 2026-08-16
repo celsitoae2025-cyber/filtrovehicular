@@ -106,10 +106,16 @@
 /* En pantallas estrechas no caben los dos tramos: la barra lleva además el
    botón de menú, la insignia de plan, el avatar y el desplegable. Se
    sacrifica "Inicio" —volver al inicio ya está en el menú lateral— y el
-   nombre de la vista se queda con toda la píldora, que es el dato útil. */
+   nombre de la vista se queda con toda la píldora, que es el dato útil.
+
+   OJO con la clase .has-current: "Inicio" solo se oculta cuando HAY un
+   nombre de vista que enseñar en su lugar. La pantalla de inicio tiene la
+   etiqueta vacía a propósito (views.js, 'view-filter': ''), así que
+   ocultarlo siempre dejaba la píldora pintada y COMPLETAMENTE vacía.
+   La clase la pone updateBreadcrumb() en views.js. */
 @media (max-width: 720px) {
-  .breadcrumb .crumb-link,
-  .breadcrumb .sep { display: none; }
+  .breadcrumb.has-current .crumb-link,
+  .breadcrumb.has-current .sep { display: none; }
 }
 .breadcrumb .crumb-link {
   background: transparent;

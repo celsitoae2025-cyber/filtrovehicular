@@ -10,6 +10,16 @@
    .content, así que baja con la página en vez de quedarse fijo.
 ============================================================ */
 
+/* IMPRESCINDIBLE — no quitar.
+   .main es un contenedor flex en columna con scroll propio. Sus elementos
+   traen flex-shrink:1 de serie, así que .content se comprimía a la altura
+   de la ventana (780px) aunque su contenido midiera 1209px, y lo que
+   sobraba se pintaba ENCIMA del pie: en móvil las tarjetas de servicios
+   aparecían flotando sobre el fondo oscuro.
+   Mientras .content era el único hijo no se notaba —no había nada debajo
+   sobre lo que derramarse—; el pie lo destapó. */
+.main > .content { flex-shrink: 0; }
+
 .site-footer {
   background: var(--c-primary);
   color: #ffffff;
@@ -124,15 +134,25 @@
 .foot-links button:hover { color: #ffffff; }
 
 /* ---------- Barra inferior ---------- */
+/* Va CENTRADA y con hueco abajo, y las dos cosas son por el mismo motivo:
+   el CTA "Obtén tu reporte" (esquina inferior izquierda) y el botón de
+   WhatsApp (esquina inferior derecha) son position:fixed, así que al
+   llegar al final de la página se quedan flotando sobre el pie. Tapaban
+   el copyright y los enlaces legales, que además dejaban de poder pulsarse.
+
+   Centrarla la aleja de las dos esquinas —el de WhatsApp llega a 144px de
+   alto en escritorio, y despejarlo solo por abajo exigía un pegote de
+   150px de vacío oscuro—, y el relleno inferior remata la separación
+   vertical con el CTA. */
 .foot-bar {
   border-top: 1px solid rgba(255, 255, 255, .10);
-  padding: 18px 32px;
+  padding: 18px 32px 100px;
   max-width: 1180px;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 14px;
+  justify-content: center;
+  gap: 8px 20px;
   flex-wrap: wrap;
 }
 .foot-copy {
@@ -180,10 +200,13 @@
     padding: 30px 18px 24px;
   }
   .foot-tagline { max-width: none; }
+  /* En móvil los dos flotantes se apoyan abajo del todo (16px) y miden
+     59px, así que basta con 88px de hueco. Se apila y se centra. */
   .foot-bar {
-    padding: 16px 18px;
+    padding: 16px 18px 88px;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
     gap: 10px;
   }
 }
