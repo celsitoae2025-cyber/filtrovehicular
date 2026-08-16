@@ -464,12 +464,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #141d1c;
+  /* Verde WhatsApp (#25D366). Es un color semantico, no de la paleta de
+     marca: identifica el canal de un vistazo, igual que el amarillo de la
+     cartera. El logo va en blanco, como en la propia app de WhatsApp. */
+  background: #25D366;
   color: #ffffff;
   border: none;
   border-radius: 50%;
   text-decoration: none;
+  transition: background var(--t-fast);
 }
+.wa-fab:hover { background: #1da851; }
 .wa-fab-icon {
   width: 33px;
   height: 33px;
