@@ -13,11 +13,18 @@
 
 /*
   # --- Forzar HTTPS ---
-  # Empieza en 1 día a propósito. Si en unos días no ha roto nada, subirlo a
-  # 31536000 (un año) y valorar includeSubDomains. Un max-age largo puesto de
-  # golpe es difícil de deshacer: el navegador lo recuerda aunque quites la
-  # cabecera, así que se sube por escalones.
-  Strict-Transport-Security: max-age=86400
+  # Un año. Se subió por escalones a propósito: arrancó en 86400 (un día) el
+  # 2026-08-15 y pasó a 31536000 el 2026-08-16, tras comprobar que un día
+  # entero de tráfico real no rompió nada.
+  #
+  # Por qué el escalón y no un año de golpe: el navegador RECUERDA el max-age
+  # aunque quites la cabecera. Si algo hubiera fallado con un año puesto de
+  # entrada, los clientes seguirían forzando HTTPS durante un año sin forma
+  # de avisarles.
+  #
+  # NO se pone includeSubDomains: obligaría a HTTPS a cualquier subdominio,
+  # presente o futuro, y aquí no se controlan todos.
+  Strict-Transport-Security: max-age=31536000
 
   # --- Clickjacking ---
   # Impide que la app se cargue dentro de un iframe ajeno para engañar al
