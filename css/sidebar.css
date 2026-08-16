@@ -593,3 +593,32 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
   }
   .nav-item .chev { transition: none; }
 }
+
+/* ============================================================
+   Accesos directos a tramites oficiales
+
+   Van sueltos bajo el grupo de categorias. Heredan todo de .nav-item
+   —alto, color, hover, la animacion de entrada— y solo anaden la marca
+   de que llevan fuera de la aplicacion.
+============================================================ */
+
+/* Flecha diagonal al final de la linea. Va en mascara y no como <svg>
+   en el marcado para no repetirla tres veces, y hereda el color con
+   `currentColor`: se aclara sola en el hover, igual que la etiqueta. */
+.nav-directo::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  margin-left: auto;
+  flex-shrink: 0;
+  background: currentColor;
+  opacity: .4;
+  transition: opacity .16s ease;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M7 17 17 7'/><path d='M8 7h9v9'/></svg>") no-repeat center / contain;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M7 17 17 7'/><path d='M8 7h9v9'/></svg>") no-repeat center / contain;
+}
+.nav-directo:hover::after { opacity: .75; }
+
+/* Con el sidebar reducido solo quedan los iconos: la flecha ahi no cabe
+   y ademas empujaria el icono fuera del centro de la columna. */
+.sidebar.collapsed .nav-directo::after { display: none; }

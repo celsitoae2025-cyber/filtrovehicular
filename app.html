@@ -46,7 +46,7 @@
 
 <!-- CSS modular -->
 <link rel="stylesheet" href="css/base.css?v=35">
-<link rel="stylesheet" href="css/sidebar.css?v=9">
+<link rel="stylesheet" href="css/sidebar.css?v=10">
 <link rel="stylesheet" href="css/topbar.css?v=9">
 <link rel="stylesheet" href="css/components.css?v=15">
 <link rel="stylesheet" href="css/views.css?v=33">
@@ -153,6 +153,16 @@
     <symbol id="i-license" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="4.6" width="18.8" height="14.8" rx="2.6"/><path d="M2.6 9.1h18.8"/><circle cx="7.6" cy="14" r="2"/><path d="M12.8 12.6h6.1M12.8 15.6h4.1"/></symbol>
     <symbol id="i-gem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.3h11l3.5 5.3L12 20.7 3 8.6Z"/><path d="M3 8.6h18"/><path d="M9.3 8.6 12 20.7l2.7-12.1"/><path d="M6.5 3.3 9.3 8.6M17.5 3.3l-2.8 5.3"/></symbol>
     <symbol id="i-briefcase" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.9" y="7.3" width="18.2" height="12.8" rx="2.2"/><path d="M8.5 7.3V5.5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.8"/><path d="M2.9 12.9h18.2"/><path d="M10.4 12.9h3.2v2.1h-3.2Z"/></symbol>
+    <!-- Iconos propios de los tres trámites del catálogo directo. No son
+         genéricos a propósito: cada uno dibuja LO QUE ES el trámite, no
+         una metáfora reutilizable. Mismo trazo de 1.6 y mismas puntas
+         redondeadas que el resto del juego, para que no desentonen. -->
+    <!-- SOAT: escudo (seguro) con el coche dentro. -->
+    <symbol id="i-soat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.4c1.7-.8 7.4-3.7 7.4-9.4V5.6L12 2.6 4.6 5.6V12c0 5.7 5.7 8.6 7.4 9.4Z"/><path d="M8.3 13.8h7.4"/><path d="M9.4 13.8l.8-2.3a1.2 1.2 0 0 1 1.1-.8h1.4a1.2 1.2 0 0 1 1.1.8l.8 2.3"/><circle cx="10.2" cy="14.9" r=".85"/><circle cx="13.8" cy="14.9" r=".85"/></symbol>
+    <!-- CITV duplicado: dos certificados, el de delante con su sello. -->
+    <symbol id="i-citv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6.4V4.6a1.8 1.8 0 0 1 1.8-1.8h4.4l3.6 3.6v8.8a1.8 1.8 0 0 1-1.8 1.8h-1.6"/><path d="M15.2 2.8v3.6h3.6"/><rect x="4.6" y="7.6" width="10.4" height="13.6" rx="1.9"/><path d="M7.2 11.2h5.2M7.2 13.6h3.4"/><circle cx="11.4" cy="17.5" r="2.1"/><path d="m10.5 17.5.7.7 1.6-1.6"/></symbol>
+    <!-- Lunas: el cristal de la puerta con el brillo en diagonal. -->
+    <symbol id="i-lunas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.9 9.4 9.7 6.1a2 2 0 0 1 1.13-.35h5.34a1.8 1.8 0 0 1 1.8 1.8v9.1a1.8 1.8 0 0 1-1.8 1.8H6.7a1.8 1.8 0 0 1-1.8-1.8Z"/><path d="M14.4 7.9 9.6 14.7"/><path d="M17.2 10.6 13.1 16.4"/></symbol>
   </defs>
 </svg>
 
@@ -176,12 +186,12 @@
 
     <div class="sidebar-scroll">
       <div class="nav-section">Principal</div>
-      <button class="nav-item" data-nav="filter" data-tooltip="Consulta vehicular" type="button">
+      <button class="nav-item" data-nav="filter" data-tooltip="Consulta Vehicular" type="button">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"/>
           <path d="m21 21-4.3-4.3"/>
         </svg>
-        <span class="label">Consulta vehicular</span>
+        <span class="label">Consulta Vehicular</span>
       </button>
       <button class="nav-item" data-nav="dashboard" data-tooltip="Dashboard" type="button">
         <svg class="ico"><use href="#i-dashboard"/></svg>
@@ -249,6 +259,41 @@
         <span class="label">Extras</span>
       </button>
       </div>
+
+      <!-- Tres trámites de acceso directo. Van FUERA del grupo plegable a
+           propósito: no son categorías del catálogo, y se ven aunque el
+           grupo esté cerrado.
+
+           Los tres abren WhatsApp con el mensaje ya escrito. El enlace no
+           va aquí: lo arma sidebar-nav-group.js con el número de
+           Consultia.WHATSAPP_NUMBER, que vive en un solo sitio. Escrito a
+           mano se quedaría viejo el día que cambie el número, y en tres
+           sitios a la vez.
+
+           Son <a> y no <button> para que el navegador sepa abrirlos —clic
+           central, «abrir en pestaña nueva», copiar enlace— sin JS.
+           Cuidado con ponerles data-nav: views.js engancha todo lo que lo
+           lleve y los trataría como vistas de la aplicación. -->
+      <a class="nav-item nav-directo" data-tooltip="SOAT Electrónico"
+         data-wa-msg="Hola, necesito comprar mi SOAT con un 40% de descuento."
+         target="_blank" rel="noopener noreferrer">
+        <svg class="ico"><use href="#i-soat"/></svg>
+        <span class="label">SOAT Electrónico</span>
+      </a>
+
+      <a class="nav-item nav-directo" data-tooltip="Duplicado CITV"
+         data-wa-msg="Hola, necesito el duplicado de mi revisión técnica."
+         target="_blank" rel="noopener noreferrer">
+        <svg class="ico"><use href="#i-citv"/></svg>
+        <span class="label">Duplicado CITV</span>
+      </a>
+
+      <a class="nav-item nav-directo" data-tooltip="Lunas Oscurecidas"
+         data-wa-msg="Hola, necesito tramitar el permiso de mis lunas oscurecidas."
+         target="_blank" rel="noopener noreferrer">
+        <svg class="ico"><use href="#i-lunas"/></svg>
+        <span class="label">Lunas Oscurecidas</span>
+      </a>
     </div>
 
     <div class="sb-info-card" id="sidebarInfoCard" hidden>
@@ -2115,7 +2160,7 @@
 <script src="js/modules/favorites.js?v=1"></script>
 <script src="js/modules/credits-counter.js?v=1"></script>
 <script src="js/sidebar.js"></script>
-<script src="js/modules/sidebar-nav-group.js?v=4"></script>
+<script src="js/modules/sidebar-nav-group.js?v=5"></script>
 <script src="js/topbar.js"></script>
 <script src="js/views.js?v=3"></script>
 <script src="js/overlays.js"></script>

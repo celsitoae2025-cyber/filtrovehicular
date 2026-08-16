@@ -24,7 +24,25 @@
     try { localStorage.setItem(CLAVE, abierto ? '1' : '0'); } catch (e) { /* sin memoria, no pasa nada */ }
   }
 
+  /* Los tres accesos directos que hay bajo el grupo (SOAT Electrónico,
+     Duplicado CITV y Lunas Oscurecidas) abren WhatsApp con el mensaje ya
+     escrito. El enlace se arma aquí y no en el marcado para que el número
+     siga viviendo en un solo sitio, Consultia.WHATSAPP_NUMBER: escrito a
+     mano en el HTML se quedaría viejo —y por triplicado— el día que
+     cambie.
+
+     El mensaje se codifica con encodeURIComponent porque lleva tildes,
+     comas y espacios; sin eso WhatsApp recibe el texto partido. */
+  function armarEnlacesWhatsApp() {
+    var numero = Consultia.WHATSAPP_NUMBER || '';
+    document.querySelectorAll('.nav-directo[data-wa-msg]').forEach(function (a) {
+      var msg = a.getAttribute('data-wa-msg') || '';
+      a.href = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(msg);
+    });
+  }
+
   Consultia.initNavGroup = function () {
+    armarEnlacesWhatsApp();
     var head  = document.getElementById('navCatToggle');
     var group = document.getElementById('navCatGroup');
     if (!head || !group) return;
