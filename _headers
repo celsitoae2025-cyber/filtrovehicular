@@ -29,9 +29,22 @@
   Referrer-Policy: strict-origin-when-cross-origin
 
   # --- Permisos del navegador ---
-  # La cámara SÍ se permite (self): hace falta para el reconocimiento facial.
-  # El resto se cierra porque la app no los usa.
-  Permissions-Policy: camera=(self), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()
+  # Todo cerrado, la cámara incluida.
+  #
+  # La versión anterior dejaba `camera=(self)` creyendo que hacía falta para
+  # el reconocimiento facial. Es falso: no existe tal función. Lo que el
+  # código llama "facial" es un TIPO DE RESULTADO — `p.facial` es un array
+  # de fotos que devuelve la consulta y se pintan en pantalla
+  # (js/modules/category-view.js:356), no una captura.
+  #
+  # Comprobadas las tres únicas vías de acceso a la cámara, ninguna aparece
+  # en el proyecto: getUserMedia/mediaDevices, un elemento <video>, y el
+  # atributo `capture` en un input de archivo. El único selector de archivos
+  # (bcImageInput, en admin.html) va con accept="image/*" y SIN capture, así
+  # que abre el explorador, no la cámara.
+  #
+  # Si algún día se añade de verdad, volver a poner camera=(self).
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()
 
   # --- CSP en modo SOLO REPORTAR ---
   # OJO: report-only NO bloquea nada, solo avisa en la consola del navegador.
