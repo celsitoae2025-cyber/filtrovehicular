@@ -49,7 +49,9 @@
    la columna. */
 .service-card {
   min-width: 0;
-  height: 64px;
+  /* 96px = los 64 de antes + 50%. Subido a petición del dueño para que las
+     tarjetas ocupen el alto que sobraba sobre el pie. */
+  height: 96px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -229,7 +231,8 @@ body.is-anonymous .service-card.is-locked-anon::after {
     gap: 6px;
   }
   .service-card {
-    height: 56px;
+    /* 84px = los 56 de antes + 50%, mismo criterio que en escritorio. */
+    height: 84px;
     padding: 0 10px;
     gap: 10px;
   }
