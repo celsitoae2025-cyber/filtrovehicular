@@ -240,11 +240,31 @@ body.is-anonymous .service-card.is-locked-anon::after {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 6px;
   }
+  /* Disposicion VERTICAL, SOLO en movil: el icono centrado arriba y la
+     informacion debajo. En escritorio se queda en fila, que alli hay ancho
+     de sobra y el nombre entra en una linea.
+     A dos columnas de ~170px, la fila dejaba al nombre unos 110px utiles y
+     casi todo se partia en dos lineas contra el borde; en columna el nombre
+     dispone del ancho entero de la tarjeta. */
   .service-card {
-    /* 84px = los 56 de antes + 50%, mismo criterio que en escritorio. */
-    height: 84px;
-    padding: 0 10px;
-    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 104px;
+    padding: 10px 8px;
+    gap: 7px;
+  }
+  /* .service-name lleva flex:1 para la disposicion en fila. En columna ese
+     flex lo estiraria a lo alto y romperia el centrado vertical. */
+  .service-name {
+    flex: initial;
+    width: 100%;
+  }
+  .service-stack {
+    flex: initial;
+    width: 100%;
+    align-items: center;
   }
   .service-icon {
     width: 32px;

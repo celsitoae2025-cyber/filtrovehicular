@@ -158,6 +158,11 @@
    "Mejora tu plan" dentro: al lado del avatar competia con el y cargaba la
    barra. El texto vive ahora en aria-label y title, asi que sigue estando
    para el lector de pantalla y al posar el raton. */
+/* Disco amarillo Caterpillar con la cartera en oscuro dentro. Va en circulo
+   igual que el avatar de al lado: los dos redondos y del mismo tamaño se
+   leen como una pareja, no como dos piezas sueltas. El amarillo es color de
+   maquina, no de la paleta de marca; se usa a proposito para que el acceso
+   a recargar destaque sin repetir el verde. */
 .user-plan-badge {
   display: inline-flex;
   align-items: center;
@@ -166,20 +171,20 @@
   height: 34px;
   padding: 0;
   border: none;
-  border-radius: 9px;
-  background: transparent;
+  border-radius: 50%;
+  background: #FFCD11;
   cursor: pointer;
   transition: background var(--t-fast);
 }
-.user-plan-badge:hover { background: var(--c-bg); }
+.user-plan-badge:hover { background: #e8b800; }
 
-/* Cartera en amarillo Caterpillar. Es un color de maquina, no de la paleta
-   de marca: se usa a proposito para que el acceso a recargar destaque. */
+/* Oscuro sobre el amarillo: la cartera en amarillo sobre amarillo no se
+   veria, y el blanco sobre este tono no llega a contraste legible. */
 .plan-badge-ico {
-  width: 23px;
-  height: 23px;
+  width: 19px;
+  height: 19px;
   flex-shrink: 0;
-  color: #FFCD11;
+  color: #141d1c;
 }
 
 .user-menu.open .user-chev { transform: rotate(180deg); }
