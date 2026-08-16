@@ -2400,11 +2400,11 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   --cr-padding-top: 20px;
   /* 80px a cada lado dejaban la ficha en una columna estrecha en medio
      de una tarjeta ancha: mucho aire muerto y los valores lejos de sus
-     etiquetas. A 24px la informacion llega casi al borde y se lee de
-     una pasada. */
-  --cr-padding-right: 24px;
+     etiquetas. A 12px la informacion llega hasta el borde del cuadro,
+     que es como se pidio; el panel ya aporta el suyo por fuera. */
+  --cr-padding-right: 12px;
   --cr-padding-bottom: 20px;
-  --cr-padding-left: 24px;
+  --cr-padding-left: 12px;
   --cr-gap: 20px;
   --cr-data-max: 100%;
   --cr-media-width: 220px;
@@ -2434,9 +2434,9 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 
   /* Layout solo texto (SUNAT, financiero, etc.) */
   --cr-txt-padding-top: 24px;
-  --cr-txt-padding-right: 20px;
+  --cr-txt-padding-right: 12px;
   --cr-txt-padding-bottom: 32px;
-  --cr-txt-padding-left: 20px;
+  --cr-txt-padding-left: 12px;
   --cr-txt-max-width: 980px;
   --cr-txt-offset-top: 0px;
   --cr-txt-offset-left: 0px;
@@ -3063,7 +3063,7 @@ body.cr-lightbox-open { overflow: hidden; }
 /* El .result-panel tiene padding:0 (para que la barra multicolor del header
    toque los bordes), así que el cuerpo de datos aporta su propio padding
    lateral. Sin esto las etiquetas quedaban pegadas al borde del cuadro. */
-.result-panel > .reniec-result-body { padding: 0 20px 16px; }
+.result-panel > .reniec-result-body { padding: 0 12px 16px; }
 
 /* Default: stack vertical (mobile-first y cuando el contenedor es angosto) */
 .cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) {
@@ -3988,14 +3988,22 @@ body.cr-lightbox-open { overflow: hidden; }
   .reniec-result-body { padding: 0; }
   /* El wrapper .panel.result-panel en móvil achica su padding para
      que el contenido tenga todo el ancho disponible */
-  .result-panel { padding: 10px !important; }
+  /* CERO relleno en el panel. El margen que quedaba a los lados era la
+     suma de tres capas: este panel, el relleno del layout de datos
+     (--cr-padding-*) y el del bloque de texto. Ninguna sola se notaba,
+     las tres juntas dejaban la ficha encogida en el centro.
+
+     No deja nada pegado al borde de verdad: la cabecera, el estado
+     vacio y las secciones traen su propio relleno, que sigue intacto. */
+  .result-panel { padding: 0 !important; }
   /* Reset de variables en móvil por si quedó algo guardado del editor */
   :root {
     --cr-padding-top: 14px;
-    /* Casi al borde: la tarjeta ya aporta su propio relleno. */
-    --cr-padding-right: 4px;
+    /* Hasta el borde. El aire lateral lo pone .content, por fuera de la
+       tarjeta; aqui dentro sobra. */
+    --cr-padding-right: 0px;
     --cr-padding-bottom: 12px;
-    --cr-padding-left: 4px;
+    --cr-padding-left: 0px;
     --cr-gap: 14px;
     --cr-data-max: 100%;
     --cr-media-width: 100%;
