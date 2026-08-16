@@ -45,15 +45,15 @@
      eran dos conexiones externas y una descarga bloqueante menos. -->
 
 <!-- CSS modular -->
-<link rel="stylesheet" href="css/base.css?v=21">
-<link rel="stylesheet" href="css/sidebar.css?v=3">
+<link rel="stylesheet" href="css/base.css?v=24">
+<link rel="stylesheet" href="css/sidebar.css?v=7">
 <link rel="stylesheet" href="css/topbar.css?v=9">
 <link rel="stylesheet" href="css/components.css?v=10">
-<link rel="stylesheet" href="css/views.css?v=29">
-<link rel="stylesheet" href="css/service-cards.css?v=8">
+<link rel="stylesheet" href="css/views.css?v=30">
+<link rel="stylesheet" href="css/service-cards.css?v=9">
 <link rel="stylesheet" href="css/plans-catalog.css?v=4">
-<link rel="stylesheet" href="css/auth.css?v=35">
-<link rel="stylesheet" href="css/footer.css?v=9">
+<link rel="stylesheet" href="css/auth.css?v=46">
+<link rel="stylesheet" href="css/footer.css?v=11">
 <link rel="stylesheet" href="css/overlays.css?v=8">
 <link rel="stylesheet" href="css/polish.css?v=5">
 <link rel="stylesheet" href="css/maintenance.css?v=9">
@@ -147,6 +147,7 @@
     </symbol>
     <symbol id="i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.4 14.6a2.4 2.4 0 0 1-2.4 2.4H8.1L4 21.1V5.4A2.4 2.4 0 0 1 6.4 3H18a2.4 2.4 0 0 1 2.4 2.4Z"/><path d="M8.7 10h.01M12.2 10h.01M15.7 10h.01"/></symbol>
     <symbol id="i-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 3.4v17.2h17.2"/><path d="M7 16.4l3.9-4.3 3 2.6 6-6.3"/><path d="M16.5 8.4h3.4v3.4"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="3.2" width="7.4" height="7.4" rx="1.8"/><rect x="13.4" y="3.2" width="7.4" height="7.4" rx="1.8"/><rect x="3.2" y="13.4" width="7.4" height="7.4" rx="1.8"/><rect x="13.4" y="13.4" width="7.4" height="7.4" rx="1.8"/></symbol>
     <symbol id="i-scroll" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.2 2.9H7a2.2 2.2 0 0 0-2.2 2.2v13.8A2.2 2.2 0 0 0 7 21.1h10a2.2 2.2 0 0 0 2.2-2.2V7.9Z"/><path d="M14.2 2.9v5h5"/><path d="M8.4 12.6h7.2M8.4 16h4.6"/></symbol>
     <symbol id="i-seeker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="7"/><path d="m15.9 15.9 5 5"/></symbol>
     <symbol id="i-license" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.6" y="4.6" width="18.8" height="14.8" rx="2.6"/><path d="M2.6 9.1h18.8"/><circle cx="7.6" cy="14" r="2"/><path d="M12.8 12.6h6.1M12.8 15.6h4.1"/></symbol>
@@ -174,6 +175,7 @@
     </div>
 
     <div class="sidebar-scroll">
+      <div class="nav-section">Principal</div>
       <button class="nav-item" data-nav="filter" data-tooltip="Consulta vehicular" type="button">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"/>
@@ -185,7 +187,23 @@
         <svg class="ico"><use href="#i-dashboard"/></svg>
         <span class="label">Dashboard</span>
       </button>
-      <div class="nav-separator"></div>
+      <div class="nav-section">Catálogo</div>
+
+      <!-- Las nueve categorías viven dentro de un grupo plegable: el menú
+           pasa de once entradas visibles a tres y el catálogo queda a un
+           clic. Arranca cerrado; sidebar-nav-group.js recuerda en
+           localStorage si se dejó abierto.
+           OJO — el botón NO lleva data-nav: views.js engancha todo lo que
+           lo tenga y lo trataría como una vista. -->
+      <button class="nav-item nav-group-head" id="navCatToggle" type="button"
+              data-tooltip="Consultas por categoría"
+              aria-expanded="false" aria-controls="navCatGroup">
+        <svg class="ico"><use href="#i-grid"/></svg>
+        <span class="label">Consultas por categoría</span>
+        <svg class="chev"><use href="#i-chevron"/></svg>
+      </button>
+
+      <div class="nav-group" id="navCatGroup">
       <button class="nav-item nav-category" data-nav="reniec" data-tooltip="Reniec" type="button">
         <svg class="ico"><use href="#i-id"/></svg>
         <span class="label">Reniec</span>
@@ -230,6 +248,7 @@
         <svg class="ico"><use href="#i-sparkles"/></svg>
         <span class="label">Extras</span>
       </button>
+      </div>
     </div>
 
     <div class="sb-info-card" id="sidebarInfoCard" hidden>
@@ -1845,23 +1864,28 @@
           <p class="foot-tagline">Consultas vehiculares y de personas con información oficial, al instante y desde un solo lugar.</p>
         </div>
 
-        <nav class="foot-col" aria-labelledby="footTitConsultas">
-          <h2 class="foot-title" id="footTitConsultas">Consultas</h2>
-          <ul class="foot-links">
-            <li><button type="button" data-nav="filter">Filtro vehicular</button></li>
-            <li><button type="button" data-nav="delitos">Delitos</button></li>
-            <li><button type="button" data-nav="vehiculos">Vehículos</button></li>
-            <li><button type="button" data-nav="regiones">Infracciones por regiones</button></li>
-          </ul>
-        </nav>
+        <!-- Las nueve categorías del menú lateral viven también aquí, como
+             segundo camino al catálogo. La antigua columna "Fuentes" se
+             retiró: sus cuatro enlaces (Sunarp, Reniec, Sunat y Financiero)
+             son cuatro de estas nueve, así que solo duplicaba.
 
-        <nav class="foot-col foot-col-fuentes" aria-labelledby="footTitFuentes">
-          <h2 class="foot-title" id="footTitFuentes">Fuentes</h2>
-          <ul class="foot-links">
-            <li><button type="button" data-nav="sunarp">Sunarp</button></li>
-            <li><button type="button" data-nav="reniec">Reniec</button></li>
-            <li><button type="button" data-nav="sunat">Sunat</button></li>
-            <li><button type="button" data-nav="financiero">Financiero</button></li>
+             Los <li class="foot-cat"> son los que se añadieron ahora: en
+             móvil se ocultan y la columna vuelve a los cuatro enlaces de
+             siempre, para no volver a alargar el pie (ver footer.css). -->
+        <nav class="foot-col foot-col-consultas" aria-labelledby="footTitConsultas">
+          <h2 class="foot-title" id="footTitConsultas">Consultas</h2>
+          <ul class="foot-links foot-links-2">
+            <li><button type="button" data-nav="filter">Filtro vehicular</button></li>
+            <li class="foot-cat"><button type="button" data-nav="reniec">Reniec</button></li>
+            <li class="foot-cat"><button type="button" data-nav="familiares">Familia</button></li>
+            <li class="foot-cat"><button type="button" data-nav="telefonia">Telefonía</button></li>
+            <li class="foot-cat"><button type="button" data-nav="sunarp">Sunarp</button></li>
+            <li><button type="button" data-nav="vehiculos">Vehículos</button></li>
+            <li class="foot-cat"><button type="button" data-nav="sunat">Sunat</button></li>
+            <li class="foot-cat"><button type="button" data-nav="financiero">Financiero</button></li>
+            <li><button type="button" data-nav="delitos">Justicia</button></li>
+            <li class="foot-cat"><button type="button" data-nav="extras">Extras</button></li>
+            <li><button type="button" data-nav="regiones">Infracciones por regiones</button></li>
           </ul>
         </nav>
 
@@ -2028,7 +2052,7 @@
 <script src="js/shared/plans-data.js"></script>
 <script src="js/modules/toasts.js"></script>
 <script src="js/modules/confirm-dialog.js"></script>
-<script src="js/modules/auth-modals.js?v=32"></script>
+<script src="js/modules/auth-modals.js?v=38"></script>
 <script src="js/modules/auth-gate.js?v=21"></script>
 <script src="js/modules/auth-ui.js?v=24"></script>
 <script src="js/modules/notifications.js"></script>
@@ -2084,10 +2108,11 @@
 <script src="js/modules/favorites.js?v=1"></script>
 <script src="js/modules/credits-counter.js?v=1"></script>
 <script src="js/sidebar.js"></script>
+<script src="js/modules/sidebar-nav-group.js?v=4"></script>
 <script src="js/topbar.js"></script>
 <script src="js/views.js?v=3"></script>
 <script src="js/overlays.js"></script>
-<script src="js/main.js?v=2"></script>
+<script src="js/main.js?v=3"></script>
 <!-- Modo mantenimiento: aviso global controlado desde el panel admin -->
 <script src="js/modules/maintenance.js?v=6"></script>
 <script src="js/modules/aviso-clientes.js?v=8"></script>

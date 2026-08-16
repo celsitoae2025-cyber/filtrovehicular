@@ -5,6 +5,21 @@
 :root {
   --c-primary: #141d1c;
   --c-primary-2: #0e1312;
+
+  /* Oscuro de las SUPERFICIES grandes: el menú lateral, el pie de
+     página, el botón "Reporte completo", la tarjeta de infracciones por
+     regiones y el panel de marca del acceso.
+
+     Es el mismo #0e1312 que --c-primary-2 y va aparte a propósito: uno
+     nombra un tono de la paleta y el otro un uso. Cambiar este valor
+     mueve los cinco fondos a la vez y no toca ni un botón.
+
+     Por qué no es --c-primary: un campo grande de #141d1c se percibe
+     más claro —más verde petróleo— que ese mismo tono en una caja
+     pequeña rodeada de blanco. La tarjeta de regiones ya se había
+     bajado a #0e1312 por eso; ahora bajan todas y dejan de discutir. */
+  --c-surface-dark: #0e1312;
+
   --c-secondary: #141d1c;
   --c-text: #141d1c;
   --c-accent: #8fc72e;
@@ -996,19 +1011,40 @@ body { background: #d4dade !important; }
   .center-notice-title { font-size: var(--fs-md) !important; }
 }
 
-/* Fondo GRIS plano, sin textura. El turquesa competia con la tarjeta
-   blanca del formulario y con la barra cuatricolor de la marca; sobre
-   gris la tarjeta se lee sola. Mismo gris que el resto de la app
-   (--c-bg) y que el acceso al panel de administrador. */
+/* ------------------------------------------------------------
+   Trama de marca del lienzo de acceso
+
+   Aquí hubo un gris plano con `background-image: none !important`, que
+   además mataba el entramado diagonal declarado en auth.css. El motivo
+   de entonces era bueno —el turquesa a toda pantalla competía con la
+   tarjeta del formulario— pero el remedio se pasó: en un monitor de
+   1920×950 quedaban 590 px de gris liso a cada lado de la tarjeta.
+
+   Ahora hay trama de verdad, y en crudo: una retícula de puntos en el
+   propio oscuro de la marca al 5% (por debajo del 4% no se ve, por
+   encima del 6% empieza a distraer) y nada más.
+
+   Aquí hubo también dos manchas amplias, una turquesa y otra verde, en
+   esquinas opuestas. Se retiraron: el acceso va sin color, solo grises
+   y el oscuro. El color se reserva para el panel de marca.
+
+   Todo con gradientes CSS: sin descargas, sin peso y sin nada que la
+   CSP pueda bloquear.
+------------------------------------------------------------ */
+.auth-modal {
+  --auth-tex-dots: radial-gradient(circle at 1px 1px, rgba(20, 29, 28, .05) 1px, transparent 1.6px);
+}
 .auth-modal-overlay {
   background-color: var(--c-bg, #F3F3F3) !important;
-  background-image: none !important;
+  background-image: var(--auth-tex-dots) !important;
+  background-size: 18px 18px !important;
+  background-repeat: repeat !important;
 }
 
 /* Lado izquierdo del modal (marca) — verde lima con distribución
    vertical clara: título arriba, footer abajo, todo con jerarquía. */
 .auth-brand-side {
-  background: #141d1c !important;
+  background: var(--c-surface-dark) !important;
   justify-content: space-between !important;
   padding: 32px 34px 26px !important;
 }
@@ -1101,15 +1137,22 @@ body { background: #d4dade !important; }
 .auth-forgot { font-weight: 400 !important; }
 .auth-switch button { font-weight: 700 !important; }
 
-/* Boton principal en verde de marca: la accion primaria se queda con
-   el color de marca y los enlaces secundarios dejan de competir.
-   Texto oscuro sobre verde da 8.4:1. */
+/* Boton principal en OSCURO, no en verde.
+
+   Estuvo en verde de marca un tiempo. La pantalla de acceso va ahora en
+   crudo —grises y oscuro, sin manchas de color— y un boton verde lima
+   era lo unico que gritaba en toda la mitad del formulario. En oscuro
+   sobre blanco pesa igual como accion primaria y no compite con nada.
+
+   Blanco sobre #0e1312 da 17.6:1, mas contraste que el par anterior. El
+   hover sube al #141d1c de la paleta: se nota el cambio sin encender
+   ningun color. */
 .auth-submit {
-  background: #8fc72e !important;
-  color: #141d1c !important;
+  background: var(--c-surface-dark) !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
 }
-.auth-submit:hover:not(:disabled) { background: #7ab325 !important; }
+.auth-submit:hover:not(:disabled) { background: #141d1c !important; }
 /* Footer "© 2026 Filtro Vehicular+ Perú" al pie del cuadro verde */
 .auth-brand-foot {
   font-size: var(--fs-xs) !important;

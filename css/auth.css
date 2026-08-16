@@ -17,21 +17,11 @@
    porque cada uno añade/quita su propia clase. */
 body.auth-modal-open { overflow: hidden; }
 
+/* El fondo del lienzo (la trama de marca) se pinta en base.css, que es
+   donde vivía el `!important` que la anulaba. Aquí solo la colocación. */
 .auth-modal-overlay {
   position: absolute;
   inset: 0;
-  background-color: #f5f5f5;
-  background-image:
-    repeating-linear-gradient(
-      45deg,
-      rgba(20, 29, 28, .025) 0, rgba(20, 29, 28, .025) 1px,
-      transparent 1px, transparent 7px
-    ),
-    repeating-linear-gradient(
-      -45deg,
-      rgba(60, 40, 20, .015) 0, rgba(60, 40, 20, .015) 1px,
-      transparent 1px, transparent 11px
-    );
 }
 
 .auth-modal-panel {
@@ -169,6 +159,86 @@ body.auth-modal-open { overflow: hidden; }
   max-width: 360px;
 }
 
+/* ---------- Retrato del formulario ----------
+   Disco oscuro con la silueta, encabezando la columna de acceso. */
+.auth-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--c-surface-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 22px;
+  flex-shrink: 0;
+}
+.auth-avatar svg {
+  width: 52px;
+  height: 52px;
+  color: #ffffff;
+}
+/* En móvil también, un punto más pequeño: ahí el disco convive con el
+   encabezado de marca y su barra de color, y a 88px empujaba el
+   formulario fuera de la pantalla. */
+@media (max-width: 768px) {
+  .auth-avatar {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 16px;
+  }
+  .auth-avatar svg { width: 42px; height: 42px; }
+}
+
+/* ---------- Fila superior del panel ---------- */
+.auth-brand-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Saludo ----------
+   "Bienvenido" / "Crea tu cuenta". Va sobre la marca, en el panel
+   oscuro, no sobre el formulario. En verde de marca porque es lo único
+   que se dirige a la persona; el resto del panel es información. */
+.auth-brand-greeting {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+/* ---------- De dónde sale la información ----------
+   En blanco. El panel ya lleva el verde en el "+" de la marca y en los
+   puntos de la lista; las fichas en turquesa metían un tercer color en
+   una fila que solo tiene que leerse. */
+.auth-src-label {
+  font-size: var(--fs-xs);
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+}
+.auth-src-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.auth-src {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, .32);
+  border-radius: 20px;
+  padding: 4px 11px;
+  white-space: nowrap;
+}
+
 .auth-brand-foot {
   position: relative;
   z-index: 1;
@@ -251,18 +321,26 @@ body.auth-modal-open { overflow: hidden; }
   letter-spacing: .05px;
 }
 
+/* Campos y botón en CÁPSULA (borde totalmente redondeado). Es el rasgo
+   que más define la columna de acceso; el radio de 9px de antes la
+   dejaba indistinguible de cualquier formulario del panel. */
 .auth-input {
   width: 100%;
-  padding: 11px 14px;
+  padding: 12px 18px;
   font-family: inherit;
   font-size: 14px;
   color: var(--c-primary);
   background: #fff;
   border: 1px solid var(--c-border);
-  border-radius: 9px;
+  border-radius: 999px;
   transition: border-color .15s;
   -webkit-tap-highlight-color: transparent;
 }
+/* base.css fija `border-radius: 8px !important` para TODOS los input de
+   la app, así que la cápsula solo gana con !important y más
+   especificidad. Se acota a .auth-modal para no tocar ni un campo del
+   resto de la plataforma. */
+.auth-modal .auth-input { border-radius: 999px !important; }
 .auth-input:hover { border-color: #C8C8C8; }
 .auth-input:focus,
 .auth-input:focus-visible {
@@ -288,7 +366,7 @@ body.auth-modal-open { overflow: hidden; }
 }
 .auth-input-icon {
   position: absolute;
-  left: 14px;
+  left: 18px;
   top: 50%;
   transform: translateY(-50%);
   width: 17px;
@@ -298,7 +376,7 @@ body.auth-modal-open { overflow: hidden; }
   transition: color .15s;
 }
 .auth-input.has-icon {
-  padding-left: 42px;
+  padding-left: 46px;
 }
 .auth-input-wrap:focus-within .auth-input-icon {
   color: var(--c-primary);
@@ -310,7 +388,7 @@ body.auth-modal-open { overflow: hidden; }
 }
 .auth-pass-toggle {
   position: absolute;
-  right: 6px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
   width: 34px;
@@ -424,12 +502,12 @@ body.auth-modal-open { overflow: hidden; }
   padding: 14px 22px;
   font-family: inherit;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: .1px;
   color: #fff;
   background: var(--c-primary);
   border: none;
-  border-radius: 10px;
+  border-radius: 999px;
   cursor: pointer;
   transition: background .15s;
   -webkit-tap-highlight-color: transparent;
@@ -561,6 +639,15 @@ body.auth-modal-open { overflow: hidden; }
   .auth-brand-title { font-size: 22px; margin-bottom: 6px; }
   .auth-brand-tagline { font-size: 13px; line-height: 1.5; max-width: none; }
   .auth-brand-foot { display: none; }
+  /* En la banda de 180px solo caben marca y bajada. La lista se quedaba
+     como un recuadro de scroll de 40px y la fila de fuentes la habría
+     aplastado del todo.
+
+     El saludo también se va: aquí el formulario conserva su propio
+     título y verlo dos veces sobraba. */
+  .auth-brand-greeting,
+  .auth-brand-list,
+  .auth-brand-top { display: none; }
   .auth-form-side {
     flex: 1 1 auto;
     padding: 26px 28px;
@@ -927,3 +1014,203 @@ body.auth-locked .wa-menu {
   z-index: 503;
 }
 
+/* ============================================================
+   PANTALLA DE ACCESO A SANGRE (escritorio, ≥821px)
+   ------------------------------------------------------------
+   Reconstruida sobre la referencia que pasó el dueño: columna de
+   formulario ESTRECHA a un lado y panel de arte ANCHO al otro, con el
+   saludo en grande abajo. Aquí la columna va a la DERECHA (en la
+   referencia estaba a la izquierda) y el arte ocupa el resto.
+
+   Del original se toma la estructura, no los colores: el degradado
+   fluido se rehace con el oscuro de marca, el verde y el turquesa; el
+   azul y el crema de la referencia no aparecen en ninguna parte.
+
+   La mitad del formulario va EN CRUDO —blanco y la retícula de
+   puntos—, así que todo el color de la pantalla vive en el arte.
+
+   Solo login y registro. El modal de recuperación no está partido —no
+   tiene panel de marca— y sigue siendo una tarjeta centrada.
+
+   El corte va en 821px y no en 769px a propósito: entre 769 y 820 manda
+   el bloque de más arriba, que apila el panel sobre el formulario. Por
+   debajo de 768 manda el bloque móvil del final de base.css.
+
+   Varias reglas llevan !important porque pisan declaraciones que ya lo
+   llevaban en base.css. No se toca el de allí para no alterar lo que se
+   ve en móvil, que se afinó aparte.
+============================================================ */
+@media (min-width: 821px) {
+
+  #authModalLogin,
+  #authModalSignup { padding: 0; }
+
+  #authModalLogin  .auth-modal-panel.auth-split,
+  #authModalSignup .auth-modal-panel.auth-split {
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  /* ============ Columna del formulario — estrecha, a la DERECHA ============
+     El orden se cambia por CSS y no moviendo el marcado: en móvil el
+     panel de arte no se muestra y el formulario tiene que seguir siendo
+     lo primero que lee un lector de pantalla. */
+  #authModalLogin  .auth-form-side,
+  #authModalSignup .auth-form-side {
+    order: 2;
+    flex: 0 0 clamp(400px, 33%, 520px);
+    padding: 34px clamp(30px, 2.6vw, 48px) 24px;
+    background-color: #ffffff;
+    background-image: var(--auth-tex-dots);
+    background-size: 18px 18px;
+    background-repeat: repeat;
+  }
+  #authModalLogin  .auth-form-wrap,
+  #authModalSignup .auth-form-wrap { width: 100%; }
+
+  /* Marca arriba del todo, como en la referencia. Solo el nombre: el
+     distintivo que llevaba al lado se retiró porque ese dibujo no es el
+     logo de la marca. */
+  #authModalLogin  .auth-form-mh,
+  #authModalSignup .auth-form-mh {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    /* Separación mínima garantizada. El margen automático de la tarjeta
+       vale 0 cuando no sobra espacio —el registro es largo— y sin esto
+       el retrato quedaba pegado a la marca. */
+    padding-bottom: 14px;
+  }
+  #authModalLogin  .mh-brand,
+  #authModalSignup .mh-brand {
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -.1px;
+    color: #141d1c;
+    max-width: 140px;
+  }
+  #authModalLogin  .mh-plus,
+  #authModalSignup .mh-plus { color: #8fc72e; }
+
+  /* El título del formulario se esconde: el saludo lo da el panel de
+     arte. Sigue en el marcado porque en móvil ese panel no existe. */
+  #authModalLogin  .auth-form-card > .auth-modal-title,
+  #authModalSignup .auth-form-card > .auth-modal-title { display: none; }
+
+  /* El acceso va sin bajada: entre el retrato y los campos no hacía
+     falta explicar que se entra a la cuenta. En el registro se queda,
+     porque ahí sí dice algo que no está en ningún otro sitio —los 5
+     créditos de bienvenida—, y va centrada bajo el retrato. */
+  #authModalLogin .auth-form-card > .auth-modal-sub { display: none; }
+  #authModalSignup .auth-modal-sub {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* Centrado vertical sin números fijos: este margen automático y el de
+     .auth-legal-foot se reparten el sobrante a partes iguales.
+
+     El margen de abajo lo sube sobre el centro exacto. Los márgenes
+     automáticos reparten lo que sobra DESPUÉS de descontar los fijos,
+     así que estos 90px se traducen en 45px de subida — la mitad, porque
+     la otra mitad se la queda el hueco de arriba. Centrado del todo, el
+     bloque quedaba bajo: el ojo lo lee mejor un punto por encima. */
+  #authModalLogin  .auth-form-card,
+  #authModalSignup .auth-form-card { margin-top: auto; }
+  /* Solo en el acceso. El registro es tan largo que ya arranca arriba, y
+     forzarle el mismo margen lo hacía scrollear en pantallas normales. */
+  #authModalLogin .auth-form-card { margin-bottom: 90px; }
+
+  /* El pie legal vuelve al flujo. En base.css va fijo al fondo del
+     viewport y centrado, que con la pantalla partida lo dejaba sobre la
+     costura: texto oscuro a medias sobre el panel oscuro. */
+  body.auth-modal-open #authModalLogin  .auth-legal-foot,
+  body.auth-modal-open #authModalSignup .auth-legal-foot {
+    position: static !important;
+    margin-top: auto !important;
+    padding: 20px 0 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    z-index: auto;
+  }
+
+  /* ============ Panel de arte — ancho, a la IZQUIERDA ============
+     El degradado fluido son cuatro manchas amplias superpuestas sobre
+     el oscuro de marca. Van en CSS y no en imagen: sin peso, sin
+     descargas y sin nada que la CSP pueda bloquear.
+
+     Las opacidades están puestas contra el texto, no al gusto: la
+     mancha fuerte (turquesa al 46%) vive arriba a la derecha, lejos del
+     titular, y la esquina de abajo a la izquierda —donde va el texto—
+     no pasa del 22%, que deja el blanco por encima de 8:1. */
+  #authModalLogin  .auth-brand-side,
+  #authModalSignup .auth-brand-side {
+    order: 1;
+    flex: 1 1 auto;
+    padding: 34px clamp(40px, 4vw, 76px) 30px !important;
+    background:
+      radial-gradient(85% 62% at 84% 10%, rgba(3, 167, 164, .46), rgba(3, 167, 164, 0) 62%),
+      radial-gradient(75% 58% at 6% 96%, rgba(143, 199, 46, .22), rgba(143, 199, 46, 0) 64%),
+      radial-gradient(120% 90% at 98% 92%, rgba(3, 167, 164, .20), rgba(3, 167, 164, 0) 58%),
+      radial-gradient(55% 42% at 46% 40%, rgba(143, 199, 46, .10), rgba(143, 199, 46, 0) 72%),
+      var(--c-surface-dark) !important;
+  }
+
+  /* Todo el bloque cae abajo a la izquierda, lo más lejos posible de la
+     columna del formulario. */
+  #authModalLogin  .auth-brand-content,
+  #authModalSignup .auth-brand-content {
+    gap: 16px !important;
+    max-width: 620px;
+    justify-content: flex-end !important;
+    /* Aire antes del filete del pie: sin esto la última línea de la
+       lista queda pegada a la raya del copyright. */
+    padding-bottom: 12px;
+  }
+
+  /* La marca pasa a antetítulo: quien manda aquí es el saludo. */
+  #authModalLogin  .auth-brand-title,
+  #authModalSignup .auth-brand-title {
+    font-size: var(--fs-md) !important;
+    letter-spacing: .2px !important;
+    color: rgba(255, 255, 255, .75) !important;
+    margin-bottom: -10px !important;
+  }
+
+  /* El titular. Es lo único grande de toda la pantalla, y por eso
+     funciona: si compitiera con algo dejaría de ser el titular. */
+  #authModalLogin  .auth-brand-greeting,
+  #authModalSignup .auth-brand-greeting {
+    font-size: clamp(48px, 5.4vw, 78px);
+    font-weight: 700;
+    letter-spacing: -2px;
+    line-height: 1;
+    text-transform: none;
+    color: #ffffff;
+  }
+
+  #authModalLogin  .auth-brand-tagline,
+  #authModalSignup .auth-brand-tagline { max-width: 460px !important; }
+
+  /* A dos columnas y a su alto real: en una sola se estiraba sola y
+     dejaba las cifras descolgadas. */
+  #authModalLogin  .auth-brand-list,
+  #authModalSignup .auth-brand-list {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 26px;
+    overflow: visible;
+    max-width: 520px;
+  }
+
+  /* El botón de cerrar NO necesita retoque de color: con el formulario a
+     la derecha, la esquina superior derecha es blanca y el gris de
+     siempre se lee bien. */
+}

@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.gauge-svg').forEach(renderGauge);
 
   const sidebarAPI = Consultia.initSidebar();
+  if (Consultia.initNavGroup) Consultia.initNavGroup();
   if (Consultia.initUserMenu) Consultia.initUserMenu();
   if (Consultia.initVehiculosCombo) Consultia.initVehiculosCombo();
   if (Consultia.initSunarpCombo) Consultia.initSunarpCombo();

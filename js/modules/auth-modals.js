@@ -11,7 +11,79 @@
   var USER_SVG = '<svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
   var MAIL_SVG = '<svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>';
   var PHONE_SVG = '<svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.4 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/></svg>';
+  /* Retrato del formulario: el disco oscuro con la silueta que encabeza
+     la columna de acceso. No es el mismo trazo que USER_SVG —ese va
+     dentro de un campo, a 17px— así que va aparte y sin la clase de los
+     iconos de campo. */
+  var AVATAR_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-1.8a4.2 4.2 0 0 0-4.2-4.2H8.2A4.2 4.2 0 0 0 4 19.2V21"/><circle cx="12" cy="7.2" r="4.2"/></svg>';
+
   var LOCK_SVG = '<svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+
+  /* ============================================================
+     Panel oscuro de la pantalla de acceso
+
+     Es el mismo en login y en registro, así que se escribe una vez. Antes
+     estaba duplicado literal en los dos modales y cualquier retoque había
+     que hacerlo por partida doble.
+
+     Lleva, de arriba abajo: de dónde sale la información, la marca, el
+     saludo en grande y lo que se puede consultar.
+
+     Las fuentes van en texto y no con sus logos: en assets/ no hay logos
+     oficiales —lo que hay son iconos propios de cada servicio—, y meter
+     imágenes ajenas aquí sumaría peso a la primera pantalla que ve nadie
+     sin sesión. Sin franjas y sin sombras, como el resto del proyecto.
+  ============================================================ */
+  function brandSide(saludo) { return [
+    '    <div class="auth-brand-side">',
+    /* Fila de arriba: de dónde sale la información. Va donde la
+       referencia pone su menú de navegación —esta pantalla no tiene
+       menú— y así el panel no arranca vacío por arriba. */
+    '      <div class="auth-brand-top">',
+    '        <span class="auth-src-label">Información oficial de</span>',
+    '        <div class="auth-src-row">',
+    '          <span class="auth-src">Sunarp</span>',
+    '          <span class="auth-src">SAT</span>',
+    '          <span class="auth-src">MTC</span>',
+    '          <span class="auth-src">APESEG</span>',
+    '          <span class="auth-src">Sutran</span>',
+    '          <span class="auth-src">ATU</span>',
+    '          <span class="auth-src">Infracción por regiones</span>',
+    '        </div>',
+    '      </div>',
+    '      <div class="auth-brand-content">',
+    /* La marca queda de antetítulo y el saludo ("Bienvenido." / "Crea tu
+       cuenta.") pasa a ser el titular grande, que es lo que manda en el
+       panel. El <h2> del formulario sigue en su sitio y solo se esconde
+       en escritorio (ver auth.css): en móvil este panel no se muestra, y
+       sin el <h2> la pantalla se quedaría sin título. */
+    '        <h3 class="auth-brand-title">Filtro Vehicular<span class="brand-plus-lg">+</span></h3>',
+    '        <p class="auth-brand-greeting">' + saludo + '</p>',
+    '        <p class="auth-brand-tagline">Consultas vehiculares oficiales al instante. Accede a:</p>',
+    /* Las quince. Estuvieron recortadas a seis mientras el acceso era una
+       tarjeta de 740×620, donde la lista larga no cabía. A pantalla
+       completa y a dos columnas entran de sobra. */
+    '        <ul class="auth-brand-list">',
+    '          <li>Inscripción de la Placa</li>',
+    '          <li>Papeletas Vigentes</li>',
+    '          <li>ATU y SUTRAN</li>',
+    '          <li>Papeletas con DNI</li>',
+    '          <li>Vigencia del SOAT</li>',
+    '          <li>Inspección Vehicular</li>',
+    '          <li>Siniestralidad</li>',
+    '          <li>Sistema GNV</li>',
+    '          <li>Órdenes de Captura</li>',
+    '          <li>Placas Duplicadas</li>',
+    '          <li>Impuesto Vehicular</li>',
+    '          <li>Historial Completo</li>',
+    '          <li>Cambio de Características</li>',
+    '          <li>Medidas Cautelares</li>',
+    '          <li>Y mucho más</li>',
+    '        </ul>',
+    '      </div>',
+    '      <div class="auth-brand-foot">© 2026 Filtro Vehicular+ Perú</div>',
+    '    </div>'
+  ].join(''); }
 
   var MODAL_HTML = [
     // ========== Registro (split) ==========
@@ -23,6 +95,7 @@
     '      <div class="auth-form-wrap">',
     '      <div class="auth-form-mh"><span class="mh-brand">Plataforma Filtro Vehicular<span class="mh-plus">+</span></span></div>',
     '      <div class="auth-form-card">',
+    '      <div class="auth-avatar" aria-hidden="true">' + AVATAR_SVG + '</div>',
     '      <h2 class="auth-modal-title">Crea tu cuenta</h2>',
     '      <p class="auth-modal-sub">Regístrate gratis y recibe <strong>5 créditos</strong> para probar el servicio.</p>',
     '      <form class="auth-form" id="signupForm" novalidate>',
@@ -56,31 +129,7 @@
     '      <div class="auth-legal-foot"><a href="#" data-modal="terms">Términos y condiciones</a><span class="dot">·</span><a href="#" data-modal="cookies">Política de cookies</a></div>',
     '      </div>',
     '    </div>',
-    '    <div class="auth-brand-side">',
-    '      <div class="auth-brand-logo"><svg><use href="#i-logo"/></svg></div>',
-    '      <div class="auth-brand-content">',
-    '        <h3 class="auth-brand-title">Filtro Vehicular<span class="brand-plus-lg">+</span></h3>',
-    '        <p class="auth-brand-tagline">Consultas vehiculares oficiales al instante. Accede a:</p>',
-    '        <ul class="auth-brand-list">',
-    '          <li>Inscripción de la Placa</li>',
-    '          <li>Papeletas Vigentes</li>',
-    '          <li>ATU y SUTRAN</li>',
-    '          <li>Papeletas con DNI</li>',
-    '          <li>Vigencia del SOAT</li>',
-    '          <li>Inspección Vehicular</li>',
-    '          <li>Siniestralidad</li>',
-    '          <li>Sistema GNV</li>',
-    '          <li>Órdenes de Captura</li>',
-    '          <li>Placas Duplicadas</li>',
-    '          <li>Impuesto Vehicular</li>',
-    '          <li>Historial Completo</li>',
-    '          <li>Cambio de Características</li>',
-    '          <li>Medidas Cautelares</li>',
-    '          <li>Y mucho más</li>',
-    '        </ul>',
-    '      </div>',
-    '      <div class="auth-brand-foot">© 2026 Filtro Vehicular+ Perú</div>',
-    '    </div>',
+    brandSide('Crea tu cuenta.'),
     '  </div>',
     '</div>',
 
@@ -93,6 +142,7 @@
     '      <div class="auth-form-wrap">',
     '      <div class="auth-form-mh"><span class="mh-brand">Plataforma Filtro Vehicular<span class="mh-plus">+</span></span></div>',
     '      <div class="auth-form-card">',
+    '      <div class="auth-avatar" aria-hidden="true">' + AVATAR_SVG + '</div>',
     '      <h2 class="auth-modal-title">Bienvenido</h2>',
     '      <p class="auth-modal-sub">Ingresa a tu cuenta para continuar con tus consultas.</p>',
     '      <form class="auth-form" id="loginForm" novalidate>',
@@ -120,31 +170,7 @@
     '      <div class="auth-legal-foot"><a href="#" data-modal="terms">Términos y condiciones</a><span class="dot">·</span><a href="#" data-modal="cookies">Política de cookies</a></div>',
     '      </div>',
     '    </div>',
-    '    <div class="auth-brand-side">',
-    '      <div class="auth-brand-logo"><svg><use href="#i-logo"/></svg></div>',
-    '      <div class="auth-brand-content">',
-    '        <h3 class="auth-brand-title">Filtro Vehicular<span class="brand-plus-lg">+</span></h3>',
-    '        <p class="auth-brand-tagline">Consultas vehiculares oficiales al instante. Accede a:</p>',
-    '        <ul class="auth-brand-list">',
-    '          <li>Inscripción de la Placa</li>',
-    '          <li>Papeletas Vigentes</li>',
-    '          <li>ATU y SUTRAN</li>',
-    '          <li>Papeletas con DNI</li>',
-    '          <li>Vigencia del SOAT</li>',
-    '          <li>Inspección Vehicular</li>',
-    '          <li>Siniestralidad</li>',
-    '          <li>Sistema GNV</li>',
-    '          <li>Órdenes de Captura</li>',
-    '          <li>Placas Duplicadas</li>',
-    '          <li>Impuesto Vehicular</li>',
-    '          <li>Historial Completo</li>',
-    '          <li>Cambio de Características</li>',
-    '          <li>Medidas Cautelares</li>',
-    '          <li>Y mucho más</li>',
-    '        </ul>',
-    '      </div>',
-    '      <div class="auth-brand-foot">© 2026 Filtro Vehicular+ Perú</div>',
-    '    </div>',
+    brandSide('Bienvenido.'),
     '  </div>',
     '</div>',
 

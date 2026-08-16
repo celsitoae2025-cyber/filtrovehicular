@@ -1,10 +1,28 @@
 ﻿/* ============================================================
    SIDEBAR — navegación lateral
+
+   Rediseño de agosto de 2026. Lo que cambió y por qué:
+
+   · El fondo pasa a --c-surface-dark, el mismo de las demás
+     superficies grandes (pie, "Reporte completo", regiones y el panel
+     del acceso). Antes era --c-primary y a la vista quedaba más verde
+     petróleo que todo lo demás.
+   · Las etiquetas dejan las VERSALITAS. A 14px las mayúsculas se leen
+     de una en una en vez de de un vistazo, y once entradas en
+     mayúscula parecen un cartel, no un menú.
+   · El activo deja de ser un bloque gris claro y pasa a un fondo verde
+     apenas insinuado con el icono en verde de marca. Pesa menos y dice
+     más.
+   · La línea verde lima que partía el menú se va: era una franja de
+     color, justo lo que la guía del proyecto prohíbe en el resto de
+     paneles. Su trabajo —separar— lo hacen ahora los rótulos de
+     sección.
+   · Todos los pesos son 400 o 700; no queda ningún 500 ni 600.
 ============================================================ */
 
 .sidebar {
   width: var(--sidebar-w);
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -62,25 +80,36 @@
 }
 .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
 
+/* ---------- Marca ----------
+   El nombre baja de 24px a 17px. A 24px ocupaba tres líneas de alto útil
+   y era, de largo, lo que más pesaba de toda la columna.
+
+   Aquí llegó a haber un distintivo con el símbolo #i-logo al lado. Se
+   retiró: el dueño avisó de que ese dibujo no es el logo de la marca.
+   Hasta tener el bueno, la marca va solo en texto.
+
+   Lleva !important porque base.css fija los 24px con !important para
+   que el nombre no siga la escala tipográfica; aquí se respeta la idea
+   —sigue fuera de la escala, con su propio valor— pero con otro tamaño. */
 .brand {
-  padding: 22px 22px 20px;
-  border-bottom: 1px solid rgba(255,255,255,.06);
+  padding: 18px 16px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
 }
 .brand-plus { color: #8fc72e; }
-.brand-name {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  letter-spacing: .2px;
-  line-height: 1.25;
+.sidebar .brand-name {
+  font-size: var(--fs-md) !important;
+  font-weight: 700 !important;
+  letter-spacing: -.1px !important;
+  line-height: 1.25 !important;
 }
 
 .sidebar-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 14px 10px 20px;
+  padding: 8px 12px 18px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,.15) transparent;
   overscroll-behavior: contain;
@@ -89,28 +118,37 @@
 .sidebar-scroll::-webkit-scrollbar { width: 6px; }
 .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 3px; }
 
+/* Rótulos de sección ("Principal", "Catálogo"). Son lo que separa los
+   bloques ahora que no hay línea de color. Van en versalitas a 12px, que
+   es el único sitio donde la app las admite: a este tamaño y con este
+   contraste leen como etiqueta, no como contenido. */
 .nav-section {
-  padding: 14px 14px 8px;
+  padding: 16px 12px 7px;
   font-size: var(--fs-xs);
-  font-weight: 600;
-  color: rgba(255,255,255,.35);
-  letter-spacing: .8px;
-  text-transform: uppercase; /* micro-label: uppercase aceptable â‰¤11px */
+  font-weight: 700;
+  color: rgba(255,255,255,.34);
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
 }
+/* El primero va pegado a la marca, sin el aire que separa bloques. */
+.nav-section:first-child { padding-top: 4px; }
 
+/* Queda por si algún día vuelve a hacer falta partir el menú, pero ya
+   no es la franja verde: un filete neutro, como el resto de divisiones
+   del proyecto. */
 .nav-separator {
   height: 1px;
-  background: #8fc72e;
-  margin: 4px 12px;
+  background: rgba(255,255,255,.08);
+  margin: 10px 12px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 7px;
-  color: rgba(255,255,255,.78);
+  gap: 11px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: rgba(255,255,255,.74);
   text-decoration: none;
   font-size: var(--fs-sm);
   font-weight: 400;
@@ -121,21 +159,29 @@
   width: 100%;
   text-align: left;
   transition: background .15s, color .15s;
-  min-height: 42px;
+  min-height: 40px;
+  margin-bottom: 2px;
 }
 .nav-item:hover, .nav-item:focus-visible {
-  background: rgba(255,255,255,.05);
+  background: rgba(255,255,255,.055);
   color: #ffffff;
   outline: none;
 }
+
+/* Dónde estás: fondo del verde de marca al 12% e icono en verde. Antes
+   era un bloque de blanco al 12% que competía con la propia marca y
+   obligaba a leer para saber dónde estabas; en verde se ve sin leer.
+   Sin barra lateral de acento: la guía del proyecto no admite franjas. */
 .nav-item.active {
-  background: rgba(255,255,255,.12);
+  background: rgba(143, 199, 46, .12);
   color: #ffffff;
+  font-weight: 700;
 }
-.nav-item .ico { width: 20px; height: 20px; flex-shrink: 0; color: rgba(255,255,255,.65); }
+.nav-item .ico { width: 20px; height: 20px; flex-shrink: 0; color: rgba(255,255,255,.55); }
 .nav-item .ico.ico-bold { width: 24px; height: 24px; }
-.nav-item:hover .ico, .nav-item.active .ico { color: #ffffff; }
-.nav-item .label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; letter-spacing: .3px; }
+.nav-item:hover .ico { color: #ffffff; }
+.nav-item.active .ico { color: var(--c-accent); }
+.nav-item .label { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nav-item .chev {
   width: 14px; height: 14px;
   opacity: .55;
@@ -158,6 +204,51 @@ body.is-anonymous .nav-item[data-submenu] .chev { display: none; }
 body.is-anonymous .nav-item[data-submenu] .label { color: rgba(255,255,255,.75); }
 body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
 
+/* ===========================================================
+   Grupo plegable "Consultas por categoría"
+
+   Las nueve categorías estaban sueltas y dejaban el menú en once
+   entradas. Metidas aquí quedan en tres, y el catálogo sigue a un clic
+   —no en otra pantalla—, que era la condición para moverlas.
+
+   Cerrado de entrada. Lo que estaba abierto se recuerda en localStorage
+   (ver js/modules/sidebar-nav-group.js).
+=========================================================== */
+.nav-group {
+  display: none;
+  flex-direction: column;
+}
+.nav-group.open { display: flex; }
+
+/* Las nueve van sangradas y con el icono un punto más pequeño: se ve de
+   un vistazo que cuelgan de la cabecera, sin necesidad de línea guía ni
+   de recuadro. */
+.nav-group .nav-item {
+  padding-left: 22px;
+  min-height: 38px;
+}
+.nav-group .nav-item .ico { width: 18px; height: 18px; }
+
+/* Cabecera del grupo: es un .nav-item más, así que hereda alto, color y
+   hover.
+
+   El chevrón gira con .is-open y no con la .open de los submenús: el
+   colapso del sidebar y el botón "Inicio" del breadcrumb hacen un
+   barrido de `.nav-item.open` para cerrar submenús, y dejarían la flecha
+   apuntando al contrario de lo que hace el grupo. */
+.nav-group-head .chev { margin-left: auto; }
+.nav-group-head.is-open .chev { transform: rotate(180deg); }
+
+/* Con el sidebar colapsado (solo iconos) el grupo no pinta nada: no hay
+   etiqueta que leer y esconder los nueve iconos dejaría una columna de
+   dos. Se retira la cabecera y las categorías quedan siempre a la vista,
+   exactamente como antes de existir el grupo. */
+.sidebar.collapsed .nav-group-head { display: none; }
+.sidebar.collapsed .nav-group { display: flex; }
+/* Sin etiquetas no hay jerarquía que marcar: el sangrado descuadraría
+   la columna de iconos. */
+.sidebar.collapsed .nav-group .nav-item { padding-left: 10px; }
+
 .submenu {
   display: none;
   flex-direction: column;
@@ -178,8 +269,8 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
 .submenu a.active-sub { color: #ffffff; background: rgba(255,255,255,.08); }
 
 .sidebar-actions {
-  border-top: 1px solid rgba(255,255,255,.06);
-  padding: 8px 12px;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding: 10px 12px 12px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -188,10 +279,10 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 7px;
-  color: rgba(255,255,255,.72);
+  gap: 11px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: rgba(255,255,255,.74);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -203,8 +294,8 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
   transition: background .15s, color .15s;
   min-height: 40px;
 }
-.sb-action:hover { background: rgba(255,255,255,.05); color: #ffffff; }
-.sb-action svg { width: 20px; height: 20px; color: rgba(255,255,255,.6); flex-shrink: 0; }
+.sb-action:hover { background: rgba(255,255,255,.055); color: #ffffff; }
+.sb-action svg { width: 20px; height: 20px; color: rgba(255,255,255,.55); flex-shrink: 0; }
 .sb-action:hover svg { color: #ffffff; }
 
 /* Link al panel admin — acento teal para destacar el rol */
@@ -218,7 +309,9 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
   width: 7px; height: 7px;
   background: #141d1c;
   border-radius: 50%;
-  border: 2px solid var(--c-primary);
+  /* El aro recorta el punto contra el fondo del menú, así que sigue al
+     menú: con el oscuro viejo se vería un cerco alrededor. */
+  border: 2px solid var(--c-surface-dark);
 }
 
 /* Campana dorada + animación al tener notificaciones sin leer */
@@ -353,10 +446,10 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
   left: calc(100% + 10px);
   top: 50%;
   transform: translateY(-50%);
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #ffffff;
   font-size: var(--fs-xs);
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: .3px;
   padding: 6px 10px;
   border-radius: 6px;
@@ -395,6 +488,14 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
   }
   .sidebar.collapsed .nav-item .chev,
   .sidebar.collapsed .nav-item .nav-lock { opacity: 1; pointer-events: auto; }
+
+  /* En móvil el sidebar nunca está en modo iconos, aunque conserve la
+     clase .collapsed de una sesión de escritorio. El grupo tiene que
+     comportarse igual que en un sidebar expandido: cabecera a la vista y
+     las nueve categorías escondidas hasta que se toque. */
+  .sidebar.collapsed .nav-group-head { display: flex; }
+  .sidebar.collapsed .nav-group { display: none; }
+  .sidebar.collapsed .nav-group.open { display: flex; }
 }
 
 /* === Premium nav button (Consultas Premium) === */

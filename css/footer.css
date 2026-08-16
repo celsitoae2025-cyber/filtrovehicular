@@ -30,7 +30,7 @@
 }
 
 .site-footer {
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #ffffff;
   margin-top: 24px;
   flex-shrink: 0;
@@ -52,9 +52,12 @@
    Menos de un milisegundo a cambio de un botón que parpadea. */
 
 /* ---------- Zona superior: marca + columnas ---------- */
+/* Tres bloques, no cuatro: marca, "Consultas" (que ahora lleva las nueve
+   categorías repartidas en dos columnas) y "Mi cuenta". La columna
+   "Fuentes" se retiró porque sus cuatro enlaces ya están entre las nueve. */
 .foot-main {
   display: grid;
-  grid-template-columns: 1.7fr 1fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1.7fr 1fr;
   gap: 40px 32px;
   padding: 44px 32px 36px;
   max-width: 1180px;
@@ -134,6 +137,14 @@
 }
 .foot-links button:hover { color: #ffffff; }
 
+/* Listado a dos columnas — los once enlaces de "Consultas" en una sola
+   columna dejaban el pie con una pata mucho más larga que las otras. */
+.foot-links-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px 22px;
+}
+
 /* ---------- Barra inferior ---------- */
 /* Ya no necesita hueco extra abajo: los botones flotantes se frenan sobre
    el pie (ver --fv-lift), así que no llegan a tapar el copyright ni los
@@ -181,6 +192,9 @@
   /* La marca ocupa la fila entera: su texto necesita más ancho que un
      listado de enlaces y partido en dos columnas se lee mal. */
   .foot-brand { grid-column: 1 / -1; }
+  /* "Consultas" también: dentro va un listado a dos columnas y en media
+     rejilla los nombres largos ("Infracciones por regiones") se partían. */
+  .foot-col-consultas { grid-column: 1 / -1; }
 }
 
 @media (max-width: 560px) {
@@ -192,13 +206,19 @@
      algo aquí y se va lo que ya está a un toque en el menú lateral:
 
        · la frase de presentación (69px) — decorativa, no navega
-       · la columna "Fuentes" — Sunarp, Reniec, Sunat y Financiero están
-         los cuatro en el menú lateral
+       · las siete categorías añadidas a "Consultas" (.foot-cat), que
+         están todas a un toque en el menú lateral
 
-     Sobreviven la marca, "Consultas", "Mi cuenta" y los legales, que es
-     lo que de verdad se busca en un pie. */
+     Sobreviven la marca, "Consultas" con sus cuatro enlaces de siempre
+     —filtro, justicia, vehículos y regiones—, "Mi cuenta" y los legales,
+     que es lo que de verdad se busca en un pie. */
   .foot-tagline { display: none; }
-  .foot-col-fuentes { display: none; }
+  .foot-cat { display: none; }
+
+  /* Con cuatro enlaces la columna vuelve a ser una sola, y "Consultas"
+     deja de ocupar la fila entera: cabe al lado de "Mi cuenta". */
+  .foot-links-2 { grid-template-columns: 1fr; }
+  .foot-col-consultas { grid-column: auto; }
 
   /* Las dos columnas que quedan caben en una sola fila. */
   .foot-main {

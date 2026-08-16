@@ -174,12 +174,13 @@
    oscuro la distingue igual pero deja el acento para lo que importa: el
    icono y el numero de regiones. */
 .service-card[data-nav="regiones"] {
-  /* Un punto mas oscuro que el sidebar (#141d1c) a proposito, no por error.
-     Es el mismo tono, pero rodeado de blanco se percibe mas claro que en
-     una columna entera de oscuro: bajarlo a #0e1312 —el oscuro secundario
-     de la paleta— hace que a la vista SI parezcan el mismo color. */
-  background: #0e1312;
-  border-color: #0e1312;
+  /* Aquí se bajó primero a #0e1312 para compensar que el mismo tono se
+     percibe más claro en una caja pequeña. La compensación se leía al
+     revés —el que cantaba acabó siendo el menú lateral—, así que ahora
+     el resto de superficies bajan también y todas comparten
+     --c-surface-dark. Sin compensaciones: son el mismo valor. */
+  background: var(--c-surface-dark);
+  border-color: var(--c-surface-dark);
   color: #ffffff;
 }
 .service-card[data-nav="regiones"]:hover {
