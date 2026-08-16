@@ -153,10 +153,23 @@ body { background: #d4dade !important; }
 .content { background: #d4dade !important; }
 
 /* Accesos rápidos del dashboard — botones centrados sin importar cuántos entren */
+/* Accesos rapidos.
+
+   El minimo de la columna es 104px y NO 0. Con `minmax(0, 1fr)` el
+   auto-fit no tenia ningun suelo que respetar, asi que metia los seis
+   accesos en una sola fila pasara lo que pasara: en un telefono de
+   360px salian a ~50px por tarjeta y las etiquetas largas —Vehiculos,
+   Historial— se cortaban. Con suelo, la rejilla parte sola en dos
+   columnas en el movil y va sumando a medida que hay sitio, sin una
+   sola consulta de medios.
+
+   Ojo si se toca: las reglas de mobile.css para esta rejilla llevan
+   menos especificidad que estas y ademas estas van con `!important`,
+   asi que no la pisan. Lo que se cambie aqui es lo que manda. */
 #view-dashboard .quick-actions-compact {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr)) !important;
-  gap: 12px !important;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)) !important;
+  gap: 10px !important;
   justify-items: stretch !important;
   align-items: stretch !important;
   width: 100%;
@@ -167,7 +180,28 @@ body { background: #d4dade !important; }
   align-items: center !important;
   justify-content: center !important;
   text-align: center !important;
-  gap: 8px !important;
+  gap: 7px !important;
+  /* Todas del mismo alto aunque una etiqueta ocupe dos lineas: si no,
+     la fila queda con una tarjeta mas alta que las demas. */
+  min-height: 78px !important;
+  padding: 12px 8px !important;
+}
+/* La etiqueta parte de linea en vez de desbordar. `anywhere` es el
+   seguro para un nombre largo sin espacios, que si no se saldria de su
+   tarjeta por el costado. */
+#view-dashboard .quick-compact span {
+  display: block;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+  /* 13px y peso normal. Estaba en 12px con peso 500: el 500 no existe
+     en este proyecto —solo 400 y 700— y a 12px sobre el turquesa la
+     etiqueta se leia con esfuerzo. Va con `!important` porque
+     mobile.css la fija en --fs-xs y se carga despues que este archivo. */
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
 }
 
 /* Logo del sidebar — tamaño fijo, no forma parte de la escala de 5
