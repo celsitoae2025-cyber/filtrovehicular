@@ -792,9 +792,11 @@
   border: none;
   cursor: pointer;
   text-align: left;
-  /* Turquesa institucional. Antes era un verde-azulado suelto (#03a7a4) que
-     no salía de la paleta y desentonaba con el resto. */
-  background: #00B4D8 !important;
+  /* Turquesa institucional #03a7a4. Una sesión anterior lo tomó por «un
+     verde-azulado suelto» y lo cambió a #00B4D8: era justo al contrario.
+     Revertido 2026-08-16. El hover (#038d8b) sale de oscurecerlo un 15%,
+     la misma proporción que tenía el par anterior. */
+  background: #03a7a4 !important;
   color: #ffffff !important;
   z-index: 45;
 }
@@ -831,7 +833,7 @@
   height: 17px;
   opacity: .9;
 }
-#ctaReporteBtn.cta-reporte-btn:hover { background: #0098b7 !important; }
+#ctaReporteBtn.cta-reporte-btn:hover { background: #038d8b !important; }
 
 /* Desde aquí el sidebar es off-canvas (ver sidebar.css), así que el
    botón ya no necesita esquivarlo y se pega al borde izquierdo. */
@@ -4702,7 +4704,7 @@ body.cr-lightbox-open { overflow: hidden; }
 }
 .le-panel .le-field:hover { background: var(--c-bg); }
 .le-panel .le-field.is-modified {
-  background: rgba(11, 163, 163, 0.05);
+  background: rgba(3, 167, 164, 0.05);
   border-left: 2px solid var(--c-primary);
   padding-left: 10px;
 }
@@ -4761,7 +4763,7 @@ body.cr-lightbox-open { overflow: hidden; }
 }
 .le-panel .le-field.is-modified .le-val {
   color: var(--c-primary);
-  background: rgba(11, 163, 163, 0.10);
+  background: rgba(3, 167, 164, 0.10);
   border-color: var(--c-primary);
 }
 
@@ -4915,8 +4917,8 @@ body.cr-lightbox-open { overflow: hidden; }
   gap: 10px;
   padding: 10px 12px;
   margin: 0 0 12px;
-  background: rgba(11, 163, 163, 0.08);
-  border: 1px solid rgba(11, 163, 163, 0.25);
+  background: rgba(3, 167, 164, 0.08);
+  border: 1px solid rgba(3, 167, 164, 0.25);
   border-radius: 8px;
   font-size: var(--fs-sm);
   color: var(--c-primary);
@@ -4941,7 +4943,7 @@ body.le-drag-mode .cr-gallery,
 body.le-drag-mode .cr-pdf-data,
 body.le-drag-mode .cr-pdf-viewer {
   cursor: grab;
-  outline: 1px dashed rgba(11, 163, 163, 0.4);
+  outline: 1px dashed rgba(3, 167, 164, 0.4);
   outline-offset: 4px;
   transition: outline-color .15s;
   user-select: none;
@@ -4987,8 +4989,8 @@ body.le-drag-mode .le-selected {
   animation: le-flash 0.6s ease-out 3;
 }
 @keyframes le-flash {
-  0%, 100% { background-color: rgba(11, 163, 163, 0.0); }
-  50%      { background-color: rgba(11, 163, 163, 0.12); }
+  0%, 100% { background-color: rgba(3, 167, 164, 0.0); }
+  50%      { background-color: rgba(3, 167, 164, 0.12); }
 }
 
 /* Etiqueta flotante con el nombre del bloque resaltado */
@@ -5032,7 +5034,7 @@ body.le-drag-mode .le-selected {
   height: 14px;
 }
 .le-field-target:hover {
-  background: rgba(11, 163, 163, 0.10);
+  background: rgba(3, 167, 164, 0.10);
   color: #141d1c;
 }
 .le-field-target:active {

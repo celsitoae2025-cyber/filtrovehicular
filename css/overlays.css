@@ -177,7 +177,7 @@ body.confirm-dialog-open { overflow: hidden; }
   position: absolute;
   inset: -4px;
   border-radius: 16px;
-  border: 2px solid rgba(11,163,163,.35);
+  border: 2px solid rgba(3, 167, 164,.35);
   animation: ip-halo 2s ease-out infinite;
   pointer-events: none;
 }

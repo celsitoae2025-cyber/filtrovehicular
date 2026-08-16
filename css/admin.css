@@ -1111,8 +1111,8 @@
   justify-content: space-between;
   gap: 12px;
   padding: 12px 14px;
-  background: linear-gradient(135deg, rgba(11,163,163,.10), rgba(11,163,163,.04));
-  border: 1px solid rgba(11,163,163,.20);
+  background: linear-gradient(135deg, rgba(3, 167, 164,.10), rgba(3, 167, 164,.04));
+  border: 1px solid rgba(3, 167, 164,.20);
   border-radius: 10px;
 }
 .sub-card-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }

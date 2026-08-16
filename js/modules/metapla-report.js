@@ -23,7 +23,7 @@
   // ── Paleta ─────────────────────────────────────────────────
   var C_INK    = [20, 29, 28];     // #141d1c — texto principal
   var C_ACCENT = [143, 199, 46];   // #8fc72e — verde institucional
-  var C_TURQ   = [0, 180, 216];    // #00b4d8 — turquesa, segundo acento
+  var C_TURQ   = [3, 167, 164];    // #03a7a4 — turquesa, segundo acento
   var C_MUTED  = [122, 130, 128];  // etiquetas y textos secundarios
   var C_HAIR   = [223, 227, 222];  // filetes y separadores
   var C_SOFT   = [248, 250, 247];  // fondos muy tenues

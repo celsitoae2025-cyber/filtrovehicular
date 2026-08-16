@@ -210,7 +210,7 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
 /* Link al panel admin — acento teal para destacar el rol */
 .sb-action-admin { text-decoration: none; color: var(--c-accent); }
 .sb-action-admin svg { color: var(--c-accent); }
-.sb-action-admin:hover { background: rgba(11, 163, 163, .12); color: var(--c-accent); }
+.sb-action-admin:hover { background: rgba(3, 167, 164, .12); color: var(--c-accent); }
 .sb-action-admin:hover svg { color: var(--c-accent); }
 .sb-dot {
   position: absolute;

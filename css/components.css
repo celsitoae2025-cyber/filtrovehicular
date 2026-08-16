@@ -532,7 +532,7 @@
 }
 /* La última opción manda a un humano: se marca en turquesa para que se
    distinga de las cinco que resuelve el bot solo. */
-.wa-menu-opcion:last-child .wa-menu-n { background: #00B4D8; }
+.wa-menu-opcion:last-child .wa-menu-n { background: #03a7a4; }
 
 .wa-menu-txt { flex: 1; }
 

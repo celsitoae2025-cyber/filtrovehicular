@@ -272,9 +272,11 @@ body { background: #d4dade !important; }
 .pay-kard:focus-visible,
 .pay-kard:active,
 .pay-kard.is-selected {
-  /* Turquesa institucional. Antes era #03a7a4, fuera de paleta. */
-  border-color: #00B4D8 !important;
-  background: #00B4D8 !important;
+  /* Turquesa institucional #03a7a4. Una sesión anterior lo cambió por
+     #00B4D8 creyendo que estaba «fuera de paleta»: era al revés, y el
+     dueño lo señaló al ver el cian desentonando. Revertido 2026-08-16. */
+  border-color: #03a7a4 !important;
+  background: #03a7a4 !important;
   color: #ffffff !important;
   outline: none;
 }
@@ -358,7 +360,7 @@ body { background: #d4dade !important; }
   gap: 13px;
   padding: 18px;
   /* Turquesa institucional, igual que el resto de la interfaz. */
-  background: #00B4D8;
+  background: #03a7a4;
   border-radius: 12px;
   color: #ffffff;
 }
@@ -456,7 +458,7 @@ body { background: #d4dade !important; }
 }
 .pay-custom:hover,
 .pay-custom:focus-visible {
-  border-color: #00B4D8;
+  border-color: #03a7a4;
   outline: none;
 }
 .pay-custom-eyebrow {
