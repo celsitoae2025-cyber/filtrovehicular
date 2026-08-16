@@ -530,51 +530,27 @@
     marcarConResultado(true);
   }
 
-  /* Copia deliberada de lo que hace category-view.js. Esta vista no sale
-     de esa fabrica —tiene su propio modulo— asi que la logica hay que
-     repetirla; lo que NO se repite es el CSS, que cubre las dos
-     estructuras con una sola regla en views.css.
-     Si se toca el comportamiento en un sitio, tocarlo en el otro. */
+  /* Modo resultado, exactamente el mismo que en las vistas de categoria:
+     la implementacion vive en render-helpers.js. Esta vista tiene su
+     propio modulo y no sale de la fabrica de category-view.js, pero
+     comparte el comportamiento entero — antes estaba duplicado aqui y
+     era cuestion de tiempo que las dos copias se separaran. */
   function marcarConResultado(hay) {
     var vista = document.getElementById('view-filter');
     if (!vista) return;
-    vista.classList.toggle('tiene-resultado', !!hay);
-    if (!hay) return;
-
-    ponerBotonNuevaConsultaFiltro(vista);
-
-    var scroller = vista.closest('.main') || document.querySelector('.main');
-    if (!scroller) return;
-    function arriba() {
-      try { scroller.scrollTo({ top: 0, behavior: 'smooth' }); }
-      catch (e) { scroller.scrollTop = 0; }
-    }
-    arriba();
-    // Repetido con las imagenes ya medidas — ver la nota en category-view.js.
-    setTimeout(function () {
-      if (vista.isConnected && !vista.hidden) arriba();
-    }, 120);
+    if (hay) H.entrarModoResultado(vista, volverAlFormulario);
+    else H.salirModoResultado(vista);
   }
 
-  /* La salida. Sin ella, escondidos el selector y el formulario, el
-     cliente se queda mirando la ficha sin forma de pedir otra consulta.
-     Esta vista no tiene cabecera de resultado donde colgarla, asi que va
-     al principio del cuerpo. */
-  function ponerBotonNuevaConsultaFiltro(vista) {
+  function volverAlFormulario() {
     var body = $('filter-result-body');
-    if (!body || body.querySelector('.cr-nueva')) return;
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'cr-nueva cr-nueva-suelta';
-    btn.textContent = 'Nueva consulta';
-    btn.addEventListener('click', function () {
-      marcarConResultado(false);
-      body.hidden = true;
-      body.innerHTML = '';
-      var prev = $('filter-preview-data');
-      if (prev) { prev.hidden = true; prev.innerHTML = ''; }
-    });
-    body.insertBefore(btn, body.firstChild);
+    if (body) { body.hidden = true; body.innerHTML = ''; }
+    var prev = $('filter-preview-data');
+    if (prev) { prev.hidden = true; prev.innerHTML = ''; }
+    var rp = $('filter-result');
+    if (rp) rp.hidden = true;
+    var empty = $('filter-empty');
+    if (empty) empty.hidden = false;
   }
 
   /* â”€â”€ API pública â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */

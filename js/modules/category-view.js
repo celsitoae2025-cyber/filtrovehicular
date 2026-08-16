@@ -96,21 +96,11 @@
     var selectedFile = null;        // File seleccionado (para tipo_dato="foto")
     var selectedFileBase64 = null;  // base64 del archivo sin el prefijo data:
 
-    /* ── Modo resultado ──
-       Con el resultado a la vista sobran el selector de consulta y el
-       formulario del DNI: ya se uso, y en el movil empujaban la ficha
-       media pantalla hacia abajo. Se esconden poniendo una clase en la
-       vista y se recuperan al volver al estado inicial.
-
-       Va por clase en la vista y no ocultando cada tarjeta a mano
-       porque TODAS las categorias comparten esta misma estructura
-       (.view > .selector-card > .panel > .panel.result-panel): una
-       regla en views.css las cubre a todas y no hay que acordarse de
-       ninguna al anadir una categoria nueva.
-
-       Y se inyecta un boton «Nueva consulta» en la cabecera del
-       resultado. Sin el, escondidos los dos cuadros, el cliente se
-       queda encerrado mirando la ficha sin forma de pedir otra. */
+    /* Modo resultado: esconder el selector y el formulario, subir
+       «Descargar» a la cabecera, poner «Nueva consulta» y llevar la
+       pagina arriba. La implementacion esta en render-helpers.js
+       (entrarModoResultado) para que sea LA MISMA en todas las vistas,
+       incluida «Consulta Vehicular», que no sale de esta fabrica. */
     function vistaEl() {
       var body = $(bodyId());
       return body ? body.closest('.view') : null;
@@ -119,69 +109,8 @@
     function marcarConResultado(hay) {
       var vista = vistaEl();
       if (!vista) return;
-      vista.classList.toggle('tiene-resultado', !!hay);
-      if (!hay) return;
-      ponerBotonNuevaConsulta(vista);
-      moverDescargaACabecera(vista);
-      subirAlResultado(vista);
-    }
-
-    /* El boton «Descargar» nace dentro del cuerpo del resultado, flotando
-       sobre las fotos y empujandolas hacia abajo. Se muda a la cabecera,
-       junto a «Nueva consulta»: ahi es donde el cliente busca las
-       acciones, y deja de estorbar a lo que se acaba de consultar.
-
-       Se mueve el NODO, no se vuelve a crear: asi conserva el listener
-       que ya le engancho wireGenericPdfButton. Por eso esto tiene que
-       correr DESPUES del cableado, nunca antes. */
-    function moverDescargaACabecera(vista) {
-      var cab = vista.querySelector('.result-panel .result-header');
-      var barra = vista.querySelector('.result-panel .cr-dl-bar');
-      if (!cab || !barra) return;
-      var btn = barra.querySelector('.nm-download');
-      if (!btn) return;
-      btn.classList.add('cr-dl-cabecera');
-      // Antes de «Nueva consulta», que es la salida y va la ultima.
-      cab.insertBefore(btn, cab.querySelector('.cr-nueva'));
-      barra.remove();
-    }
-
-    /* Con el selector y el formulario escondidos, el resultado pasa a
-       estar arriba del todo — pero la pagina sigue donde el cliente la
-       dejo al pulsar «Consultar», que en el movil es bastante mas abajo.
-       Sin esto, la ficha aparece fuera de la vista y parece que no ha
-       pasado nada. */
-    function subirAlResultado(vista) {
-      var scroller = vista.closest('.main') || document.querySelector('.main');
-      if (!scroller) return;
-
-      function arriba() {
-        try { scroller.scrollTo({ top: 0, behavior: 'smooth' }); }
-        catch (e) { scroller.scrollTop = 0; }  // navegadores sin scrollTo con opciones
-      }
-
-      arriba();
-      /* Y otra vez pasado un instante. La primera corre con el HTML
-         recien puesto pero antes de que las fotos ocupen su sitio: al
-         crecer el bloque, el navegador reajusta el desplazamiento y la
-         ficha se queda a medias. Repetirlo cuando ya esta todo medido
-         deja la pagina donde tiene que estar.
-         El guard es porque en esos 120ms el cliente pudo cambiar de
-         vista y esta ya no estar en pantalla. */
-      setTimeout(function () {
-        if (vista.isConnected && !vista.hidden) arriba();
-      }, 120);
-    }
-
-    function ponerBotonNuevaConsulta(vista) {
-      var cab = vista.querySelector('.result-panel .result-header');
-      if (!cab || cab.querySelector('.cr-nueva')) return;
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'cr-nueva';
-      btn.textContent = 'Nueva consulta';
-      btn.addEventListener('click', function () { volverEstadoInicial(); });
-      cab.appendChild(btn);
+      if (hay) H.entrarModoResultado(vista, volverEstadoInicial);
+      else H.salirModoResultado(vista);
     }
 
     function bodyId()   { return prefix + '-result-body'; }
@@ -525,7 +454,7 @@
          Tenia sentido cuando el selector y el formulario seguian arriba y
          habia que bajar hasta la ficha. Ahora esos dos se esconden y el
          resultado queda en lo alto, asi que ese salto dejaba la pagina a
-         media ficha — y encima pisaba la subida de `subirAlResultado`,
+         media ficha — y encima pisaba la subida de `entrarModoResultado`,
          que corre antes. De la subida se encarga ahora esa funcion. */
     }
 

@@ -5517,12 +5517,10 @@ body.is-logged-in .anon-cats { display: none; }
   display: none !important;
 }
 
-/* En «Consulta Vehicular» no hay cabecera de resultado donde colgar la
-   salida, asi que el boton va suelto al principio del cuerpo. */
-.cr-nueva.cr-nueva-suelta {
-  display: block;
-  margin: 0 0 14px auto;
-}
+/* (Aqui hubo una variante suelta del boton «Nueva consulta» para
+   «Consulta Vehicular», que se creia sin cabecera de resultado. Si la
+   tiene —`#filter-result > .result-header`— asi que usa la misma
+   cabecera que las demas y la variante sobraba.) */
 
 /* La salida. Sin este boton, escondidos los dos cuadros, el cliente se
    queda mirando la ficha sin forma de pedir otra consulta. Va a la

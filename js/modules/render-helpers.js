@@ -1646,7 +1646,93 @@
   }
 
   /* â"€â"€ Public API â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
+  /* ============================================================
+     MODO RESULTADO — el mismo en TODA la plataforma
+
+     Con la ficha delante: se esconden el selector de consulta y el
+     formulario del dato, el boton «Descargar» sube a la cabecera junto
+     a «Nueva consulta», el distintivo de estado desaparece y la pagina
+     se va arriba del todo.
+
+     Vive AQUI y no en cada modulo a proposito. Lo usan las once vistas
+     de categoria (a traves de category-view.js) y «Consulta Vehicular»
+     (filter.js), que no sale de esa fabrica. Estuvo escrito dos veces y
+     era cuestion de tiempo que se separaran; con una sola copia,
+     cualquier retoque llega a todas las vistas de golpe.
+
+     Lo unico que cambia entre vistas es QUE hacer al pulsar «Nueva
+     consulta», y por eso se recibe como parametro.
+  ============================================================ */
+  function entrarModoResultado(vista, alVolver) {
+    if (!vista) return;
+    vista.classList.add('tiene-resultado');
+    ponerBotonVolver(vista, alVolver);
+    subirDescargaACabecera(vista);
+    irArriba(vista);
+  }
+
+  function salirModoResultado(vista) {
+    if (vista) vista.classList.remove('tiene-resultado');
+  }
+
+  /* La salida. Sin ella, escondidos el selector y el formulario, el
+     cliente se queda mirando la ficha sin forma de pedir otra. */
+  function ponerBotonVolver(vista, alVolver) {
+    var cab = vista.querySelector('.result-panel .result-header');
+    if (!cab || cab.querySelector('.cr-nueva')) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cr-nueva';
+    btn.textContent = 'Nueva consulta';
+    btn.addEventListener('click', function () {
+      salirModoResultado(vista);
+      if (typeof alVolver === 'function') alVolver();
+    });
+    cab.appendChild(btn);
+  }
+
+  /* «Descargar» nace dentro del cuerpo del resultado, flotando sobre las
+     fotos y empujandolas hacia abajo. Se muda a la cabecera, que es
+     donde se buscan las acciones.
+
+     Se mueve el NODO, no se vuelve a crear, para que conserve el
+     listener que ya le engancharon. Por eso esto tiene que correr
+     DESPUES del cableado del boton, nunca antes. */
+  function subirDescargaACabecera(vista) {
+    var cab = vista.querySelector('.result-panel .result-header');
+    var barra = vista.querySelector('.result-panel .cr-dl-bar');
+    if (!cab || !barra) return;
+    var btn = barra.querySelector('.nm-download');
+    if (!btn) return;
+    btn.classList.add('cr-dl-cabecera');
+    cab.insertBefore(btn, cab.querySelector('.cr-nueva'));  // antes de la salida
+    barra.remove();
+  }
+
+  /* Con el selector y el formulario escondidos el resultado queda arriba
+     del todo, pero la pagina sigue donde la dejo el cliente al pulsar
+     «Consultar» —en el movil, bastante mas abajo— y la ficha aparecia
+     fuera de la vista: parecia que no habia pasado nada.
+
+     Se repite pasados 120ms porque la primera corre antes de que las
+     fotos ocupen su sitio: al crecer el bloque el navegador reajusta el
+     desplazamiento y la ficha se queda a medias. */
+  function irArriba(vista) {
+    var scroller = vista.closest('.main') || document.querySelector('.main');
+    if (!scroller) return;
+    function arriba() {
+      try { scroller.scrollTo({ top: 0, behavior: 'smooth' }); }
+      catch (e) { scroller.scrollTop = 0; }   // navegadores sin scrollTo con opciones
+    }
+    arriba();
+    setTimeout(function () {
+      if (vista.isConnected && !vista.hidden) arriba();
+    }, 120);
+  }
+
   Consultia.RenderHelpers = {
+    entrarModoResultado:     entrarModoResultado,
+    salirModoResultado:      salirModoResultado,
     esErrorTecnico:          esErrorTecnico,
     esErrorTecnicoRespuesta: esErrorTecnicoRespuesta,
     htmlMantenimiento:       htmlMantenimiento,
