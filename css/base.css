@@ -73,6 +73,15 @@ body {
   overscroll-behavior-y: contain;
 }
 
+/* El fondo va tambien en `html`, no solo en `body`.
+
+   Al recargar, el navegador borra el documento y pinta el fondo del
+   elemento raiz mientras llega el nuevo. Si `html` no tiene ninguno,
+   ese hueco lo rellena con BLANCO: era el fogonazo blanco que se veia
+   al deslizar para actualizar. Con el gris puesto aqui, el paso de una
+   pagina a la otra no cambia de color y no se nota. */
+html { background: #d4dade; }
+
 [hidden] { display: none !important; }
 
 body {

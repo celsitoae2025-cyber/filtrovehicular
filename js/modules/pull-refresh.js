@@ -15,10 +15,9 @@
    hacia abajo estando arriba del todo y, si se pasa del umbral, se
    recarga.
 
-   NO PINTA NADA. Hubo un indicador —un círculo verde con una flecha que
-   seguía al dedo— y se retiró entero: el gesto actualiza y punto. Si
-   alguien lo echa de menos, está en el historial de git; no se vuelve a
-   añadir sin pedirlo.
+   LO ÚNICO QUE PINTA es un aro girando, y solo al soltar. Hubo un
+   indicador mayor —una pastilla blanca con una flecha verde que seguía
+   al dedo— y se retiró entero.
 
    Va de la mano de `overscroll-behavior-y: contain` en html y body
    (base.css), que apaga el círculo que el propio navegador saca al
@@ -83,14 +82,36 @@
            b.contains('wa-abierto');          // menú de WhatsApp
   }
 
-  /* SIN INDICADOR.
+  /* ── Lo unico que se pinta: un aro girando ──
+     Nada de pastilla blanca ni de flecha verde siguiendo al dedo, que
+     es lo que habia antes. Un aro fino y oscuro, y solo al soltar.
 
-     Aqui se dibujaba un circulo verde con una flecha que seguia al dedo
-     y giraba. Se retiro por completo: el gesto tiene que actualizar y
-     nada mas, sin nada que aparezca en pantalla. Por eso este modulo ya
-     no necesita `css/pull-refresh.css` y esa hoja no se carga.
+     Aparece porque la recarga tarda un par de segundos en traer los
+     datos y sin nada en pantalla el gesto parecia no haber funcionado.
+     El navegador mantiene la pagina vieja a la vista hasta que la nueva
+     esta lista, asi que el aro se ve durante toda esa espera y se va
+     solo con ella.
 
-     Lo unico que se ve es la propia recarga de la pagina. */
+     Va con estilos en linea y con `animate()` en vez de una hoja
+     aparte: es un elemento suelto de doce lineas y no merece un archivo
+     CSS propio ni un @keyframes global. Si `animate` no existe, el aro
+     sale quieto — sigue diciendo que algo esta pasando. */
+  function mostrarAro() {
+    var aro = document.createElement('div');
+    aro.setAttribute('aria-hidden', 'true');
+    aro.style.cssText =
+      'position:fixed;top:18px;left:50%;margin-left:-13px;' +
+      'width:26px;height:26px;border-radius:50%;' +
+      'border:2.5px solid rgba(20,29,28,.18);border-top-color:#141d1c;' +
+      'z-index:9999;pointer-events:none;';
+    document.body.appendChild(aro);
+    if (aro.animate) {
+      aro.animate(
+        [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }],
+        { duration: 700, iterations: Infinity }
+      );
+    }
+  }
 
   function alEmpezar(e) {
     if (bloqueado() || e.touches.length !== 1) { y0 = null; return; }
@@ -132,7 +153,10 @@
     tirando = false;
     y0 = null;
 
-    if (arrastre >= UMBRAL) window.location.reload();
+    if (arrastre >= UMBRAL) {
+      mostrarAro();
+      window.location.reload();
+    }
     arrastre = 0;
   }
 
