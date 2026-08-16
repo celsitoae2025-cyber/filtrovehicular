@@ -177,14 +177,14 @@
   width: min(520px, calc(100vw - 32px));
   max-height: min(70vh, 540px);
   background: var(--c-surface);
-  /* El filete que recorta el cuadro contra el velo. Va mas oscuro que
-     --c-border (#DCDCDC): ese gris esta pensado para separar cajas
-     sobre fondo claro y aqui, contra el blanco del propio cuadro, no se
-     veia. Este llega a 2.3:1 sobre blanco, que es lo que hace falta
-     para que se lea como un filo y no como una sombra.
+  /* El filete que recorta el cuadro contra el velo. Va bastante mas
+     oscuro que --c-border (#DCDCDC): ese gris esta pensado para separar
+     cajas sobre fondo claro y aqui, contra el blanco del propio cuadro,
+     no se veia. Es el mismo #a4b1b9 que ya recorta la tarjeta del
+     acceso, asi que no se inventa un gris nuevo.
      Lleva `!important` porque base.css quita el borde a todos los
      paneles de la aplicacion en bloque. */
-  border: 1px solid #b9c0c0 !important;
+  border: 1px solid #a4b1b9 !important;
   border-radius: 16px;
   padding: 10px;
   overflow-y: auto;
@@ -247,14 +247,16 @@
    siguiente. Un pixel basta: mas y la lista se estira de mas a lo alto
    y obliga a deslizar antes de tiempo. */
 .combo-option + .combo-option { margin-top: 1px; }
-.combo-option:hover { background: #f1f3f3; }
+.combo-option:hover { background: #f4f5f5; }
 
-/* La elegida y la que esta bajo el raton se distinguen. Antes las dos
-   usaban el mismo gris y era imposible saber cual estaba marcada: al
-   pasar el raton por encima de cualquier otra, las dos se veian igual.
-   La elegida se queda en el verde palido de marca y en negrita. */
+/* La elegida y la que esta bajo el raton se distinguen, y las dos en
+   gris: el color se reserva para lo que hay que mirar, y aqui no hace
+   falta. Antes usaban el MISMO gris y era imposible saber cual estaba
+   marcada — al pasar el raton por encima de cualquier otra, las dos se
+   veian igual. La diferencia la hacen ahora dos cosas a la vez: la
+   elegida va un tono mas honda y en negrita. */
 .combo-option.selected {
-  background: var(--c-teal-soft);
+  background: #eceeee;
 }
 .combo-option.selected .combo-opt-text {
   font-weight: 700;
