@@ -1123,16 +1123,19 @@ body { background: #d4dade !important; }
    `.auth-brand-foot { margin:0 }`) lo pise por orden de cascada. */
 .auth-form-mh { display: none; }
 
-/* Enlaces verdes sobre blanco: #8fc72e da 2.0:1 de contraste, muy por
-   debajo del 4.5:1 exigible para texto pequeno. Se oscurece el mismo
-   tono hasta 5.3:1. Sobre fondo oscuro el verde original no se toca. */
+/* «Olvidaste tu contrasena» y «Crear cuenta» van en el oscuro de marca,
+   no en verde. Estuvieron en un verde oscurecido (#4e7519) para llegar
+   al 4.5:1 que exige el texto pequeno; el oscuro lo da de sobra (15:1)
+   y ademas deja el verde libre para lo que de verdad senala. El
+   `!important` hace falta: auth.css los pinta con --c-accent. Sobre
+   fondo oscuro el verde original no se toca. */
 .auth-forgot,
 .auth-switch button {
-  color: #4e7519 !important;
+  color: #141d1c !important;
 }
 .auth-forgot:hover,
 .auth-switch button:hover {
-  color: #3d5c14 !important;
+  color: #000000 !important;
 }
 .auth-forgot { font-weight: 400 !important; }
 .auth-switch button { font-weight: 700 !important; }
