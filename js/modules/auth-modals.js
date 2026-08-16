@@ -105,7 +105,7 @@
     '      <form class="auth-form" id="signupForm" novalidate>',
     '        <div class="auth-field">',
     '          <label>Nombre de usuario</label>',
-    '          <div class="auth-input-wrap">' + USER_SVG + '<input class="auth-input has-icon" type="text" name="full_name" required autocomplete="username" placeholder="Ej: Carlos, PlacaCheck, etc."></div>',
+    '          <div class="auth-input-wrap">' + USER_SVG + '<input class="auth-input has-icon" type="text" name="full_name" required autocomplete="username"></div>',
     '        </div>',
     '        <div class="auth-field">',
     '          <label>Correo electrónico</label>',
