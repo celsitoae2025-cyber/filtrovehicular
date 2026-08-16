@@ -84,12 +84,15 @@
 
 /* ── ÍCONO ────────────────────────────────────────────── */
 .service-icon {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  max-width: 36px;
-  min-height: 36px;
-  max-height: 36px;
+  /* 48px (antes 36). Subido a peticion del dueno para que la imagen de cada
+     servicio se reconozca de un vistazo: a 36 el logo de la fuente —SUNARP,
+     SAT, SUTRAN— quedaba demasiado pequeno para distinguirse. */
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  max-width: 48px;
+  min-height: 48px;
+  max-height: 48px;
   border-radius: 8px;
   background: var(--c-bg);
   display: flex;
@@ -102,15 +105,15 @@
   box-sizing: border-box;
 }
 .service-icon > svg {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   display: block;
 }
 .service-icon > img {
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
-  padding: 6px;
+  padding: 7px;
   display: block;
   box-sizing: border-box;
 }
@@ -251,9 +254,9 @@ body.is-anonymous .service-card.is-locked-anon::after {
     align-items: center;
     justify-content: center;
     text-align: center;
-    height: 104px;
-    padding: 10px 8px;
-    gap: 7px;
+    height: 116px;
+    padding: 11px 8px;
+    gap: 8px;
   }
   /* .service-name lleva flex:1 para la disposicion en fila. En columna ese
      flex lo estiraria a lo alto y romperia el centrado vertical. */
@@ -267,15 +270,15 @@ body.is-anonymous .service-card.is-locked-anon::after {
     align-items: center;
   }
   .service-icon {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    max-width: 32px;
-    min-height: 32px;
-    max-height: 32px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    min-height: 44px;
+    max-height: 44px;
   }
-  .service-icon > svg { width: 16px; height: 16px; }
-  .service-icon > img { width: 32px; height: 32px; }
+  .service-icon > svg { width: 22px; height: 22px; }
+  .service-icon > img { width: 44px; height: 44px; padding: 6px; }
   .service-name {
     font-size: var(--fs-xs);
     line-height: 1.3;
