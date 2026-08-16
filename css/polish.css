@@ -223,7 +223,7 @@
 @media (max-width: 480px) {
   /* Cards de consulta más compactas */
   .selector-card { padding: 12px; }
-  .panel-desc { font-size: var(--fs-sm); }
+  .panel-desc { font-size: 12px; }
 
   /* Empty state más pequeño */
   .empty-title { font-size: var(--fs-md); }

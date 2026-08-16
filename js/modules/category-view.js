@@ -60,12 +60,17 @@
   function bindGlobalComboListeners() {
     if (_globalBound) return;
     _globalBound = true;
+    // Cierre al pulsar fuera. Se pregunta por el BOTÓN y por el PANEL, no
+    // por el `.combo` entero: el velo del cuadro flotante es un
+    // pseudoelemento del propio `.combo`, así que un clic en él llega con
+    // `e.target` apuntando al `.combo` y el cuadro no se cerraría nunca.
     document.addEventListener('click', function (e) {
       _combos.forEach(function (c) {
-        if (!c.combo.contains(e.target)) {
-          c.combo.classList.remove('open');
-          c.btn.setAttribute('aria-expanded', 'false');
-        }
+        if (c.btn.contains(e.target)) return;
+        var panel = c.combo.querySelector('.combo-panel');
+        if (panel && panel.contains(e.target)) return;
+        c.combo.classList.remove('open');
+        c.btn.setAttribute('aria-expanded', 'false');
       });
     });
     document.addEventListener('keydown', function (e) {

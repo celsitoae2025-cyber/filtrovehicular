@@ -161,31 +161,89 @@
 }
 .combo.open .combo-chev { transform: rotate(180deg); }
 
+/* ---------- El selector de consulta abre como cuadro flotante ----------
+   Antes se desplegaba hacia abajo, pegado al campo. Con catalogos largos
+   la lista tapaba media pagina, empujaba el resto del formulario fuera
+   de la vista y en celular quedaba a medias contra el borde inferior.
+   Centrado sobre un velo se lee de una vez y no depende de cuanto
+   espacio quede por debajo del campo.
+
+   Sigue siendo el mismo elemento y la misma clase `.combo.open`: no hace
+   falta un modal aparte ni marcado nuevo, solo cambia donde se coloca. */
 .combo-panel {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0; right: 0;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: min(520px, calc(100vw - 32px));
+  max-height: min(70vh, 540px);
   background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: 10px;
-  padding: 6px;
-  max-height: 360px;
+  /* El filete gris que recorta el cuadro contra el velo. Lleva
+     `!important` porque base.css quita el borde a todos los paneles de
+     la aplicacion en bloque, y este es un cuadro flotante, no un panel:
+     sin el se funde con lo que tiene detras. */
+  border: 1px solid var(--c-border) !important;
+  border-radius: 16px;
+  padding: 10px;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Sin barra de desplazamiento a la vista. Se desliza con el dedo o con
+     la rueda; la barra metia una franja gris pegada al borde redondeado
+     y ensuciaba el cuadro. El scroll sigue funcionando igual. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-4px);
-  transition: opacity .15s, transform .15s, visibility .15s;
-  z-index: 30;
+  /* Entra creciendo un pelo desde el centro. El desplazamiento y la
+     escala van en la misma propiedad, asi que los dos valores del
+     `translate` se repiten en los dos estados: quitar uno descolocaria
+     el cuadro media pantalla. */
+  transform: translate(-50%, -50%) scale(.97);
+  transition: opacity .18s ease,
+              transform .18s cubic-bezier(.16, 1, .3, 1),
+              visibility .18s;
+  z-index: 601;
 }
-.combo.open .combo-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+.combo.open .combo-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* El velo. Es un pseudoelemento del propio `.combo` para no tener que
+   crear ni destruir un nodo cada vez. Va en `fixed`, asi que cubre la
+   ventana entera aunque su padre mida cuatro dedos.
+
+   Ojo al cerrar: un clic aqui llega al JS con `e.target` apuntando a
+   `.combo` —los pseudoelementos no son elementos—, asi que la condicion
+   de cierre no puede preguntar por `.combo.contains()`; pregunta por el
+   boton y por el panel. */
+.combo.open::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 29, 28, .48);
+  z-index: 600;
+  animation: comboVelo .18s ease both;
+}
+@keyframes comboVelo {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.combo-panel::-webkit-scrollbar { display: none; }
+
 .combo-option {
   display: flex;
   align-items: center;
-  padding: 10px 12px;
-  border-radius: 7px;
+  padding: 9px 14px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background .12s;
 }
+/* Un pelo de aire entre opciones. Pegadas, la lista se lee como un
+   bloque macizo y cuesta distinguir donde acaba una y empieza la
+   siguiente. Un pixel basta: mas y la lista se estira de mas a lo alto
+   y obliga a deslizar antes de tiempo. */
+.combo-option + .combo-option { margin-top: 1px; }
 .combo-option:hover { background: var(--c-bg); }
 .combo-option.selected { background: var(--c-bg); color: var(--c-primary); }
 .combo-opt-text {
@@ -199,14 +257,17 @@
 
 /* Encabezado de grupo en el combo (subcategoria) */
 .combo-group-header {
-  padding: 8px 12px 4px;
   font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 1px;
   color: var(--c-accent);
   text-transform: uppercase;
   border-top: 1px solid var(--c-border);
-  margin-top: 4px;
+  /* Aire por arriba y por abajo del filete: el encabezado tiene que
+     separar dos grupos, y pegado al de arriba parecia el pie del grupo
+     anterior en vez de la cabecera del siguiente. */
+  margin: 8px 0 1px;
+  padding: 10px 14px 5px;
   pointer-events: none;
   user-select: none;
 }

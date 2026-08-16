@@ -532,11 +532,17 @@
       var open = combo.classList.toggle('open');
       comboBtn.setAttribute('aria-expanded', String(open));
     });
+    // Cierre al pulsar fuera. Se pregunta por el BOTÓN y por el PANEL, no
+    // por el `.combo` entero: el velo del cuadro flotante es un
+    // pseudoelemento del propio `.combo`, así que un clic en él llega con
+    // `e.target` apuntando al `.combo` y con la condición anterior
+    // —`!combo.contains(e.target)`— el cuadro no se cerraba nunca.
     document.addEventListener('click', function (e) {
-      if (!combo.contains(e.target)) {
-        combo.classList.remove('open');
-        comboBtn.setAttribute('aria-expanded', 'false');
-      }
+      if (comboBtn.contains(e.target)) return;
+      var panel = $('filterComboPanel');
+      if (panel && panel.contains(e.target)) return;
+      combo.classList.remove('open');
+      comboBtn.setAttribute('aria-expanded', 'false');
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
