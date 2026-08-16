@@ -154,35 +154,34 @@
 .user:hover { background: var(--c-bg); }
 .user-chev { width: 14px; height: 14px; color: var(--c-muted); transition: transform .2s; }
 
-/* Insignia "Mejora tu plan" — reemplaza el nombre junto al avatar,
-   lleva directo a Mi saldo (planes y recargas). */
+/* Solo la cartera, sin recuadro. Antes era una pastilla verde con el texto
+   "Mejora tu plan" dentro: al lado del avatar competia con el y cargaba la
+   barra. El texto vive ahora en aria-label y title, asi que sigue estando
+   para el lector de pantalla y al posar el raton. */
 .user-plan-badge {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
   border: none;
-  border-radius: 8px;
-  background: var(--c-accent);
-  color: var(--c-primary);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  font-family: inherit;
-  white-space: nowrap;
+  border-radius: 9px;
+  background: transparent;
   cursor: pointer;
-  transition: background .15s;
+  transition: background var(--t-fast);
 }
-.user-plan-badge:hover { background: var(--c-accent-hover); }
+.user-plan-badge:hover { background: var(--c-bg); }
 
-/* Cartera en amarillo Caterpillar. Es un color de máquina, no de la paleta
-   de marca: se usa a propósito para que el botón de recargar destaque sobre
-   el verde institucional en vez de fundirse con él. */
+/* Cartera en amarillo Caterpillar. Es un color de maquina, no de la paleta
+   de marca: se usa a proposito para que el acceso a recargar destaque. */
 .plan-badge-ico {
-  width: 17px;
-  height: 17px;
+  width: 23px;
+  height: 23px;
   flex-shrink: 0;
   color: #FFCD11;
 }
+
 .user-menu.open .user-chev { transform: rotate(180deg); }
 
 .user-dropdown {
@@ -260,7 +259,7 @@
 @media (max-width: 768px) {
   .menu-btn { display: inline-flex; }
   .topbar { padding: 10px 16px; }
-  .user-plan-badge { padding: 5px 10px; font-size: 11px; }
+  .user-plan-badge { width: 32px; height: 32px; }
 }
 
 /* ============================================================

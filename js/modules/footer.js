@@ -42,11 +42,12 @@
     if (!pie) return;
 
     var scroller = document.querySelector('.main');
+    // Solo el flotante de WhatsApp. El CTA "Reporte completo" estaba aquí
+    // hasta que dejó de flotar: ahora vive dentro de la caja de búsqueda y
+    // scrollea con la página, así que no hay nada que frenar.
     var botones = [];
-    ['ctaReporteBtn', 'waSupport'].forEach(function (id) {
-      var e = document.getElementById(id);
-      if (e) botones.push(e);
-    });
+    var fab = document.getElementById('waSupport');
+    if (fab) botones.push(fab);
     if (!botones.length) return;
 
     var pedido = false;

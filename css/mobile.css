@@ -397,7 +397,8 @@
   /* === User menu === */
   .user { padding: 4px 6px; }
   .user-chev { width: 12px; height: 12px; }
-  .user-plan-badge { padding: 4px 8px; font-size: 10px; }
+  .user-plan-badge { width: 32px; height: 32px; }
+  .plan-badge-ico { width: 21px; height: 21px; }
 
   /* === Selector card === */
   .selector-card { padding: 11px 13px; }
