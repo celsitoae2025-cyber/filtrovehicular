@@ -48,4 +48,20 @@
   # Cloudflare para resolver el reto. Si falta cualquiera de los tres, el
   # registro y el acceso dejan de poder verificarse el día que la CSP pase
   # a modo real.
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://sdk.mercadopago.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://*.supabase.co https://api.mercadopago.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://challenges.cloudflare.com; frame-src https://*.mercadopago.com https://*.mercadolibre.com https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://*.mercadopago.com; frame-ancestors 'self'
+  #
+  # Dos avisos reales cazados en consola el 2026-08-16, con la CSP todavía
+  # en modo reportar. Por esto se puso así y no en modo real de golpe:
+  #
+  #   - static.cloudflareinsights.com: el beacon de Web Analytics. NO está
+  #     en el repositorio, lo inyecta Cloudflare Pages por su cuenta. Va en
+  #     script-src, y en connect-src porque el beacon manda sus datos a
+  #     cloudflareinsights.com/cdn-cgi/rum.
+  #   - wss://*.supabase.co: los WebSockets NO los cubre https://*.supabase.co,
+  #     el esquema se declara aparte. Los usa el panel de admin para las
+  #     actualizaciones en vivo (js/admin/audit.js, js/admin/compras.js).
+  #     Esas llamadas van dentro de un try/catch con console.warn, así que
+  #     al activar la CSP el panel habria dejado de refrescarse en silencio.
+  #
+  # Si en la consola aparece kaspersky-labs.com, eso NO sale de este archivo:
+  # es el antivirus del que mira, que reescribe la cabecera en su navegador.
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://sdk.mercadopago.com https://challenges.cloudflare.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.mercadopago.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://challenges.cloudflare.com https://static.cloudflareinsights.com https://cloudflareinsights.com; frame-src https://*.mercadopago.com https://*.mercadolibre.com https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://*.mercadopago.com; frame-ancestors 'self'
