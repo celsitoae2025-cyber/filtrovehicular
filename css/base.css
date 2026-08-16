@@ -481,9 +481,13 @@ body { background: #d4dade !important; }
   .content > .view:not([hidden]) > *:last-child {
     flex: 0 0 auto !important;
   }
+  /* Tampoco aquí se estira. Esta regla repescaba el `1 0 auto` que se
+     acababa de quitar arriba, así que en móvil —justo donde se veía el
+     fallo— la tarjeta de resultado seguía llegando hasta el borde de la
+     pantalla y sus esquinas de abajo quedaban fuera. */
   .content > .view:not([hidden]) > .result-panel,
   .content > .view:not([hidden]) > .panel.result-panel {
-    flex: 1 0 auto !important;
+    flex: 0 0 auto !important;
   }
   .plans-columns { gap: 0 !important; }
   .terms-notice { padding: 14px; gap: 10px; }

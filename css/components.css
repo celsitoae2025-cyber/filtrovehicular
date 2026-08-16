@@ -556,7 +556,24 @@
   border: none;
   border-radius: 50%;
   text-decoration: none;
-  transition: background var(--t-fast);
+  /* El `transform` tambien va con transicion, no solo el fondo.
+
+     footer.js lo mueve para que el boton no acabe montado sobre el pie:
+     mientras el pie no asoma vale 0 y el boton no se mueve NADA, y al
+     llegar abajo sube justo lo que invade el pie. Sin transicion ese
+     ajuste era un salto seco cada vez que cambiaba el alto de la
+     pagina —al abrir un cuadro flotante, al cambiar de vista— y parecia
+     que el boton daba brincos. Con ella sube y baja poco a poco.
+
+     `cubic-bezier` de frenada larga, la misma del resto del proyecto. */
+  transition: background var(--t-fast),
+              transform .28s cubic-bezier(.16, 1, .3, 1);
+  will-change: transform;
+}
+/* Quien pide menos movimiento no ve el deslizamiento: el boton salta a
+   su sitio, que sigue siendo correcto, solo que sin recorrido. */
+@media (prefers-reduced-motion: reduce) {
+  .wa-fab { transition: background var(--t-fast); }
 }
 .wa-fab:hover { background: #1da851; }
 .wa-fab-icon {
