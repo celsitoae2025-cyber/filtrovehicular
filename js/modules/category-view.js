@@ -120,7 +120,42 @@
       var vista = vistaEl();
       if (!vista) return;
       vista.classList.toggle('tiene-resultado', !!hay);
-      if (hay) ponerBotonNuevaConsulta(vista);
+      if (!hay) return;
+      ponerBotonNuevaConsulta(vista);
+      moverDescargaACabecera(vista);
+      subirAlResultado(vista);
+    }
+
+    /* El boton «Descargar» nace dentro del cuerpo del resultado, flotando
+       sobre las fotos y empujandolas hacia abajo. Se muda a la cabecera,
+       junto a «Nueva consulta»: ahi es donde el cliente busca las
+       acciones, y deja de estorbar a lo que se acaba de consultar.
+
+       Se mueve el NODO, no se vuelve a crear: asi conserva el listener
+       que ya le engancho wireGenericPdfButton. Por eso esto tiene que
+       correr DESPUES del cableado, nunca antes. */
+    function moverDescargaACabecera(vista) {
+      var cab = vista.querySelector('.result-panel .result-header');
+      var barra = vista.querySelector('.result-panel .cr-dl-bar');
+      if (!cab || !barra) return;
+      var btn = barra.querySelector('.nm-download');
+      if (!btn) return;
+      btn.classList.add('cr-dl-cabecera');
+      // Antes de «Nueva consulta», que es la salida y va la ultima.
+      cab.insertBefore(btn, cab.querySelector('.cr-nueva'));
+      barra.remove();
+    }
+
+    /* Con el selector y el formulario escondidos, el resultado pasa a
+       estar arriba del todo — pero la pagina sigue donde el cliente la
+       dejo al pulsar «Consultar», que en el movil es bastante mas abajo.
+       Sin esto, la ficha aparece fuera de la vista y parece que no ha
+       pasado nada. */
+    function subirAlResultado(vista) {
+      var scroller = vista.closest('.main') || document.querySelector('.main');
+      if (!scroller) return;
+      try { scroller.scrollTo({ top: 0, behavior: 'smooth' }); }
+      catch (e) { scroller.scrollTop = 0; }   // navegadores sin scrollTo con opciones
     }
 
     function ponerBotonNuevaConsulta(vista) {

@@ -5514,3 +5514,37 @@ body.is-logged-in .anon-cats { display: none; }
 /* Solo tiene sentido con el resultado puesto: sin el, los dos cuadros
    estan a la vista y no hay a donde volver. */
 .view:not(.tiene-resultado) .cr-nueva { display: none; }
+
+/* ── Cabecera del resultado: sin distintivo de estado y con las dos
+   acciones ──
+
+   El distintivo «Completado» se retira. Mientras se consulta si dice
+   algo util («Consultando»), pero con la ficha ya delante repetir que
+   esta completada no aporta nada: se ve. Los otros dos estados siguen
+   apareciendo porque solo se esconde con la clase del modo resultado. */
+.view.tiene-resultado .result-panel .status-chip { display: none; }
+
+/* «Descargar», mudado aqui desde el cuerpo del resultado (lo hace
+   category-view.js). Ahi flotaba sobre las fotos y las empujaba hacia
+   abajo; aqui es una accion mas de la cabecera.
+
+   Hay que rehacerle los margenes: `.nm-download` trae `margin: 0 0 12px
+   auto`, pensado para ir suelto y alineado a la derecha dentro del
+   cuerpo. En una fila flex ese margen automatico lo separaria de
+   «Nueva consulta». */
+.result-header .nm-download.cr-dl-cabecera {
+  margin: 0 0 0 auto;
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: var(--fs-xs);
+  gap: 6px;
+}
+.result-header .nm-download.cr-dl-cabecera svg { width: 14px; height: 14px; }
+/* Con las dos juntas, el margen automatico lo lleva solo la primera. */
+.result-header .nm-download.cr-dl-cabecera + .cr-nueva { margin-left: 8px; }
+
+/* La cabecera pasa a poder envolver: en un movil estrecho el titulo mas
+   las dos acciones no caben en una linea, y sin esto se estrujaban unas
+   contra otras. */
+.result-header { flex-wrap: wrap; row-gap: 8px; }
