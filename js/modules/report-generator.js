@@ -916,6 +916,161 @@
     return { blobUrl: URL.createObjectURL(blob), base64: doc.output('datauristring').split(',')[1], filename: nombre };
   }
 
+  // ── Historial de consumos ──────────────────────────────────
+  // El informe de todo lo que el cliente ha gastado. `filas` llega ya
+  // preparada desde my-transactions.js —que es quien sabe traducir un
+  // `description` como "vehiculos / placa" a algo legible— y aquí solo
+  // se dibuja. Cada fila: { n, fecha, modulo, tipo, creditos }.
+  function generateHistorial(filas, meta) {
+    if (!window.jspdf || !window.jspdf.jsPDF) return null;
+    if (!filas || !filas.length) return null;
+    meta = meta || {};
+
+    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var W = doc.internal.pageSize.getWidth();
+    var H = doc.internal.pageSize.getHeight();
+    var M = 14;
+    var bottomBandTop = H - 13;
+
+    var ahora = new Date();
+    var fechaStr = ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    var horaStr  = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+    var fechaFile = ahora.getFullYear() +
+      String(ahora.getMonth() + 1).padStart(2, '0') +
+      String(ahora.getDate()).padStart(2, '0');
+
+    // El total se suma aquí y no se recibe hecho: si alguna vez se
+    // filtra la lista antes de imprimirla, el resumen tiene que hablar
+    // de lo que se imprime, no de lo que había.
+    var totalCreditos = filas.reduce(function (acc, f) {
+      return acc + (Math.abs(Number(f.creditos)) || 0);
+    }, 0);
+
+    function bandaSuperior() {
+      doc.setFillColor.apply(doc, C_PRIMARY);
+      doc.rect(0, 0, W, 22, 'F');
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(0, 22, W, 1, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(19);
+      doc.setTextColor.apply(doc, C_WHITE);
+      doc.text('Filtro Vehicular+', M, 13);
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 2.2, 11.2, 0.9, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor.apply(doc, C_SUBHEAD);
+      doc.text('HISTORIAL DE CONSUMOS', M, 18);
+      doc.text(fechaStr + '  ·  ' + horaStr, W - M, 14, { align: 'right' });
+    }
+
+    function bandaInferior() {
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(0, bottomBandTop - 1, W, 1, 'F');
+      doc.setFillColor.apply(doc, C_PRIMARY);
+      doc.rect(0, bottomBandTop, W, H - bottomBandTop, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6.8);
+      doc.setTextColor.apply(doc, C_SUBHEAD);
+      doc.text('Documento generado por Filtro Vehicular+ · Resumen de consumo de créditos.', M, bottomBandTop + 7.5);
+      // La paginación se pinta en la última pasada, cuando ya se sabe
+      // cuántas páginas hay: aquí solo cabe el número de la actual.
+      doc.text('Página ' + doc.internal.getNumberOfPages(), W - M, bottomBandTop + 7.5, { align: 'right' });
+    }
+
+    // ── Portada de la primera página ──
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(15);
+    doc.setTextColor.apply(doc, C_TEXT);
+    doc.text('Historial de consumos', M, 34);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor.apply(doc, C_KEY);
+    var quien = meta.nombre || meta.email || '';
+    if (quien) doc.text(quien, M, 40);
+
+    // Tres cifras en una banda clara. Es lo que se mira primero y por
+    // eso va antes de la tabla y no al final.
+    var resumenY = quien ? 45 : 39;
+    doc.setFillColor(245, 247, 250);
+    doc.rect(M, resumenY, W - M * 2, 16, 'F');
+    doc.setDrawColor.apply(doc, C_BORDER);
+    doc.setLineWidth(0.2);
+    doc.rect(M, resumenY, W - M * 2, 16, 'S');
+
+    var anchoTercio = (W - M * 2) / 3;
+    var cifras = [
+      ['CONSULTAS', String(filas.length)],
+      ['CRÉDITOS CONSUMIDOS', String(totalCreditos)],
+      ['PERIODO', (meta.desde || '—') + '  a  ' + (meta.hasta || '—')]
+    ];
+    cifras.forEach(function (c, i) {
+      var x = M + anchoTercio * i + 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6.4);
+      doc.setTextColor.apply(doc, C_KEY);
+      doc.text(c[0], x, resumenY + 6);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(i === 2 ? 8 : 12);
+      doc.setTextColor.apply(doc, C_TEXT);
+      doc.text(c[1], x, resumenY + 12.5);
+    });
+
+    // ── La tabla ──
+    doc.autoTable({
+      startY: resumenY + 22,
+      head: [['#', 'FECHA Y HORA', 'MÓDULO', 'TIPO DE CONSULTA', 'CRÉDITOS']],
+      body: filas.map(function (f) {
+        return [
+          String(f.n),
+          f.fecha || '',
+          f.modulo || '',
+          f.tipo || '—',
+          String(Math.abs(Number(f.creditos)) || 0)
+        ];
+      }),
+      // El margen superior deja libre la banda de cabecera en las
+      // páginas siguientes; el inferior, la del pie.
+      margin: { left: M, right: M, top: 28, bottom: 18 },
+      didDrawPage: function () { bandaSuperior(); bandaInferior(); },
+      headStyles: {
+        fillColor: C_PRIMARY, textColor: C_WHITE,
+        fontStyle: 'bold', fontSize: 7, cellPadding: 2.2
+      },
+      bodyStyles: {
+        fontSize: 7.4, textColor: C_TEXT,
+        cellPadding: 2, lineWidth: 0, valign: 'middle'
+      },
+      alternateRowStyles: { fillColor: [247, 249, 251] },
+      columnStyles: {
+        0: { cellWidth: 11, halign: 'center', textColor: C_KEY },
+        1: { cellWidth: 36 },
+        2: { cellWidth: 30, fontStyle: 'bold' },
+        3: { cellWidth: 'auto' },
+        4: { cellWidth: 20, halign: 'right', fontStyle: 'bold' }
+      },
+      styles: { overflow: 'linebreak', lineWidth: 0 }
+    });
+
+    // Cierre bajo la tabla, solo si cabe. Si la tabla acaba pegada al
+    // pie no se fuerza una página entera para dos líneas.
+    var finY = doc.lastAutoTable ? doc.lastAutoTable.finalY : 0;
+    if (finY && finY + 14 < bottomBandTop) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor.apply(doc, C_TEXT);
+      doc.text('TOTAL CONSUMIDO: ' + totalCreditos + ' créditos', W - M, finY + 7, { align: 'right' });
+    }
+
+    var blob = doc.output('blob');
+    return {
+      blobUrl: URL.createObjectURL(blob),
+      base64: doc.output('datauristring').split(',')[1],
+      filename: 'Historial_consumos_' + fechaFile + '.pdf'
+    };
+  }
+
   function download(result) {
     if (!result || !result.blobUrl) return;
     var a = document.createElement('a');
@@ -934,6 +1089,7 @@
     generateTabla: generateTabla,
     generateNm: generateNm,
     generateArbol: generateArbol,
+    generateHistorial: generateHistorial,
     download: download,
   };
 })();

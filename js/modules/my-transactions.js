@@ -127,14 +127,100 @@
     );
   };
 
+  // ── Descarga del historial en PDF ──────────────────────────
+  // Se guarda lo último que se pintó para no volver a pedirlo a
+  // Supabase al pulsar el botón: el PDF tiene que ser exactamente lo
+  // que el cliente está viendo, no una consulta nueva que podría traer
+  // una fila de más si acaba de gastar créditos en otra pestaña.
+  var ultimosConsumos = [];
+
+  function filasParaPdf(items) {
+    return items.map(function (t, i) {
+      var parsed = parseDescription(t.description);
+      return {
+        n: i + 1,
+        fecha: fmtDate(t.created_at).replace(' · ', '  '),
+        modulo: parsed.module,
+        tipo: parsed.tipo || '—',
+        creditos: t.amount
+      };
+    });
+  }
+
+  // Fecha corta para el resumen. Las transacciones llegan de más nueva
+  // a más vieja, así que el periodo va de la última a la primera.
+  function fechaCorta(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString('es-PE', {
+      day: '2-digit', month: '2-digit', year: 'numeric'
+    });
+  }
+
+  async function descargarHistorialPdf(btn) {
+    var gen = Consultia.ReportGenerator;
+    if (!gen || !gen.generateHistorial) return;
+    if (!ultimosConsumos.length) return;
+
+    // Solo se deshabilita mientras trabaja. No se le toca el contenido:
+    // el botón lleva un icono dentro y escribirle texto lo borraría.
+    btn.disabled = true;
+
+    try {
+      var user = await Consultia.Auth.getUser();
+      // El nombre es un adorno de la portada: si el perfil falla, el
+      // informe sale igual con el correo. Por eso va en su propio
+      // try/catch y no tumba la descarga.
+      var perfil = null;
+      try {
+        if (Consultia.Auth.getProfile) perfil = await Consultia.Auth.getProfile(user);
+      } catch (e) { /* sin nombre, con correo basta */ }
+      var res = gen.generateHistorial(filasParaPdf(ultimosConsumos), {
+        nombre: (perfil && perfil.full_name) || '',
+        email: (user && user.email) || '',
+        // El más viejo es el último del array, el más nuevo el primero.
+        desde: fechaCorta(ultimosConsumos[ultimosConsumos.length - 1].created_at),
+        hasta: fechaCorta(ultimosConsumos[0].created_at)
+      });
+      if (!res) {
+        if (Consultia.toast) Consultia.toast({
+          type: 'error', title: 'No se pudo generar', message: 'Inténtalo de nuevo en un momento.'
+        });
+        return;
+      }
+      gen.download(res);
+      // El blob queda en memoria hasta que se suelta. Sin esto, cada
+      // descarga deja un PDF entero retenido en la pestaña.
+      setTimeout(function () { URL.revokeObjectURL(res.blobUrl); }, 4000);
+    } catch (e) {
+      console.error('[my-transactions] PDF:', e);
+      if (Consultia.toast) Consultia.toast({
+        type: 'error', title: 'No se pudo generar', message: 'Inténtalo de nuevo en un momento.'
+      });
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
   Consultia.renderHistorial = async function () {
     var items = await loadTransactions();
     var consumos = items.filter(function (t) { return t.amount < 0; });
+    ultimosConsumos = consumos;
+
     renderList(
       document.getElementById('historialList'),
       document.getElementById('historialEmpty'),
       consumos,
       'historial'
     );
+
+    var btn = document.getElementById('historialPdfBtn');
+    if (!btn) return;
+    btn.hidden = !consumos.length;
+    // La vista se repinta cada vez que se entra, así que el listener se
+    // pone una sola vez o se acumularían y el PDF saldría por duplicado.
+    if (!btn.dataset.bound) {
+      btn.dataset.bound = '1';
+      btn.addEventListener('click', function () { descargarHistorialPdf(btn); });
+    }
   };
 })();
