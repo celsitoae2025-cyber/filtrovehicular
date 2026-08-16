@@ -31,6 +31,7 @@ app.html.bundled
 
 # === Documentos con credenciales (NO commitear nunca) ===
 ACCESOS-Y-CREDENCIALES.md
+INFORME-SEGURIDAD.md
 CUENTAS-Y-SERVICIOS.md
 MIGRACION-CUENTAS.md
 RESUMEN-CUENTAS.md

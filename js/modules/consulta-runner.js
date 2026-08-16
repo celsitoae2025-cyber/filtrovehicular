@@ -177,6 +177,10 @@
     var body = {
       bot: consulta.bot_id,
       command: comando,
+      // Comprobante de pago. El bridge-proxy lo valida contra la base de
+      // datos ANTES de tocar el bridge: comprueba que la reserva exista, sea
+      // de este usuario, esté sin usar y sea reciente. Sin él responde 402.
+      consulta_id: opts.consultaId || null,
     };
     if (opts.photo && opts.photo.base64) {
       body.photoBase64 = opts.photo.base64;
@@ -247,6 +251,10 @@
       msgId: msgId,
       data: data,
       timeoutMs: esperaBridge,
+      // Comprobante de la consulta ya pagada a la que pertenece este clic.
+      // El bridge-proxy comprueba que sea del usuario y esté en curso; aquí
+      // no se cobra nada, es la segunda fase de algo ya cobrado.
+      consulta_id: opts.consultaId || ultimaConsultaId || null,
     };
     var controller = new AbortController();
     var fetchTimeout = setTimeout(function () { controller.abort(); }, esperaBridge + 15000);
@@ -357,28 +365,30 @@
     return (res.data.credits_balance || 0) >= precio;
   }
 
-  // --- Reembolsar consulta cuando el bot falló ---
-  async function refundConsulta(consultaId, reason) {
-    var sb = getSB();
-    if (!sb || !consultaId) return;
-    try {
-      await sb.rpc("refund_consulta", {
-        consulta_id: consultaId,
-        reason: (reason || "").slice(0, 200) || null,
-      });
-    } catch (err) {
-      console.error("[consulta-runner] error refundando consulta:", err);
-    }
-  }
+  // --- Comprobante de la última consulta pagada ---
+  // El callback (clic en un botón del bot) es la segunda fase de una consulta
+  // que ya se pagó, y el bridge-proxy también le pide el comprobante. Se
+  // guarda aquí para no tener que pasarlo a mano en cada sitio que llama a
+  // ejecutarCallback. Solo hay una consulta activa a la vez en la pantalla.
+  var ultimaConsultaId = null;
 
-  // --- Confirmar consulta como exitosa (no toca saldo, solo cambia status) ---
-  async function confirmConsulta(consultaId) {
+  // --- Devolver el crédito de una consulta que nunca llegó a ejecutarse ---
+  //
+  // El cobro ocurre ANTES de consultar. Si la petición no llega al servidor
+  // (sin red, el navegador aborta…), la reserva quedaría pagada y sin usar.
+  // Esta RPC la cancela, pero SOLO si el servidor nunca la reclamó — o sea,
+  // si es imposible que se hayan entregado datos. Si ya estaba en curso, no
+  // hace nada y liquida el servidor.
+  //
+  // Ya no existe un reembolso a voluntad del cliente: esa era la vía por la
+  // que se podía recibir el dato y recuperar el crédito (auditoría 2026-08-15).
+  async function cancelarSiNoSeUso(consultaId) {
     var sb = getSB();
     if (!sb || !consultaId) return;
     try {
-      await sb.rpc("confirm_consulta", { consulta_id: consultaId, result_url_in: null });
+      await sb.rpc("cancel_consulta_no_usada", { p_consulta_id: consultaId });
     } catch (err) {
-      console.warn("[consulta-runner] no se pudo confirmar consulta:", err);
+      console.warn("[consulta-runner] no se pudo cancelar la reserva:", err);
     }
   }
 
@@ -500,39 +510,61 @@
   // valor: dato ingresado.
   // opts.photo: opcional, { base64, filename }.
   async function ejecutarConsultaConCobro(userId, consulta, valor, opts) {
-    // 1) Verificamos saldo pero NO cobramos todavía
     var precioVenta = consulta.precio_venta;
     if (typeof precioVenta !== "number" || isNaN(precioVenta)) {
       throw new Error("Precio de venta no definido para esta consulta");
     }
+
+    // 1) Comprobación de saldo solo para dar un mensaje claro cuanto antes.
+    //    NO es la que manda: consume_credits la revalida en el servidor.
     var tieneSaldo = await verificarSaldo(userId, Math.abs(precioVenta));
     if (!tieneSaldo) {
       throw new Error("Créditos insuficientes. Recarga tu cuenta para continuar.");
     }
 
-    // 2) Llamar al bridge
-    var resp = await ejecutarConsulta(consulta, valor, opts);
+    // 2) COBRAR PRIMERO. Devuelve el consulta_id, que es el comprobante que
+    //    el bridge-proxy exige para consultar.
+    //
+    //    Antes se cobraba al final, después de entregar el dato. Eso permitía
+    //    saltarse el pago llamando al bridge por cuenta propia (auditoría
+    //    2026-08-15). Ahora sin reserva pagada no hay consulta.
+    //
+    //    Los administradores no pagan: consume_credits lo resuelve por rol
+    //    (costo 0) y aun así registra la consulta para el historial.
+    var esCuentaAdmin = await esAdmin(userId);
+    var consultaId = await cobrarCreditos(userId, consulta, valor);
+    ultimaConsultaId = consultaId;   // lo necesita ejecutarCallback
 
-    // 3) Si el bot devolvió respuesta vacía / sin datos, lanzamos error y NO SE COBRA NADA
-    if (esRespuestaVacia(resp)) {
+    // 3) Ejecutar contra el bridge, presentando el comprobante.
+    var runOpts = {};
+    if (opts) { for (var k in opts) { if (Object.prototype.hasOwnProperty.call(opts, k)) runOpts[k] = opts[k]; } }
+    runOpts.consultaId = consultaId;
+
+    var resp;
+    try {
+      resp = await ejecutarConsulta(consulta, valor, runOpts);
+    } catch (err) {
+      // La petición no llegó a completarse (sin red, timeout del navegador…).
+      // Si el servidor nunca llegó a reclamar la reserva, se devuelve el
+      // crédito. Si sí la reclamó, esta llamada no hace nada y el propio
+      // servidor la liquidará — no se puede cobrar dos veces ni devolver de más.
+      await cancelarSiNoSeUso(consultaId);
+      throw err;
+    }
+
+    // 4) Si el bot no trajo datos, el SERVIDOR ya devolvió el crédito y lo
+    //    marca aquí. El cliente solo informa; ya no decide sobre el dinero.
+    if (resp && resp.sin_resultados) {
       var tipo = (consulta.tipo_dato || "dato").toUpperCase();
-      var msg = "No se encontraron datos para el " + tipo + " " + valor + ". No se descontaron créditos.";
-      var e = new Error(msg);
+      var e = new Error("No se encontraron datos para el " + tipo + " " + valor +
+                        ". No se descontaron créditos.");
       e.code = "EMPTY_RESPONSE";
       throw e;
     }
 
-    // 4) Como fue exitosa, recién aquí descontamos los créditos.
-    //    Los administradores no pagan: consume_credits ya bypassa el cobro
-    //    por rol (costo 0, sin restricción de categoría) y de todas formas
-    //    registra la consulta, para que quede en su historial y en las
-    //    métricas del panel admin en vez de desaparecer sin dejar rastro.
-    var esCuentaAdmin = await esAdmin(userId);
-    var consultaId = await cobrarCreditos(userId, consulta, valor);
-    await confirmConsulta(consultaId);
-
     // Inyectamos el costo para que la UI lo muestre
     resp.costo_deducido = esCuentaAdmin ? 0 : consulta.precio_venta;
+    resp.consulta_id = consultaId;
 
     return resp;
   }
@@ -544,8 +576,9 @@
     ejecutarCallback: ejecutarCallback,
     ejecutarConsultaConCobro: ejecutarConsultaConCobro,
     cobrarCreditos: cobrarCreditos,
-    refundConsulta: refundConsulta,
-    confirmConsulta: confirmConsulta,
+    // refundConsulta y confirmConsulta ya no se exponen: quien liquida el
+    // cobro es el servidor (bridge-proxy). Ver migración 20260815200000.
+    cancelarSiNoSeUso: cancelarSiNoSeUso,
     verificarSaldo: verificarSaldo,
     esAdmin: esAdmin,
     esRespuestaVacia: esRespuestaVacia,

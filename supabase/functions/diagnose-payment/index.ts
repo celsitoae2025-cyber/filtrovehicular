@@ -1,20 +1,67 @@
+// ============================================================
+// diagnose-payment — herramienta de diagnóstico de pagos (SOLO ADMIN)
+//
+// AVISO (auditoría 2026-08-15): esta función se desplegó sin ninguna
+// comprobación de autenticación y con la puerta de JWT desactivada. Estaba
+// abierta a internet: con un POST y {"action":"list_recent"} cualquiera
+// obtenía los últimos pagos con el correo de los clientes, y la función usa
+// la service_role. Ahora exige sesión válida Y rol de administrador.
+//
+// IMPORTANTE al desplegar: NO usar --no-verify-jwt. Debe quedar con la
+// verificación de JWT de la plataforma activada, además de la comprobación
+// de admin que se hace aquí abajo.
+// ============================================================
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { findPlan, planCreditsToGrant } from "../_shared/plans.ts";
 
 const MP_ACCESS_TOKEN = Deno.env.get("MP_ACCESS_TOKEN") || "";
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") || "";
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+
+/** Devuelve el id del usuario solo si hay sesión válida Y es administrador. */
+async function requireAdmin(req: Request): Promise<string | null> {
+  const auth = req.headers.get("Authorization") || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  if (!token || !SUPABASE_URL || !SUPABASE_ANON_KEY || !SUPABASE_SERVICE_ROLE_KEY) {
+    return null;
+  }
+  const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+  });
+  const { data, error } = await userClient.auth.getUser(token);
+  if (error || !data?.user) return null;
+
+  const svc = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const { data: prof, error: profErr } = await svc
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", data.user.id)
+    .single();
+  if (profErr || !prof?.is_admin) return null;
+
+  return data.user.id;
+}
 
 serve(async (req: Request) => {
   if (req.method !== "POST") return new Response("POST only", { status: 405 });
+
+  // Sin esto, la función queda expuesta a internet con permisos de servidor.
+  const adminId = await requireAdmin(req);
+  if (!adminId) {
+    return new Response(JSON.stringify({ error: "No autorizado" }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   const reqBody = await req.json();
   const { payment_id, action, search_user } = reqBody;
   const results: Record<string, unknown> = { action };
 
-  const sb = createClient(
-    Deno.env.get("SUPABASE_URL") || "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "",
-  );
+  const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   // --- LIST: lista los últimos pagos de la cuenta MP (busca por email) ---
   if (action === "list_recent") {
