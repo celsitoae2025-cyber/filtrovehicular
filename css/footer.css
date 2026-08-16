@@ -31,10 +31,18 @@
      donde tiene que estar, al final de todo, y un hueco de fondo no
      molesta a nadie; un bloque oscuro a media pantalla sí.
 
-     `100%` y no `100vh`: mide contra `.main`, que es el que scrollea de
-     verdad y ya viene descontada la barra superior. Con `100vh` se
-     colaría el alto de la barra y sobraría siempre esa franja. */
-  min-height: 100%;
+     OJO CON EL VALOR. Estuvo en `100%` y estaba mal por 71px: el `100%`
+     mide contra `.main`, y la barra superior vive DENTRO de `.main`,
+     encima de `.content`. Así que `.content` medía el alto completo
+     cuando lo que se ve por debajo de la barra es ese alto menos la
+     barra: sobraba justo `--topbar-h`, y el último panel —que crece
+     para llenar— se pasaba esa misma cantidad por debajo del borde
+     inferior, dejando sus esquinas de abajo fuera de la pantalla.
+
+     Descontando la barra, el panel termina exactamente donde acaba lo
+     visible, con los 15px de relleno de `.content` por debajo. */
+  min-height: calc(100vh - var(--topbar-h));
+  min-height: calc(100dvh - var(--topbar-h));
 }
 
 .site-footer {

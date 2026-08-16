@@ -145,23 +145,21 @@ button, input, select, textarea { font-family: inherit; }
   flex-direction: column;
   gap: 15px;
 }
-/* El último panel de cada vista mide LO QUE MIDE su contenido. No se
-   estira.
+/* El último panel de cada vista crece para llenar el hueco vertical, de
+   modo que la vista termina siempre con los mismos 15px de aire al
+   borde inferior y no queda una franja de fondo suelta.
 
-   Estuvo con `flex: 1 0 auto` para que llenara el hueco vertical y no
-   quedara franja de fondo al final. Eso dejó de valer cuando el
-   contenido pasó a ocupar como mínimo el alto visible para que el pie
-   no asomara (ver footer.css): a partir de ahí siempre sobra hueco, y
-   el panel de resultado se estiraba hasta el borde inferior de la
-   pantalla dejando sus esquinas de abajo fuera de la vista. En un
-   móvil o una tableta la tarjeta parecía cortada por debajo.
-
-   Sin estirar, la tarjeta se cierra donde acaba y el sobrante se queda
-   como fondo, que es lo que tiene que ser. */
+   Esto SOLO funciona si `.content` mide exactamente lo visible. Estuvo
+   midiendo 71px de más —el alto de la barra superior, que vive dentro
+   del mismo contenedor con scroll— y entonces el panel se pasaba esos
+   71px por debajo del borde y sus esquinas de abajo quedaban fuera de
+   la pantalla. El arreglo está en footer.css, en el `min-height` de
+   `.main > .content`; si alguna vez la tarjeta vuelve a verse cortada
+   por abajo, el problema es ese valor, no esta regla. */
 .content > .view:not([hidden]) > .result-panel,
 .content > .view:not([hidden]) > .panel.result-panel,
 .content > .view:not([hidden]) > *:last-child {
-  flex: 0 0 auto !important;
+  flex: 1 0 auto !important;
 }
 
 /* Espaciado uniforme 15px también en mobile — selectores con mayor
@@ -481,13 +479,9 @@ body { background: #d4dade !important; }
   .content > .view:not([hidden]) > *:last-child {
     flex: 0 0 auto !important;
   }
-  /* Tampoco aquí se estira. Esta regla repescaba el `1 0 auto` que se
-     acababa de quitar arriba, así que en móvil —justo donde se veía el
-     fallo— la tarjeta de resultado seguía llegando hasta el borde de la
-     pantalla y sus esquinas de abajo quedaban fuera. */
   .content > .view:not([hidden]) > .result-panel,
   .content > .view:not([hidden]) > .panel.result-panel {
-    flex: 0 0 auto !important;
+    flex: 1 0 auto !important;
   }
   .plans-columns { gap: 0 !important; }
   .terms-notice { padding: 14px; gap: 10px; }
