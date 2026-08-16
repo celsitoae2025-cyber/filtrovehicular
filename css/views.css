@@ -2483,6 +2483,44 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   max-height: var(--cr-media-photo-max-height);
   object-fit: contain;
 }
+/* ===== Columna biometrica (rostro, firma, huellas) =====
+   La maqueta esta AQUI y no en el atributo `style` del JS, que es donde
+   vivia y por eso no habia forma de cambiarla desde la hoja.
+
+   Por defecto una sola columna. Con CUATRO fotos —el caso del DNI:
+   rostro, firma y dos huellas— pasa a dos, o sea dos arriba y dos
+   abajo. Es lo que se pidio y no depende de ninguna clasificacion por
+   color ni por proporcion: cuenta las fotos y ya. */
+.cr-bio-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  width: 160px;
+  max-width: 100%;
+}
+/* Documento escaneado: columna mas ancha, sigue a una foto por fila. */
+.cr-bio-col.cr-bio-doc { width: 320px; }
+
+.cr-bio-col.cr-bio-4 {
+  grid-template-columns: 1fr 1fr;
+  width: 340px;
+}
+
+/* Celdas cuadradas y todas iguales, para que la cuadricula quede
+   pareja aunque las imagenes lleguen con proporciones distintas. El
+   `object-fit: contain` de la imagen las encaja sin recortar nada.
+   Sustituye a la altura fija de 150px que ponia el JS. */
+.cr-bio-tile { aspect-ratio: 1 / 1; }
+
+/* En el movil la columna deja de ser una columna estrecha al costado y
+   ocupa el ancho del panel: con cuatro fotos, cada celda mide la mitad. */
+@media (max-width: 768px) {
+  .cr-bio-col,
+  .cr-bio-col.cr-bio-doc,
+  .cr-bio-col.cr-bio-4 { width: 100%; }
+  .cr-bio-col.cr-bio-4 { gap: 8px; }
+}
+
 .cr-bio-tile {
   width: 100%;
   display: flex;

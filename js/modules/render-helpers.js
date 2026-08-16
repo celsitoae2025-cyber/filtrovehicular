@@ -584,15 +584,23 @@
 
     var mediaParts = [];
     if (photos.length) {
-      var colW = esDniDoc ? 320 : 160;
-      var tileH = esDniDoc ? 200 : 150;
-      mediaParts.push(
-        '<div class="cr-bio-col" style="width:' + colW + 'px;max-width:100%;display:grid;grid-template-columns:1fr;gap:12px;">'
-      );
+      /* La maqueta de esta columna vive en views.css, NO aqui.
+         Estuvo escrita en el atributo `style` —ancho fijo, `display:grid`
+         y `grid-template-columns:1fr`— y por eso las cuatro fotos del DNI
+         salian siempre en fila india: un estilo en linea gana a cualquier
+         regla de la hoja que no lleve `!important`, asi que no habia forma
+         de ponerlas en cuadricula desde el CSS.
+
+         Aqui solo se dice CUANTAS fotos hay y de que tipo son; como se
+         colocan lo decide la hoja. */
+      var claseCol = 'cr-bio-col' +
+        (esDniDoc ? ' cr-bio-doc' : '') +
+        ' cr-bio-' + (photos.length <= 4 ? photos.length : 'n');
+      mediaParts.push('<div class="' + claseCol + '">');
       photos.forEach(function (m, i) {
         var src = 'data:' + (m.mimeType || 'image/jpeg') + ';base64,' + m.base64;
         mediaParts.push(
-          '<div class="cr-bio-tile" style="height:' + tileH + 'px;" data-full="' + src + '">' +
+          '<div class="cr-bio-tile" data-full="' + src + '">' +
             '<img src="' + src + '" alt="Foto ' + (i + 1) + '">' +
           '</div>'
         );
