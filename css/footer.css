@@ -36,14 +36,17 @@
   flex-shrink: 0;
 }
 
-/* Los botones flotantes se frenan encima del pie en vez de montarse sobre
-   él. --fv-lift lo calcula footer.js: es cuánto pie asoma dentro de la
-   ventana. Al restarlo, cada botón conserva su propia separación (el CTA
-   sus 24px, el de WhatsApp sus 80px) pero medida contra el borde del pie.
-   El valor por defecto es 0px, así que sin JS todo queda como estaba. */
+/* El freno de los botones flotantes sobre el pie lo escribe footer.js
+   directamente en cada botón (transform: translate3d). NO se hace con una
+   variable CSS en :root: eso obligaba a recalcular el estilo de todo el
+   documento en cada fotograma y el scroll se veía a tirones.
+
+   will-change los deja en su propia capa del compositor desde el principio,
+   para que el primer movimiento no tenga que crearla sobre la marcha —
+   que es justo cuando se nota el tirón. */
 #ctaReporteBtn.cta-reporte-btn,
 .wa-fab {
-  transform: translateY(calc(-1 * var(--fv-lift, 0px)));
+  will-change: transform;
 }
 
 /* ---------- Zona superior: marca + columnas ---------- */
@@ -93,29 +96,6 @@
   line-height: 1.65;
   color: rgba(255, 255, 255, .62);
   max-width: 34ch;
-}
-
-/* Botón de soporte — delineado, no macizo: en un pie oscuro un botón
-   relleno pesa demasiado y roba atención al contenido de arriba. */
-.foot-wa {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 10px 16px;
-  border: 1px solid rgba(255, 255, 255, .22);
-  border-radius: 9px;
-  background: transparent;
-  color: #ffffff;
-  font-family: inherit;
-  font-size: var(--fs-sm);
-  font-weight: 400;
-  cursor: pointer;
-  transition: border-color var(--t-fast), color var(--t-fast);
-}
-.foot-wa svg { width: 17px; height: 17px; flex-shrink: 0; }
-.foot-wa:hover {
-  border-color: #03a7a4;
-  color: #03a7a4;
 }
 
 /* ---------- Columnas de enlaces ---------- */
@@ -203,15 +183,28 @@
 
 @media (max-width: 560px) {
   .site-footer { margin-top: 32px; }
-  /* Se mantienen DOS columnas en el móvil. Apilarlo todo en una dejaba un
-     pie de 855 px — una pantalla entera solo para el pie. Las etiquetas
-     son cortas y las que no lo son parten en dos líneas sin estorbar. */
+
+  /* ---- Pie RESUMIDO en móvil ----
+     Entero medía 698px: el 83% de la pantalla, solo de pie. En un móvil
+     eso es un muro que hay que pasar a rueda. Se queda lo que aporta
+     algo aquí y se va lo que ya está a un toque en el menú lateral:
+
+       · la frase de presentación (69px) — decorativa, no navega
+       · la columna "Fuentes" — Sunarp, Reniec, Sunat y Financiero están
+         los cuatro en el menú lateral
+
+     Sobreviven la marca, "Consultas", "Mi cuenta" y los legales, que es
+     lo que de verdad se busca en un pie. */
+  .foot-tagline { display: none; }
+  .foot-col-fuentes { display: none; }
+
+  /* Las dos columnas que quedan caben en una sola fila. */
   .foot-main {
     grid-template-columns: 1fr 1fr;
-    gap: 26px 18px;
-    padding: 30px 18px 24px;
+    gap: 22px 18px;
+    padding: 26px 18px 20px;
   }
-  .foot-tagline { max-width: none; }
+  .foot-brand-head { margin-bottom: 0; }
   .foot-bar {
     padding: 16px 18px 20px;
     flex-direction: column;
