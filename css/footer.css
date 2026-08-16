@@ -20,13 +20,21 @@
    sobre lo que derramarse—; el pie lo destapó. */
 .main > .content {
   flex-shrink: 0;
-  /* Y se le quita el min-height de base.css (100vh - topbar, "llena el
-     viewport"). Tenía sentido cuando .content era lo último de la página;
-     con el pie debajo obliga al contenido a ocupar la ventana entera
-     aunque le sobre, y dejaba un vacío enorme entre las tarjetas y el pie
-     en pantallas grandes. Ahora .content mide lo que mide su contenido y
-     el pie sube detrás. */
-  min-height: 0;
+  /* El contenido ocupa como MÍNIMO todo el alto visible, así que el pie
+     empieza justo por debajo del borde inferior y no se ve hasta que se
+     desliza. Esa era la queja: navegando por una vista corta —Reniec,
+     por ejemplo— el bloque oscuro aparecía de entrada, a media pantalla,
+     como si fuera parte de la consulta.
+
+     El precio es un hueco gris entre el último panel y el pie cuando la
+     vista es corta. Se acepta a sabiendas: es lo que mantiene el pie
+     donde tiene que estar, al final de todo, y un hueco de fondo no
+     molesta a nadie; un bloque oscuro a media pantalla sí.
+
+     `100%` y no `100vh`: mide contra `.main`, que es el que scrollea de
+     verdad y ya viene descontada la barra superior. Con `100vh` se
+     colaría el alto de la barra y sobraría siempre esa franja. */
+  min-height: 100%;
 }
 
 .site-footer {
@@ -71,21 +79,8 @@
   gap: 10px;
   margin-bottom: 14px;
 }
-.foot-logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  background: rgba(255, 255, 255, .08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.foot-logo svg {
-  width: 19px;
-  height: 19px;
-  color: #ffffff;
-}
+/* .foot-logo se retiro del marcado: el simbolo #i-logo NO es el logo de
+   la marca y no debe usarse como distintivo. Aqui va solo el nombre. */
 .foot-name {
   font-size: var(--fs-md);
   font-weight: 700;
