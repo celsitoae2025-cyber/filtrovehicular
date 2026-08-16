@@ -3863,8 +3863,22 @@ body.cr-lightbox-open { overflow: hidden; }
   }
   .cr-data { order: 1; }
   .cr-data { grid-column: auto !important; width: 100%; }
-  .cr-media-grid:not(.cr-media-4-dni) { width: 100%; grid-template-columns: 1fr !important; }
-  .cr-media-grid:not(.cr-media-4-dni) img { max-height: 280px; object-fit: contain; }
+  /* Una columna SOLO cuando hay 1, 2 o 3 fotos. Con cuatro se queda en
+     cuadricula.
+
+     Esta regla decia `:not(.cr-media-4-dni)` a secas y era la que
+     apilaba las cuatro fotos del DNI una debajo de otra. El diseno
+     `-4-dni` depende de una clasificacion por color y proporcion
+     (applyDniLayout) que no siempre acierta —si la firma no sale mas
+     ancha que alta, se rinde— y entonces la rejilla se quedaba en
+     `.cr-media-4`, que esta regla aplastaba a una columna. Con cuatro
+     fotos el resultado tiene que ser el mismo salga o no la
+     clasificacion: dos arriba y dos abajo. */
+  .cr-media-grid:not(.cr-media-4-dni):not(.cr-media-4) { width: 100%; grid-template-columns: 1fr !important; }
+  .cr-media-grid:not(.cr-media-4-dni):not(.cr-media-4) img { max-height: 280px; object-fit: contain; }
+  .cr-media-grid.cr-media-4 { width: 100%; grid-template-columns: 1fr 1fr !important; gap: 8px; }
+  .cr-media-grid.cr-media-4 img { max-height: none; object-fit: contain; }
+  .cr-gallery.cr-gallery-4 { grid-template-columns: 1fr 1fr !important; gap: 8px; }
   /* Layout DNI en movil: mismo patron (rostro izq + firma/huellas der)
      pero el rostro tiene altura limitada para que entre la columna der */
   .cr-media-grid.cr-media-4-dni,
