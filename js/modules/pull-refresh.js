@@ -92,6 +92,13 @@
      esta lista, asi que el aro se ve durante toda esa espera y se va
      solo con ella.
 
+     OJO: estas medidas —arriba a 18px, 26x26, borde de 2.5px— son las
+     mismas que las del `#appLoader` de app.html a proposito. Ese es el
+     aro que sale ya en la pagina NUEVA, y al coincidir los dos el
+     cambio de una pagina a la otra no se nota: parece un solo aro
+     girando de principio a fin. Si se cambia uno, hay que cambiar el
+     otro.
+
      Va con estilos en linea y con `animate()` en vez de una hoja
      aparte: es un elemento suelto de doce lineas y no merece un archivo
      CSS propio ni un @keyframes global. Si `animate` no existe, el aro

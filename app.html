@@ -73,21 +73,37 @@
   /* Secciones ocultas por defecto hasta init */
   .view[hidden] { display: none !important; }
   .sb-info-card { display: none !important; }
-  /* Spinner de carga */
+  /* Aro de carga.
+
+     Va ARRIBA y no en el medio, y sin fondo propio. Antes era un aro
+     grande centrado sobre un lienzo casi blanco (#f4f5f9): al deslizar
+     para actualizar se veian tres cosas seguidas —el aro de arriba que
+     pinta pull-refresh.js, luego un cuadro blanco, y dentro otro aro en
+     el medio—.
+
+     Ahora es el MISMO aro: misma posicion, mismo tamano y mismos
+     colores que el de pull-refresh.js. La pagina vieja lo deja puesto,
+     la nueva lo recoge en el mismo sitio y el cambio no se nota. Si se
+     toca uno de los dos hay que tocar el otro.
+
+     Sin `background`: el body esta a opacidad 0 hasta que todo carga,
+     asi que por detras se ve el gris que `html` lleva en base.css. Uno
+     propio solo podria desentonar. */
   #appLoader {
     position: fixed;
     inset: 0;
     z-index: 99999;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    background: #f4f5f9;
+    padding-top: 18px;
+    background: transparent;
   }
   #appLoader .ld-ring {
-    width: 38px;
-    height: 38px;
-    border: 3px solid #e0e0e0;
-    border-top-color: #141D1C;
+    width: 26px;
+    height: 26px;
+    border: 2.5px solid rgba(20, 29, 28, .18);
+    border-top-color: #141d1c;
     border-radius: 50%;
     animation: ld-spin .7s linear infinite;
   }
@@ -2150,7 +2166,7 @@
 <script src="js/modules/metapla-report.js?v=2"></script>
 <script src="js/modules/filter.js?v=11"></script>
 <script src="js/modules/polish.js"></script>
-<script src="js/modules/pull-refresh.js?v=4"></script>
+<script src="js/modules/pull-refresh.js?v=5"></script>
 <script src="js/modules/services-uploader.js"></script>
 <script src="js/modules/saldo-catalog.js?v=4"></script>
 <!-- Funciones nuevas -->
