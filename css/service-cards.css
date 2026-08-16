@@ -174,13 +174,17 @@
    oscuro la distingue igual pero deja el acento para lo que importa: el
    icono y el numero de regiones. */
 .service-card[data-nav="regiones"] {
-  background: #141d1c;
-  border-color: #141d1c;
+  /* Un punto mas oscuro que el sidebar (#141d1c) a proposito, no por error.
+     Es el mismo tono, pero rodeado de blanco se percibe mas claro que en
+     una columna entera de oscuro: bajarlo a #0e1312 —el oscuro secundario
+     de la paleta— hace que a la vista SI parezcan el mismo color. */
+  background: #0e1312;
+  border-color: #0e1312;
   color: #ffffff;
 }
 .service-card[data-nav="regiones"]:hover {
-  background: #0e1312;
-  border-color: #0e1312;
+  background: #090c0b;
+  border-color: #090c0b;
 }
 .service-card[data-nav="regiones"] .service-name {
   color: #ffffff;
