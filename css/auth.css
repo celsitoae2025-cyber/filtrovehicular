@@ -184,9 +184,34 @@ body.auth-modal-open { overflow: hidden; }
   .auth-avatar {
     width: 72px;
     height: 72px;
-    margin-bottom: 16px;
+    /* Mismo aire arriba que abajo: el disco queda centrado en el hueco
+       que hay entre la barra de colores y el borde de la tarjeta. */
+    margin: 22px auto;
   }
   .auth-avatar svg { width: 42px; height: 42px; }
+
+  /* Para que esos dos huecos los fije un solo valor hay que quitarle al
+     encabezado lo que aportaba por su cuenta: sus 18px de relleno
+     inferior y sus DOS márgenes automáticos, que le metían por arriba y
+     por abajo un tercio del espacio sobrante cada uno y descuadraban el
+     reparto.
+
+     Sin el automático de arriba el bloque deja de ir centrado y se
+     apoya en lo alto del contenedor, que es justo lo que se pedía. El
+     sobrante se lo queda entero el margen automático de la tarjeta, por
+     debajo. */
+  .auth-modal-panel.auth-split .auth-form-mh {
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Y arriba se recorta el relleno del contenedor para ganar unos
+     píxeles más. No puede bajar de la mitad de --auth-bar-h: esa es la
+     banda verde del borde superior, y por debajo de ese valor el
+     contenido se le metería debajo. */
+  .auth-modal .auth-modal-panel.auth-split .auth-form-wrap {
+    padding-top: calc(var(--auth-bar-h) / 2 + 9px) !important;
+  }
 }
 
 /* ---------- Fila superior del panel ---------- */
@@ -309,16 +334,38 @@ body.auth-modal-open { overflow: hidden; }
   gap: 9px;
 }
 
+/* El nombre del campo va DEBAJO del cuadro, no encima.
+
+   Se hace con `order` y no cambiando el marcado: la <label> tiene que
+   seguir delante de su <input> en el HTML para que un lector de pantalla
+   anuncie primero el nombre del campo y luego el campo. Lo que cambia es
+   en qué orden se pintan.
+
+   (Ojo, viene de antes: estas <label> no llevan `for` ni envuelven al
+   <input>, así que no están emparejadas de verdad — tocarlas en el
+   cuadro no da el foco. El orden del marcado es lo único que sostiene la
+   lectura.)
+
+   Se numeran los tres, y no solo la etiqueta, porque la pista de la
+   contraseña ("Mínimo 8 caracteres…") va después del cuadro en el
+   marcado: sin darle su sitio acabaría por encima de la etiqueta. */
 .auth-field {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
+.auth-field > .auth-input-wrap { order: 1; }
+.auth-field > label           { order: 2; }
+.auth-field > .auth-hint      { order: 3; }
+
 .auth-field > label {
   font-size: 13px;
-  font-weight: 500;
-  color: var(--c-primary);
+  font-weight: 400;
+  color: var(--c-muted);
   letter-spacing: .05px;
+  /* Alineado con el texto de dentro del cuadro, no con su borde: la
+     cápsula mete el contenido 18px hacia dentro. */
+  padding-left: 18px;
 }
 
 /* Campos y botón en CÁPSULA (borde totalmente redondeado). Es el rasgo
