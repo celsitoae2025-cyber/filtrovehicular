@@ -46,15 +46,17 @@
   # Si algún día se añade de verdad, volver a poner camera=(self).
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()
 
-  # --- CSP en modo SOLO REPORTAR ---
-  # OJO: report-only NO bloquea nada, solo avisa en la consola del navegador.
-  # Está así a propósito. Una CSP mal ajustada en una app que carga el SDK de
-  # Supabase, pdf.js y fuentes de Google tumba la web entera.
+  # --- CSP EN MODO REAL (bloquea) ---
+  # Desde el 2026-08-16. Estuvo una jornada en Report-Only a propósito, y esa
+  # jornada valió la pena: cazó dos permisos que faltaban (ver más abajo).
   #
-  # Cómo pasarla a modo real: navegar la app un par de días (login, consulta,
-  # PDF, pago), mirar los avisos "Content Security Policy" en la consola,
-  # añadir lo que falte, y solo entonces renombrar la cabecera a
-  # Content-Security-Policy (sin el -Report-Only).
+  # Caminos recorridos con la consola abierta antes de activarla, todos
+  # limpios: login, registro, consulta, generación de PDF, pago con Mercado
+  # Pago y el panel de admin abierto un rato. El reconocimiento facial no se
+  # probó porque no existe (ver la nota de Permissions-Policy).
+  #
+  # Si algo se rompe y hay que volver atrás sin pensar, basta con renombrar
+  # la cabecera a Content-Security-Policy-Report-Only: vuelve a solo avisar.
   #
   # challenges.cloudflare.com aparece en script-src, frame-src y connect-src:
   # Turnstile carga su script, se pinta dentro de un iframe y habla con
@@ -62,8 +64,9 @@
   # registro y el acceso dejan de poder verificarse el día que la CSP pase
   # a modo real.
   #
-  # Dos avisos reales cazados en consola el 2026-08-16, con la CSP todavía
-  # en modo reportar. Por esto se puso así y no en modo real de golpe:
+  # Dos avisos reales cazados en consola el 2026-08-16, mientras la CSP
+  # todavía estaba en modo reportar. Por esto se puso así y no en real de
+  # golpe — sin este rodaje, los dos habrían roto algo en producción:
   #
   #   - static.cloudflareinsights.com: el beacon de Web Analytics. NO está
   #     en el repositorio, lo inyecta Cloudflare Pages por su cuenta. Va en
@@ -77,4 +80,4 @@
   #
   # Si en la consola aparece kaspersky-labs.com, eso NO sale de este archivo:
   # es el antivirus del que mira, que reescribe la cabecera en su navegador.
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://sdk.mercadopago.com https://challenges.cloudflare.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.mercadopago.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://challenges.cloudflare.com https://static.cloudflareinsights.com https://cloudflareinsights.com; frame-src https://*.mercadopago.com https://*.mercadolibre.com https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://*.mercadopago.com; frame-ancestors 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://sdk.mercadopago.com https://challenges.cloudflare.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.mercadopago.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://challenges.cloudflare.com https://static.cloudflareinsights.com https://cloudflareinsights.com; frame-src https://*.mercadopago.com https://*.mercadolibre.com https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://*.mercadopago.com; frame-ancestors 'self'
