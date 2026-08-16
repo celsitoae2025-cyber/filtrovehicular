@@ -485,56 +485,66 @@
   bottom: 152px;
   right: 24px;
   z-index: 451;
-  width: 262px;
+  width: 268px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 4px;
+  padding: 6px;
   background: var(--c-surface);
   border: 1px solid var(--c-border);
-  border-radius: 12px;
+  border-radius: 14px;
 }
 .wa-menu[hidden] { display: none; }
 
 .wa-menu-titulo {
   margin: 0;
-  padding: 8px 10px 6px;
-  font-size: 12px;
+  padding: 8px 10px 10px;
+  font-size: var(--fs-xs);
   font-weight: 700;
-  color: var(--c-text);
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  color: var(--c-muted);
 }
 
+/* Lista limpia: sin discos de colores, sin fondos por fila. Las opciones se
+   separan con un filete de un pixel y el color aparece solo al pasar por
+   encima. Antes cada fila llevaba un circulo verde numerado y el conjunto
+   parecia un teclado, no un menu de ayuda. */
 .wa-menu-opcion {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px;
+  padding: 11px 10px;
   border-radius: 8px;
-  background: var(--c-bg);
+  background: transparent;
   color: var(--c-text);
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
+  font-weight: 400;
   text-decoration: none;
+  transition: background var(--t-fast), color var(--t-fast);
 }
-.wa-menu-opcion:hover { background: var(--c-teal-soft); }
+.wa-menu-opcion + .wa-menu-opcion {
+  border-top: 1px solid var(--c-border);
+  border-radius: 8px;
+}
+.wa-menu-opcion:hover { background: var(--c-bg); }
 
-.wa-menu-n {
+.wa-menu-txt { flex: 1; min-width: 0; }
+
+.wa-menu-flecha {
   flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--c-accent);
-  color: var(--c-text);
-  font-size: 12px;
-  font-weight: 700;
+  width: 15px;
+  height: 15px;
+  color: var(--c-muted);
+  opacity: .5;
+  transition: opacity var(--t-fast), transform var(--t-fast);
 }
-/* La última opción manda a un humano: se marca en turquesa para que se
-   distinga de las cinco que resuelve el bot solo. */
-.wa-menu-opcion:last-child .wa-menu-n { background: #03a7a4; }
+.wa-menu-opcion:hover .wa-menu-flecha {
+  opacity: 1;
+  transform: translateX(2px);
+}
 
-.wa-menu-txt { flex: 1; }
+/* La ultima lleva a una persona: se marca en negrita, no con otro color. */
+.wa-menu-opcion.es-asesor .wa-menu-txt { font-weight: 700; }
 
 /* En escritorio el menú es un desplegable pegado al botón: no lleva fondo
    ni botón de cerrar, que se sale con un clic fuera o con Escape. */
@@ -621,7 +631,7 @@
     font-size: 14.5px;
     border-radius: 10px;
   }
-  .wa-menu-n { width: 25px; height: 25px; font-size: 12.5px; }
+  .wa-menu-flecha { width: 16px; height: 16px; }
 
   /* Con el modal abierto no se scrollea lo de detrás. */
   body.wa-abierto { overflow: hidden; }

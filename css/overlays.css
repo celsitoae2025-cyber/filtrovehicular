@@ -359,7 +359,7 @@ body.confirm-dialog-open { overflow: hidden; }
   flex-shrink: 0;
 }
 .modal-header h2 {
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--fs-lg);
   font-weight: 400;
   color: var(--c-primary);
@@ -477,7 +477,7 @@ body.confirm-dialog-open { overflow: hidden; }
 }
 .maint-icon svg { width: 28px; height: 28px; }
 .maint-title {
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--fs-lg);
   font-weight: 600;
   color: var(--c-primary);

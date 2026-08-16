@@ -159,6 +159,7 @@
 .user-plan-badge {
   display: inline-flex;
   align-items: center;
+  gap: 7px;
   padding: 6px 12px;
   border: none;
   border-radius: 8px;
@@ -172,6 +173,16 @@
   transition: background .15s;
 }
 .user-plan-badge:hover { background: var(--c-accent-hover); }
+
+/* Cartera en amarillo Caterpillar. Es un color de máquina, no de la paleta
+   de marca: se usa a propósito para que el botón de recargar destaque sobre
+   el verde institucional en vez de fundirse con él. */
+.plan-badge-ico {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  color: #FFCD11;
+}
 .user-menu.open .user-chev { transform: rotate(180deg); }
 
 .user-dropdown {

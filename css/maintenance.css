@@ -30,7 +30,7 @@ html.mnt-locked body {
   border-radius: 14px;
   padding: 36px 32px;
   text-align: center;
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Marca */
@@ -90,7 +90,7 @@ html.mnt-locked body {
   border-radius: 10px;
   background: var(--c-primary, #141d1c);
   color: #ffffff;
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -116,7 +116,7 @@ html.mnt-locked body {
   background: var(--c-primary, #141d1c);
   border-bottom: 2px solid var(--c-accent, #8fc72e);
   color: #ffffff;
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 12.5px;
   font-weight: 400;
   text-align: center;
@@ -255,7 +255,7 @@ html.mnt-with-banner body { padding-top: 34px; }
   border-radius: 10px;
   background: var(--c-primary, #141d1c);
   color: #ffffff;
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;

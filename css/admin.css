@@ -1265,7 +1265,7 @@
   background: var(--c-bg);
   border: 1px solid var(--c-border);
   border-radius: 7px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   color: var(--c-primary);
   word-break: break-all;

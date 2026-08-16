@@ -26,7 +26,7 @@
   //
   // Ya no se fuerza un vencimiento a 30 días: la casilla dice "Recordarme"
   // y eso es lo que hace. Quien cierra la sesión por tiempo es el módulo de
-  // inactividad (js/modules/idle-logout.js), a los 5 minutos sin uso.
+  // inactividad (js/modules/idle-logout.js), a los 30 minutos sin uso.
   var REMEMBER_KEY = 'consultia_remember';
   var EXPIRES_KEY  = 'consultia_session_exp';   // heredado: solo se limpia
 

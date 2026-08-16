@@ -10,7 +10,7 @@
   max-width: 760px;
 }
 .regiones-title {
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: clamp(28px, 3.6vw, 40px);
   font-weight: 400;
   color: var(--c-primary);
@@ -109,7 +109,7 @@
 .compact-hero { margin: 0 0 clamp(14px, 1.8vw, 20px); }
 
 .simple-title {
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: clamp(22px, 2.6vw, 28px);
   font-weight: 600;
   color: var(--c-primary);
@@ -579,7 +579,7 @@
   font-weight: 600;
 }
 .saldo-value {
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: clamp(40px, 6vw, 72px);
   color: var(--c-primary);
   font-weight: 400;
@@ -655,7 +655,7 @@
 
 .hero-eyebrow {
   display: block;
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--c-muted);
@@ -665,7 +665,7 @@
 }
 
 .hero-title {
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: clamp(28px, 5.5vw, 58px);
   font-weight: 700;
   line-height: 1.1;
@@ -787,58 +787,53 @@
   right: auto;
   width: auto;
   max-width: 250px;
-  min-height: 64px;
+  min-height: 52px;
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 12px 16px;
+  gap: 10px;
+  padding: 0 16px;
   margin: 0;
-  border-radius: 14px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
   text-align: left;
-  /* Turquesa institucional #03a7a4. Una sesión anterior lo tomó por «un
-     verde-azulado suelto» y lo cambió a #00B4D8: era justo al contrario.
-     Revertido 2026-08-16. El hover (#038d8b) sale de oscurecerlo un 15%,
-     la misma proporción que tenía el par anterior. */
-  background: #03a7a4 !important;
+  /* Oscuro institucional con el icono en turquesa: combina los tres colores
+     de marca en vez de dejarlo todo en un bloque de color. Al pasar el ratón
+     vira al turquesa entero. */
+  background: #141d1c !important;
   color: #ffffff !important;
+  transition: background .16s ease;
   z-index: 45;
 }
 
-/* El icono en su propio disco translúcido: separa el símbolo del texto sin
-   necesidad de una línea divisoria ni de sombra. */
+/* El icono sin disco de fondo: el color ya lo separa del texto y el
+   resultado es mas limpio que meterle un recuadro translucido detras. */
 .cta-reporte-ico {
   flex: none;
-  width: 34px;
-  height: 34px;
-  padding: 7px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, .18);
+  width: 21px;
+  height: 21px;
+  color: #03a7a4;
+  transition: color .16s ease;
 }
 .cta-reporte-text {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  line-height: 1.25;
-}
-.cta-reporte-text strong {
-  font-size: var(--fs-md, 15px);
+  min-width: 0;
+  font-size: var(--fs-sm);
   font-weight: 700;
-}
-.cta-reporte-text small {
-  font-size: var(--fs-xs);
-  font-weight: 400;
-  opacity: .9;
+  letter-spacing: .1px;
+  white-space: nowrap;
 }
 .cta-reporte-arrow {
   flex: none;
-  width: 17px;
-  height: 17px;
-  opacity: .9;
+  width: 16px;
+  height: 16px;
+  opacity: .55;
+  transition: opacity .16s ease, transform .16s ease;
 }
-#ctaReporteBtn.cta-reporte-btn:hover { background: #038d8b !important; }
+
+#ctaReporteBtn.cta-reporte-btn:hover { background: #03a7a4 !important; }
+#ctaReporteBtn.cta-reporte-btn:hover .cta-reporte-ico { color: #ffffff; }
+#ctaReporteBtn.cta-reporte-btn:hover .cta-reporte-arrow { opacity: 1; transform: translateX(2px); }
 
 /* Desde aquí el sidebar es off-canvas (ver sidebar.css), así que el
    botón ya no necesita esquivarlo y se pega al borde izquierdo. */
@@ -1144,7 +1139,7 @@
 .cr-cmd-hint-examples li span { color: var(--c-muted); font-size: var(--fs-xs); margin-left: 4px; }
 .cr-cmd-hint code,
 .cr-cmd-hint-code {
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   background: var(--c-surface);
   color: var(--c-primary);
   padding: 1px 6px;
@@ -1306,7 +1301,7 @@
 }
 .extras-txt-sheet .txt-content {
   margin: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--fs-sm);
   line-height: 1.7;
   color: var(--c-primary);
@@ -1603,7 +1598,7 @@
 }
 .txt-content {
   margin: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--fs-sm);
   line-height: 1.7;
   color: var(--c-primary);
@@ -5014,7 +5009,7 @@ body.le-drag-mode .le-selected {
   pointer-events: none;
   z-index: 10000;
   letter-spacing: 0.2px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   box-shadow: none;
 }
 

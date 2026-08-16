@@ -640,11 +640,11 @@ body.auth-modal-open { overflow: hidden; }
   padding: 9px 20px;
   font-family: inherit;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: .1px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background .15s, transform .1s;
+  transition: background .15s, color .15s, transform .1s;
   border: none;
   white-space: nowrap;
 }
@@ -652,8 +652,11 @@ body.auth-modal-open { overflow: hidden; }
   background: var(--c-primary);
   color: #fff;
 }
+/* Al pasar el ratón vira al verde institucional. El texto pasa a oscuro:
+   blanco sobre el verde lima no llega a contraste legible. */
 .auth-btn-primary:hover {
-  background: #141d1c;
+  background: var(--c-accent);
+  color: var(--c-primary);
 }
 .auth-btn-primary:active {
   transform: scale(.97);

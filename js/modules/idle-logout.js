@@ -1,7 +1,7 @@
 /* ============================================================
-   CIERRE DE SESIÓN POR INACTIVIDAD — 5 minutos
+   CIERRE DE SESIÓN POR INACTIVIDAD — 30 minutos
 
-   Pasados 5 minutos sin actividad la sesión se cierra por
+   Pasados 30 minutos sin actividad la sesión se cierra por
    completo. Se aplica igual en la app y en el panel de
    administrador; ambos cargan este módulo.
 
@@ -12,7 +12,7 @@
        esta no te echa. Cualquiera de las dos "renueva" a las dos.
      - Sobrevive a un refresco: si la pestaña estuvo cerrada más
        del límite, al volver se cierra la sesión de inmediato en
-       vez de regalar otros 5 minutos.
+       vez de regalar otros 30 minutos.
 
    Convive con "Recordarme", que decide dónde viven los tokens
    (ver js/shared/auth.js). Recordarme evita volver a escribir la
@@ -22,7 +22,7 @@
 (function () {
   window.Consultia = window.Consultia || {};
 
-  var LIMITE_MS   = 5 * 60 * 1000;   // 5 minutos sin actividad
+  var LIMITE_MS   = 30 * 60 * 1000;  // 30 minutos sin actividad
   var REVISION_MS = 15 * 1000;       // cada cuánto se comprueba
   var GUARDA_MS   = 5 * 1000;        // no se escribe más seguido que esto
   var CLAVE       = 'consultia_ultima_actividad';
@@ -80,7 +80,7 @@
         Consultia.toast({
           type: 'info',
           title: 'Sesión cerrada',
-          message: 'Se cerró por 5 minutos de inactividad.'
+          message: 'Se cerró por 30 minutos de inactividad.'
         });
       }
     } catch (e) {}

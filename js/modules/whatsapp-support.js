@@ -31,17 +31,28 @@
   // El asa y el botón de cerrar solo se ven en móvil (ver components.css),
   // donde el menú se muestra como modal. En escritorio sobran: se cierra con
   // un clic fuera o con Escape.
+  // Flecha fina a la derecha de cada opción. Sustituye a los círculos de
+  // colores numerados que había antes: seis discos verdes en fila pesaban
+  // mucho y no aportaban nada — el número no significa nada para el cliente.
+  var FLECHA = '<svg class="wa-menu-flecha" viewBox="0 0 24 24" fill="none" ' +
+               'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" ' +
+               'stroke-linejoin="round" aria-hidden="true">' +
+               '<path d="M9 6l6 6-6 6"/></svg>';
+
   function pintar(menu) {
     var h = '<span class="wa-menu-asa" aria-hidden="true"></span>' +
             '<div class="wa-menu-cabecera">' +
               '<p class="wa-menu-titulo">¿En qué te ayudamos?</p>' +
               '<button type="button" class="wa-menu-cerrar" aria-label="Cerrar">&times;</button>' +
             '</div>';
-    OPCIONES.forEach(function (o) {
-      h += '<a class="wa-menu-opcion" href="' + enlace(o.pide) + '"' +
+    OPCIONES.forEach(function (o, i) {
+      // La última lleva a una persona, no al bot. Se distingue con el texto
+      // en negrita, no con un color: basta para separarla de las cinco que
+      // resuelve el bot solo, sin meter otro color en la lista.
+      var clase = 'wa-menu-opcion' + (i === OPCIONES.length - 1 ? ' es-asesor' : '');
+      h += '<a class="' + clase + '" href="' + enlace(o.pide) + '"' +
            ' target="_blank" rel="noopener noreferrer">' +
-           '<span class="wa-menu-n">' + o.n + '</span>' +
-           '<span class="wa-menu-txt">' + o.titulo + '</span></a>';
+           '<span class="wa-menu-txt">' + o.titulo + '</span>' + FLECHA + '</a>';
     });
     menu.innerHTML = h;
   }

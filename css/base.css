@@ -46,7 +46,7 @@ html { -webkit-text-size-adjust: 100%; }
 [hidden] { display: none !important; }
 
 body {
-  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   background: var(--c-bg);
   color: var(--c-primary);
   font-size: var(--fs-sm);
