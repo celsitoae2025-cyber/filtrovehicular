@@ -732,7 +732,7 @@
       }
       closeAll();
       form.reset();
-      if (Consultia.toast) Consultia.toast({ type: 'success', title: '¡Bienvenido/a!', message: 'Sesión iniciada.' });
+      saludoBienvenida();
     });
 
     // ============================================================
@@ -748,6 +748,38 @@
     // los links para tracking y consumen el token al hacer pre-visita.
     // Un código numérico copy-paste es 100% inmune a eso.
     bindForgotFlow();
+  }
+
+  // ============================================================
+  // SALUDO DE ENTRADA
+  // ============================================================
+  // Sustituye al aviso emergente que salía al iniciar sesión. Es una
+  // sola palabra sobre el velo, que se acerca despacio y se va sola.
+  //
+  // Va en el body y no dentro del modal a propósito: el modal se cierra
+  // en la línea anterior, y colgándolo de ahí se iría con él.
+  //
+  // Se retira solo, y por dos vías: el `animationend` del velo, que es
+  // la buena, y un temporizador de respaldo. Si el navegador tiene las
+  // animaciones desactivadas el evento no llega nunca, y sin el
+  // respaldo el velo se quedaría puesto tapando la aplicación entera.
+  function saludoBienvenida() {
+    var velo = document.createElement('div');
+    velo.className = 'auth-saludo';
+    velo.setAttribute('aria-hidden', 'true');   // no lo lee el lector de pantalla
+    var palabra = document.createElement('span');
+    palabra.textContent = 'Bienvenido';
+    velo.appendChild(palabra);
+
+    function retirar() {
+      if (velo.parentNode) velo.parentNode.removeChild(velo);
+    }
+    velo.addEventListener('animationend', function (e) {
+      if (e.target === velo) retirar();
+    });
+    setTimeout(retirar, 3400);
+
+    document.body.appendChild(velo);
   }
 
   // Estado del flujo de recuperación (vive entre vistas A y B)

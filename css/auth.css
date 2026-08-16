@@ -1381,3 +1381,81 @@ body.auth-locked .wa-menu {
     transform: none !important;
   }
 }
+
+/* ============================================================
+   SALUDO DE ENTRADA
+
+   La palabra que sale al iniciar sesión, en lugar del aviso emergente
+   de antes. Se acerca despacio mientras el velo entra y sale, y a los
+   2,6s no queda nada: ni elemento ni velo. Lo retira el propio JS.
+
+   `pointer-events: none` es lo que la hace inofensiva: mientras se ve,
+   los clics la atraviesan y llegan a la aplicación que hay debajo.
+============================================================ */
+
+/* Los fundidos son largos y por una curva suave por los dos extremos:
+   ni el velo ni la palabra llegan nunca de golpe. Es la diferencia
+   entre un aviso y un rótulo. */
+@keyframes saludoVelo {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  74%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* El acercamiento va en LINEAL y no en una curva con frenada, al revés
+   que todo lo demás del proyecto. Una curva que arranca y para se lee
+   como una animación de interfaz; un desplazamiento constante, que no
+   empieza ni termina a la vista, se lee como cámara. Por eso tampoco
+   arranca en su tamaño: entra ya en movimiento y sigue creciendo
+   mientras se desvanece. */
+@keyframes saludoZoom {
+  from { transform: scale(1); }
+  to   { transform: scale(1.11); }
+}
+
+/* La letra abre espaciada y se cierra hasta su sitio mientras aparece.
+   Es el recurso de los rótulos de cine, y es lo que hace que la palabra
+   parezca asentarse en lugar de encenderse. Se apaga antes que el velo
+   para que no quede un texto plano sobre un fondo que ya se va. */
+@keyframes saludoPalabra {
+  0%   { opacity: 0; letter-spacing: 6px; }
+  34%  { opacity: 1; letter-spacing: -2px; }
+  68%  { opacity: 1; letter-spacing: -2px; }
+  92%  { opacity: 0; letter-spacing: -2px; }
+  100% { opacity: 0; letter-spacing: -2px; }
+}
+
+.auth-saludo {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+  pointer-events: none;
+  animation: saludoVelo 2.6s cubic-bezier(.4, 0, .2, 1) both;
+}
+.auth-saludo span {
+  font-family: inherit;
+  font-size: clamp(34px, 7vw, 68px);
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1;
+  color: #141d1c;
+  /* Dos animaciones a la vez sobre el mismo elemento: una mueve la
+     escala y la otra la opacidad y el espaciado. No se pisan porque no
+     tocan la misma propiedad, y así cada una lleva su propio ritmo —el
+     acercamiento lineal, el fundido con curva—. */
+  animation: saludoZoom 2.6s linear both,
+             saludoPalabra 2.6s cubic-bezier(.4, 0, .2, 1) both;
+  will-change: transform, opacity;
+}
+
+/* Quien pide menos movimiento ve la palabra quieta: el velo sigue
+   entrando y saliendo —es lo que la hace aparecer y desaparecer— pero
+   sin acercamiento. */
+@media (prefers-reduced-motion: reduce) {
+  .auth-saludo span { animation: saludoPalabra 2.6s cubic-bezier(.4, 0, .2, 1) both; }
+}
