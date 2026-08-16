@@ -94,8 +94,13 @@
     '    <div class="auth-form-side">',
     '      <div class="auth-form-wrap">',
     '      <div class="auth-form-mh"><span class="mh-brand">Plataforma Filtro Vehicular<span class="mh-plus">+</span></span></div>',
-    '      <div class="auth-form-card">',
+    /* El retrato va FUERA de la tarjeta, entre el encabezado de marca y
+       ella. En móvil la tarjeta es un cuadro blanco con filete y el
+       disco tiene que quedar encima, bajo la barra de colores, no
+       dentro. En escritorio la tarjeta no se ve —es solo un contenedor—
+       y el retrato sigue leyéndose pegado al formulario. */
     '      <div class="auth-avatar" aria-hidden="true">' + AVATAR_SVG + '</div>',
+    '      <div class="auth-form-card">',
     '      <h2 class="auth-modal-title">Crea tu cuenta</h2>',
     '      <p class="auth-modal-sub">Regístrate gratis y recibe <strong>5 créditos</strong> para probar el servicio.</p>',
     '      <form class="auth-form" id="signupForm" novalidate>',
@@ -141,8 +146,13 @@
     '    <div class="auth-form-side">',
     '      <div class="auth-form-wrap">',
     '      <div class="auth-form-mh"><span class="mh-brand">Plataforma Filtro Vehicular<span class="mh-plus">+</span></span></div>',
-    '      <div class="auth-form-card">',
+    /* El retrato va FUERA de la tarjeta, entre el encabezado de marca y
+       ella. En móvil la tarjeta es un cuadro blanco con filete y el
+       disco tiene que quedar encima, bajo la barra de colores, no
+       dentro. En escritorio la tarjeta no se ve —es solo un contenedor—
+       y el retrato sigue leyéndose pegado al formulario. */
     '      <div class="auth-avatar" aria-hidden="true">' + AVATAR_SVG + '</div>',
+    '      <div class="auth-form-card">',
     '      <h2 class="auth-modal-title">Bienvenido</h2>',
     '      <p class="auth-modal-sub">Ingresa a tu cuenta para continuar con tus consultas.</p>',
     '      <form class="auth-form" id="loginForm" novalidate>',

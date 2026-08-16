@@ -1120,9 +1120,13 @@ body.auth-locked .wa-menu {
      automáticos reparten lo que sobra DESPUÉS de descontar los fijos,
      así que estos 90px se traducen en 45px de subida — la mitad, porque
      la otra mitad se la queda el hueco de arriba. Centrado del todo, el
-     bloque quedaba bajo: el ojo lo lee mejor un punto por encima. */
-  #authModalLogin  .auth-form-card,
-  #authModalSignup .auth-form-card { margin-top: auto; }
+     bloque quedaba bajo: el ojo lo lee mejor un punto por encima.
+
+     El margen automático va en el RETRATO y no en la tarjeta: el retrato
+     es ahora el primero del grupo, y dejándolo en la tarjeta el hueco se
+     abría entre los dos y los separaba media pantalla. */
+  #authModalLogin  .auth-avatar,
+  #authModalSignup .auth-avatar { margin-top: auto; }
   /* Solo en el acceso. El registro es tan largo que ya arranca arriba, y
      forzarle el mismo margen lo hacía scrollear en pantallas normales. */
   #authModalLogin .auth-form-card { margin-bottom: 90px; }
