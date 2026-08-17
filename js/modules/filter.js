@@ -509,16 +509,15 @@
             if (!result) throw new Error('MetaplaReport devolvió null');
             var rfn = escapeHtml(result.filename || 'reporte.pdf');
             var cid = 'fl-metapla-' + Date.now();
+            var dlIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
             metaplaPdfArea.innerHTML =
               '<div class="cr-doccards">' +
                 '<div class="cr-doccard">' +
                   '<div class="cr-doccard-head">' +
                     '<span class="cr-doccard-tit">Reporte Vehicular</span>' +
+                    '<a class="cr-doccard-dl" href="' + result.blobUrl + '" download="' + rfn + '">' + dlIcon + '<span>Descargar</span></a>' +
                   '</div>' +
                   '<div class="cr-doccard-preview-wrap"><div class="cr-pdf-canvas-wrap" id="' + cid + '"><div class="cr-pdf-loading">Cargando PDF…</div></div></div>' +
-                  '<div class="cr-doccard-actions">' +
-                    '<a class="cr-doccard-dl" href="' + result.blobUrl + '" download="' + rfn + '">Descargar Reporte PDF</a>' +
-                  '</div>' +
                 '</div>' +
               '</div>';
             (function (cidRef, blobUrlRef, fnRef, base64Ref) {

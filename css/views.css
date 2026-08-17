@@ -1448,21 +1448,32 @@
   margin: 0;
   letter-spacing: .2px;
 }
-/* ===== Tarjeta "Documento adjunto" (previsualización + Descargar) ===== */
+/* ===== "Documento PDF": cabecera + previsualización real de la primera
+   página, sin caja ni borde propio — la ficha ES el documento, igual que
+   en el modelo que pasó el dueño. ===== */
 .cr-doccards {
   padding: 0 80px 20px;
-  display: flex; flex-direction: column; gap: 12px;
+  display: flex; flex-direction: column; gap: 24px;
 }
-.cr-doccard { border: 1px solid var(--c-border); border-radius: 8px; overflow: hidden; background: var(--c-surface); box-shadow: none; }
-.cr-doccard-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; flex-wrap: wrap; }
-.cr-doccard-tit { font-size: var(--fs-sm); font-weight: 700; color: var(--c-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-/* La previsualización: limpia, sin borde ni cuadro propio, más grande que
-   el thumbnail de 280px que usa el resto de la plataforma — aquí es lo
-   principal de la tarjeta, no un ícono de apoyo. Sin overlay «Click para
-   descargar»: el único botón de descarga es el de abajo. */
-.cr-doccard-preview-wrap { padding: 6px 20px 4px; }
+.cr-doccard { background: transparent; }
+.cr-doccard-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.cr-doccard-tit { font-size: var(--fs-md); font-weight: 700; color: var(--c-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Botón de descarga: mismo trato oscuro que «Descargar» en la cabecera del
+   resultado (.nm-download) — un solo estilo de botón de descarga en toda
+   la plataforma. */
+.cr-doccard-dl {
+  display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+  font-size: var(--fs-sm); font-weight: normal; color: #ffffff;
+  background: #141d1c; text-decoration: none;
+  padding: 10px 20px; border-radius: 8px;
+  transition: background var(--t-fast);
+}
+.cr-doccard-dl:hover { background: #0e1312; }
+.cr-doccard-dl svg { width: 17px; height: 17px; flex-shrink: 0; }
+/* La previsualización: sin borde, sin overlay, a todo el ancho disponible. */
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap {
-  max-width: 420px;
+  max-width: none;
+  width: 100%;
   cursor: default;
 }
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap:hover { transform: none; }
@@ -1471,13 +1482,6 @@
   border: none;
   border-radius: 0;
   background: transparent;
-}
-.cr-doccard-actions { display: flex; justify-content: center; gap: 8px; flex-shrink: 0; padding: 4px 14px 16px; }
-.cr-doccard-dl {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: var(--fs-sm); font-weight: 400; color: #ffffff;
-  background: var(--c-primary); text-decoration: none;
-  padding: 8px 16px; border-radius: 4px;
 }
 
 /* Lista de datos */

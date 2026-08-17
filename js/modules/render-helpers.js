@@ -672,6 +672,9 @@
   // único botón «Descargar». Se usa cuando YA hay datos mostrados como
   // filas/tabla y el PDF es solo un adjunto extra, no el contenido
   // principal. Sin botón «Visualizar»: la previsualización ya lo es.
+  // Cabecera "Documento PDF" + botón oscuro de descarga (idéntico al de la
+  // cabecera del resultado), y debajo la primera página del PDF a todo el
+  // ancho, sin caja ni borde propio — la ficha es el documento.
   function renderDocumentCard(pdfs, uniqPrefix, opts) {
     if (!pdfs || !pdfs.length) return '';
     var dlLabel = (opts && opts.downloadLabel) || 'Descargar';
@@ -682,23 +685,21 @@
       var mime = m.mimeType || 'application/pdf';
       var blobUrl = base64ToBlobUrl(m.base64, mime);
       var fn = m.filename || ('documento-' + (i + 1) + '.pdf');
-      var titulo = pdfs.length > 1 ? ('Documento ' + (i + 1)) : 'Documento adjunto';
+      var titulo = pdfs.length > 1 ? ('Documento PDF ' + (i + 1)) : 'Documento PDF';
       var cid = (uniqPrefix || 'rh') + '-doc-' + Date.now() + '-' + i;
       parts.push(
         '<div class="cr-doccard">' +
           '<div class="cr-doccard-head">' +
             '<span class="cr-doccard-tit">' + escapeHtml(titulo) + '</span>' +
+            '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">' + NM_ICON_DL + '<span>' + escapeHtml(dlLabel) + '</span></a>' +
           '</div>' +
           '<div class="cr-doccard-preview-wrap"><div class="cr-pdf-canvas-wrap" id="' + cid + '"><div class="cr-pdf-loading">Cargando PDF…</div></div></div>' +
-          '<div class="cr-doccard-actions">' +
-            '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">' + escapeHtml(dlLabel) + '</a>' +
-          '</div>' +
         '</div>'
       );
       toRender.push({ cid: cid, blobUrl: blobUrl, fn: fn, base64: m.base64 });
     });
     parts.push('</div>');
-    // Solo previsualiza; la única accion de descarga es el boton de abajo.
+    // Solo previsualiza; la única acción de descarga es el botón de arriba.
     setTimeout(function () {
       toRender.forEach(function (r) {
         var el = document.getElementById(r.cid);
