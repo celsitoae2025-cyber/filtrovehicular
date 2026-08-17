@@ -418,9 +418,71 @@
     return copia;
   }
 
+  /* Licencia de conducir (/mtc). El bot manda DOS mensajes —la licencia y
+     las papeletas del titular— y entre uno y otro cuela su propio estado de
+     cuenta. Puesto tal cual salía un apartado «Estado de cuenta» con los
+     datos del segundo mensaje partidos en «Registro 1 de 2 / 2 de 2», y el
+     nombre del titular no salía por ningún lado.
+
+     Se rearma en una sola ficha: la licencia arriba y las papeletas debajo.
+     Nada se inventa: se descarta el saldo del bot, se juntan los dos
+     mensajes y se quitan los repetidos. El PDF sigue su camino aparte. */
+  var MTC_CUENTA = /^(cr[eé]ditos?|credits?|monedas?|usuario|user(name)?|plan|comando|consultado\s+por)\s*$/i;
+  var MTC_LICENCIA = /^(DOCUMENTO|DNI|NOMBRE|CONDUCTOR|CATEGOR[IÍ]A|LICENCIA|NRO\.?\s*LICENCIA|N[°ºRO.]*\s*LICENCIA|FECHA\s*(DE\s*)?EXPEDICI[OÓ]N|VENCE|VENCIMIENTO|EMITIDO\s*EN|RESTRICCIONES|DIRECCI[OÓ]N)$/i;
+  /* «DOCUMENTO» y «NOMBRE» son los rótulos del bot; en una licencia el dato
+     se llama DNI y conductor. Renombrarlos además junta cada campo con su
+     gemelo del segundo mensaje, que ya venía con el nombre bueno. */
+  var MTC_RENOMBRA = [
+    { de: /^DOCUMENTO$/i, a: 'DNI' },
+    { de: /^NOMBRE$/i,    a: 'CONDUCTOR' },
+  ];
+
+  function estructurarMtc(p) {
+    var licencia = [], papeletas = [];
+    var vistos = Object.create(null);
+
+    (p.secciones || []).forEach(function (s) {
+      (s.campos || []).forEach(function (c) {
+        var nombre = (c.campo || '').trim();
+        if (nombre) {
+          if (MTC_CUENTA.test(nombre)) return;          // el saldo del bot
+          if (isEmptyValue(c.valor)) return;
+        } else {
+          var suelto = (c.valor || '').trim();
+          if (!suelto) return;
+          // Encabezado del bot y su estado de cuenta, repetidos por mensaje.
+          if (/^\[?#|ESTADO\s+DE\s+CUENTA|∞|♾/i.test(suelto)) return;
+        }
+
+        var campo = c;
+        MTC_RENOMBRA.forEach(function (r) {
+          if (nombre && r.de.test(nombre)) campo = { campo: r.a, valor: c.valor };
+        });
+
+        var clave = ((campo.campo || '') + '::' + (campo.valor || '')).toUpperCase();
+        if (vistos[clave]) return;
+        vistos[clave] = true;
+
+        (nombre && MTC_LICENCIA.test(nombre) ? licencia : papeletas).push(campo);
+      });
+    });
+
+    if (!licencia.length && !papeletas.length) return p;
+
+    var copia = {};
+    Object.keys(p).forEach(function (k) { copia[k] = p[k]; });   // medios, raw, título…
+    copia.secciones = [];
+    // «Datos principales» va sin encabezado propio: es la ficha de entrada.
+    if (licencia.length)  copia.secciones.push({ titulo: 'Datos principales', campos: licencia });
+    if (papeletas.length) copia.secciones.push({ titulo: 'Papeletas registradas', campos: papeletas });
+    return copia;
+  }
+
   function recortarAlResumen(p, comando) {
     if (!p || !comando) return p;
-    var aplica = SOLO_RESUMEN.some(function (re) { return re.test(String(comando).trim()); });
+    var cmd = String(comando).trim();
+    if (/^\/mtc\b/i.test(cmd)) return estructurarMtc(p);
+    var aplica = SOLO_RESUMEN.some(function (re) { return re.test(cmd); });
     return aplica ? estructurarCitv(p) : p;
   }
 
@@ -633,6 +695,8 @@
         // Suprime el índice si el primer campo ya identifica al registro
         function skipIndex(fld) {
           if (fld === 'NUMERO' || fld === 'NÃšMERO') return true;
+          // El bot ya numeró el registro en el propio rótulo («1. ENTIDAD»).
+          if (/^\d+\.\s/.test(fld)) return true;
           if (/^N[°ÂºRO.]*\s*(DENUNCIA|EXPEDIENTE|CASO|PARTIDA|ORDEN|RESOLUCI)/i.test(fld)) return true;
           return false;
         }
