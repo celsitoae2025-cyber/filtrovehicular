@@ -196,11 +196,13 @@
       });
     });
 
-    // Tamaño de texto fijo (9pt); si el contenido no entra en una hoja,
-    // jsPDF-autotable pagina solo (didDrawPage ya redibuja las franjas en
-    // cada página nueva) — no hace falta encoger la fuente para "caber".
-    var fontBody = 9;
-    var cellPad = 2.5;
+    /* Tamaño de texto fijo; si el contenido no entra en una hoja,
+       jsPDF-autotable pagina solo (didDrawPage ya redibuja las franjas en
+       cada página nueva) — no hace falta encoger la fuente para "caber".
+       Estaba en 9pt con 2.5mm de relleno: el informe salía aireado y una
+       ficha de RENIEC se iba a dos hojas por unas pocas filas. */
+    var fontBody = 8;
+    var cellPad = 1.6;
     function rowH(font, pad) { return font * 0.3528 * 1.15 + pad * 2; }
 
     // ── TABLA (franjas gris/blanco, sin bordes ni líneas; secciones en negrita) ──
