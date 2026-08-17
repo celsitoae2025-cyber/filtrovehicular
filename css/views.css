@@ -3988,6 +3988,11 @@ body.cr-lightbox-open { overflow: hidden; }
      disuelven en ella (`display: contents`), así la columna mide lo que
      mide la etiqueta más larga —una sola línea siempre— y los valores
      siguen alineados entre sí, cosa que `max-content` por fila no da. */
+  /* El primer bloque (DNI, PRENOMBRES, APELLIDOS, GÉNERO) no lleva
+     `.cr-sect-body`: sus filas cuelgan directas de `.cr-sect` (ver
+     `isFirst` en renderSeccionIndividual). Sin este selector se quedaba
+     fuera de la rejilla y alineaba por su cuenta. */
+  .cr-sect:has(> .cr-row),
   .cr-sect-body:not(:has(> .cr-record)),
   .cr-record {
     display: grid;
@@ -3999,8 +4004,11 @@ body.cr-lightbox-open { overflow: hidden; }
     grid-template-columns: minmax(max-content, 52%) minmax(0, 1fr);
     column-gap: 16px;
   }
+  .cr-sect:has(> .cr-row) > .cr-row,
   .cr-sect-body:not(:has(> .cr-record)) > .cr-row,
   .cr-record > .cr-row { display: contents; }
+  .cr-sect:has(> .cr-row) > .cr-row > .cr-k,
+  .cr-sect:has(> .cr-row) > .cr-row > .cr-v,
   .cr-sect-body:not(:has(> .cr-record)) > .cr-row > .cr-k,
   .cr-sect-body:not(:has(> .cr-record)) > .cr-row > .cr-v,
   .cr-record > .cr-row > .cr-k,
