@@ -305,16 +305,68 @@
      Va por comando y no por heurística a propósito: es una decisión sobre
      QUÉ enseña esta consulta, no sobre cómo llega la respuesta. */
   var SOLO_RESUMEN = [/^\/citv\b/i];
+
+  /* Revisiones técnicas (/citv) llega como un resumen, el historial entero
+     de certificados y la planta que hizo cada uno. Puesto tal cual sale una
+     tabla de certificados vencidos que no dice si el vehículo está al día.
+
+     Se rearma en tres bloques —el vehículo, la revisión que rige y la
+     planta que la emitió—, cada campo en su fila. Nada se inventa: solo se
+     escoge el certificado en vigor y se reparte lo que ya vino. */
+  var CITV_GRUPOS = [
+    { titulo: 'Vehículo',          campos: /^(PLACA|N[°ºO.]*\s*PLACA)$/i },
+    { titulo: 'Revisión técnica',  campos: /^(ESTADO|RESULTADO|CERTIFICADO|VIGENCIA|VIG\.?\s*INICIO|VIG\.?\s*FIN|FECHA\s*DE?\s*(INICIO|FIN)|INSPECCI[OÓ]N)$/i },
+    { titulo: 'Planta de revisión', campos: /^(EMPRESA|RAZ[OÓ]N\s*SOCIAL|DIRECCI[OÓ]N|SERVICIO|OBS|OBSERVACIONES)$/i },
+  ];
+
+  function estructurarCitv(p) {
+    var secciones = p.secciones || [];
+    if (!secciones.length) return p;
+
+    // El certificado que rige; si están todos vencidos, el primero que vino.
+    var conCertificado = secciones.filter(function (s) {
+      return (s.campos || []).some(function (c) { return c.campo && /^CERTIFICADO$/i.test(c.campo.trim()); });
+    });
+    var enVigor = conCertificado.filter(function (s) {
+      return (s.campos || []).some(function (c) {
+        return c.campo && /^ESTADO$/i.test(c.campo.trim()) && /\bVIGENTE\b/i.test(c.valor || '') && !/\bNO\s*VIGENTE\b/i.test(c.valor || '');
+      });
+    });
+    var certificado = enVigor[0] || conCertificado[0] || null;
+
+    /* Del resto de secciones se toma todo menos los certificados que no
+       rigen: sus fechas y su estado contradirían al que sí rige. */
+    var aportan = secciones.filter(function (s) {
+      return conCertificado.indexOf(s) === -1 || s === certificado;
+    });
+
+    var vistos = Object.create(null);
+    var grupos = CITV_GRUPOS.map(function (g) { return { titulo: g.titulo, campos: [] }; });
+    var sueltos = [];
+    aportan.forEach(function (s) {
+      (s.campos || []).forEach(function (c) {
+        if (!c.campo || isEmptyValue(c.valor)) return;
+        var nombre = c.campo.trim();
+        if (/^INDX$/i.test(nombre)) return;            // el número de orden del historial
+        var firma = nombre.toUpperCase() + '::' + c.valor;
+        if (vistos[firma]) return;
+        vistos[firma] = true;
+        var i = CITV_GRUPOS.findIndex(function (g) { return g.campos.test(nombre); });
+        (i === -1 ? sueltos : grupos[i].campos).push(c);
+      });
+    });
+    if (sueltos.length) grupos.push({ titulo: 'Otros datos', campos: sueltos });
+
+    var copia = {};
+    Object.keys(p).forEach(function (k) { copia[k] = p[k]; });   // medios, raw, título…
+    copia.secciones = grupos.filter(function (g) { return g.campos.length; });
+    return copia;
+  }
+
   function recortarAlResumen(p, comando) {
     if (!p || !comando) return p;
     var aplica = SOLO_RESUMEN.some(function (re) { return re.test(String(comando).trim()); });
-    if (!aplica) return p;
-    var secciones = p.secciones || [];
-    if (secciones.length < 2) return p;
-    var copia = {};
-    Object.keys(p).forEach(function (k) { copia[k] = p[k]; });   // medios, raw, título…
-    copia.secciones = [secciones[0]];
-    return copia;
+    return aplica ? estructurarCitv(p) : p;
   }
 
   function renderDataRows(p) {
