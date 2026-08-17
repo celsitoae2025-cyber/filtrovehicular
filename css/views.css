@@ -1464,6 +1464,10 @@
   max-width: none;
   width: 100%;
   cursor: default;
+  /* Una hoja debajo de otra: el documento se lee entero sin flechas. */
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap:hover { transform: none; }
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap::after { display: none; }
@@ -3114,24 +3118,14 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) .cr-btn-details {
   display: none;
 }
+/* El documento manda: ocupa el ancho del panel, como en Consulta Vehicular.
+   Aquí había un thumbnail de 280px anclado a una segunda columna —tenía
+   sentido cuando la lista de partidas seguía a la izquierda; ahora esa
+   columna está vacía y el documento quedaba arrinconado en un costado. */
 .cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) .cr-pdf-canvas-wrap {
   margin: 0 auto;
-  max-width: 280px;
-}
-
-/* Cuando el CONTENEDOR (no el viewport) tiene espacio: 2 columnas con PDF
-   a la derecha y botones a la izquierda. 620px = título legible + thumb 280 + gap */
-@container (min-width: 620px) {
-  .cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) {
-    grid-template-columns: minmax(0, 1fr) 280px;
-    grid-template-areas:
-      "tit pdf"
-      "grid pdf";
-    gap: 18px 32px;
-  }
-  .cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) .cr-pdf-canvas-wrap {
-    margin: 0;
-  }
+  max-width: none;
+  width: 100%;
 }
 
 /* Sección de botones */

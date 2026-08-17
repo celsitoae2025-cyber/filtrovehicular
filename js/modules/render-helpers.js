@@ -122,7 +122,13 @@
   }
 
   /* â"€â"€ PDF.js renderer â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
-  async function renderPdfIntoContainer(container, blobUrl, fileName, base64) {
+  /* `opts.todasLasPaginas` pinta el documento entero, una hoja debajo de
+     otra y sin navegador de páginas: es lo que hace falta cuando el PDF ES
+     el resultado (SUNARP entrega partidas de 7 y de 10 hojas) y no una
+     miniatura de apoyo. Sin la opción, se mantiene la hoja única con
+     flechas, que es lo que quiere el resto de vistas. */
+  async function renderPdfIntoContainer(container, blobUrl, fileName, base64, opts) {
+    var todasLasPaginas = !!(opts && opts.todasLasPaginas);
     var dataUrl = base64 ? ('data:application/pdf;base64,' + base64) : blobUrl;
     if (!window.pdfjsLib) {
       container.innerHTML = pdfFallbackUI(blobUrl, dataUrl, fileName);
@@ -142,6 +148,39 @@
       var pdf = await pdfjsLib.getDocument(docInput).promise;
       var total = pdf.numPages;
       container.innerHTML = '';
+
+      // Pinta una hoja en su propio lienzo, a lo ancho del contenedor.
+      async function pintarEn(num, lienzo, ancho) {
+        var page = await pdf.getPage(num);
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var baseViewport = page.getViewport({ scale: 1 });
+        var displayWidth = ancho || 600;
+        var renderScale = (displayWidth / baseViewport.width) * dpr;
+        // Cap absoluto: nunca más de ~6MP para evitar OOM en móviles low-end
+        var pixels = baseViewport.width * renderScale * baseViewport.height * renderScale;
+        if (pixels > 6e6) renderScale = renderScale * Math.sqrt(6e6 / pixels);
+        var viewport = page.getViewport({ scale: renderScale });
+        lienzo.width = viewport.width;
+        lienzo.height = viewport.height;
+        lienzo.style.width = displayWidth + 'px';
+        lienzo.style.height = (displayWidth * baseViewport.height / baseViewport.width) + 'px';
+        await page.render({ canvasContext: lienzo.getContext('2d'), viewport: viewport }).promise;
+      }
+
+      if (todasLasPaginas) {
+        var ancho = container.clientWidth || 600;
+        for (var n = 1; n <= total; n++) {
+          var hoja = document.createElement('div');
+          hoja.className = 'cr-pdf-stage';
+          var lienzo = document.createElement('canvas');
+          lienzo.className = 'cr-pdf-canvas';
+          hoja.appendChild(lienzo);
+          container.appendChild(hoja);
+          await pintarEn(n, lienzo, ancho);
+        }
+        return;
+      }
+
       var stage = document.createElement('div');
       stage.className = 'cr-pdf-stage';
       var canvas = document.createElement('canvas');
@@ -161,24 +200,7 @@
       }
       var current = 1;
       async function renderPage(num) {
-        var page = await pdf.getPage(num);
-        var dpr = Math.min(window.devicePixelRatio || 1, 2);
-        var baseViewport = page.getViewport({ scale: 1 });
-        // Calcular escala para que el PDF encaje en el contenedor visible
-        var displayWidth = stage.clientWidth || 600;
-        var cssScale = displayWidth / baseViewport.width;
-        var renderScale = cssScale * dpr;
-        // Cap absoluto: nunca más de ~6MP para evitar OOM en móviles low-end
-        var pixels = baseViewport.width * renderScale * baseViewport.height * renderScale;
-        if (pixels > 6e6) renderScale = renderScale * Math.sqrt(6e6 / pixels);
-        var viewport = page.getViewport({ scale: renderScale });
-        var ctx = canvas.getContext('2d');
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        // CSS: mostrar a tamaño real del contenedor (nítido, sin stretching)
-        canvas.style.width = displayWidth + 'px';
-        canvas.style.height = (displayWidth * baseViewport.height / baseViewport.width) + 'px';
-        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+        await pintarEn(num, canvas, stage.clientWidth || 600);
         if (pageLabel) pageLabel.textContent = num + ' / ' + total;
         if (nav) {
           nav.querySelector('[data-act="prev"]').disabled = (num <= 1);
@@ -705,7 +727,7 @@
     setTimeout(function () {
       toRender.forEach(function (r) {
         var el = document.getElementById(r.cid);
-        if (el) renderPdfIntoContainer(el, r.blobUrl, r.fn, r.base64);
+        if (el) renderPdfIntoContainer(el, r.blobUrl, r.fn, r.base64, { todasLasPaginas: true });
       });
     }, 0);
     return parts.join('');
