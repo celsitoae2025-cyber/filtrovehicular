@@ -873,12 +873,11 @@
   // Datos completos van dentro de un colapsable "Ver detalles".
   // Incluye un área de resultado donde el PDF aparecerá sin reemplazar los botones.
   function renderButtonList(p, botones) {
-    var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
     var parts = [];
     if (p && p.titulo) parts.push('<div class="cr-tit">' + escapeHtml(cleanTitle(p.titulo)) + '</div>');
 
-    // Separar campos cabecera de registros individuales
-    var headerCampos = [];
+    // Un registro por boton: de cada uno se saca el rotulo que despues
+    // acompaña a la opcion en la lista.
     var recordDetails = [];
     (p.secciones || []).forEach(function (s) {
       var recs = splitIntoRecords(s.campos || []);
@@ -898,10 +897,6 @@
             }
           });
           recordDetails.push({ tip: tip, fecha: fecha });
-        } else {
-          rec.forEach(function (c) {
-            if (c.campo && !isEmptyValue(c.valor)) headerCampos.push(c);
-          });
         }
       });
     });
@@ -913,38 +908,20 @@
     parts.push('<div class="cr-btn-grid">');
     parts.push('<div class="cr-btn-main">');
 
-    // Cabecera compacta
-    if (headerCampos.length > 0) {
-      parts.push('<div class="cr-btn-summary">');
-      headerCampos.forEach(function (c) {
-        parts.push('<span class="cr-btn-summary-item"><span class="cr-btn-summary-k">' +
-          escapeHtml(prettyLabel(c.campo)) + '</span> <strong>' + escapeHtml(c.valor) + '</strong></span>');
-      });
-      parts.push('</div>');
-    }
+    /* Aqui iba un cuadro gris repitiendo «Tipo REGISTRO DE …» una vez por
+       registro: la misma frase varias veces, sin decir de que partida es
+       cada una, y encima duplicando lo que ya sale en la ficha. Fuera.
+       `headerCampos` sigue calculandose porque separa los registros de la
+       cabecera, que es lo que alimenta `recordDetails`. */
 
-    // Colapsable "Ver detalles"
+    // La ficha, a la vista. Estaba detras de un «Ver detalles de la
+    // consulta» que el cliente tenia que descubrir para leer lo que habia
+    // pagado.
     var hasData = (p.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
     if (hasData) {
-      var uid = 'cr-details-' + Date.now();
       parts.push('<div class="cr-btn-details">');
-      parts.push(
-        '<button type="button" class="cr-btn-details-toggle" aria-expanded="false" data-target="' + uid + '">' +
-          '<svg class="cr-btn-details-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
-          '<span>Ver detalles de la consulta</span>' +
-        '</button>'
-      );
-      parts.push('<div class="cr-btn-details-body" id="' + uid + '" hidden>');
       parts.push(renderDataRows(p));
-      // Botón "Cerrar detalles" al final del contenido expandido
-      parts.push(
-        '<button type="button" class="cr-btn-details-close" data-target="' + uid + '">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>' +
-          '<span>Cerrar detalles</span>' +
-        '</button>'
-      );
-      parts.push('</div>'); // cierra details-body
-      parts.push('</div>'); // cierra details
+      parts.push('</div>');
     }
 
     // Botones de selección

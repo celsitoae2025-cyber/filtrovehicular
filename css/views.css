@@ -3022,8 +3022,12 @@ body.cr-lightbox-open { overflow: hidden; }
 }
 .cr-btn-summary-item { display: inline-flex; gap: 6px; align-items: baseline; }
 
-/* Colapsable "Ver detalles" */
+/* Colapsable "Ver detalles" — lo sigue usando renderPdfPreview. En la
+   lista de opciones ya no hay colapsable: la ficha va suelta dentro de
+   `.cr-btn-details`, y su título se esconde porque renderButtonList ya
+   imprime uno arriba. */
 .cr-btn-details { max-width: 640px; }
+.cr-btn-details > .cr-tit { display: none; }
 .cr-btn-details-toggle {
   display: inline-flex;
   align-items: center;
@@ -3133,25 +3137,29 @@ body.cr-lightbox-open { overflow: hidden; }
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
+/* Tres por fila: una columna de botones a lo ancho del panel dejaba
+   fichas de 8 partidas ocupando toda la pantalla para mostrar un código y
+   una ciudad. `auto-fill` con mínimo de 190px baja a 2 y a 1 sola cuando
+   no caben, sin más consultas de medios. */
 .cr-btn-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
 }
 .cr-btn-option {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  padding: 12px 16px;
+  padding: 9px 12px;
   border: 1px solid #e5e7eb;
   border-radius: 9px;
   background: #ffffff;
   color: var(--c-primary);
   font-family: inherit;
-  font-size: var(--fs-sm);
-  font-weight: 500;
+  font-size: var(--cr-fs);
+  font-weight: 400;
   line-height: 1.35;
   text-align: left;
   cursor: pointer;
@@ -3168,7 +3176,7 @@ body.cr-lightbox-open { overflow: hidden; }
 }
 .cr-btn-option-text {
   word-break: break-word;
-  font-weight: 600;
+  font-weight: 700;
 }
 .cr-btn-option-tip {
   font-size: var(--fs-xs);
