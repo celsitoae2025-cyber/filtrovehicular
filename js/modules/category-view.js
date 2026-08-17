@@ -354,7 +354,7 @@
     function renderResultado(resp, valorConsultado) {
       // Liberar blob URLs de resultados anteriores
       revokeActiveBlobUrls();
-      var p = resp.parsed || {};
+      var p = H.recortarAlResumen(resp.parsed || {}, currentConsulta && currentConsulta.comando);
       var pdfs    = (p.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
       var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
       var botones = p.botones || [];

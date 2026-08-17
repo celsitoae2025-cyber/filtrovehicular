@@ -291,6 +291,27 @@
       .trim();
   }
 
+  /* Consultas en las que el resumen ES la respuesta. Revisiones técnicas
+     (/citv) manda arriba placa, estado, resultado, vigencia y empresa —lo
+     que el cliente viene a saber— y debajo el mismo dato desmenuzado en
+     certificado, dirección, servicio y observaciones, una vez por cada
+     revisión del historial. Se recorta a esa primera sección.
+
+     Va por comando y no por heurística a propósito: es una decisión sobre
+     QUÉ enseña esta consulta, no sobre cómo llega la respuesta. */
+  var SOLO_RESUMEN = [/^\/citv\b/i];
+  function recortarAlResumen(p, comando) {
+    if (!p || !comando) return p;
+    var aplica = SOLO_RESUMEN.some(function (re) { return re.test(String(comando).trim()); });
+    if (!aplica) return p;
+    var secciones = p.secciones || [];
+    if (secciones.length < 2) return p;
+    var copia = {};
+    Object.keys(p).forEach(function (k) { copia[k] = p[k]; });   // medios, raw, título…
+    copia.secciones = [secciones[0]];
+    return copia;
+  }
+
   function renderDataRows(p) {
     var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
     var toTitleCase = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.toTitleCase : function (s) { return s; };
@@ -2094,6 +2115,7 @@
     splitIntoRecords:        splitIntoRecords,
     isEmptyValue:            isEmptyValue,
     renderDataRows:          renderDataRows,
+    recortarAlResumen:       recortarAlResumen,
     mediaCountClass:         mediaCountClass,
     measureSaturation:       measureSaturation,
     applyDniLayout:          applyDniLayout,
