@@ -657,14 +657,18 @@
             btns.forEach(function (b) { b.disabled = true; b.classList.remove('is-selected'); });
             btn.classList.add('is-selected', 'is-loading');
 
+            var RH = Consultia.RenderHelpers;
             resultArea.hidden = false;
-            resultArea.innerHTML =
-              '<div class="cr-loading">' +
-                '<div class="cr-spinner"></div>' +
-                '<div class="cr-loading-text">Consultando…</div>' +
-                '<div class="cr-loading-hint">Generando el documento, puede demorar unos segundos.</div>' +
-              '</div>';
-            resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            resultArea.innerHTML = '';
+            /* Pedirle el documento al proveedor puede tardar. Mismo aviso a
+               pantalla completa con contador que la descarga del listado por
+               nombres: bloquea la página, así el cliente no pulsa otra
+               partida creyendo que no pasó nada. */
+            var cerrarEspera = RH.openDownloadOverlay({
+              titulo: 'Generando el documento',
+              detalle: 'Estamos pidiendo el documento al proveedor. Puede tardar unos segundos.',
+              contador: true
+            });
 
             var status = $(statusId());
             if (status) {
@@ -675,8 +679,8 @@
 
             try {
               var resp = await Consultia.ConsultaRunner.ejecutarCallback(currentConsulta, msgId, data);
+              cerrarEspera();
               var rp = resp.parsed || {};
-              var RH = Consultia.RenderHelpers;
               var pdfs = (rp.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
               var hasDataR = (rp.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
 
@@ -689,22 +693,12 @@
                 resultArea.innerHTML = RH.renderPdfDlBar(pdfs) + RH.renderDocumentCard(pdfs, prefix);
                 marcarConResultado(true);
               } else if (hasDataR) {
-                var duid = 'cr-cb-det-' + Date.now();
+                // Los datos, a la vista. Estaban detrás de un «Ver detalles de
+                // la consulta» que dejaba la respuesta escondida tras un clic
+                // más, justo encima de la lista que el cliente acababa de usar.
                 resultArea.innerHTML =
                   '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding:16px;">' +
-                    '<div class="cr-btn-details">' +
-                      '<button type="button" class="cr-btn-details-toggle" aria-expanded="false" data-target="' + duid + '">' +
-                        '<svg class="cr-btn-details-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
-                        '<span>Ver detalles de la consulta</span>' +
-                      '</button>' +
-                      '<div class="cr-btn-details-body" id="' + duid + '" hidden>' +
-                        RH.renderDataRows(rp) +
-                        '<button type="button" class="cr-btn-details-close" data-target="' + duid + '">' +
-                          '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>' +
-                          '<span>Cerrar detalles</span>' +
-                        '</button>' +
-                      '</div>' +
-                    '</div>' +
+                    RH.renderDataRows(rp) +
                   '</div></div>';
               } else {
                 var rawText = (rp.raw || '').trim().replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
@@ -730,6 +724,7 @@
               btn.classList.remove('is-loading');
               resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch (e) {
+              cerrarEspera();   // idempotente: no pasa nada si ya se cerró
               console.error('Error en callback:', e);
               if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo procesar', message: (e && e.message) || 'Intenta de nuevo.' });
               resultArea.innerHTML = '';
