@@ -1064,8 +1064,20 @@
 .nm-meta { display: flex; justify-content: space-between; align-items: center; font-size: var(--fs-sm); color: #141d1c; padding: 2px 0; }
 .nm-meta-bold { font-weight: bold; }
 .nm-meta-italic { font-style: italic; color: #999; }
+/* Lo que vale igual en todos los registros del grupo, encima de la tabla:
+   titular, libro, estado… Una línea en vez de una columna repetida. */
+.cr-tbl-fijos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 28px;
+  padding: 0 0 10px;
+}
+.cr-tbl-fijo { display: inline-flex; align-items: baseline; gap: 8px; font-size: var(--cr-fs); }
+.cr-tbl-fijo-k { color: var(--c-muted); text-transform: uppercase; }
+.cr-tbl-fijo-v { color: var(--c-primary); font-weight: 700; }
+
 .nm-table-wrap { overflow-x: auto; }
-.nm-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+.nm-table { width: 100%; border-collapse: collapse; font-size: var(--cr-fs); }
 .nm-table thead th { background: #141d1c; color: #ffffff; font-weight: normal; font-size: var(--fs-xs); text-transform: uppercase; padding: 8px 10px; text-align: left; white-space: nowrap; }
 .nm-table tbody td { padding: 6px 10px; white-space: nowrap; }
 .nm-table tbody tr:nth-child(even) { background: #f8f9fa; }

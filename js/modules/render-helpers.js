@@ -331,15 +331,42 @@
         .filter(Boolean).sort().join('|');
     }
     function renderSeccionesTable(secciones) {
+      var mapaDe = function (s) {
+        var m = Object.create(null);
+        (s.campos || []).forEach(function (c) { if (c.campo) m[c.campo.toUpperCase().trim()] = c.valor; });
+        return m;
+      };
+      var mapas = secciones.map(mapaDe);
       var cols = (secciones[0].campos || []).filter(function (c) { return c.campo; }).map(function (c) { return c.campo; });
-      var parts = ['<div class="nm-table-wrap"><table class="nm-table"><thead><tr><th>Nº</th>'];
-      cols.forEach(function (col) { parts.push('<th>' + escapeHtml(prettyLabel(col)) + '</th>'); });
+
+      /* Un campo que vale lo mismo en los ocho registros no es una columna:
+         es una propiedad del grupo. Repetirlo ocho veces roba ancho a lo
+         que sí distingue una partida de otra (y en SUNARP eran tres
+         columnas de nueve: titular, libro y estado). Sube a la cabecera. */
+      var fijos = [], varian = [];
+      cols.forEach(function (col) {
+        var k = col.toUpperCase().trim();
+        var primero = mapas[0][k];
+        var igualEnTodos = mapas.every(function (m) { return (m[k] || '') === (primero || ''); });
+        if (igualEnTodos && !isEmptyValue(primero) && mapas.length > 1) fijos.push({ campo: col, valor: primero });
+        else varian.push(col);
+      });
+
+      var parts = [];
+      if (fijos.length) {
+        parts.push('<div class="cr-tbl-fijos">');
+        fijos.forEach(function (f) {
+          parts.push('<span class="cr-tbl-fijo"><span class="cr-tbl-fijo-k">' + escapeHtml(prettyLabel(f.campo)) +
+            '</span><span class="cr-tbl-fijo-v">' + escapeHtml(f.valor) + '</span></span>');
+        });
+        parts.push('</div>');
+      }
+      parts.push('<div class="nm-table-wrap"><table class="nm-table"><thead><tr><th>Nº</th>');
+      varian.forEach(function (col) { parts.push('<th>' + escapeHtml(prettyLabel(col)) + '</th>'); });
       parts.push('</tr></thead><tbody>');
-      secciones.forEach(function (s, idx) {
-        var map = Object.create(null);
-        (s.campos || []).forEach(function (c) { if (c.campo) map[c.campo.toUpperCase().trim()] = c.valor; });
+      mapas.forEach(function (map, idx) {
         parts.push('<tr><td>' + (idx + 1) + '</td>');
-        cols.forEach(function (col) {
+        varian.forEach(function (col) {
           var v = map[col.toUpperCase().trim()] || '';
           parts.push('<td>' + escapeHtml(isEmptyValue(v) ? '' : v) + '</td>');
         });
@@ -350,23 +377,29 @@
     }
     var runKeyOf = uniqSec.map(function (s) { return fieldSetKey(s.campos); });
 
-    var idx = 0;
-    while (idx < uniqSec.length) {
+    /* Se agrupa por FIRMA, no por vecindad. Antes solo se juntaban las
+       secciones consecutivas con los mismos campos, y el bot no las manda
+       ordenadas: en SUNARP los ocho registros llegan intercalados
+       —predio, vehículo, vehículo, predio…— y salían partidos en un bloque
+       vertical suelto y tres tablas con la misma cabecera repetida. Cada
+       firma se pinta una sola vez, en el lugar donde apareció primero. */
+    var cuentaPorFirma = Object.create(null);
+    runKeyOf.forEach(function (k) { if (k) cuentaPorFirma[k] = (cuentaPorFirma[k] || 0) + 1; });
+    var firmaPintada = Object.create(null);
+
+    uniqSec.forEach(function (s, idx) {
       var key = runKeyOf[idx];
-      var runEnd = idx + 1;
-      if (key) {
-        while (runEnd < uniqSec.length && runKeyOf[runEnd] === key) runEnd++;
-      }
-      if (key && runEnd - idx >= 2) {
+      if (key && cuentaPorFirma[key] >= 2) {
+        if (firmaPintada[key]) return;          // ya se pintó con su grupo
+        firmaPintada[key] = true;
+        var grupo = uniqSec.filter(function (_, i) { return runKeyOf[i] === key; });
         dataHtml.push('<div class="cr-sect">');
-        dataHtml.push(renderSeccionesTable(uniqSec.slice(idx, runEnd)));
+        dataHtml.push(renderSeccionesTable(grupo));
         dataHtml.push('</div>');
-        idx = runEnd;
-        continue;
+        return;
       }
-      renderSeccionIndividual(uniqSec[idx], idx);
-      idx++;
-    }
+      renderSeccionIndividual(s, idx);
+    });
     function renderSeccionIndividual(s, idx) {
       var isFirst = idx === 0 && (s.titulo === 'General' || s.titulo === 'Datos principales');
       var campos = s.campos || [];
