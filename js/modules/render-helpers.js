@@ -975,17 +975,30 @@
     var parts = [];
     var toRender = [];
     parts.push('<div class="cr-doccards">');
+    /* Con varios documentos —denuncias policiales manda uno por denuncia—
+       el «Descargar» de la cabecera sólo alcanza al primero, así que cada
+       uno lleva el suyo y se rotula para saber cuál es cuál. Con uno solo
+       no se rotula ni se repite el botón: ya está arriba. */
+    var varios = pdfs.length > 1;
     pdfs.forEach(function (m, i) {
       var mime = m.mimeType || 'application/pdf';
       var blobUrl = base64ToBlobUrl(m.base64, mime);
       var fn = m.filename || ('documento-' + (i + 1) + '.pdf');
       var cid = (uniqPrefix || 'rh') + '-doc-' + Date.now() + '-' + i;
+      parts.push('<div class="cr-doccard-preview-wrap">');
+      if (varios) {
+        parts.push('<div class="cr-doccard-barra">' +
+          '<span class="cr-doccard-tit">Documento ' + (i + 1) + ' de ' + pdfs.length + '</span>' +
+          '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">Descargar</a>' +
+        '</div>');
+      }
       // El data-blob/data-fn es lo que lee la delegación global para abrir
-      // el visor a pantalla completa (el mismo de la tarjeta «Visualizar»).
-      parts.push('<div class="cr-doccard-preview-wrap"><div class="cr-pdf-canvas-wrap cr-doccard-view" id="' + cid + '" ' +
+      // el visor a pantalla completa.
+      parts.push('<div class="cr-pdf-canvas-wrap cr-doccard-view" id="' + cid + '" ' +
         'data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '" ' +
         'title="Abrir el documento a pantalla completa">' +
-        '<div class="cr-pdf-loading">Cargando PDF…</div></div></div>');
+        '<div class="cr-pdf-loading">Cargando PDF…</div></div>');
+      parts.push('</div>');
       toRender.push({ cid: cid, blobUrl: blobUrl, fn: fn, base64: m.base64 });
     });
     parts.push('</div>');
