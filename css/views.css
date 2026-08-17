@@ -2397,6 +2397,37 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   line-height: 1.5;
 }
 
+/* â"€â"€ Espera larga: el proveedor tarda y se ofrece cancelar â"€â"€ */
+.cr-espera {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 380px;
+  text-align: center;
+}
+.cr-espera-texto {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--c-muted);
+  margin: 0;
+}
+.cr-espera-btn {
+  font: inherit;
+  font-size: 16px;
+  padding: 10px 18px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--c-text);
+  cursor: pointer;
+}
+.cr-espera-btn:hover {
+  background: #141d1c;
+  border-color: #141d1c;
+  color: #ffffff;
+}
+
 /* â"€â"€ Mensaje de mantenimiento / error técnico â"€â"€ */
 .cr-mantenimiento {
   display: flex;

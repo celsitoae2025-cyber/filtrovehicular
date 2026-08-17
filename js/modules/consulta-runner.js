@@ -165,6 +165,70 @@
     return toTitleCase(k);
   }
 
+  /* --- Espera larga y cancelación ---------------------------------
+     Hay bots que tardan de verdad: contestan primero su acuse de recibo
+     y la ficha llega bastante después. La página tiene que esperar —por
+     debajo se vuelve a pedir— en vez de dar la consulta por perdida y
+     soltarle al cliente que su dato no existe. Si la espera se alarga,
+     aparece la opción de cancelar sin costo y volver al inicio. */
+  var AVISO_ESPERA_MS    = 30000;    // cuándo se ofrece cancelar
+  var ESPERA_TOTAL_MS    = 240000;   // techo de la espera, reintentos incluidos
+  var PAUSA_REINTENTO_MS = 6000;
+
+  var controllerActivo = null;
+  var cancelada = false;
+  var avisoTimer = null;
+
+  function pausa(ms) {
+    return new Promise(function (r) { setTimeout(r, ms); });
+  }
+
+  function errorCancelado() {
+    var e = new Error("Consulta cancelada. No se descontaron créditos.");
+    e.code = "CANCELLED";
+    return e;
+  }
+
+  function pintarAvisoEspera() {
+    var caja = document.querySelector(".cr-loading");
+    if (!caja || caja.querySelector(".cr-espera")) return;
+    var wrap = document.createElement("div");
+    wrap.className = "cr-espera";
+    wrap.innerHTML =
+      '<p class="cr-espera-texto">El proveedor está tardando más de lo normal. ' +
+      'Seguimos esperando su respuesta; si prefieres, puedes cancelar sin costo.</p>' +
+      '<button type="button" class="cr-espera-btn">Cancelar y volver al inicio</button>';
+    wrap.querySelector(".cr-espera-btn").addEventListener("click", cancelarConsulta);
+    caja.appendChild(wrap);
+  }
+
+  function quitarAvisoEspera() {
+    if (avisoTimer) { clearTimeout(avisoTimer); avisoTimer = null; }
+    var w = document.querySelector(".cr-espera");
+    if (w && w.parentNode) w.parentNode.removeChild(w);
+  }
+
+  function iniciarEspera() {
+    cancelada = false;
+    quitarAvisoEspera();
+    avisoTimer = setTimeout(pintarAvisoEspera, AVISO_ESPERA_MS);
+  }
+
+  // Corta la espera: aborta la petición en curso, devuelve al inicio y deja
+  // que el flujo normal libere la reserva (cancelarSiNoSeUso).
+  function cancelarConsulta() {
+    cancelada = true;
+    if (controllerActivo) { try { controllerActivo.abort(); } catch (_) {} }
+    quitarAvisoEspera();
+    var inicio = document.querySelector('[data-nav="dashboard"]');
+    if (inicio) inicio.click();
+    if (Consultia.toast) Consultia.toast({
+      type: 'info',
+      title: 'Consulta cancelada',
+      message: 'No se descontaron créditos.'
+    });
+  }
+
   // --- Ejecutar consulta vía bridge ---
   // consulta: fila del catálogo { bot_id, comando, precio_venta, ... }
   // valor: lo que el cliente ingresó (DNI, placa, etc.)
@@ -212,6 +276,7 @@
       ? (body.timeoutMs * 2) + 20000
       : body.timeoutMs + 10000;
     var fetchTimeout = setTimeout(function () { controller.abort(); }, clientAbortMs);
+    controllerActivo = controller;
     var res;
     var bridgeReq;
     try {
@@ -229,7 +294,11 @@
       });
     } catch (fetchErr) {
       clearTimeout(fetchTimeout);
-      if (fetchErr.name === 'AbortError') throw new Error('La consulta tardó demasiado. Intenta de nuevo.');
+      if (fetchErr.name === 'AbortError') {
+        // Puede ser el tope de tiempo… o que el cliente pulsó «Cancelar».
+        if (cancelada) throw errorCancelado();
+        throw new Error('La consulta tardó demasiado. Intenta de nuevo.');
+      }
       console.error("[consulta-runner] bridge no disponible:", bridgeReq.url, fetchErr);
       throw new Error("El servidor de consultas no está disponible. Verifique que el bridge esté activo.");
     }
@@ -537,50 +606,78 @@
     //    Los administradores no pagan: consume_credits lo resuelve por rol
     //    (costo 0) y aun así registra la consulta para el historial.
     var esCuentaAdmin = await esAdmin(userId);
-    var consultaId = await cobrarCreditos(userId, consulta, valor);
-    ultimaConsultaId = consultaId;   // lo necesita ejecutarCallback
 
-    // 3) Ejecutar contra el bridge, presentando el comprobante.
-    var runOpts = {};
-    if (opts) { for (var k in opts) { if (Object.prototype.hasOwnProperty.call(opts, k)) runOpts[k] = opts[k]; } }
-    runOpts.consultaId = consultaId;
+    var optsBase = {};
+    if (opts) { for (var k in opts) { if (Object.prototype.hasOwnProperty.call(opts, k)) optsBase[k] = opts[k]; } }
 
-    var resp;
+    /* La espera puede dar varias vueltas: mientras el proveedor solo acuse
+       recibo, se le vuelve a pedir hasta agotar ESPERA_TOTAL_MS. Cada vuelta
+       lleva su propia reserva porque la anterior ya la liquidó el servidor al
+       marcarla sin resultados; el crédito vuelve a la cuenta en cada una. */
+    var limite = Date.now() + ESPERA_TOTAL_MS;
+    iniciarEspera();
     try {
-      resp = await ejecutarConsulta(consulta, valor, runOpts);
-    } catch (err) {
-      // La petición no llegó a completarse (sin red, timeout del navegador…).
-      // Si el servidor nunca llegó a reclamar la reserva, se devuelve el
-      // crédito. Si sí la reclamó, esta llamada no hace nada y el propio
-      // servidor la liquidará — no se puede cobrar dos veces ni devolver de más.
-      await cancelarSiNoSeUso(consultaId);
-      throw err;
+      while (true) {
+        if (cancelada) throw errorCancelado();
+
+        var consultaId = await cobrarCreditos(userId, consulta, valor);
+        ultimaConsultaId = consultaId;   // lo necesita ejecutarCallback
+
+        // 3) Ejecutar contra el bridge, presentando el comprobante.
+        var runOpts = {};
+        for (var k2 in optsBase) { if (Object.prototype.hasOwnProperty.call(optsBase, k2)) runOpts[k2] = optsBase[k2]; }
+        runOpts.consultaId = consultaId;
+
+        var resp;
+        try {
+          resp = await ejecutarConsulta(consulta, valor, runOpts);
+        } catch (err) {
+          // La petición no llegó a completarse (sin red, timeout del navegador,
+          // cancelación del cliente…). Si el servidor nunca llegó a reclamar la
+          // reserva, se devuelve el crédito. Si sí la reclamó, esta llamada no
+          // hace nada y el propio servidor la liquidará — no se puede cobrar
+          // dos veces ni devolver de más.
+          await cancelarSiNoSeUso(consultaId);
+          throw err;
+        }
+
+        // 4) Si el bot no trajo datos, el SERVIDOR ya devolvió el crédito y lo
+        //    marca aquí. El cliente solo informa; ya no decide sobre el dinero.
+        if (resp && resp.sin_resultados) {
+          /* No es lo mismo «el dato no existe» que «el proveedor acusó recibo y
+             todavía no contestó». Lo segundo se reconoce porque lo único que
+             llegó fue su aviso de espera, y decirle al cliente que su DNI no
+             existe cuando sí existe es mandarlo a buscar donde no hay nada. */
+          var RH = Consultia.RenderHelpers;
+          var enProceso = RH && RH.esRespuestaEnProceso && RH.esRespuestaEnProceso(resp.parsed || {});
+
+          // Sigue procesando y aún queda espera: se vuelve a pedir sin molestar
+          // al cliente, que sigue viendo «Consultando…».
+          if (enProceso && !cancelada && (Date.now() + PAUSA_REINTENTO_MS) < limite) {
+            await pausa(PAUSA_REINTENTO_MS);
+            continue;
+          }
+
+          var tipo = (consulta.tipo_dato || "dato").toUpperCase();
+          var e = enProceso
+            ? new Error("El proveedor acusó recibo pero aún no devolvió la información. " +
+                        "Vuelve a intentarlo en unos segundos. No se descontaron créditos.")
+            : new Error("No se encontraron datos para el " + tipo + " " + valor +
+                        ". No se descontaron créditos.");
+          e.code = enProceso ? "STILL_PROCESSING" : "EMPTY_RESPONSE";
+          throw e;
+        }
+
+        // Inyectamos el costo para que la UI lo muestre
+        resp.costo_deducido = esCuentaAdmin ? 0 : consulta.precio_venta;
+        resp.consulta_id = consultaId;
+
+        return resp;
+      }
+    } finally {
+      quitarAvisoEspera();
+      controllerActivo = null;
     }
-
-    // 4) Si el bot no trajo datos, el SERVIDOR ya devolvió el crédito y lo
-    //    marca aquí. El cliente solo informa; ya no decide sobre el dinero.
-    if (resp && resp.sin_resultados) {
-      var tipo = (consulta.tipo_dato || "dato").toUpperCase();
-      /* No es lo mismo «el dato no existe» que «el proveedor acusó recibo y
-         todavía no contestó». Lo segundo se reconoce porque lo único que
-         llegó fue su aviso de espera, y decirle al cliente que su DNI no
-         existe cuando sí existe es mandarlo a buscar donde no hay nada. */
-      var RH = Consultia.RenderHelpers;
-      var enProceso = RH && RH.esRespuestaEnProceso && RH.esRespuestaEnProceso(resp.parsed || {});
-      var e = enProceso
-        ? new Error("El proveedor acusó recibo pero aún no devolvió la información. " +
-                    "Vuelve a intentarlo en unos segundos. No se descontaron créditos.")
-        : new Error("No se encontraron datos para el " + tipo + " " + valor +
-                    ". No se descontaron créditos.");
-      e.code = enProceso ? "STILL_PROCESSING" : "EMPTY_RESPONSE";
-      throw e;
-    }
-
-    // Inyectamos el costo para que la UI lo muestre
-    resp.costo_deducido = esCuentaAdmin ? 0 : consulta.precio_venta;
-    resp.consulta_id = consultaId;
-
-    return resp;
   }
 
   Consultia.ConsultaRunner = {
@@ -589,6 +686,7 @@
     ejecutarConsulta: ejecutarConsulta,
     ejecutarCallback: ejecutarCallback,
     ejecutarConsultaConCobro: ejecutarConsultaConCobro,
+    cancelarConsulta: cancelarConsulta,
     cobrarCreditos: cobrarCreditos,
     // refundConsulta y confirmConsulta ya no se exponen: quien liquida el
     // cobro es el servidor (bridge-proxy). Ver migración 20260815200000.
