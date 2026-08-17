@@ -420,8 +420,12 @@
 
        Si NINGUNO está en vigor no se esconde nada: en ese caso el
        historial es justamente la respuesta (el vehículo no está al día). */
-    var RE_EN_VIGOR = /^(VIGENTE|ACTIVO|ACTIVA|AL\s*D[IÍ]A)$/i;
-    var RE_CADUCADO = /^(VENCID[OA]|CADUCAD[OA]|NO\s*VIGENTE|EXPIRAD[OA]|INACTIV[OA]|BAJA|ANULAD[OA])$/i;
+    /* Sin anclar a la cadena entera: el estado llega a veces con una coletilla
+       («VENCIDO (2025)», «VIGENTE - AL DÍA») y anclado no casaba con nada, así
+       que no se filtraba. «NO VIGENTE» contiene «VIGENTE», por eso lo caducado
+       se comprueba SIEMPRE primero. */
+    var RE_EN_VIGOR = /\b(VIGENTE|ACTIVO|ACTIVA|AL\s*D[IÍ]A)\b/i;
+    var RE_CADUCADO = /\b(VENCID[OA]|CADUCAD[OA]|NO\s*VIGENTE|EXPIRAD[OA]|INACTIV[OA]|BAJA|ANULAD[OA])\b/i;
     function estadoDe(s) {
       var v = '';
       (s.campos || []).forEach(function (c) {
@@ -432,7 +436,10 @@
     function soloEnVigor(grupo) {
       var hayCaducado = grupo.some(function (s) { return RE_CADUCADO.test(estadoDe(s)); });
       if (!hayCaducado) return grupo;
-      var enVigor = grupo.filter(function (s) { return RE_EN_VIGOR.test(estadoDe(s)); });
+      var enVigor = grupo.filter(function (s) {
+        var e = estadoDe(s);
+        return RE_EN_VIGOR.test(e) && !RE_CADUCADO.test(e);   // «NO VIGENTE» no cuenta
+      });
       return enVigor.length ? enVigor : grupo;
     }
 
