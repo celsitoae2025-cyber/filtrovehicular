@@ -720,7 +720,12 @@
       var blobUrl = base64ToBlobUrl(m.base64, mime);
       var fn = m.filename || ('documento-' + (i + 1) + '.pdf');
       var cid = (uniqPrefix || 'rh') + '-doc-' + Date.now() + '-' + i;
-      parts.push('<div class="cr-doccard-preview-wrap"><div class="cr-pdf-canvas-wrap" id="' + cid + '"><div class="cr-pdf-loading">Cargando PDF…</div></div></div>');
+      // El data-blob/data-fn es lo que lee la delegación global para abrir
+      // el visor a pantalla completa (el mismo de la tarjeta «Visualizar»).
+      parts.push('<div class="cr-doccard-preview-wrap"><div class="cr-pdf-canvas-wrap cr-doccard-view" id="' + cid + '" ' +
+        'data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '" ' +
+        'title="Abrir el documento a pantalla completa">' +
+        '<div class="cr-pdf-loading">Cargando PDF…</div></div></div>');
       toRender.push({ cid: cid, blobUrl: blobUrl, fn: fn, base64: m.base64 });
     });
     parts.push('</div>');
@@ -1774,6 +1779,7 @@
     renderTabla:             renderTabla,
     renderDocumentCard:      renderDocumentCard,
     renderPdfDlBar:          renderPdfDlBar,
+    openPdfModal:            openPdfModal,
     columnaValor:            columnaValor,
     renderNmPersonas:        renderNmPersonas,
     renderNmTabla:           renderNmTabla,

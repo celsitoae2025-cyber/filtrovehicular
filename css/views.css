@@ -1463,7 +1463,7 @@
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap {
   max-width: none;
   width: 100%;
-  cursor: default;
+  cursor: pointer;   /* abre el visor a pantalla completa */
   /* Una hoja debajo de otra: el documento se lee entero sin flechas. */
   display: flex;
   flex-direction: column;

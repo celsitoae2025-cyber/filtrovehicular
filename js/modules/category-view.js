@@ -692,6 +692,16 @@
                 // el CSS esconde la lista de opciones al detectar el visor.
                 resultArea.innerHTML = RH.renderPdfDlBar(pdfs) + RH.renderDocumentCard(pdfs, prefix);
                 marcarConResultado(true);
+                /* El documento es lo que se vino a buscar: se abre solo en el
+                   visor a pantalla completa, con sus páginas, zoom e impresión.
+                   Al cerrarlo queda debajo la previsualización, que lo vuelve
+                   a abrir. */
+                var docAbrir = pdfs[0];
+                var vistaPrevia = resultArea.querySelector('.cr-doccard-view[data-blob]');
+                if (vistaPrevia) {
+                  RH.openPdfModal(vistaPrevia.getAttribute('data-blob'),
+                                  vistaPrevia.getAttribute('data-fn') || (docAbrir.filename || 'documento.pdf'));
+                }
               } else if (hasDataR) {
                 // Los datos, a la vista. Estaban detrás de un «Ver detalles de
                 // la consulta» que dejaba la respuesta escondida tras un clic
