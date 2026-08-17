@@ -13,7 +13,6 @@
     'view-vehiculos':      'Vehículos',
     'view-sunarp':         'Sunarp',
     'view-reniec':         'Reniec',
-    'view-sunat':          'Sunat',
     'view-financiero':     'Financiero',
     'view-telefonia':      'Telefonía',
     'view-familiares':     'Familiares',

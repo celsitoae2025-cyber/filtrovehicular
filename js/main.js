@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', function () {
   if (Consultia.initVehiculosCombo) Consultia.initVehiculosCombo();
   if (Consultia.initSunarpCombo) Consultia.initSunarpCombo();
   if (Consultia.initReniecCombo) Consultia.initReniecCombo();
-  if (Consultia.initSunatCombo) Consultia.initSunatCombo();
   if (Consultia.initFinancieroCombo) Consultia.initFinancieroCombo();
   if (Consultia.initEstudiosCombo) Consultia.initEstudiosCombo();
   if (Consultia.initMtcCombo) Consultia.initMtcCombo();

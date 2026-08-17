@@ -254,11 +254,6 @@
         <span class="label">Vehículos</span>
       </button>
 
-      <button class="nav-item nav-category" data-nav="sunat" data-tooltip="Sunat" type="button">
-        <svg class="ico"><use href="#i-receipt"/></svg>
-        <span class="label">Sunat</span>
-      </button>
-
       <button class="nav-item nav-category" data-nav="financiero" data-tooltip="Financiero" type="button">
         <svg class="ico"><use href="#i-bank"/></svg>
         <span class="label">Financiero</span>
@@ -785,65 +780,6 @@
           </div>
 
           <div class="reniec-result-body" id="reniec-result-body" hidden></div>
-        </section>
-      </section>
-
-      <!-- VISTA: Sunat -->
-      <section class="view" id="view-sunat" hidden>
-        <div class="selector-card">
-          <span class="selector-label">Seleccione una opción</span>
-          <div class="combo" id="sunatCombo">
-            <button class="combo-trigger" id="sunatComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
-              <span class="combo-text" id="sunatComboText">Cargando consultas…</span>
-              <svg class="combo-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="combo-panel" id="sunatComboPanel" role="listbox">
-              <div class="combo-empty">No hay consultas disponibles.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <p class="panel-desc" id="sunat-desc">Selecciona una consulta para ver su descripción.</p>
-
-          <div class="consumo-row">
-            <span class="consumo-label">Consumo</span>
-            <span class="credits-badge credits-success">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/></svg>
-              <span id="sunat-credits">—</span>
-            </span>
-          </div>
-
-          <div class="form-row">
-            <input type="text" class="input" id="sunat-input" placeholder="Ingresa el RUC o DNI" autocomplete="one-time-code">
-            <button class="btn btn-primary" type="button" id="sunat-consultar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              Consultar
-            </button>
-          </div>
-        </div>
-
-        <section class="panel result-panel">
-          <header class="result-header">
-            <div class="result-header-left">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <h3 id="sunat-result-title">Resultado</h3>
-              <span class="status-chip status-empty" id="sunatResultStatus">
-                <span class="status-dot"></span>
-                Esperando consulta
-              </span>
-            </div>
-          </header>
-
-          <div class="empty-query-state" id="sunat-empty">
-            <h4 class="empty-title">Realice una consulta</h4>
-            <p class="empty-desc" id="sunat-empty-desc">Ingrese el RUC o DNI para consultar información en SUNAT.</p>
-            <span class="empty-chip">
-              <span id="sunat-empty-credits">Selecciona una consulta para ver su costo.</span>
-            </span>
-          </div>
-
-          <div class="reniec-result-body" id="sunat-result-body" hidden></div>
         </section>
       </section>
 
@@ -1532,10 +1468,6 @@
               <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.5"/><path d="M14 10h5M14 13h4"/></svg></span>
               <span class="anon-cat-text"><strong>Reniec</strong><span>DNI ficha completa</span></span>
             </button>
-            <button class="anon-cat-card" type="button" data-nav="sunat">
-              <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l4 4v16H6z"/><path d="M9 9h7M9 13h7M9 17h5"/></svg></span>
-              <span class="anon-cat-text"><strong>Sunat</strong><span>RUC, actividad</span></span>
-            </button>
             <button class="anon-cat-card" type="button" data-nav="financiero">
               <span class="anon-cat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-6 9 6"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
               <span class="anon-cat-text"><strong>Financiero</strong><span>Sentinel, deudas</span></span>
@@ -1951,7 +1883,6 @@
             <li class="foot-cat"><button type="button" data-nav="telefonia">Telefonía</button></li>
             <li class="foot-cat"><button type="button" data-nav="sunarp">Sunarp</button></li>
             <li><button type="button" data-nav="vehiculos">Vehículos</button></li>
-            <li class="foot-cat"><button type="button" data-nav="sunat">Sunat</button></li>
             <li class="foot-cat"><button type="button" data-nav="financiero">Financiero</button></li>
             <li><button type="button" data-nav="delitos">Justicia</button></li>
             <li class="foot-cat"><button type="button" data-nav="extras">Extras</button></li>
@@ -2138,7 +2069,6 @@
 <script src="js/modules/render-helpers.js?v=41"></script>
 <script src="js/modules/category-view.js?v=35"></script>
 <script src="js/modules/reniec.js"></script>
-<script src="js/modules/sunat.js"></script>
 <script src="js/modules/financiero.js"></script>
 <script src="js/modules/telefonia.js"></script>
 <script src="js/modules/familiares.js"></script>
@@ -2181,9 +2111,9 @@
 <script src="js/sidebar.js"></script>
 <script src="js/modules/sidebar-nav-group.js?v=5"></script>
 <script src="js/topbar.js"></script>
-<script src="js/views.js?v=3"></script>
+<script src="js/views.js?v=4"></script>
 <script src="js/overlays.js"></script>
-<script src="js/main.js?v=3"></script>
+<script src="js/main.js?v=4"></script>
 <!-- Modo mantenimiento: aviso global controlado desde el panel admin -->
 <script src="js/modules/maintenance.js?v=6"></script>
 <script src="js/modules/aviso-clientes.js?v=8"></script>
