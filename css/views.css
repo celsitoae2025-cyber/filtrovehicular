@@ -5937,3 +5937,82 @@ a.nm-download { text-decoration: none; }
   .mtc-nombre { font-size: 17px; }
   .mtc-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
 }
+
+/* ============================================================
+   LA FICHA, PARA TODAS LAS CONSULTAS
+
+   Lo que se probó con la licencia vale para cualquier respuesta con
+   datos: quién es arriba, su documento debajo y la situación al lado;
+   el resto en celdas pegadas por una línea de un píxel, tantas por fila
+   como quepan. Ocupa un tercio de lo que ocupaba en filas de etiqueta a
+   la izquierda y dato a la derecha, y se lee de un vistazo.
+
+   Solo dentro de `.cr-data`: el volcado de texto suelto (`.cr-txt-data`)
+   sigue con sus filas, que ahí no hay campos que emparejar.
+============================================================ */
+.cr-data .cr-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  padding-bottom: 12px; margin-bottom: 14px;
+  border-bottom: 2px solid #141d1c;
+}
+.cr-data .cr-head-quien { min-width: 0; }
+.cr-data .cr-nombre {
+  font-size: 20px; font-weight: 700; color: #141d1c;
+  letter-spacing: .1px; line-height: 1.25;
+}
+.cr-data .cr-sub { margin-top: 3px; font-size: 13px; color: #7c8785; }
+.cr-data .cr-sub b { color: #141d1c; font-weight: 700; font-variant-numeric: tabular-nums; }
+.cr-data .cr-punto { margin: 0 8px; color: #c6cdcb; }
+.cr-data .cr-estado {
+  flex-shrink: 0;
+  font-size: 12px; font-weight: 700; letter-spacing: 1.1px;
+  padding: 6px 14px; border-radius: 999px;
+}
+.cr-data .cr-estado.is-ok  { background: #eef7dc; color: #4f7d00; }
+.cr-data .cr-estado.is-bad { background: #fdeceb; color: #c0392b; }
+
+/* El título del organismo queda de antetítulo: la ficha la encabeza el
+   nombre, no el membrete del proveedor. */
+.cr-data .cr-tit {
+  font-size: 12px; font-weight: 700; letter-spacing: 1.4px;
+  text-transform: uppercase; color: #7c8785;
+  border-bottom: none; padding-bottom: 0; margin: 0 0 6px;
+}
+.cr-data .cr-head + .cr-sect { margin-top: 0; }
+
+/* Rejilla de datos: solo donde hay filas de campo que colocar. */
+.cr-data .cr-sect:has(> .cr-row),
+.cr-data .cr-sect-body:has(> .cr-row) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1px;
+  background: #e6e9e8;
+  border: 1px solid #e6e9e8;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.cr-data .cr-sect > .cr-row,
+.cr-data .cr-sect-body > .cr-row {
+  display: block;
+  padding: 10px 14px;
+  background: #ffffff;
+  border-bottom: none;
+  min-width: 0;
+}
+.cr-data .cr-row > .cr-k {
+  display: block;
+  font-size: 11px; font-weight: 400; letter-spacing: .9px;
+  line-height: 1.5; color: #7c8785;
+}
+.cr-data .cr-row > .cr-v {
+  display: block; margin-top: 2px;
+  font-size: 15px; font-weight: 700; color: #141d1c;
+  line-height: 1.35; overflow-wrap: break-word;
+}
+/* Línea sin rótulo (una nota, un total): a lo ancho de la rejilla. */
+.cr-data .cr-sect > .cr-row:not(:has(.cr-k)),
+.cr-data .cr-sect-body > .cr-row:not(:has(.cr-k)) {
+  grid-column: 1 / -1;
+  background: #fbfcfb;
+}

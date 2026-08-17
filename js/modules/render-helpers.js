@@ -619,12 +619,73 @@
 
   /* «APROBADO» es el veredicto de la consulta, no un dato más: se destaca
      en verde y negrita para que se lea de un vistazo. */
-  var RE_APROBADO = /^\s*(APROBADO|VIGENTE)\s*$/i;
-  var RE_NEGATIVO = /^\s*(VENCIDA|VENCIDO|NO\s+VIGENTE|DESAPROBADO)\s*$/i;
+  var RE_APROBADO = /^\s*(APROBADO|VIGENTE|ACTIVO|HABIDO|AL\s+D[IÍ]A)\s*$/i;
+  var RE_NEGATIVO = /^\s*(VENCIDA|VENCIDO|NO\s+VIGENTE|DESAPROBADO|INACTIVO|NO\s+HABIDO|BAJA|SUSPENDIDA?|ANULADA?)\s*$/i;
   function claseValor(v) {
     if (RE_APROBADO.test(v || '')) return 'cr-v cr-v-ok';
     if (RE_NEGATIVO.test(v || '')) return 'cr-v cr-v-bad';
     return 'cr-v';
+  }
+
+  /* ── El membrete de la ficha ──────────────────────────────────────────
+     Toda respuesta con datos abre con lo mismo: de quién es, con qué
+     documento se le identifica y en qué situación está. Puesto en filas,
+     como un dato más, eso se leía igual que el resto y había que buscarlo.
+
+     Aquí se sube arriba: el nombre en grande, el documento debajo y el
+     veredicto —VIGENTE, APROBADO, VENCIDA…— en un distintivo al lado. Los
+     campos promovidos no se repiten luego en la rejilla.
+
+     Vale para cualquier consulta: si la respuesta no trae ni nombre ni
+     veredicto, no hay membrete y la ficha empieza directamente. */
+  var FICHA_NOMBRE = /^(NOMBRE|NOMBRES|NOMBRE\s+COMPLETO|APELLIDOS\s+Y\s+NOMBRES|CONDUCTOR|TITULAR|PROPIETARIO|RAZ[OÓ]N\s*SOCIAL|CONTRIBUYENTE|SOLICITANTE)$/i;
+  var FICHA_ID = /^(DNI|RUC|PLACA|LICENCIA|NRO\.?\s*LICENCIA|N[°ºRO.]*\s*(LICENCIA|PLACA|DOCUMENTO|PARTIDA)|PARTIDA|EXPEDIENTE|TEL[EÉ]FONO|CIP|CARN[EÉ]T)$/i;
+  var FICHA_VEREDICTO = /^(SITUACI[OÓ]N|ESTADO|RESULTADO|CONDICI[OÓ]N|VIGENCIA)$/i;
+
+  function esVeredicto(v) {
+    return RE_APROBADO.test(v || '') || RE_NEGATIVO.test(v || '');
+  }
+
+  // Devuelve { html, promovidos } — promovidos son los campos que ya se
+  // dijeron arriba y no deben repetirse en el cuerpo de la ficha.
+  function membreteDe(seccion) {
+    var vacio = { html: '', promovidos: [] };
+    var campos = (seccion && seccion.campos) || [];
+    if (!campos.length) return vacio;
+
+    // El bloque de saldo del bot trae su propio «nombre»: no es el titular.
+    var esDelBot = campos.some(function (c) { return /^(cr[eé]ditos?|credits?|usuario|user(name)?)$/i.test((c.campo || '').trim()); });
+    if (esDelBot) return vacio;
+
+    var util = function (c) { return c.campo && !isEmptyValue(c.valor); };
+    var nombre = campos.find(function (c) { return util(c) && FICHA_NOMBRE.test(c.campo.trim()); });
+    var veredicto = campos.find(function (c) { return util(c) && FICHA_VEREDICTO.test(c.campo.trim()) && esVeredicto(c.valor); });
+    if (!nombre && !veredicto) return vacio;
+
+    var ident = campos.filter(function (c) { return util(c) && FICHA_ID.test(c.campo.trim()); }).slice(0, 2);
+    var promovidos = [].concat(nombre || [], veredicto || [], ident);
+
+    var parts = ['<div class="cr-head"><div class="cr-head-quien">'];
+    if (nombre) {
+      parts.push('<div class="cr-nombre">' + escapeHtml(nombre.valor) + '</div>');
+    }
+    if (ident.length) {
+      parts.push('<div class="cr-sub">' + ident.map(function (c) {
+        return escapeHtml(prettyEtiqueta(c.campo)) + ' <b>' + escapeHtml(c.valor) + '</b>';
+      }).join('<span class="cr-punto">·</span>') + '</div>');
+    }
+    parts.push('</div>');
+    if (veredicto) {
+      parts.push('<span class="cr-estado ' + (RE_APROBADO.test(veredicto.valor) ? 'is-ok' : 'is-bad') + '">' +
+        escapeHtml(veredicto.valor) + '</span>');
+    }
+    parts.push('</div>');
+    return { html: parts.join(''), promovidos: promovidos };
+  }
+
+  function prettyEtiqueta(campo) {
+    var f = Consultia.ConsultaRunner && Consultia.ConsultaRunner.prettyLabel;
+    return f ? f(campo) : campo;
   }
 
   function renderDataRows(p) {
@@ -681,9 +742,15 @@
       uniqSec.push(s);
     });
 
+    /* El membrete se arma con la primera sección, que es donde el bot pone
+       la identidad de lo consultado. */
+    var membrete = membreteDe(uniqSec[0]);
+    if (membrete.html) dataHtml.push(membrete.html);
+
     var _botMeta = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;
     var _botValText = /^(la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|obteniendo|consultando|buscando|procesando|generando|cargando|#\w+|∞|♾)/i;
     function renderCampo(c) {
+      if (membrete.promovidos.indexOf(c) !== -1) return '';   // ya está en el membrete
       if (c.campo && _botMeta.test(c.campo.trim())) return '';
       if (!c.campo && c.valor && _botValText.test(c.valor.trim())) return '';
       if (c.campo && isEmptyValue(c.valor)) return '';
