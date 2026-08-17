@@ -2614,9 +2614,11 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   padding: 2px 0;
   border-bottom: none;
 }
+/* Etiqueta y valor: el MISMO cuerpo y el MISMO negro. El gris de la
+   etiqueta hacia parecer que habia dos jerarquias de texto en la ficha. */
 .cr-row .cr-k {
   font-weight: 400;
-  color: var(--c-muted);
+  color: var(--c-primary);
   white-space: normal;
   overflow-wrap: break-word;
   font-size: var(--fs-sm);
@@ -3959,8 +3961,8 @@ body.cr-lightbox-open { overflow: hidden; }
     border-bottom: none;
   }
   .cr-row .cr-k {
-    font-size: var(--fs-xs);
-    color: var(--c-muted);
+    font-size: var(--fs-sm);
+    color: var(--c-primary);
     /* 400, no 500: en este proyecto solo se usan 400 y 700. */
     font-weight: 400;
     letter-spacing: .4px;
@@ -3977,6 +3979,31 @@ body.cr-lightbox-open { overflow: hidden; }
     word-break: normal;
     overflow-wrap: break-word;
   }
+  /* Cada fila era su propia rejilla con la columna de la etiqueta atada a
+     140-260px: en pantalla angosta «FECHA DE INSCRIPCIÓN» partía en dos
+     renglones. Ahora la rejilla vive en el CONTENEDOR y las filas se
+     disuelven en ella (`display: contents`), así la columna mide lo que
+     mide la etiqueta más larga —una sola línea siempre— y los valores
+     siguen alineados entre sí, cosa que `max-content` por fila no da. */
+  .cr-sect-body:not(:has(> .cr-record)),
+  .cr-record {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: 12px;
+  }
+  .cr-sect-body:not(:has(> .cr-record)) > .cr-row,
+  .cr-record > .cr-row { display: contents; }
+  .cr-sect-body:not(:has(> .cr-record)) > .cr-row > .cr-k,
+  .cr-sect-body:not(:has(> .cr-record)) > .cr-row > .cr-v,
+  .cr-record > .cr-row > .cr-k,
+  .cr-record > .cr-row > .cr-v {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  }
+  .cr-row > .cr-k { white-space: nowrap; }
+  /* Filas sin etiqueta: el valor cruza las dos columnas. */
+  .cr-row:not(:has(.cr-k)) > .cr-v { grid-column: 1 / -1; }
+
   .cr-sect-body { padding-left: 0; }
   .cr-sect { margin-top: 18px; }
   .cr-sect:first-child { margin-top: 0; }
