@@ -178,7 +178,7 @@
           container.appendChild(hoja);
           await pintarEn(n, lienzo, ancho);
         }
-        return;
+        return total;   // lo usa el visor para rotular «N páginas»
       }
 
       var stage = document.createElement('div');
@@ -212,6 +212,7 @@
         nav.querySelector('[data-act="next"]').addEventListener('click', function () { if (current < total) { current++; renderPage(current); } });
       }
       await renderPage(1);
+      return total;
     } catch (err) {
       console.error('PDF.js render error:', err);
       container.innerHTML = pdfFallbackUI(blobUrl, dataUrl, fileName);
@@ -1289,11 +1290,11 @@
   var _alNuevaConsultaPdfModal = null;
   function openPdfModal(src, fileName, opts) {
     var alNuevaConsulta = (opts && typeof opts.alNuevaConsulta === 'function') ? opts.alNuevaConsulta : null;
-    var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobile) {
-      window.open(src, '_blank');
-      return;
-    }
+    /* En el móvil el visor nativo por iframe no pinta nada, y por eso aquí
+       se abría el PDF en otra pestaña: el cliente salía de la plataforma y
+       se quedaba sin «Descargar» ni «Nueva consulta». Se muestra el mismo
+       modal, pero con las hojas pintadas por pdf.js. */
+    var esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     _alNuevaConsultaPdfModal = alNuevaConsulta;
     var el = document.getElementById('cr-pdf-modal');
     if (!el) {
@@ -1304,6 +1305,7 @@
         '<div class="cr-pdf-modal-panel">' +
           '<div class="cr-pdf-modal-header">' +
             '<span class="cr-pdf-modal-name"></span>' +
+            '<span class="cr-pdf-modal-pages" hidden></span>' +
             '<div class="cr-pdf-modal-actions">' +
               '<a class="cr-pdf-modal-dl" download="">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
@@ -1325,12 +1327,30 @@
       document.body.appendChild(el);
     }
     var body = el.querySelector('.cr-pdf-modal-body');
+    var pages = el.querySelector('.cr-pdf-modal-pages');
     body.innerHTML = '';
-    var iframe = document.createElement('iframe');
-    iframe.src = src;
-    iframe.title = fileName || 'Documento PDF';
-    iframe.style.cssText = 'width:100%;height:100%;border:none';
-    body.appendChild(iframe);
+    pages.hidden = true;
+    if (esMovil) {
+      body.classList.add('es-hojas');
+      var hojas = document.createElement('div');
+      hojas.className = 'cr-pdf-modal-hojas';
+      body.appendChild(hojas);
+      // El base64 se guardó al crear el blob: pdf.js pinta mejor desde los
+      // bytes que desde el blob URL en móvil.
+      renderPdfIntoContainer(hojas, src, fileName, _pdfBase64Map[src], { todasLasPaginas: true })
+        .then(function (total) {
+          if (!total) return;
+          pages.textContent = total === 1 ? '1 página' : total + ' páginas';
+          pages.hidden = false;
+        });
+    } else {
+      body.classList.remove('es-hojas');
+      var iframe = document.createElement('iframe');
+      iframe.src = src;
+      iframe.title = fileName || 'Documento PDF';
+      iframe.style.cssText = 'width:100%;height:100%;border:none';
+      body.appendChild(iframe);
+    }
     var dlBtn = el.querySelector('.cr-pdf-modal-dl');
     dlBtn.href = src;
     dlBtn.download = fileName || 'documento.pdf';

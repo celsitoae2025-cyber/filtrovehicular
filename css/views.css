@@ -2933,7 +2933,25 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-pdf-modal-nueva { background: #ffffff; color: var(--c-primary); }
 .cr-pdf-modal-nueva[hidden] { display: none; }
 .cr-pdf-modal-close { background: rgba(255,255,255,.12); color: #ffffff; }
-.cr-pdf-modal-pages { display: none; }
+/* «N páginas», junto al nombre del documento. */
+.cr-pdf-modal-pages {
+  font-size: var(--fs-xs);
+  color: rgba(255,255,255,.7);
+  flex-shrink: 0;
+  margin-right: auto;
+}
+.cr-pdf-modal-pages[hidden] { display: none; }
+/* Móvil: el cuerpo lleva las hojas pintadas por pdf.js, no un iframe, así
+   que scrollea él. */
+.cr-pdf-modal-body.es-hojas { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.cr-pdf-modal-hojas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+.cr-pdf-modal-hojas .cr-pdf-stage { border: none; border-radius: 0; background: #ffffff; }
+.cr-pdf-modal-hojas .cr-pdf-canvas { width: 100%; height: auto; border-radius: 0; }
 .cr-pdf-modal-body {
   flex: 1;
   width: 100%;
@@ -2960,6 +2978,15 @@ body.cr-lightbox-open { overflow: hidden; }
 @media (max-width: 640px) {
   .cr-pdf-modal { padding: 0; }
   .cr-pdf-modal-panel { max-width: none; max-height: none; border-radius: 0; }
+  /* La cabecera lleva nombre, páginas y tres acciones: en angosto se
+     reparte en dos filas antes que recortar los botones. */
+  .cr-pdf-modal-header { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+  .cr-pdf-modal-name { flex: 1 1 100%; }
+  .cr-pdf-modal-actions { flex: 1 1 auto; justify-content: flex-end; }
+  .cr-pdf-modal-dl,
+  .cr-pdf-modal-nueva,
+  .cr-pdf-modal-close { padding: 8px 12px; }
+  .cr-pdf-modal-close span { display: none; }   /* basta el aspa */
 }
 
 .cr-docs { display: flex; flex-direction: column; gap: 8px; padding: 14px 40px 20px 60px; }
