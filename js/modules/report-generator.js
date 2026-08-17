@@ -76,10 +76,18 @@
     doc.setFontSize(7);
     doc.setTextColor.apply(doc, C_SUBHEAD);
     doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', 18, 18);
+    /* La fecha comparte línea base con la marca y lleva su rótulo encima,
+       a la altura del subtítulo: así las dos columnas de la cabecera —marca
+       a la izquierda, emisión a la derecha— quedan alineadas entre sí en
+       vez de flotar cada una a su aire. */
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor.apply(doc, C_WHITE);
+    doc.text(fecha, pageW - 18, 13, { align: 'right' });
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7);
     doc.setTextColor.apply(doc, C_SUBHEAD);
-    doc.text(fecha, pageW - 18, 14, { align: 'right' });
+    doc.text('FECHA DE EMISIÓN', pageW - 18, 18, { align: 'right' });
   }
 
   function drawBottomBand(doc, pageW, pageH, bottomBandTop) {
@@ -91,6 +99,34 @@
     doc.setFontSize(6.8);
     doc.setTextColor.apply(doc, C_SUBHEAD);
     doc.text('Documento generado por Filtro Vehicular+ · Información extraída de fuentes oficiales.', 18, bottomBandTop + 7.5);
+  }
+
+  /* El pie no puede numerar mientras se dibuja: cuando se pinta la página 1
+     todavía no se sabe cuántas habrá. Se sella al final, recorriendo el
+     documento ya cerrado, que es la única forma de poner «2 de 5». */
+  function sellarPaginas(doc) {
+    var pageW = doc.internal.pageSize.getWidth();
+    var pageH = doc.internal.pageSize.getHeight();
+    var total = doc.internal.getNumberOfPages();
+    for (var i = 1; i <= total; i++) {
+      doc.setPage(i);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(6.8);
+      doc.setTextColor.apply(doc, C_SUBHEAD);
+      doc.text(i + ' de ' + total, pageW - 18, pageH - 13 + 7.5, { align: 'right' });
+    }
+  }
+
+  /* Cierre común: sella las páginas y devuelve lo que espera la interfaz.
+     Estaba repetido en los siete generadores, cada uno con su variante. */
+  function cerrarPdf(doc, nombre) {
+    sellarPaginas(doc);
+    var blob = doc.output('blob');
+    return {
+      blobUrl: URL.createObjectURL(blob),
+      base64: doc.output('datauristring').split(',')[1],
+      filename: nombre,
+    };
   }
 
   // Dimensiones reales de la imagen vía jsPDF (síncrono)
@@ -127,15 +163,23 @@
     var M      = 18;
     var bottomBandTop = pageH - 13;
 
-    // ── TÍTULO DEL INFORME ────────────────────────────────────
+    /* ── TÍTULO DEL INFORME ───────────────────────────────────
+       Título, dato consultado y una regla fina que cierra el bloque y lo
+       separa de la tabla. Antes el título y el dato quedaban a 5 mm de la
+       primera fila: se leían como parte de la tabla, no como su cabecera. */
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
+    doc.setFontSize(13);
     doc.setTextColor.apply(doc, C_TEXT);
-    doc.text('Informe de ' + consultaNombre, M, 34);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor.apply(doc, C_KEY);
-    if (valor) doc.text('Dato consultado: ' + valor, M, 39.5);
+    doc.text(cleanText(consultaNombre).toUpperCase(), M, 35);
+    if (valor) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor.apply(doc, C_KEY);
+      doc.text('Dato consultado: ' + valor, M, 40.5);
+    }
+    doc.setDrawColor.apply(doc, C_BORDER);
+    doc.setLineWidth(0.3);
+    doc.line(M, 44, pageW - M, 44);
 
     // ── PRECARGA DE IMÁGENES (proporción real) ────────────────
     var imgInfos = (photos || []).map(function (ph) { return getImgDims(doc, ph); });
@@ -146,9 +190,8 @@
     //    posible — igual que VeriNexo) ──────────────────────────────
     var bioMaxH = 34, bioTitleH = 7, bioLabelH = 5;
     var bioBlockH = imgInfos.length > 0 ? (bioTitleH + bioMaxH + bioLabelH + 8) : 0;
-    var tableTop = 45;
+    var tableTop = 51;   // debajo de la regla que cierra el título
     var tableBottom = bottomBandTop - 6 - bioBlockH;
-    var availableTableH = tableBottom - tableTop;
 
     // ── FILAS: aplanar secciones a una tabla continua (secciones = fila
     //    ancha en negrita, igual que VeriNexo — no una autoTable por
@@ -203,7 +246,6 @@
        ficha de RENIEC se iba a dos hojas por unas pocas filas. */
     var fontBody = 8;
     var cellPad = 1.6;
-    function rowH(font, pad) { return font * 0.3528 * 1.15 + pad * 2; }
 
     // ── TABLA (franjas gris/blanco, sin bordes ni líneas; secciones en negrita) ──
     var body = rows.map(function (r) {
@@ -217,17 +259,12 @@
     });
 
     if (body.length) {
-      // Centrado vertical: si el contenido (estimado a fontBody) entra
-      // holgado en el espacio disponible, se empieza más abajo para que
-      // el bloque quede centrado en la hoja en vez de pegado arriba.
-      var altoEstimado = rowH(fontBody, cellPad) * body.length;
-      var startY = tableTop;
-      if (altoEstimado < availableTableH) {
-        startY = tableTop + (availableTableH - altoEstimado) / 2;
-      }
-
+      /* La tabla arranca siempre bajo el título. Antes, si el contenido era
+         corto, se centraba verticalmente en la hoja: una ficha de cinco
+         campos quedaba flotando en mitad de la página, lejos de su propio
+         encabezado. Un informe se lee de arriba abajo. */
       doc.autoTable({
-        startY: startY,
+        startY: tableTop,
         body: body,
         margin: { left: M, right: M, top: 26, bottom: 16 },
         tableLineWidth: 0,
@@ -298,11 +335,7 @@
     var valorSlug = valor ? valor.replace(/[^a-zA-Z0-9]/g, '-').slice(0, 20) : '';
     var filename = (consultaSlug || 'consulta') + (valorSlug ? '-' + valorSlug : '') + '.pdf';
 
-    var blob    = doc.output('blob');
-    var blobUrl = URL.createObjectURL(blob);
-    var base64  = doc.output('datauristring').split(',')[1];
-
-    return { blobUrl: blobUrl, base64: base64, filename: filename };
+    return cerrarPdf(doc, filename);
   }
 
   // ── Verificación Policial: escudo PNP + foto del titular + bloques
@@ -449,10 +482,8 @@
         doc.setTextColor.apply(doc, C_KEY);
         doc.text('Generado por Filtro Vehicular+ · Información extraída de fuentes oficiales.', W / 2, 285, { align: 'center' });
 
-        var blob = doc.output('blob');
-        var blobUrl = URL.createObjectURL(blob);
         var nombre = 'VerificacionPolicial-' + (valorConsultado || '').replace(/[^a-zA-Z0-9]/g, '') + '-' + fechaFile + '.pdf';
-        return { blobUrl: blobUrl, base64: doc.output('datauristring').split(',')[1], filename: nombre };
+        return cerrarPdf(doc, nombre);
       });
     });
   }
@@ -634,11 +665,9 @@
         },
       });
 
-      var blob = doc.output('blob');
-      var blobUrl = URL.createObjectURL(blob);
       var idBase = (mejor.nombres || mejor.dni || valorConsultado || 'resultado').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40);
       var nombre = 'ReconocimientoFacial_' + idBase + '_' + fechaFile + '.pdf';
-      return { blobUrl: blobUrl, base64: doc.output('datauristring').split(',')[1], filename: nombre };
+      return cerrarPdf(doc, nombre);
     });
   }
 
@@ -720,11 +749,9 @@
       styles: { overflow: 'linebreak', lineWidth: 0 },
     });
 
-    var blob = doc.output('blob');
-    var blobUrl = URL.createObjectURL(blob);
     var slug = (etiquetaConsulta || tabla.titulo || 'Resultados').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_áéíóúÁÉÍÓÚñÑ]/g, '');
     var nombre = slug + '_' + (valorConsultado || '').replace(/[^a-zA-Z0-9]/g, '') + '_' + fechaFile + '.pdf';
-    return { blobUrl: blobUrl, base64: doc.output('datauristring').split(',')[1], filename: nombre };
+    return cerrarPdf(doc, nombre);
   }
 
   // ── Búsqueda por nombre (/nm): tabla de personas en horizontal ──
@@ -823,9 +850,8 @@
       styles: { overflow: 'linebreak', lineWidth: 0 },
     });
 
-    var blob = doc.output('blob');
     var nombre = 'Busqueda_Personas_' + (valor.replace(/[^A-Z0-9]/g, '') || 'NOMBRE') + '_' + fechaFile + '.pdf';
-    return { blobUrl: URL.createObjectURL(blob), base64: doc.output('datauristring').split(',')[1], filename: nombre };
+    return cerrarPdf(doc, nombre);
   }
 
   // ── Árbol genealógico (/ag): listado de familiares en horizontal ──
@@ -913,9 +939,8 @@
       styles: { overflow: 'linebreak', lineWidth: 0 },
     });
 
-    var blob = doc.output('blob');
     var nombre = 'Arbol_Genealogico_' + (valor.replace(/[^A-Za-z0-9]/g, '') || 'DNI') + '_' + fechaFile + '.pdf';
-    return { blobUrl: URL.createObjectURL(blob), base64: doc.output('datauristring').split(',')[1], filename: nombre };
+    return cerrarPdf(doc, nombre);
   }
 
   // ── Historial de consumos ──────────────────────────────────
@@ -1065,12 +1090,7 @@
       doc.text('TOTAL CONSUMIDO: ' + totalCreditos + ' créditos', W - M, finY + 7, { align: 'right' });
     }
 
-    var blob = doc.output('blob');
-    return {
-      blobUrl: URL.createObjectURL(blob),
-      base64: doc.output('datauristring').split(',')[1],
-      filename: 'Historial_consumos_' + fechaFile + '.pdf'
-    };
+    return cerrarPdf(doc, 'Historial_consumos_' + fechaFile + '.pdf');
   }
 
   function download(result) {
