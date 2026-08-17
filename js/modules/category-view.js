@@ -378,6 +378,7 @@
       // Cuando la respuesta es solo texto suelto (sin PDF ni tabla), el botón
       // genérico igual arma un informe propio a partir de esas líneas.
       var pParaPdf = p;
+      var abrirVisor = false;   // el documento es el resultado, no un adjunto
       if (esErrorTecnicoRespuesta(p, resp)) {
         html = htmlMantenimiento();
       } else if (hasFacial) {
@@ -398,9 +399,11 @@
         html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
           renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
       } else if (pdfs.length > 0) {
-        // Solo vino un PDF, sin datos: previsualización debajo, «Descargar»
-        // sube a la cabecera igual que en cualquier otra vista.
+        // Solo vino un PDF, sin datos: el documento ES el resultado, así que
+        // se enseña en el visor (abajo, tras pintar) en vez de esperar a que
+        // el cliente descubra que la previsualización se pulsa.
         html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, prefix);
+        abrirVisor = true;
       } else {
         var rawText = (p.raw || '').trim();
         rawText = rawText.replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
@@ -440,6 +443,9 @@
       var empty = $(emptyId());
       if (empty) empty.hidden = true;
       marcarConResultado(true);
+      // Después de `marcarConResultado`: esa llamada sube «Descargar» a la
+      // cabecera, y el visor tiene que encontrar la ficha ya montada.
+      if (abrirVisor) H.abrirVisorDelResultado(body, volverEstadoInicial);
 
       var status = $(statusId());
       if (status) {

@@ -321,6 +321,7 @@
     // Cuando la respuesta es solo texto suelto (sin PDF ni tabla), el botón
     // genérico igual arma un informe propio a partir de esas líneas.
     var pParaPdf = p;
+    var abrirVisor = false;   // el documento es el resultado, no un adjunto
 
     if (esErrorTecnicoRespuesta(p, resp)) {
       html = htmlMantenimiento();
@@ -335,8 +336,10 @@
       html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
         renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl');
     } else if (pdfs.length > 0) {
-      // Solo vino un PDF, sin datos: previsualización debajo, «Descargar» arriba.
+      // Solo vino un PDF, sin datos: el documento ES el resultado, así que se
+      // enseña en el visor en vez de dejarlo tras un clic en la miniatura.
       html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, 'fl');
+      abrirVisor = true;
     } else {
       var rawText = (p.raw || '').trim();
       var _rawH3 = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
@@ -448,6 +451,9 @@
        el resultado ya esta en lo alto y ese salto dejaba la ficha a
        medias. */
     marcarConResultado(true);
+    // Después de `marcarConResultado`: esa llamada sube «Descargar» a la
+    // cabecera, y el visor tiene que encontrar la ficha ya montada.
+    if (abrirVisor) H.abrirVisorDelResultado(body, volverAlFormulario);
   }
 
   /* Modo resultado, exactamente el mismo que en las vistas de categoria:

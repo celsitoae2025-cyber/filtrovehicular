@@ -1071,14 +1071,7 @@
             // la cabecera; el CSS esconde la lista al detectar el visor.
             resultArea.innerHTML = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, prefix);
             llamar(opts.alResultado);
-            var vistaPrevia = resultArea.querySelector('.cr-doccard-view[data-blob]');
-            if (vistaPrevia) {
-              openPdfModal(
-                vistaPrevia.getAttribute('data-blob'),
-                vistaPrevia.getAttribute('data-fn') || (pdfs[0].filename || 'documento.pdf'),
-                { alNuevaConsulta: opts.alNuevaConsulta }
-              );
-            }
+            abrirVisorDelResultado(resultArea, opts.alNuevaConsulta);
           } else if (hasDataR && esElMismoListado(container, renderDataRows(rp))) {
             /* El proveedor devolvió otra vez el listado en vez del
                documento: repintarlo dejaba la misma tabla dos veces y
@@ -1124,6 +1117,22 @@
         }
       });
     });
+  }
+
+  /* Abre el visor con el documento que se acaba de pintar en `contenedor`.
+     Cuando el PDF ES el resultado —no un adjunto al lado de la ficha—, el
+     cliente no tiene por qué descubrir que la previsualización se pulsa:
+     el documento se enseña directamente, con «Descargar» y «Nueva
+     consulta» a mano. */
+  function abrirVisorDelResultado(contenedor, alNuevaConsulta) {
+    if (!contenedor) return;
+    var previa = contenedor.querySelector('.cr-doccard-view[data-blob]');
+    if (!previa) return;
+    openPdfModal(
+      previa.getAttribute('data-blob'),
+      previa.getAttribute('data-fn') || 'documento.pdf',
+      { alNuevaConsulta: alNuevaConsulta }
+    );
   }
 
   /* ¿La respuesta del callback es la misma ficha que ya está arriba? Se
@@ -2010,6 +2019,7 @@
     renderPdfDlBar:          renderPdfDlBar,
     openPdfModal:            openPdfModal,
     wireOpcionesDelBot:      wireOpcionesDelBot,
+    abrirVisorDelResultado:  abrirVisorDelResultado,
     columnaValor:            columnaValor,
     renderNmPersonas:        renderNmPersonas,
     renderNmTabla:           renderNmTabla,
