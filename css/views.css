@@ -2422,8 +2422,8 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 :root {
   /* Cuerpo de la ficha del resultado. Vive aparte de --fs-sm porque este
      tamaño se toca a menudo y --fs-sm lo comparte toda la plataforma. */
-  --cr-fs: 13px;
-  --cr-fs-titulo: 15px;
+  --cr-fs: 9px;
+  --cr-fs-titulo: 12px;
 
   /* Layout datos + fotos */
   --cr-padding-top: 20px;
