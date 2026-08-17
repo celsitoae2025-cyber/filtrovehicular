@@ -3989,7 +3989,7 @@ body.cr-lightbox-open { overflow: hidden; }
   .cr-record {
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
-    column-gap: 12px;
+    column-gap: 28px;
   }
   .cr-sect-body:not(:has(> .cr-record)) > .cr-row,
   .cr-record > .cr-row { display: contents; }
@@ -5588,6 +5588,10 @@ body.is-logged-in .anon-cats { display: none; }
    esta completada no aporta nada: se ve. Los otros dos estados siguen
    apareciendo porque solo se esconde con la clase del modo resultado. */
 .view.tiene-resultado .result-panel .status-chip { display: none; }
+/* «Esperando consulta» no dice nada que el cuerpo del panel no diga ya
+   («Realice una consulta»), y ocupaba el sitio de la cabecera. El chip de
+   carga sí se queda: ese sí informa. */
+.result-panel .status-chip.status-empty { display: none; }
 
 /* «Descargar», mudado aqui desde el cuerpo del resultado (lo hace
    category-view.js). Ahi flotaba sobre las fotos y las empujaba hacia

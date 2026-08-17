@@ -1558,9 +1558,6 @@
     return parts.join('');
   }
 
-  // Sin tamaño inline: lo controla .nm-download svg en views.css
-  var NM_ICON_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
-
   // Botón que pide al bot el TXT con TODOS los resultados (la vista inicial viene paginada)
   function nmBotonDescargar(botones) {
     var dl = (botones || []).filter(function (b) { return /descargar/i.test(b.text); });
@@ -1570,7 +1567,7 @@
       '<button type="button" class="nm-download cr-btn-nm-txt" ' +
         'data-msgid="' + escapeHtml(String(b.msgId)) + '" ' +
         'data-callback="' + escapeHtml(b.data) + '">' +
-        NM_ICON_DL + ' Descargar' +
+        'Descargar' +
       '</button>' +
     '</div>';
   }
@@ -1578,7 +1575,7 @@
   // Botón que arma el PDF con los registros ya cargados en pantalla
   function nmBotonPdf() {
     return '<div class="cr-dl-bar cr-dl-bar-tabla">' +
-      '<button type="button" class="nm-download cr-btn-nm-pdf">' + NM_ICON_DL + ' Descargar</button>' +
+      '<button type="button" class="nm-download cr-btn-nm-pdf">Descargar</button>' +
     '</div>';
   }
 
@@ -1588,7 +1585,7 @@
   // contenido de abajo y no quede pegado al borde del panel.
   function renderPdfTopButton() {
     return '<div class="cr-dl-bar">' +
-      '<button type="button" class="nm-download cr-btn-pdf-generic">' + NM_ICON_DL + ' Descargar</button>' +
+      '<button type="button" class="nm-download cr-btn-pdf-generic">Descargar</button>' +
     '</div>';
   }
 
@@ -1657,7 +1654,7 @@
     var parts = [];
     parts.push('<div class="nm-results">');
     parts.push('<div class="cr-dl-bar cr-dl-bar-tabla">' +
-      '<button type="button" class="nm-download cr-btn-arbol-pdf">' + NM_ICON_DL + ' Descargar</button>' +
+      '<button type="button" class="nm-download cr-btn-arbol-pdf">Descargar</button>' +
     '</div>');
     parts.push('<div class="nm-header">ÁRBOL GENEALÓGICO</div>');
     parts.push('<div class="nm-query-bar">FAMILIARES – ' + escapeHtml((valorConsultado || '').toUpperCase()) + ' –</div>');
@@ -1709,8 +1706,16 @@
     irArriba(vista);
   }
 
+  /* Al volver al formulario hay que RETIRAR el boton de descarga, no solo
+     apagar la clase: vive en la cabecera, fuera del cuerpo que se vacia, y
+     se quedaba ahi ofreciendo el PDF de la consulta anterior sobre un panel
+     que ya dice «Realice una consulta». «Nueva consulta» sí lo esconde el
+     CSS con `.tiene-resultado`, este no. */
   function salirModoResultado(vista) {
-    if (vista) vista.classList.remove('tiene-resultado');
+    if (!vista) return;
+    vista.classList.remove('tiene-resultado');
+    var dl = vista.querySelector('.result-panel .result-header .cr-dl-cabecera');
+    if (dl) dl.remove();
   }
 
   /* La salida. Sin ella, escondidos el selector y el formulario, el
