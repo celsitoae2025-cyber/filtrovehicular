@@ -666,8 +666,7 @@
                partida creyendo que no pasó nada. */
             var cerrarEspera = RH.openDownloadOverlay({
               titulo: 'Generando el documento',
-              detalle: 'Estamos pidiendo el documento al proveedor. Puede tardar unos segundos.',
-              contador: true
+              detalle: 'Estamos pidiendo el documento al proveedor. Puede tardar unos segundos.'
             });
 
             var status = $(statusId());
@@ -694,13 +693,23 @@
                 marcarConResultado(true);
                 /* El documento es lo que se vino a buscar: se abre solo en el
                    visor a pantalla completa, con sus páginas, zoom e impresión.
-                   Al cerrarlo queda debajo la previsualización, que lo vuelve
-                   a abrir. */
+                   Al cerrarlo se vuelve a la lista de partidas —no al PDF
+                   desplegado a lo largo del panel, que era quedarse en lo
+                   mismo sin visor. */
                 var docAbrir = pdfs[0];
                 var vistaPrevia = resultArea.querySelector('.cr-doccard-view[data-blob]');
                 if (vistaPrevia) {
-                  RH.openPdfModal(vistaPrevia.getAttribute('data-blob'),
-                                  vistaPrevia.getAttribute('data-fn') || (docAbrir.filename || 'documento.pdf'));
+                  RH.openPdfModal(
+                    vistaPrevia.getAttribute('data-blob'),
+                    vistaPrevia.getAttribute('data-fn') || (docAbrir.filename || 'documento.pdf'),
+                    function volverALaLista() {
+                      resultArea.innerHTML = '';
+                      resultArea.hidden = true;
+                      var v = vistaEl();
+                      var dl = v && v.querySelector('.result-panel .result-header .cr-dl-cabecera');
+                      if (dl) dl.remove();   // era la descarga de ese documento
+                    }
+                  );
                 }
               } else if (hasDataR) {
                 // Los datos, a la vista. Estaban detrás de un «Ver detalles de

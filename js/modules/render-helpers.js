@@ -1126,13 +1126,18 @@
     }, 60);
   }
 
-  /* ── Modal flotante para ver PDF (iframe con visor nativo de Chrome) ── */
-  function openPdfModal(src, fileName) {
+  /* ── Modal flotante para ver PDF (iframe con visor nativo de Chrome) ──
+     `alCerrar` deja que quien lo abrió decida a qué se vuelve: el cierre lo
+     dispara la delegación global (aspa y velo), no el que llamó aquí. */
+  var _alCerrarPdfModal = null;
+  function openPdfModal(src, fileName, alCerrar) {
     var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
       window.open(src, '_blank');
+      if (typeof alCerrar === 'function') alCerrar();   // no hay modal que cerrar
       return;
     }
+    _alCerrarPdfModal = (typeof alCerrar === 'function') ? alCerrar : null;
     var el = document.getElementById('cr-pdf-modal');
     if (!el) {
       el = document.createElement('div');
@@ -1185,6 +1190,9 @@
     el.hidden = true;
     el.querySelector('.cr-pdf-modal-body').innerHTML = '';
     document.body.classList.remove('cr-lightbox-open');
+    var cb = _alCerrarPdfModal;
+    _alCerrarPdfModal = null;   // se consume una sola vez
+    if (cb) cb();
   }
 
   /* ── Búsqueda por nombre (/nm): tarjetas de persona ── */

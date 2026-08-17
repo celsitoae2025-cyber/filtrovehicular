@@ -1468,6 +1468,22 @@ button.btn-primary:hover,
   border-color: #7ab325 !important;
 }
 
+/* «Consultar» va en oscuro, no en verde: es la acción de la plataforma, no
+   una llamada comercial como los CTA de planes —esos se quedan en verde.
+   Gana por especificidad (0,2,0 contra 0,1,0), no por orden. */
+.form-row .btn-primary,
+.nm-fields .btn-primary,
+.filter-form .btn-primary {
+  background: #141d1c !important;
+  border-color: #141d1c !important;
+}
+.form-row .btn-primary:hover,
+.nm-fields .btn-primary:hover,
+.filter-form .btn-primary:hover {
+  background: #0e1312 !important;
+  border-color: #0e1312 !important;
+}
+
 /* Plan-card del dashboard: cover con esquinas redondeadas + contenido
    perfectamente centrado. */
 #view-dashboard .plan-card {
