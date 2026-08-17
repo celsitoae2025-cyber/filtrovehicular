@@ -561,9 +561,18 @@
     //    marca aquí. El cliente solo informa; ya no decide sobre el dinero.
     if (resp && resp.sin_resultados) {
       var tipo = (consulta.tipo_dato || "dato").toUpperCase();
-      var e = new Error("No se encontraron datos para el " + tipo + " " + valor +
-                        ". No se descontaron créditos.");
-      e.code = "EMPTY_RESPONSE";
+      /* No es lo mismo «el dato no existe» que «el proveedor acusó recibo y
+         todavía no contestó». Lo segundo se reconoce porque lo único que
+         llegó fue su aviso de espera, y decirle al cliente que su DNI no
+         existe cuando sí existe es mandarlo a buscar donde no hay nada. */
+      var RH = Consultia.RenderHelpers;
+      var enProceso = RH && RH.esRespuestaEnProceso && RH.esRespuestaEnProceso(resp.parsed || {});
+      var e = enProceso
+        ? new Error("El proveedor acusó recibo pero aún no devolvió la información. " +
+                    "Vuelve a intentarlo en unos segundos. No se descontaron créditos.")
+        : new Error("No se encontraron datos para el " + tipo + " " + valor +
+                    ". No se descontaron créditos.");
+      e.code = enProceso ? "STILL_PROCESSING" : "EMPTY_RESPONSE";
       throw e;
     }
 
