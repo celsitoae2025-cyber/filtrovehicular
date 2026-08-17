@@ -6015,3 +6015,33 @@ a.nm-download { text-decoration: none; }
   grid-column: 1 / -1;
   background: #fbfcfb;
 }
+
+/* ── El sello de emisión y el copiar al clic ──────────────────────── */
+.cr-emision {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #9aa3a1;
+  letter-spacing: .3px;
+  font-variant-numeric: tabular-nums;
+}
+.cr-data > .cr-emision { margin: 0 0 12px; }
+
+.cr-data .cr-row,
+.mtc-dato {
+  position: relative;
+  cursor: copy;
+  transition: background var(--t-fast);
+}
+.cr-data .cr-row:hover,
+.mtc-dato:hover { background: #f7f9f8; }
+.cr-data .cr-row.is-copiado::after,
+.mtc-dato.is-copiado::after {
+  content: 'Copiado';
+  position: absolute; top: 8px; right: 10px;
+  background: #141d1c; color: #ffffff;
+  font-size: 10px; letter-spacing: .8px;
+  padding: 3px 9px; border-radius: 999px;
+}
+/* Las líneas sin rótulo no son un dato que se copie. */
+.cr-data .cr-row:not(:has(.cr-k)) { cursor: default; }
+.cr-data .cr-row:not(:has(.cr-k)):hover { background: #fbfcfb; }

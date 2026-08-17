@@ -298,6 +298,7 @@
   function renderResultado(resp) {
     revokeActiveBlobUrls();
     var p       = H.recortarAlResumen(resp.parsed || {}, currentConsulta && currentConsulta.comando);
+    H.fijarEmision(resp);   // fecha y folio del sello de la ficha
     var pdfs    = H.pdfsDe(p);
     var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
     var botones = p.botones || [];

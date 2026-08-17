@@ -538,6 +538,7 @@
     if (dni)      sub.push('DNI <b>' + escapeHtml(dni) + '</b>');
     if (licencia) sub.push('Licencia <b>' + escapeHtml(licencia) + '</b>');
     if (sub.length) parts.push('<div class="mtc-sub">' + sub.join('<span class="mtc-punto">·</span>') + '</div>');
+    parts.push(lineaEmision());
     parts.push('</div>');
     if (situacion) {
       parts.push('<span class="mtc-estado ' + (/VIGENTE/i.test(situacion) ? 'is-ok' : 'is-bad') + '">' +
@@ -665,6 +666,7 @@
         return escapeHtml(prettyEtiqueta(c.campo)) + ' <b>' + escapeHtml(c.valor) + '</b>';
       }).join('<span class="cr-punto">·</span>') + '</div>');
     }
+    parts.push(lineaEmision());
     parts.push('</div>');
     if (veredicto) {
       parts.push('<span class="cr-estado ' + (RE_APROBADO.test(veredicto.valor) ? 'is-ok' : 'is-bad') + '">' +
@@ -672,6 +674,37 @@
     }
     parts.push('</div>');
     return { html: parts.join(''), promovidos: promovidos };
+  }
+
+  /* ── El sello de emisión ──────────────────────────────────────────────
+     Una ficha sin fecha ni número es un texto suelto; con ellos es un
+     documento que se puede citar, mandar por WhatsApp y reclamar. Se
+     escribe cuándo se emitió y con qué folio —los seis últimos caracteres
+     del identificador de la consulta, que es el que queda en el historial
+     y en el cobro—. Lo fija la vista antes de pintar. */
+  var emision = null;
+
+  function fijarEmision(resp) {
+    if (!resp) { emision = null; return; }
+    var folio = resp.consulta_id
+      ? String(resp.consulta_id).replace(/-/g, '').slice(-6).toUpperCase() : '';
+    var fecha = '';
+    try {
+      fecha = new Date().toLocaleString('es-PE', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    } catch (_) { fecha = new Date().toLocaleString(); }
+    emision = { fecha: fecha, folio: folio };
+  }
+
+  function lineaEmision() {
+    if (!emision) return '';
+    var partes = [];
+    if (emision.fecha) partes.push('Emitido ' + escapeHtml(emision.fecha));
+    if (emision.folio) partes.push('Folio ' + escapeHtml(emision.folio));
+    if (!partes.length) return '';
+    return '<div class="cr-emision">' + partes.join('<span class="cr-punto">·</span>') + '</div>';
   }
 
   function prettyEtiqueta(campo) {
@@ -737,6 +770,7 @@
        la identidad de lo consultado. */
     var membrete = membreteDe(uniqSec[0]);
     if (membrete.html) dataHtml.push(membrete.html);
+    else dataHtml.push(lineaEmision());
 
     var _botMeta = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;
     var _botValText = /^(la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|obteniendo|consultando|buscando|procesando|generando|cargando|#\w+|∞|♾)/i;
@@ -2435,10 +2469,28 @@
     descargarPdfConOverlay:  descargarPdfConOverlay,
     parseArbolGenealogico:   parseArbolGenealogico,
     renderArbolGenealogico:  renderArbolGenealogico,
+    fijarEmision:            fijarEmision,
   };
 
   // Compat: category-view.js lo expone en Consultia.renderPdfIntoContainer
   Consultia.renderPdfIntoContainer = renderPdfIntoContainer;
+
+  /* ── Copiar el dato con un clic ──────────────────────────────────────
+     El cliente consulta para pegar el dato en otro sitio: un formulario,
+     un mensaje, un expediente. Seleccionarlo con el ratón sin llevarse de
+     paso la etiqueta es un fastidio, así que la celda entera se copia al
+     pulsarla y lo dice con un «Copiado» que se va solo. */
+  document.addEventListener('click', function (e) {
+    var celda = e.target.closest && e.target.closest('.cr-data .cr-row, .mtc-dato');
+    if (!celda || e.target.closest('a, button')) return;
+    var dato = celda.querySelector('.cr-v, strong');
+    var texto = dato ? dato.textContent.trim() : '';
+    if (!texto || !navigator.clipboard || !navigator.clipboard.writeText) return;
+    navigator.clipboard.writeText(texto).then(function () {
+      celda.classList.add('is-copiado');
+      setTimeout(function () { celda.classList.remove('is-copiado'); }, 1100);
+    }).catch(function () { /* sin portapapeles: el clic no hace nada */ });
+  });
 
   /* â"€â"€ Delegación global: toggles "Ver detalles" / "Cerrar detalles" â"€â"€ */
   document.addEventListener('click', function (e) {
