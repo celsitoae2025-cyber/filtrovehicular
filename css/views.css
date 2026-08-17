@@ -1453,8 +1453,11 @@
    a «Nueva consulta» (renderPdfDlBar + subirDescargaACabecera) — aquí no
    hay botón ni título, solo la ficha. Mismo padding lateral que el resto
    del panel (--cr-padding-left/right), no uno propio. ===== */
+/* Margen lateral propio y fijo: --cr-padding-left/right caen a 0 en la
+   consulta de medios de 720px (para que las filas de datos lleguen al
+   borde) y ahí la ficha del PDF quedaba pegada de borde a borde. */
 .cr-doccards {
-  padding: 0 var(--cr-padding-right) 20px var(--cr-padding-left);
+  padding: 0 20px 20px;
   display: flex; flex-direction: column; gap: 20px;
 }
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap {
@@ -5577,7 +5580,9 @@ body.is-logged-in .anon-cats { display: none; }
 }
 .result-header .nm-download.cr-dl-cabecera svg { width: 14px; height: 14px; }
 /* Con las dos juntas, el margen automatico lo lleva solo la primera. */
-.result-header .nm-download.cr-dl-cabecera + .cr-nueva { margin-left: 8px; }
+.result-header .nm-download.cr-dl-cabecera + .cr-nueva { margin-left: 4px; }
+/* El de la descarga del PDF del bot es un <a>, no un <button>: sin subrayado. */
+a.nm-download { text-decoration: none; }
 
 /* La cabecera pasa a poder envolver: en un movil estrecho el titulo mas
    las dos acciones no caben en una linea, y sin esto se estrujaban unas

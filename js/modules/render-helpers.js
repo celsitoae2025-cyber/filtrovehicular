@@ -680,7 +680,7 @@
     var fn = m.filename || 'documento.pdf';
     return '<div class="cr-dl-bar">' +
       '<a class="nm-download" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">' +
-        NM_ICON_DL + '<span>' + escapeHtml(dlLabel || 'Descargar') + '</span>' +
+        '<span>' + escapeHtml(dlLabel || 'Descargar') + '</span>' +
       '</a>' +
     '</div>';
   }
