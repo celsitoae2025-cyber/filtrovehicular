@@ -3984,8 +3984,8 @@ body.cr-lightbox-open { overflow: hidden; }
      su línea junto a su etiqueta. En escritorio la ficha se lee de lejos y
      manda el tamaño de :root. */
   :root {
-    --cr-fs: 9px;
-    --cr-fs-titulo: 12px;
+    --cr-fs: 10px;
+    --cr-fs-titulo: 13px;
   }
 
   /* Reseteamos cualquier valor que haya sido guardado desde el editor
