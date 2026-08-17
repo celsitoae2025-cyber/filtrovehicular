@@ -369,6 +369,13 @@
     return aplica ? estructurarCitv(p) : p;
   }
 
+  /* «APROBADO» es el veredicto de la consulta, no un dato más: se destaca
+     en verde y negrita para que se lea de un vistazo. */
+  var RE_APROBADO = /^\s*APROBADO\s*$/i;
+  function claseValor(v) {
+    return RE_APROBADO.test(v || '') ? 'cr-v cr-v-ok' : 'cr-v';
+  }
+
   function renderDataRows(p) {
     var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
     var toTitleCase = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.toTitleCase : function (s) { return s; };
@@ -429,7 +436,7 @@
       if (c.campo && _botMeta.test(c.campo.trim())) return '';
       if (!c.campo && c.valor && _botValText.test(c.valor.trim())) return '';
       if (c.campo && isEmptyValue(c.valor)) return '';
-      if (c.campo) return '<div class="cr-row"><span class="cr-k">' + escapeHtml(prettyLabel(c.campo)) + '</span><span class="cr-v">' + escapeHtml(c.valor) + '</span></div>';
+      if (c.campo) return '<div class="cr-row"><span class="cr-k">' + escapeHtml(prettyLabel(c.campo)) + '</span><span class="' + claseValor(c.valor) + '">' + escapeHtml(c.valor) + '</span></div>';
       if (c.valor && !isEmptyValue(c.valor)) return '<div class="cr-row"><span class="cr-v">' + escapeHtml(c.valor) + '</span></div>';
       return '';
     }
@@ -484,7 +491,8 @@
         parts.push('<tr><td>' + (idx + 1) + '</td>');
         varian.forEach(function (col) {
           var v = map[col.toUpperCase().trim()] || '';
-          parts.push('<td>' + escapeHtml(isEmptyValue(v) ? '' : v) + '</td>');
+          var td = RE_APROBADO.test(v) ? '<td class="cr-v-ok">' : '<td>';
+          parts.push(td + escapeHtml(isEmptyValue(v) ? '' : v) + '</td>');
         });
         parts.push('</tr>');
       });

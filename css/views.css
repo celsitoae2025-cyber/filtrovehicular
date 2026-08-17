@@ -2653,6 +2653,10 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   text-transform: uppercase;
 }
 .cr-row .cr-k::after { content: ""; }
+/* El veredicto de la consulta, en verde institucional y en negrita. Va con
+   el selector completo porque `.cr-row .cr-v` (0,2,0) le ganaría al color. */
+.cr-row .cr-v.cr-v-ok,
+.nm-table tbody td.cr-v-ok { color: #8fc72e; font-weight: 700; }
 .cr-row .cr-v {
   font-weight: 400;
   color: var(--c-primary);
