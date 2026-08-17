@@ -1472,19 +1472,32 @@
   padding: 0 20px 20px;
   display: flex; flex-direction: column; gap: 20px;
 }
-/* Rótulo y descarga por documento (sólo cuando hay más de uno). */
-.cr-doccard-barra {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; max-width: 620px; margin: 0 auto 8px;
+/* Varios documentos: lista con sus acciones, no cuatro hojas apiladas. */
+.cr-doclist { display: flex; flex-direction: column; gap: 8px; }
+.cr-docitem {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  background: var(--c-surface);
 }
-.cr-doccard-tit { font-size: var(--cr-fs); font-weight: 700; color: var(--c-primary); }
-.cr-doccard-dl {
-  display: inline-flex; align-items: center; flex-shrink: 0;
-  font-size: var(--cr-fs); color: #ffffff; text-decoration: none;
-  background: #141d1c; padding: 7px 14px; border-radius: 8px;
-  transition: background var(--t-fast);
+.cr-docitem-ico { flex-shrink: 0; color: var(--c-muted); display: inline-flex; }
+.cr-docitem-ico svg { width: 20px; height: 20px; }
+.cr-docitem-nom {
+  flex: 1 1 auto; min-width: 0;
+  font-size: var(--cr-fs); color: var(--c-primary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.cr-doccard-dl:hover { background: #0e1312; }
+.cr-docitem-peso { color: var(--c-muted); margin-left: 8px; }
+.cr-docitem-ver, .cr-docitem-dl {
+  flex-shrink: 0; font-family: inherit; font-size: var(--cr-fs);
+  padding: 7px 14px; border-radius: 8px; cursor: pointer; text-decoration: none;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.cr-docitem-ver { border: 1px solid var(--c-border); background: #ffffff; color: var(--c-primary); }
+.cr-docitem-ver:hover { border-color: var(--c-primary); }
+.cr-docitem-dl { border: none; background: #141d1c; color: #ffffff; }
+.cr-docitem-dl:hover { background: #0e1312; }
 
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap {
   /* Una hoja A4 estirada a lo ancho de un panel de 1500px es un mural: la

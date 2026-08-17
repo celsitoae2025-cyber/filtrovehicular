@@ -410,13 +410,14 @@
         // nunca se esconden los datos detrás del visor de PDF.
         html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
           renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
-        // Venga solo o acompañando a la ficha, si hay documento se enseña.
-        abrirVisor = pdfs.length > 0;
+        /* Con un documento se abre el visor; con varios no, porque no hay
+           forma de saber cuál quería ver: se listan y elige él. */
+        abrirVisor = pdfs.length === 1;
       } else if (pdfs.length > 0) {
         // Solo el documento: se enseña en el visor (abajo, tras pintar) en vez
         // de esperar a que el cliente descubra que la miniatura se pulsa.
         html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, prefix);
-        abrirVisor = true;
+        abrirVisor = pdfs.length === 1;
       } else {
         var rawText = (p.raw || '').trim();
         rawText = rawText.replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();

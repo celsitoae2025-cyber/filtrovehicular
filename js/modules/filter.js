@@ -339,13 +339,13 @@
       // PDF debajo y su «Descargar» sube a la cabecera junto a «Nueva consulta».
       html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
         renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl');
-      // Venga solo o acompañando a la ficha, si hay documento se enseña.
-      abrirVisor = pdfs.length > 0;
+      // Con un documento se abre el visor; con varios se listan y elige él.
+      abrirVisor = pdfs.length === 1;
     } else if (pdfs.length > 0) {
       // Solo vino un PDF, sin datos: el documento ES el resultado, así que se
       // enseña en el visor en vez de dejarlo tras un clic en la miniatura.
       html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, 'fl');
-      abrirVisor = true;
+      abrirVisor = pdfs.length === 1;
     } else {
       var rawText = (p.raw || '').trim();
       var _rawH3 = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;

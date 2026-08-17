@@ -970,35 +970,57 @@
   // Previsualización real del PDF (primera página, mismo renderer que el
   // resto de la plataforma): sin caja, sin borde, a todo el ancho. La
   // descarga vive en la cabecera (renderPdfDlBar), no aquí.
+  var ICONO_DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>';
+
   function renderDocumentCard(pdfs, uniqPrefix) {
     if (!pdfs || !pdfs.length) return '';
     var parts = [];
     var toRender = [];
     parts.push('<div class="cr-doccards">');
-    /* Con varios documentos —denuncias policiales manda uno por denuncia—
-       el «Descargar» de la cabecera sólo alcanza al primero, así que cada
-       uno lleva el suyo y se rotula para saber cuál es cuál. Con uno solo
-       no se rotula ni se repite el botón: ya está arriba. */
+    /* Un documento: se previsualiza, porque es el resultado y se quiere ver
+       de inmediato.
+
+       Varios —denuncias policiales manda un PDF por denuncia— se listan:
+       apilar cuatro hojas a tamaño completo empuja la información que el
+       cliente vino a leer fuera de la pantalla y obliga a bajar a ciegas
+       para saber cuál es cuál. Cada uno con su botón de ver y el de
+       descargar; el visor se abre en el que se elija. */
     var varios = pdfs.length > 1;
+    if (varios) {
+      parts.push('<div class="cr-doclist">');
+      pdfs.forEach(function (m, i) {
+        var blobUrl = base64ToBlobUrl(m.base64, m.mimeType || 'application/pdf');
+        var fn = m.filename || ('documento-' + (i + 1) + '.pdf');
+        var kb = m.base64 ? Math.round((m.base64.length * 3 / 4) / 1024) : 0;
+        parts.push(
+          '<div class="cr-docitem">' +
+            '<span class="cr-docitem-ico">' + ICONO_DOC + '</span>' +
+            '<span class="cr-docitem-nom">' + escapeHtml(fn) +
+              (kb ? '<span class="cr-docitem-peso">' + kb + ' KB</span>' : '') +
+            '</span>' +
+            '<button type="button" class="cr-docitem-ver cr-doccard-view" ' +
+              'data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '">Visualizar</button>' +
+            '<a class="cr-docitem-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">Descargar</a>' +
+          '</div>'
+        );
+      });
+      parts.push('</div>');
+      parts.push('</div>');   // cierra .cr-doccards
+      return parts.join('');
+    }
+
     pdfs.forEach(function (m, i) {
       var mime = m.mimeType || 'application/pdf';
       var blobUrl = base64ToBlobUrl(m.base64, mime);
       var fn = m.filename || ('documento-' + (i + 1) + '.pdf');
       var cid = (uniqPrefix || 'rh') + '-doc-' + Date.now() + '-' + i;
-      parts.push('<div class="cr-doccard-preview-wrap">');
-      if (varios) {
-        parts.push('<div class="cr-doccard-barra">' +
-          '<span class="cr-doccard-tit">Documento ' + (i + 1) + ' de ' + pdfs.length + '</span>' +
-          '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">Descargar</a>' +
-        '</div>');
-      }
       // El data-blob/data-fn es lo que lee la delegación global para abrir
       // el visor a pantalla completa.
-      parts.push('<div class="cr-pdf-canvas-wrap cr-doccard-view" id="' + cid + '" ' +
+      parts.push('<div class="cr-doccard-preview-wrap">' +
+        '<div class="cr-pdf-canvas-wrap cr-doccard-view" id="' + cid + '" ' +
         'data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '" ' +
         'title="Abrir el documento a pantalla completa">' +
-        '<div class="cr-pdf-loading">Cargando PDF…</div></div>');
-      parts.push('</div>');
+        '<div class="cr-pdf-loading">Cargando PDF…</div></div></div>');
       toRender.push({ cid: cid, blobUrl: blobUrl, fn: fn, base64: m.base64 });
     });
     parts.push('</div>');
