@@ -1046,9 +1046,12 @@
      Rasterizar con pdf.js las diez hojas de una partida cuesta segundos de
      hilo principal y decenas de MB de lienzo para dejar una hoja diminuta
      que igual hay que abrir para leerla. El panel enseña de qué documento
-     se trata —nombre y peso— y las dos cosas que se pueden hacer con él;
-     el visor a pantalla completa es donde se lee, con zoom, páginas e
-     impresión. Ahí el trabajo de dibujar SÍ se aprovecha.
+     se trata —nombre y peso— y lo único que hay que hacer con él:
+     visualizarlo. El visor a pantalla completa es donde se lee, con zoom,
+     páginas e impresión. Ahí el trabajo de dibujar SÍ se aprovecha.
+
+     Descargar no se repite aquí: ese botón vive en la cabecera del
+     resultado, uno por respuesta.
 
      Vale igual para uno o para veinte: la única diferencia es que con
      varios cada uno se rotula para saber cuál es cuál. */
@@ -1071,7 +1074,6 @@
           '</span>' +
           '<button type="button" class="cr-docitem-ver cr-doccard-view" ' +
             'data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '">Visualizar</button>' +
-          '<a class="cr-docitem-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">Descargar</a>' +
         '</div>'
       );
     });
