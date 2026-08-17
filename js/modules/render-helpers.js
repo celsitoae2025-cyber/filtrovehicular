@@ -157,9 +157,14 @@
     return ((p && p.medios) || []).filter(esPdf);
   }
 
+  /* Se sueltan los blobs Y el base64 que se guardó de cada uno. El mapa
+     existe para que el visor móvil pinte desde los bytes en vez del blob
+     URL, pero nadie lo vaciaba: cada consulta con documento dejaba ahí
+     medio mega retenido hasta recargar la página. */
   function revokeActiveBlobUrls() {
     activeBlobUrls.forEach(function (url) {
       try { URL.revokeObjectURL(url); } catch (_) {}
+      delete _pdfBase64Map[url];
     });
     activeBlobUrls = [];
   }
@@ -1010,133 +1015,6 @@
     return parts.join('');
   }
 
-  function renderPdfPreview(p, pdfs, hasData, uniqPrefix) {
-    var parts = [];
-    var wrapClass = hasData ? 'cr-pdf-split' : 'cr-pdf-nosplit';
-    parts.push('<div class="' + wrapClass + '">');
-    // Preparar datos de PDFs antes del HTML para usarlos en la columna de datos
-    var toRender = [];
-    var multi = pdfs.length > 1;
-    var pdfMetas = [];
-    pdfs.forEach(function (m, i) {
-      var mime = m.mimeType || 'application/pdf';
-      var blobUrl = base64ToBlobUrl(m.base64, mime);
-      var fn = m.filename || ('reporte-' + (i + 1) + '.pdf');
-      var cid = (uniqPrefix || 'rh') + '-pdf-' + Date.now() + '-' + i;
-      var sizeKB = m.base64 ? Math.round((m.base64.length * 3 / 4) / 1024) : 0;
-      pdfMetas.push({ cid: cid, blobUrl: blobUrl, fn: fn, base64: m.base64, mime: mime, sizeKB: sizeKB });
-    });
-
-    // Columna izquierda: datos (colapsable) + info del documento
-    if (hasData) {
-      parts.push('<div class="cr-pdf-data">');
-      var duid = 'cr-pdf-det-' + Date.now();
-      parts.push(
-        '<div class="cr-btn-details">' +
-          '<button type="button" class="cr-btn-details-toggle" aria-expanded="false" data-target="' + duid + '">' +
-            '<svg class="cr-btn-details-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
-            '<span>Ver detalles de la consulta</span>' +
-          '</button>' +
-          '<div class="cr-btn-details-body" id="' + duid + '" hidden>' +
-            renderDataRows(p) +
-            '<button type="button" class="cr-btn-details-close" data-target="' + duid + '">' +
-              '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>' +
-              '<span>Cerrar detalles</span>' +
-            '</button>' +
-          '</div>' +
-        '</div>'
-      );
-      // Panel de info del documento para llenar espacio vacío
-      parts.push('<div class="cr-pdf-doc-info">');
-      parts.push('<div class="cr-pdf-doc-info-title">' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg>' +
-        '<span>Documento adjunto</span></div>');
-      pdfMetas.forEach(function (pm, i) {
-        var sizeStr = pm.sizeKB >= 1024 ? (pm.sizeKB / 1024).toFixed(1) + ' MB' : pm.sizeKB + ' KB';
-        parts.push('<div class="cr-pdf-doc-row">');
-        parts.push('<span class="cr-pdf-doc-name">' + escapeHtml(pm.fn) + '</span>');
-        parts.push('<span class="cr-pdf-doc-size">' + sizeStr + '</span>');
-        parts.push('</div>');
-      });
-      var now = new Date();
-      var dateStr = now.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' });
-      var timeStr = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
-      parts.push('<div class="cr-pdf-doc-meta">');
-      parts.push('<div class="cr-pdf-doc-meta-row"><span>Fecha</span><strong>' + dateStr + '</strong></div>');
-      parts.push('<div class="cr-pdf-doc-meta-row"><span>Hora</span><strong>' + timeStr + '</strong></div>');
-      parts.push('<div class="cr-pdf-doc-meta-row"><span>Formato</span><strong>PDF</strong></div>');
-      if (pdfMetas.length > 0) {
-        parts.push('<div class="cr-pdf-doc-meta-row"><span>Documentos</span><strong>' + pdfMetas.length + '</strong></div>');
-      }
-      parts.push('</div>');
-      // Botón de descarga por cada PDF (oculto hasta que el PDF renderice)
-      if (pdfMetas.length > 0) {
-        parts.push('<div class="cr-pdf-doc-downloads" hidden>');
-        pdfMetas.forEach(function (pm, i) {
-          var label = pdfMetas.length === 1 ? 'Descargar PDF' : 'Descargar ' + (i + 1) + ' de ' + pdfMetas.length;
-          parts.push('<a class="cr-pdf-doc-dl" href="' + pm.blobUrl + '" download="' + escapeHtml(pm.fn) + '">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
-            '<span>' + label + '</span></a>');
-        });
-        parts.push('</div>');
-      }
-      parts.push('</div>'); // cierra cr-pdf-doc-info
-      parts.push('</div>'); // cierra cr-pdf-data
-    }
-
-    // Columna derecha: visor PDF
-    parts.push('<div class="cr-pdf-viewer">');
-    pdfMetas.forEach(function (pm, i) {
-      parts.push('<div class="cr-pdf-block' + (multi ? ' cr-pdf-block-multi' : '') + '">');
-      if (multi) {
-        parts.push('<div class="cr-pdf-block-header">' +
-          '<span class="cr-pdf-block-num">Documento ' + (i + 1) + ' de ' + pdfs.length + '</span>' +
-          '<span class="cr-pdf-block-name">' + escapeHtml(pm.fn) + '</span>' +
-        '</div>');
-      }
-      parts.push('<div class="cr-pdf-block-inner">');
-      parts.push('<div class="cr-pdf-canvas-wrap" id="' + pm.cid + '"><div class="cr-pdf-loading">Cargando PDF…</div></div>');
-      parts.push('</div>');
-      toRender.push(pm);
-      parts.push('</div>');
-    });
-    parts.push('</div></div>');
-    setTimeout(function () {
-      var pending = toRender.length;
-      toRender.forEach(function (r) {
-        var el = document.getElementById(r.cid);
-        if (el) {
-          // Click en el thumbnail = descarga el PDF (mismo patrón que ReportGenerator)
-          el.addEventListener('click', function () {
-            var a = document.createElement('a');
-            a.href = r.blobUrl;
-            a.download = r.fn || 'documento.pdf';
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(function () { document.body.removeChild(a); }, 200);
-          });
-          renderPdfIntoContainer(el, r.blobUrl, r.fn, r.base64).then(function () {
-            pending--;
-            if (pending <= 0) {
-              var dls = el.closest('.cr-pdf-layout');
-              if (dls) {
-                var dlBox = dls.querySelector('.cr-pdf-doc-downloads[hidden]');
-                if (dlBox) dlBox.hidden = false;
-              }
-            }
-          });
-        } else {
-          pending--;
-        }
-      });
-    }, 0);
-    return '<div class="cr-pdf-layout">' + parts.join('') + '</div>';
-  }
-
-  // Renderiza una lista de botones inline enviados por el bot: la ficha
-  // completa arriba y debajo una opción por registro, en rejilla de tres.
-  // Incluye un área de resultado donde el PDF aparecerá sin reemplazar los botones.
   function renderButtonList(p, botones) {
     var parts = [];
     if (p && p.titulo) parts.push('<div class="cr-tit">' + escapeHtml(cleanTitle(p.titulo)) + '</div>');
@@ -1189,28 +1067,7 @@
       parts.push('</div>');
     }
 
-    // Botones de selección
-    parts.push('<div class="cr-btn-section">');
-    parts.push('<div class="cr-btn-hint">Elige una opción:</div>');
-    parts.push('<div class="cr-btn-list">');
-    botones.forEach(function (b, idx) {
-      var detail = recordDetails[idx] || {};
-      var tipHtml = detail.tip
-        ? '<span class="cr-btn-option-tip">' + escapeHtml(detail.tip) + '</span>'
-        : '';
-      parts.push(
-        '<button type="button" class="cr-btn-option" ' +
-          'data-msgid="' + escapeHtml(String(b.msgId)) + '" ' +
-          'data-callback="' + escapeHtml(b.data) + '">' +
-          '<div class="cr-btn-option-body">' +
-            '<span class="cr-btn-option-text">' + escapeHtml(b.text) + '</span>' +
-            tipHtml +
-          '</div>' +
-          '<svg class="cr-btn-option-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
-        '</button>'
-      );
-    });
-    parts.push('</div></div>'); // cierra list + section
+    parts.push(seccionOpciones(botones, recordDetails));
     parts.push('</div>'); // cierra cr-btn-main
 
     /* Aqui iba una silueta de documento con «Selecciona una opción para ver
@@ -1386,6 +1243,50 @@
     tmp.innerHTML = htmlNuevo;
     var norm = function (s) { return (s || '').replace(/\s+/g, ' ').trim(); };
     return norm(tmp.textContent) === norm(ficha.textContent);
+  }
+
+  /* La lista de opciones, aparte del resto de `renderButtonList`: hace
+     falta también cuando el bot manda botones JUNTO a la ficha o a un
+     documento. Ese caso caía en la rama de datos y las opciones no se
+     dibujaban: el cliente veía el resultado pero no podía elegir nada. */
+  function seccionOpciones(botones, recordDetails) {
+    if (!botones || !botones.length) return '';
+    var detalles = recordDetails || [];
+    var parts = ['<div class="cr-btn-section">',
+      '<div class="cr-btn-hint">Elige una opción:</div>',
+      '<div class="cr-btn-list">'];
+    botones.forEach(function (b, idx) {
+      var detail = detalles[idx] || {};
+      var tipHtml = detail.tip
+        ? '<span class="cr-btn-option-tip">' + escapeHtml(detail.tip) + '</span>'
+        : '';
+      parts.push(
+        '<button type="button" class="cr-btn-option" ' +
+          'data-msgid="' + escapeHtml(String(b.msgId)) + '" ' +
+          'data-callback="' + escapeHtml(b.data) + '">' +
+          '<div class="cr-btn-option-body">' +
+            '<span class="cr-btn-option-text">' + escapeHtml(b.text) + '</span>' +
+            tipHtml +
+          '</div>' +
+          '<svg class="cr-btn-option-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+        '</button>'
+      );
+    });
+    parts.push('</div></div>');
+    return parts.join('');
+  }
+
+  /* Las opciones solas, para colgarlas debajo de una ficha que ya se
+     pintó. Llevan su propia área de resultado, que es donde
+     `wireOpcionesDelBot` deja lo que devuelva el bot. */
+  function renderOpcionesSueltas(botones) {
+    if (!botones || !botones.length) return '';
+    return '<div class="cr-btn-layout">' +
+      '<div class="cr-btn-result-area" hidden></div>' +
+      '<div class="cr-btn-grid"><div class="cr-btn-main">' +
+        seccionOpciones(botones, []) +
+      '</div></div>' +
+    '</div>';
   }
 
   // Devuelve el % numérico de un string tipo "85.7%" para poder ordenar.
@@ -2253,8 +2154,8 @@
     applyDniLayout:          applyDniLayout,
     renderGallery:           renderGallery,
     renderDataWithMedia:     renderDataWithMedia,
-    renderPdfPreview:        renderPdfPreview,
     renderButtonList:        renderButtonList,
+    renderOpcionesSueltas:   renderOpcionesSueltas,
     applyWatermark:          applyWatermark,
     applyWatermarksToPhotos: applyWatermarksToPhotos,
     renderFacialHero:        renderFacialHero,
@@ -2308,40 +2209,6 @@
     if (e.target.closest('.cr-pdf-modal-close') || e.target.closest('.cr-pdf-modal-backdrop')) {
       closePdfModal();
       return;
-    }
-    // Toggle abrir/cerrar
-    var toggle = e.target.closest('.cr-btn-details-toggle');
-    if (toggle) {
-      var tid = toggle.getAttribute('data-target');
-      var body = document.getElementById(tid);
-      if (!body) return;
-      var open = body.hidden;
-      body.hidden = !open;
-      toggle.setAttribute('aria-expanded', String(open));
-      toggle.classList.toggle('is-open', open);
-      var sp = toggle.querySelector('span');
-      if (sp) sp.textContent = open ? 'Ocultar detalles' : 'Ver detalles de la consulta';
-      return;
-    }
-    // Cerrar detalles (botón al final)
-    var closer = e.target.closest('.cr-btn-details-close');
-    if (closer) {
-      var cid = closer.getAttribute('data-target');
-      var cbody = document.getElementById(cid);
-      if (!cbody) return;
-      cbody.hidden = true;
-      // Buscar el toggle hermano para resetear estado
-      var parent = cbody.parentElement;
-      if (parent) {
-        var tgl = parent.querySelector('.cr-btn-details-toggle');
-        if (tgl) {
-          tgl.setAttribute('aria-expanded', 'false');
-          tgl.classList.remove('is-open');
-          var s = tgl.querySelector('span');
-          if (s) s.textContent = 'Ver detalles de la consulta';
-          tgl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }
     }
   });
 })();

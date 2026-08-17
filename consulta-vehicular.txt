@@ -1,0 +1,114 @@
+CONSULTA VEHICULAR — catálogo activo (16)
+Actualizado 17/08/2026
+
+[ 10] Boleta Informativa
+      comando  : /boi {valor}
+      bot      : fuentesdata
+      dato     : placa
+      créditos : 15        costo: 15        margen: 0
+      devuelve : texto + PDF
+
+[ 20] Consulta Placa
+      comando  : /placa {valor}
+      bot      : laindata
+      dato     : placa
+      créditos : 5        costo: 5        margen: 0
+      devuelve : texto + 1 imagen
+
+[ 30] Historial SOAT
+      comando  : /hsoat2 {valor}
+      bot      : recupsd
+      dato     : placa
+      créditos : 6        costo: 6        margen: 0
+      devuelve : PDF
+
+[ 40] MTC por Puntos
+      comando  : /mtcb {valor}
+      bot      : recupsd
+      dato     : dni
+      créditos : 5        costo: 5        margen: 0
+      devuelve : texto
+
+[ 50] Numero de Propietarios - Cambio de Caracteristicas - Gravamenes y Afectaciones
+      comando  : /lplaca {valor}
+      bot      : recupsd
+      dato     : placa
+      créditos : 12        costo: 12        margen: 0
+      devuelve : PDF
+
+[ 60] Propiedades y VehÃ­culos por DNI
+      comando  : /sun {valor}
+      bot      : recupsd
+      dato     : dni
+      créditos : 3        costo: 3        margen: 0
+      devuelve : texto
+
+[ 70] Record de Conductor
+      comando  : /record {valor}
+      bot      : recupsd
+      dato     : dni
+      créditos : 5        costo: 5        margen: 0
+      devuelve : texto + PDF
+
+[ 80] Reporte Completo
+      comando  : /metapla {valor}
+      bot      : fuentesdata
+      dato     : placa
+      créditos : 20        costo: 20        margen: 0
+      devuelve : texto + PDF + auto-click
+
+[ 90] Revision Tecnica
+      comando  : /citv {valor}
+      bot      : recupsd
+      dato     : placa
+      créditos : 6        costo: 6        margen: 0
+      devuelve : texto
+
+[100] Revisiones Tecnicas
+      comando  : /citv {valor}
+      bot      : laindata
+      dato     : placa
+      créditos : 5        costo: 5        margen: 0
+      devuelve : texto
+
+[110] SAT Capturas
+      comando  : /csat {valor}
+      bot      : recupsd
+      dato     : placa
+      créditos : 4        costo: 4        margen: 0
+      devuelve : texto
+
+[120] SAT Papeletas
+      comando  : /sat {valor}
+      bot      : recupsd
+      dato     : placa
+      créditos : 4        costo: 4        margen: 0
+      devuelve : texto
+
+[130] SOAT
+      comando  : /soat {valor}
+      bot      : recupsd
+      dato     : placa
+      créditos : 2        costo: 2        margen: 0
+      devuelve : texto
+
+[140] SOAT
+      comando  : /soat {valor}
+      bot      : laindata
+      dato     : placa
+      créditos : 5        costo: 5        margen: 0
+      devuelve : PDF
+
+[150] TIVE Generado (Replica)
+      comando  : /tiveg {valor}
+      bot      : laindata
+      dato     : placa
+      créditos : 5        costo: 5        margen: 0
+      devuelve : PDF + abre visor
+
+[160] TIVE Original
+      comando  : /tiv {valor}
+      bot      : laindata
+      dato     : placa
+      créditos : 10        costo: 10        margen: 0
+      devuelve : PDF + abre visor

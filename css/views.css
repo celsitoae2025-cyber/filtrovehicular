@@ -3086,62 +3086,14 @@ body.cr-lightbox-open { overflow: hidden; }
   max-width: 640px;
 }
 
-/* Cabecera compacta (DNI, Total, etc.) */
-.cr-btn-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 20px;
-  padding: 10px 16px;
-  background: var(--c-bg);
-  border-radius: 8px;
-  font-size: var(--fs-sm);
-  max-width: 640px;
-}
-.cr-btn-summary-item { display: inline-flex; gap: 6px; align-items: baseline; }
 
-/* Colapsable "Ver detalles" — lo sigue usando renderPdfPreview. En la
-   lista de opciones ya no hay colapsable: la ficha va suelta dentro de
-   `.cr-btn-details`, y su título se esconde porque renderButtonList ya
-   imprime uno arriba. */
+/* La ficha dentro de la lista de opciones. Su título se esconde porque
+   renderButtonList ya imprime uno arriba. */
 .cr-btn-details { max-width: 640px; }
 /* Sin la columna de la ilustración, la ficha ya no tiene por qué caber en
    640px: la tabla de partidas se cortaba a media columna. */
 .cr-btn-grid .cr-btn-details { max-width: none; }
 .cr-btn-details > .cr-tit { display: none; }
-.cr-btn-details-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border: 1px solid var(--c-border);
-  border-radius: 8px;
-  background: var(--c-surface);
-  color: var(--c-muted);
-  font-size: var(--fs-sm);
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  transition: color .15s, border-color .15s;
-}
-.cr-btn-details-toggle:hover { color: var(--c-primary); border-color: var(--c-primary); }
-.cr-btn-details-chevron {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  transition: transform .2s ease;
-}
-.cr-btn-details-toggle.is-open .cr-btn-details-chevron { transform: rotate(180deg); }
-.cr-btn-details-body {
-  margin-top: 12px;
-  padding: 16px 20px;
-  border: 1px solid var(--c-border);
-  border-radius: 10px;
-  background: var(--c-surface);
-}
-.cr-btn-details-body[hidden] { display: none; }
-.cr-btn-details-body .cr-tit { display: none; }
-.cr-btn-summary-k { color: var(--c-muted); }
-.cr-btn-summary-item strong { color: var(--c-primary); font-weight: 700; }
 
 /* Ãrea de resultado (PDF aparece aquí sin reemplazar botones) */
 .cr-btn-result-area { border-radius: 10px; overflow: hidden; }
@@ -3343,23 +3295,6 @@ body.cr-lightbox-open { overflow: hidden; }
 }
 
 /* Botón "Cerrar detalles" al final del contenido desplegado */
-.cr-btn-details-close {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 16px;
-  padding: 8px 14px;
-  border: 1px solid var(--c-border);
-  border-radius: 8px;
-  background: var(--c-surface);
-  color: var(--c-muted);
-  font-size: var(--fs-sm);
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  transition: color .15s, border-color .15s;
-}
-.cr-btn-details-close:hover { color: var(--c-primary); border-color: var(--c-primary); }
 
 @media (max-width: 720px) {
   .cr-btn-layout { padding: 20px 18px; }
@@ -4211,15 +4146,6 @@ body.cr-lightbox-open { overflow: hidden; }
   /* Resultado de consulta — layout limpio en móvil */
   .cr-btn-details {
     max-width: 100%;
-  }
-  .cr-btn-details-toggle {
-    width: 100%;
-    justify-content: center;
-    padding: 10px 14px;
-    font-size: var(--fs-sm);
-  }
-  .cr-btn-details-body {
-    padding: 12px;
   }
   .cr-pdf-nosplit {
     max-width: 100%;

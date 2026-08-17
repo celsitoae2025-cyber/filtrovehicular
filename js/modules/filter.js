@@ -37,7 +37,6 @@
   var inputModeFor            = H.inputModeFor;
   var validarValor            = H.validarValor;
   var renderDataRows          = H.renderDataRows;
-  var renderPdfPreview        = H.renderPdfPreview;
   var renderButtonList        = H.renderButtonList;
   var renderDataWithMedia     = H.renderDataWithMedia;
   var renderDocumentCard      = H.renderDocumentCard;
@@ -159,7 +158,7 @@
     if (status) {
       status.classList.remove('status-ok', 'status-loading');
       status.classList.add('status-empty');
-      status.innerHTML = '<span class="status-dot"></span> Esperando consulta';
+      status.innerHTML = '';   // el chip vacío está oculto por CSS
     }
   }
 
@@ -196,7 +195,7 @@
     if (status) {
       status.classList.remove('status-loading', 'status-ok');
       status.classList.add('status-empty');
-      status.innerHTML = '<span class="status-dot"></span> Esperando consulta';
+      status.innerHTML = '';   // el chip vacío está oculto por CSS
     }
   }
 
@@ -338,15 +337,17 @@
       // Mismo trato que las vistas de categoria: previsualización real del
       // PDF debajo y su «Descargar» sube a la cabecera junto a «Nueva consulta».
       html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
-        renderDataWithMedia(p, photos) + renderDocumentCard(pdfs);
+        renderDataWithMedia(p, photos) + renderDocumentCard(pdfs) +
+        // Opciones junto a la ficha: antes se perdían y no se podía elegir.
+        H.renderOpcionesSueltas(botones);
       /* Con ficha delante no se tapa al cliente con el visor: lo abre él.
          Salvo que el catálogo lo pida para esta consulta (`abrir_visor`). */
       abrirVisor = pdfs.length === 1 && !!(currentConsulta && (currentConsulta.respuesta_formato || {}).abrir_visor);
     } else if (pdfs.length > 0) {
       // Solo vino un PDF, sin datos: el documento ES el resultado, así que se
       // enseña en el visor en vez de dejarlo tras un clic en la miniatura.
-      html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs);
-      abrirVisor = pdfs.length === 1;
+      html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs) + H.renderOpcionesSueltas(botones);
+      abrirVisor = pdfs.length === 1 && !botones.length;
     } else {
       var rawText = (p.raw || '').trim();
       var _rawH3 = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
@@ -372,7 +373,8 @@
     body.innerHTML = html;
     body.hidden = false;
 
-    if (botones.length > 0 && !hasMedia) wireResultButtons(body);
+    // Se cablean siempre que existan en el DOM, traiga o no medios.
+    if (botones.length > 0) wireResultButtons(body);
 
     // «Descargar» de la cabecera: arma el informe al vuelo con los datos que
     // ya estan en pantalla. No existe cuando ya hay una tarjeta de PDF (esa

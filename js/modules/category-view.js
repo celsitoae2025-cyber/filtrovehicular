@@ -20,7 +20,7 @@
      #{prefix}-result-body
 
    Las funciones de renderizado compartidas (escapeHtml, renderDataRows,
-   renderPdfPreview, etc.) viven en render-helpers.js y se acceden a
+   renderDataWithMedia, etc.) viven en render-helpers.js y se acceden a
    través de Consultia.RenderHelpers.
 ============================================================ */
 
@@ -46,7 +46,6 @@
   var renderDataRows          = H.renderDataRows;
   var renderGallery           = H.renderGallery;
   var renderDataWithMedia     = H.renderDataWithMedia; // ya estaba aliasado, ahora sí se usa
-  var renderPdfPreview        = H.renderPdfPreview;
   var renderButtonList        = H.renderButtonList;
   var applyDniLayout          = H.applyDniLayout;
   var mediaCountClass         = H.mediaCountClass;
@@ -310,7 +309,7 @@
       if (status) {
         status.classList.remove('status-ok', 'status-loading');
         status.classList.add('status-empty');
-        status.innerHTML = '<span class="status-dot"></span> Esperando consulta';
+        status.innerHTML = '';   // el chip vacío está oculto por CSS
       }
     }
 
@@ -347,7 +346,7 @@
       if (status) {
         status.classList.remove('status-loading', 'status-ok');
         status.classList.add('status-empty');
-        status.innerHTML = '<span class="status-dot"></span> Esperando consulta';
+        status.innerHTML = '';   // el chip vacío está oculto por CSS
       }
     }
 
@@ -356,14 +355,6 @@
       revokeActiveBlobUrls();
       var p = H.recortarAlResumen(resp.parsed || {}, currentConsulta && currentConsulta.comando);
       var pdfs    = H.pdfsDe(p);
-      /* Traza de adjuntos: cuando el bot manda un documento y la ficha sale
-         sin él, esta línea dice si llegó y cómo venía tipado — que es
-         justo lo que distingue «el bot no lo mandó» de «no lo reconocimos». */
-      if ((p.medios || []).length) {
-        console.log('[' + prefix + '] adjuntos:', p.medios.map(function (m) {
-          return { tipo: m.tipo, mime: m.mimeType, archivo: m.filename, bytes: m.size, conBase64: !!m.base64 };
-        }), 'reconocidos como PDF:', pdfs.length);
-      }
       var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
       var botones = p.botones || [];
       var _metaRe = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;
@@ -409,7 +400,10 @@
         // sube a la cabecera junto a «Nueva consulta» — igual que VeriNexo,
         // nunca se esconden los datos detrás del visor de PDF.
         html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
-          renderDataWithMedia(p, photos) + renderDocumentCard(pdfs);
+          renderDataWithMedia(p, photos) + renderDocumentCard(pdfs) +
+          // Si el bot mandó opciones junto a la ficha, van debajo: antes se
+          // perdían por completo y el cliente no podía elegir nada.
+          H.renderOpcionesSueltas(botones);
         /* Aquí el documento acompaña a una ficha que el cliente vino a
            leer, así que NO se le tapa con el visor: lo abre él desde la
            previsualización. Salvo que el catálogo diga lo contrario para
@@ -420,8 +414,8 @@
       } else if (pdfs.length > 0) {
         // Solo el documento: se enseña en el visor (abajo, tras pintar) en vez
         // de esperar a que el cliente descubra que la miniatura se pulsa.
-        html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs);
-        abrirVisor = pdfs.length === 1;
+        html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs) + H.renderOpcionesSueltas(botones);
+        abrirVisor = pdfs.length === 1 && !botones.length;
       } else {
         var rawText = (p.raw || '').trim();
         rawText = rawText.replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
@@ -455,7 +449,8 @@
       var isNm = currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0;
       if (isNm) wireNmButtons(body, valorConsultado);
       else if (html === htmlArbol) { body.__arbolRaw = p.raw || ''; wireArbolButtons(body, valorConsultado); }
-      else if (botones.length > 0 && !hasMedia && !hasFacial && !hasTabla) wireResultButtons(body);
+      // Se cablean SIEMPRE que existan en el DOM, traiga o no medios la respuesta.
+      else if (botones.length > 0 && !hasFacial && !hasTabla) wireResultButtons(body);
       wireGenericPdfButton(body, pParaPdf, valorConsultado, photos);
 
       var empty = $(emptyId());
@@ -579,10 +574,6 @@
           // Si no vino adjunto, el bot pudo mandar el listado como texto
           if (!regs.length) regs = RH.nmRegistros(rp);
           if (!regs.length && rp.raw) regs = RH.parseNmTexto(rp.raw);
-
-          console.log('[/nm descarga] adjuntos:', (rp.medios || []).map(function (m) {
-            return { tipo: m.tipo, mime: m.mimeType, archivo: m.filename, bytes: m.size };
-          }), 'registros:', regs.length);
 
           if (!regs.length) {
             detener();
