@@ -2400,6 +2400,11 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 }
 
 :root {
+  /* Cuerpo de la ficha del resultado. Vive aparte de --fs-sm porque este
+     tamaño se toca a menudo y --fs-sm lo comparte toda la plataforma. */
+  --cr-fs: 13px;
+  --cr-fs-titulo: 15px;
+
   /* Layout datos + fotos */
   --cr-padding-top: 20px;
   /* 80px a cada lado dejaban la ficha en una columna estrecha en medio
@@ -2576,7 +2581,7 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 }
 
 .cr-tit {
-  font-size: var(--fs-sm);
+  font-size: var(--cr-fs-titulo);
   font-weight: 600;
   color: var(--c-primary);
   padding-bottom: 8px;
@@ -2587,7 +2592,7 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 .cr-sect { margin-top: 18px; }
 .cr-sect:first-child { margin-top: 0; }
 .cr-sect h4 {
-  font-size: var(--fs-sm);
+  font-size: var(--cr-fs-titulo);
   font-weight: 700;
   color: var(--c-primary);
   margin: 0 0 8px;
@@ -2606,7 +2611,7 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   grid-template-columns: 260px minmax(0, 1fr);
   gap: 10px;
   padding: 6px 0;
-  font-size: var(--fs-sm);
+  font-size: var(--cr-fs);
   align-items: baseline;
   line-height: 1.55;
   border-bottom: 1px solid rgba(15, 23, 42, 0.06);
@@ -2624,7 +2629,7 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   color: var(--c-primary);
   white-space: normal;
   overflow-wrap: break-word;
-  font-size: var(--fs-sm);
+  font-size: var(--cr-fs);
   text-transform: uppercase;
 }
 .cr-row .cr-k::after { content: ""; }
@@ -2632,11 +2637,11 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   font-weight: 400;
   color: var(--c-primary);
   word-break: break-word;
-  font-size: var(--fs-sm);
+  font-size: var(--cr-fs);
   text-transform: uppercase;
 }
 /* Layout texto puro — espaciado más compacto */
-.cr-txt-data .cr-row { padding: 6px 0; font-size: var(--fs-sm); line-height: 1.55; }
+.cr-txt-data .cr-row { padding: 6px 0; font-size: var(--cr-fs); line-height: 1.55; }
 
 .cr-record { padding: 6px 0 10px; }
 .cr-record-next {
@@ -3964,7 +3969,7 @@ body.cr-lightbox-open { overflow: hidden; }
     border-bottom: none;
   }
   .cr-row .cr-k {
-    font-size: var(--fs-sm);
+    font-size: var(--cr-fs);
     color: var(--c-primary);
     /* 400, no 500: en este proyecto solo se usan 400 y 700. */
     font-weight: 400;
@@ -3978,7 +3983,7 @@ body.cr-lightbox-open { overflow: hidden; }
   }
   .cr-row .cr-k::after { content: ""; }
   .cr-row .cr-v {
-    font-size: var(--fs-sm);
+    font-size: var(--cr-fs);
     word-break: normal;
     overflow-wrap: break-word;
   }
@@ -4024,7 +4029,7 @@ body.cr-lightbox-open { overflow: hidden; }
   .cr-sect { margin-top: 18px; }
   .cr-sect:first-child { margin-top: 0; }
   .cr-sect h4 {
-    font-size: var(--fs-sm);
+    font-size: var(--cr-fs-titulo);
     margin: 0 0 8px;
     padding-bottom: 6px;
     border-bottom: 1px solid rgba(15, 23, 42, 0.12);
