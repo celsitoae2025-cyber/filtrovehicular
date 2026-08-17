@@ -412,6 +412,29 @@
       parts.push('</tbody></table></div>');
       return parts.join('');
     }
+    /* De un grupo de registros con estado, solo el que rige. Una revisión
+       técnica trae el historial entero —la vigente y todas las vencidas— y
+       lo que el cliente viene a ver es si el vehículo está al día; las
+       caducadas solo ensucian la ficha.
+
+       Si NINGUNO está en vigor no se esconde nada: en ese caso el
+       historial es justamente la respuesta (el vehículo no está al día). */
+    var RE_EN_VIGOR = /^(VIGENTE|ACTIVO|ACTIVA|AL\s*D[IÍ]A)$/i;
+    var RE_CADUCADO = /^(VENCID[OA]|CADUCAD[OA]|NO\s*VIGENTE|EXPIRAD[OA]|INACTIV[OA]|BAJA|ANULAD[OA])$/i;
+    function estadoDe(s) {
+      var v = '';
+      (s.campos || []).forEach(function (c) {
+        if (c.campo && /^(ESTADO|SITUACI[OÓ]N)$/i.test(c.campo.trim())) v = (c.valor || '').trim();
+      });
+      return v;
+    }
+    function soloEnVigor(grupo) {
+      var hayCaducado = grupo.some(function (s) { return RE_CADUCADO.test(estadoDe(s)); });
+      if (!hayCaducado) return grupo;
+      var enVigor = grupo.filter(function (s) { return RE_EN_VIGOR.test(estadoDe(s)); });
+      return enVigor.length ? enVigor : grupo;
+    }
+
     var runKeyOf = uniqSec.map(function (s) { return fieldSetKey(s.campos); });
 
     /* Se agrupa por FIRMA, no por vecindad. Antes solo se juntaban las
@@ -429,7 +452,10 @@
       if (key && cuentaPorFirma[key] >= 2) {
         if (firmaPintada[key]) return;          // ya se pintó con su grupo
         firmaPintada[key] = true;
-        var grupo = uniqSec.filter(function (_, i) { return runKeyOf[i] === key; });
+        var grupo = soloEnVigor(uniqSec.filter(function (_, i) { return runKeyOf[i] === key; }));
+        // Si del grupo queda un solo registro, la tabla sobra: se lee mejor
+        // como ficha, con cada campo en su fila.
+        if (grupo.length === 1) { renderSeccionIndividual(grupo[0], idx); return; }
         dataHtml.push('<div class="cr-sect">');
         dataHtml.push(renderSeccionesTable(grupo));
         dataHtml.push('</div>');
