@@ -1127,17 +1127,19 @@
   }
 
   /* ── Modal flotante para ver PDF (iframe con visor nativo de Chrome) ──
-     `alCerrar` deja que quien lo abrió decida a qué se vuelve: el cierre lo
-     dispara la delegación global (aspa y velo), no el que llamó aquí. */
-  var _alCerrarPdfModal = null;
-  function openPdfModal(src, fileName, alCerrar) {
+     `opts.alNuevaConsulta` añade «Nueva consulta» junto a Descargar: sin
+     ella, salir del documento para pedir otra cosa eran dos pasos (cerrar
+     y luego buscar el botón del panel). Los disparan la delegación global,
+     no quien llamó aquí, así que la referencia se guarda en el módulo. */
+  var _alNuevaConsultaPdfModal = null;
+  function openPdfModal(src, fileName, opts) {
+    var alNuevaConsulta = (opts && typeof opts.alNuevaConsulta === 'function') ? opts.alNuevaConsulta : null;
     var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
       window.open(src, '_blank');
-      if (typeof alCerrar === 'function') alCerrar();   // no hay modal que cerrar
       return;
     }
-    _alCerrarPdfModal = (typeof alCerrar === 'function') ? alCerrar : null;
+    _alNuevaConsultaPdfModal = alNuevaConsulta;
     var el = document.getElementById('cr-pdf-modal');
     if (!el) {
       el = document.createElement('div');
@@ -1152,6 +1154,7 @@
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
                 '<span>Descargar</span>' +
               '</a>' +
+              '<button type="button" class="cr-pdf-modal-nueva" hidden>Nueva consulta</button>' +
               '<button type="button" class="cr-pdf-modal-close" aria-label="Cerrar">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
                 '<span>Cerrar</span>' +
@@ -1180,6 +1183,9 @@
     var fallbackLink = el.querySelector('.cr-pdf-modal-fallback-link');
     fallbackLink.href = src;
     fallbackLink.download = fileName || 'documento.pdf';
+    // El modal se reutiliza entre consultas: hay que reponer el estado del
+    // botón en cada apertura, no solo al crearlo.
+    el.querySelector('.cr-pdf-modal-nueva').hidden = !alNuevaConsulta;
     el.hidden = false;
     document.body.classList.add('cr-lightbox-open');
   }
@@ -1190,9 +1196,7 @@
     el.hidden = true;
     el.querySelector('.cr-pdf-modal-body').innerHTML = '';
     document.body.classList.remove('cr-lightbox-open');
-    var cb = _alCerrarPdfModal;
-    _alCerrarPdfModal = null;   // se consume una sola vez
-    if (cb) cb();
+    _alNuevaConsultaPdfModal = null;
   }
 
   /* ── Búsqueda por nombre (/nm): tarjetas de persona ── */
@@ -1818,6 +1822,15 @@
     var docToggle = e.target.closest('.cr-doccard-view');
     if (docToggle) {
       openPdfModal(docToggle.getAttribute('data-blob'), docToggle.getAttribute('data-fn'));
+      return;
+    }
+    // «Nueva consulta» desde el visor: cerrar y devolver el control a la
+    // vista, sin pasar por el botón del panel. Se lee ANTES de cerrar,
+    // porque `closePdfModal` suelta la referencia.
+    if (e.target.closest('.cr-pdf-modal-nueva')) {
+      var alNueva = _alNuevaConsultaPdfModal;
+      closePdfModal();
+      if (alNueva) alNueva();
       return;
     }
     if (e.target.closest('.cr-pdf-modal-close') || e.target.closest('.cr-pdf-modal-backdrop')) {

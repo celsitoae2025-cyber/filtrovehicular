@@ -713,7 +713,8 @@
                 if (vistaPrevia) {
                   RH.openPdfModal(
                     vistaPrevia.getAttribute('data-blob'),
-                    vistaPrevia.getAttribute('data-fn') || (docAbrir.filename || 'documento.pdf')
+                    vistaPrevia.getAttribute('data-fn') || (docAbrir.filename || 'documento.pdf'),
+                    { alNuevaConsulta: volverEstadoInicial }
                   );
                 }
               } else if (hasDataR && esElMismoListado(container, RH.renderDataRows(rp))) {

@@ -2911,6 +2911,7 @@ body.cr-lightbox-open { overflow: hidden; }
 }
 .cr-pdf-modal-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .cr-pdf-modal-dl,
+.cr-pdf-modal-nueva,
 .cr-pdf-modal-close {
   display: inline-flex;
   align-items: center;
@@ -2927,6 +2928,10 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-pdf-modal-dl svg,
 .cr-pdf-modal-close svg { width: 15px; height: 15px; flex-shrink: 0; }
 .cr-pdf-modal-dl { background: var(--c-accent); color: #ffffff; }
+/* Entre Descargar y Cerrar: en blanco sobre el fondo oscuro del visor, como
+   «Nueva consulta» en la cabecera del panel. */
+.cr-pdf-modal-nueva { background: #ffffff; color: var(--c-primary); }
+.cr-pdf-modal-nueva[hidden] { display: none; }
 .cr-pdf-modal-close { background: rgba(255,255,255,.12); color: #ffffff; }
 .cr-pdf-modal-pages { display: none; }
 .cr-pdf-modal-body {
