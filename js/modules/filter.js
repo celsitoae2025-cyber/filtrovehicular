@@ -299,7 +299,7 @@
   function renderResultado(resp) {
     revokeActiveBlobUrls();
     var p       = H.recortarAlResumen(resp.parsed || {}, currentConsulta && currentConsulta.comando);
-    var pdfs    = (p.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
+    var pdfs    = H.pdfsDe(p);
     var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
     var botones = p.botones || [];
     var _metaRe = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;

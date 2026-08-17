@@ -107,6 +107,23 @@
     return url;
   }
 
+  /* El bot no siempre tipa el adjunto como 'pdf': lo manda como 'document'
+     con mimeType application/pdf, y a veces sin mimeType pero con el .pdf
+     en el nombre. Mirar sólo `tipo` dejaba el documento de SUNAT por DNI
+     fuera del resultado —ni previsualización, ni visor, ni descarga—. */
+  function esPdf(m) {
+    // Sin los bytes no hay nada que previsualizar ni descargar, y
+    // `base64ToBlobUrl` reventaría al montar el blob.
+    if (!m || !m.base64) return false;
+    if (m.tipo === 'photo' || /^image\//i.test(m.mimeType || '')) return false;
+    return m.tipo === 'pdf' ||
+           /pdf/i.test(m.mimeType || '') ||
+           /\.pdf$/i.test(m.filename || '');
+  }
+  function pdfsDe(p) {
+    return ((p && p.medios) || []).filter(esPdf);
+  }
+
   function revokeActiveBlobUrls() {
     activeBlobUrls.forEach(function (url) {
       try { URL.revokeObjectURL(url); } catch (_) {}
@@ -1237,7 +1254,7 @@
           var resp = await Consultia.ConsultaRunner.ejecutarCallback(consulta, msgId, data);
           cerrarEspera();
           var rp = resp.parsed || {};
-          var pdfs = (rp.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
+          var pdfs = pdfsDe(rp);
           var hasDataR = (rp.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
 
           if (esErrorTecnicoRespuesta(rp, resp)) {
@@ -2181,6 +2198,7 @@
     isEmptyValue:            isEmptyValue,
     renderDataRows:          renderDataRows,
     recortarAlResumen:       recortarAlResumen,
+    pdfsDe:                  pdfsDe,
     mediaCountClass:         mediaCountClass,
     measureSaturation:       measureSaturation,
     applyDniLayout:          applyDniLayout,
