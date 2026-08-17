@@ -3118,6 +3118,12 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) .cr-btn-details {
   display: none;
 }
+/* En cuanto hay respuesta —sea PDF o datos— la ficha de la consulta se
+   retira. Cuando el bot devolvía la misma tabla de partidas, se veía dos
+   veces: la de arriba y la de la respuesta. */
+.cr-btn-layout:has(.cr-btn-result-area:not([hidden])) .cr-btn-details {
+  display: none;
+}
 /* El documento manda: ocupa el ancho del panel, como en Consulta Vehicular.
    Aquí había un thumbnail de 280px anclado a una segunda columna —tenía
    sentido cuando la lista de partidas seguía a la izquierda; ahora esa
@@ -3145,22 +3151,21 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-btn-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  column-gap: 28px;
+  gap: 10px;
 }
-/* Fila sobria: sin tarjeta ni esquinas marcadas, solo una línea inferior
-   que separa una opción de la siguiente. La flecha se sostiene sola como
-   señal de que es pulsable. */
+/* Con una línea inferior sola no se leían como pulsables. Vuelven a ser
+   pieza cerrada —fondo, borde y una flecha en su propio disco—, pero sin
+   negritas ni relleno de más: el peso lo lleva el dato, no la caja. */
 .cr-btn-option {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
   width: 100%;
-  padding: 12px 4px;
-  border: none;
-  border-bottom: 1px solid var(--c-border);
-  border-radius: 0;
-  background: transparent;
+  padding: 10px 10px 10px 14px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  background: var(--c-surface);
   color: var(--c-primary);
   font-family: inherit;
   font-size: var(--cr-fs);
@@ -3168,7 +3173,7 @@ body.cr-lightbox-open { overflow: hidden; }
   line-height: 1.35;
   text-align: left;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition: border-color 0.15s, background-color 0.15s;
 }
 
 /* Cuerpo del botón (texto + subtítulo) */
@@ -3195,17 +3200,25 @@ body.cr-lightbox-open { overflow: hidden; }
   word-break: break-word;
 }
 
+/* La flecha en su propio disco: es lo que dice «esto se pulsa». */
 .cr-btn-option-arrow {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
+  padding: 5px;
   flex-shrink: 0;
-  color: var(--c-muted);
+  color: var(--c-primary);
+  background: var(--c-bg);
+  border-radius: 50%;
+  transition: background-color 0.15s, color 0.15s;
 }
 .cr-btn-option:hover:not(:disabled) {
-  color: #8fc72e;
-  border-bottom-color: #8fc72e;
+  border-color: #8fc72e;
+  background: #f6fbec;
 }
-.cr-btn-option:hover:not(:disabled) .cr-btn-option-arrow { color: #8fc72e; }
+.cr-btn-option:hover:not(:disabled) .cr-btn-option-arrow {
+  background: #8fc72e;
+  color: #ffffff;
+}
 .cr-btn-option:disabled {
   opacity: 0.55;
   cursor: not-allowed;
@@ -3214,15 +3227,16 @@ body.cr-lightbox-open { overflow: hidden; }
    sitio a un girador verde: sin él, el único aviso quedaba lejos —en el
    área de resultado— y la fila parecía no haber respondido. */
 .cr-btn-option.is-loading {
-  color: #8fc72e;
-  border-bottom-color: #8fc72e;
+  border-color: #8fc72e;
+  background: #f6fbec;
   opacity: 1;
 }
 .cr-btn-option.is-loading .cr-btn-option-arrow { display: none; }
 .cr-btn-option.is-loading::after {
   content: "";
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
+  margin: 4px;
   flex-shrink: 0;
   border: 2px solid rgba(143, 199, 46, .25);
   border-top-color: #8fc72e;
@@ -3230,10 +3244,13 @@ body.cr-lightbox-open { overflow: hidden; }
   animation: cr-spin .8s linear infinite;
 }
 .cr-btn-option.is-selected {
-  border-bottom-color: var(--c-primary);
-  font-weight: 700;
+  border-color: var(--c-primary);
+  background: var(--c-bg);
 }
-.cr-btn-option.is-selected .cr-btn-option-arrow { color: var(--c-primary); }
+.cr-btn-option.is-selected .cr-btn-option-arrow {
+  background: var(--c-primary);
+  color: #ffffff;
+}
 
 /* Grid: contenido principal + ilustración */
 /* Una sola columna: la segunda existía para la silueta decorativa, que ya
@@ -3306,9 +3323,9 @@ body.cr-lightbox-open { overflow: hidden; }
   /* Tres no caben, pero una sola deja media pantalla vacía a la derecha de
      cada código: dos columnas es lo que aprovecha el ancho del móvil. */
   .cr-btn-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; }
-  .cr-btn-option { padding: 11px 2px; font-size: var(--cr-fs); gap: 6px; }
+  .cr-btn-option { padding: 9px 8px 9px 12px; font-size: var(--cr-fs); gap: 6px; }
   .cr-btn-option-tip { font-size: var(--fs-xs); }
-  .cr-btn-option-arrow { width: 13px; height: 13px; }
+  .cr-btn-option-arrow { width: 21px; height: 21px; padding: 5px; }
 }
 
 /* Pantallas muy angostas: dos columnas obligarían a recortar el nombre de
