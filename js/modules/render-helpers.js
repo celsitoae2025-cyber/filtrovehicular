@@ -43,8 +43,13 @@
   }
 
   /* â"€â"€ Text helpers â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
-  // Quita emojis y caracteres decorativos del texto visible al usuario
-  var EMOJI_RE = /[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2190}-\u{21FF}\u{1F100}-\u{1F1FF}\u{1F200}-\u{1F2FF}\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FAFF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
+  /* Quita emojis y caracteres decorativos del texto visible al usuario.
+
+     Del bloque de flechas (U+2190–U+21FF) se salvan ← → ↔: el bot las usa
+     como parte del dato, no como adorno —«VIGENCIA: 01/08/2026 → 01/08/2027»
+     perdía la flecha y quedaban dos fechas pegadas sin decir nada—. Las
+     decorativas de otros bloques (➾, ⌞) siguen fuera. */
+  var EMOJI_RE = /[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2191}\u{2193}\u{2195}-\u{21FF}\u{1F100}-\u{1F1FF}\u{1F200}-\u{1F2FF}\u{1F300}-\u{1F5FF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FAFF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
 
   function stripEmoji(s) {
     return String(s || '').replace(EMOJI_RE, '').replace(/\s{2,}/g, ' ').trim();
