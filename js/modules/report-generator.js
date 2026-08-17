@@ -67,40 +67,31 @@
      con la franja a 20, 22 o 26 mm y el nombre a 10,5, 17 o 19 puntos. El
      mismo cliente descargaba dos informes y parecían de dos empresas.
 
-     Sencillo a propósito: el logo con la marca a la izquierda, la fecha a
-     la derecha, y una línea que los separa del informe. Nada más. Lo que
-     se viene a leer es la ficha, no el papel donde va impresa.
+     Sencillo a propósito: la marca a la izquierda, la fecha a la derecha y
+     una línea verde que las separa del informe. Nada más. Lo que se viene a
+     leer es la ficha, no el papel donde va impresa.
   ============================================================ */
   var CAB_ALTO = 19;    // la línea que cierra la cabecera
   var PIE_ALTO = 14;    // desde la línea del pie hasta el borde
 
-  /* El logo se precarga al arrancar: `membreteTop` se llama desde
-     `didDrawPage`, que es síncrono y no puede esperar a una imagen. Si por
-     lo que sea no está listo, la marca se sostiene sola con su tipografía. */
-  var LOGO_PDF = null;
-  loadPngDataUrl('icons/icon-192.png').then(function (d) { LOGO_PDF = d; });
-
   function membreteTop(doc, pageW, fecha, M) {
     M = M || 18;
-    var x = M;
-
-    if (LOGO_PDF) {
-      try { doc.addImage(LOGO_PDF, 'PNG', M, 7.5, 8, 8); x = M + 10.5; }
-      catch (_) { /* sin logo, la marca va sola */ }
-    }
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.setTextColor.apply(doc, C_TEXT);
-    doc.text('Filtro Vehicular+', x, 14);
+    doc.text('Plataforma Filtro Vehicular', M, 14);
+    // El «+» en verde, como en la marca de la plataforma.
+    doc.setTextColor.apply(doc, C_ACCENT);
+    doc.text('+', M + doc.getTextWidth('Plataforma Filtro Vehicular'), 14);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor.apply(doc, C_KEY);
     doc.text(fecha, pageW - M, 14, { align: 'right' });
 
-    doc.setDrawColor.apply(doc, C_BORDER);
-    doc.setLineWidth(0.4);
+    doc.setDrawColor.apply(doc, C_ACCENT);
+    doc.setLineWidth(0.6);
     doc.line(M, CAB_ALTO, pageW - M, CAB_ALTO);
   }
 
@@ -108,8 +99,8 @@
     M = M || 18;
     var reglaY = pageH - PIE_ALTO;
 
-    doc.setDrawColor.apply(doc, C_BORDER);
-    doc.setLineWidth(0.4);
+    doc.setDrawColor.apply(doc, C_ACCENT);
+    doc.setLineWidth(0.6);
     doc.line(M, reglaY, pageW - M, reglaY);
 
     doc.setFont('helvetica', 'normal');
@@ -253,13 +244,23 @@
       });
     });
 
-    /* Tamaño de texto fijo; si el contenido no entra en una hoja,
-       jsPDF-autotable pagina solo (didDrawPage ya redibuja las franjas en
-       cada página nueva) — no hace falta encoger la fuente para "caber".
-       Estaba en 9pt con 2.5mm de relleno: el informe salía aireado y una
-       ficha de RENIEC se iba a dos hojas por unas pocas filas. */
+    /* Ajuste a una hoja: se parte de 8 pt y, si el contenido no entra en
+       el alto útil, se encoge de medio en medio hasta 6 pt —con el relleno
+       acompañando— antes de rendirse. Por debajo de 6 no se sigue: un
+       informe ilegible no sirve, así que ahí se deja paginar a
+       jsPDF-autotable, que redibuja el membrete en cada hoja nueva.
+
+       Una ficha de RENIEC completa cabe en una sola hoja con este ajuste;
+       ocho denuncias con su detalle, no, y esas sí se reparten. */
     var fontBody = 8;
     var cellPad = 1.6;
+    var altoUtil = tableBottom - tableTop;
+    var altoFila = function (f, pad) { return f * 0.3528 * 1.15 + pad * 2; };
+    var filasEstimadas = rows.length;
+    while (fontBody > 6 && altoFila(fontBody, cellPad) * filasEstimadas > altoUtil) {
+      fontBody -= 0.5;
+      cellPad = Math.max(0.9, cellPad - 0.12);
+    }
 
     // ── TABLA (franjas gris/blanco, sin bordes ni líneas; secciones en negrita) ──
     var body = rows.map(function (r) {
