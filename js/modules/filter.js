@@ -41,6 +41,8 @@
   var renderButtonList        = H.renderButtonList;
   var renderDataWithMedia     = H.renderDataWithMedia;
   var renderDocumentCard      = H.renderDocumentCard;
+  var renderPdfTopButton      = H.renderPdfTopButton;
+  var descargarPdfConOverlay  = H.descargarPdfConOverlay;
   var isEmptyValue            = H.isEmptyValue;
 
   // Render dedicado para "Reporte Completo" (/metapla): filas simples,
@@ -421,6 +423,9 @@
 
     var body = $('filter-result-body');
     var html;
+    // Cuando la respuesta es solo texto suelto (sin PDF ni tabla), el botón
+    // genérico igual arma un informe propio a partir de esas líneas.
+    var pParaPdf = p;
 
     if (esErrorTecnicoRespuesta(p, resp)) {
       html = htmlMantenimiento();
@@ -430,8 +435,13 @@
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
     } else if (hasData || photos.length > 0) {
-      html = renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl', docOpts);
+      // Mismo trato que las vistas de categoria: el boton «Descargar» nace
+      // aqui arriba y `entrarModoResultado` lo sube a la cabecera — pero solo
+      // si no hay ya una tarjeta de PDF con su propio Visualizar/Descargar.
+      html = (pdfs.length > 0 ? '' : renderPdfTopButton()) +
+        renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl', docOpts);
     } else if (pdfs.length > 0) {
+      // Solo vino un PDF, sin datos: la tarjeta ya trae Visualizar/Descargar.
       html = renderDocumentCard(pdfs, 'fl', docOpts);
     } else {
       var rawText = (p.raw || '').trim();
@@ -442,9 +452,14 @@
         try { rawText += '\n\n' + decodeURIComponent(escape(atob(doc.base64))); } catch (e) { rawText += '\n\n' + atob(doc.base64); }
       }
       if (rawText.length > 5) {
-        html = esErrorTecnico(rawText)
-          ? htmlMantenimiento()
-          : '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding: 16px;"><div style="white-space: pre-wrap; font-family: monospace; font-size: var(--fs-sm); line-height: 1.5;">' + escapeHtml(rawText) + '</div></div></div>';
+        if (esErrorTecnico(rawText)) {
+          html = htmlMantenimiento();
+        } else {
+          // El generador trabaja con secciones: el texto va linea por linea.
+          pParaPdf = { secciones: [{ titulo: '', campos: rawText.split(/\r?\n/).map(function (l) { return { valor: l }; }) }] };
+          html = renderPdfTopButton() +
+            '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding: 16px;"><div style="white-space: pre-wrap; font-family: monospace; font-size: var(--fs-sm); line-height: 1.5;">' + escapeHtml(rawText) + '</div></div></div>';
+        }
       } else {
         html = '<div class="cr-loading"><div class="cr-loading-text">No se encontraron datos para mostrar.</div></div>';
       }
@@ -454,6 +469,25 @@
     body.hidden = false;
 
     if (botones.length > 0 && !hasMedia) wireResultButtons(body);
+
+    // «Descargar» de la cabecera: arma el informe al vuelo con los datos que
+    // ya estan en pantalla. No existe cuando ya hay una tarjeta de PDF (esa
+    // trae su propio Visualizar/Descargar) ni en /metapla (botón aparte).
+    var pdfBtn = body.querySelector('.cr-btn-pdf-generic');
+    if (pdfBtn) {
+      var valorConsultado = $('filter-input') ? $('filter-input').value.trim() : '';
+      pdfBtn.addEventListener('click', function () {
+        descargarPdfConOverlay(function () {
+          return Consultia.ReportGenerator.generate(pParaPdf, {
+            consultaNombre: currentConsulta ? currentConsulta.nombre : 'Consulta',
+            valor: valorConsultado,
+            fecha: new Date().toLocaleDateString('es-PE', {
+              day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            })
+          }, photos);
+        });
+      });
+    }
 
     // /metapla: rediseñar por completo el PDF del bot con el estilo FV+
     // (extrae texto + imágenes del original y arma un documento nuevo).
@@ -474,18 +508,25 @@
             });
             if (!result) throw new Error('MetaplaReport devolvió null');
             var rfn = escapeHtml(result.filename || 'reporte.pdf');
+            var cid = 'fl-metapla-' + Date.now();
             metaplaPdfArea.innerHTML =
               '<div class="cr-doccards">' +
                 '<div class="cr-doccard">' +
                   '<div class="cr-doccard-head">' +
                     '<span class="cr-doccard-tit">Reporte Vehicular</span>' +
-                    '<div class="cr-doccard-actions">' +
-                      '<button type="button" class="cr-doccard-view" data-blob="' + result.blobUrl + '" data-fn="' + rfn + '">Visualizar</button>' +
-                      '<a class="cr-doccard-dl" href="' + result.blobUrl + '" download="' + rfn + '">Descargar Reporte PDF</a>' +
-                    '</div>' +
+                  '</div>' +
+                  '<div class="cr-doccard-preview-wrap"><div class="cr-pdf-canvas-wrap" id="' + cid + '"><div class="cr-pdf-loading">Cargando PDF…</div></div></div>' +
+                  '<div class="cr-doccard-actions">' +
+                    '<a class="cr-doccard-dl" href="' + result.blobUrl + '" download="' + rfn + '">Descargar Reporte PDF</a>' +
                   '</div>' +
                 '</div>' +
               '</div>';
+            (function (cidRef, blobUrlRef, fnRef, base64Ref) {
+              setTimeout(function () {
+                var el = document.getElementById(cidRef);
+                if (el) Consultia.RenderHelpers.renderPdfIntoContainer(el, blobUrlRef, fnRef, base64Ref);
+              }, 0);
+            })(cid, result.blobUrl, rfn, result.base64);
           } catch (e) {
             console.error('[metapla-report]', e);
             // Fallback: el PDF original del bot, para no dejar al usuario sin documento.

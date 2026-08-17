@@ -1448,7 +1448,7 @@
   margin: 0;
   letter-spacing: .2px;
 }
-/* ===== Tarjeta "Documento adjunto" (Visualizar/Descargar) ===== */
+/* ===== Tarjeta "Documento adjunto" (previsualización + Descargar) ===== */
 .cr-doccards {
   padding: 0 80px 20px;
   display: flex; flex-direction: column; gap: 12px;
@@ -1456,13 +1456,23 @@
 .cr-doccard { border: 1px solid var(--c-border); border-radius: 8px; overflow: hidden; background: var(--c-surface); box-shadow: none; }
 .cr-doccard-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; flex-wrap: wrap; }
 .cr-doccard-tit { font-size: var(--fs-sm); font-weight: 700; color: var(--c-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cr-doccard-actions { display: flex; gap: 8px; flex-shrink: 0; }
-.cr-doccard-view {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: var(--fs-sm); font-weight: 400; color: var(--c-primary);
-  background: #ffffff; border: 1px solid var(--c-primary);
-  cursor: pointer; padding: 8px 16px; border-radius: 4px;
+/* La previsualización: limpia, sin borde ni cuadro propio, más grande que
+   el thumbnail de 280px que usa el resto de la plataforma — aquí es lo
+   principal de la tarjeta, no un ícono de apoyo. Sin overlay «Click para
+   descargar»: el único botón de descarga es el de abajo. */
+.cr-doccard-preview-wrap { padding: 6px 20px 4px; }
+.cr-doccard-preview-wrap .cr-pdf-canvas-wrap {
+  max-width: 420px;
+  cursor: default;
 }
+.cr-doccard-preview-wrap .cr-pdf-canvas-wrap:hover { transform: none; }
+.cr-doccard-preview-wrap .cr-pdf-canvas-wrap::after { display: none; }
+.cr-doccard-preview-wrap .cr-pdf-stage {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+.cr-doccard-actions { display: flex; justify-content: center; gap: 8px; flex-shrink: 0; padding: 4px 14px 16px; }
 .cr-doccard-dl {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: var(--fs-sm); font-weight: 400; color: #ffffff;

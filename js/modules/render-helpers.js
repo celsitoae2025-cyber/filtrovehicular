@@ -667,34 +667,44 @@
     return parts.join('');
   }
 
-  // Tarjeta simple "Documento adjunto" — Visualizar (visor lazy, colapsable)
-  // + Descargar. Se usa cuando YA hay datos mostrados como filas/tabla y el
-  // PDF es solo un adjunto extra, no el contenido principal — mismo patrón
-  // que VeriNexo (tarjeta "Documento PDF" con Visualizar/Descargar, en vez
-  // del visor grande embebido de renderPdfPreview).
+  // Tarjeta simple "Documento adjunto" — la previsualización real del PDF
+  // (primera página, mismo renderer que el resto de la plataforma) y un
+  // único botón «Descargar». Se usa cuando YA hay datos mostrados como
+  // filas/tabla y el PDF es solo un adjunto extra, no el contenido
+  // principal. Sin botón «Visualizar»: la previsualización ya lo es.
   function renderDocumentCard(pdfs, uniqPrefix, opts) {
     if (!pdfs || !pdfs.length) return '';
     var dlLabel = (opts && opts.downloadLabel) || 'Descargar';
     var parts = [];
+    var toRender = [];
     parts.push('<div class="cr-doccards">');
     pdfs.forEach(function (m, i) {
       var mime = m.mimeType || 'application/pdf';
       var blobUrl = base64ToBlobUrl(m.base64, mime);
       var fn = m.filename || ('documento-' + (i + 1) + '.pdf');
       var titulo = pdfs.length > 1 ? ('Documento ' + (i + 1)) : 'Documento adjunto';
+      var cid = (uniqPrefix || 'rh') + '-doc-' + Date.now() + '-' + i;
       parts.push(
         '<div class="cr-doccard">' +
           '<div class="cr-doccard-head">' +
             '<span class="cr-doccard-tit">' + escapeHtml(titulo) + '</span>' +
-            '<div class="cr-doccard-actions">' +
-              '<button type="button" class="cr-doccard-view" data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '">Visualizar</button>' +
-              '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">' + escapeHtml(dlLabel) + '</a>' +
-            '</div>' +
+          '</div>' +
+          '<div class="cr-doccard-preview-wrap"><div class="cr-pdf-canvas-wrap" id="' + cid + '"><div class="cr-pdf-loading">Cargando PDF…</div></div></div>' +
+          '<div class="cr-doccard-actions">' +
+            '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">' + escapeHtml(dlLabel) + '</a>' +
           '</div>' +
         '</div>'
       );
+      toRender.push({ cid: cid, blobUrl: blobUrl, fn: fn, base64: m.base64 });
     });
     parts.push('</div>');
+    // Solo previsualiza; la única accion de descarga es el boton de abajo.
+    setTimeout(function () {
+      toRender.forEach(function (r) {
+        var el = document.getElementById(r.cid);
+        if (el) renderPdfIntoContainer(el, r.blobUrl, r.fn, r.base64);
+      });
+    }, 0);
     return parts.join('');
   }
 
@@ -1119,6 +1129,31 @@
       if (node) node.hidden = true;
       document.body.classList.remove('modal-open');
     };
+  }
+
+  /* Arma un PDF mostrando el overlay de descarga. jsPDF es sincrono y
+     bloquea el hilo, asi que cedemos un frame antes de generar para que
+     el overlay alcance a pintarse (si no, no se veria nada hasta el final).
+
+     Vive aqui, y no en cada modulo, por lo mismo que el modo resultado:
+     lo usan las vistas de categoria y «Consulta Vehicular». */
+  function descargarPdfConOverlay(generar) {
+    var cerrar = openDownloadOverlay({
+      titulo: 'Generando el PDF',
+      detalle: 'Estamos armando el informe con los datos de la consulta.'
+    });
+    setTimeout(function () {
+      var res = null;
+      try {
+        res = generar();
+      } catch (e) {
+        console.error('Error generando PDF:', e);
+      } finally {
+        cerrar();
+      }
+      if (res) Consultia.ReportGenerator.download(res);
+      else if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo generar el PDF' });
+    }, 60);
   }
 
   /* ── Modal flotante para ver PDF (iframe con visor nativo de Chrome) ── */
@@ -1700,10 +1735,16 @@
      DESPUES del cableado del boton, nunca antes. */
   function subirDescargaACabecera(vista) {
     var cab = vista.querySelector('.result-panel .result-header');
+    if (!cab) return;
+    // El boton de la consulta anterior ya vive en la cabecera (se mudo aqui
+    // en la llamada pasada), fuera del `body.innerHTML` que acaba de
+    // reemplazarse: sin quitarlo, cada consulta nueva apilaba uno mas.
+    var viejo = cab.querySelector('.cr-dl-cabecera');
+    if (viejo) viejo.remove();
     var barra = vista.querySelector('.result-panel .cr-dl-bar');
-    if (!cab || !barra) return;
+    if (!barra) return;
     var btn = barra.querySelector('.nm-download');
-    if (!btn) return;
+    if (!btn) { barra.remove(); return; }
     btn.classList.add('cr-dl-cabecera');
     cab.insertBefore(btn, cab.querySelector('.cr-nueva'));  // antes de la salida
     barra.remove();
@@ -1770,6 +1811,7 @@
     nmBotonPdf:              nmBotonPdf,
     renderPdfTopButton:      renderPdfTopButton,
     openDownloadOverlay:     openDownloadOverlay,
+    descargarPdfConOverlay:  descargarPdfConOverlay,
     parseArbolGenealogico:   parseArbolGenealogico,
     renderArbolGenealogico:  renderArbolGenealogico,
   };

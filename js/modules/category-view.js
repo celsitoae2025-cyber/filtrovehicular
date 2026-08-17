@@ -374,6 +374,9 @@
 
       var body = $(bodyId());
       var html;
+      // Cuando la respuesta es solo texto suelto (sin PDF ni tabla), el botón
+      // genérico igual arma un informe propio a partir de esas líneas.
+      var pParaPdf = p;
       if (esErrorTecnicoRespuesta(p, resp)) {
         html = htmlMantenimiento();
       } else if (hasFacial) {
@@ -390,10 +393,13 @@
         // Datos visibles de inmediato (tabla + fotos al costado); si además
         // vino un PDF, se agrega como tarjeta "Documento adjunto" debajo
         // (Visualizar/Descargar) — igual que VeriNexo, nunca se esconden
-        // los datos detrás del visor de PDF. El botón de arriba genera
-        // nuestro propio PDF a partir de lo que ya está en pantalla.
-        html = renderPdfTopButton() + renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
+        // los datos detrás del visor de PDF. Si ya hay esa tarjeta, la
+        // cabecera NO suma un «Descargar» propio: quedaría duplicado.
+        html = (pdfs.length > 0 ? '' : renderPdfTopButton()) +
+          renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
       } else if (pdfs.length > 0) {
+        // Solo vino un PDF, sin datos: la tarjeta trae su propio
+        // Visualizar/Descargar, no hace falta el botón genérico de arriba.
         html = renderDocumentCard(pdfs, prefix);
       } else {
         var rawText = (p.raw || '').trim();
@@ -408,9 +414,16 @@
           try { rawText += '\n\n' + decodeURIComponent(escape(atob(doc.base64))); } catch (e) { rawText += '\n\n' + atob(doc.base64); }
         }
         if (rawText.length > 5) {
-          html = esErrorTecnico(rawText)
-            ? htmlMantenimiento()
-            : '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding: 16px;"><div style="white-space: pre-wrap; font-family: monospace; font-size: var(--fs-sm); line-height: 1.5;">' + escapeHtml(rawText) + '</div></div></div>';
+          if (esErrorTecnico(rawText)) {
+            html = htmlMantenimiento();
+          } else {
+            // El generador de informes trabaja con secciones; el texto suelto
+            // se le entrega linea por linea (las que son «CLAVE: valor» las
+            // reconoce y salen como fila normal).
+            pParaPdf = { secciones: [{ titulo: '', campos: rawText.split(/\r?\n/).map(function (l) { return { valor: l }; }) }] };
+            html = renderPdfTopButton() +
+              '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding: 16px;"><div style="white-space: pre-wrap; font-family: monospace; font-size: var(--fs-sm); line-height: 1.5;">' + escapeHtml(rawText) + '</div></div></div>';
+          }
         } else {
           html = '<div class="cr-loading"><div class="cr-loading-text">No se encontraron datos para mostrar.</div></div>';
         }
@@ -422,7 +435,7 @@
       if (isNm) wireNmButtons(body, valorConsultado);
       else if (html === htmlArbol) { body.__arbolRaw = p.raw || ''; wireArbolButtons(body, valorConsultado); }
       else if (botones.length > 0 && !hasMedia && !hasFacial && !hasTabla) wireResultButtons(body);
-      wireGenericPdfButton(body, p, valorConsultado, photos);
+      wireGenericPdfButton(body, pParaPdf, valorConsultado, photos);
 
       var empty = $(emptyId());
       if (empty) empty.hidden = true;
@@ -473,27 +486,9 @@
       }
     }
 
-    // Arma un PDF mostrando el overlay de descarga. jsPDF es síncrono y
-    // bloquea el hilo, así que cedemos un frame antes de generar para que
-    // el overlay alcance a pintarse (si no, no se vería nada hasta el final).
-    function descargarPdfConOverlay(generar) {
-      var cerrar = Consultia.RenderHelpers.openDownloadOverlay({
-        titulo: 'Generando el PDF',
-        detalle: 'Estamos armando el informe con los datos de la consulta.'
-      });
-      setTimeout(function () {
-        var res = null;
-        try {
-          res = generar();
-        } catch (e) {
-          console.error('Error generando PDF:', e);
-        } finally {
-          cerrar();
-        }
-        if (res) Consultia.ReportGenerator.download(res);
-        else if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo generar el PDF' });
-      }, 60);
-    }
+    // Arma un PDF mostrando el overlay de descarga. La implementación vive
+    // en render-helpers.js: la comparten estas vistas y «Consulta Vehicular».
+    var descargarPdfConOverlay = H.descargarPdfConOverlay;
 
     function wireNmButtons(container, valorConsultado) {
       var RH = Consultia.RenderHelpers;
