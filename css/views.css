@@ -3131,13 +3131,15 @@ body.cr-lightbox-open { overflow: hidden; }
 }
 
 /* Sección de botones */
-.cr-btn-section { max-width: 640px; display: flex; flex-direction: column; gap: 12px; }
+/* Sin tope de 640px: quedaba de una época con la ilustración al lado, y
+   dejaba la fila de opciones encogida en la mitad izquierda del panel. */
+.cr-btn-section { display: flex; flex-direction: column; gap: 12px; }
 
 .cr-btn-hint {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--c-primary);
-  letter-spacing: 0.01em;
+  font-size: var(--cr-fs);
+  font-weight: 700;
+  color: var(--c-muted);
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 /* Tres por fila: una columna de botones a lo ancho del panel gastaba una
@@ -3145,18 +3147,22 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-btn-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  column-gap: 28px;
 }
+/* Fila sobria: sin tarjeta ni esquinas marcadas, solo una línea inferior
+   que separa una opción de la siguiente. La flecha se sostiene sola como
+   señal de que es pulsable. */
 .cr-btn-option {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
   width: 100%;
-  padding: 11px 14px;
-  border: 1px solid var(--c-border);
-  border-radius: 8px;
-  background: #ffffff;
+  padding: 12px 4px;
+  border: none;
+  border-bottom: 1px solid var(--c-border);
+  border-radius: 0;
+  background: transparent;
   color: var(--c-primary);
   font-family: inherit;
   font-size: var(--cr-fs);
@@ -3164,7 +3170,7 @@ body.cr-lightbox-open { overflow: hidden; }
   line-height: 1.35;
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.15s, background-color 0.15s;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 /* Cuerpo del botón (texto + subtítulo) */
@@ -3178,7 +3184,7 @@ body.cr-lightbox-open { overflow: hidden; }
 /* Una línea por opción: «60500130 - QUILLABAMBA» partía en dos y esa
    tarjeta crecía más que sus vecinas, rompiendo la fila. */
 .cr-btn-option-text {
-  font-weight: 700;
+  font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3198,8 +3204,8 @@ body.cr-lightbox-open { overflow: hidden; }
   color: var(--c-muted);
 }
 .cr-btn-option:hover:not(:disabled) {
-  border-color: #8fc72e;
-  background: #edf7d9;
+  color: #8fc72e;
+  border-bottom-color: #8fc72e;
 }
 .cr-btn-option:hover:not(:disabled) .cr-btn-option-arrow { color: #8fc72e; }
 .cr-btn-option:disabled {
@@ -3207,13 +3213,13 @@ body.cr-lightbox-open { overflow: hidden; }
   cursor: not-allowed;
 }
 .cr-btn-option.is-loading {
-  border-color: #8fc72e;
-  background: #edf7d9;
+  color: #8fc72e;
+  border-bottom-color: #8fc72e;
   opacity: 1;
 }
 .cr-btn-option.is-selected {
-  border-color: var(--c-primary);
-  background: var(--c-bg);
+  border-bottom-color: var(--c-primary);
+  font-weight: 700;
 }
 .cr-btn-option.is-selected .cr-btn-option-arrow { color: var(--c-primary); }
 
@@ -3285,14 +3291,11 @@ body.cr-lightbox-open { overflow: hidden; }
 
 @media (max-width: 720px) {
   .cr-btn-layout { padding: 20px 18px; }
-  .cr-btn-option {
-    padding: 10px 14px;
-    font-size: var(--fs-sm);
-    border-radius: 8px;
-  }
+  /* En angosto no caben tres códigos con su ciudad: una sola columna. */
+  .cr-btn-list { grid-template-columns: minmax(0, 1fr); }
+  .cr-btn-option { padding: 11px 2px; font-size: var(--cr-fs); }
   .cr-btn-option-tip { font-size: var(--fs-xs); }
   .cr-btn-option-arrow { width: 14px; height: 14px; }
-  .cr-btn-hint { font-size: var(--fs-xs); }
 }
 
 /* ===== Layout: PDF preview (C4, nacido vivo, defunción) ===== */
