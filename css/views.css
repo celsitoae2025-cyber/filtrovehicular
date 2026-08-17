@@ -3124,15 +3124,17 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-btn-layout:has(.cr-btn-result-area:not([hidden])) .cr-btn-details {
   display: none;
 }
-/* El documento manda: ocupa el ancho del panel, como en Consulta Vehicular.
-   Aquí había un thumbnail de 280px anclado a una segunda columna —tenía
-   sentido cuando la lista de partidas seguía a la izquierda; ahora esa
-   columna está vacía y el documento quedaba arrinconado en un costado. */
+/* El documento, centrado y a tamaño de hoja: ni arrinconado en un thumbnail
+   de 280px (lo de antes, heredado de cuando la lista ocupaba la izquierda)
+   ni estirado a lo ancho de un panel de 1500px, donde una hoja A4 se vuelve
+   un mural. 620px es una hoja legible en pantalla. */
 .cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) .cr-pdf-canvas-wrap {
   margin: 0 auto;
-  max-width: none;
+  max-width: 620px;
   width: 100%;
 }
+/* El título ya está arriba del panel: dentro del resultado sobra. */
+.cr-btn-result-area .cr-tit { display: none; }
 
 /* Sección de botones */
 /* Sin tope de 640px: quedaba de una época con la ilustración al lado, y

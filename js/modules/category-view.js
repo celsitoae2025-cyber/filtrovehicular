@@ -635,6 +635,19 @@
       });
     }
 
+    /* ¿La respuesta del callback es la misma ficha que ya está arriba? Se
+       comparan los textos, no el HTML: el navegador normaliza comillas y
+       orden de atributos al leer innerHTML, y una diferencia así daría un
+       falso negativo. */
+    function esElMismoListado(container, htmlNuevo) {
+      var ficha = container.querySelector('.cr-btn-details');
+      if (!ficha) return false;
+      var tmp = document.createElement('div');
+      tmp.innerHTML = htmlNuevo;
+      var norm = function (s) { return (s || '').replace(/\s+/g, ' ').trim(); };
+      return norm(tmp.textContent) === norm(ficha.textContent);
+    }
+
     function wireResultButtons(container) {
       var btns = container.querySelectorAll('.cr-btn-option');
       var resultArea = container.querySelector('.cr-btn-result-area');
@@ -693,24 +706,24 @@
                 marcarConResultado(true);
                 /* El documento es lo que se vino a buscar: se abre solo en el
                    visor a pantalla completa, con sus páginas, zoom e impresión.
-                   Al cerrarlo se vuelve a la lista de partidas —no al PDF
-                   desplegado a lo largo del panel, que era quedarse en lo
-                   mismo sin visor. */
+                   Al cerrarlo queda la previsualización en el panel —no la
+                   lista de partidas—, y un clic sobre ella lo reabre. */
                 var docAbrir = pdfs[0];
                 var vistaPrevia = resultArea.querySelector('.cr-doccard-view[data-blob]');
                 if (vistaPrevia) {
                   RH.openPdfModal(
                     vistaPrevia.getAttribute('data-blob'),
-                    vistaPrevia.getAttribute('data-fn') || (docAbrir.filename || 'documento.pdf'),
-                    function volverALaLista() {
-                      resultArea.innerHTML = '';
-                      resultArea.hidden = true;
-                      var v = vistaEl();
-                      var dl = v && v.querySelector('.result-panel .result-header .cr-dl-cabecera');
-                      if (dl) dl.remove();   // era la descarga de ese documento
-                    }
+                    vistaPrevia.getAttribute('data-fn') || (docAbrir.filename || 'documento.pdf')
                   );
                 }
+              } else if (hasDataR && esElMismoListado(container, RH.renderDataRows(rp))) {
+                /* El proveedor devolvió otra vez el listado de partidas en vez
+                   del documento. Repintarlo dejaba la misma tabla dos veces en
+                   pantalla y ninguna previsualización: se dice lo que pasó y
+                   se deja la lista para reintentar. */
+                resultArea.innerHTML =
+                  '<div class="cr-loading"><div class="cr-loading-text">El proveedor devolvió el listado, no el documento.</div>' +
+                  '<div class="cr-loading-hint">Vuelve a pulsar la partida en unos segundos.</div></div>';
               } else if (hasDataR) {
                 // Los datos, a la vista. Estaban detrás de un «Ver detalles de
                 // la consulta» que dejaba la respuesta escondida tras un clic
