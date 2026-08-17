@@ -446,7 +446,8 @@
         var nombre = (c.campo || '').trim();
         if (nombre) {
           if (MTC_CUENTA.test(nombre)) return;          // el saldo del bot
-          if (isEmptyValue(c.valor)) return;
+          // Lo demás sale como vino: si el bot lo bota, se enseña.
+          if (!String(c.valor || '').trim()) return;
         } else {
           var suelto = (c.valor || '').trim();
           if (!suelto) return;
@@ -510,13 +511,6 @@
      papeletas en una tabla. Todo lo que llegue y no esté previsto entra
      igual en la rejilla: no se pierde nada por no conocerlo. */
   var MTC_EN_MEMBRETE = /^(CONDUCTOR|DNI|NRO\.?\s*LICENCIA|N[°ºRO.]*\s*LICENCIA|LICENCIA|SITUACI[OÓ]N)$/i;
-  var MTC_ORDEN = ['CATEGORÍA', 'CATEGORIA', 'FECHA EXPEDICIÓN', 'FECHA EXPEDICION',
-                   'VENCE', 'VENCIMIENTO', 'EMITIDO EN', 'RESTRICCIONES', 'DIRECCIÓN', 'DIRECCION'];
-
-  function soloGuiones(v) {
-    return !String(v || '').replace(/[\s,.\-–—]/g, '').length;
-  }
-
   function renderMtc(p) {
     var e = estructurarMtc(p || {});
     var lic = [], pap = [];
@@ -551,15 +545,12 @@
     }
     parts.push('</div>');
 
-    // Rejilla: primero los campos de siempre, en su orden, y detrás el resto.
+    /* Rejilla: TODO lo que mandó el bot y en su orden. Nada de escoger ni
+       de reordenar —lo que él bota, sale—; lo único que no llega aquí es
+       su propio saldo y lo que ya está dicho en el membrete. */
     var celdas = lic.filter(function (c) {
       var n = (c.campo || '').trim();
-      if (!n || MTC_EN_MEMBRETE.test(n)) return false;
-      return !isEmptyValue(c.valor) && !soloGuiones(c.valor);
-    }).sort(function (a, b) {
-      var ia = MTC_ORDEN.indexOf((a.campo || '').trim().toUpperCase());
-      var ib = MTC_ORDEN.indexOf((b.campo || '').trim().toUpperCase());
-      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+      return n && !MTC_EN_MEMBRETE.test(n);
     });
     if (celdas.length) {
       parts.push('<div class="mtc-grid">');

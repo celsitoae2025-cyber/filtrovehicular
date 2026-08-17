@@ -5732,13 +5732,12 @@ a.nm-download { text-decoration: none; }
 .result-panel > .result-header h3 {
   color: #ffffff;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: .4px;
 }
 .result-panel > .result-header .nm-download.cr-dl-cabecera {
   background: #8fc72e;
   color: #141d1c;
-  font-weight: 700;
 }
 .result-panel > .result-header .nm-download.cr-dl-cabecera:hover { background: #7fb426; }
 .result-panel > .result-header .cr-nueva {
@@ -5792,7 +5791,7 @@ a.nm-download { text-decoration: none; }
 }
 .cr-row .cr-v {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 400;
   color: #141d1c;
   letter-spacing: .1px;
   font-variant-numeric: tabular-nums;
@@ -5832,7 +5831,7 @@ a.nm-download { text-decoration: none; }
   align-items: center; justify-content: center;
 }
 .cr-docitem-ico svg { width: 21px; height: 21px; }
-.cr-docitem-nom { font-size: 15px; font-weight: 700; color: #141d1c; }
+.cr-docitem-nom { font-size: 15px; font-weight: 400; color: #141d1c; }
 .cr-docitem-peso { font-size: 13px; font-weight: 400; color: #7c8785; }
 .cr-docitem-ver {
   background: #141d1c;
@@ -5871,7 +5870,7 @@ a.nm-download { text-decoration: none; }
   letter-spacing: .1px; line-height: 1.25;
 }
 .mtc-sub { margin-top: 3px; font-size: 13px; color: #7c8785; }
-.mtc-sub b { color: #141d1c; font-weight: 700; font-variant-numeric: tabular-nums; }
+.mtc-sub b { color: #141d1c; font-weight: 400; font-variant-numeric: tabular-nums; }
 .mtc-punto { margin: 0 8px; color: #c6cdcb; }
 .mtc-estado {
   flex-shrink: 0;
@@ -5898,7 +5897,7 @@ a.nm-download { text-decoration: none; }
 }
 .mtc-dato strong {
   display: block; margin-top: 2px;
-  font-size: 15px; font-weight: 700; color: #141d1c;
+  font-size: 15px; font-weight: 400; color: #141d1c;
   line-height: 1.35; overflow-wrap: break-word;
 }
 
@@ -5926,7 +5925,7 @@ a.nm-download { text-decoration: none; }
 .mtc-tabla td {
   padding: 9px 14px 9px 0;
   border-bottom: 1px solid #f2f4f3;
-  font-weight: 700; color: #141d1c;
+  font-weight: 400; color: #141d1c;
   font-variant-numeric: tabular-nums;
 }
 .mtc-tabla tr:last-child td { border-bottom: none; }
@@ -5962,7 +5961,7 @@ a.nm-download { text-decoration: none; }
   letter-spacing: .1px; line-height: 1.25;
 }
 .cr-data .cr-sub { margin-top: 3px; font-size: 13px; color: #7c8785; }
-.cr-data .cr-sub b { color: #141d1c; font-weight: 700; font-variant-numeric: tabular-nums; }
+.cr-data .cr-sub b { color: #141d1c; font-weight: 400; font-variant-numeric: tabular-nums; }
 .cr-data .cr-punto { margin: 0 8px; color: #c6cdcb; }
 .cr-data .cr-estado {
   flex-shrink: 0;
@@ -6007,7 +6006,7 @@ a.nm-download { text-decoration: none; }
 }
 .cr-data .cr-row > .cr-v {
   display: block; margin-top: 2px;
-  font-size: 15px; font-weight: 700; color: #141d1c;
+  font-size: 15px; font-weight: 400; color: #141d1c;
   line-height: 1.35; overflow-wrap: break-word;
 }
 /* Línea sin rótulo (una nota, un total): a lo ancho de la rejilla. */
