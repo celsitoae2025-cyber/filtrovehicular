@@ -2442,8 +2442,8 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   /* Escritorio: la ficha se lee de lejos y hay ancho de sobra. En el móvil
      baja a 9px (ver la consulta de medios de 720px), donde lo que manda es
      que cada campo entre en su línea. */
-  --cr-fs: 17px;
-  --cr-fs-titulo: 19px;
+  --cr-fs: 15px;
+  --cr-fs-titulo: 17px;
 
   /* Layout datos + fotos */
   --cr-padding-top: 20px;

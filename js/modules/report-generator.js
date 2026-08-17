@@ -60,37 +60,76 @@
     return EMPTY.indexOf(t) !== -1 || /^\[\s*\]$/.test(t) || /^\[\s*-\s*\]$/.test(t);
   }
 
-  // ── Franjas de página (se redibujan en cada página vía didDrawPage) ──
-  /* Cabecera: dos columnas sobre la franja oscura, alineadas por sus
-     líneas base —marca y actividad a la izquierda, emisión a la derecha—
-     y cerradas por el filete verde. El aire (26 mm en vez de 22) es lo que
-     separa un membrete de una barra de color con letras encima. */
-  function drawTopBand(doc, pageW, fecha) {
-    doc.setFillColor.apply(doc, C_PRIMARY);
-    doc.rect(0, 0, pageW, 26, 'F');
+  /* ============================================================
+     MEMBRETE — el mismo en los siete informes
+
+     Antes cada generador dibujaba el suyo: cinco variantes distintas de
+     la misma marca, con la franja a 20, 22 o 26 mm y el nombre a 10,5,
+     17 o 19 puntos. El mismo cliente descargaba dos informes y parecían
+     de dos empresas.
+
+     El diseño abandona la banda de color a sangre: el membrete se apoya
+     en el papel, como un documento formal, y la marca se sostiene con
+     tipografía y una regla. Menos tinta, mejor impresión y la ficha —que
+     es lo que se viene a leer— manda en la hoja.
+
+         ▍Filtro Vehicular+                          EMITIDO
+          PLATAFORMA DE CONSULTAS VEHICULARES     17/08/2026 · 01:30
+         ──────────────────────────────────────────────────────────
+  ============================================================ */
+  var CAB_ALTO = 30;    // hasta la regla que cierra la cabecera
+  var PIE_ALTO = 16;    // desde la regla del pie hasta el borde
+
+  function membreteTop(doc, pageW, fecha, M) {
+    M = M || 18;
+
+    // Marca: acento vertical + nombre, con la actividad debajo.
     doc.setFillColor.apply(doc, C_ACCENT);
-    doc.rect(0, 26, pageW, 1.2, 'F');
+    doc.rect(M, 9, 1.6, 9.5, 'F');
 
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
-    doc.setTextColor.apply(doc, C_WHITE);
-    doc.text('Filtro Vehicular+', 18, 14);
-    doc.setFillColor.apply(doc, C_ACCENT);
-    doc.circle(18 + doc.getTextWidth('Filtro Vehicular+') + 2.2, 12.2, 0.9, 'F');
+    doc.setFontSize(14);
+    doc.setTextColor.apply(doc, C_TEXT);
+    doc.text('Filtro Vehicular+', M + 4.5, 15.5);
 
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6.6);
-    doc.setTextColor.apply(doc, C_SUBHEAD);
-    espaciado(doc, 'PLATAFORMA DE CONSULTAS VEHICULARES', 18, 20, 0.55);
+    doc.setFontSize(6);
+    doc.setTextColor.apply(doc, C_KEY);
+    espaciado(doc, 'PLATAFORMA DE CONSULTAS VEHICULARES', M + 4.5, 20, 0.5);
 
+    // Emisión, a la derecha y alineada con la marca por sus líneas base.
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6);
+    doc.setTextColor.apply(doc, C_KEY);
+    espaciado(doc, 'EMITIDO', pageW - M, 11.5, 0.5, 'right');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8.5);
-    doc.setTextColor.apply(doc, C_WHITE);
-    doc.text(fecha, pageW - 18, 14, { align: 'right' });
+    doc.setTextColor.apply(doc, C_TEXT);
+    doc.text(fecha, pageW - M, 16.5, { align: 'right' });
+
+    // La regla cierra la cabecera; el tramo verde la ancla a la marca.
+    doc.setDrawColor.apply(doc, C_TEXT);
+    doc.setLineWidth(0.5);
+    doc.line(M, CAB_ALTO - 6, pageW - M, CAB_ALTO - 6);
+    doc.setDrawColor.apply(doc, C_ACCENT);
+    doc.setLineWidth(1.4);
+    doc.line(M, CAB_ALTO - 6, M + 26, CAB_ALTO - 6);
+  }
+
+  function membreteBottom(doc, pageW, pageH, M) {
+    M = M || 18;
+    var reglaY = pageH - PIE_ALTO;
+
+    doc.setDrawColor.apply(doc, C_BORDER);
+    doc.setLineWidth(0.3);
+    doc.line(M, reglaY, pageW - M, reglaY);
+
+    var baseY = reglaY + 5.5;
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6.6);
-    doc.setTextColor.apply(doc, C_SUBHEAD);
-    espaciado(doc, 'FECHA DE EMISIÓN', pageW - 18, 20, 0.55, 'right');
+    doc.setFontSize(6.2);
+    doc.setTextColor.apply(doc, C_KEY);
+    doc.text('Información extraída de fuentes oficiales', M, baseY);
+    doc.text('filtrovehicularperu.com', pageW / 2, baseY, { align: 'center' });
   }
 
   /* Helvetica en jsPDF no tiene interletraje, así que el rótulo se dibuja
@@ -106,28 +145,6 @@
     });
   }
 
-  /* Pie de tres zonas: la procedencia a la izquierda, el dominio al centro
-     y la paginación a la derecha (la estampa `sellarPaginas` al cerrar).
-     Una sola frase corrida ocupaba el ancho entero y dejaba el pie sin
-     donde numerar. */
-  function drawBottomBand(doc, pageW, pageH, bottomBandTop) {
-    doc.setFillColor.apply(doc, C_ACCENT);
-    doc.rect(0, bottomBandTop - 1.2, pageW, 1.2, 'F');
-    doc.setFillColor.apply(doc, C_PRIMARY);
-    doc.rect(0, bottomBandTop, pageW, pageH - bottomBandTop, 'F');
-
-    var baseY = bottomBandTop + 7.5;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6.4);
-    doc.setTextColor.apply(doc, C_SUBHEAD);
-    doc.text('Información extraída de fuentes oficiales', 18, baseY);
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(6.4);
-    doc.setTextColor.apply(doc, C_WHITE);
-    doc.text('filtrovehicularperu.com', pageW / 2, baseY, { align: 'center' });
-  }
-
   /* El pie no puede numerar mientras se dibuja: cuando se pinta la página 1
      todavía no se sabe cuántas habrá. Se sella al final, recorriendo el
      documento ya cerrado, que es la única forma de poner «2 de 5». */
@@ -137,10 +154,10 @@
     var total = doc.internal.getNumberOfPages();
     for (var i = 1; i <= total; i++) {
       doc.setPage(i);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.8);
-      doc.setTextColor.apply(doc, C_SUBHEAD);
-      doc.text(i + ' de ' + total, pageW - 18, pageH - 13 + 7.5, { align: 'right' });
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.2);
+      doc.setTextColor.apply(doc, C_TEXT);
+      doc.text(i + ' de ' + total, pageW - 18, pageH - PIE_ALTO + 5.5, { align: 'right' });
     }
   }
 
@@ -188,25 +205,22 @@
     var pageW  = doc.internal.pageSize.getWidth();   // 210
     var pageH  = doc.internal.pageSize.getHeight();  // 297
     var M      = 18;
-    var bottomBandTop = pageH - 13;
+    var bottomBandTop = pageH - PIE_ALTO;
 
     /* ── TÍTULO DEL INFORME ───────────────────────────────────
-       Título, dato consultado y una regla fina que cierra el bloque y lo
-       separa de la tabla. Antes el título y el dato quedaban a 5 mm de la
-       primera fila: se leían como parte de la tabla, no como su cabecera. */
+       Título y dato consultado, con aire suficiente para leerse como la
+       cabecera de la tabla y no como su primera fila. La regla que cierra
+       el bloque la pone ya el membrete. */
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.setTextColor.apply(doc, C_TEXT);
-    doc.text(cleanText(consultaNombre).toUpperCase(), M, 39);
+    doc.text(cleanText(consultaNombre).toUpperCase(), M, 38);
     if (valor) {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
       doc.setTextColor.apply(doc, C_KEY);
-      doc.text('Dato consultado: ' + valor, M, 44.5);
+      doc.text('Dato consultado: ' + valor, M, 43.5);
     }
-    doc.setDrawColor.apply(doc, C_BORDER);
-    doc.setLineWidth(0.3);
-    doc.line(M, 48, pageW - M, 48);
 
     // ── PRECARGA DE IMÁGENES (proporción real) ────────────────
     var imgInfos = (photos || []).map(function (ph) { return getImgDims(doc, ph); });
@@ -217,7 +231,7 @@
     //    posible — igual que VeriNexo) ──────────────────────────────
     var bioMaxH = 34, bioTitleH = 7, bioLabelH = 5;
     var bioBlockH = imgInfos.length > 0 ? (bioTitleH + bioMaxH + bioLabelH + 8) : 0;
-    var tableTop = 55;   // debajo de la regla que cierra el título
+    var tableTop = 50;   // debajo del bloque de título
     var tableBottom = bottomBandTop - 6 - bioBlockH;
 
     // ── FILAS: aplanar secciones a una tabla continua (secciones = fila
@@ -295,7 +309,7 @@
         body: body,
         margin: { left: M, right: M, top: 34, bottom: 18 },
         tableLineWidth: 0,
-        didDrawPage: function () { drawTopBand(doc, pageW, fecha); drawBottomBand(doc, pageW, pageH, bottomBandTop); },
+        didDrawPage: function () { membreteTop(doc, pageW, fecha, M); membreteBottom(doc, pageW, pageH, M); },
         bodyStyles: {
           fontSize: fontBody, textColor: C_TEXT,
           cellPadding: { top: cellPad, bottom: cellPad, left: 3, right: 5 },
@@ -307,8 +321,8 @@
       });
     } else {
       // Sin filas de datos: igual dibujamos las franjas de la página 1.
-      drawTopBand(doc, pageW, fecha);
-      drawBottomBand(doc, pageW, pageH, bottomBandTop);
+      membreteTop(doc, pageW, fecha, M);
+      membreteBottom(doc, pageW, pageH, M);
     }
 
     // ── IMÁGENES BIOMÉTRICAS (proporción real, alineadas por la base) ─
@@ -323,8 +337,8 @@
       var altoBloque = bioTitleH + bioMaxH + bioLabelH;
       if (titleY + altoBloque > bottomBandTop - 6) {
         doc.addPage();
-        drawTopBand(doc, pageW, fecha);
-        drawBottomBand(doc, pageW, pageH, bottomBandTop);
+        membreteTop(doc, pageW, fecha, M);
+        membreteBottom(doc, pageW, pageH, M);
         titleY = 34;
       }
 
@@ -364,7 +378,7 @@
     //    vacío) ───────────────────────────────────────────────────────
     var totalPages = typeof doc.getNumberOfPages === 'function' ? doc.getNumberOfPages() : 1;
     doc.setPage(totalPages);
-    drawBottomBand(doc, pageW, pageH, bottomBandTop);
+    membreteBottom(doc, pageW, pageH, M);
 
     // ── GENERAR BLOB ───────────────────────────────────────────────
     var consultaSlug = consultaNombre
@@ -392,20 +406,7 @@
     var horaStr = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
     var fechaFile = ahora.getFullYear() + String(ahora.getMonth() + 1).padStart(2, '0') + String(ahora.getDate()).padStart(2, '0');
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10.5);
-    doc.setTextColor.apply(doc, C_PRIMARY);
-    doc.text('Filtro Vehicular+', M, 16);
-    doc.setFillColor.apply(doc, C_ACCENT);
-    doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 1.6, 13.8, 0.7, 'F');
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6.3);
-    doc.setTextColor.apply(doc, C_KEY);
-    doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', M, 20);
-    doc.text(fechaStr + '  ·  ' + horaStr, W - M, 16, { align: 'right' });
-    doc.setDrawColor.apply(doc, C_ACCENT);
-    doc.setLineWidth(0.35);
-    doc.line(M, 24, W - M, 24);
+    membreteTop(doc, W, fechaStr + '  ·  ' + horaStr, M);
 
     return loadPngDataUrl('icons/pnp-logo.png').then(function (logoDataUrl) {
       var y = 38;
@@ -516,10 +517,7 @@
           ['Fecha de Caducidad', val('Fecha de Caducidad')], ['Unidad', val('Unidad')],
         ]);
 
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(6.5);
-        doc.setTextColor.apply(doc, C_KEY);
-        doc.text('Generado por Filtro Vehicular+ · Información extraída de fuentes oficiales.', W / 2, 285, { align: 'center' });
+        membreteBottom(doc, W, H, M);
 
         var nombre = 'VerificacionPolicial-' + (valorConsultado || '').replace(/[^a-zA-Z0-9]/g, '') + '-' + fechaFile + '.pdf';
         return cerrarPdf(doc, nombre);
@@ -565,27 +563,9 @@
     var fechaFile = ahora.getFullYear() + String(ahora.getMonth() + 1).padStart(2, '0') + String(ahora.getDate()).padStart(2, '0');
 
     function dibujarEncabezado() {
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10.5);
-      doc.setTextColor.apply(doc, C_PRIMARY);
-      doc.text('Filtro Vehicular+', M, 16);
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 1.6, 13.8, 0.7, 'F');
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.3);
-      doc.setTextColor.apply(doc, C_KEY);
-      doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', M, 20);
-      doc.text(fechaStr + '  ·  ' + horaStr, W - M, 16, { align: 'right' });
-      doc.setDrawColor.apply(doc, C_ACCENT);
-      doc.setLineWidth(0.35);
-      doc.line(M, 24, W - M, 24);
+      membreteTop(doc, W, fechaStr + '  ·  ' + horaStr, M);
     }
-    function dibujarPie() {
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.5);
-      doc.setTextColor.apply(doc, C_KEY);
-      doc.text('Generado por Filtro Vehicular+', W / 2, H - 10, { align: 'center' });
-    }
+    function dibujarPie() { membreteBottom(doc, W, H, M); }
     function pctNum(s) { var n = parseFloat(String(s || '').replace(/[^\d.]/g, '')); return isNaN(n) ? 0 : n; }
 
     var ratioPromises = candidatos.map(function (c) {
@@ -725,33 +705,8 @@
     var horaStr = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
     var fechaFile = ahora.getFullYear() + String(ahora.getMonth() + 1).padStart(2, '0') + String(ahora.getDate()).padStart(2, '0');
 
-    function drawTopBandT() {
-      doc.setFillColor.apply(doc, C_PRIMARY);
-      doc.rect(0, 0, W, 22, 'F');
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.rect(0, 22, W, 1, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(19);
-      doc.setTextColor(255, 255, 255);
-      doc.text('Filtro Vehicular+', M, 13);
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 2.2, 11.2, 0.9, 'F');
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
-      doc.setTextColor.apply(doc, C_SUBHEAD);
-      doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', M, 18);
-      doc.text(fechaStr + '  ·  ' + horaStr, W - M, 14, { align: 'right' });
-    }
-    function drawBottomBandT() {
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.rect(0, bottomBandTop - 1, W, 1, 'F');
-      doc.setFillColor.apply(doc, C_PRIMARY);
-      doc.rect(0, bottomBandTop, W, H - bottomBandTop, 'F');
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.8);
-      doc.setTextColor.apply(doc, C_SUBHEAD);
-      doc.text('Documento generado por Filtro Vehicular+ · Información extraída de fuentes oficiales.', M, bottomBandTop + 7.5);
-    }
+    function drawTopBandT() { membreteTop(doc, W, fechaStr + '  ·  ' + horaStr, M); }
+    function drawBottomBandT() { membreteBottom(doc, W, H, M); }
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
@@ -812,30 +767,8 @@
     var fechaFile = ahora.getFullYear() + String(ahora.getMonth() + 1).padStart(2, '0') + String(ahora.getDate()).padStart(2, '0');
 
     function bandas() {
-      doc.setFillColor.apply(doc, C_PRIMARY);
-      doc.rect(0, 0, W, 20, 'F');
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.rect(0, 20, W, 1, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(17);
-      doc.setTextColor(255, 255, 255);
-      doc.text('Filtro Vehicular+', M, 12);
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 2, 10.3, 0.85, 'F');
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
-      doc.setTextColor.apply(doc, C_SUBHEAD);
-      doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', M, 17);
-      doc.text(fechaStr + '  ·  ' + horaStr, W - M, 13, { align: 'right' });
-
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.rect(0, bottomBandTop - 1, W, 1, 'F');
-      doc.setFillColor.apply(doc, C_PRIMARY);
-      doc.rect(0, bottomBandTop, W, H - bottomBandTop, 'F');
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.5);
-      doc.setTextColor.apply(doc, C_SUBHEAD);
-      doc.text('Documento generado por Filtro Vehicular+ · Información extraída de fuentes oficiales.', M, bottomBandTop + 7);
+      membreteTop(doc, W, fechaStr + '  ·  ' + horaStr, M);
+      membreteBottom(doc, W, H, M);
     }
 
     var valor = (meta.valor || '').replace(/\|/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
@@ -911,30 +844,8 @@
     var fechaFile = ahora.getFullYear() + String(ahora.getMonth() + 1).padStart(2, '0') + String(ahora.getDate()).padStart(2, '0');
 
     function bandas() {
-      doc.setFillColor.apply(doc, C_PRIMARY);
-      doc.rect(0, 0, W, 20, 'F');
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.rect(0, 20, W, 1, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(17);
-      doc.setTextColor(255, 255, 255);
-      doc.text('Filtro Vehicular+', M, 12);
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 2, 10.3, 0.85, 'F');
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
-      doc.setTextColor.apply(doc, C_SUBHEAD);
-      doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', M, 17);
-      doc.text(fechaStr + '  ·  ' + horaStr, W - M, 13, { align: 'right' });
-
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.rect(0, bottomBandTop - 1, W, 1, 'F');
-      doc.setFillColor.apply(doc, C_PRIMARY);
-      doc.rect(0, bottomBandTop, W, H - bottomBandTop, 'F');
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.5);
-      doc.setTextColor.apply(doc, C_SUBHEAD);
-      doc.text('Documento generado por Filtro Vehicular+ · Información extraída de fuentes oficiales.', M, bottomBandTop + 7);
+      membreteTop(doc, W, fechaStr + '  ·  ' + horaStr, M);
+      membreteBottom(doc, W, H, M);
     }
 
     var valor = (meta.valor || '').trim();
@@ -1012,37 +923,9 @@
       return acc + (Math.abs(Number(f.creditos)) || 0);
     }, 0);
 
-    function bandaSuperior() {
-      doc.setFillColor.apply(doc, C_PRIMARY);
-      doc.rect(0, 0, W, 22, 'F');
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.rect(0, 22, W, 1, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(19);
-      doc.setTextColor.apply(doc, C_WHITE);
-      doc.text('Filtro Vehicular+', M, 13);
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.circle(M + doc.getTextWidth('Filtro Vehicular+') + 2.2, 11.2, 0.9, 'F');
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
-      doc.setTextColor.apply(doc, C_SUBHEAD);
-      doc.text('HISTORIAL DE CONSUMOS', M, 18);
-      doc.text(fechaStr + '  ·  ' + horaStr, W - M, 14, { align: 'right' });
-    }
+    function bandaSuperior() { membreteTop(doc, W, fechaStr + '  ·  ' + horaStr, M); }
 
-    function bandaInferior() {
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.rect(0, bottomBandTop - 1, W, 1, 'F');
-      doc.setFillColor.apply(doc, C_PRIMARY);
-      doc.rect(0, bottomBandTop, W, H - bottomBandTop, 'F');
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.8);
-      doc.setTextColor.apply(doc, C_SUBHEAD);
-      doc.text('Documento generado por Filtro Vehicular+ · Resumen de consumo de créditos.', M, bottomBandTop + 7.5);
-      // La paginación se pinta en la última pasada, cuando ya se sabe
-      // cuántas páginas hay: aquí solo cabe el número de la actual.
-      doc.text('Página ' + doc.internal.getNumberOfPages(), W - M, bottomBandTop + 7.5, { align: 'right' });
-    }
+    function bandaInferior() { membreteBottom(doc, W, H, M); }
 
     // ── Portada de la primera página ──
     doc.setFont('helvetica', 'bold');
