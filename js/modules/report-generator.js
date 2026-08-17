@@ -61,44 +61,71 @@
   }
 
   // ── Franjas de página (se redibujan en cada página vía didDrawPage) ──
+  /* Cabecera: dos columnas sobre la franja oscura, alineadas por sus
+     líneas base —marca y actividad a la izquierda, emisión a la derecha—
+     y cerradas por el filete verde. El aire (26 mm en vez de 22) es lo que
+     separa un membrete de una barra de color con letras encima. */
   function drawTopBand(doc, pageW, fecha) {
     doc.setFillColor.apply(doc, C_PRIMARY);
-    doc.rect(0, 0, pageW, 22, 'F');
+    doc.rect(0, 0, pageW, 26, 'F');
     doc.setFillColor.apply(doc, C_ACCENT);
-    doc.rect(0, 22, pageW, 1, 'F');
+    doc.rect(0, 26, pageW, 1.2, 'F');
+
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(19);
+    doc.setFontSize(18);
     doc.setTextColor.apply(doc, C_WHITE);
-    doc.text('Filtro Vehicular+', 18, 13);
+    doc.text('Filtro Vehicular+', 18, 14);
     doc.setFillColor.apply(doc, C_ACCENT);
-    doc.circle(18 + doc.getTextWidth('Filtro Vehicular+') + 2.2, 11.2, 0.9, 'F');
+    doc.circle(18 + doc.getTextWidth('Filtro Vehicular+') + 2.2, 12.2, 0.9, 'F');
+
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7);
+    doc.setFontSize(6.6);
     doc.setTextColor.apply(doc, C_SUBHEAD);
-    doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', 18, 18);
-    /* La fecha comparte línea base con la marca y lleva su rótulo encima,
-       a la altura del subtítulo: así las dos columnas de la cabecera —marca
-       a la izquierda, emisión a la derecha— quedan alineadas entre sí en
-       vez de flotar cada una a su aire. */
+    espaciado(doc, 'PLATAFORMA DE CONSULTAS VEHICULARES', 18, 20, 0.55);
+
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
+    doc.setFontSize(8.5);
     doc.setTextColor.apply(doc, C_WHITE);
-    doc.text(fecha, pageW - 18, 13, { align: 'right' });
+    doc.text(fecha, pageW - 18, 14, { align: 'right' });
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7);
+    doc.setFontSize(6.6);
     doc.setTextColor.apply(doc, C_SUBHEAD);
-    doc.text('FECHA DE EMISIÓN', pageW - 18, 18, { align: 'right' });
+    espaciado(doc, 'FECHA DE EMISIÓN', pageW - 18, 20, 0.55, 'right');
   }
 
+  /* Helvetica en jsPDF no tiene interletraje, así que el rótulo se dibuja
+     letra a letra. Es lo que da el aire de membrete a las mayúsculas
+     pequeñas; apretadas parecen una etiqueta de sistema. */
+  function espaciado(doc, texto, x, y, sep, align) {
+    var letras = String(texto).split('');
+    var ancho = letras.reduce(function (t, c) { return t + doc.getTextWidth(c) + sep; }, 0) - sep;
+    var cx = align === 'right' ? x - ancho : x;
+    letras.forEach(function (c) {
+      doc.text(c, cx, y);
+      cx += doc.getTextWidth(c) + sep;
+    });
+  }
+
+  /* Pie de tres zonas: la procedencia a la izquierda, el dominio al centro
+     y la paginación a la derecha (la estampa `sellarPaginas` al cerrar).
+     Una sola frase corrida ocupaba el ancho entero y dejaba el pie sin
+     donde numerar. */
   function drawBottomBand(doc, pageW, pageH, bottomBandTop) {
     doc.setFillColor.apply(doc, C_ACCENT);
-    doc.rect(0, bottomBandTop - 1, pageW, 1, 'F');
+    doc.rect(0, bottomBandTop - 1.2, pageW, 1.2, 'F');
     doc.setFillColor.apply(doc, C_PRIMARY);
     doc.rect(0, bottomBandTop, pageW, pageH - bottomBandTop, 'F');
+
+    var baseY = bottomBandTop + 7.5;
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6.8);
+    doc.setFontSize(6.4);
     doc.setTextColor.apply(doc, C_SUBHEAD);
-    doc.text('Documento generado por Filtro Vehicular+ · Información extraída de fuentes oficiales.', 18, bottomBandTop + 7.5);
+    doc.text('Información extraída de fuentes oficiales', 18, baseY);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(6.4);
+    doc.setTextColor.apply(doc, C_WHITE);
+    doc.text('filtrovehicularperu.com', pageW / 2, baseY, { align: 'center' });
   }
 
   /* El pie no puede numerar mientras se dibuja: cuando se pinta la página 1
@@ -170,16 +197,16 @@
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.setTextColor.apply(doc, C_TEXT);
-    doc.text(cleanText(consultaNombre).toUpperCase(), M, 35);
+    doc.text(cleanText(consultaNombre).toUpperCase(), M, 39);
     if (valor) {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
       doc.setTextColor.apply(doc, C_KEY);
-      doc.text('Dato consultado: ' + valor, M, 40.5);
+      doc.text('Dato consultado: ' + valor, M, 44.5);
     }
     doc.setDrawColor.apply(doc, C_BORDER);
     doc.setLineWidth(0.3);
-    doc.line(M, 44, pageW - M, 44);
+    doc.line(M, 48, pageW - M, 48);
 
     // ── PRECARGA DE IMÁGENES (proporción real) ────────────────
     var imgInfos = (photos || []).map(function (ph) { return getImgDims(doc, ph); });
@@ -190,7 +217,7 @@
     //    posible — igual que VeriNexo) ──────────────────────────────
     var bioMaxH = 34, bioTitleH = 7, bioLabelH = 5;
     var bioBlockH = imgInfos.length > 0 ? (bioTitleH + bioMaxH + bioLabelH + 8) : 0;
-    var tableTop = 51;   // debajo de la regla que cierra el título
+    var tableTop = 55;   // debajo de la regla que cierra el título
     var tableBottom = bottomBandTop - 6 - bioBlockH;
 
     // ── FILAS: aplanar secciones a una tabla continua (secciones = fila
@@ -266,7 +293,7 @@
       doc.autoTable({
         startY: tableTop,
         body: body,
-        margin: { left: M, right: M, top: 26, bottom: 16 },
+        margin: { left: M, right: M, top: 34, bottom: 18 },
         tableLineWidth: 0,
         didDrawPage: function () { drawTopBand(doc, pageW, fecha); drawBottomBand(doc, pageW, pageH, bottomBandTop); },
         bodyStyles: {
@@ -286,8 +313,20 @@
 
     // ── IMÁGENES BIOMÉTRICAS (proporción real, alineadas por la base) ─
     if (imgInfos.length > 0) {
+      /* Si el bloque no cabe bajo la tabla, se abre página. Antes se
+         forzaba hacia arriba con un `Math.min` contra el borde inferior:
+         cuando la tabla llegaba baja —una ficha de RENIEC completa— el
+         título y las fotos se dibujaban ENCIMA de las últimas filas. Un
+         tope no hace sitio, solo tapa. */
       var lastY = (doc.lastAutoTable && doc.lastAutoTable.finalY) || tableTop;
-      var titleY = Math.min(lastY + 12, bottomBandTop - 6 - bioBlockH + bioTitleH);
+      var titleY = lastY + 12;
+      var altoBloque = bioTitleH + bioMaxH + bioLabelH;
+      if (titleY + altoBloque > bottomBandTop - 6) {
+        doc.addPage();
+        drawTopBand(doc, pageW, fecha);
+        drawBottomBand(doc, pageW, pageH, bottomBandTop);
+        titleY = 34;
+      }
 
       doc.setFillColor.apply(doc, C_ACCENT);
       doc.rect(M, titleY - 3, 1.2, 4, 'F');
