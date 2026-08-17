@@ -297,10 +297,47 @@
     var dataHtml = [];
     if (p.titulo) dataHtml.push('<div class="cr-tit">' + escapeHtml(cleanTitle(p.titulo)) + '</div>');
 
+    /* El bot corta un mismo registro en dos bloques cuando mete una línea
+       en blanco por medio. En revisiones técnicas cada certificado llega
+       así: primero INDX/ESTADO/CERTIFICADO/vigencias y debajo su
+       EMPRESA/DIRECCIÓN/SERVICIO/OBS. Sin unirlos, las empresas se
+       agrupaban por su cuenta y se perdía de quién era cada certificado.
+
+       Se unen solo cuando el corte es evidente: dos bloques sin ningún
+       campo en común cuyo par se REPITE más adelante (o más atrás, para el
+       último). Ese patrón A,B,A,B… es el de un registro partido, no el de
+       dos secciones distintas, así que sirva para 1 certificado o para 100. */
+    function camposDe(k) { return k ? k.split('|') : []; }
+    function sinCamposComunes(a, b) {
+      var ca = camposDe(a), cb = camposDe(b);
+      if (!ca.length || !cb.length) return false;
+      return !ca.some(function (c) { return cb.indexOf(c) !== -1; });
+    }
+    var secsCrudas = p.secciones || [];
+    var clavesCrudas = secsCrudas.map(function (s) { return fieldSetKey(s.campos); });
+    var secsUnidas = [];
+    for (var si = 0; si < secsCrudas.length; si++) {
+      var parteA = clavesCrudas[si], parteB = clavesCrudas[si + 1];
+      var esPar = sinCamposComunes(parteA, parteB);
+      var patronSeRepite = esPar && (
+        (clavesCrudas[si + 2] === parteA && clavesCrudas[si + 3] === parteB) ||
+        (si >= 2 && clavesCrudas[si - 2] === parteA && clavesCrudas[si - 1] === parteB)
+      );
+      if (patronSeRepite) {
+        secsUnidas.push({
+          titulo: secsCrudas[si].titulo || secsCrudas[si + 1].titulo,
+          campos: (secsCrudas[si].campos || []).concat(secsCrudas[si + 1].campos || [])
+        });
+        si++;   // el segundo bloque ya está dentro del registro
+        continue;
+      }
+      secsUnidas.push(secsCrudas[si]);
+    }
+
     // Dedup secciones idénticas
     var seenSec = Object.create(null);
     var uniqSec = [];
-    (p.secciones || []).forEach(function (s) {
+    secsUnidas.forEach(function (s) {
       var sig = (s.campos || []).map(function (c) { return (c.campo || '_') + '::' + (c.valor || ''); }).join('Â§Â§');
       if (!sig || seenSec[sig]) return;
       seenSec[sig] = true;
