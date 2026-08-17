@@ -356,6 +356,14 @@
       revokeActiveBlobUrls();
       var p = H.recortarAlResumen(resp.parsed || {}, currentConsulta && currentConsulta.comando);
       var pdfs    = H.pdfsDe(p);
+      /* Traza de adjuntos: cuando el bot manda un documento y la ficha sale
+         sin él, esta línea dice si llegó y cómo venía tipado — que es
+         justo lo que distingue «el bot no lo mandó» de «no lo reconocimos». */
+      if ((p.medios || []).length) {
+        console.log('[' + prefix + '] adjuntos:', p.medios.map(function (m) {
+          return { tipo: m.tipo, mime: m.mimeType, archivo: m.filename, bytes: m.size, conBase64: !!m.base64 };
+        }), 'reconocidos como PDF:', pdfs.length);
+      }
       var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
       var botones = p.botones || [];
       var _metaRe = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;
