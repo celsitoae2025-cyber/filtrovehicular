@@ -835,42 +835,8 @@
     return '<div class="cr-pdf-layout">' + parts.join('') + '</div>';
   }
 
-  // Silueta decorativa de documento (SVG inline)
-  var DOC_ILLUST =
-    '<svg class="cr-btn-illust-svg" viewBox="0 0 180 250" fill="none">' +
-      '<rect x="6" y="6" width="160" height="230" rx="4" fill="#f5f5f5"/>' +
-      '<rect x="2" y="2" width="160" height="230" rx="4" fill="#fff" stroke="#f5f5f5" stroke-width=".8"/>' +
-      '<rect x="2" y="2" width="160" height="38" rx="4" fill="#f5f5f5"/>' +
-      '<line x1="2" y1="40" x2="162" y2="40" stroke="#f5f5f5" stroke-width=".6"/>' +
-      '<path d="M74 10h16v18c0 4-8 8-8 8s-8-4-8-8V10z" fill="#f5f5f5"/>' +
-      '<rect x="44" y="48" width="76" height="4" rx="2" fill="#f5f5f5"/>' +
-      '<rect x="54" y="56" width="56" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<line x1="18" y1="68" x2="146" y2="68" stroke="#f5f5f5" stroke-width=".5"/>' +
-      '<rect x="18" y="78" width="34" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="66" y="78" width="78" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="18" y="90" width="42" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="66" y="90" width="60" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="18" y="102" width="28" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="66" y="102" width="70" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="18" y="114" width="38" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="66" y="114" width="52" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<line x1="18" y1="128" x2="146" y2="128" stroke="#f5f5f5" stroke-width=".5"/>' +
-      '<rect x="18" y="138" width="36" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="66" y="138" width="66" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="18" y="150" width="44" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="66" y="150" width="56" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="18" y="162" width="32" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="66" y="162" width="78" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<line x1="18" y1="176" x2="146" y2="176" stroke="#f5f5f5" stroke-width=".5"/>' +
-      '<rect x="18" y="186" width="126" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="18" y="194" width="110" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<rect x="18" y="202" width="90" height="3" rx="1.5" fill="#f5f5f5"/>' +
-      '<circle cx="126" cy="218" r="12" fill="none" stroke="#f5f5f5" stroke-width=".7" stroke-dasharray="2 1.5"/>' +
-      '<line x1="18" y1="222" x2="76" y2="222" stroke="#f5f5f5" stroke-dasharray="4 2" stroke-width=".7"/>' +
-    '</svg>';
-
-  // Renderiza una lista de botones inline enviados por el bot.
-  // Datos completos van dentro de un colapsable "Ver detalles".
+  // Renderiza una lista de botones inline enviados por el bot: la ficha
+  // completa arriba y debajo una opción por registro, en rejilla de tres.
   // Incluye un área de resultado donde el PDF aparecerá sin reemplazar los botones.
   function renderButtonList(p, botones) {
     var parts = [];
@@ -948,13 +914,10 @@
     parts.push('</div></div>'); // cierra list + section
     parts.push('</div>'); // cierra cr-btn-main
 
-    // Ilustración decorativa (columna derecha)
-    parts.push(
-      '<div class="cr-btn-illust">' +
-        DOC_ILLUST +
-        '<span class="cr-btn-illust-label">Selecciona una opción<br>para ver el documento</span>' +
-      '</div>'
-    );
+    /* Aqui iba una silueta de documento con «Selecciona una opción para ver
+       el documento»: media pantalla de adorno que ademas estrechaba la
+       tabla hasta cortarla. El texto tampoco hacia falta —«Elige una
+       opción:» ya lo dice, encima de los botones. */
 
     parts.push('</div>'); // cierra cr-btn-grid
     return '<div class="cr-btn-layout">' + parts.join('') + '</div>';

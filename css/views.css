@@ -3027,6 +3027,9 @@ body.cr-lightbox-open { overflow: hidden; }
    `.cr-btn-details`, y su título se esconde porque renderButtonList ya
    imprime uno arriba. */
 .cr-btn-details { max-width: 640px; }
+/* Sin la columna de la ilustración, la ficha ya no tiene por qué caber en
+   640px: la tabla de partidas se cortaba a media columna. */
+.cr-btn-grid .cr-btn-details { max-width: none; }
 .cr-btn-details > .cr-tit { display: none; }
 .cr-btn-details-toggle {
   display: inline-flex;
@@ -3137,24 +3140,22 @@ body.cr-lightbox-open { overflow: hidden; }
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
-/* Tres por fila: una columna de botones a lo ancho del panel dejaba
-   fichas de 8 partidas ocupando toda la pantalla para mostrar un código y
-   una ciudad. `auto-fill` con mínimo de 190px baja a 2 y a 1 sola cuando
-   no caben, sin más consultas de medios. */
+/* Tres por fila: una columna de botones a lo ancho del panel gastaba una
+   pantalla entera en mostrar un código y una ciudad. */
 .cr-btn-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
 }
 .cr-btn-option {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
-  padding: 9px 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 9px;
+  padding: 11px 14px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
   background: #ffffff;
   color: var(--c-primary);
   font-family: inherit;
@@ -3174,9 +3175,13 @@ body.cr-lightbox-open { overflow: hidden; }
   gap: 3px;
   min-width: 0;
 }
+/* Una línea por opción: «60500130 - QUILLABAMBA» partía en dos y esa
+   tarjeta crecía más que sus vecinas, rompiendo la fila. */
 .cr-btn-option-text {
-  word-break: break-word;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .cr-btn-option-tip {
   font-size: var(--fs-xs);
@@ -3213,10 +3218,11 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-btn-option.is-selected .cr-btn-option-arrow { color: var(--c-primary); }
 
 /* Grid: contenido principal + ilustración */
+/* Una sola columna: la segunda existía para la silueta decorativa, que ya
+   no se dibuja (ver renderButtonList). */
 .cr-btn-grid {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 40px;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
 .cr-btn-main {
