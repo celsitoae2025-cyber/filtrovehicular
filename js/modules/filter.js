@@ -339,8 +339,9 @@
       // PDF debajo y su «Descargar» sube a la cabecera junto a «Nueva consulta».
       html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
         renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl');
-      // Con un documento se abre el visor; con varios se listan y elige él.
-      abrirVisor = pdfs.length === 1;
+      /* Con ficha delante no se tapa al cliente con el visor: lo abre él.
+         Salvo que el catálogo lo pida para esta consulta (`abrir_visor`). */
+      abrirVisor = pdfs.length === 1 && !!(currentConsulta && (currentConsulta.respuesta_formato || {}).abrir_visor);
     } else if (pdfs.length > 0) {
       // Solo vino un PDF, sin datos: el documento ES el resultado, así que se
       // enseña en el visor en vez de dejarlo tras un clic en la miniatura.

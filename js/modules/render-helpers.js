@@ -1017,6 +1017,12 @@
       // El data-blob/data-fn es lo que lee la delegación global para abrir
       // el visor a pantalla completa.
       parts.push('<div class="cr-doccard-preview-wrap">' +
+        // La miniatura se pulsa, pero eso hay que decirlo: sin el botón el
+        // cliente se queda mirando una hoja pequeña sin saber que se abre.
+        '<div class="cr-doccard-barra">' +
+          '<button type="button" class="cr-docitem-ver cr-doccard-view" ' +
+            'data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '">Visualizar documento</button>' +
+        '</div>' +
         '<div class="cr-pdf-canvas-wrap cr-doccard-view" id="' + cid + '" ' +
         'data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '" ' +
         'title="Abrir el documento a pantalla completa">' +

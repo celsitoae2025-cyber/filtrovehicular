@@ -1472,6 +1472,12 @@
   padding: 0 20px 20px;
   display: flex; flex-direction: column; gap: 20px;
 }
+/* Botón sobre la previsualización, centrado con ella. */
+.cr-doccard-barra {
+  display: flex; justify-content: center;
+  max-width: 620px; margin: 0 auto 10px;
+}
+
 /* Varios documentos: lista con sus acciones, no cuatro hojas apiladas. */
 .cr-doclist { display: flex; flex-direction: column; gap: 8px; }
 .cr-docitem {
