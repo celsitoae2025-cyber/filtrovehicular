@@ -2600,7 +2600,10 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 .cr-sect-body { padding-left: 0; }
 .cr-row {
   display: grid;
-  grid-template-columns: minmax(140px, 260px) 1fr;
+  /* Ancho fijo, no un rango: con minmax(140px, 260px) la columna se ajusta
+     al contenido de CADA fila y los valores no arrancaban todos del mismo
+     punto. */
+  grid-template-columns: 260px minmax(0, 1fr);
   gap: 10px;
   padding: 6px 0;
   font-size: var(--fs-sm);
@@ -3988,8 +3991,13 @@ body.cr-lightbox-open { overflow: hidden; }
   .cr-sect-body:not(:has(> .cr-record)),
   .cr-record {
     display: grid;
-    grid-template-columns: max-content minmax(0, 1fr);
-    column-gap: 28px;
+    /* Columna FIJA, no `max-content`: con max-content cada sección medía
+       su propia etiqueta más larga y los valores de «NACIMIENTO» caían más
+       a la izquierda que los de «INFORMACION GENERAL». El mínimo en
+       max-content es la válvula: si una etiqueta no cabe en el 52%, la
+       columna crece en vez de recortarla. */
+    grid-template-columns: minmax(max-content, 52%) minmax(0, 1fr);
+    column-gap: 16px;
   }
   .cr-sect-body:not(:has(> .cr-record)) > .cr-row,
   .cr-record > .cr-row { display: contents; }
