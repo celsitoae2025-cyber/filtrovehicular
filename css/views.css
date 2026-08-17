@@ -2412,21 +2412,24 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   color: var(--c-muted);
   margin: 0;
 }
+/* El botón manda: es la única salida que tiene el cliente mientras se
+   espera, y en gris sobre blanco no se veía. Verde institucional, ancho y
+   con letra oscura — se distingue del texto sin gritar. */
 .cr-espera-btn {
   font: inherit;
   font-size: 16px;
-  padding: 10px 18px;
-  border: 1px solid var(--c-border);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--c-text);
+  font-weight: 700;
+  letter-spacing: .3px;
+  padding: 14px 30px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 999px;
+  background: #8fc72e;
+  color: #141d1c;
   cursor: pointer;
+  transition: background var(--t-fast);
 }
-.cr-espera-btn:hover {
-  background: #141d1c;
-  border-color: #141d1c;
-  color: #ffffff;
-}
+.cr-espera-btn:hover { background: #7fb426; }
 
 /* â"€â"€ Mensaje de mantenimiento / error técnico â"€â"€ */
 .cr-mantenimiento {

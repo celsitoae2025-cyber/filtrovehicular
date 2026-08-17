@@ -172,7 +172,6 @@
      soltarle al cliente que su dato no existe. Si la espera se alarga,
      aparece la opción de cancelar sin costo y volver al inicio. */
   var AVISO_ESPERA_MS    = 30000;    // cuándo se ofrece cancelar
-  var ESPERA_TOTAL_MS    = 240000;   // techo de la espera, reintentos incluidos
   var PAUSA_REINTENTO_MS = 6000;
 
   var controllerActivo = null;
@@ -196,7 +195,8 @@
     wrap.className = "cr-espera";
     wrap.innerHTML =
       '<p class="cr-espera-texto">El proveedor está tardando más de lo normal. ' +
-      'Seguimos esperando su respuesta; si prefieres, puedes cancelar sin costo.</p>' +
+      'Seguimos esperando su respuesta todo lo que haga falta; si prefieres no esperar, ' +
+      'cancela sin costo.</p>' +
       '<button type="button" class="cr-espera-btn">Cancelar y volver al inicio</button>';
     wrap.querySelector(".cr-espera-btn").addEventListener("click", cancelarConsulta);
     caja.appendChild(wrap);
@@ -610,11 +610,13 @@
     var optsBase = {};
     if (opts) { for (var k in opts) { if (Object.prototype.hasOwnProperty.call(opts, k)) optsBase[k] = opts[k]; } }
 
-    /* La espera puede dar varias vueltas: mientras el proveedor solo acuse
-       recibo, se le vuelve a pedir hasta agotar ESPERA_TOTAL_MS. Cada vuelta
-       lleva su propia reserva porque la anterior ya la liquidó el servidor al
-       marcarla sin resultados; el crédito vuelve a la cuenta en cada una. */
-    var limite = Date.now() + ESPERA_TOTAL_MS;
+    /* La espera da las vueltas que hagan falta: mientras el proveedor solo
+       acuse recibo, se le vuelve a pedir. No hay reloj que la corte —quien
+       decide dejarlo es el cliente, con el botón de cancelar—: cambiarle la
+       pantalla por un aviso que él no pidió es echarlo de su propia consulta.
+
+       Cada vuelta lleva su propia reserva porque la anterior ya la liquidó el
+       servidor al marcarla sin resultados; el crédito vuelve en cada una. */
     iniciarEspera();
     try {
       while (true) {
@@ -651,9 +653,9 @@
           var RH = Consultia.RenderHelpers;
           var enProceso = RH && RH.esRespuestaEnProceso && RH.esRespuestaEnProceso(resp.parsed || {});
 
-          // Sigue procesando y aún queda espera: se vuelve a pedir sin molestar
-          // al cliente, que sigue viendo «Consultando…».
-          if (enProceso && !cancelada && (Date.now() + PAUSA_REINTENTO_MS) < limite) {
+          // Sigue procesando: se vuelve a pedir sin molestar al cliente, que
+          // sigue viendo «Consultando…» hasta que llegue o hasta que cancele.
+          if (enProceso && !cancelada) {
             await pausa(PAUSA_REINTENTO_MS);
             continue;
           }
