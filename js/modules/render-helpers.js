@@ -295,6 +295,7 @@
     var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
     var toTitleCase = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.toTitleCase : function (s) { return s; };
     var dataHtml = [];
+    var camposVistos = Object.create(null);   // campo::valor ya impresos
     if (p.titulo) dataHtml.push('<div class="cr-tit">' + escapeHtml(cleanTitle(p.titulo)) + '</div>');
 
     /* El bot corta un mismo registro en dos bloques cuando mete una línea
@@ -468,6 +469,7 @@
       var campos = s.campos || [];
       if (!campos.length) return;
       var recs = splitIntoRecords(campos);
+      var marca = dataHtml.length;   // por si la sección acaba vacía
 
       dataHtml.push('<div class="cr-sect">');
       if (!isFirst) {
@@ -517,12 +519,30 @@
         }
         dataHtml.push('</div>');
       } else {
+        /* Un solo registro: aquí sí se puede descartar lo ya dicho. El bot
+           suele mandar un resumen y debajo el detalle, y la placa, el
+           resultado o la empresa salían dos y tres veces en la misma ficha.
+           En el camino de varios registros no se toca: ahí un valor
+           repetido pertenece a otro registro y borrarlo sería perder datos. */
         recs.forEach(function (rec) {
-          rec.forEach(function (c) { dataHtml.push(renderCampo(c)); });
+          rec.forEach(function (c) {
+            var firma = (c.campo || '') + '::' + (c.valor || '');
+            if (c.campo && camposVistos[firma]) return;
+            if (c.campo) camposVistos[firma] = true;
+            dataHtml.push(renderCampo(c));
+          });
         });
       }
       if (!isFirst) dataHtml.push('</div>');
       dataHtml.push('</div>');
+
+      /* Sección que se quedó sin una sola fila —todo lo suyo ya estaba
+         dicho, como el bloque que solo repite la placa— se retira entera:
+         si no, deja un hueco y una línea divisoria de nada. */
+      var pintoAlgo = dataHtml.slice(marca).some(function (h) {
+        return h && h.indexOf('cr-row') !== -1;
+      });
+      if (!pintoAlgo) dataHtml.length = marca;
     }
     return dataHtml.join('');
   }
