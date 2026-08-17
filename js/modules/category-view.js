@@ -398,10 +398,11 @@
         // nunca se esconden los datos detrás del visor de PDF.
         html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
           renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
+        // Venga solo o acompañando a la ficha, si hay documento se enseña.
+        abrirVisor = pdfs.length > 0;
       } else if (pdfs.length > 0) {
-        // Solo vino un PDF, sin datos: el documento ES el resultado, así que
-        // se enseña en el visor (abajo, tras pintar) en vez de esperar a que
-        // el cliente descubra que la previsualización se pulsa.
+        // Solo el documento: se enseña en el visor (abajo, tras pintar) en vez
+        // de esperar a que el cliente descubra que la miniatura se pulsa.
         html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, prefix);
         abrirVisor = true;
       } else {

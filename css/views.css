@@ -1473,7 +1473,11 @@
   display: flex; flex-direction: column; gap: 20px;
 }
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap {
-  max-width: none;
+  /* Una hoja A4 estirada a lo ancho de un panel de 1500px es un mural: la
+     previsualización es la referencia de lo que se descargó, el documento
+     se lee en el visor. */
+  max-width: 620px;
+  margin: 0 auto;
   width: 100%;
   cursor: pointer;   /* abre el visor a pantalla completa */
   /* Una hoja debajo de otra: el documento se lee entero sin flechas. */

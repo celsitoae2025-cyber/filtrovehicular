@@ -335,6 +335,8 @@
       // PDF debajo y su «Descargar» sube a la cabecera junto a «Nueva consulta».
       html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
         renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl');
+      // Venga solo o acompañando a la ficha, si hay documento se enseña.
+      abrirVisor = pdfs.length > 0;
     } else if (pdfs.length > 0) {
       // Solo vino un PDF, sin datos: el documento ES el resultado, así que se
       // enseña en el visor en vez de dejarlo tras un clic en la miniatura.
