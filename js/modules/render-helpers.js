@@ -950,6 +950,161 @@
     return '<div class="cr-btn-layout">' + parts.join('') + '</div>';
   }
 
+  /* ============================================================
+     OPCIONES DEL BOT — el mismo comportamiento en TODA la plataforma
+
+     Cablea la lista que devuelve `renderButtonList`: al pulsar una opción
+     se pide el documento al bot con un aviso a pantalla completa, y la
+     respuesta se pinta en `.cr-btn-result-area`. Si viene un PDF, se abre
+     en el visor a pantalla completa y queda la previsualización debajo.
+
+     Vive AQUI y no en cada modulo a proposito: estuvo escrito dos veces
+     —las once vistas de categoria y «Consulta Vehicular»— y las copias se
+     separaron. La de `filter.js` se quedó sin visor, sin aviso de espera,
+     con el colapsable que ya se había quitado y apuntando a una
+     ilustración que ya no se dibuja.
+
+     Lo que cambia entre vistas se recibe en `opts`:
+       consulta()        la consulta activa (cada modulo lleva la suya)
+       status()          el distintivo de estado del panel
+       prefix            prefijo de los id de previsualización
+       alNuevaConsulta() volver al formulario (botón del visor)
+       alResultado()     tras pintar un PDF: sube «Descargar» a la cabecera
+       alFallback(resp)  respuesta sin `.cr-btn-result-area` en pantalla
+  ============================================================ */
+  function wireOpcionesDelBot(container, opts) {
+    opts = opts || {};
+    var btns = container.querySelectorAll('.cr-btn-option');
+    var resultArea = container.querySelector('.cr-btn-result-area');
+    var prefix = opts.prefix || 'rh';
+    var llamar = function (fn, arg) { if (typeof fn === 'function') return fn(arg); };
+
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', async function () {
+        var consulta = llamar(opts.consulta);
+        if (!consulta) return;
+        var msgId = parseInt(btn.dataset.msgid, 10);
+        var data  = btn.dataset.callback;
+        if (!msgId || !data) return;
+
+        // Sin área de resultado en pantalla, decide el módulo qué hacer.
+        if (!resultArea) {
+          var guardado = container.innerHTML;
+          btns.forEach(function (b) { b.disabled = true; });
+          btn.classList.add('is-loading');
+          try {
+            llamar(opts.alFallback, await Consultia.ConsultaRunner.ejecutarCallback(consulta, msgId, data));
+          } catch (e) {
+            console.error('Error en callback:', e);
+            if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo procesar', message: (e && e.message) || 'Intenta de nuevo.' });
+            container.innerHTML = guardado;
+            wireOpcionesDelBot(container, opts);
+          }
+          return;
+        }
+
+        btns.forEach(function (b) { b.disabled = true; b.classList.remove('is-selected'); });
+        btn.classList.add('is-selected', 'is-loading');
+        resultArea.hidden = false;
+        resultArea.innerHTML = '';
+
+        /* Pedirle el documento al proveedor puede tardar. El aviso bloquea
+           la página, así el cliente no pulsa otra opción creyendo que no
+           pasó nada. */
+        var cerrarEspera = openDownloadOverlay({
+          titulo: 'Generando el documento',
+          detalle: 'Estamos pidiendo el documento al proveedor. Puede tardar unos segundos.'
+        });
+
+        var status = llamar(opts.status);
+        if (status) {
+          status.classList.remove('status-empty', 'status-ok');
+          status.classList.add('status-loading');
+          status.innerHTML = '<span class="status-dot"></span> Consultando';
+        }
+
+        try {
+          var resp = await Consultia.ConsultaRunner.ejecutarCallback(consulta, msgId, data);
+          cerrarEspera();
+          var rp = resp.parsed || {};
+          var pdfs = (rp.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
+          var hasDataR = (rp.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
+
+          if (esErrorTecnicoRespuesta(rp, resp)) {
+            resultArea.innerHTML = htmlMantenimiento();
+          } else if (pdfs.length > 0) {
+            // La barra de descarga va delante para que el módulo la suba a
+            // la cabecera; el CSS esconde la lista al detectar el visor.
+            resultArea.innerHTML = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, prefix);
+            llamar(opts.alResultado);
+            var vistaPrevia = resultArea.querySelector('.cr-doccard-view[data-blob]');
+            if (vistaPrevia) {
+              openPdfModal(
+                vistaPrevia.getAttribute('data-blob'),
+                vistaPrevia.getAttribute('data-fn') || (pdfs[0].filename || 'documento.pdf'),
+                { alNuevaConsulta: opts.alNuevaConsulta }
+              );
+            }
+          } else if (hasDataR && esElMismoListado(container, renderDataRows(rp))) {
+            /* El proveedor devolvió otra vez el listado en vez del
+               documento: repintarlo dejaba la misma tabla dos veces y
+               ninguna previsualización. */
+            resultArea.innerHTML =
+              '<div class="cr-loading"><div class="cr-loading-text">El proveedor devolvió el listado, no el documento.</div>' +
+              '<div class="cr-loading-hint">Vuelve a pulsar la opción en unos segundos.</div></div>';
+          } else if (hasDataR) {
+            resultArea.innerHTML =
+              '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding:16px;">' +
+                renderDataRows(rp) +
+              '</div></div>';
+          } else {
+            var rawText = (rp.raw || '').trim().replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
+            if (rawText.length > 5 && !esErrorTecnico(rawText)) {
+              resultArea.innerHTML = '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding:16px;">' +
+                '<div style="white-space:pre-wrap;font-family:monospace;font-size:var(--cr-fs);line-height:1.5;">' + escapeHtml(rawText) + '</div></div></div>';
+            } else if (esErrorTecnico(rawText)) {
+              resultArea.innerHTML = htmlMantenimiento();
+            } else {
+              resultArea.innerHTML = '<div class="cr-loading"><div class="cr-loading-text">No se encontraron datos para esta opción.</div></div>';
+            }
+          }
+
+          if (status) {
+            status.classList.remove('status-empty', 'status-loading');
+            status.classList.add('status-ok');
+            status.innerHTML = '<span class="status-dot"></span> Completado';
+          }
+          if (resp.costo_deducido > 0 && Consultia.toast) {
+            Consultia.toast({ type: 'info', title: 'Cobro exitoso', message: 'Se han descontado ' + resp.costo_deducido + ' créditos.', duration: 4000 });
+          }
+          btns.forEach(function (b) { b.disabled = false; });
+          btn.classList.remove('is-loading');
+        } catch (e) {
+          cerrarEspera();
+          console.error('Error en callback:', e);
+          if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo procesar', message: (e && e.message) || 'Intenta de nuevo.' });
+          resultArea.innerHTML = '';
+          resultArea.hidden = true;
+          btns.forEach(function (b) { b.disabled = false; });
+          btn.classList.remove('is-loading', 'is-selected');
+        }
+      });
+    });
+  }
+
+  /* ¿La respuesta del callback es la misma ficha que ya está arriba? Se
+     comparan los textos, no el HTML: el navegador normaliza comillas y
+     orden de atributos al leer innerHTML, y una diferencia así daría un
+     falso negativo. */
+  function esElMismoListado(container, htmlNuevo) {
+    var ficha = container.querySelector('.cr-btn-details');
+    if (!ficha) return false;
+    var tmp = document.createElement('div');
+    tmp.innerHTML = htmlNuevo;
+    var norm = function (s) { return (s || '').replace(/\s+/g, ' ').trim(); };
+    return norm(tmp.textContent) === norm(ficha.textContent);
+  }
+
   // Devuelve el % numérico de un string tipo "85.7%" para poder ordenar.
   function pctNum(s) {
     var n = parseFloat(String(s || '').replace(/[^\d.]/g, ''));
@@ -1792,6 +1947,7 @@
     renderDocumentCard:      renderDocumentCard,
     renderPdfDlBar:          renderPdfDlBar,
     openPdfModal:            openPdfModal,
+    wireOpcionesDelBot:      wireOpcionesDelBot,
     columnaValor:            columnaValor,
     renderNmPersonas:        renderNmPersonas,
     renderNmTabla:           renderNmTabla,

@@ -278,123 +278,20 @@
 
   /* â”€â”€ Botones de respuesta â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   // Conecta los botones inline que el bot devuelve como opciones
+  /* Mismo cableado que las vistas de categoria: la implementacion vive en
+     render-helpers.js. Esta copia se habia quedado atras —sin visor a
+     pantalla completa, sin aviso de espera, con el colapsable «Ver
+     detalles» ya retirado y buscando una ilustracion que ya no se
+     dibuja—, que es justo lo que pasa cuando el mismo flujo se escribe
+     dos veces. */
   function wireResultButtons(container) {
-    var btns = container.querySelectorAll('.cr-btn-option');
-    var resultArea = container.querySelector('.cr-btn-result-area');
-
-    // Toggles "Ver detalles" / "Cerrar detalles" se manejan por delegación global (render-helpers.js)
-
-    // Ilustración decorativa
-    var illust = container.querySelector('.cr-btn-illust');
-
-    btns.forEach(function (btn) {
-      btn.addEventListener('click', async function () {
-        if (!currentConsulta) return;
-        var msgId = parseInt(btn.dataset.msgid, 10);
-        var data  = btn.dataset.callback;
-        if (!msgId || !data) return;
-
-        // â”€â”€ Modo nuevo: renderizar en el área sin reemplazar botones â”€â”€
-        if (resultArea) {
-          if (illust) illust.hidden = true;
-          btns.forEach(function (b) { b.disabled = true; b.classList.remove('is-selected'); });
-          btn.classList.add('is-selected', 'is-loading');
-
-          resultArea.hidden = false;
-          resultArea.innerHTML =
-            '<div class="cr-loading">' +
-              '<div class="cr-spinner"></div>' +
-              '<div class="cr-loading-text">Consultando…</div>' +
-              '<div class="cr-loading-hint">Generando el documento, puede demorar unos segundos.</div>' +
-            '</div>';
-          resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-          var status = $('filterResultStatus');
-          if (status) {
-            status.classList.remove('status-empty', 'status-ok');
-            status.classList.add('status-loading');
-            status.innerHTML = '<span class="status-dot"></span> Consultando';
-          }
-
-          try {
-            var resp = await Consultia.ConsultaRunner.ejecutarCallback(currentConsulta, msgId, data);
-            var rp = resp.parsed || {};
-            var RH = Consultia.RenderHelpers;
-            var pdfs = (rp.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
-            var hasDataR = (rp.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
-
-            if (RH.esErrorTecnicoRespuesta(rp, resp)) {
-              resultArea.innerHTML = RH.htmlMantenimiento();
-            } else if (pdfs.length > 0) {
-              resultArea.innerHTML = RH.renderDocumentCard(pdfs, 'filter');
-            } else if (hasDataR) {
-              var duid = 'cr-cb-det-' + Date.now();
-              resultArea.innerHTML =
-                '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding:16px;">' +
-                  '<div class="cr-btn-details">' +
-                    '<button type="button" class="cr-btn-details-toggle" aria-expanded="false" data-target="' + duid + '">' +
-                      '<svg class="cr-btn-details-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
-                      '<span>Ver detalles de la consulta</span>' +
-                    '</button>' +
-                    '<div class="cr-btn-details-body" id="' + duid + '" hidden>' +
-                      RH.renderDataRows(rp) +
-                      '<button type="button" class="cr-btn-details-close" data-target="' + duid + '">' +
-                        '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>' +
-                        '<span>Cerrar detalles</span>' +
-                      '</button>' +
-                    '</div>' +
-                  '</div>' +
-                '</div></div>';
-            } else {
-              var rawText = (rp.raw || '').trim().replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
-              var _rawH2 = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
-              rawText = rawText.split(/\r?\n/).filter(function (l) { var t = l.replace(/\[\s*[^\]]*\]\s*/g, '').trim(); return t && !_rawH2.test(t); }).join('\n').trim();
-              if (rawText.length > 5 && !RH.esErrorTecnico(rawText)) {
-                resultArea.innerHTML = '<div style="white-space:pre-wrap;font-family:monospace;font-size: var(--fs-sm);line-height:1.5;padding:16px;">' + RH.escapeHtml(rawText) + '</div>';
-              } else {
-                resultArea.innerHTML = '<div class="cr-loading"><div class="cr-loading-text">No se encontraron datos.</div></div>';
-              }
-            }
-
-            if (status) {
-              status.classList.remove('status-empty', 'status-loading');
-              status.classList.add('status-ok');
-              status.innerHTML = '<span class="status-dot"></span> Completado';
-            }
-            if (resp.costo_deducido > 0 && Consultia.toast) {
-              Consultia.toast({ type: 'info', title: 'Cobro exitoso', message: 'Se han descontado ' + resp.costo_deducido + ' créditos.', duration: 4000 });
-            }
-
-            btns.forEach(function (b) { b.disabled = false; });
-            btn.classList.remove('is-loading');
-            resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          } catch (e) {
-            console.error('[filter] Error en callback:', e);
-            if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo procesar', message: (e && e.message) || 'Intenta de nuevo.' });
-            resultArea.innerHTML = '';
-            resultArea.hidden = true;
-            btns.forEach(function (b) { b.disabled = false; });
-            btn.classList.remove('is-loading', 'is-selected');
-          }
-          return;
-        }
-
-        // â”€â”€ Fallback: comportamiento original â”€â”€
-        var savedHtml = container.innerHTML;
-        btns.forEach(function (b) { b.disabled = true; });
-        btn.classList.add('is-loading');
-        mostrarCargando();
-
-        try {
-          var resp = await Consultia.ConsultaRunner.ejecutarCallback(currentConsulta, msgId, data);
-          renderResultado(resp);
-        } catch (e) {
-          console.error('[filter] Error en callback:', e);
-          if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo procesar', message: (e && e.message) || 'Intenta de nuevo.' });
-          var body = $('filter-result-body');
-          if (body) { body.innerHTML = savedHtml; wireResultButtons(body); }
-        }
-      });
+    H.wireOpcionesDelBot(container, {
+      consulta:        function () { return currentConsulta; },
+      status:          function () { return $('filterResultStatus'); },
+      prefix:          'fl',
+      alNuevaConsulta: volverAlFormulario,
+      alResultado:     function () { marcarConResultado(true); },
+      alFallback:      function (resp) { renderResultado(resp); }
     });
   }
 

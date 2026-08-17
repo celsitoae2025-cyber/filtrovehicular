@@ -635,154 +635,18 @@
       });
     }
 
-    /* ¿La respuesta del callback es la misma ficha que ya está arriba? Se
-       comparan los textos, no el HTML: el navegador normaliza comillas y
-       orden de atributos al leer innerHTML, y una diferencia así daría un
-       falso negativo. */
-    function esElMismoListado(container, htmlNuevo) {
-      var ficha = container.querySelector('.cr-btn-details');
-      if (!ficha) return false;
-      var tmp = document.createElement('div');
-      tmp.innerHTML = htmlNuevo;
-      var norm = function (s) { return (s || '').replace(/\s+/g, ' ').trim(); };
-      return norm(tmp.textContent) === norm(ficha.textContent);
-    }
-
+    /* Las opciones que devuelve el bot las cablea render-helpers.js: es
+       el mismo comportamiento en las once vistas de categoria y en
+       «Consulta Vehicular», y estuvo duplicado hasta que las dos copias
+       se separaron. Aqui solo va lo propio de esta vista. */
     function wireResultButtons(container) {
-      var btns = container.querySelectorAll('.cr-btn-option');
-      var resultArea = container.querySelector('.cr-btn-result-area');
-
-      // Toggles "Ver detalles" / "Cerrar detalles" se manejan por delegación global (render-helpers.js)
-
-      // Ilustración decorativa (se oculta al mostrar resultado)
-      var illust = container.querySelector('.cr-btn-illust');
-
-      btns.forEach(function (btn) {
-        btn.addEventListener('click', async function () {
-          if (!currentConsulta) return;
-          var msgId = parseInt(btn.dataset.msgid, 10);
-          var data = btn.dataset.callback;
-          if (!msgId || !data) return;
-
-          // â"€â"€ Modo nuevo: renderizar en el área de resultado sin reemplazar botones â"€â"€
-          if (resultArea) {
-            if (illust) illust.hidden = true;
-            btns.forEach(function (b) { b.disabled = true; b.classList.remove('is-selected'); });
-            btn.classList.add('is-selected', 'is-loading');
-
-            var RH = Consultia.RenderHelpers;
-            resultArea.hidden = false;
-            resultArea.innerHTML = '';
-            /* Pedirle el documento al proveedor puede tardar. Mismo aviso a
-               pantalla completa con contador que la descarga del listado por
-               nombres: bloquea la página, así el cliente no pulsa otra
-               partida creyendo que no pasó nada. */
-            var cerrarEspera = RH.openDownloadOverlay({
-              titulo: 'Generando el documento',
-              detalle: 'Estamos pidiendo el documento al proveedor. Puede tardar unos segundos.'
-            });
-
-            var status = $(statusId());
-            if (status) {
-              status.classList.remove('status-empty', 'status-ok');
-              status.classList.add('status-loading');
-              status.innerHTML = '<span class="status-dot"></span> Consultando';
-            }
-
-            try {
-              var resp = await Consultia.ConsultaRunner.ejecutarCallback(currentConsulta, msgId, data);
-              cerrarEspera();
-              var rp = resp.parsed || {};
-              var pdfs = (rp.medios || []).filter(function (m) { return m.tipo === 'pdf'; });
-              var hasDataR = (rp.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
-
-              if (RH.esErrorTecnicoRespuesta(rp, resp)) {
-                resultArea.innerHTML = RH.htmlMantenimiento();
-              } else if (pdfs.length > 0) {
-                // La barra de descarga va delante para que `marcarConResultado`
-                // la suba a la cabecera, igual que en cualquier otra consulta;
-                // el CSS esconde la lista de opciones al detectar el visor.
-                resultArea.innerHTML = RH.renderPdfDlBar(pdfs) + RH.renderDocumentCard(pdfs, prefix);
-                marcarConResultado(true);
-                /* El documento es lo que se vino a buscar: se abre solo en el
-                   visor a pantalla completa, con sus páginas, zoom e impresión.
-                   Al cerrarlo queda la previsualización en el panel —no la
-                   lista de partidas—, y un clic sobre ella lo reabre. */
-                var docAbrir = pdfs[0];
-                var vistaPrevia = resultArea.querySelector('.cr-doccard-view[data-blob]');
-                if (vistaPrevia) {
-                  RH.openPdfModal(
-                    vistaPrevia.getAttribute('data-blob'),
-                    vistaPrevia.getAttribute('data-fn') || (docAbrir.filename || 'documento.pdf'),
-                    { alNuevaConsulta: volverEstadoInicial }
-                  );
-                }
-              } else if (hasDataR && esElMismoListado(container, RH.renderDataRows(rp))) {
-                /* El proveedor devolvió otra vez el listado de partidas en vez
-                   del documento. Repintarlo dejaba la misma tabla dos veces en
-                   pantalla y ninguna previsualización: se dice lo que pasó y
-                   se deja la lista para reintentar. */
-                resultArea.innerHTML =
-                  '<div class="cr-loading"><div class="cr-loading-text">El proveedor devolvió el listado, no el documento.</div>' +
-                  '<div class="cr-loading-hint">Vuelve a pulsar la partida en unos segundos.</div></div>';
-              } else if (hasDataR) {
-                // Los datos, a la vista. Estaban detrás de un «Ver detalles de
-                // la consulta» que dejaba la respuesta escondida tras un clic
-                // más, justo encima de la lista que el cliente acababa de usar.
-                resultArea.innerHTML =
-                  '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding:16px;">' +
-                    RH.renderDataRows(rp) +
-                  '</div></div>';
-              } else {
-                var rawText = (rp.raw || '').trim().replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
-                if (rawText.length > 5 && !RH.esErrorTecnico(rawText)) {
-                  resultArea.innerHTML = '<div style="white-space:pre-wrap;font-family:monospace;font-size: var(--fs-sm);line-height:1.5;padding:16px;">' + RH.escapeHtml(rawText) + '</div>';
-                } else if (RH.esErrorTecnico(rawText)) {
-                  resultArea.innerHTML = RH.htmlMantenimiento();
-                } else {
-                  resultArea.innerHTML = '<div class="cr-loading"><div class="cr-loading-text">No se encontraron datos para esta opción.</div></div>';
-                }
-              }
-
-              if (status) {
-                status.classList.remove('status-empty', 'status-loading');
-                status.classList.add('status-ok');
-                status.innerHTML = '<span class="status-dot"></span> Completado';
-              }
-              if (resp.costo_deducido > 0 && Consultia.toast) {
-                Consultia.toast({ type: 'info', title: 'Cobro exitoso', message: 'Se han descontado ' + resp.costo_deducido + ' créditos.', duration: 4000 });
-              }
-
-              btns.forEach(function (b) { b.disabled = false; });
-              btn.classList.remove('is-loading');
-              resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } catch (e) {
-              cerrarEspera();   // idempotente: no pasa nada si ya se cerró
-              console.error('Error en callback:', e);
-              if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo procesar', message: (e && e.message) || 'Intenta de nuevo.' });
-              resultArea.innerHTML = '';
-              resultArea.hidden = true;
-              btns.forEach(function (b) { b.disabled = false; });
-              btn.classList.remove('is-loading', 'is-selected');
-            }
-            return;
-          }
-
-          // â"€â"€ Fallback: comportamiento original (sin cr-btn-result-area) â"€â"€
-          var savedHtml = container.innerHTML;
-          btns.forEach(function (b) { b.disabled = true; });
-          btn.classList.add('is-loading');
-          mostrarCargando();
-          try {
-            var resp = await Consultia.ConsultaRunner.ejecutarCallback(currentConsulta, msgId, data);
-            renderResultado(resp);
-          } catch (e) {
-            console.error('Error en callback:', e);
-            if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo procesar', message: (e && e.message) || 'Intenta de nuevo.' });
-            var body = $(bodyId());
-            if (body) { body.innerHTML = savedHtml; wireResultButtons(body); }
-          }
-        });
+      H.wireOpcionesDelBot(container, {
+        consulta:        function () { return currentConsulta; },
+        status:          function () { return $(statusId()); },
+        prefix:          prefix,
+        alNuevaConsulta: volverEstadoInicial,
+        alResultado:     function () { marcarConResultado(true); },
+        alFallback:      function (resp) { renderResultado(resp); }
       });
     }
 
