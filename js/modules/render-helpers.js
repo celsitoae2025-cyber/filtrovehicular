@@ -1290,11 +1290,19 @@
   var _alNuevaConsultaPdfModal = null;
   function openPdfModal(src, fileName, opts) {
     var alNuevaConsulta = (opts && typeof opts.alNuevaConsulta === 'function') ? opts.alNuevaConsulta : null;
-    /* En el móvil el visor nativo por iframe no pinta nada, y por eso aquí
-       se abría el PDF en otra pestaña: el cliente salía de la plataforma y
-       se quedaba sin «Descargar» ni «Nueva consulta». Se muestra el mismo
-       modal, pero con las hojas pintadas por pdf.js. */
-    var esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    /* El iframe con el visor nativo solo sirve en escritorio: en un móvil
+       Chrome no lo pinta, se BAJA el archivo y lo abre en el visor del
+       sistema —el cliente sale de la plataforma y se queda sin «Descargar»
+       ni «Nueva consulta»—. Ahí las hojas las pinta pdf.js.
+
+       La decisión no puede colgar de la cadena de agente: basta un
+       navegador que se anuncie como escritorio (pasa en tabletas y en el
+       modo escritorio de Chrome) para caer en el iframe y provocar
+       justamente esa descarga. Se pregunta por lo que importa —pantalla
+       angosta, o puntero grueso sin hover—, que es lo que decide si el
+       visor nativo va a funcionar. */
+    var esMovil = !window.matchMedia ||
+      window.matchMedia('(max-width: 820px), (hover: none) and (pointer: coarse)').matches;
     _alNuevaConsultaPdfModal = alNuevaConsulta;
     var el = document.getElementById('cr-pdf-modal');
     if (!el) {
@@ -1334,6 +1342,7 @@
       body.classList.add('es-hojas');
       var hojas = document.createElement('div');
       hojas.className = 'cr-pdf-modal-hojas';
+      hojas.innerHTML = '<div class="cr-pdf-loading">Cargando documento…</div>';
       body.appendChild(hojas);
       // El base64 se guardó al crear el blob: pdf.js pinta mejor desde los
       // bytes que desde el blob URL en móvil.
