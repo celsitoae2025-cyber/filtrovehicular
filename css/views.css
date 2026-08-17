@@ -3291,11 +3291,18 @@ body.cr-lightbox-open { overflow: hidden; }
 
 @media (max-width: 720px) {
   .cr-btn-layout { padding: 20px 18px; }
-  /* En angosto no caben tres códigos con su ciudad: una sola columna. */
-  .cr-btn-list { grid-template-columns: minmax(0, 1fr); }
-  .cr-btn-option { padding: 11px 2px; font-size: var(--cr-fs); }
+  /* Tres no caben, pero una sola deja media pantalla vacía a la derecha de
+     cada código: dos columnas es lo que aprovecha el ancho del móvil. */
+  .cr-btn-list { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; }
+  .cr-btn-option { padding: 11px 2px; font-size: var(--cr-fs); gap: 6px; }
   .cr-btn-option-tip { font-size: var(--fs-xs); }
-  .cr-btn-option-arrow { width: 14px; height: 14px; }
+  .cr-btn-option-arrow { width: 13px; height: 13px; }
+}
+
+/* Pantallas muy angostas: dos columnas obligarían a recortar el nombre de
+   la ciudad, así que ahí sí una sola. */
+@media (max-width: 400px) {
+  .cr-btn-list { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ===== Layout: PDF preview (C4, nacido vivo, defunción) ===== */
