@@ -2422,8 +2422,11 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
 :root {
   /* Cuerpo de la ficha del resultado. Vive aparte de --fs-sm porque este
      tamaño se toca a menudo y --fs-sm lo comparte toda la plataforma. */
-  --cr-fs: 9px;
-  --cr-fs-titulo: 12px;
+  /* Escritorio: la ficha se lee de lejos y hay ancho de sobra. En el móvil
+     baja a 9px (ver la consulta de medios de 720px), donde lo que manda es
+     que cada campo entre en su línea. */
+  --cr-fs: 15px;
+  --cr-fs-titulo: 17px;
 
   /* Layout datos + fotos */
   --cr-padding-top: 20px;
@@ -3977,6 +3980,14 @@ body.cr-lightbox-open { overflow: hidden; }
 }
 
 @media (max-width: 720px) {
+  /* El cuerpo chico es cosa del móvil: ahí cada campo tiene que entrar en
+     su línea junto a su etiqueta. En escritorio la ficha se lee de lejos y
+     manda el tamaño de :root. */
+  :root {
+    --cr-fs: 9px;
+    --cr-fs-titulo: 12px;
+  }
+
   /* Reseteamos cualquier valor que haya sido guardado desde el editor
      — en móvil usamos un layout fluido, no el de escritorio. */
   .cr-layout {
