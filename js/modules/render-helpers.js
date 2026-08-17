@@ -42,6 +42,39 @@
     ].join('');
   }
 
+  /* ============================================================
+     AVISO DE ESPERA DEL PROVEEDOR
+
+     El bot contesta primero «ESTAMOS PROCESANDO TU SOLICITUD» y adjunta su
+     PROPIO LOGO. Eso no es un resultado, y ese logo no puede aparecerle
+     jamás al cliente: es la marca del proveedor dentro de nuestra ficha.
+
+     Se reconoce el aviso y se pinta un mensaje nuestro, descartando de
+     paso cualquier adjunto que venga con él. Si el mensaje trae campos de
+     verdad ya no es un aviso, es el resultado, y se muestra tal cual.
+  ============================================================ */
+  var RE_EN_PROCESO = /(estamos\s+procesando|procesando\s+(tu|su)\s+solicitud|un\s+momento\s+por\s+favor|aguard[ae]\s+un\s+momento|espera\s+un\s+momento|en\s+breve\s+te\s+respond)/i;
+
+  function esRespuestaEnProceso(p) {
+    if (!p) return false;
+    var texto = [p.raw, p.titulo, p.mensaje].filter(Boolean).join(' ');
+    if (!RE_EN_PROCESO.test(texto)) return false;
+    var hayCampos = (p.secciones || []).some(function (s) {
+      return (s.campos || []).some(function (c) { return c.campo && !isEmptyValue(c.valor); });
+    });
+    return !hayCampos;
+  }
+
+  function htmlEnProceso() {
+    return [
+      '<div class="cr-mantenimiento">',
+      '  <h4 class="cr-mant-titulo">Tu consulta sigue en curso</h4>',
+      '  <p class="cr-mant-texto">El proveedor acusó recibo pero todavía no devolvió la información. Vuelve a consultar en unos segundos.</p>',
+      '  <p class="cr-mant-creditos">Sin cargo — tus créditos están protegidos.</p>',
+      '</div>',
+    ].join('');
+  }
+
   /* â"€â"€ Text helpers â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   /* Quita emojis y caracteres decorativos del texto visible al usuario.
 
@@ -1257,7 +1290,9 @@
           var pdfs = pdfsDe(rp);
           var hasDataR = (rp.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
 
-          if (esErrorTecnicoRespuesta(rp, resp)) {
+          if (esRespuestaEnProceso(rp)) {
+            resultArea.innerHTML = htmlEnProceso();   // acuse del proveedor, con su logo: no se pinta
+          } else if (esErrorTecnicoRespuesta(rp, resp)) {
             resultArea.innerHTML = htmlMantenimiento();
           } else if (pdfs.length > 0) {
             // La barra de descarga va delante para que el módulo la suba a
@@ -2183,6 +2218,8 @@
     esErrorTecnico:          esErrorTecnico,
     esErrorTecnicoRespuesta: esErrorTecnicoRespuesta,
     htmlMantenimiento:       htmlMantenimiento,
+    esRespuestaEnProceso:    esRespuestaEnProceso,
+    htmlEnProceso:           htmlEnProceso,
     stripEmoji:              stripEmoji,
     escapeHtml:              escapeHtml,
     placeholderFor:          placeholderFor,

@@ -387,7 +387,11 @@
       // genérico igual arma un informe propio a partir de esas líneas.
       var pParaPdf = p;
       var abrirVisor = false;   // el documento es el resultado, no un adjunto
-      if (esErrorTecnicoRespuesta(p, resp)) {
+      if (H.esRespuestaEnProceso(p)) {
+        /* Antes que nada: el acuse de recibo del proveedor trae SU logo
+           adjunto, y ni el aviso ni el logo son el resultado. */
+        html = H.htmlEnProceso();
+      } else if (esErrorTecnicoRespuesta(p, resp)) {
         html = htmlMantenimiento();
       } else if (hasFacial) {
         html = renderPdfTopButton() + renderFacialHero(p.facial);

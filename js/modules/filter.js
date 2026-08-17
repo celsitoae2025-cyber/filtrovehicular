@@ -323,7 +323,11 @@
     var pParaPdf = p;
     var abrirVisor = false;   // el documento es el resultado, no un adjunto
 
-    if (esErrorTecnicoRespuesta(p, resp)) {
+    if (H.esRespuestaEnProceso(p)) {
+      /* El acuse de recibo del proveedor trae SU logo adjunto: ni el aviso
+         ni el logo son el resultado. */
+      html = H.htmlEnProceso();
+    } else if (esErrorTecnicoRespuesta(p, resp)) {
       html = htmlMantenimiento();
     } else if (esMetapla) {
       // Los datos van como tabla + placeholder para el PDF rediseñado.
