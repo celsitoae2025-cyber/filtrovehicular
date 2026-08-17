@@ -5847,3 +5847,93 @@ a.nm-download { text-decoration: none; }
   .cr-row { grid-template-columns: 1fr; gap: 2px; padding: 10px 0; }
   .cr-tit { font-size: 18px; }
 }
+
+/* ============================================================
+   FICHA DE LICENCIA (/mtc) — densa, no derrochadora
+
+   Ocho campos en filas de etiqueta a la izquierda y dato a la derecha se
+   comían una pantalla entera para decir muy poco. Aquí el titular manda
+   en el membrete, con su situación al lado, y los datos van en celdas
+   pegadas: una línea de un píxel las separa, sin tarjetas ni huecos.
+   Las papeletas, en tabla; una fila cada una.
+============================================================ */
+.mtc { padding: 18px 20px 20px; }
+
+.mtc-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #141d1c;
+}
+.mtc-quien { min-width: 0; }
+.mtc-nombre {
+  font-size: 20px; font-weight: 700; color: #141d1c;
+  letter-spacing: .1px; line-height: 1.25;
+}
+.mtc-sub { margin-top: 3px; font-size: 13px; color: #7c8785; }
+.mtc-sub b { color: #141d1c; font-weight: 700; font-variant-numeric: tabular-nums; }
+.mtc-punto { margin: 0 8px; color: #c6cdcb; }
+.mtc-estado {
+  flex-shrink: 0;
+  font-size: 12px; font-weight: 700; letter-spacing: 1.1px;
+  padding: 6px 14px; border-radius: 999px;
+}
+.mtc-estado.is-ok  { background: #eef7dc; color: #4f7d00; }
+.mtc-estado.is-bad { background: #fdeceb; color: #c0392b; }
+
+.mtc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1px;
+  margin-top: 14px;
+  background: #e6e9e8;
+  border: 1px solid #e6e9e8;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.mtc-dato { background: #ffffff; padding: 10px 14px; min-width: 0; }
+.mtc-dato span {
+  display: block;
+  font-size: 11px; letter-spacing: .9px; text-transform: uppercase; color: #7c8785;
+}
+.mtc-dato strong {
+  display: block; margin-top: 2px;
+  font-size: 15px; font-weight: 700; color: #141d1c;
+  line-height: 1.35; overflow-wrap: break-word;
+}
+
+.mtc-bloque { margin-top: 20px; }
+.mtc-bloque h4 {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.4px;
+  text-transform: uppercase; color: #7c8785;
+}
+.mtc-cuenta {
+  background: #141d1c; color: #ffffff;
+  border-radius: 999px; padding: 2px 8px;
+  font-size: 11px; letter-spacing: .4px;
+}
+.mtc-tabla-wrap { overflow-x: auto; }
+.mtc-tabla { width: 100%; border-collapse: collapse; font-size: 14px; }
+.mtc-tabla th {
+  text-align: left; white-space: nowrap;
+  padding: 0 14px 6px 0;
+  font-size: 11px; font-weight: 400; letter-spacing: .8px;
+  text-transform: uppercase; color: #7c8785;
+  border-bottom: 1px solid #e6e9e8;
+}
+.mtc-tabla td {
+  padding: 9px 14px 9px 0;
+  border-bottom: 1px solid #f2f4f3;
+  font-weight: 700; color: #141d1c;
+  font-variant-numeric: tabular-nums;
+}
+.mtc-tabla tr:last-child td { border-bottom: none; }
+.mtc-tabla .mtc-n { color: #7c8785; font-weight: 400; width: 28px; }
+
+@media (max-width: 640px) {
+  .mtc { padding: 14px 12px 16px; }
+  .mtc-nombre { font-size: 17px; }
+  .mtc-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+}

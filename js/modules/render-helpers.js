@@ -486,7 +486,9 @@
     if (fecha) {
       var limite = new Date(+fecha[3], +fecha[2] - 1, +fecha[1], 23, 59, 59);
       if (!isNaN(limite.getTime())) {
-        licencia.unshift({ campo: 'SITUACIÓN', valor: limite >= new Date() ? 'VIGENTE' : 'VENCIDA' });
+        // Al final, no al principio: delante del DNI cortaría la ficha en dos
+        // registros (el DNI es un arranque de registro) y saldría partida.
+        licencia.push({ campo: 'SITUACIÓN', valor: limite >= new Date() ? 'VIGENTE' : 'VENCIDA' });
       }
     }
 
@@ -497,6 +499,114 @@
     if (licencia.length)  copia.secciones.push({ titulo: 'Datos principales', campos: licencia });
     if (papeletas.length) copia.secciones.push({ titulo: 'Papeletas registradas', campos: papeletas });
     return copia;
+  }
+
+  /* La ficha de la licencia, dibujada aparte.
+
+     Con las filas corrientes —etiqueta a la izquierda, dato a la derecha—
+     ocho campos ocupaban una pantalla entera de aire. Aquí el titular y su
+     situación van en un membrete, los datos en una rejilla de celdas
+     pegadas (una línea de un píxel entre ellas, nada de tarjetas) y las
+     papeletas en una tabla. Todo lo que llegue y no esté previsto entra
+     igual en la rejilla: no se pierde nada por no conocerlo. */
+  var MTC_EN_MEMBRETE = /^(CONDUCTOR|DNI|NRO\.?\s*LICENCIA|N[°ºRO.]*\s*LICENCIA|LICENCIA|SITUACI[OÓ]N)$/i;
+  var MTC_ORDEN = ['CATEGORÍA', 'CATEGORIA', 'FECHA EXPEDICIÓN', 'FECHA EXPEDICION',
+                   'VENCE', 'VENCIMIENTO', 'EMITIDO EN', 'RESTRICCIONES', 'DIRECCIÓN', 'DIRECCION'];
+
+  function soloGuiones(v) {
+    return !String(v || '').replace(/[\s,.\-–—]/g, '').length;
+  }
+
+  function renderMtc(p) {
+    var e = estructurarMtc(p || {});
+    var lic = [], pap = [];
+    (e.secciones || []).forEach(function (s) {
+      var destino = /papeleta/i.test(s.titulo || '') ? pap : lic;
+      (s.campos || []).forEach(function (c) { destino.push(c); });
+    });
+    if (!lic.length && !pap.length) return '';
+
+    var buscar = function (re) {
+      var c = lic.find(function (x) { return re.test((x.campo || '').trim()); });
+      return c ? String(c.valor || '').trim() : '';
+    };
+    var conductor = buscar(/^CONDUCTOR$/i);
+    var dni       = buscar(/^DNI$/i);
+    var licencia  = buscar(/^(NRO\.?\s*LICENCIA|N[°ºRO.]*\s*LICENCIA|LICENCIA)$/i);
+    var situacion = buscar(/^SITUACI[OÓ]N$/i);
+
+    var parts = ['<div class="mtc">'];
+
+    parts.push('<div class="mtc-head">');
+    parts.push('<div class="mtc-quien">');
+    parts.push('<div class="mtc-nombre">' + escapeHtml(conductor || cleanTitle(p.titulo) || 'Licencia de conducir') + '</div>');
+    var sub = [];
+    if (dni)      sub.push('DNI <b>' + escapeHtml(dni) + '</b>');
+    if (licencia) sub.push('Licencia <b>' + escapeHtml(licencia) + '</b>');
+    if (sub.length) parts.push('<div class="mtc-sub">' + sub.join('<span class="mtc-punto">·</span>') + '</div>');
+    parts.push('</div>');
+    if (situacion) {
+      parts.push('<span class="mtc-estado ' + (/VIGENTE/i.test(situacion) ? 'is-ok' : 'is-bad') + '">' +
+        escapeHtml(situacion) + '</span>');
+    }
+    parts.push('</div>');
+
+    // Rejilla: primero los campos de siempre, en su orden, y detrás el resto.
+    var celdas = lic.filter(function (c) {
+      var n = (c.campo || '').trim();
+      if (!n || MTC_EN_MEMBRETE.test(n)) return false;
+      return !isEmptyValue(c.valor) && !soloGuiones(c.valor);
+    }).sort(function (a, b) {
+      var ia = MTC_ORDEN.indexOf((a.campo || '').trim().toUpperCase());
+      var ib = MTC_ORDEN.indexOf((b.campo || '').trim().toUpperCase());
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    });
+    if (celdas.length) {
+      parts.push('<div class="mtc-grid">');
+      celdas.forEach(function (c) {
+        parts.push('<div class="mtc-dato"><span>' + escapeHtml(c.campo) + '</span>' +
+          '<strong>' + escapeHtml(c.valor) + '</strong></div>');
+      });
+      parts.push('</div>');
+    }
+
+    // Papeletas: una fila por papeleta. El bot las manda en viñetas seguidas,
+    // así que cada ENTIDAD abre una nueva.
+    var filas = [], fila = null;
+    pap.forEach(function (c) {
+      var n = (c.campo || '').trim().replace(/^\d+\.\s*/, '').toUpperCase();
+      if (!n) return;
+      if (n === 'ENTIDAD' || !fila) { fila = {}; filas.push(fila); }
+      fila[n] = String(c.valor || '').trim();
+    });
+    filas = filas.filter(function (f) { return Object.keys(f).length; });
+    if (filas.length) {
+      var cols = ['ENTIDAD', 'PAPELETA', 'FALTA', 'FECHA'];
+      var extra = [];
+      filas.forEach(function (f) {
+        Object.keys(f).forEach(function (k) {
+          if (cols.indexOf(k) === -1 && extra.indexOf(k) === -1) extra.push(k);
+        });
+      });
+      cols = cols.concat(extra).filter(function (k) {
+        return filas.some(function (f) { return f[k]; });
+      });
+
+      parts.push('<div class="mtc-bloque">');
+      parts.push('<h4>Papeletas <span class="mtc-cuenta">' + filas.length + '</span></h4>');
+      parts.push('<div class="mtc-tabla-wrap"><table class="mtc-tabla"><thead><tr><th>Nº</th>');
+      cols.forEach(function (k) { parts.push('<th>' + escapeHtml(k) + '</th>'); });
+      parts.push('</tr></thead><tbody>');
+      filas.forEach(function (f, i) {
+        parts.push('<tr><td class="mtc-n">' + (i + 1) + '</td>');
+        cols.forEach(function (k) { parts.push('<td>' + escapeHtml(f[k] || '—') + '</td>'); });
+        parts.push('</tr>');
+      });
+      parts.push('</tbody></table></div></div>');
+    }
+
+    parts.push('</div>');
+    return parts.join('');
   }
 
   function recortarAlResumen(p, comando) {
@@ -2238,6 +2348,7 @@
     isEmptyValue:            isEmptyValue,
     renderDataRows:          renderDataRows,
     recortarAlResumen:       recortarAlResumen,
+    renderMtc:               renderMtc,
     pdfsDe:                  pdfsDe,
     mediaCountClass:         mediaCountClass,
     measureSaturation:       measureSaturation,

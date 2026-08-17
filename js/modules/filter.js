@@ -333,6 +333,10 @@
       html = renderMetaplaData(p) + '<div id="metapla-pdf-area"><div class="cr-pdf-loading">Generando reporte PDF...</div></div>';
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
+    } else if (currentConsulta && /^\/mtc\b/i.test(currentConsulta.comando || '') && H.renderMtc(p)) {
+      // La licencia tiene su propia ficha: membrete, rejilla y papeletas.
+      html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
+        H.renderMtc(p) + renderDocumentCard(pdfs) + H.renderOpcionesSueltas(botones);
     } else if (hasData || photos.length > 0) {
       // Mismo trato que las vistas de categoria: previsualización real del
       // PDF debajo y su «Descargar» sube a la cabecera junto a «Nueva consulta».

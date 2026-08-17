@@ -390,6 +390,10 @@
         html = renderPdfTopButton() + renderTabla(p.tabla);
       } else if (currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0) {
         html = renderNmPersonas(p, botones, valorConsultado);
+      } else if (currentConsulta && /^\/mtc\b/i.test(currentConsulta.comando || '') && H.renderMtc(p)) {
+        // La licencia tiene su propia ficha: membrete, rejilla y papeletas.
+        html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
+          H.renderMtc(p) + renderDocumentCard(pdfs) + H.renderOpcionesSueltas(botones);
       } else if (htmlArbol) {
         html = htmlArbol;
       } else if (botones.length > 0 && !hasMedia) {
