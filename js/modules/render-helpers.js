@@ -459,6 +459,15 @@
           if (nombre && r.de.test(nombre)) campo = { campo: r.a, valor: c.valor };
         });
 
+        /* Las papeletas vienen en viñetas —«• PAPELETA ➾ 399360E»— y el
+           puente entrega algunas como línea suelta. Sin rótulo salían de
+           corrido, como un párrafo, en vez de campo y dato. */
+        if (!nombre) {
+          var enDos = (c.valor || '').trim()
+            .match(/^(PAPELETA|FALTA|FECHA|ENTIDAD|C[OÓ]DIGO|INFRACCI[OÓ]N|MONTO|IMPORTE)\s+(.+)$/i);
+          if (enDos) campo = { campo: enDos[1], valor: enDos[2] };
+        }
+
         var clave = ((campo.campo || '') + '::' + (campo.valor || '')).toUpperCase();
         if (vistos[clave]) return;
         vistos[clave] = true;
@@ -468,6 +477,18 @@
     });
 
     if (!licencia.length && !papeletas.length) return p;
+
+    /* Lo que el cliente viene a saber de una licencia es si sirve hoy, y eso
+       el bot no lo dice: manda la fecha y que cada cual calcule. Se calcula
+       aquí y encabeza la ficha, en verde o en rojo. */
+    var vence = licencia.find(function (c) { return /^(VENCE|VENCIMIENTO)$/i.test((c.campo || '').trim()); });
+    var fecha = vence && String(vence.valor).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (fecha) {
+      var limite = new Date(+fecha[3], +fecha[2] - 1, +fecha[1], 23, 59, 59);
+      if (!isNaN(limite.getTime())) {
+        licencia.unshift({ campo: 'SITUACIÓN', valor: limite >= new Date() ? 'VIGENTE' : 'VENCIDA' });
+      }
+    }
 
     var copia = {};
     Object.keys(p).forEach(function (k) { copia[k] = p[k]; });   // medios, raw, título…
@@ -488,9 +509,12 @@
 
   /* «APROBADO» es el veredicto de la consulta, no un dato más: se destaca
      en verde y negrita para que se lea de un vistazo. */
-  var RE_APROBADO = /^\s*APROBADO\s*$/i;
+  var RE_APROBADO = /^\s*(APROBADO|VIGENTE)\s*$/i;
+  var RE_NEGATIVO = /^\s*(VENCIDA|VENCIDO|NO\s+VIGENTE|DESAPROBADO)\s*$/i;
   function claseValor(v) {
-    return RE_APROBADO.test(v || '') ? 'cr-v cr-v-ok' : 'cr-v';
+    if (RE_APROBADO.test(v || '')) return 'cr-v cr-v-ok';
+    if (RE_NEGATIVO.test(v || '')) return 'cr-v cr-v-bad';
+    return 'cr-v';
   }
 
   function renderDataRows(p) {

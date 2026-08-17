@@ -5701,3 +5701,149 @@ a.nm-download { text-decoration: none; }
    las dos acciones no caben en una linea, y sin esto se estrujaban unas
    contra otras. */
 .result-header { flex-wrap: wrap; row-gap: 8px; }
+
+/* ============================================================
+   LA FICHA DEL RESULTADO — presentación
+
+   Es lo único que el cliente se lleva de la consulta, y hasta ahora se
+   leía como un volcado: etiqueta y dato del mismo tamaño y del mismo
+   color, la barra de cuatro colores de las cabeceras internas encima, y
+   el documento anunciado con la misma letra que un campo cualquiera.
+
+   Aquí se le da forma de documento emitido: cabecera oscura con la
+   marca, el dato en grande y en negrita —que es lo que se viene a leer—,
+   la etiqueta pequeña y gris por encima de él, y cada bloque separado
+   por un rótulo, no por una caja. Sin sombras y sin franjas de color:
+   el peso lo llevan la tipografía y el espacio.
+============================================================ */
+
+/* ── Cabecera: el membrete ── */
+.result-panel > .result-header {
+  background: #141d1c;
+  border-radius: 12px 12px 0 0;
+  padding: 15px 22px !important;
+  margin-bottom: 0 !important;
+  border-bottom: none !important;
+}
+/* La barra cuatricolor es de las cabeceras de sección; sobre el membrete
+   oscuro sobra y le quita seriedad al documento. */
+.result-panel > .result-header::after { display: none; }
+.result-panel > .result-header > .result-header-left > svg { color: #8fc72e; }
+.result-panel > .result-header h3 {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .4px;
+}
+.result-panel > .result-header .nm-download.cr-dl-cabecera {
+  background: #8fc72e;
+  color: #141d1c;
+  font-weight: 700;
+}
+.result-panel > .result-header .nm-download.cr-dl-cabecera:hover { background: #7fb426; }
+.result-panel > .result-header .cr-nueva {
+  background: transparent;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, .35);
+}
+.result-panel > .result-header .cr-nueva:hover {
+  background: rgba(255, 255, 255, .12);
+  border-color: rgba(255, 255, 255, .6);
+}
+
+/* ── Título del organismo ── */
+.cr-tit {
+  font-size: 21px;
+  font-weight: 700;
+  color: #141d1c;
+  letter-spacing: .1px;
+  text-transform: none;
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #141d1c;
+}
+
+/* ── Rótulo de bloque ── */
+.cr-sect { margin-top: 30px; }
+.cr-sect h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #7c8785;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  border-bottom: none;
+  margin: 0 0 2px;
+  padding-bottom: 0;
+}
+
+/* ── Cada dato: etiqueta discreta, valor con peso ── */
+.cr-row {
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px solid #eceeed;
+}
+.cr-row .cr-k {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: .9px;
+  color: #7c8785;
+  line-height: 1.9;
+}
+.cr-row .cr-v {
+  font-size: 16px;
+  font-weight: 700;
+  color: #141d1c;
+  letter-spacing: .1px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+}
+/* Veredictos: lo que la ficha DICE, no lo que trae. */
+.cr-row .cr-v.cr-v-ok { color: #5f9500; }
+.cr-row .cr-v.cr-v-bad { color: #c0392b; }
+
+/* ── Varios registros: tarjetas sobrias, no cajas grises ── */
+.cr-2col-wrapper { gap: 16px; margin-top: 12px; }
+.cr-col-box {
+  padding: 18px 22px;
+  background-color: #ffffff;
+  border: 1px solid #e6e9e8;
+  border-radius: 12px;
+}
+.cr-record-index {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #8fc72e;
+}
+
+/* ── El documento: se anuncia, no se disimula ── */
+.cr-docitem {
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid #e6e9e8;
+  border-radius: 12px;
+}
+.cr-docitem-ico {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: #f2f7e9;
+  color: #5f9500;
+  align-items: center; justify-content: center;
+}
+.cr-docitem-ico svg { width: 21px; height: 21px; }
+.cr-docitem-nom { font-size: 15px; font-weight: 700; color: #141d1c; }
+.cr-docitem-peso { font-size: 13px; font-weight: 400; color: #7c8785; }
+.cr-docitem-ver {
+  background: #141d1c;
+  border-color: #141d1c;
+  color: #ffffff;
+  font-size: 14px;
+  padding: 10px 20px;
+}
+.cr-docitem-ver:hover { background: #0e1312; border-color: #0e1312; }
+
+@media (max-width: 700px) {
+  .cr-row { grid-template-columns: 1fr; gap: 2px; padding: 10px 0; }
+  .cr-tit { font-size: 18px; }
+}
