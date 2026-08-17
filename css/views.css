@@ -2442,8 +2442,8 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   /* Escritorio: la ficha se lee de lejos y hay ancho de sobra. En el móvil
      baja a 9px (ver la consulta de medios de 720px), donde lo que manda es
      que cada campo entre en su línea. */
-  --cr-fs: 15px;
-  --cr-fs-titulo: 17px;
+  --cr-fs: 14px;
+  --cr-fs-titulo: 16px;
 
   /* Layout datos + fotos */
   --cr-padding-top: 20px;
@@ -2456,10 +2456,10 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   --cr-padding-left: 12px;
   --cr-gap: 20px;
   --cr-data-max: 100%;
-  --cr-media-width: 220px;
+  --cr-media-width: 330px;          /* +50%: se veían pequeñas */
   --cr-media-margin-top: 40px;
   --cr-media-margin-left: 0px;
-  --cr-media-photo-max-height: 340px;
+  --cr-media-photo-max-height: 510px;
   --cr-max-width: 1180px;
 
   /* Layout PDF (C4, nacido vivo, defunción) */
@@ -2503,7 +2503,7 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   --cr-gallery-gap: 16px;
   --cr-gallery-offset-top: 0px;
   --cr-gallery-offset-left: 0px;
-  --cr-gallery-img-max-height: 320px;
+  --cr-gallery-img-max-height: 480px;
   --cr-gallery-img-width: 100%;
 }
 
@@ -4107,7 +4107,7 @@ body.cr-lightbox-open { overflow: hidden; }
     --cr-media-width: 100%;
     --cr-media-margin-top: 0;
     --cr-media-margin-left: 0;
-    --cr-media-photo-max-height: 280px;
+    --cr-media-photo-max-height: 420px;
     --cr-max-width: 100%;
     --cr-pdf-padding-top: 12px;
     --cr-pdf-padding-right: 12px;

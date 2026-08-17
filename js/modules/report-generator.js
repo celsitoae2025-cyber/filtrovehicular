@@ -63,57 +63,45 @@
   /* ============================================================
      MEMBRETE — el mismo en los siete informes
 
-     Antes cada generador dibujaba el suyo: cinco variantes distintas de
-     la misma marca, con la franja a 20, 22 o 26 mm y el nombre a 10,5,
-     17 o 19 puntos. El mismo cliente descargaba dos informes y parecían
-     de dos empresas.
+     Cada generador dibujaba el suyo: cinco variantes de la misma marca,
+     con la franja a 20, 22 o 26 mm y el nombre a 10,5, 17 o 19 puntos. El
+     mismo cliente descargaba dos informes y parecían de dos empresas.
 
-     El diseño abandona la banda de color a sangre: el membrete se apoya
-     en el papel, como un documento formal, y la marca se sostiene con
-     tipografía y una regla. Menos tinta, mejor impresión y la ficha —que
-     es lo que se viene a leer— manda en la hoja.
-
-         ▍Filtro Vehicular+                          EMITIDO
-          PLATAFORMA DE CONSULTAS VEHICULARES     17/08/2026 · 01:30
-         ──────────────────────────────────────────────────────────
+     Sencillo a propósito: el logo con la marca a la izquierda, la fecha a
+     la derecha, y una línea que los separa del informe. Nada más. Lo que
+     se viene a leer es la ficha, no el papel donde va impresa.
   ============================================================ */
-  var CAB_ALTO = 30;    // hasta la regla que cierra la cabecera
-  var PIE_ALTO = 16;    // desde la regla del pie hasta el borde
+  var CAB_ALTO = 19;    // la línea que cierra la cabecera
+  var PIE_ALTO = 14;    // desde la línea del pie hasta el borde
+
+  /* El logo se precarga al arrancar: `membreteTop` se llama desde
+     `didDrawPage`, que es síncrono y no puede esperar a una imagen. Si por
+     lo que sea no está listo, la marca se sostiene sola con su tipografía. */
+  var LOGO_PDF = null;
+  loadPngDataUrl('icons/icon-192.png').then(function (d) { LOGO_PDF = d; });
 
   function membreteTop(doc, pageW, fecha, M) {
     M = M || 18;
+    var x = M;
 
-    // Marca: acento vertical + nombre, con la actividad debajo.
-    doc.setFillColor.apply(doc, C_ACCENT);
-    doc.rect(M, 9, 1.6, 9.5, 'F');
+    if (LOGO_PDF) {
+      try { doc.addImage(LOGO_PDF, 'PNG', M, 7.5, 8, 8); x = M + 10.5; }
+      catch (_) { /* sin logo, la marca va sola */ }
+    }
 
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setTextColor.apply(doc, C_TEXT);
-    doc.text('Filtro Vehicular+', M + 4.5, 15.5);
+    doc.text('Filtro Vehicular+', x, 14);
 
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6);
+    doc.setFontSize(8);
     doc.setTextColor.apply(doc, C_KEY);
-    espaciado(doc, 'PLATAFORMA DE CONSULTAS VEHICULARES', M + 4.5, 20, 0.5);
+    doc.text(fecha, pageW - M, 14, { align: 'right' });
 
-    // Emisión, a la derecha y alineada con la marca por sus líneas base.
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6);
-    doc.setTextColor.apply(doc, C_KEY);
-    espaciado(doc, 'EMITIDO', pageW - M, 11.5, 0.5, 'right');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8.5);
-    doc.setTextColor.apply(doc, C_TEXT);
-    doc.text(fecha, pageW - M, 16.5, { align: 'right' });
-
-    // La regla cierra la cabecera; el tramo verde la ancla a la marca.
-    doc.setDrawColor.apply(doc, C_TEXT);
-    doc.setLineWidth(0.5);
-    doc.line(M, CAB_ALTO - 6, pageW - M, CAB_ALTO - 6);
-    doc.setDrawColor.apply(doc, C_ACCENT);
-    doc.setLineWidth(1.4);
-    doc.line(M, CAB_ALTO - 6, M + 26, CAB_ALTO - 6);
+    doc.setDrawColor.apply(doc, C_BORDER);
+    doc.setLineWidth(0.4);
+    doc.line(M, CAB_ALTO, pageW - M, CAB_ALTO);
   }
 
   function membreteBottom(doc, pageW, pageH, M) {
@@ -121,28 +109,13 @@
     var reglaY = pageH - PIE_ALTO;
 
     doc.setDrawColor.apply(doc, C_BORDER);
-    doc.setLineWidth(0.3);
+    doc.setLineWidth(0.4);
     doc.line(M, reglaY, pageW - M, reglaY);
 
-    var baseY = reglaY + 5.5;
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(6.2);
+    doc.setFontSize(6.4);
     doc.setTextColor.apply(doc, C_KEY);
-    doc.text('Información extraída de fuentes oficiales', M, baseY);
-    doc.text('filtrovehicularperu.com', pageW / 2, baseY, { align: 'center' });
-  }
-
-  /* Helvetica en jsPDF no tiene interletraje, así que el rótulo se dibuja
-     letra a letra. Es lo que da el aire de membrete a las mayúsculas
-     pequeñas; apretadas parecen una etiqueta de sistema. */
-  function espaciado(doc, texto, x, y, sep, align) {
-    var letras = String(texto).split('');
-    var ancho = letras.reduce(function (t, c) { return t + doc.getTextWidth(c) + sep; }, 0) - sep;
-    var cx = align === 'right' ? x - ancho : x;
-    letras.forEach(function (c) {
-      doc.text(c, cx, y);
-      cx += doc.getTextWidth(c) + sep;
-    });
+    doc.text('filtrovehicularperu.com', M, reglaY + 5);
   }
 
   /* El pie no puede numerar mientras se dibuja: cuando se pinta la página 1
@@ -157,7 +130,7 @@
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(6.2);
       doc.setTextColor.apply(doc, C_TEXT);
-      doc.text(i + ' de ' + total, pageW - 18, pageH - PIE_ALTO + 5.5, { align: 'right' });
+      doc.text(i + ' de ' + total, pageW - 18, pageH - PIE_ALTO + 5, { align: 'right' });
     }
   }
 
@@ -214,12 +187,12 @@
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.setTextColor.apply(doc, C_TEXT);
-    doc.text(cleanText(consultaNombre).toUpperCase(), M, 38);
+    doc.text(cleanText(consultaNombre).toUpperCase(), M, 29);
     if (valor) {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8.5);
       doc.setTextColor.apply(doc, C_KEY);
-      doc.text('Dato consultado: ' + valor, M, 43.5);
+      doc.text('Dato consultado: ' + valor, M, 34.5);
     }
 
     // ── PRECARGA DE IMÁGENES (proporción real) ────────────────
@@ -231,7 +204,7 @@
     //    posible — igual que VeriNexo) ──────────────────────────────
     var bioMaxH = 34, bioTitleH = 7, bioLabelH = 5;
     var bioBlockH = imgInfos.length > 0 ? (bioTitleH + bioMaxH + bioLabelH + 8) : 0;
-    var tableTop = 50;   // debajo del bloque de título
+    var tableTop = 41;   // debajo del bloque de título
     var tableBottom = bottomBandTop - 6 - bioBlockH;
 
     // ── FILAS: aplanar secciones a una tabla continua (secciones = fila
@@ -307,7 +280,7 @@
       doc.autoTable({
         startY: tableTop,
         body: body,
-        margin: { left: M, right: M, top: 34, bottom: 18 },
+        margin: { left: M, right: M, top: 26, bottom: 18 },
         tableLineWidth: 0,
         didDrawPage: function () { membreteTop(doc, pageW, fecha, M); membreteBottom(doc, pageW, pageH, M); },
         bodyStyles: {
@@ -373,12 +346,13 @@
       });
     }
 
-    // ── FOOTER en todas las páginas (redibuja la franja inferior por si
-    //    la última página no pasó por didDrawPage, ej. cuando body está
-    //    vacío) ───────────────────────────────────────────────────────
-    var totalPages = typeof doc.getNumberOfPages === 'function' ? doc.getNumberOfPages() : 1;
-    doc.setPage(totalPages);
-    membreteBottom(doc, pageW, pageH, M);
+    /* El pie de la última página lo dibuja `didDrawPage`; esto solo cubre
+       el caso en que la tabla no llegó a correr —una respuesta sin filas—
+       y por tanto nadie lo pintó. Antes se repintaba siempre, así que en
+       la última hoja se imprimía dos veces encima. */
+    if (!body.length) {
+      membreteBottom(doc, pageW, pageH, M);
+    }
 
     // ── GENERAR BLOB ───────────────────────────────────────────────
     var consultaSlug = consultaNombre
