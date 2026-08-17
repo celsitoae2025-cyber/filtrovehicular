@@ -409,7 +409,7 @@
         // sube a la cabecera junto a «Nueva consulta» — igual que VeriNexo,
         // nunca se esconden los datos detrás del visor de PDF.
         html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
-          renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
+          renderDataWithMedia(p, photos) + renderDocumentCard(pdfs);
         /* Aquí el documento acompaña a una ficha que el cliente vino a
            leer, así que NO se le tapa con el visor: lo abre él desde la
            previsualización. Salvo que el catálogo diga lo contrario para
@@ -420,7 +420,7 @@
       } else if (pdfs.length > 0) {
         // Solo el documento: se enseña en el visor (abajo, tras pintar) en vez
         // de esperar a que el cliente descubra que la miniatura se pulsa.
-        html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, prefix);
+        html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs);
         abrirVisor = pdfs.length === 1;
       } else {
         var rawText = (p.raw || '').trim();

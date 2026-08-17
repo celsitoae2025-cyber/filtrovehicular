@@ -338,14 +338,14 @@
       // Mismo trato que las vistas de categoria: previsualización real del
       // PDF debajo y su «Descargar» sube a la cabecera junto a «Nueva consulta».
       html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
-        renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl');
+        renderDataWithMedia(p, photos) + renderDocumentCard(pdfs);
       /* Con ficha delante no se tapa al cliente con el visor: lo abre él.
          Salvo que el catálogo lo pida para esta consulta (`abrir_visor`). */
       abrirVisor = pdfs.length === 1 && !!(currentConsulta && (currentConsulta.respuesta_formato || {}).abrir_visor);
     } else if (pdfs.length > 0) {
       // Solo vino un PDF, sin datos: el documento ES el resultado, así que se
       // enseña en el visor en vez de dejarlo tras un clic en la miniatura.
-      html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, 'fl');
+      html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs);
       abrirVisor = pdfs.length === 1;
     } else {
       var rawText = (p.raw || '').trim();
@@ -415,11 +415,11 @@
             // reutiliza el reporte ya generado (result.blobUrl/base64), no
             // el PDF original del bot.
             var reportePdf = [{ base64: result.base64, filename: result.filename || 'reporte.pdf', mimeType: 'application/pdf' }];
-            metaplaPdfArea.innerHTML = renderPdfDlBar(reportePdf, 'Descargar Reporte PDF') + renderDocumentCard(reportePdf, 'fl-metapla');
+            metaplaPdfArea.innerHTML = renderPdfDlBar(reportePdf, 'Descargar Reporte PDF') + renderDocumentCard(reportePdf);
           } catch (e) {
             console.error('[metapla-report]', e);
             // Fallback: el PDF original del bot, para no dejar al usuario sin documento.
-            metaplaPdfArea.innerHTML = renderPdfDlBar(pdfsRef, 'Descargar Reporte PDF') + renderDocumentCard(pdfsRef, 'fl');
+            metaplaPdfArea.innerHTML = renderPdfDlBar(pdfsRef, 'Descargar Reporte PDF') + renderDocumentCard(pdfsRef);
           }
         })();
       })(pdfs, $('filter-input') ? $('filter-input').value.trim() : '');

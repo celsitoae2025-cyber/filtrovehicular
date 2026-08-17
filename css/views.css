@@ -1472,13 +1472,7 @@
   padding: 0 20px 20px;
   display: flex; flex-direction: column; gap: 20px;
 }
-/* Botón sobre la previsualización, centrado con ella. */
-.cr-doccard-barra {
-  display: flex; justify-content: center;
-  max-width: 620px; margin: 0 auto 10px;
-}
-
-/* Varios documentos: lista con sus acciones, no cuatro hojas apiladas. */
+/* Los documentos se listan: nombre, peso y sus dos acciones. */
 .cr-doclist { display: flex; flex-direction: column; gap: 8px; }
 .cr-docitem {
   display: flex; align-items: center; gap: 12px;
@@ -1494,6 +1488,10 @@
   font-size: var(--cr-fs); color: var(--c-primary);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+.cr-docitem-orden {
+  color: var(--c-muted); margin-right: 8px;
+  font-variant-numeric: tabular-nums;
+}
 .cr-docitem-peso { color: var(--c-muted); margin-left: 8px; }
 .cr-docitem-ver, .cr-docitem-dl {
   flex-shrink: 0; font-family: inherit; font-size: var(--cr-fs);
@@ -1504,27 +1502,13 @@
 .cr-docitem-ver:hover { border-color: var(--c-primary); }
 .cr-docitem-dl { border: none; background: #141d1c; color: #ffffff; }
 .cr-docitem-dl:hover { background: #0e1312; }
-
-.cr-doccard-preview-wrap .cr-pdf-canvas-wrap {
-  /* Una hoja A4 estirada a lo ancho de un panel de 1500px es un mural: la
-     previsualización es la referencia de lo que se descargó, el documento
-     se lee en el visor. */
-  max-width: 620px;
-  margin: 0 auto;
-  width: 100%;
-  cursor: pointer;   /* abre el visor a pantalla completa */
-  /* Una hoja debajo de otra: el documento se lee entero sin flechas. */
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.cr-doccard-preview-wrap .cr-pdf-canvas-wrap:hover { transform: none; }
-.cr-doccard-preview-wrap .cr-pdf-canvas-wrap::after { display: none; }
-.cr-doccard-preview-wrap .cr-pdf-stage,
-.cr-doccard-preview-wrap .cr-pdf-canvas {
-  border: none;
-  border-radius: 0;
-  background: transparent;
+/* En angosto el nombre del archivo y los dos botones no caben en una
+   línea: el nombre pasa arriba y las acciones debajo, a la derecha. */
+@media (max-width: 560px) {
+  .cr-docitem { flex-wrap: wrap; }
+  .cr-docitem-nom { flex: 1 1 100%; order: -1; white-space: normal; }
+  .cr-docitem-ico { display: none; }
+  .cr-docitem-ver, .cr-docitem-dl { flex: 1 1 0; text-align: center; justify-content: center; }
 }
 
 /* Lista de datos */
