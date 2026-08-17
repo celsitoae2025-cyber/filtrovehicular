@@ -3107,7 +3107,11 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) > .cr-btn-grid {
   grid-area: grid;
 }
-.cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) .cr-btn-illust {
+/* Con el documento delante sobra todo lo que llevó hasta él: la lista de
+   partidas y la ficha de la consulta. Se muestra el PDF y nada más; para
+   pedir otra cosa está «Nueva consulta» en la cabecera. */
+.cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) .cr-btn-section,
+.cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) .cr-btn-details {
   display: none;
 }
 .cr-btn-layout:has(.cr-btn-result-area .cr-pdf-canvas-wrap) .cr-pdf-canvas-wrap {
@@ -3212,10 +3216,24 @@ body.cr-lightbox-open { overflow: hidden; }
   opacity: 0.55;
   cursor: not-allowed;
 }
+/* Mientras el bot arma el documento, la flecha de la fila pulsada cede su
+   sitio a un girador verde: sin él, el único aviso quedaba lejos —en el
+   área de resultado— y la fila parecía no haber respondido. */
 .cr-btn-option.is-loading {
   color: #8fc72e;
   border-bottom-color: #8fc72e;
   opacity: 1;
+}
+.cr-btn-option.is-loading .cr-btn-option-arrow { display: none; }
+.cr-btn-option.is-loading::after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border: 2px solid rgba(143, 199, 46, .25);
+  border-top-color: #8fc72e;
+  border-radius: 50%;
+  animation: cr-spin .8s linear infinite;
 }
 .cr-btn-option.is-selected {
   border-bottom-color: var(--c-primary);

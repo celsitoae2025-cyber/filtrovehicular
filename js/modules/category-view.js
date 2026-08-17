@@ -683,7 +683,11 @@
               if (RH.esErrorTecnicoRespuesta(rp, resp)) {
                 resultArea.innerHTML = RH.htmlMantenimiento();
               } else if (pdfs.length > 0) {
-                resultArea.innerHTML = RH.renderDocumentCard(pdfs, prefix);
+                // La barra de descarga va delante para que `marcarConResultado`
+                // la suba a la cabecera, igual que en cualquier otra consulta;
+                // el CSS esconde la lista de opciones al detectar el visor.
+                resultArea.innerHTML = RH.renderPdfDlBar(pdfs) + RH.renderDocumentCard(pdfs, prefix);
+                marcarConResultado(true);
               } else if (hasDataR) {
                 var duid = 'cr-cb-det-' + Date.now();
                 resultArea.innerHTML =
