@@ -53,6 +53,7 @@
   var renderFacialHero        = H.renderFacialHero;
   var renderTabla             = H.renderTabla;
   var renderDocumentCard      = H.renderDocumentCard;
+  var renderPdfDlBar          = H.renderPdfDlBar;
   var renderNmPersonas        = H.renderNmPersonas;
   var renderArbolGenealogico  = H.renderArbolGenealogico;
   var renderPdfTopButton      = H.renderPdfTopButton;
@@ -391,16 +392,15 @@
         html = renderButtonList(p, botones);
       } else if (hasData || photos.length > 0) {
         // Datos visibles de inmediato (tabla + fotos al costado); si además
-        // vino un PDF, se agrega como tarjeta "Documento adjunto" debajo
-        // (Visualizar/Descargar) — igual que VeriNexo, nunca se esconden
-        // los datos detrás del visor de PDF. Si ya hay esa tarjeta, la
-        // cabecera NO suma un «Descargar» propio: quedaría duplicado.
-        html = (pdfs.length > 0 ? '' : renderPdfTopButton()) +
+        // vino un PDF, la previsualización real va debajo y su «Descargar»
+        // sube a la cabecera junto a «Nueva consulta» — igual que VeriNexo,
+        // nunca se esconden los datos detrás del visor de PDF.
+        html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
           renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, prefix);
       } else if (pdfs.length > 0) {
-        // Solo vino un PDF, sin datos: la tarjeta trae su propio
-        // Visualizar/Descargar, no hace falta el botón genérico de arriba.
-        html = renderDocumentCard(pdfs, prefix);
+        // Solo vino un PDF, sin datos: previsualización debajo, «Descargar»
+        // sube a la cabecera igual que en cualquier otra vista.
+        html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, prefix);
       } else {
         var rawText = (p.raw || '').trim();
         rawText = rawText.replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();

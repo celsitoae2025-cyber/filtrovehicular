@@ -41,6 +41,7 @@
   var renderButtonList        = H.renderButtonList;
   var renderDataWithMedia     = H.renderDataWithMedia;
   var renderDocumentCard      = H.renderDocumentCard;
+  var renderPdfDlBar          = H.renderPdfDlBar;
   var renderPdfTopButton      = H.renderPdfTopButton;
   var descargarPdfConOverlay  = H.descargarPdfConOverlay;
   var isEmptyValue            = H.isEmptyValue;
@@ -415,11 +416,8 @@
     });
     var hasMedia = pdfs.length > 0 || photos.length > 0;
 
-    // El "Reporte Completo" (/metapla) pide su propio texto en el botón de
-    // descarga; el resto de consultas mantiene el genérico "Descargar".
     var esMetapla = currentConsulta && currentConsulta.comando &&
       currentConsulta.comando.indexOf('/metapla') === 0;
-    var docOpts = esMetapla ? { downloadLabel: 'Descargar Reporte PDF' } : undefined;
 
     var body = $('filter-result-body');
     var html;
@@ -435,14 +433,13 @@
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
     } else if (hasData || photos.length > 0) {
-      // Mismo trato que las vistas de categoria: el boton «Descargar» nace
-      // aqui arriba y `entrarModoResultado` lo sube a la cabecera — pero solo
-      // si no hay ya una tarjeta de PDF con su propio Visualizar/Descargar.
-      html = (pdfs.length > 0 ? '' : renderPdfTopButton()) +
-        renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl', docOpts);
+      // Mismo trato que las vistas de categoria: previsualización real del
+      // PDF debajo y su «Descargar» sube a la cabecera junto a «Nueva consulta».
+      html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
+        renderDataWithMedia(p, photos) + renderDocumentCard(pdfs, 'fl');
     } else if (pdfs.length > 0) {
-      // Solo vino un PDF, sin datos: la tarjeta ya trae Visualizar/Descargar.
-      html = renderDocumentCard(pdfs, 'fl', docOpts);
+      // Solo vino un PDF, sin datos: previsualización debajo, «Descargar» arriba.
+      html = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs, 'fl');
     } else {
       var rawText = (p.raw || '').trim();
       var _rawH3 = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
@@ -507,29 +504,15 @@
                 '<div class="cr-pdf-loading">Generando reporte PDF… ' + n + ' de ' + total + '</div>';
             });
             if (!result) throw new Error('MetaplaReport devolvió null');
-            var rfn = escapeHtml(result.filename || 'reporte.pdf');
-            var cid = 'fl-metapla-' + Date.now();
-            var dlIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
-            metaplaPdfArea.innerHTML =
-              '<div class="cr-doccards">' +
-                '<div class="cr-doccard">' +
-                  '<div class="cr-doccard-head">' +
-                    '<span class="cr-doccard-tit">Reporte Vehicular</span>' +
-                    '<a class="cr-doccard-dl" href="' + result.blobUrl + '" download="' + rfn + '">' + dlIcon + '<span>Descargar</span></a>' +
-                  '</div>' +
-                  '<div class="cr-doccard-preview-wrap"><div class="cr-pdf-canvas-wrap" id="' + cid + '"><div class="cr-pdf-loading">Cargando PDF…</div></div></div>' +
-                '</div>' +
-              '</div>';
-            (function (cidRef, blobUrlRef, fnRef, base64Ref) {
-              setTimeout(function () {
-                var el = document.getElementById(cidRef);
-                if (el) Consultia.RenderHelpers.renderPdfIntoContainer(el, blobUrlRef, fnRef, base64Ref);
-              }, 0);
-            })(cid, result.blobUrl, rfn, result.base64);
+            // Mismo componente que el resto de la plataforma: «Descargar»
+            // reutiliza el reporte ya generado (result.blobUrl/base64), no
+            // el PDF original del bot.
+            var reportePdf = [{ base64: result.base64, filename: result.filename || 'reporte.pdf', mimeType: 'application/pdf' }];
+            metaplaPdfArea.innerHTML = renderPdfDlBar(reportePdf, 'Descargar Reporte PDF') + renderDocumentCard(reportePdf, 'fl-metapla');
           } catch (e) {
             console.error('[metapla-report]', e);
             // Fallback: el PDF original del bot, para no dejar al usuario sin documento.
-            metaplaPdfArea.innerHTML = renderDocumentCard(pdfsRef, 'fl', { downloadLabel: 'Descargar Reporte PDF' });
+            metaplaPdfArea.innerHTML = renderPdfDlBar(pdfsRef, 'Descargar Reporte PDF') + renderDocumentCard(pdfsRef, 'fl');
           }
         })();
       })(pdfs, $('filter-input') ? $('filter-input').value.trim() : '');

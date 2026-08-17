@@ -667,17 +667,29 @@
     return parts.join('');
   }
 
-  // Tarjeta simple "Documento adjunto" — la previsualización real del PDF
-  // (primera página, mismo renderer que el resto de la plataforma) y un
-  // único botón «Descargar». Se usa cuando YA hay datos mostrados como
-  // filas/tabla y el PDF es solo un adjunto extra, no el contenido
-  // principal. Sin botón «Visualizar»: la previsualización ya lo es.
-  // Cabecera "Documento PDF" + botón oscuro de descarga (idéntico al de la
-  // cabecera del resultado), y debajo la primera página del PDF a todo el
-  // ancho, sin caja ni borde propio — la ficha es el documento.
-  function renderDocumentCard(pdfs, uniqPrefix, opts) {
+  // «Descargar» del PDF original del bot, en la MISMA barra que usa
+  // `subirDescargaACabecera` para subir el botón junto a «Nueva consulta»
+  // en la cabecera — mismo tamaño y color oscuro que ese botón, un único
+  // punto de descarga por respuesta. Solo el primer PDF: la cabecera solo
+  // tiene sitio para un botón (ver `subirDescargaACabecera`).
+  function renderPdfDlBar(pdfs, dlLabel) {
     if (!pdfs || !pdfs.length) return '';
-    var dlLabel = (opts && opts.downloadLabel) || 'Descargar';
+    var m = pdfs[0];
+    var mime = m.mimeType || 'application/pdf';
+    var blobUrl = base64ToBlobUrl(m.base64, mime);
+    var fn = m.filename || 'documento.pdf';
+    return '<div class="cr-dl-bar">' +
+      '<a class="nm-download" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">' +
+        NM_ICON_DL + '<span>' + escapeHtml(dlLabel || 'Descargar') + '</span>' +
+      '</a>' +
+    '</div>';
+  }
+
+  // Previsualización real del PDF (primera página, mismo renderer que el
+  // resto de la plataforma): sin caja, sin borde, a todo el ancho. La
+  // descarga vive en la cabecera (renderPdfDlBar), no aquí.
+  function renderDocumentCard(pdfs, uniqPrefix) {
+    if (!pdfs || !pdfs.length) return '';
     var parts = [];
     var toRender = [];
     parts.push('<div class="cr-doccards">');
@@ -685,21 +697,11 @@
       var mime = m.mimeType || 'application/pdf';
       var blobUrl = base64ToBlobUrl(m.base64, mime);
       var fn = m.filename || ('documento-' + (i + 1) + '.pdf');
-      var titulo = pdfs.length > 1 ? ('Documento PDF ' + (i + 1)) : 'Documento PDF';
       var cid = (uniqPrefix || 'rh') + '-doc-' + Date.now() + '-' + i;
-      parts.push(
-        '<div class="cr-doccard">' +
-          '<div class="cr-doccard-head">' +
-            '<span class="cr-doccard-tit">' + escapeHtml(titulo) + '</span>' +
-            '<a class="cr-doccard-dl" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">' + NM_ICON_DL + '<span>' + escapeHtml(dlLabel) + '</span></a>' +
-          '</div>' +
-          '<div class="cr-doccard-preview-wrap"><div class="cr-pdf-canvas-wrap" id="' + cid + '"><div class="cr-pdf-loading">Cargando PDF…</div></div></div>' +
-        '</div>'
-      );
+      parts.push('<div class="cr-doccard-preview-wrap"><div class="cr-pdf-canvas-wrap" id="' + cid + '"><div class="cr-pdf-loading">Cargando PDF…</div></div></div>');
       toRender.push({ cid: cid, blobUrl: blobUrl, fn: fn, base64: m.base64 });
     });
     parts.push('</div>');
-    // Solo previsualiza; la única acción de descarga es el botón de arriba.
     setTimeout(function () {
       toRender.forEach(function (r) {
         var el = document.getElementById(r.cid);
@@ -1804,6 +1806,7 @@
     renderFacialHero:        renderFacialHero,
     renderTabla:             renderTabla,
     renderDocumentCard:      renderDocumentCard,
+    renderPdfDlBar:          renderPdfDlBar,
     columnaValor:            columnaValor,
     renderNmPersonas:        renderNmPersonas,
     renderNmTabla:           renderNmTabla,

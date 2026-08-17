@@ -1448,29 +1448,15 @@
   margin: 0;
   letter-spacing: .2px;
 }
-/* ===== "Documento PDF": cabecera + previsualización real de la primera
-   página, sin caja ni borde propio — la ficha ES el documento, igual que
-   en el modelo que pasó el dueño. ===== */
+/* ===== Previsualización real del PDF: sin caja, sin borde, a todo el
+   ancho del panel. El «Descargar» vive en la cabecera del resultado, junto
+   a «Nueva consulta» (renderPdfDlBar + subirDescargaACabecera) — aquí no
+   hay botón ni título, solo la ficha. Mismo padding lateral que el resto
+   del panel (--cr-padding-left/right), no uno propio. ===== */
 .cr-doccards {
-  padding: 0 80px 20px;
-  display: flex; flex-direction: column; gap: 24px;
+  padding: 0 var(--cr-padding-right) 20px var(--cr-padding-left);
+  display: flex; flex-direction: column; gap: 20px;
 }
-.cr-doccard { background: transparent; }
-.cr-doccard-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.cr-doccard-tit { font-size: var(--fs-md); font-weight: 700; color: var(--c-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-/* Botón de descarga: mismo trato oscuro que «Descargar» en la cabecera del
-   resultado (.nm-download) — un solo estilo de botón de descarga en toda
-   la plataforma. */
-.cr-doccard-dl {
-  display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
-  font-size: var(--fs-sm); font-weight: normal; color: #ffffff;
-  background: #141d1c; text-decoration: none;
-  padding: 10px 20px; border-radius: 8px;
-  transition: background var(--t-fast);
-}
-.cr-doccard-dl:hover { background: #0e1312; }
-.cr-doccard-dl svg { width: 17px; height: 17px; flex-shrink: 0; }
-/* La previsualización: sin borde, sin overlay, a todo el ancho disponible. */
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap {
   max-width: none;
   width: 100%;
@@ -1478,7 +1464,8 @@
 }
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap:hover { transform: none; }
 .cr-doccard-preview-wrap .cr-pdf-canvas-wrap::after { display: none; }
-.cr-doccard-preview-wrap .cr-pdf-stage {
+.cr-doccard-preview-wrap .cr-pdf-stage,
+.cr-doccard-preview-wrap .cr-pdf-canvas {
   border: none;
   border-radius: 0;
   background: transparent;
