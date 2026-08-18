@@ -10,6 +10,13 @@
        cancelText: 'Cancelar',
        danger: true
      }).then(function (ok) { if (ok) { ... } });
+
+   `title`, `message` y los textos de los botones se escapan SIEMPRE. Van
+   dentro de un innerHTML y por ahí pasan nombres que escribe el propio
+   usuario al registrarse: un nombre con etiquetas se ejecutaba en la
+   sesión de quien abría el diálogo —el administrador, con todos sus
+   permisos—. Quien de verdad necesite negritas o saltos de línea usa
+   `messageHtml`, y escapa él lo que venga de fuera.
 ============================================================ */
 
 (function () {
@@ -34,6 +41,7 @@
     Consultia.confirm({
       title: opts.title,
       message: opts.message,
+      messageHtml: opts.messageHtml,
       confirmText: opts.confirmLabel || opts.confirmText,
       cancelText: opts.cancelLabel || opts.cancelText,
       danger: opts.confirmStyle === 'danger' || !!opts.danger,
@@ -46,12 +54,20 @@
     });
   };
 
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   Consultia.confirm = function (opts) {
     opts = opts || {};
-    var title       = opts.title       || '¿Confirmas la acción?';
-    var message     = opts.message     || '';
-    var confirmText = opts.confirmText || 'Confirmar';
-    var cancelText  = opts.cancelText  || 'Cancelar';
+    var title       = esc(opts.title || '¿Confirmas la acción?');
+    // `messageHtml` es la vía explícita para quien necesita marcado; el
+    // `message` de siempre se escapa.
+    var message     = opts.messageHtml ? String(opts.messageHtml) : esc(opts.message || '');
+    var confirmText = esc(opts.confirmText || 'Confirmar');
+    var cancelText  = esc(opts.cancelText  || 'Cancelar');
     var danger      = !!opts.danger;
 
     return new Promise(function (resolve) {

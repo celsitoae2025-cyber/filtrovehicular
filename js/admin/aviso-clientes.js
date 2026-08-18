@@ -276,7 +276,7 @@
     if (encender && Consultia.confirm) {
       var ok = await Consultia.confirm({
         title: 'Encender el aviso',
-        message: 'Todos los clientes verán esta cinta al abrir la aplicación:<br><br>' +
+        messageHtml: 'Todos los clientes verán esta cinta al abrir la aplicación:<br><br>' +
                  '<strong>' + esc(f.titulo || '(sin título)') + '</strong><br>' +
                  esc(f.mensaje) + '<br><br>' +
                  'La aplicación seguirá funcionando con normalidad. ¿Lo enciendes?',

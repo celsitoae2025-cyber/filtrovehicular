@@ -296,10 +296,6 @@
         emptyCredits.textContent = 'La consulta requiere ' + c.precio_venta + ' crédito' + (c.precio_venta === 1 ? '' : 's');
       }
 
-      if (Consultia.LayoutEditor && Consultia.LayoutEditor.setActiveProfile) {
-        Consultia.LayoutEditor.setActiveProfile(c.id, c.nombre, c);
-      }
-
       var empty = $(emptyId());
       var body = $(bodyId());
       marcarConResultado(false);

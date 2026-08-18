@@ -50,10 +50,14 @@
   // ============================================================
   var NC_MODAL_ID = 'noCreditsModalRoot';
 
+  /* Los paquetes de créditos que se le ofrecen a quien se quedó sin saldo.
+     Llamaba a `Consultia.Plans.getPlans()`, que no existe: la API es
+     `getActiveCreditPlans()`. Como la llamada iba dentro de un `if`, no
+     reventaba nada — devolvía una lista vacía y el aviso salía sin un
+     solo paquete que comprar. El cliente sin créditos no veía qué pagar. */
   function getPlans() {
-    if (Consultia.Plans && Consultia.Plans.getPlans) {
-      var all = Consultia.Plans.getPlans();
-      return (all.creditPlans || []).filter(function (p) { return p.active; });
+    if (Consultia.Plans && Consultia.Plans.getActiveCreditPlans) {
+      return Consultia.Plans.getActiveCreditPlans();
     }
     return [];
   }

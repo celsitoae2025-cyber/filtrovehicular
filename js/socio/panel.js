@@ -235,7 +235,7 @@
     // Un solo oyente para toda la tabla: las filas se repintan a cada
     // rato y colgarle un oyente a cada botón los iría acumulando.
     var cuerpo = $('socioClientesBody');
-    if (cuerpo) cuerpo.addEventListener('click', function (e) {
+    if (cuerpo) cuerpo.addEventListener('click', async function (e) {
       var btn = e.target.closest ? e.target.closest('[data-entregar]') : null;
       if (!btn) return;
       var campoEmail = $('socioBuscarEmail');
@@ -244,7 +244,9 @@
       // Se reusa el mismo formulario de arriba: una sola forma de
       // entregar créditos en todo el panel.
       if (campoEmail) campoEmail.value = cliente.email;
-      S.buscarUsuario();
+      // Se espera a que la ficha esté pintada: si no, el desplazamiento
+      // ocurría con el cuadro todavía oculto y no llevaba a ninguna parte.
+      await S.buscarUsuario();
       var caja = $('socioHallazgo');
       if (caja && caja.scrollIntoView) caja.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });

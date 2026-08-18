@@ -999,7 +999,7 @@
       await new Promise(function (resolve) {
         Consultia.confirmDialog({
           title: 'Cancelar plan',
-          message: '¿Seguro que quieres cancelar el plan de <strong>' + (u.full_name || u.email) + '</strong>?<br><br>' +
+          messageHtml: '¿Seguro que quieres cancelar el plan de <strong>' + esc(u.full_name || u.email) + '</strong>?<br><br>' +
                    'Perderá inmediatamente el acceso a las consultas premium. Esta acción no se puede deshacer.',
           confirmLabel: 'Cancelar plan',
           confirmStyle: 'danger',

@@ -32,7 +32,7 @@
     if (Consultia.confirm) {
       Consultia.confirm({
         title: 'Servicio exclusivo Plus / Business',
-        message: 'Esta consulta está disponible únicamente con el plan <b>Profesional Plus</b> o <b>Business</b>.<br><br>Mejora tu plan para desbloquear todos los servicios premium.',
+        messageHtml: 'Esta consulta está disponible únicamente con el plan <b>Profesional Plus</b> o <b>Business</b>.<br><br>Mejora tu plan para desbloquear todos los servicios premium.',
         confirmText: 'Ver planes',
         cancelText: 'Cerrar',
       }).then(function (ok) {

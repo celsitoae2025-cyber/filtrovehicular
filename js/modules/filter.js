@@ -288,10 +288,6 @@
       var el = $(id); if (el) el.hidden = true;
     });
 
-    if (Consultia.LayoutEditor && Consultia.LayoutEditor.setActiveProfile) {
-      Consultia.LayoutEditor.setActiveProfile(c.id, c.nombre, c);
-    }
-
     // Resetear resultado
     marcarConResultado(false);
     var resultPanel = $('filter-result');
