@@ -59,20 +59,47 @@
 
   function htmlReporteEnImplementacion() {
     return '<div class="rep-espera">' +
-      '<div class="rep-espera-head">' +
-        '<span class="rep-espera-chip">En implementación</span>' +
+      '<div class="rep-espera-hero">' +
+        '<span class="rep-espera-chip"><span class="rep-espera-pulso"></span>En implementación</span>' +
         '<h4 class="rep-espera-titulo">Reporte Completo</h4>' +
-        '<p class="rep-espera-texto">Lo estamos terminando. Cuando esté listo, ' +
-        'un solo clic te devuelve todo esto en un mismo documento:</p>' +
+        '<p class="rep-espera-cifra">' +
+          '<span class="rep-espera-num" data-hasta="' + REPORTE_INCLUYE.length + '">0</span>' +
+          '<span class="rep-espera-cifra-txt">trámites en un solo clic</span>' +
+        '</p>' +
+        '<div class="rep-espera-barra"><span></span></div>' +
       '</div>' +
+      '<p class="rep-espera-texto">Lo estamos terminando. Cuando esté listo, un solo clic ' +
+      'te devuelve todo esto reunido en un mismo documento:</p>' +
       '<ul class="rep-espera-lista">' +
-        REPORTE_INCLUYE.map(function (t) {
-          return '<li><span class="rep-espera-ico">' + ICONO_CHECK + '</span>' + escapeHtml(t) + '</li>';
+        REPORTE_INCLUYE.map(function (t, i) {
+          return '<li style="--i:' + i + '"><span class="rep-espera-ico">' + ICONO_CHECK + '</span>' +
+            escapeHtml(t) + '</li>';
         }).join('') +
       '</ul>' +
       '<p class="rep-espera-pie">Mientras tanto, cada consulta de la lista ya está disponible ' +
       'por separado en su categoría.</p>' +
     '</div>';
+  }
+
+  /* El contador sube de 0 a 21 al aparecer. Es el dato que vende el
+     reporte, y verlo subir dice «esto es mucho» mejor que escribirlo. */
+  function animarCifra(raiz) {
+    var num = raiz && raiz.querySelector('.rep-espera-num');
+    if (!num) return;
+    var hasta = parseInt(num.getAttribute('data-hasta'), 10) || 0;
+    var quieto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (quieto || !hasta) { num.textContent = hasta; return; }
+    var DURACION = 900;
+    var inicio = 0;
+    function paso(ahora) {
+      if (!inicio) inicio = ahora;
+      var t = Math.min((ahora - inicio) / DURACION, 1);
+      // Desacelera al final: arranca rápido y se posa en la cifra.
+      var suave = 1 - Math.pow(1 - t, 3);
+      num.textContent = Math.round(hasta * suave);
+      if (t < 1) requestAnimationFrame(paso);
+    }
+    requestAnimationFrame(paso);
   }
 
   /* La pantalla flotante sale al PULSAR Consultar, no al elegir la consulta
@@ -100,6 +127,12 @@
       '</div>';
     document.body.appendChild(root);
     document.body.classList.add('modal-open');
+    // Un fotograma de margen para que el navegador vea el estado inicial y
+    // la entrada se anime en vez de aparecer puesta.
+    requestAnimationFrame(function () {
+      root.classList.add('is-abierto');
+      animarCifra(root);
+    });
 
     function cerrar() {
       document.removeEventListener('keydown', alPulsarTecla);
@@ -123,7 +156,11 @@
     var rp    = $('filter-result');
     if (rp) rp.hidden = false;
     if (empty) empty.hidden = true;
-    if (body) { body.hidden = false; body.innerHTML = htmlReporteEnImplementacion(); }
+    if (body) {
+      body.hidden = false;
+      body.innerHTML = htmlReporteEnImplementacion();
+      animarCifra(body);
+    }
     var status = $('filterResultStatus');
     if (status) {
       status.classList.remove('status-loading', 'status-ok');

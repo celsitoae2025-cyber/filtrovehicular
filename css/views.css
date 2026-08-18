@@ -6131,26 +6131,66 @@ a.nm-download { text-decoration: none; }
    plataforma, así que ocupa el panel del resultado con el mismo aire
    que una ficha de verdad.
 ============================================================ */
-.rep-espera { padding: 22px 20px 24px; }
-.rep-espera-head { padding-bottom: 14px; border-bottom: 2px solid #141d1c; }
+.rep-espera { padding: 0 0 22px; }
+
+/* El membrete del reporte: fondo oscuro, la cifra grande y una barra que
+   avanza sin llegar nunca — está en obra, y se nota. */
+.rep-espera-hero {
+  position: relative;
+  overflow: hidden;
+  background: #141d1c;
+  padding: 26px 24px 0;
+  border-radius: 12px 12px 0 0;
+}
 .rep-espera-chip {
-  display: inline-block;
-  background: #eef7dc; color: #4f7d00;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(143, 199, 46, .16); color: #a9d95c;
   font-size: 11px; font-weight: 700; letter-spacing: 1.1px;
   text-transform: uppercase;
-  padding: 5px 12px; border-radius: 999px;
+  padding: 6px 14px; border-radius: 999px;
+}
+.rep-espera-pulso {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #8fc72e;
+  animation: rep-pulso 1.6s ease-in-out infinite;
+}
+@keyframes rep-pulso {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .35; transform: scale(.7); }
 }
 .rep-espera-titulo {
-  margin: 10px 0 4px;
-  font-size: 21px; font-weight: 700; color: #141d1c; letter-spacing: .1px;
+  margin: 14px 0 2px;
+  font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: .2px;
 }
+.rep-espera-cifra {
+  display: flex; align-items: baseline; gap: 10px;
+  margin: 0 0 20px;
+}
+.rep-espera-num {
+  font-size: 44px; font-weight: 700; line-height: 1;
+  color: #8fc72e;
+  font-variant-numeric: tabular-nums;
+}
+.rep-espera-cifra-txt { font-size: 15px; color: #9aa8a4; }
+/* La barra no marca progreso real: dice «esto está avanzando». */
+.rep-espera-barra { height: 3px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+.rep-espera-barra span {
+  display: block; height: 100%; width: 40%;
+  background: #8fc72e;
+  animation: rep-barra 2.4s ease-in-out infinite;
+}
+@keyframes rep-barra {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
 .rep-espera-texto {
-  margin: 0; max-width: 62ch;
+  margin: 18px 20px 0; max-width: 62ch;
   font-size: 15px; line-height: 1.5; color: #5d6866;
 }
 .rep-espera-lista {
   list-style: none;
-  margin: 16px 0 0; padding: 0;
+  margin: 16px 20px 0; padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1px;
@@ -6164,6 +6204,14 @@ a.nm-download { text-decoration: none; }
   background: #ffffff;
   padding: 11px 14px;
   font-size: 14px; color: #141d1c; line-height: 1.35;
+  /* Entran en cascada, de arriba abajo. */
+  opacity: 0;
+  animation: rep-entra .34s ease-out forwards;
+  animation-delay: calc(var(--i, 0) * 28ms + 120ms);
+}
+@keyframes rep-entra {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
 }
 .rep-espera-ico {
   flex-shrink: 0; display: inline-flex;
@@ -6171,6 +6219,20 @@ a.nm-download { text-decoration: none; }
   color: #8fc72e;
 }
 .rep-espera-ico svg { width: 100%; height: 100%; }
+/* El check se dibuja solo, al ritmo de su fila. */
+.rep-espera-ico polyline {
+  stroke-dasharray: 26;
+  stroke-dashoffset: 26;
+  animation: rep-traza .4s ease-out forwards;
+  animation-delay: calc(var(--i, 0) * 28ms + 260ms);
+}
+@keyframes rep-traza { to { stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rep-espera-lista li,
+  .rep-espera-ico polyline { animation: none; opacity: 1; stroke-dashoffset: 0; }
+  .rep-espera-pulso, .rep-espera-barra span { animation: none; }
+}
 .rep-espera-pie {
   margin: 14px 0 0;
   font-size: 13px; color: #7c8785; line-height: 1.5;
@@ -6185,7 +6247,14 @@ a.nm-download { text-decoration: none; }
    Sale al pulsar Consultar. Misma ficha que el panel, sobre un fondo
    oscurecido y con una sola salida: «Entendido». */
 .rep-modal { position: fixed; inset: 0; z-index: 9995; display: flex; align-items: center; justify-content: center; padding: 24px; }
-.rep-modal-fondo { position: absolute; inset: 0; background: rgba(14, 19, 18, .62); }
+.rep-modal-fondo {
+  position: absolute; inset: 0;
+  background: rgba(14, 19, 18, .62);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity .28s ease;
+}
+.rep-modal.is-abierto .rep-modal-fondo { opacity: 1; }
 .rep-modal-caja {
   position: relative;
   width: min(760px, 100%);
@@ -6193,6 +6262,13 @@ a.nm-download { text-decoration: none; }
   overflow-y: auto;
   background: #ffffff;
   border-radius: 14px;
+  opacity: 0;
+  transform: translateY(14px) scale(.985);
+  transition: opacity .3s ease, transform .34s cubic-bezier(.16, 1, .3, 1);
+}
+.rep-modal.is-abierto .rep-modal-caja { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .rep-modal-fondo, .rep-modal-caja { transition: none; opacity: 1; transform: none; }
 }
 .rep-modal-cerrar {
   position: absolute; top: 14px; right: 14px;
@@ -6211,7 +6287,7 @@ a.nm-download { text-decoration: none; }
   transition: background var(--t-fast);
 }
 .rep-modal-ok:hover { background: #0e1312; }
-.rep-modal .rep-espera { padding-top: 26px; }
+.rep-modal .rep-espera { padding-bottom: 18px; }
 @media (max-width: 720px) {
   .rep-modal { padding: 12px; }
   .rep-modal-caja { max-height: 92vh; }
