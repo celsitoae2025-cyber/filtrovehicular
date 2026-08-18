@@ -6180,3 +6180,41 @@ a.nm-download { text-decoration: none; }
   .rep-espera-titulo { font-size: 18px; }
   .rep-espera-lista { grid-template-columns: 1fr; }
 }
+
+/* ── Reporte Completo: la pantalla flotante ──────────────────────────
+   Sale al pulsar Consultar. Misma ficha que el panel, sobre un fondo
+   oscurecido y con una sola salida: «Entendido». */
+.rep-modal { position: fixed; inset: 0; z-index: 9995; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.rep-modal-fondo { position: absolute; inset: 0; background: rgba(14, 19, 18, .62); }
+.rep-modal-caja {
+  position: relative;
+  width: min(760px, 100%);
+  max-height: 86vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 14px;
+}
+.rep-modal-cerrar {
+  position: absolute; top: 14px; right: 14px;
+  width: 34px; height: 34px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--c-border); border-radius: 999px;
+  background: #ffffff; color: #141d1c; cursor: pointer;
+}
+.rep-modal-cerrar svg { width: 17px; height: 17px; }
+.rep-modal-cerrar:hover { background: #f1f3f3; }
+.rep-modal-pie { padding: 0 20px 22px; display: flex; justify-content: flex-end; }
+.rep-modal-ok {
+  font: inherit; font-size: 14px; letter-spacing: .4px;
+  padding: 11px 26px; border: none; border-radius: 999px;
+  background: #141d1c; color: #ffffff; cursor: pointer;
+  transition: background var(--t-fast);
+}
+.rep-modal-ok:hover { background: #0e1312; }
+.rep-modal .rep-espera { padding-top: 26px; }
+@media (max-width: 720px) {
+  .rep-modal { padding: 12px; }
+  .rep-modal-caja { max-height: 92vh; }
+  .rep-modal-pie { padding: 0 12px 16px; }
+  .rep-modal-ok { width: 100%; }
+}

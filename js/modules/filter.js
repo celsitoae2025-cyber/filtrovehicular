@@ -75,6 +75,48 @@
     '</div>';
   }
 
+  /* La pantalla flotante sale al PULSAR Consultar, no al elegir la consulta
+     del cuadro: quien pulsa está pidiendo el reporte y merece la respuesta
+     de frente; a quien solo pasea por el catálogo, un cartel encima le
+     estorba —para eso está la lista en el panel, que no tapa nada. */
+  var CERRAR_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
+    'stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+
+  function abrirModalReporte() {
+    var previo = document.getElementById('rep-modal');
+    if (previo) previo.remove();
+
+    var root = document.createElement('div');
+    root.id = 'rep-modal';
+    root.className = 'rep-modal';
+    root.setAttribute('role', 'dialog');
+    root.setAttribute('aria-modal', 'true');
+    root.innerHTML =
+      '<div class="rep-modal-fondo"></div>' +
+      '<div class="rep-modal-caja">' +
+        '<button class="rep-modal-cerrar" type="button" aria-label="Cerrar">' + CERRAR_SVG + '</button>' +
+        htmlReporteEnImplementacion() +
+        '<div class="rep-modal-pie"><button class="rep-modal-ok" type="button">Entendido</button></div>' +
+      '</div>';
+    document.body.appendChild(root);
+    document.body.classList.add('modal-open');
+
+    function cerrar() {
+      document.removeEventListener('keydown', alPulsarTecla);
+      document.body.classList.remove('modal-open');
+      root.remove();
+    }
+    function alPulsarTecla(e) { if (e.key === 'Escape') cerrar(); }
+    document.addEventListener('keydown', alPulsarTecla);
+    root.querySelector('.rep-modal-fondo').addEventListener('click', cerrar);
+    root.querySelector('.rep-modal-cerrar').addEventListener('click', cerrar);
+    root.querySelector('.rep-modal-ok').addEventListener('click', cerrar);
+    setTimeout(function () {
+      var b = root.querySelector('.rep-modal-ok');
+      if (b) b.focus();
+    }, 50);
+  }
+
   function mostrarReporteEnImplementacion() {
     var body  = $('filter-result-body');
     var empty = $('filter-empty');
@@ -292,11 +334,7 @@
        incluido— sigue donde estaba. */
     if (REPORTE_EN_IMPLEMENTACION && esMetapla(currentConsulta)) {
       mostrarReporteEnImplementacion();
-      if (Consultia.toast) Consultia.toast({
-        type: 'info',
-        title: 'Reporte Completo en implementación',
-        message: 'Muy pronto: los 21 trámites en un solo clic. No se descontaron créditos.'
-      });
+      abrirModalReporte();
       return;
     }
 
