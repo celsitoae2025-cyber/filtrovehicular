@@ -12,7 +12,30 @@
   window.Consultia = window.Consultia || {};
 
   /* â"€â"€ Error detection â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
-  var ERROR_TECNICO_RE = /ECONN|ETIMEDOUT|ENOTFOUND|socket hang|network error|error en la consulta|no se pudo extraer|error al procesar|timeout|connection reset/i;
+  /* Fallos que no son culpa del cliente: se le enseña la ficha de
+     mantenimiento con «sin cargo». La lista tiene que ser LA MISMA que la
+     del servidor (supabase/functions/_shared/empty-response.ts,
+     FALLO_TECNICO_PATTERNS): allí se decide si se devuelve el crédito, y
+     si una reconoce lo que la otra no, la página promete una cosa y la
+     cuenta hace otra. Si se cambia una, cambiar la otra. */
+  var ERROR_TECNICO_RE = new RegExp([
+    'ECONN|ETIMEDOUT|ENOTFOUND',
+    'socket hang',
+    'network error',
+    'connection reset',
+    'timeout',
+    'no se pudo extraer',
+    'error al procesar',
+    'error en la consulta',
+    // Del proveedor: su saldo, sus topes, su mantenimiento.
+    '(cr[eé]ditos?|saldo)\\s+(insuficient|agotad)',
+    'sin\\s+(cr[eé]ditos?|saldo)\\s+(suficient|disponible)',
+    'l[íi]mite\\s+(diario|de\\s+consultas|alcanzado|excedid)',
+    'en\\s+mantenimiento',
+    '(intente|intenta|vuelva|vuelve)\\s+.{0,20}m[áa]s\\s+tarde',
+    'servidor\\s+(ca[íi]d|no\\s+responde|ocupado)',
+    'bot\\s+(desconectad|no\\s+disponible)',
+  ].join('|'), 'i');
 
   function esErrorTecnico(texto) {
     return ERROR_TECNICO_RE.test(texto);
