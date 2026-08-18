@@ -50,6 +50,13 @@ const NO_RESULT_PATTERNS: RegExp[] = [
   /no\s+cuenta\s+con/i,
 ];
 
+// Fallos que NO son culpa del cliente: la consulta no se entregó, así que
+// no se cobra. La página ya le dice «sin cargo, tus créditos están
+// protegidos» al enseñar estos casos; si el servidor no los reconoce, esa
+// promesa es mentira y el crédito se queda descontado.
+//
+// Los nueve primeros son los mismos de render-helpers.js
+// (ERROR_TECNICO_RE). Si se cambia una lista, cambiar la otra.
 const ERROR_PATTERNS: RegExp[] = [
   /error\s+en\s+la\s+consulta/i,
   /no\s+se\s+pudo\s+obtener/i,
@@ -58,6 +65,34 @@ const ERROR_PATTERNS: RegExp[] = [
   /servicio\s+(no\s+disponible|temporalmente)/i,
   /intenta\s+(de\s+)?nuevo|reintenta(r|s)?\s+/i,
   /fallo\s+(en\s+la\s+)?consulta/i,
+];
+
+/* Fallos técnicos y del proveedor: la consulta no se entregó.
+   Se miran SOLO cuando la respuesta no trae ni un campo con datos. Un
+   resultado bueno puede mencionar «mantenimiento» o «límite» dentro de un
+   valor —una infracción, el estado de un vehículo— y eso no convierte la
+   consulta en fallida ni tiene por qué salir gratis.
+
+   Los técnicos son los mismos de render-helpers.js (ERROR_TECNICO_RE):
+   allí la página promete «sin cargo, tus créditos están protegidos», y si
+   el servidor no los reconoce esa promesa es mentira. Si se cambia una
+   lista, cambiar la otra. */
+const FALLO_TECNICO_PATTERNS: RegExp[] = [
+  /ECONN|ETIMEDOUT|ENOTFOUND/i,
+  /socket\s+hang/i,
+  /network\s+error/i,
+  /connection\s+reset/i,
+  /timeout/i,
+  /no\s+se\s+pudo\s+extraer/i,
+  /error\s+al\s+procesar/i,
+  // Del proveedor: su saldo, sus topes, su mantenimiento.
+  /(cr[eé]ditos?|saldo)\s+(insuficient|agotad)/i,
+  /sin\s+(cr[eé]ditos?|saldo)\s+(suficient|disponible)/i,
+  /l[íi]mite\s+(diario|de\s+consultas|alcanzado|excedid)/i,
+  /en\s+mantenimiento/i,
+  /(intente|intenta|vuelva|vuelve)\s+.{0,20}m[áa]s\s+tarde/i,
+  /servidor\s+(ca[íi]d|no\s+responde|ocupado)/i,
+  /bot\s+(desconectad|no\s+disponible)/i,
 ];
 
 type Dict = Record<string, unknown>;
@@ -144,6 +179,13 @@ export function esRespuestaVacia(resp: unknown): boolean {
     asStr(p.mensaje),
   ].filter(Boolean).join(" ");
   if (!hasSecciones && EN_PROCESO_PATTERNS.some((re) => re.test(textoAcuse))) {
+    return true;
+  }
+
+  /* Fallo técnico o del proveedor sin ni un campo de datos: no se entregó
+     nada. La página ya lo enseña como «servicio en mantenimiento, sin
+     cargo»; aquí se cumple esa promesa. */
+  if (!hasSecciones && FALLO_TECNICO_PATTERNS.some((re) => re.test(textoAcuse))) {
     return true;
   }
   const hasMedios = Array.isArray(p.medios) && (p.medios as unknown[]).length > 0;
