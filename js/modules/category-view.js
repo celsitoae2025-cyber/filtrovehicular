@@ -122,6 +122,20 @@
       var panel = $(prefix + 'ComboPanel');
       try {
         catalog = await Consultia.ConsultaRunner.loadCatalog(categoria);
+
+        /* Los trámites, detrás de las consultas.
+           No son filas del catálogo ni salen del bot: los registra su
+           propio módulo en `Consultia.Tramites` (hoy, el Duplicado de
+           CITV en Vehículos). Se cuelan en el mismo desplegable porque
+           el cliente no tiene por qué saber que por dentro son otra
+           cosa: escribe su placa y pulsa Consultar igual que siempre.
+           Lo que cambia es el final —ver `ejecutar()`—: en vez de ir al
+           bot, abren lo suyo. */
+        var tramites = (Consultia.Tramites || []).filter(function (t) {
+          return t.categoria === categoria;
+        });
+        if (tramites.length) catalog = catalog.concat(tramites);
+
         if (!catalog.length) {
           if (comboText) comboText.textContent = 'Sin consultas activas';
           if (panel) panel.innerHTML = '<div class="combo-empty">No hay consultas disponibles.</div>';
@@ -726,6 +740,14 @@
             return;
           }
         }
+      }
+
+      /* Un trámite no consulta al bot: abre lo suyo con el dato ya
+         escrito. De aquí en adelante manda su módulo —él comprueba la
+         sesión, el saldo y el cobro—, así que esta vista se aparta. */
+      if (currentConsulta.tramite_abrir) {
+        currentConsulta.tramite_abrir(valor);
+        return;
       }
 
       var user = await Consultia.Auth.getUser();

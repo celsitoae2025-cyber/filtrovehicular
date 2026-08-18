@@ -386,7 +386,13 @@
      consulta se lleva el texto de la otra. */
   var PAUSA_ENTRE_COMANDOS_MS = 7000;
 
-  function abrir() {
+  /* Se puede entrar por dos puertas. Desde el menú lateral se entra en
+     frío y el cuadro empieza por el aviso —qué es un CITV, cuánto
+     tarda—. Desde la pestaña de Vehículos se entra con la placa ya
+     escrita, así que ese aviso sobra: se salta directo al paso de la
+     placa, con el dato puesto, y lo único que queda por decidir es el
+     logotipo. */
+  function abrir(placaInicial) {
     var previo = document.getElementById('citv-modal');
     if (previo) previo.remove();
 
@@ -769,14 +775,34 @@
       }
     }
 
-    boton.onclick = function () { paso2(); };
-    setTimeout(function () { if (boton) boton.focus(); }, 50);
+    if (placaInicial) {
+      paso2(String(placaInicial).trim().toUpperCase());
+    } else {
+      boton.onclick = function () { paso2(); };
+      setTimeout(function () { if (boton) boton.focus(); }, 50);
+    }
   }
 
   Consultia.CitvAviso = { abrir: abrir };
 
+  /* El trámite se anuncia en la pestaña de Vehículos, al final del
+     desplegable, como una consulta más. No lo es —no hay fila en el
+     catálogo ni comando que mandar— pero para el cliente se pide igual:
+     su placa y el botón de siempre. Lo recoge category-view.js. */
+  Consultia.Tramites = Consultia.Tramites || [];
+  Consultia.Tramites.push({
+    id: 'tramite-citv',
+    categoria: 'vehiculos',
+    nombre: 'Duplicado de CITV',
+    descripcion: 'Emite el duplicado del Certificado de Inspección Técnica Vehicular.',
+    tipo_dato: 'placa',
+    precio_venta: COSTO_CITV,
+    tramite_abrir: function (placa) { abrir(placa); },
+  });
+
   document.addEventListener('DOMContentLoaded', function () {
     var btn = document.getElementById('navCitv');
-    if (btn) btn.addEventListener('click', abrir);
+    // Sin pasarle el evento: `abrir` toma una placa como primer argumento.
+    if (btn) btn.addEventListener('click', function () { abrir(); });
   });
 })();
