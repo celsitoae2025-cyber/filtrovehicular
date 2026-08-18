@@ -44,14 +44,12 @@ FUENTESDATA-INVENTARIO.md
 consulta-vehicular.csv
 consulta-vehicular.md
 
-# Emisor de certificados CITV — NO se publica.
-# El repositorio se despliega entero en Cloudflare Pages, así que subir
-# esto dejaría la plantilla del certificado —con membrete del MTC, logo
-# y firma— colgada en internet para quien acierte la dirección. El
-# guardián de administrador que trae solo esconde la página, no el
-# archivo: cualquiera podría leer su código fuente.
-# Se trabaja en local hasta ponerle una puerta de verdad (Cloudflare
-# Access) o dejarlo definitivamente fuera del sitio.
-CITV/
-citv-emisor.html
-assets/citv/
+# El emisor de certificados CITV SÍ se publica: tiene que correr desde la
+# nube. Lo tapa el guardián de administrador, pero eso solo esconde la
+# pantalla —el archivo se lee igual desde el código fuente—, así que la
+# puerta de verdad es Cloudflare Access sobre /citv-emisor.html.
+#
+# Lo que no va al sitio es la carpeta de trabajo original. La barra del
+# principio es necesaria: sin ella, y con Windows ignorando mayúsculas,
+# la regla se llevaba por delante también `assets/citv/`.
+/CITV/

@@ -1,0 +1,2264 @@
+<!DOCTYPE html>
+<html lang="es" style="visibility:hidden">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificado CITV - MTC</title>
+
+    <meta name="theme-color" content="#141d1c">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=2">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .cert-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .page {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            /* Keep certificate in Helvetica */
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            padding: 25mm 10mm 10mm 10mm;
+            /* Updated padding from previous steps */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            position: relative;
+            transform: scale(1.3);
+            transform-origin: top center;
+            margin-bottom: 100px;
+        }
+
+        .page-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .page-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            padding: 8px 15px;
+            border-radius: 8px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .toolbar button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .toolbar button:hover {
+            background: #45a049;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+            min-height: 80px;
+        }
+
+        .logo-box {
+            /* El logo del centro entra a tamaño reducido: la imagen viene
+               de casi 1000 px de ancho y, suelta, se comía la cabecera
+               entera. Se fija el alto y el ancho se acomoda solo. */
+            min-width: 100px;
+            max-width: 200px;
+            height: 80px;
+            min-height: 0;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #333;
+            margin-left: 25px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            resize: both;
+            border: 1px dashed transparent;
+        }
+
+        .logo-box:hover {
+            border: 1px dashed #999;
+        }
+
+        .logo-box img,
+        .seal-box img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .logo-box.has-image {
+            background: transparent;
+            resize: horizontal;
+            overflow: hidden;
+            border: 1px dashed transparent;
+        }
+
+        .logo-box.has-image:hover {
+            border: 1px dashed #999;
+        }
+
+        .logo-placeholder,
+        .seal-placeholder {
+            background: #d0d0d0;
+            padding: 15px 10px;
+            text-align: center;
+        }
+
+        .seal-box.has-image .seal-placeholder {
+            display: none;
+        }
+
+        .logo-box:hover,
+        .seal-box:hover {
+            opacity: 0.8;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 60%;
+        }
+
+        .header-center .ministry {
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .header-center .company {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 3px 0;
+        }
+
+        .header-center .address {
+            font-size: 8px;
+        }
+
+        .header-right {
+            position: absolute;
+            right: 85px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: center;
+        }
+
+        .mtc-letters {
+            font-size: 20px;
+            font-weight: bold;
+            font-style: italic;
+            color: red;
+            line-height: 0.85;
+        }
+
+        /* Main Title */
+        .main-title {
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+        }
+
+        .cert-number {
+            text-align: center;
+            font-size: 10px;
+            margin-bottom: 8px;
+        }
+
+        /* Info Bar */
+        .info-bar {
+            display: flex;
+            border: 1px solid black;
+            margin-bottom: 5px;
+            font-size: 9px;
+        }
+
+        .info-bar>div {
+            flex: 1;
+            padding: 2px 5px;
+            border-right: 1px solid black;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-bar>div:last-child {
+            border-right: none;
+        }
+
+        .info-bar .label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            background: rgba(192, 192, 192, 0.5);
+            padding: 4px 5px;
+            font-weight: bold;
+            font-size: 9px;
+            border: 1px solid black;
+            margin-top: 8px;
+            height: 18px;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8px;
+        }
+
+        td,
+        th {
+            border: 1px solid black;
+            padding: 1px 3px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        /* Section I - Vehicle Data - New Layout */
+        .vehicle-table-new {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8px;
+            margin-top: 5px;
+        }
+
+        .vehicle-table-new td {
+            padding: 2px 3px;
+            vertical-align: middle;
+            text-align: left;
+            border: 1px solid black;
+        }
+
+        .vehicle-table-new .num {
+            width: 18px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .vehicle-table-new .label {
+            font-weight: bold;
+            width: 65px;
+            color: #333;
+        }
+
+        .vehicle-table-new .value {
+            width: 90px;
+        }
+
+        #cTipoUso {
+            white-space: nowrap;
+            font-size: 7px;
+            letter-spacing: -0.2px;
+        }
+
+        /* Section II - Equipment */
+        .equip-table th {
+            background: transparent;
+            font-weight: bold;
+        }
+
+        /* Section III - Results */
+        .results-section {
+            margin-top: 5px;
+        }
+
+        .brake-header {
+            background: transparent;
+            font-weight: bold;
+        }
+
+        .brake-subheader {
+            background: transparent;
+            font-size: 7px;
+        }
+
+        /* Multi-column layout for tests */
+        .tests-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.3fr 1.2fr;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .test-box table {
+            height: 100%;
+        }
+
+        .test-box th {
+            background: transparent;
+            font-weight: bold;
+        }
+
+        /* Emissions row */
+        .emissions-table {
+            margin-top: 5px;
+        }
+
+        .emissions-table td {
+            font-size: 7px;
+        }
+
+        /* Section IV - Defects */
+        .defects-table {
+            margin-top: 5px;
+        }
+
+        .defects-table th {
+            background: rgba(192, 192, 192, 0.5);
+        }
+
+        /* Section V - Final Result */
+        .result-section {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            align-items: flex-start;
+        }
+
+        .result-table-container {
+            flex: 1.5;
+        }
+
+        .result-table th {
+            background: transparent;
+        }
+
+        .result-table td {
+            height: 25px;
+        }
+
+        .seal-signature {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .seal-box {
+            border: 1px solid #999;
+            width: 150px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .signature-line {
+            margin-top: 15px;
+            border-top: 1px solid black;
+            width: 150px;
+            text-align: center;
+            padding-top: 3px;
+            font-size: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 10px;
+        }
+
+        .mtc-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #1a237e;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .ci-code {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .ci-black {
+            color: black;
+        }
+
+.ci-red {
+    color: red;
+}
+
+/* ========== ESTILOS DE LA INTERFAZ (UI) ========== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0d0d1a;
+            background-image:
+                radial-gradient(ellipse at 15% 50%, rgba(183,28,28,0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(30,30,70,0.3) 0%, transparent 50%);
+            display: flex;
+            justify-content: center;
+            padding-right: 460px;
+            margin: 0;
+            padding-top: 80px;
+            padding-bottom: 60px;
+            min-height: 100vh;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Top Global Header */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-bottom: 1px solid rgba(183,28,28,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 30px;
+            padding-right: 460px;
+            box-sizing: border-box;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .main-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #b71c1c, #ff5252, #b71c1c, transparent);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            width: 210mm;
+            max-width: 100%;
+        }
+
+        .main-header img {
+            height: 38px;
+            width: auto;
+            object-fit: contain;
+            filter: brightness(1.1);
+        }
+
+        .main-header .separator {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(180deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .main-header h1 {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.3;
+            letter-spacing: 0.3px;
+        }
+
+        /* Global Footer */
+        .main-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13,13,26,0.95);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 0 30px;
+            padding-right: 460px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 36px;
+            box-sizing: border-box;
+        }
+
+        .footer-bottom {
+            width: 210mm;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* Form Button Grid */
+        .form-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        /* Form Panel */
+        .form-panel {
+            width: 440px;
+            position: fixed;
+            right: 0;
+            top: 70px;
+            bottom: 0;
+            background: rgba(16,16,32,0.98);
+            border-left: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            flex-direction: column;
+            z-index: 1001;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+        }
+
+        .form-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .form-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .form-panel::-webkit-scrollbar-thumb {
+            background: rgba(183,28,28,0.4);
+            border-radius: 2px;
+        }
+
+        .form-panel-header {
+            display: none;
+        }
+
+        .form-panel-header h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-panel-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            background: transparent;
+        }
+
+        .form-panel-content::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .form-panel-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .form-panel-content::-webkit-scrollbar-thumb {
+            background: rgba(183,28,28,0.3);
+            border-radius: 3px;
+        }
+
+        .form-panel-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(183,28,28,0.5);
+        }
+
+        /* Form Sections */
+        .form-section {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-section:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(183,28,28,0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .form-section.sticky-buttons {
+            position: sticky;
+            top: -20px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 0;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: rgba(16,16,32,0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 10;
+            padding: 16px 20px;
+        }
+
+        .form-section-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #ff5252;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,82,82,0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-section-title::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: linear-gradient(180deg, #ff5252, #b71c1c);
+            border-radius: 2px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 6px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            font-size: 13px;
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.9);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+            outline: none;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255,255,255,0.2);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: rgba(183,28,28,0.5);
+            background: rgba(183,28,28,0.06);
+            box-shadow: 0 0 0 3px rgba(183,28,28,0.1), 0 4px 12px rgba(0,0,0,0.2);
+            color: #fff;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.763L10.825 4z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            appearance: none;
+        }
+
+        .form-group select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+
+        /* Vehicle Grid */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .vehicle-grid .form-group label {
+            font-size: 9px;
+        }
+
+        .vehicle-grid .form-group input {
+            padding: 8px 10px;
+            font-size: 12px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #c62828, #b71c1c);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-action:hover::before {
+            left: 100%;
+        }
+
+        .btn-action:hover {
+            background: linear-gradient(135deg, #d32f2f, #c62828);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(183,28,28,0.4);
+        }
+
+        .btn-action:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(183,28,28,0.3);
+        }
+
+        .btn-action.secondary {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: none;
+        }
+
+        .btn-action.secondary::before {
+            display: none;
+        }
+
+        .btn-action.secondary:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(183,28,28,0.3);
+            color: #ff5252;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(20,20,40,0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 6px 14px;
+            border-radius: 50px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .zoom-controls button {
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-controls button:hover {
+            background: rgba(183,28,28,0.3);
+            border-color: rgba(183,28,28,0.5);
+            color: white;
+        }
+
+        .zoom-controls span {
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            min-width: 45px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+
+        /* ========== ESTILOS DE IMPRESIÓN A4 ========== */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            html,
+            body {
+                width: 210mm;
+                height: auto;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                overflow: visible !important;
+            }
+
+            body {
+                display: block !important;
+                padding-right: 0 !important;
+            }
+
+            /* Ocultar TODOS los elementos de UI en impresión */
+            .form-panel,
+            .zoom-controls,
+            .toolbar,
+            .btn-action,
+            .main-header,
+            .main-footer,
+            input[type="file"],
+            #pdfInput,
+            #imageInput,
+            #logoInput,
+            #bgInput,
+            ::-webkit-scrollbar {
+                display: none !important;
+            }
+
+            /* Reset del borde y fondo del Body */
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                display: block !important;
+            }
+
+            /* Ajustar el contenedor del certificado */
+            .cert-container {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            /* Ajustar la página del certificado */
+            .page {
+                font-family: 'Helvetica', 'Arial', sans-serif !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                min-height: 297mm !important;
+                margin: 0 !important;
+                padding: 18mm 10mm 5mm 10mm !important;
+                box-shadow: none !important;
+                page-break-after: avoid;
+                page-break-inside: avoid;
+                overflow: hidden !important;
+                border: none !important;
+                position: relative !important;
+                left: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+            }
+
+            /* Reducir espaciado en impresión para que quepa en 1 página */
+            .footer {
+                margin-top: 3px !important;
+            }
+
+            .mtc-circle {
+                margin-top: 5px !important;
+            }
+
+            .ci-code {
+                margin-top: 5px !important;
+            }
+
+            .section-header {
+                margin-top: 4px !important;
+            }
+
+            .result-section {
+                margin-top: 4px !important;
+            }
+
+            /* Fondo blanco para impresión */
+            .bg-layer {
+                border: none !important;
+            }
+
+            /* Asegurar que el fondo se imprima */
+            .page-background {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background-size: cover !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Asegurar contenido visible */
+            .page-content {
+                position: relative !important;
+                z-index: 1 !important;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Global Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <img src="assets/citv/logo-mtc.png"
+                alt="MTC Logo">
+            <div class="separator"></div>
+            <h1>Dirección General de Autorizaciones<br>en Transportes</h1>
+        </div>
+    </header>
+
+    <!-- Global Footer -->
+    <footer class="main-footer">
+        <div class="footer-bottom">
+            <p>Consulta de entidades complementarias MTC 2026 Todos los Derechos Reservados</p>
+        </div>
+    </footer>
+
+    <!-- Form Panel on Right -->
+    <div class="form-panel">
+        <div class="form-panel-header">
+            <h2> Datos del Certificado</h2>
+        </div>
+        <div class="form-panel-content">
+
+            <!-- LA PLACA
+                 Es el único dato que se escribe a mano: de ella salen los
+                 demás. El botón queda listo para engancharse a los dos
+                 comandos del catálogo (/citv la revisión, /tiveg la ficha
+                 del vehículo) en cuanto se mapee la salida real de cada
+                 uno; hoy avisa que ese paso falta en vez de fingir. -->
+            <div class="form-section sticky-buttons">
+                <div class="form-group">
+                    <label>Placa del vehículo</label>
+                    <input type="text" id="fPlacaBuscar" placeholder="ABC-123"
+                           style="text-transform:uppercase;letter-spacing:1px;">
+                </div>
+                <div class="form-buttons">
+                    <button class="btn-action" id="btnTraerDatos" onclick="traerDatos()">
+                        TRAER DATOS
+                    </button>
+
+                    <button class="btn-action" onclick="saveToPDF()">
+                        GUARDAR
+                    </button>
+
+                    <button class="btn-action secondary" onclick="document.getElementById('bgInput').click()">
+                        FONDO
+                    </button>
+
+                    <button class="btn-action secondary" onclick="document.getElementById('logoInput').click()">
+                        LOGO
+                    </button>
+                </div>
+                <!-- Inputs ocultos -->
+                <input type="file" id="bgInput" style="display:none" accept="image/*" onchange="uploadBackground(this)">
+                <input type="file" id="logoInput" style="display:none" accept="image/*" onchange="uploadLogo(this)">
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">DATOS DE LA EMPRESA</div>
+                <div class="form-group">
+                    <label>Nombre Empresa (CITV)</label>
+                    <input type="text" id="fEmpresa" value="INFASERVIS E.I.R.L." oninput="updateCert()">
+                </div>
+                <div class="form-group">
+                    <label>Dirección (Enter para nueva línea)</label>
+                    <textarea id="fDireccion" rows="2" oninput="updateCert()">VIA ASFALTADA QUILLABAMBA- SAMBARAY
+CUSCO - LA CONVENCION - SANTA ANA</textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">CERTIFICADO</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>N° Certificado</label>
+                        <input type="text" id="fNumCert" value="C-2026-101-125-000232" oninput="updateCert()">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo Inspección</label>
+                        <select id="fTipo" oninput="updateCert()">
+                            <option>ORDINARIA</option>
+                            <option>RE-INSPECCION</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha Inspección</label>
+                        <input type="text" id="fFecha" placeholder="DD/MM/YYYY" oninput="updateCert()">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Vigencia</label>
+                        <select id="fVigencia" oninput="updateCert()">
+                            <option>6 MESES</option>
+                            <option>12 MESES</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Próxima Inspección</label>
+                        <input type="text" id="fProxima" placeholder="DD/MM/YYYY" oninput="updateCert()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Informe N°</label>
+                    <input type="text" id="fInforme" value="0000029515-V1" oninput="updateCert()">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">I. VEHÍCULO (Campos 1-20)</div>
+                <div class="vehicle-grid">
+                    <div class="form-group"><label>1. Placa</label><input type="text" id="fPlaca" placeholder="ASD123" oninput="updateCert()"></div>
+                    <div class="form-group"><label>2. Tipo Uso</label><input type="text" id="fTipoUso" placeholder="VEHICULOS PARTICULARES (CATEGORIA M)" oninput="updateCert()"></div>
+                    <div class="form-group"><label>3. Carrocería</label><input type="text" id="fCarroceria" placeholder="SUV" oninput="updateCert()"></div>
+                    <div class="form-group"><label>4. Marca</label><input type="text" id="fMarca" placeholder="AUDI" oninput="updateCert()"></div>
+                    <div class="form-group"><label>5. Modelo</label><input type="text" id="fModelo" placeholder="Q5" oninput="updateCert()"></div>
+                    <div class="form-group"><label>6. Año Fab</label><input type="text" id="fAnioFab" placeholder="2016" oninput="updateCert()"></div>
+                    <div class="form-group"><label>7. N° Serie</label><input type="text" id="fSerie" placeholder="WAUZZZ8R6GA145467" oninput="updateCert()"></div>
+                    <div class="form-group"><label>8. N° Motor</label><input type="text" id="fMotor" placeholder="CNC169257" oninput="updateCert()"></div>
+                    <div class="form-group"><label>9. Tipo Combus</label><input type="text" id="fCombustible" placeholder="GASOLINA" oninput="updateCert()"></div>
+                    <div class="form-group"><label>10. N° Cilindros</label><input type="text" id="fCilindros" placeholder="4" oninput="updateCert()"></div>
+                    <div class="form-group"><label>11. Cilindrada</label><input type="text" id="fCilindrada" placeholder="1.984 L" oninput="updateCert()"></div>
+                    <div class="form-group"><label>12. Peso Neto</label><input type="text" id="fPesoNeto" placeholder="1.83" oninput="updateCert()"></div>
+                    <div class="form-group"><label>13. Peso Bruto</label><input type="text" id="fPesoBruto" placeholder="2.49" oninput="updateCert()"></div>
+                    <div class="form-group"><label>14. Carga Útil</label><input type="text" id="fCargaUtil" placeholder="0.660 tn" oninput="updateCert()"></div>
+                    <div class="form-group"><label>15. N° Ruedas</label><input type="text" id="fRuedas" placeholder="4" oninput="updateCert()"></div>
+                    <div class="form-group"><label>16. N° Asientos</label><input type="text" id="fAsientos" placeholder="5" oninput="updateCert()"></div>
+                    <div class="form-group"><label>17. N° Pasajer.</label><input type="text" id="fPasajeros" placeholder="4" oninput="updateCert()"></div>
+                    <div class="form-group"><label>18. Color</label><input type="text" id="fColor" placeholder="BLANCO GLACIAR" oninput="updateCert()"></div>
+                    <div class="form-group"><label>19. Estado</label><input type="text" id="fEstado" placeholder="EN CIRCULACION" oninput="updateCert()"></div>
+                    <div class="form-group"><label>20. Placa Anterior</label><input type="text" id="fPlacaAnterior" placeholder="NINGUNA" oninput="updateCert()"></div>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="form-section-title">OBSERVACIONES</div>
+                <div class="form-group">
+                    <textarea id="fObservaciones" rows="2" placeholder="Ingrese observaciones..."
+                        oninput="updateCert()"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="cert-container">
+        <div class="page" id="certificatePage">
+            <div class="page-background" id="pageBackground" style="background-image:url(assets/citv/fondo.jpg)"></div>
+            <div class="page-content">
+                <!-- Header -->
+                <div class="header">
+                    <div class="logo-box has-image" id="logoBox" onclick="document.getElementById('logoInput').click()">
+                        <div class="logo-placeholder logo-text" style="display:none">INSERTAR<br>LOGO</div>
+                        <img src="assets/citv/logo-citv.png" alt="">
+                    </div>
+                    <div class="header-center">
+                        <div class="ministry">MINISTERIO DE TRANSPORTES Y COMUNICACIONES - MTC</div>
+                        <div class="company">CENTRO DE INSPECCION TECNICA VEHICULAR<br><span id="certEmpresa">INFASERVIS
+                                E.I.R.L.</span></div>
+                        <div class="address" id="certDireccion">VIA ASFALTADA QUILLABAMBA- SAMBARAY - CUSCO - LA
+                            CONVENCION - SANTA ANA</div>
+                    </div>
+                    <div class="header-right">
+                        <div class="mtc-letters">M<br>T<br>C</div>
+                    </div>
+                </div>
+
+                <!-- Main Title -->
+                <div class="main-title">CERTIFICADO DE INSPECCION TECNICA VEHICULAR</div>
+                <div class="cert-number">N° : <span id="certNumero">C-2026-101-125-000232</span></div>
+
+                <!-- Info Bar -->
+                <div class="info-bar">
+                    <div><span class="label">Tipo de Inspección</span> <span id="certTipo">ORDINARIA</span></div>
+                    <div><span class="label">Fecha de Inspección</span> <span id="certFecha">10/01/2026</span></div>
+                    <div><span class="label">Informe de Inspección N°</span> <span id="certInforme">0000029515-V1</span>
+                    </div>
+                </div>
+
+                <!-- Section I: Vehicle Characteristics -->
+                <div class="section-header">I.&nbsp;&nbsp;&nbsp;CARACTERISTICAS DEL VEHICULO</div>
+                <table class="vehicle-table-new">
+                    <tr>
+                        <td class="num">1</td>
+                        <td class="label">Placa</td>
+                        <td class="value" id="cPlaca">ASD123</td>
+                        <td class="num">8</td>
+                        <td class="label">N° Motor</td>
+                        <td class="value" id="cMotor">CNC169257</td>
+                        <td class="num">15</td>
+                        <td class="label">N° Ruedas</td>
+                        <td class="value" id="cRuedas">4</td>
+                    </tr>
+                    <tr>
+                        <td class="num">2</td>
+                        <td class="label">Tipo Uso</td>
+                        <td class="value" id="cTipoUso">VEHICULOS PARTICULARES (CATEGORIA M)</td>
+                        <td class="num">9</td>
+                        <td class="label">Tipo Combus</td>
+                        <td class="value" id="cCombustible">GASOLINA</td>
+                        <td class="num">16</td>
+                        <td class="label">N° Asientos</td>
+                        <td class="value" id="cAsientos">5</td>
+                    </tr>
+                    <tr>
+                        <td class="num">3</td>
+                        <td class="label">Carrocería</td>
+                        <td class="value" id="cCarroceria">SUV</td>
+                        <td class="num">10</td>
+                        <td class="label">N° Cilindros</td>
+                        <td class="value" id="cCilindros">4</td>
+                        <td class="num">17</td>
+                        <td class="label">N° Pasajer.</td>
+                        <td class="value" id="cPasajeros">4</td>
+                    </tr>
+                    <tr>
+                        <td class="num">4</td>
+                        <td class="label">Marca</td>
+                        <td class="value" id="cMarca">AUDI</td>
+                        <td class="num">11</td>
+                        <td class="label">Cilindrada</td>
+                        <td class="value" id="cCilindrada">1.984 L</td>
+                        <td class="num">18</td>
+                        <td class="label">Color</td>
+                        <td class="value" id="cColor">BLANCO GLACIAR</td>
+                    </tr>
+                    <tr>
+                        <td class="num">5</td>
+                        <td class="label">Modelo</td>
+                        <td class="value" id="cModelo">Q5</td>
+                        <td class="num">12</td>
+                        <td class="label">Peso Neto</td>
+                        <td class="value" id="cPesoNeto">1.83</td>
+                        <td class="num">19</td>
+                        <td class="label">Estado</td>
+                        <td class="value" id="cEstado">EN CIRCULACION</td>
+                    </tr>
+                    <tr>
+                        <td class="num">6</td>
+                        <td class="label">Año Fab</td>
+                        <td class="value" id="cAnioFab">2016</td>
+                        <td class="num">13</td>
+                        <td class="label">Peso Bruto</td>
+                        <td class="value" id="cPesoBruto">2.49</td>
+                        <td class="num">20</td>
+                        <td class="label">Placa Anterior</td>
+                        <td class="value" id="cPlacaAnterior">NINGUNA</td>
+                    </tr>
+                    <tr>
+                        <td class="num">7</td>
+                        <td class="label">N° Serie</td>
+                        <td class="value" id="cSerie">WAUZZZ8R6GA145467</td>
+                        <td class="num">14</td>
+                        <td class="label">Carga Útil</td>
+                        <td class="value" id="cCargaUtil">0.660 tn</td>
+                        <td class="num"></td>
+                        <td class="label"></td>
+                        <td class="value"></td>
+                    </tr>
+                </table>
+
+                <!-- Section II: Equipment Data -->
+                <div class="section-header">II.&nbsp;&nbsp;&nbsp;DATOS DE LOS EQUIPOS</div>
+                <table class="equip-table">
+                    <tr>
+                        <th style="width:40px;">CITV</th>
+                        <th id="cCitv">INFASERVIS E.I.R.L.</th>
+                        <th>Frenómetro</th>
+                        <th>Alineador</th>
+                        <th>Analizador u Opacímetro</th>
+                        <th>Regloscopio/ Luxómetro</th>
+                        <th>Banco de Suspensión</th>
+                    </tr>
+                    <tr>
+                        <td>Línea</td>
+                        <td>MIXTA</td>
+                        <td>Equipo N° 20101602</td>
+                        <td>Equipo N° 20101602</td>
+                        <td>Equipo N° 20101602</td>
+                        <td>Equipo N° TECNOLUX-0331</td>
+                        <td>Equipo N° 20101602</td>
+                    </tr>
+                </table>
+
+                <!-- Section III: Results -->
+                <div class="section-header">III.&nbsp;&nbsp;&nbsp;RESULTADOS OBTENIDOS</div>
+
+                <!-- Brake Test Table -->
+                <table class="results-section">
+                    <tr>
+                        <th colspan="16" class="brake-header">PRUEBA DE FRENOS</th>
+                    </tr>
+                    <tr class="brake-header">
+                        <th colspan="7">FRENO DE SERVICIO</th>
+                        <th colspan="5">FRENO DE ESTACIONAMIENTO</th>
+                        <th colspan="4">FRENO DE EMERGENCIA</th>
+                    </tr>
+                    <tr class="brake-subheader">
+                        <td>Ejes</td>
+                        <td>Peso<br>(Kg)</td>
+                        <td>Fuerza (KN)<br>Der</td>
+                        <td>Fuerza (KN)<br>Izq</td>
+                        <td>Desqui.<br>Rmo %</td>
+                        <td>Eficiencia<br>%</td>
+                        <td>Resultado</td>
+                        <td>Ejes</td>
+                        <td>Peso<br>(Kg)</td>
+                        <td>Fuerza (KN)<br>Der</td>
+                        <td>Fuerza (KN)<br>Izq</td>
+                        <td>Eficiencia<br>%</td>
+                        <td>Ejes</td>
+                        <td>Fuerza (KN)<br>Der</td>
+                        <td>Fuerza (KN)<br>Izq</td>
+                        <td>Resultado</td>
+                    </tr>
+                    <tr>
+                        <td>1º</td>
+                        <td>750.00</td>
+                        <td>2.20</td>
+                        <td>2.30</td>
+                        <td>4.35</td>
+                        <td rowspan="5">60.70</td>
+                        <td rowspan="5">APROBADO</td>
+                        <td>1º</td>
+                        <td>750.00</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td rowspan="5">57.48</td>
+                        <td>1º</td>
+                        <td>750.00</td>
+                        <td>0.03</td>
+                        <td rowspan="5">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>2º</td>
+                        <td>550.00</td>
+                        <td>1.60</td>
+                        <td>1.65</td>
+                        <td>3.03</td>
+                        <td>2º</td>
+                        <td>550.00</td>
+                        <td>1.50</td>
+                        <td>1.60</td>
+                        <td>2º</td>
+                        <td>550.00</td>
+                        <td>0.03</td>
+                    </tr>
+                    <tr>
+                        <td>3º</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>3º</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>3º</td>
+                        <td>0.00</td>
+                        <td>0.03</td>
+                    </tr>
+                    <tr>
+                        <td>4º</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>4º</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>4º</td>
+                        <td>0.00</td>
+                        <td>0.03</td>
+                    </tr>
+                    <tr>
+                        <td>5º</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>5º</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>0.00</td>
+                        <td>5º</td>
+                        <td>0.00</td>
+                        <td>0.03</td>
+                    </tr>
+                </table>
+
+                <!-- Tests Grid: Alignment, Tires, Lights, Suspension -->
+                <div class="tests-grid">
+                    <!-- Alignment -->
+                    <div class="test-box">
+                        <table>
+                            <tr>
+                                <th colspan="3">PRUEBA DE ALINEAMIENTO</th>
+                            </tr>
+                            <tr class="brake-subheader">
+                                <td>Ejes</td>
+                                <td>desviación<br>(m/Km)</td>
+                                <td>Resultado</td>
+                            </tr>
+                            <tr>
+                                <td>1º</td>
+                                <td>2.10</td>
+                                <td>APROBADO</td>
+                            </tr>
+                            <tr>
+                                <td>2º</td>
+                                <td>1.00</td>
+                                <td>APROBADO</td>
+                            </tr>
+                            <tr>
+                                <td>3º</td>
+                                <td>0.00</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>4º</td>
+                                <td>0.00</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>5º</td>
+                                <td>0.00</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Tires -->
+                    <div class="test-box">
+                        <table>
+                            <tr>
+                                <th colspan="3">PROF. DE NEUMATICOS</th>
+                            </tr>
+                            <tr class="brake-subheader">
+                                <td>Ejes</td>
+                                <td>Medida<br>Obtenida (s)</td>
+                                <td>Resultado</td>
+                            </tr>
+                            <tr>
+                                <td>1º</td>
+                                <td>3.10</td>
+                                <td>APROBADO</td>
+                            </tr>
+                            <tr>
+                                <td>2º</td>
+                                <td>3.00</td>
+                                <td>APROBADO</td>
+                            </tr>
+                            <tr>
+                                <td>3º</td>
+                                <td>0.00</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>4º</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>5º</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Lights -->
+                    <div class="test-box">
+                        <table>
+                            <tr>
+                                <th colspan="5">PRUEBA DE LUCES</th>
+                            </tr>
+                            <tr class="brake-subheader">
+                                <td>Tipo de Luz</td>
+                                <td>Medida Obtenida (Lux) c/<br>Der</td>
+                                <td>Medida Obtenida (Lux) c/<br>Izq</td>
+                                <td>Alineamiento</td>
+                                <td>Resultado</td>
+                            </tr>
+                            <tr>
+                                <td>Bajas</td>
+                                <td>24.00</td>
+                                <td>25.00</td>
+                                <td>OK</td>
+                                <td>APROBADO</td>
+                            </tr>
+                            <tr>
+                                <td>Altas</td>
+                                <td>41.00</td>
+                                <td>42.00</td>
+                                <td>OK</td>
+                                <td>APROBADO</td>
+                            </tr>
+                            <tr>
+                                <td>Alte Adicional</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Neblineros</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="font-size:6px; text-align:left;">(1). Indicar la desviación
+                                    del
+                                    haz de luz a la IZQ(-) / DER(+) / INF(-) / SUP(+)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Suspension -->
+                    <div class="test-box">
+                        <table>
+                            <tr>
+                                <th colspan="4">PRUEBA DE SUSPENSION</th>
+                            </tr>
+                            <tr class="brake-subheader">
+                                <td colspan="2">Delantera (%)</td>
+                                <td colspan="2">Posterior (%)</td>
+                            </tr>
+                            <tr>
+                                <td>Izq.</td>
+                                <td>63.00</td>
+                                <td>Izq.</td>
+                                <td>60.00</td>
+                            </tr>
+                            <tr>
+                                <td>Der.</td>
+                                <td>62.00</td>
+                                <td>Der.</td>
+                                <td>61.00</td>
+                            </tr>
+                            <tr>
+                                <td>Desv.</td>
+                                <td>1.00</td>
+                                <td>Desv.</td>
+                                <td>1.00</td>
+                            </tr>
+                            <tr>
+                                <td>Resultado</td>
+                                <td>APROBA</td>
+                                <td>Resultado</td>
+                                <td>APROBA</td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">Resultado Final:</th>
+                                <td colspan="2">APROBADO</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Emissions Row -->
+                <table class="emissions-table">
+                    <tr>
+                        <td rowspan="2" class="bold" style="width:80px;">EMISIONES<br>DE GASES<br><span
+                                style="font-size:6px;">(no
+                                aplica para<br>veh.electricos)</span></td>
+                        <td>T° Aceite (°C)</td>
+                        <td>80</td>
+                        <td>CO Ralenti (%)</td>
+                        <td>0.23</td>
+                        <td>CO Acel (%)</td>
+                        <td>0.24</td>
+                        <td rowspan="2">Resultado<br><span class="bold">APROBADO</span></td>
+                        <td rowspan="2" class="bold" style="width:70px;">EMISIONES<br>SONORAS</td>
+                        <td rowspan="2">Sonómetro<br>(dB)<br><span>78.00</span></td>
+                        <td rowspan="2">Resultado<br><span class="bold">APROBADO</span></td>
+                    </tr>
+                    <tr>
+                        <td>RPM</td>
+                        <td>2500</td>
+                        <td>CO + CO2 Ralenti (%)</td>
+                        <td>14.23</td>
+                        <td>CO + CO2 Acel (%)</td>
+                        <td>10.24</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Opacidad (m^-1)</td>
+                        <td>--</td>
+                        <td>HC Ralenti (ppm)</td>
+                        <td>59.00</td>
+                        <td>HC Acel (ppm)</td>
+                        <td>60.00</td>
+                        <td colspan="4"></td>
+                    </tr>
+                </table>
+
+                <!-- Section IV: Defects -->
+                <div class="section-header">IV.&nbsp;&nbsp;&nbsp;DEFECTOS ENCONTRADOS</div>
+                <table class="defects-table">
+                    <tr>
+                        <th style="width:80px;">CODIGO</th>
+                        <th>INTERPRETACION DE DEFECTOS</th>
+                        <th style="width:100px;">CLASIFICACION</th>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="text-left">NO REGISTRA FALLAS</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-left">OBSERVACIONES: <span id="cObservaciones"></span></td>
+                    </tr>
+                </table>
+                <div style="font-size:7px; margin:3px 0;">NOTA: Las observaciones efectuadas deben ser subsanadas
+                    antes
+                    de la siguiente Inspección Técnica Vehicular.</div>
+
+                <!-- Section V: Final Result -->
+                <div class="section-header">V.&nbsp;&nbsp;&nbsp;RESULTADO DE LA INSPECCION TECNICA VEHICULAR</div>
+
+                <div class="result-section">
+                    <div class="result-table-container">
+                        <table class="result-table">
+                            <tr>
+                                <th>Resultado de la Inspección</th>
+                                <th>Vigencia del certificado</th>
+                                <th>Fecha de próxima inspección</th>
+                            </tr>
+                            <tr>
+                                <td class="bold" style="font-size:12px;" id="cResultado">APROBADO</td>
+                                <td id="cVigencia">6 MESES</td>
+                                <td id="cProxima">10/07/2026</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="seal-signature">
+                        <div class="seal-box has-image" id="sealBox" onclick="document.getElementById('sealInput').click()">
+                            <div class="seal-placeholder" style="display:none"><span>INSERTAR</span><br><span
+                                    style="font-size:16px; font-weight:bold;">SELLO</span></div>
+                            <img src="assets/citv/firma.png" alt="">
+                            <input type="file" id="sealInput" class="upload-input" accept="image/*"
+                                onchange="uploadSeal(this)">
+                        </div>
+                        <div class="signature-line">
+                            <strong>Firma del Ingeniero Supervisor</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="footer">
+                    <div class="mtc-circle"></div>
+                    <div class="ci-code"><span class="ci-black">CI- 228-</span><span class="ci-red">0047768</span>
+                    </div>
+                </div>
+            </div> <!-- end page-content -->
+        </div>
+    </div> <!-- end cert-container -->
+
+    <!-- Zoom Controls -->
+    <div class="zoom-controls">
+        <button onclick="zoomOut()">−</button>
+        <span id="zoomLevel">100%</span>
+        <button onclick="zoomIn()">+</button>
+    </div>
+
+    <script>
+        /* ── TRAER DATOS ──────────────────────────────────────────────
+           De la placa sale todo lo de la revisión. El bot LainDaata
+           contesta a /citv con una ficha por cada inspección que tuvo el
+           vehículo, de la más nueva a la más vieja, así:
+
+               ⌞ INDX: 1
+               ⌞ ESTADO: VIGENTE
+               ⌞ RESULTADO: APROBADO
+               ⌞ CERTIFICADO: C-2026-138-354-000780
+               ⌞ VIG. INICIO: 13/01/2026
+               ⌞ VIG. FIN: 13/01/2027
+               EMPRESA: ...
+               DIRECCIÓN: ...
+
+           Se toma la VIGENTE. Si ninguna lo está —el vehículo dejó vencer
+           su revisión— se toma la que venció más tarde, que es la última
+           que se le emitió, y el certificado sale con esas fechas: aquí no
+           se inventa una vigencia que el vehículo no tiene.
+
+           La vigencia (6 o 12 meses) no viene dicha: se calcula de la
+           distancia entre inicio y fin, que es como se lee en el papel. */
+        /* Lo que se deja respirar al bot entre un comando y el
+           siguiente. Con menos, sus respuestas se cruzan. */
+        var PAUSA_ENTRE_COMANDOS_MS = 7000;
+
+        function bloquesCitv(texto) {
+            var partes = String(texto || '').split(/⌞\s*INDX\s*:/);
+            var out = [];
+            for (var i = 1; i < partes.length; i++) {
+                var b = partes[i];
+                var dato = function (re) {
+                    var m = b.match(re);
+                    // El bot entrecomilla algunos nombres de empresa; en el
+                    // papel esas comillas no pintan nada.
+                    return m ? m[1].trim().replace(/^"+|"+$/g, '').trim() : '';
+                };
+                out.push({
+                    indx:        (b.match(/^\s*(\d+)/) || [])[1] || '',
+                    estado:      dato(/ESTADO\s*:\s*([^\n]+)/i),
+                    resultado:   dato(/RESULTADO\s*:\s*([^\n]+)/i),
+                    certificado: dato(/CERTIFICADO\s*:\s*([^\n]+)/i),
+                    inicio:      dato(/VIG\.?\s*INICIO\s*:\s*([0-9\/\-]+)/i),
+                    fin:         dato(/VIG\.?\s*FIN\s*:\s*([0-9\/\-]+)/i),
+                    empresa:     dato(/EMPRESA\s*:\s*([^\n]+)/i),
+                    direccion:   dato(/DIRECCI[ÓO]N\s*:\s*([^\n]+)/i),
+                    servicio:    dato(/SERVICIO\s*:\s*([^\n]+)/i),
+                    obs:         dato(/OBS\s*:\s*([^\n]+)/i),
+                });
+            }
+            return out;
+        }
+
+        function aFecha(ddmmyyyy) {
+            var m = String(ddmmyyyy || '').match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+            if (!m) return null;
+            return new Date(+m[3], +m[2] - 1, +m[1]);
+        }
+
+        // El formulario de fechas es <input type="text"> con DD/MM/YYYY:
+        // se deja tal cual llega del bot.
+        function elegirRevision(bloques) {
+            if (!bloques.length) return null;
+            var vigentes = bloques.filter(function (b) { return /VIGENTE/i.test(b.estado); });
+            var lista = vigentes.length ? vigentes : bloques;
+            return lista.sort(function (a, b) {
+                var fa = aFecha(a.fin), fb = aFecha(b.fin);
+                return (fb ? fb.getTime() : 0) - (fa ? fa.getTime() : 0);
+            })[0];
+        }
+
+        function mesesEntre(inicio, fin) {
+            var a = aFecha(inicio), b = aFecha(fin);
+            if (!a || !b) return null;
+            return Math.round((b - a) / (1000 * 60 * 60 * 24 * 30.44));
+        }
+
+        function ponerValor(id, valor) {
+            var el = document.getElementById(id);
+            if (!el || valor === '' || valor == null) return;
+            el.value = valor;
+        }
+
+        /* ── /placa: la ficha del vehículo ────────────────────────────
+           El mismo bot contesta a /placa con los datos del registro. De
+           todo lo que manda —partida, título, oficina registral,
+           propietarios— al certificado solo le tocan estos veinte. El
+           resto no se copia: son datos de otra cosa.
+
+           «PESO BRUTO / NETO: 2.49 / 1.83» viene en una sola línea y en
+           el certificado son dos cuadros, así que se parte por la barra. */
+        function datosDePlaca(texto) {
+            var t = String(texto || '');
+            var dato = function (re) {
+                var m = t.match(re);
+                return m ? m[1].trim() : '';
+            };
+            var pesos = dato(/PESO\s+BRUTO\s*\/\s*NETO\s*:\s*([^\n]+)/i).split('/');
+            return {
+                placa:        dato(/B[UÚ]SQUEDA\s+DE\s+PLACA\s*-\s*([A-Z0-9-]+)\s*-/i),
+                marca:        dato(/^\s*MARCA\s*:\s*([^\n]+)/im),
+                modelo:       dato(/^\s*MODELO\s*:\s*([^\n]+)/im),
+                color:        dato(/^\s*COLOR\s*:\s*([^\n]+)/im),
+                estado:       dato(/^\s*ESTADO\s*:\s*([^\n]+)/im),
+                anioFab:      dato(/A[ÑN]O\s+DE\s+FABRICACI[ÓO]N\s*:\s*([^\n]+)/i),
+                tipoUso:      dato(/TIPO\s+DE\s+USO\s*:\s*([^\n]+)/i),
+                carroceria:   dato(/TIPO\s+DE\s+CARROCER[ÍI]A\s*:\s*([^\n]+)/i),
+                combustible:  dato(/TIPO\s+DE\s+COMBUSTIBLE\s*:\s*([^\n]+)/i),
+                cilindrada:   dato(/CILINDRADA\s*:\s*([^\n]+)/i),
+                cilindros:    dato(/N[ÚU]MERO\s+DE\s+CILINDROS\s*:\s*([^\n]+)/i),
+                motor:        dato(/N[ÚU]MERO\s+DE\s+MOTOR\s*:\s*([^\n]+)/i),
+                serie:        dato(/N[ÚU]MERO\s+DE\s+SERIE\s*:\s*([^\n]+)/i),
+                placaAnterior:dato(/PLACA\s+ANTERIOR\s*:\s*([^\n]+)/i),
+                ruedas:       dato(/N[ÚU]MERO\s+DE\s+RUEDAS\s*:\s*([^\n]+)/i),
+                pasajeros:    dato(/N[ÚU]MERO\s+DE\s+PASAJEROS\s*:\s*([^\n]+)/i),
+                asientos:     dato(/N[ÚU]MERO\s+DE\s+ASIENTOS\s*:\s*([^\n]+)/i),
+                pesoBruto:    (pesos[0] || '').trim(),
+                pesoNeto:     (pesos[1] || '').trim(),
+                cargaUtil:    dato(/CARGA\s+[ÚU]TIL\s*:\s*([^\n]+)/i),
+            };
+        }
+
+        function aplicarPlaca(v) {
+            ponerValor('fPlaca', v.placa);
+            ponerValor('fMarca', v.marca);
+            ponerValor('fModelo', v.modelo);
+            ponerValor('fColor', v.color);
+            ponerValor('fEstado', v.estado);
+            ponerValor('fAnioFab', v.anioFab);
+            ponerValor('fTipoUso', v.tipoUso);
+            ponerValor('fCarroceria', v.carroceria);
+            ponerValor('fCombustible', v.combustible);
+            ponerValor('fCilindrada', v.cilindrada);
+            ponerValor('fCilindros', v.cilindros);
+            ponerValor('fMotor', v.motor);
+            ponerValor('fSerie', v.serie);
+            ponerValor('fPlacaAnterior', v.placaAnterior);
+            ponerValor('fRuedas', v.ruedas);
+            ponerValor('fPasajeros', v.pasajeros);
+            ponerValor('fAsientos', v.asientos);
+            ponerValor('fPesoBruto', v.pesoBruto);
+            ponerValor('fPesoNeto', v.pesoNeto);
+            ponerValor('fCargaUtil', v.cargaUtil);
+        }
+
+        /* ── El logotipo del cliente ──────────────────────────────────
+           Cuando pide su duplicado, el cliente sube el logo de su centro
+           y la aplicación se lo guarda ya recortado y sin fondo. Aquí se
+           busca por la placa: el archivo se llama
+           `{usuario}/{PLACA}-{marca de tiempo}.png`, así que basta con
+           mirar qué carpetas hay y quedarse con el más reciente de esa
+           placa. Si no hay ninguno, se deja el logo que ya está puesto. */
+        async function traerLogoDelCliente(placa) {
+            var limpia = placa.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+            var sb = window.Consultia.supabase;
+            var carpetas = await sb.storage.from('citv-logos').list('', { limit: 200 });
+            if (carpetas.error || !carpetas.data) return false;
+
+            var candidatos = [];
+            for (var i = 0; i < carpetas.data.length; i++) {
+                var carpeta = carpetas.data[i].name;
+                var dentro = await sb.storage.from('citv-logos').list(carpeta, { limit: 200 });
+                if (dentro.error || !dentro.data) continue;
+                dentro.data.forEach(function (f) {
+                    if (f.name.toUpperCase().indexOf(limpia + '-') === 0) {
+                        candidatos.push({ ruta: carpeta + '/' + f.name, cuando: f.created_at || '' });
+                    }
+                });
+            }
+            if (!candidatos.length) return false;
+
+            candidatos.sort(function (a, b) { return (b.cuando || '').localeCompare(a.cuando || ''); });
+            var firmada = await sb.storage.from('citv-logos').createSignedUrl(candidatos[0].ruta, 600);
+            if (firmada.error || !firmada.data) return false;
+
+            var box = document.getElementById('logoBox');
+            var img = box.querySelector('img');
+            if (!img) { img = document.createElement('img'); box.appendChild(img); }
+            img.src = firmada.data.signedUrl;
+            box.classList.add('has-image');
+            var ph = box.querySelector('.logo-placeholder');
+            if (ph) ph.style.display = 'none';
+            return true;
+        }
+
+        async function traerDatos() {
+            var boton = document.getElementById('btnTraerDatos');
+            var placa = (document.getElementById('fPlacaBuscar').value || '').trim().toUpperCase();
+            if (placa.length < 5) { alert('Escribe la placa completa.'); return; }
+
+            boton.disabled = true;
+            var textoBoton = boton.textContent;
+            boton.textContent = 'CONSULTANDO…';
+            try {
+                var catalogo = await Consultia.ConsultaRunner.loadCatalog();
+                var buscar = function (re) {
+                    return (catalogo || []).filter(function (c) { return re.test(c.comando || ''); })[0];
+                };
+                var cCitv  = buscar(/^\/citv\b/);
+                var cPlaca = buscar(/^\/placa\b/);
+                if (!cCitv) throw new Error('No encuentro la consulta /citv en el catálogo.');
+
+                /* Las dos consultas van EN SERIE y con una pausa entre
+                   medias. Es la misma cuenta de Telegram hablando con el
+                   mismo bot: lanzadas a la vez, las respuestas se pisan y
+                   una consulta se lleva el texto de la otra. Primero la
+                   revisión, siete segundos de aire, y después la ficha del
+                   vehículo. */
+                var pedir = function (c) {
+                    if (!c) return Promise.resolve(null);
+                    return Consultia.ConsultaRunner.ejecutarConsultaConCobro(c, placa)
+                        .catch(function (e) { console.warn('[citv] una consulta falló:', e); return null; });
+                };
+                var esperar = function (ms) {
+                    return new Promise(function (r) { setTimeout(r, ms); });
+                };
+
+                var respuestas = [];
+                respuestas[0] = await pedir(cCitv);
+                if (cPlaca) {
+                    boton.textContent = 'CONSULTANDO PLACA…';
+                    await esperar(PAUSA_ENTRE_COMANDOS_MS);
+                    respuestas[1] = await pedir(cPlaca);
+                }
+
+                var texto = (respuestas[0] && respuestas[0].parsed && respuestas[0].parsed.raw) || '';
+                var rev = elegirRevision(bloquesCitv(texto));
+                if (!rev) throw new Error('El bot no devolvió ninguna revisión para esa placa.');
+
+                var textoPlaca = (respuestas[1] && respuestas[1].parsed && respuestas[1].parsed.raw) || '';
+                if (textoPlaca) aplicarPlaca(datosDePlaca(textoPlaca));
+
+                ponerValor('fPlaca', placa);
+                ponerValor('fEmpresa', rev.empresa);
+                ponerValor('fDireccion', rev.direccion);
+                ponerValor('fNumCert', rev.certificado);
+                ponerValor('fFecha', rev.inicio);
+                ponerValor('fProxima', rev.fin);
+                if (rev.obs) ponerValor('fObservaciones', rev.obs);
+
+                var meses = mesesEntre(rev.inicio, rev.fin);
+                var vigenciaRara = false;
+                if (meses !== null) {
+                    var sel = document.getElementById('fVigencia');
+                    if (sel) sel.value = (meses <= 9 ? '6 MESES' : '12 MESES');
+                    // Ni 6 ni 12: hubo prórroga y el papel dirá otra cosa.
+                    vigenciaRara = (Math.abs(meses - 6) > 2 && Math.abs(meses - 12) > 2);
+                }
+
+                updateCert();
+
+                // El resultado y las fechas del documento, que no pasan por
+                // updateCert (son celdas de la tabla final).
+                var res = document.getElementById('cResultado');
+                if (res && rev.resultado) res.textContent = rev.resultado;
+                var prox = document.getElementById('cProxima');
+                if (prox && rev.fin) prox.textContent = rev.fin;
+
+                // El logo que subió el cliente, si lo mandó.
+                var conLogo = false;
+                try {
+                    conLogo = await traerLogoDelCliente(placa);
+                } catch (e) {
+                    console.warn('[citv] no se pudo traer el logotipo:', e);
+                }
+
+                var avisos = [];
+                if (!conLogo) avisos.push('Este cliente no subió logotipo: va el que está puesto.');
+                if (!/VIGENTE/i.test(rev.estado)) {
+                    avisos.push('La última revisión de esta placa figura como ' +
+                                (rev.estado || 'VENCIDA') + ': venció el ' + rev.fin + '.');
+                }
+                if (vigenciaRara) {
+                    avisos.push('Esa revisión duró ' + meses + ' meses, que no es ni 6 ni 12 ' +
+                                '(hubo prórroga). Revisa la vigencia antes de imprimir.');
+                }
+                if (avisos.length) alert('Ojo: ' + avisos.join('  '));
+
+            } catch (e) {
+                console.error('[citv] ', e);
+                alert('No se pudo traer la revisión. ' + ((e && e.message) || ''));
+            } finally {
+                boton.disabled = false;
+                boton.textContent = textoBoton;
+            }
+        }
+
+        // Upload Logo with resize capability
+        function uploadLogo(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const box = document.getElementById('logoBox');
+                    const placeholder = box.querySelector('.logo-placeholder');
+                    if (placeholder) placeholder.style.display = 'none';
+
+                    let img = box.querySelector('img');
+                    if (!img) {
+                        img = document.createElement('img');
+                        box.appendChild(img);
+                    }
+                    img.src = e.target.result;
+                    box.classList.add('has-image');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Upload Seal - hides all text
+        function uploadSeal(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const box = document.getElementById('sealBox');
+                    const placeholder = box.querySelector('.seal-placeholder');
+                    if (placeholder) placeholder.style.display = 'none';
+
+                    let img = box.querySelector('img');
+                    if (!img) {
+                        img = document.createElement('img');
+                        box.appendChild(img);
+                    }
+                    img.src = e.target.result;
+                    box.classList.add('has-image');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Main import function - detects PDF or Image
+        /* Aquí vivía el importador por OCR: se subía una foto o el PDF
+           del certificado y Tesseract intentaba adivinar los campos. Lo
+           reemplazan /citv y /placa, que traen los datos del registro en
+           vez de leerlos de una imagen borrosa. */
+
+        function uploadBackground(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const bg = document.getElementById('pageBackground');
+                    bg.style.backgroundImage = `url(${e.target.result})`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Print Certificate as PDF
+        function printCertificate() {
+            // Reset zoom to 100% before printing
+            const page = document.getElementById('certificatePage');
+            const originalTransform = page.style.transform;
+            page.style.transform = 'scale(1)';
+
+            // Print
+            window.print();
+
+            // Restore zoom after print dialog closes
+            setTimeout(() => {
+                page.style.transform = originalTransform;
+            }, 100);
+        }
+
+        // Zoom functionality
+        let currentZoom = 100;
+        function zoomIn() {
+            if (currentZoom < 200) { currentZoom += 10; applyZoom(); }
+        } function zoomOut() {
+            if (currentZoom > 50) {
+                currentZoom -= 10;
+                applyZoom();
+            }
+        }
+        function applyZoom() {
+            const page = document.getElementById('certificatePage');
+            page.style.transform = `scale(${currentZoom / 100})`;
+            page.style.transformOrigin = 'top center';
+            document.getElementById('zoomLevel').textContent = currentZoom + '%';
+        }
+
+        // Real-time update function
+        function updateCert() {
+            // Update company name
+            const empresa = document.getElementById('fEmpresa');
+            if (empresa && document.getElementById('certEmpresa'))
+                document.getElementById('certEmpresa').textContent = empresa.value;
+
+            // Update address - convert newlines to <br> for multi-line display
+            const direccion = document.getElementById('fDireccion');
+            if (direccion && document.getElementById('certDireccion'))
+                document.getElementById('certDireccion').innerHTML = direccion.value.replace(/\n/g, '<br>');
+
+            // Update certificate number
+            const numCert = document.getElementById('fNumCert');
+            if (numCert && document.getElementById('certNumero'))
+                document.getElementById('certNumero').textContent = numCert.value;
+
+            // Update inspection type
+            const tipo = document.getElementById('fTipo');
+            if (tipo && document.getElementById('certTipo'))
+                document.getElementById('certTipo').textContent = tipo.value;
+
+            // Update inspection date
+            const fecha = document.getElementById('fFecha');
+            if (fecha && fecha.value && document.getElementById('certFecha')) {
+                document.getElementById('certFecha').textContent = formatDate(fecha.value);
+            }
+
+            // Update informe number
+            const informe = document.getElementById('fInforme');
+            if (informe && document.getElementById('certInforme'))
+                document.getElementById('certInforme').textContent = informe.value;
+
+            // Vehicle fields mapping - New Layout
+            // Los 20 cuadros del certificado, en el orden en que se leen.
+            // Los 20 cuadros, en el orden en que se leen en el papel.
+            const vehicleFields = [
+                ['fPlaca', 'cPlaca'],
+                ['fTipoUso', 'cTipoUso'],
+                ['fCarroceria', 'cCarroceria'],
+                ['fMarca', 'cMarca'],
+                ['fModelo', 'cModelo'],
+                ['fAnioFab', 'cAnioFab'],
+                ['fSerie', 'cSerie'],
+                ['fMotor', 'cMotor'],
+                ['fCombustible', 'cCombustible'],
+                ['fCilindros', 'cCilindros'],
+                ['fCilindrada', 'cCilindrada'],
+                ['fPesoNeto', 'cPesoNeto'],
+                ['fPesoBruto', 'cPesoBruto'],
+                ['fCargaUtil', 'cCargaUtil'],
+                ['fRuedas', 'cRuedas'],
+                ['fAsientos', 'cAsientos'],
+                ['fPasajeros', 'cPasajeros'],
+                ['fColor', 'cColor'],
+                ['fEstado', 'cEstado'],
+                ['fPlacaAnterior', 'cPlacaAnterior']
+            ];
+
+            vehicleFields.forEach(([formId, certId]) => {
+                const formField = document.getElementById(formId);
+                const certField = document.getElementById(certId);
+                if (formField && certField && formField.value) {
+                    certField.textContent = formField.value;
+                }
+            });
+
+            // Update document title with plate number for PDF filename
+            const placa = document.getElementById('fPlaca');
+            if (placa && placa.value) {
+                document.title = 'Certificado CITV - MTC - ' + placa.value.toUpperCase();
+            } else {
+                document.title = 'Certificado CITV - MTC';
+            }
+
+            // Update CITV name in section II
+            const empresa2 = document.getElementById('fEmpresa');
+            if (empresa2 && document.getElementById('cCitv'))
+                document.getElementById('cCitv').textContent = empresa2.value;
+
+            // Update observaciones
+            const obs = document.getElementById('fObservaciones');
+            if (obs && document.getElementById('cObservaciones'))
+                document.getElementById('cObservaciones').textContent = obs.value;
+
+            // Update vigencia
+            const vigencia = document.getElementById('fVigencia');
+            if (vigencia && document.getElementById('cVigencia'))
+                document.getElementById('cVigencia').textContent = vigencia.value;
+
+            // Update próxima inspección
+            const proxima = document.getElementById('fProxima');
+            if (proxima && proxima.value && document.getElementById('cProxima')) {
+                document.getElementById('cProxima').textContent = formatDate(proxima.value);
+            }
+        }
+
+        // Format date as DD/MM/YYYY with zero padding
+        function formatDate(dateString) {
+            // Handle YYYY-MM-DD format (from input type date)
+            const isoMatch = dateString.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (isoMatch) {
+                return isoMatch[3] + '/' + isoMatch[2] + '/' + isoMatch[1];
+            }
+            // Handle DD/MM/YYYY format (from text input) - normalize padding
+            const dmyMatch = dateString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (dmyMatch) {
+                return dmyMatch[1].padStart(2, '0') + '/' + dmyMatch[2].padStart(2, '0') + '/' + dmyMatch[3];
+            }
+            return dateString;
+        }
+
+        // Initialize date (DD/MM/YYYY for text type inputs)
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        if (document.getElementById('fFecha')) document.getElementById('fFecha').value = `${dd}/${mm}/${yyyy}`;
+
+        const future = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
+        const fdd = String(future.getDate()).padStart(2, '0');
+        const fmm = String(future.getMonth() + 1).padStart(2, '0');
+        const fyyyy = future.getFullYear();
+        if (document.getElementById('fProxima')) document.getElementById('fProxima').value = `${fdd}/${fmm}/${fyyyy}`;
+
+        // ========== FUNCIÓN GUARDAR PDF ==========
+        async function saveToPDF() {
+            const page = document.getElementById('certificatePage');
+            if (!page) {
+                alert('No se encontró el certificado para guardar');
+                return;
+            }
+
+            // Guardar estilos inline originales
+            const originalTransform = page.style.transform;
+            const originalMargin = page.style.marginBottom;
+            const originalTransformOrigin = page.style.transformOrigin;
+
+            // Limpiar TODOS los estilos inline que puedan interferir con @media print
+            page.style.transform = '';
+            page.style.transformOrigin = '';
+            page.style.marginBottom = '';
+
+            // Pequeña pausa para que el navegador aplique los cambios antes de imprimir
+            await new Promise(r => setTimeout(r, 100));
+
+            // Imprimir (el navegador aplica @media print CSS)
+            window.print();
+
+            // Restaurar estilos inline después de imprimir
+            setTimeout(() => {
+                page.style.transform = originalTransform;
+                page.style.transformOrigin = originalTransformOrigin;
+                page.style.marginBottom = originalMargin;
+            }, 500);
+        }
+    </script>
+
+
+<!-- ACCESO
+     El emisor no es para clientes: arma un documento con el membrete del
+     MTC. Se comprueba contra Supabase que quien abre la página sea
+     administrador; si no lo es, se va a la aplicación y no llega a ver
+     nada — la página arranca oculta y solo se revela al pasar. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/shared/supabase-config.js?v=2"></script>
+<script src="js/shared/auth.js?v=24"></script>
+<!-- El motor de consultas, el mismo de la aplicación: la petición sale
+     por el proxy del servidor y no expone ninguna clave. El
+     administrador no paga créditos (consume_credits lo resuelve por
+     rol), así que traer los datos aquí no cuesta nada. -->
+<script src="js/modules/toasts.js?v=2"></script>
+<script src="js/modules/render-helpers.js?v=57"></script>
+<script src="js/modules/consulta-runner.js?v=14"></script>
+<script>
+    (async function () {
+        try {
+            var user = await window.Consultia.Auth.getUser();
+            if (!user) { location.replace('app.html'); return; }
+            var perfil = await window.Consultia.Auth.getProfile();
+            if (!perfil || !perfil.is_admin) { location.replace('app.html'); return; }
+            document.documentElement.style.visibility = '';
+        } catch (e) {
+            location.replace('app.html');
+        }
+    })();
+</script>
+</body>
+
+</html>
