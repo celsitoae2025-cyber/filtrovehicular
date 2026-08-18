@@ -6473,3 +6473,92 @@ a.nm-download { text-decoration: none; }
   .citv-cuerpo   { padding: 20px 20px 4px; }
   .citv-titulo   { font-size: 23px; }
 }
+
+/* El segundo paso del aviso: la placa. */
+.citv-label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-primary);
+}
+.citv-campo { position: relative; }
+.citv-campo-ico {
+  position: absolute;
+  left: 14px; top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  color: #141d1c;
+  pointer-events: none;
+}
+.citv-campo-ico svg { width: 21px; height: 21px; }
+.citv-input {
+  width: 100%;
+  padding-left: 46px !important;
+  font-size: 19px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.citv-error {
+  margin: 8px 0 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #e53935;
+}
+.citv-costo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  font-size: 17px;
+  color: var(--c-primary);
+}
+.citv-costo strong { font-size: 19px; font-weight: 700; }
+
+/* El acuse: se envió. */
+.citv-listo {
+  padding: 34px 36px 4px;
+  text-align: center;
+}
+.citv-listo-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px; height: 62px;
+  border-radius: 999px;
+  background: #8fc72e;
+  color: #141d1c;
+}
+.citv-listo-ico svg { width: 32px; height: 32px; }
+.citv-listo-titulo {
+  margin: 16px 0 6px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--c-primary);
+}
+.citv-listo-placa {
+  margin: 0 0 14px;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--c-primary);
+}
+.citv-listo-txt {
+  margin: 0 auto;
+  max-width: 400px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--c-primary);
+}
+.citv-listo-cobro {
+  margin: 14px 0 0;
+  font-size: 16px;
+  color: var(--c-primary);
+}
+@media (max-width: 720px) {
+  .citv-listo { padding: 28px 20px 4px; }
+}
