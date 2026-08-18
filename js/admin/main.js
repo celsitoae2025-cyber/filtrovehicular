@@ -11,6 +11,7 @@
     users:       'Usuarios',
     addusers:    'Agregar Usuario',
     recargas:    'Recargas de créditos',
+    socios:      'Socios',
     plans:       'Planes y Suscripciones',
     compras:     'Compras',
     consultas:   'Consultas',
@@ -41,6 +42,7 @@
     if (viewKey === 'users'       && A.renderUsers)       A.renderUsers();
     if (viewKey === 'addusers'    && A.renderAddUsers)    A.renderAddUsers();
     if (viewKey === 'recargas'    && A.renderRecargas)    A.renderRecargas();
+    if (viewKey === 'socios'      && A.renderSocios)      A.renderSocios();
     if (viewKey === 'plans'       && A.renderPlans)       A.renderPlans();
     if (viewKey === 'compras'     && A.renderCompras)     A.renderCompras();
     if (viewKey === 'consultas'   && A.renderConsultas)   A.renderConsultas();

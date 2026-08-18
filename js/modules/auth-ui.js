@@ -271,6 +271,12 @@
     if (adminLink) adminLink.hidden = !isAdmin;
     if (adminDivider) adminDivider.hidden = !isAdmin;
     if (sidebarAdminLink) sidebarAdminLink.hidden = true; // siempre oculto en sidebar
+
+    // Panel de socio — solo si is_socio = true. Es otro panel y otra
+    // cuenta de resultados: un socio no es administrador, y un
+    // administrador no ve esto salvo que además sea socio.
+    var socioLink = document.getElementById('socioPanelLink');
+    if (socioLink) socioLink.hidden = !(profile && profile.is_socio);
   }
 
   async function refresh() {

@@ -1,0 +1,132 @@
+/* ============================================================
+   PANEL DEL SOCIO — lo poco que no hereda de admin.css
+   ------------------------------------------------------------
+   La estructura, la barra, las tarjetas y las tablas son las del
+   panel de administrador: un solo lenguaje visual para toda la
+   plataforma. Aquí solo van las tres piezas que allí no existen:
+   el saldo en la barra, la ficha del cliente encontrado y la guía
+   de tres pasos.
+============================================================ */
+
+/* El saldo, siempre a la vista. Es el número que manda en este panel:
+   de él sale cada entrega y sin él no se puede vender. */
+.socio-saldo-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-left: auto;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: #141d1c;
+  color: #ffffff;
+}
+.socio-saldo-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, .75);
+}
+.socio-saldo-chip strong {
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Buscar al cliente por su correo */
+.socio-buscar {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.socio-buscar .input { flex: 1; }
+
+.socio-hallazgo {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #a4b1b9;
+  border-radius: 12px;
+}
+.socio-hallazgo-no {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--c-primary);
+}
+.socio-hallazgo-fila {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.socio-hallazgo-quien {
+  display: flex;
+  flex-direction: column;
+}
+.socio-hallazgo-quien strong { font-size: 17px; font-weight: 700; }
+.socio-hallazgo-quien span   { font-size: 15px; }
+.socio-hallazgo-saldo { font-size: 15px; }
+.socio-hallazgo-form {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.socio-hallazgo-form .input { flex: 1; min-width: 140px; }
+
+/* La guía. El socio no es empleado del dueño: entra aquí sin que
+   nadie le explique nada, así que el panel se explica solo. */
+.socio-pasos {
+  margin: 0;
+  padding-left: 22px;
+}
+.socio-pasos li {
+  font-size: 17px;
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+.socio-nota {
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* ── Lado del administrador (vista «Socios» de admin.html) ──
+   Este archivo se carga también allí: las dos pantallas hablan del
+   mismo asunto y no tiene sentido repetir las reglas en dos sitios. */
+.socios-buscar,
+.socios-recarga {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.socios-buscar .input { flex: 1; min-width: 200px; }
+.socios-recarga .admin-select { flex: 1; min-width: 220px; }
+.socios-recarga .input { width: 140px; }
+
+.socios-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #a4b1b9;
+  border-radius: 12px;
+}
+.socios-preview strong { display: block; font-size: 17px; font-weight: 700; }
+.socios-preview span   { font-size: 15px; }
+.socios-aviso {
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+.socios-acciones {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .socio-saldo-chip { margin-left: 8px; padding: 6px 12px; }
+  .socio-buscar { flex-wrap: wrap; }
+  .socio-buscar .input { min-width: 100%; }
+}

@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="css/overlays.css?v=8">
 <link rel="stylesheet" href="css/plans-catalog.css">
 <link rel="stylesheet" href="css/admin.css?v=8">
+<link rel="stylesheet" href="css/socio.css?v=1">
 <link rel="stylesheet" href="css/maintenance.css?v=9">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=14">
 </head>
@@ -93,6 +94,10 @@
       <button class="admin-link" data-admin-view="recargas">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M7 12h10"/></svg>
         Recargas
+      </button>
+      <button class="admin-link" data-admin-view="socios">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Socios
       </button>
       <button class="admin-link" data-admin-view="plans">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4h8z"/></svg>
@@ -836,6 +841,50 @@
         <div class="admin-empty" id="whEmpty" hidden>Sin eventos registrados.</div>
       </section>
 
+      <!-- SOCIOS
+           Distribuidores: compran créditos aquí y los revenden a sus
+           propios clientes desde socio.html. El dinero solo va del socio
+           hacia el dueño, así que en esta pantalla nunca se paga nada:
+           se nombra al socio, se le carga lo que compró y se mira cómo
+           le va. -->
+      <section class="admin-view" id="adminView-socios" hidden>
+        <div class="admin-panel">
+          <header class="admin-panel-head">
+            <h2>Nombrar socio</h2>
+            <span class="admin-panel-sub">Cuenta ya registrada</span>
+          </header>
+          <div class="socios-buscar">
+            <input class="input" type="email" id="socioNuevoEmail" placeholder="Correo del futuro socio" autocomplete="off">
+            <button class="btn btn-primary" type="button" id="socioNuevoBuscar">Buscar</button>
+          </div>
+          <div id="socioNuevoPreview" hidden></div>
+        </div>
+
+        <div class="admin-panel" id="socioRecargaPanel" style="margin-top:18px">
+          <header class="admin-panel-head">
+            <h2>Cargar créditos a un socio</h2>
+            <span class="admin-panel-sub">Venta al por mayor</span>
+          </header>
+          <div class="socios-recarga">
+            <select class="admin-select" id="socioRecargaId">
+              <option value="">Elige un socio</option>
+            </select>
+            <input class="input" type="number" min="1" step="1" id="socioRecargaCantidad" placeholder="Créditos">
+            <button class="btn btn-primary" type="button" id="socioRecargaBtn">Cargar</button>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap" style="margin-top:18px">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Socio</th><th>Correo</th><th>Saldo</th><th>Clientes</th><th>Entregó (mes)</th><th>Entregó (total)</th><th></th></tr>
+            </thead>
+            <tbody id="sociosTableBody"></tbody>
+          </table>
+        </div>
+        <div class="admin-empty" id="sociosEmpty" hidden>Todavía no hay socios.</div>
+      </section>
+
       <!-- EQUIPO -->
       <section class="admin-view" id="adminView-team" hidden>
         <div class="admin-toolbar">
@@ -1420,6 +1469,7 @@
 <script src="js/admin/users.js?v=23"></script>
 <script src="js/admin/addusers.js?v=22"></script>
 <script src="js/admin/recargas.js?v=22"></script>
+<script src="js/admin/socios.js?v=1"></script>
 <script src="js/admin/plans.js?v=22"></script>
 <script src="js/admin/compras.js?v=23"></script>
 <script src="js/admin/consultas.js?v=23"></script>
@@ -1434,7 +1484,7 @@
 <script src="js/admin/maintenance.js?v=3"></script>
 <script src="js/admin/aviso-clientes.js?v=13"></script>
 <script src="js/modules/idle-logout.js?v=2"></script>
-<script src="js/admin/main.js?v=23"></script>
+<script src="js/admin/main.js?v=24"></script>
 
 </body>
 </html>
