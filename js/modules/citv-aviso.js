@@ -448,7 +448,7 @@
 
     function paso2(placaPrevia, errorPrevio) {
       root.classList.remove('is-previa');
-      pintar(htmlFormulario(), 'Enviar solicitud');
+      pintar(htmlFormulario(), 'Emitir certificado');
       var campo = root.querySelector('#citvPlaca');
       if (campo) {
         if (placaPrevia) campo.value = placaPrevia;
@@ -523,11 +523,22 @@
       hoja.srcdoc = docHtml;
       marco.appendChild(hoja);
 
+      /* La hoja se encoge hasta caber ENTERA, y por los dos lados: por el
+         ancho del cuadro y por lo que queda de alto una vez puestos el
+         membrete y el pie. Mirando solo el ancho salía a tamaño real
+         —1123 px de papel dentro de un cuadro de 886— y el cliente tenía
+         que arrastrar para ver su propio certificado. Nunca por encima
+         de 1: se encoge para caber, no se estira para llenar. */
+      var MARGEN_MODAL = 32;      // el aire del .rep-modal alrededor del cuadro
+      var AIRE_CUERPO  = 30;      // lo que respira la hoja dentro del cuerpo
+
       reajustar = function () {
-        // Nunca por encima de 1: la hoja se encoge para caber, pero no se
-        // estira para llenar. En pantallas anchas sobra sitio a los lados
-        // y el papel se queda en medio, no pegado a la izquierda.
-        var escala = Math.min(1, marco.clientWidth / C.ANCHO_PX);
+        var membrete = root.querySelector('.citv-membrete');
+        var alto = window.innerHeight - MARGEN_MODAL - AIRE_CUERPO -
+                   (membrete ? membrete.offsetHeight : 0) - pie.offsetHeight;
+        var escala = Math.min(1,
+                              marco.clientWidth / C.ANCHO_PX,
+                              Math.max(alto, 200) / C.ALTO_PX);
         hoja.style.transform = 'scale(' + escala + ')';
         hoja.style.left = Math.max(0, Math.round((marco.clientWidth - C.ANCHO_PX * escala) / 2)) + 'px';
         marco.style.height = Math.round(C.ALTO_PX * escala) + 'px';
@@ -579,7 +590,7 @@
       }
 
       boton.disabled = true;
-      boton.textContent = 'Enviando…';
+      boton.textContent = 'Emitiendo…';
 
       var sb = window.Consultia.supabase;
       /* La sesión que ya está en memoria, NO `getUser()`: aquella va al
