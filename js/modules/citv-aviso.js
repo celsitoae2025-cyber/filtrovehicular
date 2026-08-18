@@ -328,7 +328,15 @@
       boton.textContent = 'Enviando…';
       try {
         var sb = window.Consultia.supabase;
-        var user = await window.Consultia.Auth.getUser();
+        /* La sesión que ya está en memoria, NO `getUser()`: aquella va al
+           servidor a validar el token y, si el refresco falla, Supabase
+           cierra la sesión — el cliente enviaba su solicitud y la
+           plataforma lo escupía al login. */
+        var user = null;
+        try {
+            var ses = await sb.auth.getSession();
+            user = ses && ses.data && ses.data.session && ses.data.session.user;
+        } catch (e) { user = null; }
         if (!user) {
           cerrar();
           if (window.Consultia.AuthModals) window.Consultia.AuthModals.openLogin();
