@@ -1679,7 +1679,7 @@ CUSCO - LA CONVENCION - SANTA ANA</textarea>
                 <!-- Footer -->
                 <div class="footer">
                     <div class="mtc-circle"></div>
-                    <div class="ci-code"><span class="ci-black">CI- 228-</span><span class="ci-red">0047768</span>
+                    <div class="ci-code"><span class="ci-black">CI- 228-</span><span class="ci-red" id="ciCorrelativo">0047768</span>
                     </div>
                 </div>
             </div> <!-- end page-content -->
@@ -1878,6 +1878,29 @@ CUSCO - LA CONVENCION - SANTA ANA</textarea>
             return true;
         }
 
+        /* El correlativo del pie (CI- 228-XXXXXXX). Es único por
+           certificado: dos duplicados no pueden salir con el mismo
+           número. Se guarda el último usado en este navegador y se
+           avanza de uno en uno; si algún día se emite desde dos sitios,
+           esto pasa a la base de datos y se acabó el problema. */
+        var CI_CLAVE = 'fv_citv_correlativo';
+
+        function siguienteCorrelativo() {
+            var actual = 0;
+            try { actual = parseInt(localStorage.getItem(CI_CLAVE), 10) || 0; } catch (e) {}
+            if (!actual) actual = 47768;          // el que traía la plantilla
+            actual += 1;
+            try { localStorage.setItem(CI_CLAVE, String(actual)); } catch (e) {}
+            var texto = String(actual);
+            while (texto.length < 7) texto = '0' + texto;
+            return texto;
+        }
+
+        function ponerCorrelativo() {
+            var el = document.getElementById('ciCorrelativo');
+            if (el) el.textContent = siguienteCorrelativo();
+        }
+
         async function traerDatos() {
             var boton = document.getElementById('btnTraerDatos');
             var placa = (document.getElementById('fPlacaBuscar').value || '').trim().toUpperCase();
@@ -1950,6 +1973,9 @@ CUSCO - LA CONVENCION - SANTA ANA</textarea>
                 if (res && rev.resultado) res.textContent = rev.resultado;
                 var prox = document.getElementById('cProxima');
                 if (prox && rev.fin) prox.textContent = rev.fin;
+
+                // Un número de control nuevo para este certificado.
+                ponerCorrelativo();
 
                 // El logo que subió el cliente, si lo mandó.
                 var conLogo = false;
