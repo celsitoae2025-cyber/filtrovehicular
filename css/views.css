@@ -2412,24 +2412,25 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   color: var(--c-muted);
   margin: 0;
 }
-/* El botón manda: es la única salida que tiene el cliente mientras se
-   espera, y en gris sobre blanco no se veía. Verde institucional, ancho y
-   con letra oscura — se distingue del texto sin gritar. */
+/* El botón es la única salida que tiene el cliente mientras se espera, así
+   que tiene que verse; pero un verde ancho en mitad de una pantalla de
+   espera grita. Oscuro sobre blanco: es lo que más contrasta de la página
+   y no hace falta ni tamaño ni negrita para que se encuentre. */
 .cr-espera-btn {
   font: inherit;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: .3px;
-  padding: 14px 30px;
-  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: .4px;
+  padding: 11px 24px;
+  margin-top: 2px;
   border: none;
   border-radius: 999px;
-  background: #8fc72e;
-  color: #141d1c;
+  background: #141d1c;
+  color: #ffffff;
   cursor: pointer;
   transition: background var(--t-fast);
 }
-.cr-espera-btn:hover { background: #7fb426; }
+.cr-espera-btn:hover { background: #0e1312; }
 
 /* â"€â"€ Mensaje de mantenimiento / error técnico â"€â"€ */
 .cr-mantenimiento {
