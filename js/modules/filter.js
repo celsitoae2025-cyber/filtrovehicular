@@ -667,6 +667,7 @@
       e.stopPropagation();
       var open = combo.classList.toggle('open');
       comboBtn.setAttribute('aria-expanded', String(open));
+      if (open) Consultia.RenderHelpers.ajustarComboPanel($('filterComboPanel'));
     });
     // Cierre al pulsar fuera. Se pregunta por el BOTÓN y por el PANEL, no
     // por el `.combo` entero: el velo del cuadro flotante es un

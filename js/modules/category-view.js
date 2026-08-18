@@ -864,6 +864,7 @@
         e.stopPropagation();
         var open = combo.classList.toggle('open');
         comboBtn.setAttribute('aria-expanded', String(open));
+        if (open) Consultia.RenderHelpers.ajustarComboPanel($(prefix + 'ComboPanel'));
       });
       _combos.push({ combo: combo, btn: comboBtn });
       bindGlobalComboListeners();

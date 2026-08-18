@@ -1426,6 +1426,29 @@
        alResultado()     tras pintar un PDF: sube «Descargar» a la cabecera
        alFallback(resp)  respuesta sin `.cr-btn-result-area` en pantalla
   ============================================================ */
+  /* ── Cuadro de opciones: sin filas cortadas ────────────────────────
+     El cuadro tiene un tope de alto y el catálogo es largo, así que la
+     última fila que asomaba quedaba partida por la mitad y se leía como
+     si al texto le faltara un trozo. Se mide una fila real —lo que va de
+     una opción a la siguiente, con su pixel de separación— y el alto se
+     baja al múltiplo entero que quepa dentro del tope del CSS. Se mide al
+     abrir: el tope depende de la ventana y el catálogo cambia. */
+  function ajustarComboPanel(panel) {
+    if (!panel) return;
+    panel.style.maxHeight = '';
+    var opciones = panel.querySelectorAll('.combo-option');
+    if (opciones.length < 2) return;
+    var cs = getComputedStyle(panel);
+    var relleno = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+    var fila = opciones[1].getBoundingClientRect().top - opciones[0].getBoundingClientRect().top;
+    var tope = parseFloat(cs.maxHeight);
+    if (!(fila > 0) || !(tope > 0)) return;
+    if (panel.scrollHeight <= tope) return;     // cabe entero, nada que recortar
+    var caben = Math.floor((tope - relleno) / fila);
+    if (caben < 1) return;
+    panel.style.maxHeight = (relleno + caben * fila) + 'px';
+  }
+
   var PAUSA_CALLBACK_MS = 6000;   // lo que se espera entre vuelta y vuelta
 
   function wireOpcionesDelBot(container, opts) {
@@ -2569,6 +2592,7 @@
     nmRegistros:             nmRegistros,
     nmBotonPdf:              nmBotonPdf,
     renderPdfTopButton:      renderPdfTopButton,
+    ajustarComboPanel:       ajustarComboPanel,
     openDownloadOverlay:     openDownloadOverlay,
     descargarPdfConOverlay:  descargarPdfConOverlay,
     parseArbolGenealogico:   parseArbolGenealogico,
