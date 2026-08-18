@@ -712,6 +712,37 @@
     return f ? f(campo) : campo;
   }
 
+  /* El saldo del bot, fuera; los datos del cliente, dentro.
+
+     Se filtraba por el NOMBRE del campo: cualquier «Nombre» y cualquier
+     «Estado» se daban por basura del proveedor y no se pintaban nunca. Pero
+     esos dos son datos de verdad en media plataforma —el titular de una
+     ficha, el estado de una revisión técnica, el de un RUC— y desaparecían
+     sin que nadie lo notara, porque desaparecían siempre.
+
+     La diferencia no está en cómo se llama el campo sino en DÓNDE está: el
+     bot mete su saldo en un bloque con CREDITOS y USUARIO. Ahí dentro,
+     «nombre» y «estado» son suyos; fuera, son del cliente. */
+  var CUENTA_BOT = /^(cr[eé]ditos?|credits?|monedas?|usuario|user(name)?|plan|comando|consultado\s+por|costo|uso|info|id|mensaje)\s*$/i;
+  var MARCA_BLOQUE_BOT = /^(cr[eé]ditos?|credits?|usuario|user(name)?)$/i;
+
+  function limpiarSeccionesDelBot(secciones) {
+    return (secciones || []).map(function (s) {
+      var campos = s.campos || [];
+      var esBloqueDelBot = campos.some(function (c) { return MARCA_BLOQUE_BOT.test((c.campo || '').trim()); });
+      return {
+        titulo: s.titulo,
+        campos: campos.filter(function (c) {
+          var n = (c.campo || '').trim();
+          if (!n) return true;
+          if (CUENTA_BOT.test(n)) return false;
+          if (esBloqueDelBot && /^(nombre|estado)$/i.test(n)) return false;
+          return true;
+        })
+      };
+    }).filter(function (s) { return s.campos.length; });
+  }
+
   function renderDataRows(p) {
     var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
     var toTitleCase = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.toTitleCase : function (s) { return s; };
@@ -735,7 +766,7 @@
       if (!ca.length || !cb.length) return false;
       return !ca.some(function (c) { return cb.indexOf(c) !== -1; });
     }
-    var secsCrudas = p.secciones || [];
+    var secsCrudas = limpiarSeccionesDelBot(p.secciones);
     var clavesCrudas = secsCrudas.map(function (s) { return fieldSetKey(s.campos); });
     var secsUnidas = [];
     for (var si = 0; si < secsCrudas.length; si++) {
@@ -772,7 +803,9 @@
     if (membrete.html) dataHtml.push(membrete.html);
     else dataHtml.push(lineaEmision());
 
-    var _botMeta = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;
+    // Lo del bot ya se quitó por bloque (limpiarSeccionesDelBot); aquí solo
+    // queda la red por si llega suelto, y sin «nombre» ni «estado».
+    var _botMeta = CUENTA_BOT;
     var _botValText = /^(la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|obteniendo|consultando|buscando|procesando|generando|cargando|#\w+|∞|♾)/i;
     function renderCampo(c) {
       if (membrete.promovidos.indexOf(c) !== -1) return '';   // ya está en el membrete

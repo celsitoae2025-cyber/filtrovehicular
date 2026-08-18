@@ -298,11 +298,16 @@
   function renderResultado(resp) {
     revokeActiveBlobUrls();
     var p       = H.recortarAlResumen(resp.parsed || {}, currentConsulta && currentConsulta.comando);
-    H.fijarEmision(resp);   // fecha y folio del sello de la ficha
+    // Con `H.` por delante: un navegador que arrastre la versión vieja de
+    // render-helpers en caché no las tiene, y sin la guarda reventaría la
+    // pantalla entera por un sello.
+    if (H.fijarEmision) H.fijarEmision(resp);   // fecha y folio de la ficha
+    var htmlMtc = (currentConsulta && /^\/mtc\b/i.test(currentConsulta.comando || '') && H.renderMtc)
+      ? H.renderMtc(p) : '';
     var pdfs    = H.pdfsDe(p);
     var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
     var botones = p.botones || [];
-    var _metaRe = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;
+    var _metaRe = /^(cr[eé]ditos?|credits?|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|costo|uso|info|id)\s*$/i;
     var _valRe = /^(la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|obteniendo|consultando|buscando|procesando|generando|cargando|#\w+|∞|♾)/i;
     var hasData = (p.secciones || []).some(function (s) {
       return (s.campos || []).some(function (c) {
@@ -334,10 +339,10 @@
       html = renderMetaplaData(p) + '<div id="metapla-pdf-area"><div class="cr-pdf-loading">Generando reporte PDF...</div></div>';
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
-    } else if (currentConsulta && /^\/mtc\b/i.test(currentConsulta.comando || '') && H.renderMtc(p)) {
+    } else if (htmlMtc) {
       // La licencia tiene su propia ficha: membrete, rejilla y papeletas.
       html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
-        H.renderMtc(p) + renderDocumentCard(pdfs) + H.renderOpcionesSueltas(botones);
+        htmlMtc + renderDocumentCard(pdfs) + H.renderOpcionesSueltas(botones);
     } else if (hasData || photos.length > 0) {
       // Mismo trato que las vistas de categoria: previsualización real del
       // PDF debajo y su «Descargar» sube a la cabecera junto a «Nueva consulta».

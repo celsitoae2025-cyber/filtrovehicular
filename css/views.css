@@ -1493,22 +1493,20 @@
   font-variant-numeric: tabular-nums;
 }
 .cr-docitem-peso { color: var(--c-muted); margin-left: 8px; }
-.cr-docitem-ver, .cr-docitem-dl {
+.cr-docitem-ver {
   flex-shrink: 0; font-family: inherit; font-size: var(--cr-fs);
   padding: 7px 14px; border-radius: 8px; cursor: pointer; text-decoration: none;
   transition: background var(--t-fast), border-color var(--t-fast);
 }
 .cr-docitem-ver { border: 1px solid var(--c-border); background: #ffffff; color: var(--c-primary); }
 .cr-docitem-ver:hover { border-color: var(--c-primary); }
-.cr-docitem-dl { border: none; background: #141d1c; color: #ffffff; }
-.cr-docitem-dl:hover { background: #0e1312; }
 /* En angosto el nombre del archivo y los dos botones no caben en una
    línea: el nombre pasa arriba y las acciones debajo, a la derecha. */
 @media (max-width: 560px) {
   .cr-docitem { flex-wrap: wrap; }
   .cr-docitem-nom { flex: 1 1 100%; order: -1; white-space: normal; }
   .cr-docitem-ico { display: none; }
-  .cr-docitem-ver, .cr-docitem-dl { flex: 1 1 0; text-align: center; justify-content: center; }
+  .cr-docitem-ver { flex: 1 1 0; text-align: center; justify-content: center; }
 }
 
 /* Lista de datos */
@@ -5846,8 +5844,9 @@ a.nm-download { text-decoration: none; }
 }
 .cr-docitem-ver:hover { background: #0e1312; border-color: #0e1312; }
 
+/* El móvil de la ficha se resuelve entero más abajo, en la consulta de
+   medios de 720px; aquí solo queda el tamaño del antetítulo. */
 @media (max-width: 700px) {
-  .cr-row { grid-template-columns: 1fr; gap: 2px; padding: 10px 0; }
   .cr-tit { font-size: 18px; }
 }
 

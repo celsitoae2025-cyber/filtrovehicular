@@ -189,7 +189,11 @@
   }
 
   function pintarAvisoEspera() {
-    var caja = document.querySelector(".cr-loading");
+    /* Solo en la vista que está a la vista: cada pestaña guarda su propio
+       resultado, y un «Consultando…» viejo escondido en otra se llevaría el
+       aviso a una pantalla que nadie está mirando. */
+    var caja = document.querySelector(".view:not([hidden]) .cr-loading") ||
+               document.querySelector(".cr-loading");
     if (!caja || caja.querySelector(".cr-espera")) return;
     var wrap = document.createElement("div");
     wrap.className = "cr-espera";
@@ -624,6 +628,15 @@
 
         var consultaId = await cobrarCreditos(userId, consulta, valor);
         ultimaConsultaId = consultaId;   // lo necesita ejecutarCallback
+
+        /* Cancelar justo aquí —entre el cobro y la petición— dejaba una
+           reserva pagada que nadie iba a usar: el abort no tenía todavía a
+           qué agarrarse y la consulta se iba al bridge con el cliente ya en
+           el inicio. Se libera y se sale. */
+        if (cancelada) {
+          await cancelarSiNoSeUso(consultaId);
+          throw errorCancelado();
+        }
 
         // 3) Ejecutar contra el bridge, presentando el comprobante.
         var runOpts = {};

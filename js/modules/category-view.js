@@ -354,11 +354,11 @@
       // Liberar blob URLs de resultados anteriores
       revokeActiveBlobUrls();
       var p = H.recortarAlResumen(resp.parsed || {}, currentConsulta && currentConsulta.comando);
-      H.fijarEmision(resp);   // fecha y folio del sello de la ficha
+      if (H.fijarEmision) H.fijarEmision(resp);   // fecha y folio de la ficha
       var pdfs    = H.pdfsDe(p);
       var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
       var botones = p.botones || [];
-      var _metaRe = /^(cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|estado|costo|uso|info|id)\s*$/i;
+      var _metaRe = /^(cr[eé]ditos?|credits?|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|costo|uso|info|id)\s*$/i;
       var _valRe = /^(la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|obteniendo|consultando|buscando|procesando|generando|cargando|#\w+|∞|♾)/i;
       var hasData = (p.secciones || []).some(function (s) {
         return (s.campos || []).some(function (c) {
@@ -372,6 +372,12 @@
       var hasTabla  = p.tabla && p.tabla.filas && p.tabla.filas.length > 0;
       var esArbol = currentConsulta && currentConsulta.comando && /^\/ag\s/i.test(currentConsulta.comando);
       var htmlArbol = esArbol ? renderArbolGenealogico(p, valorConsultado) : '';
+      /* La ficha de la licencia se arma una sola vez: antes se llamaba dos
+         —una para preguntar si había algo y otra para pintarlo—. Con `H.` por
+         delante porque un navegador con la versión vieja en caché no la
+         tiene, y ahí vale más una ficha genérica que un error. */
+      var htmlMtc = (currentConsulta && /^\/mtc\b/i.test(currentConsulta.comando || '') && H.renderMtc)
+        ? H.renderMtc(p) : '';
 
       var body = $(bodyId());
       var html;
@@ -391,10 +397,10 @@
         html = renderPdfTopButton() + renderTabla(p.tabla);
       } else if (currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0) {
         html = renderNmPersonas(p, botones, valorConsultado);
-      } else if (currentConsulta && /^\/mtc\b/i.test(currentConsulta.comando || '') && H.renderMtc(p)) {
+      } else if (htmlMtc) {
         // La licencia tiene su propia ficha: membrete, rejilla y papeletas.
         html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
-          H.renderMtc(p) + renderDocumentCard(pdfs) + H.renderOpcionesSueltas(botones);
+          htmlMtc + renderDocumentCard(pdfs) + H.renderOpcionesSueltas(botones);
       } else if (htmlArbol) {
         html = htmlArbol;
       } else if (botones.length > 0 && !hasMedia) {
