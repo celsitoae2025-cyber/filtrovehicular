@@ -6344,3 +6344,132 @@ a.nm-download { text-decoration: none; }
   .rep-modal-pie { padding: 0 18px 20px; }
   .rep-modal-ok { width: 100%; }
 }
+
+/* ============================================================
+   DUPLICADO CITV — el aviso del tiempo de emisión
+   ------------------------------------------------------------
+   Comparte cuadro con el modal del Reporte Completo (.rep-modal):
+   aquí solo va el contenido. Membrete oscuro, la cifra de la espera
+   como protagonista y la barra cuatricolor de siempre.
+============================================================ */
+.citv-membrete {
+  background: var(--c-surface-dark, #0e1312);
+  color: #ffffff;
+  padding: 30px 36px 0;
+  border-radius: 14px 14px 0 0;
+}
+.citv-chip {
+  display: inline-block;
+  font-size: 13px;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .35);
+}
+.citv-titulo {
+  margin: 12px 0 4px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+}
+/* La sigla, explicada. La usa todo el rubro y casi nadie fuera de él. */
+.citv-sigla {
+  margin: 0 0 18px;
+  font-size: 17px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, .82);
+}
+.citv-linea {
+  display: flex;
+  height: 5px;
+  border-radius: 2px 2px 0 0;
+  overflow: hidden;
+}
+.citv-linea span { flex: 1; }
+.citv-linea span:nth-child(1) { background: #00bcd4; }
+.citv-linea span:nth-child(2) { background: #8fc72e; }
+.citv-linea span:nth-child(3) { background: #ffb020; }
+.citv-linea span:nth-child(4) { background: #e53935; }
+
+.citv-cuerpo { padding: 24px 36px 4px; }
+
+/* Lo que el cliente vino a saber: cuánto tarda. Va primero y grande. */
+.citv-tiempo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+}
+.citv-tiempo-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border-radius: 999px;
+  background: #141d1c;
+  color: #ffffff;
+}
+.citv-tiempo-ico svg { width: 24px; height: 24px; }
+.citv-tiempo-cifra {
+  display: block;
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--c-primary);
+}
+.citv-tiempo-txt {
+  display: block;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--c-primary);
+}
+.citv-texto {
+  margin: 18px 0 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--c-primary);
+}
+.citv-puntos {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.citv-puntos li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 8px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--c-primary);
+}
+/* La marca de cada punto, en verde institucional: dibujada con dos
+   trazos para no cargar un SVG por línea. */
+.citv-puntos li::before,
+.citv-puntos li::after {
+  content: '';
+  position: absolute;
+  background: #8fc72e;
+  border-radius: 1px;
+}
+.citv-puntos li::before {
+  left: 4px; top: 12px;
+  width: 6px; height: 2px;
+  transform: rotate(45deg);
+}
+.citv-puntos li::after {
+  left: 7px; top: 10px;
+  width: 11px; height: 2px;
+  transform: rotate(-50deg);
+}
+
+.citv-modal .rep-modal-caja { width: min(560px, 100%); }
+
+@media (max-width: 720px) {
+  .citv-membrete { padding: 24px 20px 0; }
+  .citv-cuerpo   { padding: 20px 20px 4px; }
+  .citv-titulo   { font-size: 23px; }
+}

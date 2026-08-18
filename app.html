@@ -55,7 +55,7 @@
 <link rel="stylesheet" href="css/sidebar.css?v=10">
 <link rel="stylesheet" href="css/topbar.css?v=9">
 <link rel="stylesheet" href="css/components.css?v=19">
-<link rel="stylesheet" href="css/views.css?v=94">
+<link rel="stylesheet" href="css/views.css?v=95">
 <link rel="stylesheet" href="css/service-cards.css?v=9">
 <link rel="stylesheet" href="css/plans-catalog.css?v=4">
 <link rel="stylesheet" href="css/auth.css?v=68">
@@ -298,12 +298,13 @@
         <span class="label">SOAT Electrónico</span>
       </a>
 
-      <a class="nav-item nav-directo" data-tooltip="Duplicado CITV"
-         data-wa-msg="Hola, necesito el duplicado de mi revisión técnica."
-         target="_blank" rel="noopener noreferrer">
+      <!-- Duplicado CITV ya NO abre WhatsApp: al pulsarlo sale el aviso
+           del tiempo de emisión (js/modules/citv-aviso.js). Por eso es un
+           <button> y no un <a> — no lleva a ninguna parte. -->
+      <button type="button" class="nav-item nav-directo" id="navCitv" data-tooltip="Duplicado CITV">
         <svg class="ico"><use href="#i-citv"/></svg>
         <span class="label">Duplicado CITV</span>
-      </a>
+      </button>
 
       <a class="nav-item nav-directo" data-tooltip="Lunas Oscurecidas"
          data-wa-msg="Hola, necesito tramitar el permiso de mis lunas oscurecidas."
@@ -2131,6 +2132,7 @@
 <!-- Rediseño completo del Reporte Vehicular Integral (/metapla) -->
 <script src="js/modules/metapla-report.js?v=2"></script>
 <script src="js/modules/filter.js?v=38"></script>
+<script src="js/modules/citv-aviso.js?v=1"></script>
 <script src="js/modules/polish.js?v=1"></script>
 <script src="js/modules/pull-refresh.js?v=5"></script>
 <script src="js/modules/services-uploader.js?v=1"></script>
