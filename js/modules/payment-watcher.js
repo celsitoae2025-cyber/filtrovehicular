@@ -31,18 +31,25 @@
     }
   }
 
-  function showCreditToast(credits, amount) {
-    if (!Consultia.toast || alreadyNotified) return;
+  function showReceipt(credits, amount, method, paymentId) {
+    var rows = document.getElementById('receiptRows');
+    if (!rows || !Consultia.openModal) return;
+    var items = [];
+    if (amount) items.push(['Monto pagado', 'S/ ' + amount]);
+    items.push(['Créditos acreditados', '+' + credits]);
+    if (method) items.push(['Método', method]);
+    if (paymentId) items.push(['N.º de operación', paymentId]);
+    items.push(['Fecha', new Date().toLocaleString('es-PE')]);
+    rows.innerHTML = items.map(function (r) {
+      return '<div class="receipt-row"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>';
+    }).join('');
+    Consultia.openModal('receipt');
+  }
+
+  function showCreditToast(credits, amount, method, paymentId) {
+    if (alreadyNotified) return;
     alreadyNotified = true;
-    var msg = amount
-      ? 'Tu pago de S/ ' + amount + ' fue aprobado. Ya puedes usar tus creditos.'
-      : 'Tus creditos fueron acreditados. Ya puedes usarlos.';
-    Consultia.toast({
-      type: 'success',
-      title: '+' + credits + ' creditos acreditados',
-      message: msg,
-      duration: 8000
-    });
+    showReceipt(credits, amount, method, paymentId);
   }
 
   // --- Mecanismo 1: Supabase Realtime ---
@@ -61,7 +68,7 @@
         }, function (payload) {
           var row = payload.new;
           if (!row || row.status !== 'approved') return;
-          showCreditToast(row.credits, row.amount);
+          showCreditToast(row.credits, row.amount, row.mp_payment_method, row.payment_id);
           refreshUI();
           stopPolling();
         })

@@ -60,7 +60,7 @@
 <link rel="stylesheet" href="css/plans-catalog.css?v=4">
 <link rel="stylesheet" href="css/auth.css?v=68">
 <link rel="stylesheet" href="css/footer.css?v=13">
-<link rel="stylesheet" href="css/overlays.css?v=8">
+<link rel="stylesheet" href="css/overlays.css?v=9">
 <link rel="stylesheet" href="css/polish.css?v=6">
 <link rel="stylesheet" href="css/maintenance.css?v=9">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=14">
@@ -2015,6 +2015,21 @@
   </div>
 </div>
 
+<div class="modal" id="receiptModal" hidden role="dialog" aria-modal="true" aria-labelledby="receiptTitle">
+  <div class="modal-overlay" data-close></div>
+  <div class="modal-panel receipt-panel">
+    <div class="receipt-body">
+      <div class="receipt-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h2 id="receiptTitle">Pago confirmado</h2>
+      <p class="receipt-sub" id="receiptSub">Tus créditos ya están disponibles.</p>
+      <div class="receipt-rows" id="receiptRows"></div>
+      <button class="btn btn-primary receipt-close" type="button" data-close>Listo</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- ============================================================
      BANNER DE COOKIES (aparece hasta que el usuario elige)
@@ -2122,7 +2137,7 @@
 <script src="js/modules/saldo-catalog.js?v=4"></script>
 <!-- Funciones nuevas -->
 <script src="js/modules/low-balance-alert.js?v=1"></script>
-<script src="js/modules/payment-watcher.js?v=1"></script>
+<script src="js/modules/payment-watcher.js?v=2"></script>
 <script src="js/modules/search-history.js?v=1"></script>
 <script src="js/modules/favorites.js?v=1"></script>
 <script src="js/modules/credits-counter.js?v=1"></script>
