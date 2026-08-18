@@ -6616,19 +6616,28 @@ a.nm-download { text-decoration: none; }
 }
 
 /* ── Duplicado CITV: la espera y el papel ────────────────────────────
-   El tercer y el cuarto paso del mismo cuadro. Mientras se consulta,
-   la rueda de carga de la plataforma; cuando llega, el certificado a
-   tamaño A4 encogido hasta el ancho que dé el cuadro. */
+   El tercer y el cuarto paso del mismo cuadro. Mientras se consulta, la
+   rueda de carga de la plataforma; cuando llega, el certificado.
+
+   En la vista previa el cuadro deja de ser un panel con membrete y pasa
+   a ser el papel: sin franja oscura arriba, sin margen a los lados y sin
+   borde propio. El ancho lo pone el guion, que lo iguala al de la hoja
+   ya escalada, así que no queda blanco por ningún lado. */
 .citv-cargando { padding: 48px 24px; min-height: 260px; }
 
-/* Al llegar el papel el cuadro se ensancha: 560 px es la medida de un
-   formulario, no la de una hoja A4. */
-.citv-modal.is-previa .rep-modal-caja { width: min(900px, 100%); }
+.citv-modal.is-previa .rep-modal-caja {
+  /* El ancho exacto lo fija citv-aviso.js; aquí solo se le quita el tope
+     del formulario y se recorta lo que asome por las esquinas —la hoja
+     es cuadrada y el cuadro, redondeado. */
+  width: auto;
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+}
 
-.citv-cuerpo-previa { padding: 20px 24px 4px; }
+.citv-aviso-previa { display: block; }
 
 .citv-nota {
-  margin: 0 0 16px;
+  margin: 12px 14px;
   padding: 12px 14px;
   border: 1px solid var(--c-border);
   border-radius: 10px;
@@ -6638,14 +6647,12 @@ a.nm-download { text-decoration: none; }
 }
 
 /* El marco recorta lo que sobra: el <iframe> se pinta a 794 px —los
-   210 mm de la hoja— y se encoge con `transform`, que es lo único que
-   no deforma las tablas del certificado. El alto lo pone el guion,
+   210 mm de la hoja— y se encoge con `transform`, que es lo único que no
+   deforma las tablas del certificado. El alto lo pone el guion,
    calculado con la misma escala. */
 .citv-previa {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--c-border);
-  border-radius: 10px;
   background: #ffffff;
 }
 .citv-hoja {
@@ -6653,6 +6660,13 @@ a.nm-download { text-decoration: none; }
   top: 0; left: 0;
   border: 0;
   transform-origin: top left;
+}
+
+/* El pie, debajo del papel: centrado y pegado, que el cuadro ahora mide
+   lo que mide la hoja y los 36 px del formulario aquí sobran. */
+.citv-modal.is-previa .rep-modal-pie {
+  padding: 12px 14px;
+  justify-content: center;
 }
 
 /* El botón de descarga lleva icono: hay que alinearlo con su texto. */
@@ -6663,7 +6677,3 @@ a.nm-download { text-decoration: none; }
   gap: 9px;
 }
 .citv-modal .rep-modal-ok svg { width: 19px; height: 19px; }
-
-@media (max-width: 720px) {
-  .citv-cuerpo-previa { padding: 16px 14px 4px; }
-}

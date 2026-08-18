@@ -358,19 +358,15 @@
       '</div>';
   }
 
-  function htmlPrevia(placa, nota) {
+  /* Aquí no hay membrete. El paso 4 no necesita presentarse —el papel ya
+     lleva la placa, el ministerio y el número— y esa franja oscura le
+     estaba robando a la hoja un tercio de la altura del cuadro. El
+     certificado ocupa todo el ancho y todo el alto que hay. */
+  function htmlPrevia(nota) {
     return '' +
-      '<div class="citv-aviso">' +
-        '<header class="citv-membrete citv-membrete-previa">' +
-          '<span class="citv-chip">Duplicado emitido</span>' +
-          '<h4 class="citv-titulo">' + esc(placa) + '</h4>' +
-          '<p class="citv-sigla">Certificado de Inspección Técnica Vehicular</p>' +
-          '<div class="citv-linea"><span></span><span></span><span></span><span></span></div>' +
-        '</header>' +
-        '<div class="citv-cuerpo citv-cuerpo-previa">' +
-          (nota ? '<p class="citv-nota">' + esc(nota) + '</p>' : '') +
-          '<div class="citv-previa" id="citvPrevia"></div>' +
-        '</div>' +
+      '<div class="citv-aviso citv-aviso-previa">' +
+        (nota ? '<p class="citv-nota">' + esc(nota) + '</p>' : '') +
+        '<div class="citv-previa" id="citvPrevia"></div>' +
       '</div>';
   }
 
@@ -523,29 +519,92 @@
       hoja.srcdoc = docHtml;
       marco.appendChild(hoja);
 
-      /* La hoja se encoge hasta caber ENTERA, y por los dos lados: por el
-         ancho del cuadro y por lo que queda de alto una vez puestos el
-         membrete y el pie. Mirando solo el ancho salía a tamaño real
-         —1123 px de papel dentro de un cuadro de 886— y el cliente tenía
-         que arrastrar para ver su propio certificado. Nunca por encima
-         de 1: se encoge para caber, no se estira para llenar. */
+      /* Quien manda es la hoja: se calcula cuánto cabe de alto y de ancho,
+         se elige la escala que entra por los dos lados, y el cuadro se
+         estrecha hasta medir exactamente lo que mide el papel. Al revés
+         —primero el cuadro, después la hoja— quedaba blanco a los lados
+         y el certificado no llenaba nada.
+
+         El alto disponible descuenta el pie con su botón y, si la hay, la
+         nota de arriba; el ancho, el aire que el modal deja alrededor.
+         Nunca por encima de 1: se encoge para caber, no se estira. */
       var MARGEN_MODAL = 32;      // el aire del .rep-modal alrededor del cuadro
-      var AIRE_CUERPO  = 30;      // lo que respira la hoja dentro del cuerpo
+
+      function medir() {
+        var nota = root.querySelector('.citv-nota');
+        var alto = window.innerHeight - MARGEN_MODAL - pie.offsetHeight -
+                   (nota ? nota.offsetHeight + 12 : 0);
+        var ancho = Math.min(window.innerWidth - MARGEN_MODAL, 900);
+        return Math.min(1, Math.max(alto, 220) / C.ALTO_PX, ancho / C.ANCHO_PX);
+      }
 
       reajustar = function () {
-        var membrete = root.querySelector('.citv-membrete');
-        var alto = window.innerHeight - MARGEN_MODAL - AIRE_CUERPO -
-                   (membrete ? membrete.offsetHeight : 0) - pie.offsetHeight;
-        var escala = Math.min(1,
-                              marco.clientWidth / C.ANCHO_PX,
-                              Math.max(alto, 200) / C.ALTO_PX);
+        // Dos pasadas: la primera fija el ancho del cuadro y la segunda
+        // vuelve a medir, porque la nota reparte sus líneas según ese
+        // ancho y con una sola pasada la hoja se pasaba de alto.
+        var escala = medir();
+        caja.style.width = Math.round(C.ANCHO_PX * escala) + 'px';
+        escala = medir();
+        caja.style.width = Math.round(C.ANCHO_PX * escala) + 'px';
         hoja.style.transform = 'scale(' + escala + ')';
-        hoja.style.left = Math.max(0, Math.round((marco.clientWidth - C.ANCHO_PX * escala) / 2)) + 'px';
         marco.style.height = Math.round(C.ALTO_PX * escala) + 'px';
       };
       reajustar();
       window.addEventListener('resize', reajustar);
       return hoja;
+    }
+
+    /* ── El PDF ──────────────────────────────────────────────────────
+       Pulsar y que baje el archivo. Nada de abrir el diálogo de
+       impresión y confiar en que el cliente acierte con «Guardar como
+       PDF», el tamaño A4 y los márgenes a cero: eso es pedirle que
+       maquete él el documento que vino a comprar.
+
+       La hoja se rasteriza al doble de resolución y se mete entera en
+       una página A4 —210 × 297 mm, esquina a esquina—, que es la
+       proporción exacta con la que está montada. Si el rasterizador no
+       estuviera cargado se cae al diálogo de impresión, que sigue
+       imprimiendo bien: mejor un camino más largo que ninguno. */
+    var PDF_ESCALA = 2;         // el doble de puntos por píxel al rasterizar
+    var PDF_CALIDAD = 0.95;     // JPEG: por encima de esto el archivo se dispara
+
+    async function descargarPdf(placa) {
+      var doc = marcoHoja && marcoHoja.contentDocument;
+      var pagina = doc && doc.querySelector('.page');
+      if (!pagina) return;
+
+      if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
+        marcoHoja.contentWindow.focus();
+        marcoHoja.contentWindow.print();
+        return;
+      }
+
+      var C = Consultia.CitvCertificado;
+      var textoBoton = boton.innerHTML;
+      boton.disabled = true;
+      boton.innerHTML = '<span>Preparando el PDF…</span>';
+      try {
+        var lienzo = await window.html2canvas(pagina, {
+          scale: PDF_ESCALA,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false,
+          width: C.ANCHO_PX,
+          height: C.ALTO_PX,
+          windowWidth: C.ANCHO_PX,
+          windowHeight: C.ALTO_PX,
+        });
+        var pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        pdf.addImage(lienzo.toDataURL('image/jpeg', PDF_CALIDAD), 'JPEG', 0, 0, 210, 297);
+        pdf.save('CITV-' + String(placa).replace(/[^A-Z0-9]/gi, '') + '.pdf');
+      } catch (e) {
+        console.error('[citv] no se pudo armar el PDF:', e);
+        marcoHoja.contentWindow.focus();
+        marcoHoja.contentWindow.print();
+      } finally {
+        boton.disabled = false;
+        boton.innerHTML = textoBoton;
+      }
     }
 
     /* La diferencia entre lo que cuesta el trámite y lo que ya cobraron
@@ -709,13 +768,9 @@
           ': venció el ' + rev.fin + '. El duplicado sale con esas fechas.';
 
         root.classList.add('is-previa');
-        pintar(htmlPrevia(v.placa || placa, nota), PDF_SVG + '<span>Descargar PDF</span>');
+        pintar(htmlPrevia(nota), PDF_SVG + '<span>Descargar PDF</span>');
         marcoHoja = montarHoja(doc);
-        boton.onclick = function () {
-          if (!marcoHoja || !marcoHoja.contentWindow) return;
-          marcoHoja.contentWindow.focus();
-          marcoHoja.contentWindow.print();
-        };
+        boton.onclick = function () { descargarPdf(v.placa || placa); };
 
         if (window.Consultia.AuthUI && window.Consultia.AuthUI.refresh) {
           window.Consultia.AuthUI.refresh();   // el saldo de la cabecera, al día
