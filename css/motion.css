@@ -1,0 +1,57 @@
+/* ============================================================
+   MOVIMIENTO — una sola entrada para toda la plataforma
+   ------------------------------------------------------------
+   Un efecto, no doce. Todo lo que aparece en pantalla lo hace de
+   la misma manera: sube seis pixeles mientras se revela, en el
+   tiempo que ya usa el resto de la aplicación (--t-base). Con un
+   solo gesto compartido la plataforma se siente de una pieza; con
+   uno distinto por pantalla, hecha a parches.
+
+   Reglas que se respetan aquí:
+   - Nada de sombras, escalas grandes ni rebotes: el diseño es plano.
+   - Seis pixeles y 180 ms. Se nota que algo entró, no se espera.
+   - No se anima lo que ya trae su propio movimiento (el cuadro de
+     opciones, el visor, los avisos): duplicarlo lo haría temblar.
+   - `prefers-reduced-motion` ya está anulado en bloque en base.css.
+
+   Va cargado el ÚLTIMO a propósito: solo añade, no pisa nada.
+============================================================ */
+
+@keyframes fv-entra {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fv-revela {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* La vista que se abre. Solo se revela, sin desplazamiento: dentro
+   viven cuadros en `position: fixed` —el de opciones, el visor— y un
+   ancestro con `transform` los ataría a la vista en vez de a la
+   ventana, descolocándolos media pantalla. */
+.view:not([hidden]) {
+  animation: fv-revela var(--t-base) both;
+}
+
+/* El resultado de la consulta: lo que el cliente estaba esperando.
+   Aquí sí sube, porque es lo único que cambia en esa zona y el gesto
+   dice «esto es nuevo». */
+.cr-btn-layout,
+.cr-txt-layout,
+.cr-loading,
+.cr-mantenimiento {
+  animation: fv-entra var(--t-base) both;
+}
+
+/* Paneles que aparecen sueltos dentro de una vista ya abierta. */
+.result-panel:not([hidden]),
+.cr-btn-result-area:not([hidden]) {
+  animation: fv-entra var(--t-base) both;
+}
+
+/* Avisos a pantalla completa: se revelan, no se mueven. Un cuadro
+   centrado que además se desplaza parece que se cayó dentro. */
+.dl-overlay:not([hidden]) {
+  animation: fv-revela var(--t-base) both;
+}
