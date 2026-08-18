@@ -64,7 +64,7 @@
      /placa). Para que el cliente no pague dos veces, lo que se le cobra
      aparte es solo la diferencia —ver `cobrarDiferencia()`—: entre las
      consultas y esa diferencia, el trámite suma exactamente esto. */
-  var COSTO_CITV = 30;
+  var COSTO_CITV = 40;
 
   var PLACA_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -352,7 +352,7 @@
         '<div class="cr-loading citv-cargando">' +
           '<div class="cr-spinner"></div>' +
           '<div class="cr-loading-text">Emitiendo el duplicado de ' + esc(placa) + '…</div>' +
-          '<div class="cr-loading-hint">Consultamos el registro y armamos el certificado. ' +
+          '<div class="cr-loading-hint">Consultamos el registro. ' +
           'Suele tardar cerca de un minuto: no cierres esta ventana.</div>' +
         '</div>' +
       '</div>';
@@ -560,47 +560,28 @@
        PDF», el tamaño A4 y los márgenes a cero: eso es pedirle que
        maquete él el documento que vino a comprar.
 
-       La hoja se rasteriza al doble de resolución y se mete entera en
-       una página A4 —210 × 297 mm, esquina a esquina—, que es la
-       proporción exacta con la que está montada. Si el rasterizador no
-       estuviera cargado se cae al diálogo de impresión, que sigue
+       Quien lo dibuja es js/modules/citv-pdf.js, y lo dibuja de verdad:
+       texto seleccionable y líneas vectoriales, no una foto de la
+       pantalla. Si algo fallara queda el diálogo de impresión, que sigue
        imprimiendo bien: mejor un camino más largo que ninguno. */
-    var PDF_ESCALA = 2;         // el doble de puntos por píxel al rasterizar
-    var PDF_CALIDAD = 0.95;     // JPEG: por encima de esto el archivo se dispara
-
     async function descargarPdf(placa) {
-      var doc = marcoHoja && marcoHoja.contentDocument;
-      var pagina = doc && doc.querySelector('.page');
-      if (!pagina) return;
+      if (!marcoHoja || !marcoHoja.contentDocument) return;
 
-      if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
+      var aImprimir = function () {
         marcoHoja.contentWindow.focus();
         marcoHoja.contentWindow.print();
-        return;
-      }
+      };
+      if (!Consultia.CitvPdf || !window.jspdf || !window.jspdf.jsPDF) { aImprimir(); return; }
 
-      var C = Consultia.CitvCertificado;
       var textoBoton = boton.innerHTML;
       boton.disabled = true;
       boton.innerHTML = '<span>Preparando el PDF…</span>';
       try {
-        var lienzo = await window.html2canvas(pagina, {
-          scale: PDF_ESCALA,
-          backgroundColor: '#ffffff',
-          useCORS: true,
-          logging: false,
-          width: C.ANCHO_PX,
-          height: C.ALTO_PX,
-          windowWidth: C.ANCHO_PX,
-          windowHeight: C.ALTO_PX,
-        });
-        var pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-        pdf.addImage(lienzo.toDataURL('image/jpeg', PDF_CALIDAD), 'JPEG', 0, 0, 210, 297);
-        pdf.save('CITV-' + String(placa).replace(/[^A-Z0-9]/gi, '') + '.pdf');
+        await Consultia.CitvPdf.generar(
+          marcoHoja, 'CITV-' + String(placa).replace(/[^A-Z0-9]/gi, '') + '.pdf');
       } catch (e) {
         console.error('[citv] no se pudo armar el PDF:', e);
-        marcoHoja.contentWindow.focus();
-        marcoHoja.contentWindow.print();
+        aImprimir();
       } finally {
         boton.disabled = false;
         boton.innerHTML = textoBoton;

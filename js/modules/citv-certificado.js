@@ -58,28 +58,37 @@ html, body { background: #ffffff; }
 
 .page-content { position: relative; z-index: 1; }
 
-/* Cabecera */
-.header { display: flex; align-items: center; margin-bottom: 10px; position: relative; min-height: 80px; }
+/* Cabecera — tres columnas que no se pisan
+   ------------------------------------------------------------------
+   El bloque del centro estaba absoluto y centrado sobre la página, y el
+   logo del cliente, suelto a la izquierda. Con un logo
+   ancho —los hay que son casi una banda— la caja del logo llegaba hasta
+   debajo de «MINISTERIO DE TRANSPORTES…» y las letras se tocaban.
 
-/* El logo del centro entra a tamaño reducido: la imagen viene de casi
-   1000 px de ancho y, suelta, se comía la cabecera entera. Se fija el
-   alto y el ancho se acomoda solo. */
+   Ahora son tres columnas de una fila: los dos laterales miden lo mismo
+   (194 px), así que el centro sigue cayendo en mitad de la página como
+   antes, pero por reparto y no por casualidad. Ningún logo puede ya
+   invadir el texto: como mucho llena su columna. Al del medio le quedan
+   330 px y la línea del ministerio ocupa 318, que por eso va sin
+   partir. */
+.header { display: flex; align-items: center; margin-bottom: 10px; min-height: 80px; }
+
 .logo-box {
-  min-width: 100px; max-width: 200px;
+  flex: 0 0 194px;
   height: 80px; min-height: 0;
   background: transparent;
-  display: flex; align-items: center; justify-content: center;
-  margin-left: 25px;
+  display: flex; align-items: center; justify-content: flex-start;
+  padding-left: 10px;
   position: relative; overflow: hidden;
 }
 .logo-box img { max-width: 100%; max-height: 100%; width: auto; height: 100%; object-fit: contain; }
 
-.header-center { position: absolute; left: 50%; transform: translateX(-50%); text-align: center; width: 60%; }
-.header-center .ministry { font-size: 11px; font-weight: bold; }
+.header-center { flex: 1 1 auto; min-width: 0; text-align: center; }
+.header-center .ministry { font-size: 11px; font-weight: bold; white-space: nowrap; }
 .header-center .company  { font-size: 14px; font-weight: bold; margin: 3px 0; }
 .header-center .address  { font-size: 8px; }
 
-.header-right { position: absolute; right: 85px; top: 50%; transform: translateY(-50%); text-align: center; }
+.header-right { flex: 0 0 194px; text-align: center; }
 .mtc-letters { font-size: 20px; font-weight: bold; font-style: italic; color: red; line-height: 0.85; }
 
 .main-title  { text-align: center; font-size: 12px; font-weight: bold; margin: 10px 0 5px 0; }
