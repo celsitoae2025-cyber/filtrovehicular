@@ -18,6 +18,12 @@
 
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=2">
+
+<!-- El anti-bot de Cloudflare vive en otro dominio. Sin esto, el celular
+     empieza a resolver DNS y a negociar TLS recién al abrir el formulario
+     de acceso, y el recuadro tarda segundos en aparecer. -->
+<link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
+<link rel="dns-prefetch" href="https://challenges.cloudflare.com">
 <link rel="apple-touch-icon" href="icons/icon-192.png?v=2">
 
 
@@ -2060,7 +2066,7 @@
 <script src="js/shared/utils.js?v=2"></script>
 <script src="js/shared/device-fingerprint.js?v=1"></script>
 <script src="js/shared/email-validator.js?v=1"></script>
-<script src="js/shared/turnstile.js?v=2"></script>
+<script src="js/shared/turnstile.js?v=3"></script>
 <script src="js/shared/auth.js?v=24"></script>
 <script src="js/shared/plans-data.js?v=1"></script>
 <script src="js/modules/toasts.js?v=1"></script>

@@ -67,6 +67,46 @@
     pedirScript();
   }
 
+  /* ── Precalentado ──────────────────────────────────────────────
+     Hasta ahora el script de Cloudflare se pedía en el momento de
+     abrir el formulario. En el celular eso se nota: antes de que
+     aparezca el recuadro hay que resolver el DNS de
+     challenges.cloudflare.com, negociar TLS con un servidor con el
+     que la página nunca habló, bajar la librería y recién entonces
+     empezar el reto. Segundos, con el cliente mirando un formulario
+     a medias.
+
+     Se adelanta la descarga a cuando el navegador está sin trabajo.
+     No dibuja nada —el script va en modo explícito—, solo deja la
+     conexión hecha y el código en caché para que al abrir el
+     formulario el recuadro salga de una vez.
+
+     No se precalienta si ya hay sesión guardada: quien entra con su
+     cuenta abierta no va a ver ningún formulario de acceso y no tiene
+     por qué gastar sus datos. */
+  function haySesionGuardada() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf('sb-') === 0 && k.indexOf('-auth-token') > 0) return true;
+      }
+    } catch (e) { /* almacenamiento bloqueado: se precalienta igual */ }
+    return false;
+  }
+
+  function precalentar() {
+    if (scriptPedido) return;
+    if (!document.querySelector('.auth-turnstile')) return;   // esta página no pide acceso
+    if (haySesionGuardada()) return;
+    pedirScript();
+  }
+
+  if (window.requestIdleCallback) {
+    window.requestIdleCallback(precalentar, { timeout: 3000 });
+  } else {
+    window.addEventListener('load', function () { setTimeout(precalentar, 1200); });
+  }
+
   function estado(containerId) {
     if (!widgets[containerId]) {
       widgets[containerId] = { id: null, token: null, waiters: [] };
