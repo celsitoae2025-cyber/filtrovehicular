@@ -6134,16 +6134,16 @@ a.nm-download { text-decoration: none; }
 /* Todo en blanco y con aire: el gris de fondo y las celdas pegadas hacían
    un bloque apretado. Aquí manda el espacio —nada toca el borde ni a la
    línea de al lado— y lo único con color es la línea de marca. */
-.rep-espera { padding: 34px 36px 30px; background: #ffffff; }
+.rep-espera { padding: 30px 36px 24px; background: #ffffff; }
 
 .rep-espera-hero { background: transparent; padding: 0; overflow: visible; }
 .rep-espera-chip {
   display: inline-flex; align-items: center; gap: 9px;
-  color: #5d6866; background: transparent;
-  border: 1px solid #e6e9e8; border-radius: 999px;
-  font-size: 11px; font-weight: 400; letter-spacing: 1.2px;
+  color: #ffffff; background: #141d1c;
+  border: none; border-radius: 999px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
   text-transform: uppercase;
-  padding: 6px 14px;
+  padding: 7px 15px;
 }
 .rep-espera-pulso {
   width: 7px; height: 7px; border-radius: 50%;
@@ -6155,8 +6155,8 @@ a.nm-download { text-decoration: none; }
   50%      { opacity: .3; }
 }
 .rep-espera-titulo {
-  margin: 18px 0 0;
-  font-size: 25px; font-weight: 700; color: #141d1c; letter-spacing: .1px;
+  margin: 16px 0 0;
+  font-size: 23px; font-weight: 700; color: #141d1c; letter-spacing: .1px;
   line-height: 1.2;
 }
 .rep-espera-cifra {
@@ -6164,7 +6164,7 @@ a.nm-download { text-decoration: none; }
   margin: 8px 0 0;
 }
 .rep-espera-num {
-  font-size: 30px; font-weight: 400; line-height: 1.1;
+  font-size: 27px; font-weight: 400; line-height: 1.1;
   color: #141d1c;
   font-variant-numeric: tabular-nums;
 }
@@ -6172,7 +6172,7 @@ a.nm-download { text-decoration: none; }
 
 /* La línea de marca: los cuatro colores de la casa, llenándose. */
 .rep-espera-barra {
-  height: 4px; margin-top: 20px;
+  height: 4px; margin-top: 16px;
   background: #f1f3f2; border-radius: 999px; overflow: hidden;
 }
 .rep-espera-barra span {
@@ -6190,7 +6190,7 @@ a.nm-download { text-decoration: none; }
 }
 
 .rep-espera-texto {
-  margin: 24px 0 0; max-width: 58ch;
+  margin: 18px 0 0; max-width: 58ch;
   font-size: 15px; line-height: 1.6; color: #5d6866;
 }
 
@@ -6198,7 +6198,7 @@ a.nm-download { text-decoration: none; }
    fondo, sin caja: lo que ordena es la retícula, no los bordes. */
 .rep-espera-lista {
   list-style: none;
-  margin: 20px 0 0; padding: 0;
+  margin: 14px 0 0; padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
   column-gap: 36px;
@@ -6207,9 +6207,9 @@ a.nm-download { text-decoration: none; }
 }
 .rep-espera-lista li {
   display: flex; align-items: baseline; gap: 12px;
-  padding: 12px 0;
+  padding: 9px 0;
   border-bottom: 1px solid #f1f3f2;
-  font-size: 14.5px; color: #141d1c; line-height: 1.45;
+  font-size: 14px; color: #141d1c; line-height: 1.4;
   background: transparent;
   opacity: 0;
   animation: rep-entra .34s ease-out forwards;
@@ -6235,7 +6235,7 @@ a.nm-download { text-decoration: none; }
 @keyframes rep-traza { to { stroke-dashoffset: 0; } }
 
 .rep-espera-pie {
-  margin: 22px 0 0;
+  margin: 12px 0 0;
   font-size: 13px; color: #9aa3a1; line-height: 1.6;
 }
 
@@ -6247,16 +6247,29 @@ a.nm-download { text-decoration: none; }
 }
 
 @media (max-width: 720px) {
-  .rep-espera { padding: 22px 18px 20px; }
-  .rep-espera-titulo { font-size: 20px; }
-  .rep-espera-num { font-size: 26px; }
-  .rep-espera-lista { grid-template-columns: 1fr; column-gap: 0; }
+  .rep-espera { padding: 18px 16px 14px; }
+  .rep-espera-titulo { font-size: 18px; margin-top: 12px; }
+  .rep-espera-cifra { margin-top: 4px; }
+  .rep-espera-num { font-size: 22px; }
+  .rep-espera-cifra-txt { font-size: 13px; }
+  .rep-espera-barra { margin-top: 12px; }
+  /* La frase de introducción se va: en el móvil el sitio es para la lista,
+     y el distintivo con el título ya dicen lo mismo. */
+  .rep-espera-texto { display: none; }
+  /* Dos columnas también en el móvil: en una sola, veintiún renglones
+     obligaban a arrastrar el cuadro entero. */
+  .rep-espera-lista { grid-template-columns: 1fr 1fr; column-gap: 14px; margin-top: 14px; }
+  .rep-espera-lista li { padding: 5px 0; font-size: 11.5px; gap: 7px; line-height: 1.35; }
+  .rep-espera-ico { width: 12px; height: 12px; }
+  .rep-espera-pie { margin-top: 10px; font-size: 11px; }
+  .rep-modal { padding: 10px; }
+  .rep-modal-caja { max-height: calc(100vh - 20px); }
 }
 
 /* ── Reporte Completo: la pantalla flotante ──────────────────────────
    Sale al pulsar Consultar. Misma ficha que el panel, sobre un fondo
    oscurecido y con una sola salida: «Entendido». */
-.rep-modal { position: fixed; inset: 0; z-index: 9995; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.rep-modal { position: fixed; inset: 0; z-index: 9995; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .rep-modal-fondo {
   position: absolute; inset: 0;
   background: rgba(14, 19, 18, .62);
@@ -6268,8 +6281,12 @@ a.nm-download { text-decoration: none; }
 .rep-modal-caja {
   position: relative;
   width: min(900px, 100%);
-  max-height: 86vh;
+  max-height: calc(100vh - 32px);
   overflow-y: auto;
+  /* Sin barra a la vista: en pantallas cortas el cuadro sigue pudiéndose
+     arrastrar, pero no enseña el raíl. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   background: #ffffff;
   border-radius: 14px;
   opacity: 0;
@@ -6289,7 +6306,7 @@ a.nm-download { text-decoration: none; }
 }
 .rep-modal-cerrar svg { width: 17px; height: 17px; }
 .rep-modal-cerrar:hover { background: #f1f3f3; }
-.rep-modal-pie { padding: 0 36px 30px; display: flex; justify-content: flex-end; }
+.rep-modal-pie { padding: 0 36px 22px; display: flex; justify-content: flex-end; }
 .rep-modal-ok {
   font: inherit; font-size: 14px; letter-spacing: .4px;
   padding: 11px 26px; border: none; border-radius: 999px;
@@ -6297,7 +6314,8 @@ a.nm-download { text-decoration: none; }
   transition: background var(--t-fast);
 }
 .rep-modal-ok:hover { background: #0e1312; }
-.rep-modal .rep-espera { padding-top: 40px; }
+.rep-modal-caja::-webkit-scrollbar { width: 0; height: 0; }
+.rep-modal .rep-espera { padding-top: 30px; }
 @media (max-width: 720px) {
   .rep-modal { padding: 12px; }
   .rep-modal-caja { max-height: 92vh; }
