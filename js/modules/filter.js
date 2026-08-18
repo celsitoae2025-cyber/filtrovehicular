@@ -23,6 +23,73 @@
     return !!(c && c.comando && c.comando.indexOf('/metapla') === 0);
   }
 
+  /* ── Reporte Completo: en implementación ──────────────────────────────
+     Todavía no se entrega, pero es lo más grande que va a tener la
+     plataforma —veintiún trámites en un solo clic—, así que en vez de
+     esconderlo se anuncia: al elegirlo se ve la lista entera de lo que va
+     a traer, y pulsar Consultar no cobra ni consulta, lo repite. */
+  var REPORTE_EN_IMPLEMENTACION = true;
+
+  var REPORTE_INCLUYE = [
+    'Infracciones por regiones (17 regiones disponibles)',
+    'Propiedad Vehicular SUNARP',
+    'Historial Completo por Placa',
+    'Cambio de Características',
+    'Deudas y Multas SAT Lima',
+    'Deudas y Multas SAT Callao',
+    'Papeletas de Tránsito ATU',
+    'Siniestralidad por Placa',
+    'Estado de Placa',
+    'Papeletas de Infracción por Cinemómetro',
+    'Inspección Técnica Vehicular CITV',
+    'Vigencia del SOAT',
+    'Papeletas SUTRAN',
+    'Lunas Oscurecidas',
+    'FISE GNV Subsidio Gas',
+    'Consulta Deuda GNV',
+    'Denuncias y Órdenes de Captura',
+    'Boleta Informativa',
+    'Tarjeta de Propiedad (TIVE)',
+    'Historial de Propietarios Inscritos',
+    'Récord de Conductor (DNI)',
+  ];
+
+  var ICONO_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  function htmlReporteEnImplementacion() {
+    return '<div class="rep-espera">' +
+      '<div class="rep-espera-head">' +
+        '<span class="rep-espera-chip">En implementación</span>' +
+        '<h4 class="rep-espera-titulo">Reporte Completo</h4>' +
+        '<p class="rep-espera-texto">Lo estamos terminando. Cuando esté listo, ' +
+        'un solo clic te devuelve todo esto en un mismo documento:</p>' +
+      '</div>' +
+      '<ul class="rep-espera-lista">' +
+        REPORTE_INCLUYE.map(function (t) {
+          return '<li><span class="rep-espera-ico">' + ICONO_CHECK + '</span>' + escapeHtml(t) + '</li>';
+        }).join('') +
+      '</ul>' +
+      '<p class="rep-espera-pie">Mientras tanto, cada consulta de la lista ya está disponible ' +
+      'por separado en su categoría.</p>' +
+    '</div>';
+  }
+
+  function mostrarReporteEnImplementacion() {
+    var body  = $('filter-result-body');
+    var empty = $('filter-empty');
+    var rp    = $('filter-result');
+    if (rp) rp.hidden = false;
+    if (empty) empty.hidden = true;
+    if (body) { body.hidden = false; body.innerHTML = htmlReporteEnImplementacion(); }
+    var status = $('filterResultStatus');
+    if (status) {
+      status.classList.remove('status-loading', 'status-ok');
+      status.classList.add('status-empty');
+      status.innerHTML = '';
+    }
+  }
+
   function $(id) { return document.getElementById(id); }
 
   // Alias de render helpers
@@ -160,6 +227,9 @@
       status.classList.add('status-empty');
       status.innerHTML = '';   // el chip vacío está oculto por CSS
     }
+
+    // El Reporte Completo enseña de entrada todo lo que va a traer.
+    if (REPORTE_EN_IMPLEMENTACION && esMetapla(c)) mostrarReporteEnImplementacion();
   }
 
   /* â”€â”€ Estado de carga â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -213,6 +283,20 @@
     if (err) {
       if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Formato inválido', message: err });
       input.focus();
+      return;
+    }
+
+    /* El Reporte Completo todavía no se entrega: se enseña lo que traerá y
+       no se cobra ni se llama al bot. El día que se abra, se pone
+       REPORTE_EN_IMPLEMENTACION en false y el resto del flujo —enfriamiento
+       incluido— sigue donde estaba. */
+    if (REPORTE_EN_IMPLEMENTACION && esMetapla(currentConsulta)) {
+      mostrarReporteEnImplementacion();
+      if (Consultia.toast) Consultia.toast({
+        type: 'info',
+        title: 'Reporte Completo en implementación',
+        message: 'Muy pronto: los 21 trámites en un solo clic. No se descontaron créditos.'
+      });
       return;
     }
 
