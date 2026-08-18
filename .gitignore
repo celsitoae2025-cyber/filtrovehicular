@@ -43,3 +43,15 @@ FUENTESDATA-INVENTARIO.md
 # Listados de catalogo para revisar en Excel (no son parte de la app)
 consulta-vehicular.csv
 consulta-vehicular.md
+
+# Emisor de certificados CITV — NO se publica.
+# El repositorio se despliega entero en Cloudflare Pages, así que subir
+# esto dejaría la plantilla del certificado —con membrete del MTC, logo
+# y firma— colgada en internet para quien acierte la dirección. El
+# guardián de administrador que trae solo esconde la página, no el
+# archivo: cualquiera podría leer su código fuente.
+# Se trabaja en local hasta ponerle una puerta de verdad (Cloudflare
+# Access) o dejarlo definitivamente fuera del sitio.
+CITV/
+citv-emisor.html
+assets/citv/
