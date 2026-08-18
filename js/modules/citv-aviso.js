@@ -1,13 +1,18 @@
 /* ============================================================
-   DUPLICADO CITV — el aviso del tiempo de emisión
+   DUPLICADO CITV — el trámite entero, en un solo cuadro
    ------------------------------------------------------------
-   Antes este acceso mandaba a WhatsApp de una. Ahora abre un aviso:
-   el duplicado no sale al instante y el cliente tiene derecho a
-   saberlo ANTES, no mientras espera sin entender por qué tarda.
+   Cuatro pasos sin sacar al cliente de donde está:
 
-   Dice también qué es un CITV. La sigla la usa todo el mundo en el
-   rubro y casi nadie fuera de él: escribirla sin explicar deja
-   afuera justo a quien viene a preguntar.
+     1. el aviso  — qué es un CITV y cuánto tarda
+     2. la placa  — y, si quiere, el logotipo de su centro
+     3. la espera — rueda de carga mientras se consulta
+     4. el papel  — la vista previa del certificado, con su PDF
+
+   Antes el paso 4 no existía: el cuadro decía «se envió
+   correctamente» y alguien, al otro lado, armaba el documento a mano
+   en citv-emisor.html. Ese acuse se ha ido. Lo que hacía el emisor
+   —leer /citv, leer /placa, numerar y montar la hoja— pasó aquí, y
+   ahora el duplicado se emite solo, como cualquier otra consulta.
 
    Reusa el esqueleto del modal del Reporte Completo (.rep-modal):
    mismo cuadro, mismo fondo, mismo botón. Solo cambia el contenido.
@@ -37,13 +42,13 @@
           '<div class="citv-tiempo">' +
             '<span class="citv-tiempo-ico">' + RELOJ_SVG + '</span>' +
             '<div>' +
-              '<strong class="citv-tiempo-cifra">Hasta 5 minutos</strong>' +
-              '<span class="citv-tiempo-txt">Es el máximo. Casi siempre lo tenemos en menos.</span>' +
+              '<strong class="citv-tiempo-cifra">Alrededor de un minuto</strong>' +
+              '<span class="citv-tiempo-txt">Se emite aquí mismo, sin salir de esta pantalla.</span>' +
             '</div>' +
           '</div>' +
 
-          '<p class="citv-texto">Tu duplicado se solicita al registro y se emite el mismo día. ' +
-          'No hace falta que estés pendiente: apenas esté listo te llega.</p>' +
+          '<p class="citv-texto">Tu duplicado se consulta al registro y se arma al instante. ' +
+          'Cuando esté listo lo verás en este mismo cuadro y podrás descargarlo en PDF.</p>' +
 
           '<ul class="citv-puntos">' +
             '<li>Es el mismo certificado, con la validez de siempre.</li>' +
@@ -54,27 +59,27 @@
       '</div>';
   }
 
-  /* Lo que cuesta el trámite. Es un precio fijo y no vive en el catálogo:
-     esto no pasa por ningún bot, lo emite el equipo a mano. Si cambia, se
-     cambia aquí y en el texto que lee el cliente —está escrito una sola
-     vez, más abajo, a partir de esta constante. */
+  /* Lo que cuesta el trámite. El precio es fijo y no vive en el catálogo,
+     pero por debajo se pagan dos consultas que sí están en él (/citv y
+     /placa). Para que el cliente no pague dos veces, lo que se le cobra
+     aparte es solo la diferencia —ver `cobrarDiferencia()`—: entre las
+     consultas y esa diferencia, el trámite suma exactamente esto. */
   var COSTO_CITV = 30;
 
   var PLACA_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h2M11 10h2M16 10h2M6 14h12"/></svg>';
 
-  var LISTO_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+  var PDF_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-    '<circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9.5"/></svg>';
+    '<path d="M12 3v11"/><polyline points="8 10.5 12 14.5 16 10.5"/><path d="M4 17.5v1.6A1.9 1.9 0 0 0 5.9 21h12.2a1.9 1.9 0 0 0 1.9-1.9v-1.6"/></svg>';
 
   /* ── El logotipo del cliente ─────────────────────────────────────
      El certificado lleva el logo del centro de inspección, así que lo
      pone quien lo pide. Casi siempre llegará un cuadrado con fondo
      blanco —así lo guarda todo el mundo—, y sobre el papel ese blanco
      se ve como un parche. Se le quita aquí mismo, en el navegador del
-     cliente, antes de subirlo: el que emite el certificado recibe el
-     logo ya recortado y con el fondo transparente.
+     cliente, antes de montarlo en el certificado.
 
      Cómo se limpia: se miran los píxeles del borde hacia adentro; los
      que son casi blancos se vuelven transparentes, y después se
@@ -162,6 +167,143 @@
     return new Promise(function (ok) { lienzo.toBlob(ok, 'image/png'); });
   }
 
+  /* ── Lo que contesta el bot a /citv ──────────────────────────────
+     Una ficha por cada inspección que tuvo el vehículo, de la más nueva
+     a la más vieja, así:
+
+         ⌞ INDX: 1
+         ⌞ ESTADO: VIGENTE
+         ⌞ RESULTADO: APROBADO
+         ⌞ CERTIFICADO: C-2026-138-354-000780
+         ⌞ VIG. INICIO: 13/01/2026
+         ⌞ VIG. FIN: 13/01/2027
+         EMPRESA: ...
+         DIRECCIÓN: ...
+
+     Se toma la VIGENTE. Si ninguna lo está —el vehículo dejó vencer su
+     revisión— se toma la que venció más tarde, que es la última que se
+     le emitió, y el certificado sale con esas fechas: aquí no se
+     inventa una vigencia que el vehículo no tiene.
+
+     La vigencia (6 o 12 meses) no viene dicha: se calcula de la
+     distancia entre inicio y fin, que es como se lee en el papel. */
+  function bloquesCitv(texto) {
+    var partes = String(texto || '').split(/⌞\s*INDX\s*:/);
+    var out = [];
+    for (var i = 1; i < partes.length; i++) {
+      var b = partes[i];
+      var dato = function (re) {
+        var m = b.match(re);
+        // El bot entrecomilla algunos nombres de empresa; en el papel
+        // esas comillas no pintan nada.
+        return m ? m[1].trim().replace(/^"+|"+$/g, '').trim() : '';
+      };
+      out.push({
+        indx:        (b.match(/^\s*(\d+)/) || [])[1] || '',
+        estado:      dato(/ESTADO\s*:\s*([^\n]+)/i),
+        resultado:   dato(/RESULTADO\s*:\s*([^\n]+)/i),
+        certificado: dato(/CERTIFICADO\s*:\s*([^\n]+)/i),
+        inicio:      dato(/VIG\.?\s*INICIO\s*:\s*([0-9\/\-]+)/i),
+        fin:         dato(/VIG\.?\s*FIN\s*:\s*([0-9\/\-]+)/i),
+        empresa:     dato(/EMPRESA\s*:\s*([^\n]+)/i),
+        direccion:   dato(/DIRECCI[ÓO]N\s*:\s*([^\n]+)/i),
+        servicio:    dato(/SERVICIO\s*:\s*([^\n]+)/i),
+        obs:         dato(/OBS\s*:\s*([^\n]+)/i),
+      });
+    }
+    return out;
+  }
+
+  function aFecha(ddmmyyyy) {
+    var m = String(ddmmyyyy || '').match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+    if (!m) return null;
+    return new Date(+m[3], +m[2] - 1, +m[1]);
+  }
+
+  function elegirRevision(bloques) {
+    if (!bloques.length) return null;
+    var vigentes = bloques.filter(function (b) { return /VIGENTE/i.test(b.estado); });
+    var lista = vigentes.length ? vigentes : bloques;
+    return lista.sort(function (a, b) {
+      var fa = aFecha(a.fin), fb = aFecha(b.fin);
+      return (fb ? fb.getTime() : 0) - (fa ? fa.getTime() : 0);
+    })[0];
+  }
+
+  function mesesEntre(inicio, fin) {
+    var a = aFecha(inicio), b = aFecha(fin);
+    if (!a || !b) return null;
+    return Math.round((b - a) / (1000 * 60 * 60 * 24 * 30.44));
+  }
+
+  /* ── Lo que contesta el bot a /placa ─────────────────────────────
+     La ficha del registro. De todo lo que manda —partida, título,
+     oficina registral, propietarios— al certificado solo le tocan estos
+     veinte cuadros. El resto no se copia: son datos de otra cosa.
+
+     «PESO BRUTO / NETO: 2.49 / 1.83» viene en una sola línea y en el
+     certificado son dos cuadros, así que se parte por la barra. */
+  function datosDePlaca(texto) {
+    var t = String(texto || '');
+    var dato = function (re) {
+      var m = t.match(re);
+      return m ? m[1].trim() : '';
+    };
+    var pesos = dato(/PESO\s+BRUTO\s*\/\s*NETO\s*:\s*([^\n]+)/i).split('/');
+    return {
+      placa:        dato(/B[UÚ]SQUEDA\s+DE\s+PLACA\s*-\s*([A-Z0-9-]+)\s*-/i),
+      marca:        dato(/^\s*MARCA\s*:\s*([^\n]+)/im),
+      modelo:       dato(/^\s*MODELO\s*:\s*([^\n]+)/im),
+      color:        dato(/^\s*COLOR\s*:\s*([^\n]+)/im),
+      estado:       dato(/^\s*ESTADO\s*:\s*([^\n]+)/im),
+      anioFab:      dato(/A[ÑN]O\s+DE\s+FABRICACI[ÓO]N\s*:\s*([^\n]+)/i),
+      tipoUso:      dato(/TIPO\s+DE\s+USO\s*:\s*([^\n]+)/i),
+      carroceria:   dato(/TIPO\s+DE\s+CARROCER[ÍI]A\s*:\s*([^\n]+)/i),
+      combustible:  dato(/TIPO\s+DE\s+COMBUSTIBLE\s*:\s*([^\n]+)/i),
+      cilindrada:   dato(/CILINDRADA\s*:\s*([^\n]+)/i),
+      cilindros:    dato(/N[ÚU]MERO\s+DE\s+CILINDROS\s*:\s*([^\n]+)/i),
+      motor:        dato(/N[ÚU]MERO\s+DE\s+MOTOR\s*:\s*([^\n]+)/i),
+      serie:        dato(/N[ÚU]MERO\s+DE\s+SERIE\s*:\s*([^\n]+)/i),
+      placaAnterior:dato(/PLACA\s+ANTERIOR\s*:\s*([^\n]+)/i),
+      ruedas:       dato(/N[ÚU]MERO\s+DE\s+RUEDAS\s*:\s*([^\n]+)/i),
+      pasajeros:    dato(/N[ÚU]MERO\s+DE\s+PASAJEROS\s*:\s*([^\n]+)/i),
+      asientos:     dato(/N[ÚU]MERO\s+DE\s+ASIENTOS\s*:\s*([^\n]+)/i),
+      pesoBruto:    (pesos[0] || '').trim(),
+      pesoNeto:     (pesos[1] || '').trim(),
+      cargaUtil:    dato(/CARGA\s+[ÚU]TIL\s*:\s*([^\n]+)/i),
+    };
+  }
+
+  /* ── Los números del documento ───────────────────────────────────
+     El correlativo del pie (CI- 228-XXXXXXX) tiene que ser distinto en
+     cada certificado. En el emisor se llevaba con un contador guardado
+     en el navegador; aquí eso no vale, porque quien emite ya no es una
+     sola máquina sino cada cliente desde la suya, y dos clientes
+     estrenarían el mismo número.
+
+     Se saca del identificador que devuelve el servidor al cobrar la
+     consulta: es único por emisión, lo asigna la base de datos y no
+     depende de nada guardado aquí. El número de informe sale del mismo
+     sitio, con otra longitud. */
+  function revolver(semilla, sal) {
+    var h = 2166136261;
+    var s = String(sal) + '|' + String(semilla == null ? Date.now() : semilla);
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+    }
+    return h;
+  }
+
+  function digitos(n, largo) {
+    var t = String(n % Math.pow(10, largo));
+    while (t.length < largo) t = '0' + t;
+    return t;
+  }
+
+  function correlativoDe(id) { return digitos(revolver(id, 'ci'), 7); }
+  function informeDe(id)     { return digitos(revolver(id, 'inf'), 10) + '-V1'; }
+
   function htmlFormulario() {
     return '' +
       '<div class="citv-aviso">' +
@@ -200,16 +342,34 @@
       '</div>';
   }
 
-  function htmlEnviado(placa) {
+  /* La espera. Lleva la clase `cr-loading` a propósito: es la que busca
+     el motor de consultas para colgar ahí su aviso de «el proveedor
+     tarda, cancela sin costo» si la cosa se alarga. Así ese aviso sale
+     dentro del cuadro y no en una pantalla que nadie está mirando. */
+  function htmlCargando(placa) {
     return '' +
       '<div class="citv-aviso">' +
-        '<div class="citv-listo">' +
-          '<span class="citv-listo-ico">' + LISTO_SVG + '</span>' +
-          '<h4 class="citv-listo-titulo">Se envió correctamente</h4>' +
-          '<p class="citv-listo-placa">' + esc(placa) + '</p>' +
-          '<p class="citv-listo-txt">Ya estamos gestionando el duplicado de tu CITV. ' +
-          'Puede demorar hasta 5 minutos; casi siempre lo tenemos en menos.</p>' +
-          '<p class="citv-listo-cobro">Se descontaron ' + COSTO_CITV + ' créditos de tu cuenta.</p>' +
+        '<div class="cr-loading citv-cargando">' +
+          '<div class="cr-spinner"></div>' +
+          '<div class="cr-loading-text">Emitiendo el duplicado de ' + esc(placa) + '…</div>' +
+          '<div class="cr-loading-hint">Consultamos el registro y armamos el certificado. ' +
+          'Suele tardar cerca de un minuto: no cierres esta ventana.</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function htmlPrevia(placa, nota) {
+    return '' +
+      '<div class="citv-aviso">' +
+        '<header class="citv-membrete citv-membrete-previa">' +
+          '<span class="citv-chip">Duplicado emitido</span>' +
+          '<h4 class="citv-titulo">' + esc(placa) + '</h4>' +
+          '<p class="citv-sigla">Certificado de Inspección Técnica Vehicular</p>' +
+          '<div class="citv-linea"><span></span><span></span><span></span><span></span></div>' +
+        '</header>' +
+        '<div class="citv-cuerpo citv-cuerpo-previa">' +
+          (nota ? '<p class="citv-nota">' + esc(nota) + '</p>' : '') +
+          '<div class="citv-previa" id="citvPrevia"></div>' +
         '</div>' +
       '</div>';
   }
@@ -219,6 +379,16 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
   }
+
+  function esperar(ms) {
+    return new Promise(function (r) { setTimeout(r, ms); });
+  }
+
+  /* Lo que se deja respirar al bot entre un comando y el siguiente. Las
+     dos consultas van EN SERIE: es la misma cuenta de Telegram hablando
+     con el mismo bot y, lanzadas a la vez, las respuestas se pisan —una
+     consulta se lleva el texto de la otra. */
+  var PAUSA_ENTRE_COMANDOS_MS = 7000;
 
   function abrir() {
     var previo = document.getElementById('citv-modal');
@@ -243,8 +413,18 @@
     // el cuadro entre animado en vez de aparecer puesto.
     requestAnimationFrame(function () { root.classList.add('is-abierto'); });
 
+    var logoLimpio = null;      // el logotipo del cliente, ya sin fondo
+    var marcoHoja = null;       // el <iframe> con el certificado
+    var reajustar = null;       // el oyente que lo escala al cambiar la ventana
+    var emitiendo = false;      // hay consultas en vuelo
+
     function cerrar() {
       document.removeEventListener('keydown', alPulsarTecla);
+      if (reajustar) { window.removeEventListener('resize', reajustar); reajustar = null; }
+      // Cerrar durante la espera corta la consulta: el motor aborta la
+      // petición y el servidor devuelve la reserva. Nadie paga por algo
+      // que ya no va a ver.
+      if (emitiendo && Consultia.ConsultaRunner) Consultia.ConsultaRunner.cancelarConsulta();
       document.body.classList.remove('modal-open');
       root.remove();
     }
@@ -253,10 +433,6 @@
     root.querySelector('.rep-modal-fondo').addEventListener('click', cerrar);
     root.querySelector('.rep-modal-cerrar').addEventListener('click', cerrar);
 
-    /* El aviso no termina en «Entendido»: ahí empieza el trámite. El mismo
-       cuadro se convierte en el formulario de la placa y, al enviarlo, en
-       el acuse. Tres pasos sin sacar al cliente de donde está. */
-    var logoLimpio = null;      // el logotipo del cliente, ya sin fondo
     var caja  = root.querySelector('.rep-modal-caja');
     var pie   = root.querySelector('.rep-modal-pie');
     var boton = root.querySelector('.rep-modal-ok');
@@ -265,14 +441,17 @@
       var viejo = caja.querySelector('.citv-aviso');
       if (viejo) viejo.remove();
       pie.insertAdjacentHTML('beforebegin', html);
-      boton.textContent = textoBoton;
+      boton.innerHTML = textoBoton;
       boton.disabled = false;
+      caja.scrollTop = 0;
     }
 
-    function paso2() {
+    function paso2(placaPrevia, errorPrevio) {
+      root.classList.remove('is-previa');
       pintar(htmlFormulario(), 'Enviar solicitud');
       var campo = root.querySelector('#citvPlaca');
       if (campo) {
+        if (placaPrevia) campo.value = placaPrevia;
         campo.focus();
         // La placa se lee y se guarda en mayúsculas, como en la tarjeta.
         campo.addEventListener('input', function () {
@@ -305,6 +484,17 @@
         }
       });
 
+      // El logotipo elegido antes de un intento fallido sigue puesto: no
+      // se le pide dos veces la misma imagen.
+      if (logoLimpio) {
+        var previaLogo = root.querySelector('#citvLogoPrevia');
+        previaLogo.innerHTML = '';
+        previaLogo.appendChild(logoLimpio);
+        previaLogo.hidden = false;
+        if (botonLogo) botonLogo.textContent = 'Cambiar imagen';
+      }
+
+      if (errorPrevio) mostrarError(errorPrevio);
       boton.onclick = enviar;
     }
 
@@ -313,6 +503,70 @@
       if (!err) return;
       err.textContent = texto;
       err.hidden = false;
+    }
+
+    /* La hoja va dentro de un <iframe> con su propio documento; ver
+       js/modules/citv-certificado.js. Aquí solo se encaja: se pinta a
+       tamaño real y se encoge con `transform` hasta el ancho que dé el
+       cuadro, que es lo único que no deforma el papel. */
+    function montarHoja(docHtml) {
+      var C = Consultia.CitvCertificado;
+      var marco = root.querySelector('#citvPrevia');
+      if (!marco) return null;
+
+      var hoja = document.createElement('iframe');
+      hoja.className = 'citv-hoja';
+      hoja.setAttribute('title', 'Vista previa del certificado');
+      hoja.setAttribute('scrolling', 'no');
+      hoja.width = C.ANCHO_PX;
+      hoja.height = C.ALTO_PX;
+      hoja.srcdoc = docHtml;
+      marco.appendChild(hoja);
+
+      reajustar = function () {
+        // Nunca por encima de 1: la hoja se encoge para caber, pero no se
+        // estira para llenar. En pantallas anchas sobra sitio a los lados
+        // y el papel se queda en medio, no pegado a la izquierda.
+        var escala = Math.min(1, marco.clientWidth / C.ANCHO_PX);
+        hoja.style.transform = 'scale(' + escala + ')';
+        hoja.style.left = Math.max(0, Math.round((marco.clientWidth - C.ANCHO_PX * escala) / 2)) + 'px';
+        marco.style.height = Math.round(C.ALTO_PX * escala) + 'px';
+      };
+      reajustar();
+      window.addEventListener('resize', reajustar);
+      return hoja;
+    }
+
+    /* La diferencia entre lo que cuesta el trámite y lo que ya cobraron
+       las consultas del catálogo. Si el catálogo subiera de precio hasta
+       igualar el trámite, esto es cero y no se cobra nada aparte —nunca
+       se cobra de más por encima de los 30. */
+    async function cobrarDiferencia(sb, yaCobrado, placa) {
+      var falta = COSTO_CITV - yaCobrado;
+      if (falta <= 0) return;
+      var res = await sb.rpc('consume_credits', {
+        cost: falta,
+        module_name: 'citv',
+        q_type: 'placa',
+        q_input: placa.slice(0, 200),
+      });
+      if (res.error) throw res.error;
+    }
+
+    // El logotipo se guarda para que el emisor de administración pueda
+    // rehacer el documento a mano si alguna vez hace falta. Va detrás de
+    // la entrega y sin bloquear: al cliente ya se le dio su certificado.
+    async function guardarLogo(sb, userId, placa) {
+      if (!logoLimpio) return;
+      try {
+        var blob = await aBlob(logoLimpio);
+        var ruta = userId + '/' + placa.replace(/[^A-Z0-9]/gi, '') + '-' + Date.now() + '.png';
+        var subida = await sb.storage.from('citv-logos')
+          .upload(ruta, blob, { contentType: 'image/png', upsert: true });
+        if (subida.error) throw subida.error;
+      } catch (errLogo) {
+        console.warn('[citv] no se pudo guardar el logotipo:', errLogo);
+      }
     }
 
     async function enviar() {
@@ -326,69 +580,149 @@
 
       boton.disabled = true;
       boton.textContent = 'Enviando…';
+
+      var sb = window.Consultia.supabase;
+      /* La sesión que ya está en memoria, NO `getUser()`: aquella va al
+         servidor a validar el token y, si el refresco falla, Supabase
+         cierra la sesión — el cliente enviaba su solicitud y la
+         plataforma lo escupía al login. */
+      var user = null;
       try {
-        var sb = window.Consultia.supabase;
-        /* La sesión que ya está en memoria, NO `getUser()`: aquella va al
-           servidor a validar el token y, si el refresco falla, Supabase
-           cierra la sesión — el cliente enviaba su solicitud y la
-           plataforma lo escupía al login. */
-        var user = null;
-        try {
-            var ses = await sb.auth.getSession();
-            user = ses && ses.data && ses.data.session && ses.data.session.user;
-        } catch (e) { user = null; }
-        if (!user) {
-          cerrar();
-          if (window.Consultia.AuthModals) window.Consultia.AuthModals.openLogin();
-          return;
-        }
+        var ses = await sb.auth.getSession();
+        user = ses && ses.data && ses.data.session && ses.data.session.user;
+      } catch (e) { user = null; }
+      if (!user) {
+        cerrar();
+        if (window.Consultia.AuthModals) window.Consultia.AuthModals.openLogin();
+        return;
+      }
 
-        /* Se cobra con la misma función que el resto de la plataforma: es
-           la que valida el saldo y descuenta en un solo paso, y deja la
-           solicitud registrada para que el equipo la vea. */
-        var res = await sb.rpc('consume_credits', {
-          cost: COSTO_CITV,
-          module_name: 'citv',
-          q_type: 'placa',
-          q_input: placa.slice(0, 200),
-        });
-        if (res.error) throw res.error;
+      emitiendo = true;
+      pintar(htmlCargando(placa), 'Cancelar');
+      boton.onclick = cerrar;
 
-        /* El logotipo va detrás del cobro, no antes: si algo falla al
-           subirlo, la solicitud ya está hecha y el certificado se emite
-           igual con el logo puesto a mano. Al revés se habría subido un
-           archivo de una solicitud que nunca ocurrió. */
-        if (logoLimpio) {
-          try {
-            var blob = await aBlob(logoLimpio);
-            var ruta = user.id + '/' + placa.replace(/[^A-Z0-9]/gi, '') + '-' + Date.now() + '.png';
-            var subida = await sb.storage.from('citv-logos')
-              .upload(ruta, blob, { contentType: 'image/png', upsert: true });
-            if (subida.error) throw subida.error;
-          } catch (errLogo) {
-            console.warn('[citv] no se pudo subir el logotipo:', errLogo);
+      try {
+        var runner = Consultia.ConsultaRunner;
+        var catalogo = await runner.loadCatalog();
+        var buscar = function (re) {
+          return (catalogo || []).filter(function (c) { return re.test(c.comando || ''); })[0];
+        };
+        var cCitv  = buscar(/^\/citv\b/);
+        var cPlaca = buscar(/^\/placa\b/);
+        if (!cCitv) throw new Error('El trámite no está disponible en este momento.');
+
+        /* El saldo se mira por el trámite entero antes de tocar nada. Si
+           no llega, no se empieza: quedarse a medias sería cobrar las
+           consultas y no entregar el papel. Los administradores no pagan
+           —consume_credits lo resuelve por rol— y se saltan la revisión. */
+        var esCuentaAdmin = await runner.esAdmin(user.id);
+        if (!esCuentaAdmin) {
+          var alcanza = await runner.verificarSaldo(user.id, COSTO_CITV);
+          if (!alcanza) {
+            throw new Error('No te alcanzan los créditos. El trámite cuesta ' + COSTO_CITV + '.');
           }
         }
 
-        pintar(htmlEnviado(placa), 'Cerrar');
-        boton.onclick = cerrar;
+        // Primero la revisión, siete segundos de aire, y después la ficha
+        // del vehículo. Ver PAUSA_ENTRE_COMANDOS_MS.
+        var rCitv = await runner.ejecutarConsultaConCobro(user.id, cCitv, placa);
+        var rPlaca = null;
+        if (cPlaca) {
+          await esperar(PAUSA_ENTRE_COMANDOS_MS);
+          try {
+            rPlaca = await runner.ejecutarConsultaConCobro(user.id, cPlaca, placa);
+          } catch (e) {
+            // Sin la ficha del registro el certificado sale con los
+            // veinte cuadros vacíos, pero sale. Lo que no puede faltar es
+            // la revisión.
+            console.warn('[citv] la ficha del vehículo no llegó:', e);
+          }
+        }
+
+        var texto = (rCitv && rCitv.parsed && rCitv.parsed.raw) || '';
+        var rev = elegirRevision(bloquesCitv(texto));
+        if (!rev) throw new Error('El registro no devolvió ninguna revisión para esa placa.');
+
+        var v = datosDePlaca((rPlaca && rPlaca.parsed && rPlaca.parsed.raw) || '');
+
+        var yaCobrado = (rCitv && rCitv.costo_deducido) || 0;
+        if (rPlaca) yaCobrado += (rPlaca.costo_deducido || 0);
+        if (!esCuentaAdmin) await cobrarDiferencia(sb, yaCobrado, placa);
+
+        var meses = mesesEntre(rev.inicio, rev.fin);
+        var id = (rCitv && rCitv.consulta_id) || null;
+
+        var doc = Consultia.CitvCertificado.html({
+          placa:         v.placa || placa,
+          marca:         v.marca,
+          modelo:        v.modelo,
+          color:         v.color,
+          estado:        v.estado,
+          anioFab:       v.anioFab,
+          tipoUso:       v.tipoUso,
+          carroceria:    v.carroceria,
+          combustible:   v.combustible,
+          cilindrada:    v.cilindrada,
+          cilindros:     v.cilindros,
+          motor:         v.motor,
+          serie:         v.serie,
+          placaAnterior: v.placaAnterior,
+          ruedas:        v.ruedas,
+          pasajeros:     v.pasajeros,
+          asientos:      v.asientos,
+          pesoBruto:     v.pesoBruto,
+          pesoNeto:      v.pesoNeto,
+          cargaUtil:     v.cargaUtil,
+
+          empresa:       rev.empresa,
+          direccionHtml: esc(rev.direccion),
+          numCert:       rev.certificado,
+          tipo:          'ORDINARIA',
+          fecha:         rev.inicio,
+          informe:       informeDe(id),
+          obs:           rev.obs,
+          resultado:     rev.resultado || 'APROBADO',
+          vigencia:      meses === null ? '' : (meses <= 9 ? '6 MESES' : '12 MESES'),
+          proxima:       rev.fin,
+          correlativo:   correlativoDe(id),
+          logo:          logoLimpio ? logoLimpio.toDataURL('image/png') : 'assets/citv/logo-citv.png',
+        });
+
+        emitiendo = false;
+
+        /* Si la última revisión no está vigente el documento sale igual
+           —es el duplicado de lo que hay— pero el cliente tiene que
+           saberlo antes de imprimirlo. */
+        var nota = /VIGENTE/i.test(rev.estado) ? '' :
+          'La última revisión de esta placa figura como ' + (rev.estado || 'VENCIDA') +
+          ': venció el ' + rev.fin + '. El duplicado sale con esas fechas.';
+
+        root.classList.add('is-previa');
+        pintar(htmlPrevia(v.placa || placa, nota), PDF_SVG + '<span>Descargar PDF</span>');
+        marcoHoja = montarHoja(doc);
+        boton.onclick = function () {
+          if (!marcoHoja || !marcoHoja.contentWindow) return;
+          marcoHoja.contentWindow.focus();
+          marcoHoja.contentWindow.print();
+        };
+
         if (window.Consultia.AuthUI && window.Consultia.AuthUI.refresh) {
           window.Consultia.AuthUI.refresh();   // el saldo de la cabecera, al día
         }
+        guardarLogo(sb, user.id, placa);
+
       } catch (e) {
+        emitiendo = false;
+        if (e && e.code === 'CANCELLED') { cerrar(); return; }
         var msg = (e && e.message) || '';
-        boton.disabled = false;
-        boton.textContent = 'Enviar solicitud';
-        if (/cr[eé]dito|saldo|insufficient/i.test(msg)) {
-          mostrarError('No te alcanzan los créditos. El trámite cuesta ' + COSTO_CITV + '.');
-          return;
-        }
-        console.error('[citv] no se pudo enviar la solicitud:', e);
-        mostrarError('No se pudo enviar la solicitud. Intenta de nuevo en un momento.');
+        console.error('[citv] no se pudo emitir el duplicado:', e);
+        paso2(placa, /cr[eé]dito|saldo|insufficient/i.test(msg)
+          ? 'No te alcanzan los créditos. El trámite cuesta ' + COSTO_CITV + '.'
+          : (msg || 'No se pudo emitir el duplicado. Intenta de nuevo en un momento.'));
       }
     }
 
-    boton.onclick = paso2;
+    boton.onclick = function () { paso2(); };
     setTimeout(function () { if (boton) boton.focus(); }, 50);
   }
 

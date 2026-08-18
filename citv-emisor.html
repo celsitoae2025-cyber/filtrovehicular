@@ -1910,6 +1910,14 @@ CUSCO - LA CONVENCION - SANTA ANA</textarea>
             var textoBoton = boton.textContent;
             boton.textContent = 'CONSULTANDO…';
             try {
+                /* El id del administrador. `ejecutarConsultaConCobro` lo pide
+                   como PRIMER argumento y aquí se le pasaba la fila del
+                   catálogo: la consulta moría en «Precio de venta no definido»
+                   antes de salir, el catch la tragaba y la página siempre
+                   acababa diciendo que el bot no había devuelto nada. */
+                var usuario = await window.Consultia.Auth.getUser();
+                if (!usuario) throw new Error('La sesión caducó. Vuelve a entrar.');
+
                 var catalogo = await Consultia.ConsultaRunner.loadCatalog();
                 var buscar = function (re) {
                     return (catalogo || []).filter(function (c) { return re.test(c.comando || ''); })[0];
@@ -1926,7 +1934,7 @@ CUSCO - LA CONVENCION - SANTA ANA</textarea>
                    vehículo. */
                 var pedir = function (c) {
                     if (!c) return Promise.resolve(null);
-                    return Consultia.ConsultaRunner.ejecutarConsultaConCobro(c, placa)
+                    return Consultia.ConsultaRunner.ejecutarConsultaConCobro(usuario.id, c, placa)
                         .catch(function (e) { console.warn('[citv] una consulta falló:', e); return null; });
                 };
                 var esperar = function (ms) {
