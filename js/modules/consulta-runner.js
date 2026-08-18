@@ -336,6 +336,12 @@
     };
     var controller = new AbortController();
     var fetchTimeout = setTimeout(function () { controller.abort(); }, esperaBridge + 15000);
+    /* Quien llama puede cortar la espera (el botón de cancelar del cliente):
+       su señal aborta la petición en vuelo, no solo la vuelta siguiente. */
+    if (opts.signal) {
+      if (opts.signal.aborted) controller.abort();
+      else opts.signal.addEventListener('abort', function () { controller.abort(); }, { once: true });
+    }
     var bridgeReq;
     try {
       bridgeReq = await resolveBridgeRequest('callback');

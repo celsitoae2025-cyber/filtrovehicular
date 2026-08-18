@@ -1163,6 +1163,28 @@
   line-height: 1.5;
 }
 .dl-timer { font-variant-numeric: tabular-nums; }
+/* Salida del cliente cuando el proveedor se demora. Aparece recién al
+   primer reintento: antes no hay nada que abandonar. Sobre el fondo oscuro
+   del aviso, el blanco es lo que más se ve sin gritar. */
+.dl-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+.dl-cancel {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: .4px;
+  padding: 11px 24px;
+  border: none;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #141d1c;
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+.dl-cancel:hover { background: #e6e6e6; }
 @media (prefers-reduced-motion: reduce) {
   .dl-ring::after, .dl-ring svg { animation: none; }
 }

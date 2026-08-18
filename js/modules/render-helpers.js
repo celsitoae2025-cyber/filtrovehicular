@@ -1426,6 +1426,8 @@
        alResultado()     tras pintar un PDF: sube «Descargar» a la cabecera
        alFallback(resp)  respuesta sin `.cr-btn-result-area` en pantalla
   ============================================================ */
+  var PAUSA_CALLBACK_MS = 6000;   // lo que se espera entre vuelta y vuelta
+
   function wireOpcionesDelBot(container, opts) {
     opts = opts || {};
     var btns = container.querySelectorAll('.cr-btn-option');
@@ -1470,7 +1472,15 @@
           detalle: 'Estamos pidiendo el documento al proveedor. Puede tardar unos segundos.'
         });
 
+        var cancelado = false;
+        var abortoEspera = new AbortController();
+        var cancelarEspera = function () {
+          cancelado = true;
+          try { abortoEspera.abort(); } catch (_) {}
+        };
+
         var status = llamar(opts.status);
+        var statusPrevio = status ? { clase: status.className, html: status.innerHTML } : null;
         if (status) {
           status.classList.remove('status-empty', 'status-ok');
           status.classList.add('status-loading');
@@ -1478,15 +1488,45 @@
         }
 
         try {
-          var resp = await Consultia.ConsultaRunner.ejecutarCallback(consulta, msgId, data);
-          cerrarEspera();
-          var rp = resp.parsed || {};
-          var pdfs = pdfsDe(rp);
-          var hasDataR = (rp.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
+          /* El proveedor contesta a veces su acuse de recibo, o repite el
+             mismo listado en vez del documento. Eso no es un resultado: se
+             le vuelve a pedir las veces que haga falta, sin tope y sin
+             cobrar de nuevo —el callback es la segunda fase de algo ya
+             pagado—. La única salida es el botón de cancelar. */
+          var resp, rp, pdfs, hasDataR;
+          while (true) {
+            resp = await Consultia.ConsultaRunner.ejecutarCallback(consulta, msgId, data, { signal: abortoEspera.signal });
+            if (cancelado) break;
+            rp = resp.parsed || {};
+            pdfs = pdfsDe(rp);
+            hasDataR = (rp.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
 
-          if (esRespuestaEnProceso(rp)) {
-            resultArea.innerHTML = htmlEnProceso();   // acuse del proveedor, con su logo: no se pinta
-          } else if (esErrorTecnicoRespuesta(rp, resp)) {
+            var seguirEsperando = esRespuestaEnProceso(rp) ||
+              (pdfs.length === 0 && hasDataR && esElMismoListado(container, renderDataRows(rp)));
+            if (!seguirEsperando) break;
+
+            cerrarEspera.esperando(
+              'Esperando el documento',
+              'El proveedor todavía no lo devuelve. Seguimos pidiéndolo todo lo que haga falta; si prefieres no esperar, cancela.',
+              cancelarEspera
+            );
+            await new Promise(function (r) { setTimeout(r, PAUSA_CALLBACK_MS); });
+            if (cancelado) break;
+          }
+
+          if (cancelado) {
+            cerrarEspera();
+            resultArea.innerHTML = '';
+            resultArea.hidden = true;
+            if (status && statusPrevio) { status.className = statusPrevio.clase; status.innerHTML = statusPrevio.html; }
+            btns.forEach(function (b) { b.disabled = false; });
+            btn.classList.remove('is-loading', 'is-selected');
+            return;
+          }
+
+          cerrarEspera();
+
+          if (esErrorTecnicoRespuesta(rp, resp)) {
             resultArea.innerHTML = htmlMantenimiento();
           } else if (pdfs.length > 0) {
             // La barra de descarga va delante para que el módulo la suba a
@@ -1494,13 +1534,6 @@
             resultArea.innerHTML = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs);
             llamar(opts.alResultado);
             abrirVisorDelResultado(resultArea, opts.alNuevaConsulta);
-          } else if (hasDataR && esElMismoListado(container, renderDataRows(rp))) {
-            /* El proveedor devolvió otra vez el listado en vez del
-               documento: repintarlo dejaba la misma tabla dos veces y
-               ninguna previsualización. */
-            resultArea.innerHTML =
-              '<div class="cr-loading"><div class="cr-loading-text">El proveedor devolvió el listado, no el documento.</div>' +
-              '<div class="cr-loading-hint">Vuelve a pulsar la opción en unos segundos.</div></div>';
           } else if (hasDataR) {
             resultArea.innerHTML =
               '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding:16px;">' +
@@ -1530,8 +1563,15 @@
           btn.classList.remove('is-loading');
         } catch (e) {
           cerrarEspera();
-          console.error('Error en callback:', e);
-          if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo procesar', message: (e && e.message) || 'Intenta de nuevo.' });
+          // Cancelar aborta la petición en vuelo: el error que llega es el del
+          // abort, no un fallo del proveedor. No hay nada que avisar.
+          if (!cancelado) {
+            console.error('Error en callback:', e);
+            if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo procesar', message: (e && e.message) || 'Intenta de nuevo.' });
+          } else if (status && statusPrevio) {
+            status.className = statusPrevio.clase;
+            status.innerHTML = statusPrevio.html;
+          }
           resultArea.innerHTML = '';
           resultArea.hidden = true;
           btns.forEach(function (b) { b.disabled = false; });
@@ -1729,11 +1769,20 @@
       el.innerHTML =
         '<div class="dl-ring">' + DL_ICON + '</div>' +
         '<div class="dl-title"></div>' +
-        '<div class="dl-sub"></div>';
+        '<div class="dl-sub"></div>' +
+        '<div class="dl-actions" hidden></div>';
       document.body.appendChild(el);
     }
     var titleEl = el.querySelector('.dl-title');
     var subEl = el.querySelector('.dl-sub');
+    var actionsEl = el.querySelector('.dl-actions');
+    if (!actionsEl) {
+      actionsEl = document.createElement('div');
+      actionsEl.className = 'dl-actions';
+      el.appendChild(actionsEl);
+    }
+    actionsEl.innerHTML = '';
+    actionsEl.hidden = true;
     var baseTitulo = opts.titulo || 'Preparando la descarga';
     titleEl.textContent = baseTitulo;
     subEl.innerHTML = opts.detalle
@@ -1755,14 +1804,36 @@
     }
 
     var cerrado = false;
-    return function cerrar() {
+    var cerrar = function cerrar() {
       if (cerrado) return;
       cerrado = true;
       if (tick) clearInterval(tick);
       var node = document.getElementById('dl-overlay');
       if (node) node.hidden = true;
+      var acts = node && node.querySelector('.dl-actions');
+      if (acts) { acts.innerHTML = ''; acts.hidden = true; }
       document.body.classList.remove('modal-open');
     };
+
+    /* Cambia el texto del aviso mientras se sigue esperando y, si se pasa
+       `onCancelar`, saca el botón de salida. La espera no se corta sola:
+       quien decide dejarlo es el cliente. */
+    cerrar.esperando = function (titulo, detalle, onCancelar) {
+      if (cerrado) return;
+      baseTitulo = titulo || baseTitulo;
+      titleEl.textContent = baseTitulo;
+      if (detalle) subEl.textContent = detalle;
+      if (typeof onCancelar !== 'function' || actionsEl.firstChild) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'dl-cancel';
+      btn.textContent = 'Cancelar y volver';
+      btn.addEventListener('click', onCancelar);
+      actionsEl.appendChild(btn);
+      actionsEl.hidden = false;
+    };
+
+    return cerrar;
   }
 
   /* Arma un PDF mostrando el overlay de descarga. jsPDF es sincrono y
