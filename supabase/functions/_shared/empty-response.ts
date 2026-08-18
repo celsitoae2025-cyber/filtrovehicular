@@ -11,6 +11,23 @@
 // La versión que manda es esta. Si se cambia una, cambiar la otra.
 // ============================================================
 
+// El acuse de recibo del proveedor: «estamos procesando tu solicitud».
+// No es un resultado — es el bot diciendo que empezó a trabajar. Si esto
+// se cuenta como respuesta buena, el cliente paga por un aviso y vuelve a
+// pagar en cada reintento hasta que llegue el dato de verdad.
+//
+// La misma lista vive en el frontend (render-helpers.js, RE_EN_PROCESO)
+// para el mensaje que ve el usuario. Si se cambia una, cambiar la otra.
+const EN_PROCESO_PATTERNS: RegExp[] = [
+  /estamos\s+procesando/i,
+  /procesando\s+(tu|su)\s+(solicitud|consulta|pedido)/i,
+  /solicitud\s+en\s+proceso/i,
+  /un\s+momento\s+por\s+favor/i,
+  /aguard[ae]\s+un\s+momento/i,
+  /espera\s+un\s+momento/i,
+  /en\s+breve\s+te\s+respond/i,
+];
+
 const NO_RESULT_PATTERNS: RegExp[] = [
   /no\s+se\s+(tuvo|obtuvo|han?)\s+(ning[uú]n|resultad)/i,
   /no\s+se\s+(encontr|hall|obtuv)/i,
@@ -94,6 +111,9 @@ function contieneFraseSinResultados(text: string): boolean {
 export function esRespuestaVacia(resp: unknown): boolean {
   if (!resp || typeof resp !== "object") return true;
   const r = resp as Dict;
+  // El bridge lo dice cuando cerró la espera con el acuse en la mano y
+  // nada más. No hay que adivinarlo por el texto.
+  if (r.en_proceso === true) return true;
   const p = (r.parsed && typeof r.parsed === "object")
     ? (r.parsed as Dict)
     : null;
@@ -112,6 +132,20 @@ export function esRespuestaVacia(resp: unknown): boolean {
   const hasSecciones = secciones.some(
     (s) => s && Array.isArray(s.campos) && (s.campos as unknown[]).length > 0,
   );
+
+  /* El acuse de recibo, antes que nada. Trae texto largo y a veces el logo
+     del proveedor, así que pasaba por «tiene contenido» y se cobraba; con
+     el reintento, otra vez, y otra. Mientras no traiga NI UN campo con
+     datos, es un aviso: se devuelve el crédito y el cliente sigue
+     esperando su consulta sin pagarla dos veces. */
+  const textoAcuse = [
+    rawText,
+    asStr(p.titulo),
+    asStr(p.mensaje),
+  ].filter(Boolean).join(" ");
+  if (!hasSecciones && EN_PROCESO_PATTERNS.some((re) => re.test(textoAcuse))) {
+    return true;
+  }
   const hasMedios = Array.isArray(p.medios) && (p.medios as unknown[]).length > 0;
   const hasBotones = Array.isArray(p.botones) && (p.botones as unknown[]).length > 0;
   const hasTitulo = !!p.titulo && asStr(p.titulo).trim().length > 0;
