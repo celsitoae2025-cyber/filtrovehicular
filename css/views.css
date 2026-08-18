@@ -6049,3 +6049,77 @@ a.nm-download { text-decoration: none; }
 /* Las líneas sin rótulo no son un dato que se copie. */
 .cr-data .cr-row:not(:has(.cr-k)) { cursor: default; }
 .cr-data .cr-row:not(:has(.cr-k)):hover { background: #fbfcfb; }
+
+/* ============================================================
+   LA FICHA EN EL MÓVIL
+
+   El móvil tenía su propia maqueta anterior a la rejilla: etiqueta y dato
+   en dos columnas, con la etiqueta atada a una sola línea (`nowrap`) y a
+   poco más de la mitad del ancho. En una pantalla estrecha eso recorta
+   —«FECHA DE EXPEDICIÓN», «EMITIDO EN» y los valores largos se salían del
+   cuadro— y el cliente no llega a ver el dato entero.
+
+   Aquí el móvil usa la MISMA ficha que el escritorio: cada dato en su
+   celda, rótulo arriba y valor debajo, dos por fila si caben y una si no.
+   Nada se recorta porque nada tiene ancho fijo.
+============================================================ */
+@media (max-width: 720px) {
+  .cr-data .cr-sect:has(> .cr-row),
+  .cr-data .cr-sect-body:not(:has(> .cr-record)),
+  .cr-data .cr-record:has(> .cr-row) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    column-gap: 1px;
+    gap: 1px;
+    background: #e6e9e8;
+    border: 1px solid #e6e9e8;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .cr-data .cr-sect > .cr-row,
+  .cr-data .cr-sect-body > .cr-row,
+  .cr-data .cr-record > .cr-row {
+    display: block !important;
+    grid-template-columns: none !important;
+    gap: 0 !important;
+    padding: 9px 12px !important;
+    background: #ffffff;
+    border-bottom: none;
+  }
+  .cr-data .cr-row > .cr-k {
+    display: block;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    font-size: 11px;
+    letter-spacing: .6px;
+    line-height: 1.45;
+    padding: 0 !important;
+    border-bottom: none !important;
+  }
+  .cr-data .cr-row > .cr-v {
+    display: block;
+    margin-top: 2px;
+    font-size: 14px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    padding: 0 !important;
+    border-bottom: none !important;
+  }
+  .cr-data .cr-sect > .cr-row:not(:has(.cr-k)),
+  .cr-data .cr-sect-body > .cr-row:not(:has(.cr-k)) { grid-column: 1 / -1; }
+
+  /* Membrete y sello: el nombre puede ser largo, que baje de línea. */
+  .cr-data .cr-head { gap: 10px; }
+  .cr-data .cr-nombre { font-size: 17px; overflow-wrap: anywhere; }
+  .cr-data .cr-sub, .cr-emision { font-size: 12px; }
+
+  /* La licencia, igual: celdas más estrechas antes que recortadas. */
+  .mtc { padding: 14px 12px 16px; }
+  .mtc-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .mtc-dato strong { overflow-wrap: anywhere; }
+  .mtc-nombre { font-size: 17px; overflow-wrap: anywhere; }
+
+  /* El nombre del documento se cortaba con puntos suspensivos. */
+  .cr-docitem { flex-wrap: wrap; }
+  .cr-docitem-nom { white-space: normal; overflow: visible; text-overflow: clip; }
+}
