@@ -242,9 +242,17 @@
       });
     }
 
-    /* El recorrido, en el orden del documento: primero la caja y después
-       lo que lleva dentro, para que ningún fondo tape el texto que ya se
-       pintó. */
+    /* El recorrido empieza en `.page-content`, no en la hoja.
+
+       La hoja lleva `background: white` y se pintaba entera de blanco
+       después de haber colocado la filigrana: el PDF salía con el fondo
+       dentro del archivo pero tapado, y el cliente recibía un
+       certificado en papel liso. La hoja no hay que pintarla —la página
+       del PDF ya es blanca— y lo único que va debajo del contenido es la
+       filigrana, que ya está puesta.
+
+       De ahí para adentro, cada caja antes que lo que lleva dentro, para
+       que ningún fondo tape el texto que ya se pintó. */
     (function recorrer(el) {
       if (el.classList && el.classList.contains('page-background')) return;
       if (!pintarCaja(el)) return;
@@ -258,7 +266,7 @@
           recorrer(hijo);
         }
       }
-    })(hoja);
+    })(doc.querySelector('.page-content'));
 
     pdf.save(nombre);
   }
