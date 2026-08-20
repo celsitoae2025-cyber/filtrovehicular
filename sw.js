@@ -12,7 +12,7 @@
 
 // IMPORTANTE: incrementar CACHE_VERSION en cada deploy para que los usuarios
 // reciban las actualizaciones de JS/CSS/HTML automáticamente.
-const CACHE_VERSION = "v2.12.0-20260819";
+const CACHE_VERSION = "v2.12.1-20260819";
 const SHELL_CACHE = "fv-shell-" + CACHE_VERSION;
 const ASSETS_CACHE = "fv-assets-" + CACHE_VERSION;
 const IMG_CACHE = "fv-img-" + CACHE_VERSION;
@@ -20,8 +20,11 @@ const IMG_CACHE = "fv-img-" + CACHE_VERSION;
 // Recursos críticos que se precachean al instalar.
 // Mantener pequeño: solo lo imprescindible para que la app levante offline.
 const PRECACHE_URLS = [
+  // Sin ".html": Cloudflare Pages sirve la app en /app y redirige /app.html
+  // hacia ella. Precachear la que redirige guarda la redirección, no la
+  // página.
   "/",
-  "/app.html",
+  "/app",
   "/manifest.json",
   "/icons/favicon.svg",
   "/icons/icon-192.png",
