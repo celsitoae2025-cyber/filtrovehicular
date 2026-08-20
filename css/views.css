@@ -6678,49 +6678,93 @@ a.nm-download { text-decoration: none; }
 }
 .citv-modal .rep-modal-ok svg { width: 19px; height: 19px; }
 
-/* ── Instalar la app: la hoja del iPhone ─────────────────────────────
-   Safari no deja instalar por código, así que lo único que queda es
-   contarle al cliente los dos toques. Reusa el cuadro del Duplicado de
-   CITV (.rep-modal + .citv-*), que ya tiene membrete y pie; aquí solo se
-   viste la lista de pasos. */
-.inst-modal .rep-modal-caja { width: min(520px, 100%); }
+/* ── Instalar la app ─────────────────────────────────────────────────
+   Un botón redondo justo encima del de WhatsApp: mismo tamaño, mismo
+   margen y misma columna, para que se lean como dos botones de la misma
+   fila y no como un adorno suelto.
 
+   Oscuro y no verde a propósito. El de WhatsApp lleva su verde porque
+   identifica el canal; si este llevara el verde de marca, los dos
+   círculos de colores en la misma esquina competirían y ninguno se
+   entendería. Plano, sin sombra, como todo aquí. */
+.inst-fab {
+  position: fixed;
+  right: 24px;
+  /* 80 del de WhatsApp + sus 64 de alto + 14 de aire. */
+  bottom: 158px;
+  z-index: 449;
+  width: 64px;
+  height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 999px;
+  background: #141d1c;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+.inst-fab:hover { background: #0e1312; }
+.inst-fab svg { width: 26px; height: 26px; }
+.inst-fab[hidden] { display: none; }
+
+/* En la pantalla de acceso el modal ocupa todo; el botón sube con el de
+   WhatsApp para no quedarse debajo (ver auth.css). */
+body.auth-locked .inst-fab { z-index: 501; }
+
+/* En móvil se copian los valores del de WhatsApp y se le suma su alto:
+   ancho, margen derecho y la cuenta del `bottom` con la barra de gestos
+   incluida. Copiados y no aproximados a propósito — si un día se mueve
+   aquel, este tiene que moverse con él o se descuelgan.
+   Ver el porqué de los 44px en css/components.css. */
+@media (max-width: 768px) {
+  .inst-fab {
+    right: 16px;
+    bottom: calc(44px + 59px + 14px + env(safe-area-inset-bottom));
+    width: 59px;
+    height: 59px;
+  }
+  .inst-fab svg { width: 24px; height: 24px; }
+}
+
+/* La hoja del iPhone, que es la única vía que deja Safari. Sin membrete
+   ni barra de colores: son dos frases y dos iconos, y cuanto menos haya
+   alrededor, antes se hace. */
+.inst-modal .rep-modal-caja { width: min(400px, 100%); }
+.inst-hoja { padding: 34px 28px 6px; }
+.inst-titulo {
+  margin: 0 0 20px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--c-primary);
+}
 .inst-pasos {
   list-style: none;
-  margin: 0 0 18px;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   counter-reset: paso;
 }
 .inst-pasos li {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 16px;
-  border: 1px solid var(--c-border);
-  border-radius: 12px;
   font-size: 17px;
   line-height: 1.45;
   color: var(--c-primary);
-}
-/* El número va delante del texto, no en un disco aparte: dos discos
-   seguidos —el del número y el del icono— competían entre sí. */
-.inst-pasos li > div::before {
-  counter-increment: paso;
-  content: counter(paso) ". ";
-  font-weight: 700;
 }
 .inst-ico {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
   border-radius: 999px;
-  background: #141d1c;
-  color: #ffffff;
+  background: #f1f3f3;
+  color: #141d1c;
 }
-.inst-ico svg { width: 22px; height: 22px; }
+.inst-ico svg { width: 21px; height: 21px; }
