@@ -2,38 +2,36 @@
   <!-- ============================================================
        Icono de marca — Filtro Vehicular+
 
-       Se ve casi siempre a 16 px, en la pestaña del navegador, así que
-       manda la legibilidad a ese tamaño y no el detalle. De ahí las tres
-       decisiones:
+       Un disco oscuro con el aro de los cuatro colores de la casa y,
+       dentro, el mismo coche que la aplicación usa en la pestaña de
+       Vehículos (el símbolo #i-car de app.html). No es un dibujo nuevo a
+       propósito: el icono del navegador y el de dentro tienen que ser el
+       mismo, o son dos marcas.
 
-       · Solo dos letras y el signo. La versión anterior metía además una
-         elipse suelta en la esquina que a tamaño de pestaña se comía la
-         V y dejaba una mancha verde sin significado.
-       · Letras gruesas y grandes dentro del cuadro. Antes ocupaban poco
-         más de la mitad del alto y a 16 px eran dos rayas.
-       · Los colores de la casa y no unos parecidos: el fondo es #141d1c
-         y el verde #8fc72e. El icono llevaba #1f2a2c y #62c031, que de
-         lejos pasan por los buenos pero no lo son.
+       Los colores del aro son los de la línea que va bajo el nombre en
+       la pantalla de acceso —turquesa, verde, ámbar y rojo—, en ese
+       orden y empezando arriba. A 16 px el coche se difumina, pero el
+       aro sigue reconociéndose: es lo que distingue esta pestaña de las
+       otras veinte que tenga abiertas el cliente.
 
-       La V va trazada y no rellenada: el mismo dibujo hecho con un
-       contorno se descuadra en cuanto se le mueve un número, y así los
-       dos brazos salen del mismo grosor sin tener que calcularlo.
+       Los cuatro tramos van como arcos explícitos. Con un patrón de
+       trazo salía más corto, pero los rasterizadores que no entienden
+       stroke-dashoffset pintaban los cuatro en el mismo sitio y el icono
+       acababa con un solo arco rojo.
+
+       Este archivo lo escribe un guion; no se edita a mano.
   ============================================================ -->
 
-  <rect x="0" y="0" width="1024" height="1024" rx="205" ry="205" fill="#141d1c"/>
+  <rect x="0" y="0" width="1024" height="1024" rx="512" ry="512" fill="#141d1c"/>
 
-  <!-- F -->
-  <path d="M 150 262 L 432 262 L 432 384 L 282 384 L 282 502 L 420 502 L 420 620 L 282 620 L 282 800 L 150 800 Z"
-        fill="#ffffff"/>
+  <g fill="none" stroke-width="86" stroke-linecap="butt">
+    <path d="M 552.09 53.75 A 460 460 0 0 1 970.25 471.91" stroke="#00bcd4"/>
+    <path d="M 970.25 552.09 A 460 460 0 0 1 552.09 970.25" stroke="#8fc72e"/>
+    <path d="M 471.91 970.25 A 460 460 0 0 1 53.75 552.09" stroke="#ffb020"/>
+    <path d="M 53.75 471.91 A 460 460 0 0 1 471.91 53.75" stroke="#e53935"/>
+  </g>
 
-  <!-- V -->
-  <path d="M 494 262 L 604 738 L 714 262"
-        fill="none" stroke="#ffffff" stroke-width="124"
-        stroke-linejoin="miter" stroke-miterlimit="4" stroke-linecap="butt"/>
-
-  <!-- + -->
-  <g fill="#8fc72e">
-    <rect x="836" y="516" width="54" height="188" rx="10" ry="10"/>
-    <rect x="769" y="583" width="188" height="54" rx="10" ry="10"/>
+  <g transform="translate(297.00 359.98) scale(0.014478)">
+    <path fill="#ffffff" fill-rule="evenodd" clip-rule="evenodd" d="M20425.98 11038.24c341.57,-146.2 2730.56,-160.66 3183.85,-56.93 958.5,219.37 1069.83,1539.18 146.23,1917.77 -338.96,138.94 -2817.1,144.87 -3216.82,52.04 -932.75,-216.64 -1166.18,-1462.2 -113.26,-1912.88zm-14370.33 -37.54c308.15,-101.87 2860.38,-103.59 3223.02,6.17 957.02,289.71 906.7,1638.01 -10.02,1922.19 -332.44,103.06 -2894.9,103.12 -3223.23,-1.81 -933.34,-298.29 -949.52,-1609.32 10.23,-1926.55zm2546.65 -7326.97l12510.13 34.5 1986.58 5430.43 -16441.69 -9.31 1944.98 -5455.62zm-3724.76 3582.03c-439.59,-723.34 150.31,-763.43 -1826.92,-760.08 -964.67,1.63 -1736.71,-255.64 -1964.09,640.92 -645.68,2546 1394.59,1963.2 3113.63,1963.2 -643.72,741.22 -916.26,257.37 -908.7,2061.04l27.64 7978.11c108.5,387.46 76.92,231.23 296.44,370.94 363.87,251.06 3381.62,249.87 3748.41,1.32 744.23,-487.36 23.71,-2158.45 388.41,-3526.89l14221.04 0c155.1,581.97 66.6,1286.42 65.31,1897.09 -2.12,1016.92 -146.32,1322.42 323.1,1629.8 366.78,248.55 3384.51,249.74 3748.4,-1.32 243.98,-155.29 236.88,-27.22 312.82,-457.96l11.88 -8000.67c3.2,-809.6 51.83,-1136.45 -522.93,-1616.56l-386.38 -334.9c2295.24,0 3260.4,436.09 3192.51,-1401.44 -58.76,-1591.03 -824.96,-1191.25 -2478.51,-1205.11 -1306.2,-10.93 -918.99,-21.01 -1390.53,761.65 -2566.55,-7035.74 -926.3,-5881.23 -9986.19,-5881.23 -7997.72,0 -7622.39,-716.4 -8941.32,3014.5 -337.35,954.29 -711.73,1951.37 -1044.02,2867.59z"/>
   </g>
 </svg>
