@@ -1279,24 +1279,68 @@ body.auth-locked .wa-menu {
     order: 1;
     flex: 1 1 auto;
     padding: 34px clamp(40px, 4vw, 76px) 30px !important;
+    /* La luz entra por arriba a la izquierda, que es por donde entra la
+       vista, y se apaga antes de llegar al texto. La mancha fuerte
+       estaba antes en la esquina de arriba a la derecha —justo contra
+       la costura del formulario—, y ahí no ilumina nada: solo ensucia
+       el encuentro de los dos lados.
+
+       Turquesa arriba, verde abajo y una vela fría pegada al borde
+       derecho para que la costura se lea buscada y no como un corte.
+       Debajo del texto nada pasa del 20%: el blanco se mantiene muy por
+       encima de 8:1 en toda la esquina donde se lee. */
     background:
-      radial-gradient(85% 62% at 84% 10%, rgba(3, 167, 164, .46), rgba(3, 167, 164, 0) 62%),
-      radial-gradient(75% 58% at 6% 96%, rgba(143, 199, 46, .22), rgba(143, 199, 46, 0) 64%),
-      radial-gradient(120% 90% at 98% 92%, rgba(3, 167, 164, .20), rgba(3, 167, 164, 0) 58%),
-      radial-gradient(55% 42% at 46% 40%, rgba(143, 199, 46, .10), rgba(143, 199, 46, 0) 72%),
+      radial-gradient(78% 58% at 8% 4%, rgba(3, 167, 164, .42), rgba(3, 167, 164, 0) 58%),
+      radial-gradient(64% 52% at 2% 92%, rgba(143, 199, 46, .20), rgba(143, 199, 46, 0) 62%),
+      radial-gradient(46% 100% at 100% 50%, rgba(3, 167, 164, .16), rgba(3, 167, 164, 0) 70%),
+      radial-gradient(70% 50% at 62% 22%, rgba(143, 199, 46, .07), rgba(143, 199, 46, 0) 74%),
       var(--c-surface-dark) !important;
   }
 
-  /* Todo el bloque cae abajo a la izquierda, lo más lejos posible de la
-     columna del formulario. */
+  /* La trama de puntos.
+     Un campo de color plano de casi mil píxeles de ancho se ve muerto por
+     mucho degradado que lleve. Esto le da superficie sin encender nada:
+     puntos de medio píxel al 4% de blanco cada 26px. De cerca casi no
+     están; de lejos el panel deja de ser una mancha.
+
+     Es el mismo recurso que ya usa la columna del formulario, así que
+     los dos lados se reconocen como parte de la misma pantalla. Va en
+     ::after y no en la lista de fondos de arriba para poder pararlo en
+     seco: se apaga solo donde estorbaría. */
+  #authModalLogin  .auth-brand-side::after,
+  #authModalSignup .auth-brand-side::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px);
+    background-size: 26px 26px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* La marca de agua se retira un punto: con la trama puesta, al 12% se
+     empastaban las dos y el logotipo se leía como suciedad. */
+  #authModalLogin  .auth-brand-side::before,
+  #authModalSignup .auth-brand-side::before {
+    opacity: .07;
+  }
+
+  /* El bloque, centrado en su columna.
+     Iba pegado abajo, y como su caja ocupa todo el alto del panel eso
+     dejaba cuatrocientos píxeles de vacío entre la fila de fuentes y el
+     titular: el panel arrancaba con un agujero y todo el peso caía en el
+     último tercio. Centrado, ese aire se reparte por igual arriba y
+     abajo y el titular queda a la altura de los ojos.
+
+     Los 24px de menos por abajo son la corrección óptica de siempre: un
+     bloque centrado a plomo se ve caído, y hay que subirlo un poco para
+     que se vea centrado. */
   #authModalLogin  .auth-brand-content,
   #authModalSignup .auth-brand-content {
-    gap: 16px !important;
+    gap: 18px !important;
     max-width: 620px;
-    justify-content: flex-end !important;
-    /* Aire antes del filete del pie: sin esto la última línea de la
-       lista queda pegada a la raya del copyright. */
-    padding-bottom: 12px;
+    justify-content: center !important;
+    padding-bottom: 24px;
   }
 
   /* La marca pasa a antetítulo: quien manda aquí es el saludo. */
@@ -1320,8 +1364,20 @@ body.auth-locked .wa-menu {
     color: #ffffff;
   }
 
+  /* Cuerpos de lectura. Iban a 14,5 y a 14 px, que es tamaño de letra
+     pequeña, y esta es la primera pantalla que ve alguien sin sesión —se
+     lee de lejos y a veces de pie. Sube a 16 y a 15,5, que es el mínimo
+     de la casa. */
   #authModalLogin  .auth-brand-tagline,
-  #authModalSignup .auth-brand-tagline { max-width: 460px !important; }
+  #authModalSignup .auth-brand-tagline {
+    max-width: 460px !important;
+    /* Los `!important` no son adorno: base.css marca esta bajada con
+       `font-size: var(--fs-sm) !important` y sin ellos gana ese, por
+       mucha especificidad que tenga esta regla. */
+    font-size: 16px !important;
+    line-height: 1.55 !important;
+    color: rgba(255, 255, 255, .78) !important;
+  }
 
   /* A dos columnas y a su alto real: en una sola se estiraba sola y
      dejaba las cifras descolgadas. */
@@ -1330,10 +1386,56 @@ body.auth-locked .wa-menu {
     flex: 0 0 auto;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px 26px;
+    gap: 10px 30px;
     overflow: visible;
-    max-width: 520px;
+    max-width: 560px;
   }
+
+  #authModalLogin  .auth-brand-list li,
+  #authModalSignup .auth-brand-list li {
+    font-size: 15.5px;
+    line-height: 1.45;
+    padding-left: 20px;
+    color: rgba(255, 255, 255, .88);
+  }
+
+  /* Los puntos, en los tres colores de la casa y no todos verdes.
+     Quince puntos del mismo verde son una columna verde; alternando, la
+     lista respira y la marca aparece entera —verde, turquesa y blanco—
+     sin meter una sola franja. El orden es fijo, por posición, así que
+     las dos columnas quedan salteadas entre sí. */
+  #authModalLogin  .auth-brand-list li::before,
+  #authModalSignup .auth-brand-list li::before {
+    top: 7px;
+  }
+  #authModalLogin  .auth-brand-list li:nth-child(3n+2)::before,
+  #authModalSignup .auth-brand-list li:nth-child(3n+2)::before {
+    background: #03a7a4;
+  }
+  #authModalLogin  .auth-brand-list li:nth-child(3n+3)::before,
+  #authModalSignup .auth-brand-list li:nth-child(3n+3)::before {
+    background: rgba(255, 255, 255, .55);
+  }
+
+  /* La fila de fuentes. Estaba a 12px: el dato de dónde sale la
+     información es de lo más importante del panel —es lo que sostiene
+     que esto sea oficial— y estaba escrito en el cuerpo más pequeño de
+     la pantalla. Sube a 14 y el rótulo a 13; si la fila se parte en dos
+     líneas, mejor: llena la banda de arriba, que iba suelta. */
+  #authModalLogin  .auth-src,
+  #authModalSignup .auth-src {
+    font-size: 14px;
+    padding: 6px 14px;
+    border-color: rgba(255, 255, 255, .26);
+    letter-spacing: .4px;
+  }
+  #authModalLogin  .auth-src-label,
+  #authModalSignup .auth-src-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, .5);
+  }
+  #authModalLogin  .auth-src-row,
+  #authModalSignup .auth-src-row { gap: 8px; }
 
   /* El botón de cerrar NO necesita retoque de color: con el formulario a
      la derecha, la esquina superior derecha es blanca y el gris de
