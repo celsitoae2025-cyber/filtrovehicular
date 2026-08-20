@@ -1,15 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" preserveAspectRatio="xMidYMid meet">
-  <!-- Fondo cuadrado redondeado oscuro -->
-  <rect x="0" y="0" width="1024" height="1024" rx="190" ry="190" fill="#1f2a2c"/>
-  <!-- Hoja / círculo verde en esquina superior derecha (parcialmente fuera del frame) -->
-  <ellipse cx="850" cy="120" rx="120" ry="135" fill="#62c031"/>
-  <!-- Letra F -->
-  <path d="M 195 305 L 470 305 L 470 405 L 305 405 L 305 510 L 450 510 L 450 605 L 305 605 L 305 760 L 195 760 Z" fill="#ffffff"/>
-  <!-- Letra V -->
-  <path d="M 490 305 L 605 305 L 685 605 L 690 605 L 770 305 L 880 305 L 745 760 L 625 760 Z" fill="#ffffff"/>
-  <!-- Signo + verde a la derecha -->
-  <g fill="#62c031">
-    <rect x="845" y="455" width="60" height="220" rx="6" ry="6"/>
-    <rect x="765" y="535" width="220" height="60" rx="6" ry="6"/>
+  <!-- ============================================================
+       Icono de marca — Filtro Vehicular+
+
+       Se ve casi siempre a 16 px, en la pestaña del navegador, así que
+       manda la legibilidad a ese tamaño y no el detalle. De ahí las tres
+       decisiones:
+
+       · Solo dos letras y el signo. La versión anterior metía además una
+         elipse suelta en la esquina que a tamaño de pestaña se comía la
+         V y dejaba una mancha verde sin significado.
+       · Letras gruesas y grandes dentro del cuadro. Antes ocupaban poco
+         más de la mitad del alto y a 16 px eran dos rayas.
+       · Los colores de la casa y no unos parecidos: el fondo es #141d1c
+         y el verde #8fc72e. El icono llevaba #1f2a2c y #62c031, que de
+         lejos pasan por los buenos pero no lo son.
+
+       La V va trazada y no rellenada: el mismo dibujo hecho con un
+       contorno se descuadra en cuanto se le mueve un número, y así los
+       dos brazos salen del mismo grosor sin tener que calcularlo.
+  ============================================================ -->
+
+  <rect x="0" y="0" width="1024" height="1024" rx="205" ry="205" fill="#141d1c"/>
+
+  <!-- F -->
+  <path d="M 150 262 L 432 262 L 432 384 L 282 384 L 282 502 L 420 502 L 420 620 L 282 620 L 282 800 L 150 800 Z"
+        fill="#ffffff"/>
+
+  <!-- V -->
+  <path d="M 494 262 L 604 738 L 714 262"
+        fill="none" stroke="#ffffff" stroke-width="124"
+        stroke-linejoin="miter" stroke-miterlimit="4" stroke-linecap="butt"/>
+
+  <!-- + -->
+  <g fill="#8fc72e">
+    <rect x="836" y="516" width="54" height="188" rx="10" ry="10"/>
+    <rect x="769" y="583" width="188" height="54" rx="10" ry="10"/>
   </g>
 </svg>

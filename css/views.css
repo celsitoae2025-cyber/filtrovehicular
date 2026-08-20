@@ -6677,3 +6677,50 @@ a.nm-download { text-decoration: none; }
   gap: 9px;
 }
 .citv-modal .rep-modal-ok svg { width: 19px; height: 19px; }
+
+/* ── Instalar la app: la hoja del iPhone ─────────────────────────────
+   Safari no deja instalar por código, así que lo único que queda es
+   contarle al cliente los dos toques. Reusa el cuadro del Duplicado de
+   CITV (.rep-modal + .citv-*), que ya tiene membrete y pie; aquí solo se
+   viste la lista de pasos. */
+.inst-modal .rep-modal-caja { width: min(520px, 100%); }
+
+.inst-pasos {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  counter-reset: paso;
+}
+.inst-pasos li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--c-primary);
+}
+/* El número va delante del texto, no en un disco aparte: dos discos
+   seguidos —el del número y el del icono— competían entre sí. */
+.inst-pasos li > div::before {
+  counter-increment: paso;
+  content: counter(paso) ". ";
+  font-weight: 700;
+}
+.inst-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 999px;
+  background: #141d1c;
+  color: #ffffff;
+}
+.inst-ico svg { width: 22px; height: 22px; }
