@@ -74,9 +74,35 @@
       '</button>';
   }
 
-  /* La hoja del iPhone. Se abre solo si el cliente pulsa el botón: no se
-     le suelta un aviso a nadie que no lo haya pedido. */
-  function abrirAyudaIOS() {
+  var MENU_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+    '<circle cx="12" cy="5" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="12" cy="19" r="1.9"/></svg>';
+
+  /* Los pasos, según dónde esté el cliente. Solo se abre si pulsa el
+     botón: no se le suelta un aviso a nadie que no lo haya pedido. */
+  function pasos() {
+    if (esIOS()) {
+      return {
+        titulo: 'Instálala en tu iPhone',
+        bajada: 'Queda como una aplicación más, con su icono.',
+        lista: [
+          [COMPARTIR_IOS, 'Toca <strong>Compartir</strong>, abajo en la barra de Safari.'],
+          [MAS_IOS, 'Baja y elige <strong>Añadir a pantalla de inicio</strong>.'],
+        ],
+        nota: 'Safari no deja instalarla desde un botón; en el iPhone hay que hacerlo desde ahí.',
+      };
+    }
+    return {
+      titulo: 'Instálala en tu teléfono',
+      bajada: 'Queda como una aplicación más, con su icono.',
+      lista: [
+        [MENU_SVG, 'Abre el <strong>menú del navegador</strong>, arriba a la derecha.'],
+        [MAS_IOS, 'Elige <strong>Instalar aplicación</strong> o <strong>Añadir a pantalla de inicio</strong>.'],
+      ],
+      nota: 'Si tu navegador no trae esa opción, prueba con Chrome: es el que mejor la soporta.',
+    };
+  }
+
+  function abrirAyuda() {
     var previo = document.getElementById('inst-ios');
     if (previo) previo.remove();
 
@@ -86,6 +112,7 @@
     root.setAttribute('role', 'dialog');
     root.setAttribute('aria-modal', 'true');
     root.setAttribute('aria-label', 'Instalar la aplicación');
+    var p = pasos();
     root.innerHTML =
       '<div class="rep-modal-fondo"></div>' +
       '<div class="rep-modal-caja">' +
@@ -93,19 +120,17 @@
         '<div class="citv-aviso">' +
           '<header class="citv-membrete">' +
             '<span class="citv-chip">Filtro Vehicular+</span>' +
-            '<h4 class="citv-titulo">Instálala en tu iPhone</h4>' +
-            '<p class="citv-sigla">Queda como una aplicación más, con su icono.</p>' +
+            '<h4 class="citv-titulo">' + p.titulo + '</h4>' +
+            '<p class="citv-sigla">' + p.bajada + '</p>' +
             '<div class="citv-linea"><span></span><span></span><span></span><span></span></div>' +
           '</header>' +
           '<div class="citv-cuerpo">' +
             '<ol class="inst-pasos">' +
-              '<li><span class="inst-ico">' + COMPARTIR_IOS + '</span>' +
-                  '<div>Toca <strong>Compartir</strong>, abajo en la barra de Safari.</div></li>' +
-              '<li><span class="inst-ico">' + MAS_IOS + '</span>' +
-                  '<div>Baja y elige <strong>Añadir a pantalla de inicio</strong>.</div></li>' +
+              p.lista.map(function (paso) {
+                return '<li><span class="inst-ico">' + paso[0] + '</span><div>' + paso[1] + '</div></li>';
+              }).join('') +
             '</ol>' +
-            '<p class="citv-texto">Safari no deja instalarla desde un botón; en el iPhone hay que ' +
-            'hacerlo desde ahí. En Android y en la computadora sale sola.</p>' +
+            '<p class="citv-texto">' + p.nota + '</p>' +
           '</div>' +
         '</div>' +
         '<div class="rep-modal-pie"><button class="rep-modal-ok" type="button">Entendido</button></div>' +
@@ -126,53 +151,89 @@
     root.querySelector('.rep-modal-ok').addEventListener('click', cerrar);
   }
 
+  function htmlItemMenu() {
+    return '' +
+      '<button class="dropdown-item" type="button" role="menuitem" id="itemInstalar">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+             'stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M12 3v11"/><polyline points="8 10.5 12 14.5 16 10.5"/>' +
+          '<path d="M4 17.5v1.6A1.9 1.9 0 0 0 5.9 21h12.2a1.9 1.9 0 0 0 1.9-1.9v-1.6"/>' +
+        '</svg>' +
+        '<span>Instalar la app</span>' +
+      '</button>';
+  }
+
   function arrancar() {
     registrarServicio();
 
-    var caja = document.querySelector('.sidebar-actions');
-    if (!caja) return;
-    caja.insertAdjacentHTML('afterbegin', htmlBoton());
-    var boton = document.getElementById('btnInstalar');
-    if (!boton) return;
-
-    // Ya está instalada: el botón no pinta nada.
+    // Ya está instalada: no hay nada que ofrecer.
     if (yaInstalada()) return;
 
-    if (esIOS()) {
-      boton.hidden = false;
-      boton.addEventListener('click', abrirAyudaIOS);
-      return;
+    /* Dos sitios, y no por gusto.
+
+       El botón vivía solo en el menú lateral, y en el celular ese menú
+       está en `display:none`: en la pantalla donde más falta hace
+       instalar la aplicación, el botón no existía. Ahora va también en
+       el desplegable del usuario, que es lo que sí se abre desde la
+       barra de arriba en un teléfono. */
+    var puestos = [];
+
+    var lateral = document.querySelector('.sidebar-actions');
+    if (lateral) {
+      lateral.insertAdjacentHTML('afterbegin', htmlBoton());
+      var b1 = document.getElementById('btnInstalar');
+      if (b1) puestos.push(b1);
     }
 
-    /* Android y escritorio. El aviso llega cuando el navegador decide que
-       la aplicación cumple —manifiesto, iconos, service worker y HTTPS—,
-       y hay que quedárselo: si no se guarda, se pierde y ya no se puede
-       pedir la instalación más tarde. */
-    var guardado = null;
-    window.addEventListener('beforeinstallprompt', function (e) {
-      e.preventDefault();
-      guardado = e;
-      boton.hidden = false;
-    });
+    var menu = document.querySelector('#userDropdown #logoutBtn');
+    if (menu) {
+      menu.insertAdjacentHTML('beforebegin', htmlItemMenu());
+      var b2 = document.getElementById('itemInstalar');
+      if (b2) puestos.push(b2);
+    }
+    if (!puestos.length) return;
 
-    boton.addEventListener('click', async function () {
-      if (!guardado) return;
-      boton.disabled = true;
-      try {
-        guardado.prompt();
-        await guardado.userChoice;
-      } catch (e) {
-        console.warn('[instalar] el navegador rechazó la instalación:', e);
-      } finally {
-        // El aviso guardado solo sirve una vez.
-        guardado = null;
-        boton.disabled = false;
-        boton.hidden = true;
-      }
+    function mostrar(si) {
+      puestos.forEach(function (b) { b.hidden = !si; });
+    }
+
+    /* El aviso del navegador puede haber llegado ANTES que este guion: se
+       dispara en cuanto la página cumple, y este archivo carga al final.
+       Por eso lo recoge un fragmento en la cabecera y lo deja en
+       `window.__fvInstalable`; aquí se mira si ya está y, si no, se
+       espera al aviso que ese fragmento reenvía. */
+    function pendiente() { return window.__fvInstalable || null; }
+
+    window.addEventListener('fv-instalable', function () { mostrar(true); });
+
+    /* El botón se enseña SIEMPRE, haya aviso o no. Sin aviso no se puede
+       instalar por código —en iPhone nunca se puede, y en Android hay
+       casos en que el navegador no lo manda—, pero sí se puede explicar
+       dónde está la opción en el menú del navegador. Un botón que enseña
+       el camino vale más que ningún botón. */
+    mostrar(true);
+
+    puestos.forEach(function (boton) {
+      boton.addEventListener('click', async function () {
+        var aviso = pendiente();
+        if (!aviso) { abrirAyuda(); return; }
+        boton.disabled = true;
+        try {
+          aviso.prompt();
+          await aviso.userChoice;
+        } catch (e) {
+          console.warn('[instalar] el navegador rechazó la instalación:', e);
+          abrirAyuda();
+        } finally {
+          // El aviso guardado solo sirve una vez.
+          window.__fvInstalable = null;
+          boton.disabled = false;
+        }
+      });
     });
 
     window.addEventListener('appinstalled', function () {
-      boton.hidden = true;
+      mostrar(false);
       if (Consultia.toast) Consultia.toast({
         type: 'success',
         title: 'Instalada',

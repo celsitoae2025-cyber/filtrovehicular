@@ -29,6 +29,20 @@
      muy completo que esté el manifiesto. -->
 <link rel="manifest" href="/manifest.json?v=5">
 
+<!-- El aviso de «esto se puede instalar» llega en cuanto la página cumple,
+     y llega UNA vez. js/modules/instalar.js carga al final del documento,
+     así que puede llegar antes que él y perderse para siempre. Se recoge
+     aquí, que es lo primero que corre, y se guarda para cuando ese módulo
+     esté listo. -->
+<script>
+  window.__fvInstalable = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    window.__fvInstalable = e;
+    window.dispatchEvent(new Event('fv-instalable'));
+  });
+</script>
+
 <!-- El anti-bot de Cloudflare vive en otro dominio. Sin esto, el celular
      empieza a resolver DNS y a negociar TLS recién al abrir el formulario
      de acceso, y el recuadro tarda segundos en aparecer. -->
@@ -2170,7 +2184,7 @@
 <script src="js/modules/aviso-clientes.js?v=8"></script>
 <script src="js/modules/idle-logout.js?v=2"></script>
 <!-- Registra el service worker y ofrece instalar la aplicación. -->
-<script src="js/modules/instalar.js?v=1"></script>
+<script src="js/modules/instalar.js?v=2"></script>
 
 </body>
 </html>
