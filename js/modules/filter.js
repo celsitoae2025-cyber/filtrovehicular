@@ -218,33 +218,107 @@
      la respuesta; hay que ponerla desde aquí.
 
      Si el bot llegara a devolverla como un campo más, no se repite. */
+  /* ── La ficha del Reporte Completo ───────────────────────────────────
+     Antes era una lista plana de pares etiqueta/valor pegada al borde de
+     la tarjeta —seis píxeles de aire— y con la columna del valor
+     estirada a novecientos: la etiqueta quedaba en un extremo y el dato
+     en el otro, y el ojo tenía que cruzar la pantalla para juntarlos.
+
+     Ahora son dos piezas. Arriba un RESUMEN con lo que se mira primero,
+     en celdas del mismo tamaño; debajo el DETALLE con todo lo demás, en
+     dos columnas que no se separan más de lo que se lee cómodo.
+
+     El resumen no repite lo que ya dice el veredicto: el veredicto
+     contesta qué pasa con el vehículo, el resumen dice qué es. */
+
+  // Lo que va arriba, en el orden en que se mira. Cada entrada busca su
+  // campo entre los que trajo el bot, con varios nombres posibles.
+  var RESUMEN_CAMPOS = [
+    { rot: 'Placa',      re: /^PLACA$/ },
+    { rot: 'Marca',      re: /^MARCA$/ },
+    { rot: 'Modelo',     re: /^MODELO$/ },
+    { rot: 'Año',        re: /^A[NÑ]I?O/ },
+    { rot: 'Color',      re: /^COLOR$/ },
+    { rot: 'Propietario',re: /^PROPIETARIO/ },
+    { rot: 'SOAT',       re: /^SOAT$/,     sub: /^VIGENCIA SOAT/,     subRot: 'hasta el' },
+    { rot: 'Revisión',   re: /^REVISION T/, sub: /^VIGENCIA REVISION/, subRot: 'hasta el' },
+  ];
+
   function renderMetaplaData(p, placa) {
     var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
-    var seen = Object.create(null);
-    var rows = [];
 
+    // Todo lo que llegó, sin repetidos: el bot manda algún campo dos veces.
+    var campos = [];
+    var vistos = Object.create(null);
     if (placa) {
-      seen.PLACA = true;
-      rows.push(
-        '<div class="cr-row"><span class="cr-k">Placa</span>' +
-        '<span class="cr-v cr-v-fuerte">' + escapeHtml(placa.toUpperCase()) + '</span></div>'
-      );
+      vistos.PLACA = true;
+      campos.push({ clave: 'PLACA', rotulo: 'Placa', valor: placa.toUpperCase() });
     }
     (p.secciones || []).forEach(function (s) {
       (s.campos || []).forEach(function (c) {
-        if (!c.campo) return;
-        var key = c.campo.toUpperCase().trim();
-        if (seen[key]) return; // el bot a veces repite el mismo campo 2 veces
-        seen[key] = true;
-        if (isEmptyValue(c.valor)) return;
-        rows.push(
-          '<div class="cr-row"><span class="cr-k">' + escapeHtml(prettyLabel(c.campo)) +
-          '</span><span class="cr-v">' + escapeHtml(c.valor) + '</span></div>'
-        );
+        if (!c.campo || isEmptyValue(c.valor)) return;
+        var k = c.campo.toUpperCase().trim();
+        if (vistos[k]) return;
+        vistos[k] = true;
+        campos.push({ clave: k, rotulo: prettyLabel(c.campo), valor: c.valor });
       });
     });
-    if (!rows.length) return '';
-    return '<div class="cr-sect"><div class="cr-sect-body">' + rows.join('') + '</div></div>';
+    if (!campos.length) return '';
+
+    // Reparto: lo del resumen arriba, el resto abajo, sin duplicar.
+    var enResumen = Object.create(null);
+    var resumen = [];
+    var buscar = function (re) {
+      for (var i = 0; i < campos.length; i++) {
+        if (!enResumen[campos[i].clave] && re.test(campos[i].clave)) return campos[i];
+      }
+      return null;
+    };
+    RESUMEN_CAMPOS.forEach(function (r) {
+      var c = buscar(r.re);
+      if (!c) return;
+      enResumen[c.clave] = true;
+      var celda = { rotulo: r.rot, valor: c.valor };
+      if (r.sub) {
+        var sc = buscar(r.sub);
+        if (sc) { enResumen[sc.clave] = true; celda.sub = r.subRot + ' ' + sc.valor; }
+      }
+      resumen.push(celda);
+    });
+    var detalle = campos.filter(function (c) { return !enResumen[c.clave]; });
+
+    var html = '<div class="rep-ficha">';
+
+    if (resumen.length) {
+      html += '<div class="rep-bloque">' +
+        '<h4 class="rep-titulo">Resumen</h4>' +
+        '<div class="rep-resumen">' +
+          resumen.map(function (r) {
+            return '<div class="res-celda">' +
+              '<span class="res-k">' + escapeHtml(r.rotulo) + '</span>' +
+              '<strong class="res-v">' + escapeHtml(r.valor) + '</strong>' +
+              (r.sub ? '<span class="res-sub">' + escapeHtml(r.sub) + '</span>' : '') +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>';
+    }
+
+    if (detalle.length) {
+      html += '<div class="rep-bloque">' +
+        '<h4 class="rep-titulo">Detalle</h4>' +
+        '<dl class="rep-detalle">' +
+          detalle.map(function (c) {
+            return '<div class="det-fila">' +
+              '<dt class="det-k">' + escapeHtml(c.rotulo) + '</dt>' +
+              '<dd class="det-v">' + escapeHtml(c.valor) + '</dd>' +
+            '</div>';
+          }).join('') +
+        '</dl>' +
+      '</div>';
+    }
+
+    return html + '</div>';
   }
 
   /* ── El veredicto en pantalla ────────────────────────────────────────

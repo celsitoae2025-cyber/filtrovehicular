@@ -6860,3 +6860,95 @@ body.auth-locked .inst-fab { z-index: 501; }
 @media (max-width: 768px) {
   .result-panel { padding-bottom: 132px; }
 }
+
+/* ── Reporte Completo: la ficha en pantalla ──────────────────────────
+   Iba pegada al borde de la tarjeta —seis píxeles— y con la columna del
+   valor estirada a novecientos: la etiqueta en un extremo, el dato en el
+   otro, y el ojo cruzando la pantalla para juntarlos.
+
+   Aire por dentro, y el par etiqueta/valor a una distancia que se lee de
+   una sola mirada. */
+.rep-ficha {
+  padding: 4px 26px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.rep-bloque { display: flex; flex-direction: column; gap: 12px; }
+.rep-titulo {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+/* El resumen: celdas iguales, para que se barran de un vistazo. */
+.rep-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(186px, 1fr));
+  gap: 4px;
+}
+.res-celda {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #f4f6f4;
+  min-width: 0;
+}
+.res-k {
+  font-size: 13px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.res-v {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--c-primary);
+  word-break: break-word;
+}
+/* La fecha debajo del estado. SOAT y revisión son los dos datos que más
+   se miran, y el estado sin su fecha obliga a bajar al detalle. */
+.res-sub { font-size: 15px; color: var(--c-muted); }
+
+/* El detalle: dos columnas y un filete. La del valor NO se estira: a
+   partir de cierto ancho, separar más el dato de su etiqueta no ayuda a
+   leer, estorba. */
+.rep-detalle { margin: 0; }
+.det-fila {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 4px 20px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--c-border);
+  align-items: baseline;
+}
+.det-fila:last-child { border-bottom: none; }
+.det-k {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.det-v {
+  margin: 0;
+  font-size: 17px;
+  color: var(--c-primary);
+  max-width: 62ch;
+  word-break: break-word;
+}
+
+/* El veredicto, con el mismo margen lateral que la ficha: antes uno iba
+   a 6 px del borde y la otra a 26, y se veía torcido. */
+.rep-veredicto { margin: 4px 26px 22px; }
+
+@media (max-width: 720px) {
+  .rep-ficha { padding: 4px 16px 8px; gap: 22px; }
+  .rep-veredicto { margin: 4px 16px 18px; }
+  .det-fila { grid-template-columns: 1fr; gap: 2px; padding: 10px 0; }
+}
