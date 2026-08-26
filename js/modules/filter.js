@@ -706,17 +706,40 @@
 
     catalogReadyPromise = cargarCatalogo();
 
-    // CTA "Obtén tu reporte": selecciona /metapla (Reporte Completo) y deja
-    // el campo de placa listo. Ya estamos en view-filter, no hay que navegar.
+    /* CTA «Reporte completo»: cambia el tipo de consulta al reporte y, si
+       la placa ya está escrita, lo lanza. Ya estamos en view-filter, no
+       hay que navegar.
+
+       Dos cosas que hacía mal. Buscaba la consulta por `/metapla`, y el
+       reporte cambió de bot y de comando a `/mpla`: no encontraba nada y
+       el botón no hacía absolutamente nada. Y vaciaba el campo, así que
+       la placa que el cliente acababa de escribir —justo encima, en la
+       misma caja— se perdía y había que teclearla otra vez.
+
+       Ahora la placa se guarda antes de cambiar de consulta y se repone
+       después, porque `setConsulta` limpia el campo al cambiar de tipo.
+       Con placa, se ejecuta; sin ella, el foco cae en el campo y basta
+       con escribirla y pulsar Enter. */
     var ctaBtn = $('ctaReporteBtn');
     if (ctaBtn) {
       ctaBtn.addEventListener('click', async function () {
         try { await catalogReadyPromise; } catch (_) {}
-        var item = catalog.find(function (c) {
-          return c.comando && c.comando.indexOf('/metapla') === 0;
-        });
-        if (item) selectByOptionId(item.id);
-        if (input) { input.value = ''; input.focus(); }
+        var item = catalog.find(esMetapla);
+        if (!item) {
+          if (Consultia.toast) Consultia.toast({
+            type: 'error',
+            title: 'No disponible',
+            message: 'El Reporte Completo no está en el catálogo ahora mismo.',
+          });
+          return;
+        }
+        var placa = input ? input.value.trim() : '';
+        selectByOptionId(item.id);
+        if (input) {
+          input.value = placa;
+          input.focus();
+        }
+        if (placa) ejecutar();
       });
     }
   };
