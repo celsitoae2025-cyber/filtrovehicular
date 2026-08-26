@@ -19,16 +19,29 @@
   var METAPLA_COOLDOWN_MS = 60 * 1000;
   var metaplaCooldownUntil = 0;
 
+  /* El Reporte Completo ha cambiado de bot y con él de comando: era
+     `/metapla` en fuentesdata y ahora es `/mpla` en ghostdataxxx. Se
+     reconocen los dos porque de esta comprobación cuelga TODO lo propio
+     del reporte —el render en tabla, el PDF rediseñado con el estilo de
+     la casa y el enfriamiento de un minuto—, y con el nombre viejo a
+     secas el reporte nuevo se habría renderizado como una consulta
+     cualquiera sin que nadie lo notara. */
   function esMetapla(c) {
-    return !!(c && c.comando && c.comando.indexOf('/metapla') === 0);
+    var cmd = (c && c.comando) || '';
+    return cmd.indexOf('/metapla') === 0 || cmd.indexOf('/mpla') === 0;
   }
 
   /* ── Reporte Completo: en implementación ──────────────────────────────
      Todavía no se entrega, pero es lo más grande que va a tener la
      plataforma —veintiún trámites en un solo clic—, así que en vez de
      esconderlo se anuncia: al elegirlo se ve la lista entera de lo que va
-     a traer, y pulsar Consultar no cobra ni consulta, lo repite. */
-  var REPORTE_EN_IMPLEMENTACION = true;
+     a traer, y pulsar Consultar no cobra ni consulta, lo repite.
+
+     Abierto el 2026-08-19: se escribe la placa, se pulsa Consultar y se
+     entrega. El aviso y su lista se quedan escritos aquí porque el día
+     que haya que cerrarlo otra vez —un bot caído, un trámite que deje de
+     responder— basta con volver a poner esto en true. */
+  var REPORTE_EN_IMPLEMENTACION = false;
 
   var REPORTE_INCLUYE = [
     'Infracciones por regiones (17 regiones disponibles)',
@@ -473,8 +486,10 @@
     });
     var hasMedia = pdfs.length > 0 || photos.length > 0;
 
-    var esMetapla = currentConsulta && currentConsulta.comando &&
-      currentConsulta.comando.indexOf('/metapla') === 0;
+    // La misma comprobación de arriba, no una copia: repetida a mano se
+    // quedó con el nombre viejo del comando cuando el reporte cambió de
+    // bot, y el render propio del reporte dejaba de aplicarse.
+    var esReporte = esMetapla(currentConsulta);
 
     var body = $('filter-result-body');
     var html;
@@ -489,7 +504,7 @@
       html = H.htmlEnProceso();
     } else if (esErrorTecnicoRespuesta(p, resp)) {
       html = htmlMantenimiento();
-    } else if (esMetapla) {
+    } else if (esReporte) {
       // Los datos van como tabla + placeholder para el PDF rediseñado.
       html = renderMetaplaData(p) + '<div id="metapla-pdf-area"><div class="cr-pdf-loading">Generando reporte PDF...</div></div>';
     } else if (botones.length > 0 && !hasMedia) {
@@ -563,7 +578,7 @@
     // /metapla: rediseñar por completo el PDF del bot con el estilo FV+
     // (extrae texto + imágenes del original y arma un documento nuevo).
     var metaplaPdfArea = document.getElementById('metapla-pdf-area');
-    if (metaplaPdfArea && esMetapla && pdfs.length && pdfs[0].base64 && Consultia.MetaplaReport) {
+    if (metaplaPdfArea && esReporte && pdfs.length && pdfs[0].base64 && Consultia.MetaplaReport) {
       (function (pdfsRef, valorRef) {
         (async function () {
           try {
