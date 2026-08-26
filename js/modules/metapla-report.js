@@ -56,6 +56,18 @@
     return C_INK;
   }
 
+  // Las tres respuestas se dicen con la misma palabra en el PDF y en la
+  // pantalla. Si una dice «Sí» y la otra «Correcto», parecen dos cosas.
+  function palabra(estado) {
+    return estado === 'si' ? 'Sí' : (estado === 'no' ? 'No' : 'Con reparos');
+  }
+
+  function estadoColor(estado) {
+    if (estado === 'si') return C_OK;
+    if (estado === 'no') return C_BAD;
+    return C_WARN;
+  }
+
   var ROMANS = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
                 'XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX'];
 
@@ -705,54 +717,124 @@
     y += 6;
     hairline(y); y += 10;
 
-    /* ── Índice de riesgo: medidor circular a color ── */
+    /* ── Veredicto ────────────────────────────────────────────────
+       Lo primero de la primera página, y con una sola voz.
+
+       Aquí antes iba el medidor circular con el puntaje del proveedor.
+       Se veía bien y contradecía a la propia plataforma: el PDF decía
+       «riesgo medio» —su criterio, que no conocemos— mientras la ficha
+       en pantalla decía «riesgo alto» con el nuestro, que sí sabemos
+       explicar. Dos cifras distintas para el mismo vehículo, en la misma
+       consulta.
+
+       Manda el veredicto propio, que es el que se puede defender delante
+       de un cliente. El índice del proveedor no se esconde: se imprime
+       debajo, dicho de quién es, para que quien compare las dos cosas
+       entienda por qué no coinciden en vez de sospechar de las dos. */
     var R = secciones.resumen || {};
-    if (R.score) {
-      var rc = riskColor(R.nivel);
-      var pct = Math.max(0, Math.min(100, +R.score)) / 100;
+    var VER = null;
+    try {
+      if (Consultia.ReporteModelo && Consultia.ReporteVeredicto) {
+        var modelo = Consultia.ReporteModelo.desdeSecciones(secciones, meta.valor);
+        VER = Consultia.ReporteVeredicto.nivel(modelo);
+        VER.modelo = modelo;
+      }
+    } catch (e) {
+      console.warn('[metapla] sin veredicto, se imprime lo que haya:', e);
+    }
 
-      var ringR = 15, ringW = 3.4;
-      var cx = M + ringR, cy = y + ringR;
+    if (VER) {
+      var vc = riskColor(VER.nivel);
 
-      // Aro base tenue + arco de progreso en el color del nivel
-      arco(cx, cy, ringR, 0, Math.PI * 2, C_HAIR, ringW);
-      if (pct > 0) arco(cx, cy, ringR, 0, Math.PI * 2 * pct, rc, ringW);
-
-      // Cifra centrada dentro del aro
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(19);
-      doc.setTextColor.apply(doc, C_INK);
-      doc.text(String(R.score), cx, cy + 1.5, { align: 'center' });
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6);
-      doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('DE 100', cx, cy + 6, { align: 'center' });
-
-      // Bloque de texto a la derecha del aro
-      var tx = cx + ringR + 12;
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(6.6);
       doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('ÍNDICE DE RIESGO VEHICULAR', tx, y + 5);
+      doc.text('VEREDICTO', M, y + 4);
 
-      if (R.nivel) {
-        // Chip del nivel con el color correspondiente
+      doc.setFontSize(17);
+      doc.setTextColor.apply(doc, vc);
+      doc.text('Riesgo ' + VER.nivel.charAt(0) + VER.nivel.slice(1).toLowerCase(), M, y + 13);
+      y += 19;
+
+      // Las tres respuestas, en tres cajas del mismo ancho.
+      var respuestas = [
+        ['¿PUEDE CIRCULAR?', palabra(VER.circular.estado), VER.circular.resumen, VER.circular.estado],
+        ['¿PUEDE TRANSFERIRSE?', palabra(VER.transferir.estado), VER.transferir.resumen, VER.transferir.estado],
+        ['DEUDA REGISTRADA', VER.deuda.totalTexto,
+         VER.deuda.completa ? 'Todas las fuentes respondieron'
+                            : VER.deuda.fuentesMudas + ' fuente(s) sin respuesta',
+         VER.deuda.total > 0 ? 'no' : (VER.deuda.completa ? 'si' : 'con reparos')],
+      ];
+      var hueco = 4, anchoCaja = (COLW - hueco * 2) / 3, altoCaja = 25;
+      respuestas.forEach(function (r, i) {
+        var x0 = M + i * (anchoCaja + hueco);
+        doc.setFillColor.apply(doc, C_SOFT);
+        doc.rect(x0, y, anchoCaja, altoCaja, 'F');
+        // Filete a color con el estado de ESA respuesta, no del conjunto.
+        doc.setFillColor.apply(doc, estadoColor(r[3]));
+        doc.rect(x0, y, 1.4, altoCaja, 'F');
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(5.6);
+        doc.setTextColor.apply(doc, C_MUTED);
+        doc.text(r[0], x0 + 4, y + 5, { maxWidth: anchoCaja - 7 });
+
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(13);
-        doc.setTextColor.apply(doc, rc);
-        doc.text('Riesgo ' + R.nivel.charAt(0) + R.nivel.slice(1).toLowerCase(), tx, y + 13);
-      }
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7.4);
-      doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('Evaluación consolidada de antecedentes, deudas y vigencias del vehículo.',
-               tx, y + 19, { maxWidth: W - M - tx });
+        doc.setFontSize(11);
+        doc.setTextColor.apply(doc, estadoColor(r[3]));
+        doc.text(String(r[1]), x0 + 4, y + 12.5, { maxWidth: anchoCaja - 7 });
 
-      y = cy + ringR + 10;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(6.4);
+        doc.setTextColor.apply(doc, C_MUTED);
+        doc.text(String(r[2] || ''), x0 + 4, y + 17.5, { maxWidth: anchoCaja - 7 });
+      });
+      y += altoCaja + 7;
+
+      // Por qué. Sin esto el veredicto es una opinión.
+      if (VER.motivos.length) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(6.2);
+        doc.setTextColor.apply(doc, C_MUTED);
+        doc.text('POR QUÉ', M, y);
+        y += 4;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.6);
+        doc.setTextColor.apply(doc, C_INK);
+        VER.motivos.forEach(function (mo) {
+          var lineas = doc.splitTextToSize('·  ' + mo, COLW);
+          doc.text(lineas, M, y);
+          y += lineas.length * 4;
+        });
+        y += 3;
+      }
+
+      // El índice del proveedor, dicho de quién es.
+      if (R.score) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(6.6);
+        doc.setTextColor.apply(doc, C_MUTED);
+        doc.text('Índice del proveedor: ' + R.score + ' de 100' +
+                 (R.nivel ? ' (' + R.nivel.toLowerCase() + ')' : '') +
+                 '. Criterio no publicado; el veredicto de arriba es el de la plataforma.',
+                 M, y, { maxWidth: COLW });
+        y += 6;
+      }
+
+      hairline(y); y += 8;
     }
 
-    /* ── Indicadores: filete lateral que rota entre los tres colores ── */
+    /* ── Indicadores del proveedor ────────────────────────────────
+       Se conservan porque traen recuentos que el veredicto no da
+       —propietarios, denuncias— pero rotulados: son su resumen, no el
+       nuestro. Sin ese rótulo, dos bloques de cifras seguidos parecían
+       el mismo análisis partido en dos. */
     if (R.indEtiquetas && R.indValores && R.indEtiquetas.length === R.indValores.length) {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6.2);
+      doc.setTextColor.apply(doc, C_MUTED);
+      doc.text('RESUMEN DEL PROVEEDOR', M, y);
+      y += 4;
       var n = R.indEtiquetas.length;
       var ciclo = [C_ACCENT, C_TURQ, C_INK];
       var gap = 4, cardW = (COLW - (n - 1) * gap) / n, cardH = 17;
@@ -931,6 +1013,64 @@
 
       y += 6;
     });
+
+    /* ── Cobertura ────────────────────────────────────────────────
+       Qué se consultó y qué contestó cada fuente. Es el apartado que
+       convierte el silencio en información: sin él, una sección que no
+       respondió se lee igual que una sección limpia, y alguien puede
+       comprar un vehículo confiando en algo que nunca se comprobó. */
+    if (VER && VER.modelo && VER.modelo.cobertura.length) {
+      need(40);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor.apply(doc, C_INK);
+      doc.text('Fuentes consultadas', M, y);
+      y += 3.5;
+      hairline(y);
+      doc.setDrawColor.apply(doc, C_TURQ);
+      doc.setLineWidth(0.8);
+      doc.line(M, y, M + 14, y);
+      y += 7;
+
+      var traduce = {
+        'con datos':     'Respondió con registros',
+        'sin registros': 'Respondió: sin registros',
+        'sin respuesta': 'No respondió',
+      };
+      doc.autoTable({
+        startY: y,
+        head: [['Fuente', 'Resultado']],
+        body: VER.modelo.cobertura.map(function (c) {
+          return [c.fuente, traduce[c.estado] || c.estado];
+        }),
+        margin: { left: M, right: M, top: TOP, bottom: H - FOOT + 6 },
+        tableLineWidth: 0,
+        didDrawPage: cromo,
+        headStyles: {
+          fontSize: 6.6, textColor: C_MUTED, fontStyle: 'bold', fillColor: false,
+          cellPadding: { top: 0, bottom: 2, left: 0, right: 2 },
+          lineWidth: { bottom: 0.3 }, lineColor: C_INK
+        },
+        bodyStyles: {
+          fontSize: 7.6, textColor: C_INK, valign: 'top',
+          cellPadding: { top: 2.2, bottom: 2.2, left: 0, right: 2 },
+          lineWidth: { bottom: 0.1 }, lineColor: C_HAIR
+        },
+        columnStyles: { 1: { cellWidth: 58 } },
+        // Lo que no respondió, en rojo: es lo que hay que mirar.
+        didParseCell: function (data) {
+          if (data.section === 'body' && data.column.index === 1 &&
+              /No respondió/.test(data.cell.raw)) {
+            data.cell.styles.textColor = C_BAD;
+            data.cell.styles.fontStyle = 'bold';
+          }
+        },
+        styles: { overflow: 'linebreak', lineWidth: 0, fillColor: false },
+        theme: 'plain'
+      });
+      y = (doc.lastAutoTable && doc.lastAutoTable.finalY) || y;
+      y += 6;
+    }
 
     /* ── Folio ── */
     var total = typeof doc.getNumberOfPages === 'function' ? doc.getNumberOfPages() : 1;
