@@ -574,24 +574,64 @@
   /* ══════════════════════════════════════════════════════════
      3. MAQUETACIÓN
 
-     El documento se compone como un informe impreso, no como una
-     pantalla volcada a papel: portada de página entera, índice con
-     números de página, retícula sostenida por filetes finos y tablas
-     con cabecera sólida. Todo el color vive en el semáforo, en los
-     puntos de estado y en el filete corto de marca; el resto es tinta
-     sobre blanco, que es lo que hace que un reporte se lea como un
-     documento y no como un folleto.
+     El informe no se compone «a ojo»: todas las medidas salen de las
+     cuatro tablas de abajo —retícula, bandas fijas, escala tipográfica
+     e interlineados— y en el cuerpo del código no hay ni un número
+     suelto. Esa es la diferencia entre un documento que parece armado y
+     uno que lo está: cada bloque empieza en una columna de la retícula y
+     cada salto vertical es un múltiplo de la misma unidad, así que los
+     blancos se repiten en vez de salir distintos en cada página.
+
+     A4 con 20 mm de margen deja 170 mm de columna viva. Se divide en 12
+     columnas de 10,5 mm con medianil de 4 mm, que es lo que permite
+     partir la página en mitades (6+6), tercios (4+4+4) y cuartos (3×4)
+     sin decimales raros: el veredicto usa tercios, la ficha del vehículo
+     usa 4+7 y las tablas ocupan las doce.
      ══════════════════════════════════════════════════════════ */
+
+  // ── Página y márgenes (mm) ──
+  var PG = { W: 210, H: 297 };
+  var MG = { x: 20 };
+
+  // ── Retícula ──
+  var GRID = { cols: 12, gutter: 4 };
+  var CW   = PG.W - MG.x * 2;                                    // 170
+  var COL  = (CW - GRID.gutter * (GRID.cols - 1)) / GRID.cols;   // 10.5
+
+  function gx(i) { return MG.x + i * (COL + GRID.gutter); }      // origen de la columna i
+  function gw(n) { return n * COL + (n - 1) * GRID.gutter; }     // ancho de n columnas
+
+  // ── Ritmo vertical: todo avance es múltiplo de U ──
+  var U = 4;
+
+  /* ── Bandas fijas de la página ──
+     Cabecera y pie son zonas muertas para el contenido: se reservan una
+     vez y ningún bloque las invade. */
+  var CAB = { texto: 22, filete: 26 };
+  var PIE = { filete: 265, l1: 270, l2: 274.4, qr: 12 };
+  var CUERPO = { top: 36, bottom: PIE.filete - 6 };               // 36 … 259
+
+  // ── Escala tipográfica (pt), razón ≈1,25 ──
+  var T = {
+    micro: 6.2,   // versalitas de etiqueta
+    mini:  7.4,   // notas y pies
+    base:  8.8,   // cuerpo y tablas
+    dato: 10.5,   // cifras dentro de un bloque
+    h3:     12,   // título de sección
+    h2:     16,   // titular del veredicto
+    h1:     26,   // título del informe
+    placa:  30    // la matrícula en portada
+  };
+
+  // ── Interlineados (mm) ──
+  var LH = { micro: 3, mini: 3.6, base: 4.4 };
+
+  // ── Portada ──
+  var PORTADA = { banda: 58 };
 
   function buildPdf(secciones, meta) {
     var doc = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    var W = doc.internal.pageSize.getWidth();   // 210
-    var H = doc.internal.pageSize.getHeight();  // 297
-    var M = 18;                 // margen lateral
-    var HEAD_Y = 15;            // línea base del membrete
-    var TOP = 34;               // inicio del área de contenido
-    var FOOT = H - 24;          // filete del pie
-    var COLW = W - M * 2;
+    var W = PG.W, H = PG.H, M = MG.x;
 
     // El folio se imprime en cada pie y viaja dentro del QR.
     var folio = meta.folio || '';
@@ -604,10 +644,10 @@
 
     /* ── Utilidades de trazo y texto ───────────────────────────── */
 
-    function hairline(y, x0, x1, color, grosor) {
+    function hairline(yy, x0, x1, color, grosor) {
       doc.setDrawColor.apply(doc, color || C_HAIR);
       doc.setLineWidth(grosor || 0.2);
-      doc.line(x0 === undefined ? M : x0, y, x1 === undefined ? W - M : x1, y);
+      doc.line(x0 === undefined ? M : x0, yy, x1 === undefined ? W - M : x1, yy);
     }
 
     function vline(x, y0, y1, color) {
@@ -617,21 +657,21 @@
     }
 
     /* Versalita espaciada: el recurso que ordena el documento. Todas las
-       etiquetas del informe salen de aquí, así que el tono de gris y el
-       tracking se cambian en un solo sitio. */
+       etiquetas salen de aquí, así que el gris y el tracking se cambian
+       en un solo sitio.
+
+       El alineado se calcula aquí y no se delega en jsPDF: su `align`
+       mide el texto SIN el espaciado entre letras, así que un rótulo
+       trackeado y alineado a la derecha se corre tantos milímetros como
+       letras tenga. El del membrete se salía 17 mm fuera de la caja. */
     function versalita(texto, x, yy, opts) {
       opts = opts || {};
       var t = String(texto).toUpperCase();
       var track = opts.track === undefined ? 0.5 : opts.track;
       doc.setFont('helvetica', opts.bold === false ? 'normal' : 'bold');
-      doc.setFontSize(opts.size || 6.8);
+      doc.setFontSize(opts.size || T.micro);
       doc.setTextColor.apply(doc, opts.color || C_MUTED);
 
-      /* El alineado se calcula aquí y no se delega en jsPDF: su `align`
-         mide el texto SIN el espaciado entre letras, así que un rótulo
-         trackeado y alineado a la derecha se corre tantos milímetros
-         como letras tenga. El del membrete se salía 17 mm fuera de la
-         caja, por el borde de la hoja. */
       var ancho = doc.getTextWidth(t) + track * Math.max(0, t.length - 1);
       var x0 = x;
       if (opts.align === 'right') x0 = x - ancho;
@@ -643,11 +683,34 @@
       return ancho;
     }
 
-    function rotulo(texto, x, yy, size, color, bold) {
+    /* El texto corriente se dibuja SIEMPRE sin espaciado entre letras, y
+       hay que decirlo en cada llamada: autoTable deja su propio valor
+       puesto al terminar una tabla, y `splitTextToSize` y `getTextWidth`
+       lo ignoran mientras el dibujado sí lo aplica. Esa asimetría hacía
+       que un párrafo partido a 170 mm se imprimiera de 199 mm y se
+       saliera de la hoja: el partido contaba 156 letras y la impresión
+       les añadía medio milímetro a cada una. */
+    function sinTracking() {
+      try { doc.setCharSpace(0); } catch (e) {}
+    }
+
+    /* Partir un texto SIEMPRE con la fuente con la que se va a imprimir.
+       jsPDF mide con la que esté activa en ese momento —la que dejó el
+       bloque anterior o autoTable—, así que partir antes de fijar el
+       cuerpo devuelve líneas que no caben. */
+    function parte(texto, ancho, size, bold) {
+      sinTracking();
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      doc.setFontSize(size);
+      return doc.splitTextToSize(String(texto), ancho);
+    }
+
+    function rotulo(texto, x, yy, size, color, bold, opts) {
+      sinTracking();
       doc.setFont('helvetica', bold ? 'bold' : 'normal');
       doc.setFontSize(size);
       doc.setTextColor.apply(doc, color);
-      doc.text(String(texto), x, yy);
+      doc.text(texto, x, yy, opts);
     }
 
     // Filete corto de dos tramos (verde + turquesa): el acento de marca.
@@ -667,76 +730,80 @@
       doc.circle(x, yy, r || 1.5, 'F');
     }
 
-    /* ── Membrete y pie ───────────────────────────────────────── */
+    /* ── Cabecera y pie ───────────────────────────────────────── */
     var decoradas = {};
     function paginaActual() {
       try { return doc.internal.getCurrentPageInfo().pageNumber; } catch (e) { return 1; }
+    }
+
+    /* El pie es idéntico en todas las páginas, portada incluida: marca y
+       trazabilidad a la izquierda, verificación a la derecha.
+
+       El QR va en TODAS las páginas y no solo al final. Un reporte se
+       enseña suelto, se fotografía una hoja o se imprime de a poco; con
+       el QR únicamente en la última, la página que acaba en manos del
+       comprador no se puede comprobar. El folio impreso al lado no es
+       adorno: si el QR se estropea al fotocopiar, se teclea a mano. */
+    function pie(pn) {
+      hairline(PIE.filete);
+      rotulo('Filtro Vehicular+', M, PIE.l1, T.mini, C_INK, true);
+      var fw = doc.getTextWidth('Filtro Vehicular+');
+      rotulo('· Plataforma de consultas vehiculares', M + fw + 1.6, PIE.l1, T.mini, C_MUTED);
+      rotulo((folio ? 'Folio ' + folio + '  ·  ' : '') + 'Emitido el ' + fecha,
+             M, PIE.l2, T.micro, C_MUTED);
+
+      if (folio) {
+        var qx = W - M - PIE.qr, qy = PIE.filete + 2;
+        var pintado = dibujarQR(doc, VERIFICA + '?f=' + encodeURIComponent(folio),
+                                qx, qy, PIE.qr);
+        /* El hueco a la izquierda del QR es de la numeración en las
+           páginas interiores, y la portada no se numera: solo ahí cabe
+           decir para qué sirve el código. */
+        if (pintado) {
+          if (pn === 1) {
+            versalita('Verifica este reporte', qx - 3, PIE.l1,
+                      { size: 5.4, track: 0.4, align: 'right' });
+            rotulo('filtrovehicularperu.com/verificar', qx - 3, PIE.l2, 5.6, C_MUTED,
+                   false, { align: 'right' });
+          }
+        } else {
+          versalita('Verifica en', W - M, PIE.l1, { size: 5.6, align: 'right' });
+          rotulo(VERIFICA, W - M, PIE.l2, 5.6, C_MUTED, false, { align: 'right' });
+        }
+      }
+    }
+
+    // Membrete de las páginas interiores. La portada lleva su banda y no
+    // repite el membrete: sería decir dos veces lo mismo en 60 mm.
+    function membrete() {
+      rotulo('Filtro Vehicular', M, CAB.texto, 9.5, C_INK, true);
+      var wm = doc.getTextWidth('Filtro Vehicular');
+      rotulo('+', M + wm + 0.5, CAB.texto, 9.5, C_ACCENT, true);
+      if (valor) {
+        var wp = doc.getTextWidth('+') + wm;
+        rotulo('· ' + valor, M + wp + 2.4, CAB.texto, 8, C_MUTED);
+      }
+      hairline(CAB.filete);
+      fileteBicolor(M, CAB.filete, 18, 0.7);
     }
 
     function cromo() {
       var pn = paginaActual();
       if (decoradas[pn]) return;
       decoradas[pn] = true;
-
-      // Marca, sin sello ni monograma: el nombre es lo que se reconoce.
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10.5);
-      doc.setTextColor.apply(doc, C_INK);
-      doc.text('Filtro Vehicular', M, HEAD_Y);
-      var wm = doc.getTextWidth('Filtro Vehicular');
-      doc.setTextColor.apply(doc, C_ACCENT);
-      doc.text('+', M + wm + 0.6, HEAD_Y);
-
-      versalita('Reporte vehicular integral', W - M, HEAD_Y - 3.2,
-                { size: 6.2, color: C_TURQ, track: 0.7, align: 'right' });
-      if (valor) {
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(9);
-        doc.setTextColor.apply(doc, C_INK);
-        doc.text(valor, W - M, HEAD_Y + 1.4, { align: 'right' });
-      }
-
-      hairline(HEAD_Y + 5.4);
-      fileteBicolor(M, HEAD_Y + 5.4, 18, 0.7);
-
-      // Pie: marca y trazabilidad a la izquierda; verificación a la derecha.
-      hairline(FOOT);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(6.8);
-      doc.setTextColor.apply(doc, C_INK);
-      doc.text('Filtro Vehicular+', M, FOOT + 5);
-      var fw = doc.getTextWidth('Filtro Vehicular+');
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('· Plataforma de consultas vehiculares', M + fw + 1.6, FOOT + 5);
-      doc.setFontSize(6.4);
-      doc.text('Emitido el ' + fecha + (folio ? '  ·  Folio ' + folio : ''), M, FOOT + 9.2);
-
-      /* ── El QR, en TODAS las páginas ──────────────────────────────
-         Un reporte se enseña suelto, se fotografía una hoja o se imprime
-         de a poco. Con el QR solo al final, la página que acaba en manos
-         del comprador no se puede comprobar. El folio impreso al lado no
-         es adorno: si el QR se estropea al fotocopiar, se escribe a mano
-         y verifica igual. */
-      if (folio) {
-        var lado = 12;
-        var qx = W - M - lado, qy = FOOT + 2.4;
-        var pintado = dibujarQR(doc, VERIFICA + '?f=' + encodeURIComponent(folio), qx, qy, lado);
-        if (!pintado) {
-          versalita('Verifica en', qx + lado, FOOT + 5, { size: 5.6, align: 'right' });
-          rotulo(VERIFICA, qx + lado, FOOT + 8.6, 5.6, C_MUTED);
-        }
-      }
+      if (pn !== 1) membrete();
+      pie(pn);
     }
 
-    var y = TOP;
-    function nuevaPagina() { doc.addPage(); cromo(); y = TOP; }
-    function need(mm) { if (y + mm > FOOT - 8) nuevaPagina(); }
+    var y = CUERPO.top;
+    function av(n) { y += n * U; }                       // avanza n unidades de ritmo
+    function nuevaPagina() { doc.addPage(); cromo(); y = CUERPO.top; }
+    function need(mm) { if (y + mm > CUERPO.bottom) nuevaPagina(); }
 
     cromo();
 
     /* ══════════════════════════════════════════════════════════
-       PORTADA — página entera
+       PORTADA
        ══════════════════════════════════════════════════════════ */
     var DV     = /DATOS DEL VEH/i;
     var marca  = findVal(secciones, /^Marca\s*\/\s*Modelo/i) || findVal(secciones, /^Marca/i);
@@ -746,66 +813,72 @@
     var estado = findVal(secciones, /^Estado$/i, DV);
     var placa  = findVal(secciones, /^N[°º]? de Placa/i) || valor;
 
-    y = TOP + 6;
-    versalita('Informe consolidado', M, y, { size: 7.6, color: C_TURQ, track: 1.4 });
-    y += 12;
+    /* Banda de identidad. Es la única superficie oscura del informe y
+       usa el mismo tono que las superficies oscuras de la plataforma, no
+       un gris inventado para la ocasión. */
+    doc.setFillColor(14, 19, 18);                        // #0e1312
+    doc.rect(0, 0, W, PORTADA.banda, 'F');
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(27);
-    doc.setTextColor.apply(doc, C_INK);
-    doc.text('Reporte Vehicular', M, y);
-    y += 11;
-    doc.text('Integral', M, y);
-    y += 8;
+    rotulo('Filtro Vehicular', M, 32, 18, [255, 255, 255], true);
+    var wmp = doc.getTextWidth('Filtro Vehicular');
+    rotulo('+', M + wmp + 1, 32, 18, C_ACCENT, true);
+    versalita('Plataforma de consultas vehiculares', M, 40,
+              { size: T.micro, color: [150, 158, 156], track: 1 });
 
-    rotulo('Documento emitido el ' + fecha, M, y, 8.6, C_MUTED);
-    y += 12;
+    if (folio) {
+      versalita('Folio del documento', W - M, 29,
+                { size: 5.8, color: [150, 158, 156], track: 0.8, align: 'right' });
+      rotulo(folio, W - M, 36, 10, [255, 255, 255], true, { align: 'right' });
+    }
+    fileteBicolor(M, PORTADA.banda, 46, 1.2);
 
-    /* Recuadro de placa: la matrícula es el identificador del informe y
-       se comporta como tal — encerrada, sola y grande. A su derecha, la
-       identidad del vehículo en retícula. */
-    var cajaW = 62, cajaH = 26;
+    y = PORTADA.banda + U * 4;                           // 74
+    versalita('Informe consolidado', M, y, { size: T.mini, color: C_TURQ, track: 1.4 });
+
+    av(3);                                               // 86
+    rotulo('Reporte Vehicular', M, y, T.h1, C_INK, true);
+    av(3);                                               // 98
+    rotulo('Integral', M, y, T.h1, C_INK, true);
+    av(2);                                               // 106
+    rotulo('Documento emitido el ' + fecha, M, y, T.base, C_MUTED);
+
+    /* ── Ficha del vehículo: 4 columnas de matrícula + 7 de atributos ──
+       Los dos bloques miden lo mismo de alto y cierran en la misma línea:
+       el recuadro no puede quedar colgando sobre una retícula más larga
+       ni al revés. */
+    av(3.5);                                             // 120
+    var fichaTop = y, fichaH = 26;
     doc.setDrawColor.apply(doc, C_INK);
     doc.setLineWidth(0.5);
-    doc.rect(M, y, cajaW, cajaH);
-    versalita('Placa', M + 5, y + 7.4, { size: 6, track: 0.8 });
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(21);
-    doc.setTextColor.apply(doc, C_INK);
-    doc.text(placa || '—', M + 5, y + 19.5, { maxWidth: cajaW - 10 });
+    doc.rect(gx(0), fichaTop, gw(4), fichaH);
+    versalita('Placa', gx(0) + 5, fichaTop + 7.4, { size: T.micro, track: 0.8 });
+    rotulo(placa || '—', gx(0) + 5, fichaTop + 19.5, T.placa, C_INK, true,
+           { maxWidth: gw(4) - 10 });
 
     var attrs = [
       ['Marca y modelo', marca], ['Año', anio], ['Color', color],
       ['Carrocería', carro], ['Estado', estado]
     ].filter(function (a) { return a[1]; });
 
-    /* Tres columnas por dos filas, no dos por tres: así el bloque mide
-       exactamente lo mismo que el recuadro de la placa y los dos cierran
-       en la misma línea. Con dos columnas, el quinto atributo colgaba
-       por debajo del recuadro y el conjunto quedaba descuadrado. */
-    var ax = M + cajaW + 12;
-    var COLS = 3;
-    var anchoAttr = (W - M - ax) / COLS;
-    var filaH = cajaH / 2;
+    var ATTR_COLS = 3;
+    var attrW = gw(7) / ATTR_COLS;
     attrs.forEach(function (a, i) {
-      var cx = ax + (i % COLS) * anchoAttr;
-      var cy = y + 5 + Math.floor(i / COLS) * filaH;
-      versalita(a[0], cx, cy, { size: 6, track: 0.4 });
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
-      doc.setTextColor.apply(doc, C_INK);
-      doc.text(String(a[1]), cx, cy + 5, { maxWidth: anchoAttr - 4 });
+      var cx = gx(5) + (i % ATTR_COLS) * attrW;
+      var cy = fichaTop + 5 + Math.floor(i / ATTR_COLS) * (fichaH / 2);
+      versalita(a[0], cx, cy, { size: T.micro, track: 0.4 });
+      rotulo(String(a[1]), cx, cy + 5, 9, C_INK, true, { maxWidth: attrW - 4 });
     });
-    y += Math.max(cajaH, 5 + Math.ceil(attrs.length / COLS) * filaH) + 13;
+    y = fichaTop + fichaH;
+
+    av(2);                                               // 154
     hairline(y);
-    y += 12;
 
     /* ── Veredicto ────────────────────────────────────────────────
-       Lo primero de la primera página, y con una sola voz.
+       Lo primero del informe, y con una sola voz.
 
        Manda el veredicto propio, que es el que se puede defender delante
        de un cliente. El índice del proveedor no se esconde: se imprime
-       debajo, dicho de quién es, para que quien compare las dos cosas
+       debajo, dicho de quién es, para que quien compare las dos cifras
        entienda por qué no coinciden en vez de sospechar de las dos. */
     var R = secciones.resumen || {};
     var VER = null;
@@ -826,50 +899,42 @@
 
     if (VER) {
       var vc = riskColor(VER.nivel);
-
-      versalita('Veredicto de la plataforma', M, y, { size: 7, track: 1 });
-      y += 11;
-
-      /* El semáforo: un disco del color del veredicto junto al titular.
-         Quien abre el reporte lo entiende antes de leer una palabra, y
-         eso es justo lo que tiene que pasar en un informe de riesgo.
-
-         Cuando no hay nivel, el disco NO se rellena. Relleno con la
-         tinta neutra salía un círculo negro enorme al lado de «Veredicto
-         parcial»: nadie sabía qué era, y un semáforo apagado tiene que
-         parecer apagado. Un aro hueco dice exactamente eso — hay un
-         indicador y está sin respuesta— y el propio texto lo explica.
-
-         El centro va 2,3 mm por encima de la línea base, que es donde
-         cae el centro óptico de una mayúscula de 18 pt: así el disco y
-         el titular se leen como una sola pieza. */
-      var discoR = 6.2;
-      var discoY = y - 2.3;
       var parcial = VER.nivel === 'SIN DETERMINAR';
+
+      av(2);                                             // 162
+      versalita('Veredicto de la plataforma', M, y, { size: T.mini, track: 1.2 });
+
+      /* El semáforo: disco lleno del color del veredicto junto al
+         titular. Quien abre el reporte lo entiende antes de leer una
+         palabra, y eso es lo que tiene que pasar en un informe de riesgo.
+
+         Sin nivel, el disco NO se rellena: pintado con la tinta neutra
+         salía un círculo negro enorme que no significaba nada. Un aro
+         hueco dice justo lo que pasa —hay indicador y está sin
+         respuesta— y el renglón de al lado lo explica. El centro cae
+         2,3 mm sobre la línea base, que es el centro óptico de una
+         mayúscula de 16 pt. */
+      av(3);                                             // 174
+      var discoR = 6.2;
       if (parcial) {
         doc.setDrawColor.apply(doc, C_MUTED);
         doc.setLineWidth(1.1);
-        doc.circle(M + discoR, discoY, discoR - 0.55, 'S');
+        doc.circle(gx(0) + discoR, y - 2.3, discoR - 0.55, 'S');
       } else {
-        punto(M + discoR, discoY, vc, discoR);
+        punto(gx(0) + discoR, y - 2.3, vc, discoR);
       }
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(18);
-      doc.setTextColor.apply(doc, vc);
-      doc.text(parcial
-        ? 'Veredicto parcial'
-        : 'Riesgo ' + VER.nivel.charAt(0) + VER.nivel.slice(1).toLowerCase(),
-        M + discoR * 2 + 6, y);
+      rotulo(parcial ? 'Veredicto parcial'
+                     : 'Riesgo ' + VER.nivel.charAt(0) + VER.nivel.slice(1).toLowerCase(),
+             gx(0) + discoR * 2 + 6, y, T.h2, vc, true);
       if (parcial) {
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(7.4);
-        doc.setTextColor.apply(doc, C_MUTED);
-        doc.text('Falta información para calificar el riesgo; lo comprobado se detalla abajo.',
-                 M + discoR * 2 + 6, y + 5, { maxWidth: COLW - discoR * 2 - 6 });
+        rotulo('Falta información para calificar el riesgo; lo comprobado se detalla abajo.',
+               gx(0) + discoR * 2 + 6, y + 5, T.mini, C_MUTED,
+               false, { maxWidth: CW - discoR * 2 - 6 });
       }
-      y += 13;
 
-      // Las tres respuestas, en columnas separadas por filete, sin cajas.
+      /* Las tres respuestas, en tercios de la retícula: sin cajas de
+         color, separadas por filete y con el estado en un punto. */
+      av(3);                                             // 186
       var respuestas = [
         ['¿Puede circular?', palabra(VER.circular.estado), VER.circular.resumen, VER.circular.estado],
         ['¿Puede transferirse?', palabra(VER.transferir.estado), VER.transferir.resumen, VER.transferir.estado],
@@ -882,73 +947,85 @@
                  : 'Todas las fuentes respondieron')),
          !VER.deuda.exacta ? 'con reparos' : (VER.deuda.total > 0 ? 'no' : 'si')],
       ];
-      var colW = COLW / 3, altoCol = 30;
-      hairline(y - 4, M, W - M, C_INK, 0.4);
+      var altoCol = 26;
+      hairline(y, M, W - M, C_INK, 0.4);
       respuestas.forEach(function (r, i) {
-        var x0 = M + i * colW + (i ? 6 : 0);
-        var ancho = colW - (i ? 6 : 0) - 4;
-        if (i) vline(M + i * colW, y - 4, y + altoCol - 8);
-        versalita(r[0], x0, y + 2, { size: 6, track: 0.4 });
-        punto(x0 + 1.4, y + 8.6, estadoColor(r[3]), 1.5);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(12);
-        doc.setTextColor.apply(doc, C_INK);
-        doc.text(String(r[1]), x0 + 5, y + 10, { maxWidth: ancho - 5 });
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(6.8);
-        doc.setTextColor.apply(doc, C_MUTED);
-        doc.text(doc.splitTextToSize(String(r[2] || ''), ancho), x0, y + 16);
+        var x0 = gx(i * 4), ancho = gw(4);
+        if (i) vline(x0 - GRID.gutter / 2, y, y + altoCol - U);
+        versalita(r[0], x0, y + 5, { size: T.micro, track: 0.4 });
+        punto(x0 + 1.4, y + 11.4, estadoColor(r[3]), 1.5);
+        rotulo(String(r[1]), x0 + 5, y + 13, T.h3, C_INK, true, { maxWidth: ancho - 5 });
+        rotulo(parte(r[2] || '', ancho, T.micro), x0, y + 18.5, T.micro, C_MUTED);
       });
       y += altoCol;
 
       // Por qué. Sin esto el veredicto es una opinión.
       if (VER.motivos.length) {
-        hairline(y - 5);
-        versalita('Fundamento', M, y + 1, { size: 6.4, track: 0.6 });
-        y += 6;
+        av(1);
+        hairline(y);
+        av(1);
+        versalita('Fundamento', M, y, { size: T.micro, track: 0.8 });
+        av(1.5);
         VER.motivos.forEach(function (mo) {
-          var lineas = doc.splitTextToSize(mo, COLW - 6);
+          var lineas = parte(mo, gw(11), T.base);
           punto(M + 1, y - 1.2, C_HAIR, 0.9);
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(8);
-          doc.setTextColor.apply(doc, C_INK);
-          doc.text(lineas, M + 5, y);
-          y += lineas.length * 4.2 + 1.4;
+          rotulo(lineas, gx(0) + 5, y, T.base, C_INK);
+          y += lineas.length * LH.base + 1.2;
         });
-        y += 3;
       }
 
       // El índice del proveedor, dicho de quién es.
       if (R.score) {
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(7);
-        doc.setTextColor.apply(doc, C_MUTED);
-        doc.text('Índice del proveedor: ' + R.score + ' de 100' +
-                 (R.nivel ? ' (' + R.nivel.toLowerCase() + ')' : '') +
-                 '. Criterio no publicado; el veredicto de arriba es el de la plataforma.',
-                 M, y, { maxWidth: COLW });
-        y += 6;
+        av(0.5);
+        rotulo('Índice del proveedor: ' + R.score + ' de 100' +
+               (R.nivel ? ' (' + R.nivel.toLowerCase() + ')' : '') +
+               '. Criterio no publicado; el veredicto de arriba es el de la plataforma.',
+               M, y, T.mini, C_MUTED, false, { maxWidth: CW });
+        av(1.5);
       }
     }
 
-    /* Nota de alcance, anclada al pie de la portada. Un informe serio
-       dice de dónde sale y hasta dónde llega antes de que alguien tome
-       una decisión con él. */
-    var notaY = FOOT - 16;
-    if (y < notaY - 8) {          // con menos aire que eso, se pisaría el fundamento
-      hairline(notaY - 6);
+    /* ── Nota de alcance ──────────────────────────────────────────
+       Un informe serio dice de dónde sale y hasta dónde llega antes de
+       que alguien tome una decisión con él. Va al pie de la portada
+       cuando queda sitio; si el fundamento creció y no cabe, se imprime
+       al cierre del documento en vez de apretarla contra el pie. */
+    var NOTA = 'Este documento reúne la información devuelta por las fuentes oficiales ' +
+               'consultadas en la fecha de emisión. El veredicto es una lectura de esos ' +
+               'registros y no sustituye la verificación física del vehículo ni el trámite ' +
+               'ante la entidad correspondiente. Su autenticidad se comprueba con el folio y ' +
+               'el código QR impresos en cada página.';
+
+    /* `splitTextToSize` parte con la fuente ACTIVA, no con la que se
+       vaya a usar después: midiendo con la que quedó puesta por el
+       bloque anterior, la nota salía en líneas de 185 mm y se iba fuera
+       de la caja. Se fija el cuerpo antes de medir, y se mide una sola
+       vez para que el alto reservado y el dibujado sean el mismo. */
+    function lineasNota() {
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.8);
-      doc.setTextColor.apply(doc, C_MUTED);
-      doc.text(doc.splitTextToSize(
-        'Este documento reúne la información devuelta por las fuentes oficiales consultadas en la fecha de ' +
-        'emisión. El veredicto es una lectura de esos registros y no sustituye la verificación física del ' +
-        'vehículo ni el trámite ante la entidad correspondiente. Su autenticidad se comprueba con el folio ' +
-        'y el código QR impresos en cada página.', COLW - 20), M, notaY);
+      doc.setFontSize(T.micro);
+      return doc.splitTextToSize(NOTA, CW - 10);
+    }
+
+    function notaAlcance(yy) {
+      var lineas = lineasNota();
+      var alto = lineas.length * LH.mini + 9;
+      doc.setFillColor.apply(doc, C_SOFT);
+      doc.rect(M, yy, CW, alto, 'F');
+      versalita('Alcance del informe', M + 5, yy + 5.5, { size: 5.8, track: 0.8 });
+      rotulo(lineas, M + 5, yy + 10.5, T.micro, C_MUTED);
+      return alto;
+    }
+
+    var notaEnPortada = false;
+    var notaAlto = lineasNota().length * LH.mini + 9;
+    if (y + U * 2 + notaAlto <= CUERPO.bottom) {
+      notaAlcance(CUERPO.bottom - notaAlto);
+      notaEnPortada = true;
     }
 
     /* ══════════════════════════════════════════════════════════
-       CONTENIDO
+       CUERPO
        ══════════════════════════════════════════════════════════ */
     nuevaPagina();
 
@@ -958,38 +1035,58 @@
        el mismo análisis partido en dos. */
     if (R.indEtiquetas && R.indValores && R.indEtiquetas.length === R.indValores.length) {
       var n = R.indEtiquetas.length;
-      versalita('Recuento del proveedor', M, y, { size: 6.8, track: 0.8 });
-      y += 5;
+      versalita('Recuento del proveedor', M, y, { size: T.micro, track: 0.8 });
+      av(1);
       hairline(y, M, W - M, C_INK, 0.4);
-      var cardW = COLW / n, cardH = 20;
+      var cardW = CW / n, cardH = U * 5;
       for (var ci = 0; ci < n; ci++) {
         var cx0 = M + ci * cardW;
-        if (ci) vline(cx0, y, y + cardH - 4);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(15);
-        doc.setTextColor.apply(doc, C_INK);
-        doc.text(String(R.indValores[ci] || '—'), cx0 + (ci ? 5 : 0), y + 9,
-                 { maxWidth: cardW - 6 });
-        versalita(String(R.indEtiquetas[ci] || ''), cx0 + (ci ? 5 : 0), y + 14.5,
+        if (ci) vline(cx0 - GRID.gutter / 2, y, y + cardH - U);
+        rotulo(String(R.indValores[ci] || '—'), cx0, y + 9, 15, C_INK, true,
+               { maxWidth: cardW - 6 });
+        versalita(String(R.indEtiquetas[ci] || ''), cx0, y + 14.5,
                   { size: 5.8, track: 0.3 });
       }
-      y += cardH + 8;
+      y += cardH;
+      av(2);
     }
 
-    // Estilos compartidos por todas las tablas del informe.
-    var margenTabla = { left: M, right: M, top: TOP, bottom: H - FOOT + 8 };
+    // ── Estilos comunes de tabla ──
+    var margenTabla = { left: M, right: M, top: CUERPO.top, bottom: H - PIE.filete + 6 };
     var CABECERA = {
-      fontSize: 7, textColor: [255, 255, 255], fontStyle: 'bold', fillColor: C_INK,
+      fontSize: T.micro + 0.6, textColor: [255, 255, 255], fontStyle: 'bold', fillColor: C_INK,
       cellPadding: { top: 2.2, bottom: 2.2, left: 2.5, right: 2.5 }, lineWidth: 0
     };
-    var CUERPO = {
-      fontSize: 8.2, textColor: C_INK, valign: 'top',
+    var CUERPO_TABLA = {
+      fontSize: T.base, textColor: C_INK, valign: 'top',
       cellPadding: { top: 2.6, bottom: 2.6, left: 2.5, right: 2.5 },
       lineWidth: { bottom: 0.1 }, lineColor: C_HAIR
     };
 
-    var indice = [];
+    /* Las columnas de importes y fechas se alinean a la derecha. En un
+       informe con dinero dentro, una columna de cifras alineada a la
+       izquierda es la señal más rápida de que el documento no lo hizo
+       nadie: los soles dejan de comparar de un vistazo. */
+    var RE_CIFRA = /^\s*(S\/\.?\s*)?-?\d[\d.,]*\s*$/;
+    function columnasNumericas(cuerpo, maxCols) {
+      var estilos = {};
+      for (var c = 0; c < maxCols; c++) {
+        var conDato = 0, numericas = 0;
+        cuerpo.forEach(function (fila) {
+          var v = String(fila[c] === undefined ? '' : fila[c]).trim();
+          if (!v) return;
+          conDato++;
+          if (RE_CIFRA.test(v)) numericas++;
+        });
+        if (conDato >= 2 && numericas === conDato) estilos[c] = { halign: 'right' };
+      }
+      return estilos;
+    }
+
+    var indice = [];        // para la página de contenido
+    var marcas = [];        // running head: qué sección corre en cada página
     var numSec = 0;
+
     secciones.forEach(function (sec) {
       var kv  = sec.filas.filter(function (f) { return f.t === 'kv'; });
       var txt = sec.filas.filter(function (f) { return f.t === 'txt'; });
@@ -997,24 +1094,20 @@
       if (!kv.length && !txt.length && !row.length && !sec.imgs.length) return;
 
       numSec++;
-      need(30);
+      need(U * 8);
 
       /* Cabecera de sección: el número en gris claro y grande hace de
-         guía visual al hojear; el título manda, y el filete cierra. */
+         guía al hojear; el título manda y el filete en tinta cierra. */
       var etiqueta = ('0' + numSec).slice(-2);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(15);
-      doc.setTextColor.apply(doc, C_HAIR);
-      doc.text(etiqueta, M, y);
-      doc.setFontSize(12.5);
-      doc.setTextColor.apply(doc, C_INK);
-      doc.text(sec.titulo, M + 11, y, { maxWidth: COLW - 11 });
+      rotulo(etiqueta, M, y, 15, C_HAIR, true);
+      rotulo(sec.titulo, gx(1), y, T.h3, C_INK, true, { maxWidth: gw(11) });
       indice.push({ n: etiqueta, titulo: sec.titulo, pag: paginaActual() });
+      marcas.push({ pag: paginaActual(), texto: etiqueta + ' · ' + sec.titulo });
       y += 3.6;
       hairline(y, M, W - M, C_INK, 0.4);
-      y += 8;
+      av(2);
 
-      // Campos: etiqueta tenue a la izquierda, valor en tinta.
+      // Campos: etiqueta tenue a la izquierda (4 columnas), valor en tinta.
       if (kv.length) {
         doc.autoTable({
           startY: y,
@@ -1022,9 +1115,9 @@
           margin: margenTabla,
           tableLineWidth: 0,
           didDrawPage: cromo,
-          bodyStyles: CUERPO,
+          bodyStyles: CUERPO_TABLA,
           columnStyles: {
-            0: { cellWidth: 56, textColor: C_MUTED, fontSize: 7.8,
+            0: { cellWidth: gw(4), textColor: C_MUTED, fontSize: T.mini,
                  cellPadding: { top: 2.6, bottom: 2.6, left: 0, right: 3 } },
             1: { cellWidth: 'auto', fontStyle: 'bold' }
           },
@@ -1032,7 +1125,7 @@
           theme: 'plain'
         });
         y = (doc.lastAutoTable && doc.lastAutoTable.finalY) || y;
-        y += 6;
+        av(1.5);
       }
 
       // Tablas: cabecera sólida cuando la primera fila viene en versalitas.
@@ -1049,6 +1142,7 @@
           head = [norm(row[0])];
           cuerpo = cuerpo.slice(1);
         }
+        var alineadas = columnasNumericas(cuerpo, maxCols);
         doc.autoTable({
           startY: y,
           head: head || undefined,
@@ -1057,30 +1151,28 @@
           tableLineWidth: 0,
           didDrawPage: cromo,
           headStyles: CABECERA,
-          bodyStyles: CUERPO,
+          bodyStyles: CUERPO_TABLA,
           alternateRowStyles: { fillColor: C_SOFT },
+          columnStyles: alineadas,
           styles: { overflow: 'linebreak', lineWidth: 0, fillColor: false },
           theme: 'plain'
         });
         y = (doc.lastAutoTable && doc.lastAutoTable.finalY) || y;
-        y += 6;
+        av(1.5);
       }
 
       // Notas al pie de sección
       txt.forEach(function (f) {
         if (!f.a || f.a.length < 2) return;
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(7.8);
-        doc.setTextColor.apply(doc, C_MUTED);
-        var ls = doc.splitTextToSize(f.a, COLW);
-        need(ls.length * 3.8 + 4);
-        doc.text(ls, M, y + 2);
-        y += ls.length * 3.8 + 4;
+        var ls = parte(f.a, CW, T.mini);
+        need(ls.length * LH.mini + U);
+        rotulo(ls, M, y + 2, T.mini, C_MUTED);
+        y += ls.length * LH.mini + U;
       });
 
       /* ── Imágenes ── */
       if (sec.imgs.length) {
-        y += 3;
+        av(0.5);
         var chicas = sec.imgs.filter(function (im) { return im.px <= 1000 && im.py <= 700; });
         var grandes = chicas.length > 1
           ? sec.imgs.filter(function (im) { return !(im.px <= 1000 && im.py <= 700); })
@@ -1089,9 +1181,9 @@
         // Biométricas: alineadas por su base, con rótulo debajo
         if (chicas.length > 1) {
           var rotulos = ['Fotografía', 'Firma', 'Huella derecha', 'Huella izquierda'];
-          var maxHb = 34;
-          need(maxHb + 14);
-          var slot = COLW / chicas.length, base = y + maxHb;
+          var maxHb = U * 9;
+          need(maxHb + U * 3);
+          var slot = CW / chicas.length, base = y + maxHb;
           chicas.forEach(function (im, i) {
             var esc = Math.min((slot - 10) / im.px, maxHb / im.py);
             var dw = im.px * esc, dh = im.py * esc, cx = M + slot * i + slot / 2;
@@ -1101,50 +1193,48 @@
             versalita(rotulos[i] || ('Imagen ' + (i + 1)), cx, base + 4.6,
                       { size: 5.8, track: 0.3, align: 'center' });
           });
-          y = base + 11;
+          y = base + U * 2.5;
         }
 
         // Documentos: a página ancha, con su pie tomado del original
         var caps = sec.caps || [];
         grandes.forEach(function (im, gi) {
           var cap = caps[gi] || '';
-          var maxHg = FOOT - TOP - 16;
-          var esc = Math.min(COLW / im.px, maxHg / im.py);
+          var maxHg = CUERPO.bottom - CUERPO.top - U * 3;
+          var esc = Math.min(CW / im.px, maxHg / im.py);
           var dw = im.px * esc, dh = im.py * esc;
-          if (y + dh + (cap ? 7 : 0) > FOOT - 8) nuevaPagina();
+          if (y + dh + (cap ? U * 1.5 : 0) > CUERPO.bottom) nuevaPagina();
           if (cap) {
-            versalita(cap, M, y, { size: 6.2, track: 0.4 });
-            y += 4;
+            versalita(cap, M, y, { size: T.micro, track: 0.4 });
+            av(1);
           }
-          var ix = M + (COLW - dw) / 2;
+          var ix = M + (CW - dw) / 2;
           try {
             doc.addImage(im.dataUrl, 'JPEG', ix, y, dw, dh, undefined, 'FAST');
           } catch (e) { /* imagen no insertable */ }
           doc.setDrawColor.apply(doc, C_HAIR);
           doc.setLineWidth(0.2);
           doc.rect(ix, y, dw, dh);
-          y += dh + 8;
+          y += dh + U * 2;
         });
       }
 
-      y += 8;
+      av(2);
     });
 
     /* ── Cobertura ────────────────────────────────────────────────
        Qué se consultó y qué contestó cada fuente. Es el apartado que
        convierte el silencio en información: sin él, una sección que no
-       respondió se lee igual que una sección limpia, y alguien puede
-       comprar un vehículo confiando en algo que nunca se comprobó. */
+       respondió se lee igual que una limpia, y alguien puede comprar un
+       vehículo confiando en algo que nunca se comprobó. */
     if (VER && VER.modelo && VER.modelo.cobertura && VER.modelo.cobertura.length) {
-      need(46);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12.5);
-      doc.setTextColor.apply(doc, C_INK);
-      doc.text('Fuentes consultadas', M, y);
+      need(U * 12);
+      rotulo('Fuentes consultadas', M, y, T.h3, C_INK, true);
       indice.push({ n: '·', titulo: 'Fuentes consultadas', pag: paginaActual() });
+      marcas.push({ pag: paginaActual(), texto: 'Fuentes consultadas' });
       y += 3.6;
       hairline(y, M, W - M, C_INK, 0.4);
-      y += 8;
+      av(2);
 
       var traduce = {
         'con datos':     'Respondió con registros',
@@ -1161,9 +1251,9 @@
         tableLineWidth: 0,
         didDrawPage: cromo,
         headStyles: CABECERA,
-        bodyStyles: CUERPO,
+        bodyStyles: CUERPO_TABLA,
         alternateRowStyles: { fillColor: C_SOFT },
-        columnStyles: { 1: { cellWidth: 62 } },
+        columnStyles: { 1: { cellWidth: gw(5) } },
         // Lo que no respondió, en rojo: es lo que hay que mirar.
         didParseCell: function (data) {
           if (data.section === 'body' && data.column.index === 1 &&
@@ -1176,64 +1266,79 @@
         theme: 'plain'
       });
       y = (doc.lastAutoTable && doc.lastAutoTable.finalY) || y;
-      y += 6;
+      av(1.5);
+    }
+
+    // La nota de alcance que no cupo en la portada cierra el documento.
+    if (!notaEnPortada) {
+      need(notaAlto + U);
+      notaAlcance(y);
+      y += notaAlto;
     }
 
     /* ── Índice, insertado como página 2 ──────────────────────────
        Se dibuja al final, cuando ya se sabe en qué página cayó cada
        sección, y se mueve delante. Si el informe trae tantas secciones
-       que el índice no cabría en una página, no se imprime: media tabla
-       de contenidos confunde más que no tenerla. */
-    if (indice.length > 2 && indice.length <= 26 &&
+       que no cabrían en una página, no se imprime: media tabla de
+       contenidos confunde más que ninguna. */
+    var CABE_INDICE = Math.floor((CUERPO.bottom - CUERPO.top - U * 6) / (U * 2));
+    var conIndice = false;
+    if (indice.length > 2 && indice.length <= CABE_INDICE &&
         typeof doc.movePage === 'function' && typeof doc.deletePage === 'function') {
       try {
         doc.addPage();
         cromo();
-        var iy = TOP + 6;
-        versalita('Contenido', M, iy, { size: 7, track: 1.2 });
-        iy += 10;
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(19);
-        doc.setTextColor.apply(doc, C_INK);
-        doc.text('Índice del informe', M, iy);
+        var iy = CUERPO.top + U;
+        versalita('Contenido', M, iy, { size: T.mini, track: 1.4 });
+        iy += U * 2.5;
+        rotulo('Índice del informe', M, iy, 19, C_INK, true);
         iy += 4;
         hairline(iy, M, W - M, C_INK, 0.4);
-        iy += 9;
+        iy += U * 2;
         indice.forEach(function (it) {
           // Todo lo que iba de la página 2 en adelante baja un lugar.
           var pag = it.pag >= 2 ? it.pag + 1 : it.pag;
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(8);
-          doc.setTextColor.apply(doc, C_MUTED);
-          doc.text(it.n, M, iy);
-          doc.setFontSize(9.4);
-          doc.setTextColor.apply(doc, C_INK);
-          doc.text(it.titulo, M + 11, iy, { maxWidth: COLW - 30 });
-          doc.setFont('helvetica', 'normal');
-          doc.setTextColor.apply(doc, C_MUTED);
-          doc.text(String(pag), W - M, iy, { align: 'right' });
+          rotulo(it.n, M, iy, T.base, C_MUTED, true);
+          rotulo(it.titulo, gx(1), iy, 9.4, C_INK, true, { maxWidth: gw(9) });
+          rotulo(String(pag), W - M, iy, 9.4, C_MUTED, false, { align: 'right' });
           hairline(iy + 2.6);
-          iy += 8;
+          iy += U * 2;
         });
         doc.movePage(doc.getNumberOfPages(), 2);
+        conIndice = true;
       } catch (e) {
         console.warn('[metapla] sin índice:', e);
         try { doc.deletePage(doc.getNumberOfPages()); } catch (e2) {}
       }
     }
 
-    /* ── Folio de página ── */
+    /* ── Pasada final: running head y numeración ──────────────────
+       Las dos cosas necesitan saber el total de páginas y en cuál acabó
+       cada sección, así que se pintan cuando ya no se añade nada. El
+       encabezado corriente se resuelve por posición: cada página lleva
+       la última sección abierta en ella o antes. */
+    if (conIndice) {
+      marcas.forEach(function (mk) { if (mk.pag >= 2) mk.pag += 1; });
+      marcas.push({ pag: 2, texto: 'Contenido' });
+    }
+    marcas.sort(function (a, b) { return a.pag - b.pag; });
+
     var total = typeof doc.getNumberOfPages === 'function' ? doc.getNumberOfPages() : 1;
-    for (var pn = 1; pn <= total; pn++) {
-      if (pn === 1) continue;               // la portada no se numera
+    for (var pn = 2; pn <= total; pn++) {                // la portada no se rotula ni se numera
       doc.setPage(pn);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.6);
-      doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('Página', W - M - 15, FOOT + 5, { align: 'right' });
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor.apply(doc, C_INK);
-      doc.text(pn + ' de ' + total, W - M - 15, FOOT + 9.2, { align: 'right' });
+
+      var corre = '';
+      for (var mi = 0; mi < marcas.length; mi++) {
+        if (marcas[mi].pag <= pn) corre = marcas[mi].texto; else break;
+      }
+      if (corre) {
+        if (corre.length > 46) corre = corre.slice(0, 45) + '…';
+        versalita(corre, W - M, CAB.texto, { size: T.micro, track: 0.5, align: 'right' });
+      }
+
+      versalita('Página', W - M - PIE.qr - 3, PIE.l1, { size: 5.4, track: 0.4, align: 'right' });
+      rotulo(pn + ' de ' + total, W - M - PIE.qr - 3, PIE.l2 + 0.4, T.mini, C_INK, true,
+             { align: 'right' });
     }
 
     var slug = valor.replace(/[^A-Z0-9]/g, '').slice(0, 12);
@@ -1249,7 +1354,6 @@
       filename: filename
     };
   }
-
   /* ══════════════════════════════════════════════════════════
      API pública
      ══════════════════════════════════════════════════════════ */
