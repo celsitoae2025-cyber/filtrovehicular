@@ -397,7 +397,35 @@
     return modelo;
   }
 
+  /* ── El folio ────────────────────────────────────────────────────
+     El número que va impreso al pie del reporte y dentro del QR. Sale
+     del identificador que devuelve el servidor al cobrar la consulta:
+     es único por emisión y no depende de ningún contador guardado en el
+     navegador, que se repetiría en cuanto lo pidieran dos clientes a la
+     vez.
+
+     Alfabeto sin O, I ni 1: un folio se dicta por teléfono y se copia a
+     mano, y ahí el cero y la o son la misma letra. */
+  var ALFABETO = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+
+  function folioDe(id) {
+    var s = String(id || Date.now()) + '|fv';
+    var h1 = 2166136261, h2 = 5381;
+    for (var i = 0; i < s.length; i++) {
+      h1 ^= s.charCodeAt(i);
+      h1 = (h1 + ((h1 << 1) + (h1 << 4) + (h1 << 7) + (h1 << 8) + (h1 << 24))) >>> 0;
+      h2 = (((h2 << 5) + h2) + s.charCodeAt(i)) >>> 0;
+    }
+    var out = '';
+    for (var j = 0; j < 8; j++) {
+      var fuente = (j < 4 ? h1 : h2);
+      out += ALFABETO[(fuente >>> ((j % 4) * 5)) % ALFABETO.length];
+    }
+    return 'FV-' + out;
+  }
+
   Consultia.ReporteModelo = {
+    folioDe: folioDe,
     desdeSecciones: desdeSecciones,
     desdeParsed: desdeParsed,
     aImporte: aImporte,

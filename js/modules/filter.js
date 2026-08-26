@@ -321,6 +321,37 @@
     return html + '</div>';
   }
 
+  // El nivel del último reporte, para guardarlo junto al folio.
+  var ultimoVeredicto = null;
+
+  /* ── El registro del folio ───────────────────────────────────────────
+     Sin esto el QR no verifica nada: apuntaría a una página que no sabe
+     que ese documento existe. Se guarda lo mínimo —folio, placa, fecha y
+     veredicto— y nada del contenido: quien comprueba un reporte no tiene
+     por qué ver las deudas de nadie.
+
+     Va después de entregar el documento y sin bloquear. Si falla, el
+     cliente ya tiene su PDF; lo único que pierde es poder verificarlo, y
+     eso se arregla volviendo a emitirlo. */
+  async function registrarFolio(folio, placa, veredicto) {
+    var sb = Consultia.supabase;
+    if (!sb || !folio) return;
+    try {
+      var ses = await sb.auth.getSession();
+      var u = ses && ses.data && ses.data.session && ses.data.session.user;
+      if (!u) return;
+      var res = await sb.from('reportes_emitidos').insert({
+        folio: folio,
+        placa: String(placa || '').toUpperCase(),
+        user_id: u.id,
+        veredicto: veredicto || null,
+      });
+      if (res.error) throw res.error;
+    } catch (e) {
+      console.warn('[reporte] no se pudo registrar el folio:', e);
+    }
+  }
+
   /* ── El veredicto en pantalla ────────────────────────────────────────
      Lo primero que necesita quien va a comprar un auto no son veintiún
      apartados: es saber si puede circular, si puede transferirlo y cuánto
@@ -344,6 +375,7 @@
     try {
       var modelo = Consultia.ReporteModelo.desdeParsed(parsed, placa);
       r = Consultia.ReporteVeredicto.nivel(modelo);
+      ultimoVeredicto = r.nivel;
       if (modelo.noMapeado.length) {
         // No se le enseña al cliente: es para nosotros, y es el aviso de
         // que el proveedor cambió el nombre de algún campo.
@@ -775,7 +807,9 @@
     // (extrae texto + imágenes del original y arma un documento nuevo).
     var metaplaPdfArea = document.getElementById('metapla-pdf-area');
     if (metaplaPdfArea && esReporte && pdfs.length && pdfs[0].base64 && Consultia.MetaplaReport) {
-      (function (pdfsRef, valorRef) {
+      var folioRep = (Consultia.ReporteModelo && resp && resp.consulta_id)
+        ? Consultia.ReporteModelo.folioDe(resp.consulta_id) : '';
+      (function (pdfsRef, valorRef, folio) {
         (async function () {
           try {
             var result = await Consultia.MetaplaReport.generate(pdfsRef[0].base64, {
@@ -786,7 +820,8 @@
               }),
               // El veredicto del PDF sale de los mismos campos que el de
               // pantalla, no de las secciones deducidas del documento.
-              parsed: p
+              parsed: p,
+              folio: folio
             }, function (n, total) {
               metaplaPdfArea.innerHTML =
                 '<div class="cr-pdf-loading">Generando reporte PDF… ' + n + ' de ' + total + '</div>';
@@ -805,7 +840,8 @@
         })();
       // La placa consultada, no lo que haya en el campo ahora: para cuando
       // el PDF termina de armarse, el cliente puede haber escrito otra cosa.
-      })(pdfs, valorConsultado || ($('filter-input') ? $('filter-input').value.trim() : ''));
+      })(pdfs, valorConsultado || ($('filter-input') ? $('filter-input').value.trim() : ''), folioRep);
+      if (folioRep) registrarFolio(folioRep, valorConsultado, ultimoVeredicto);
     }
 
     var empty = $('filter-empty');

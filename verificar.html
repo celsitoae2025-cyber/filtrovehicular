@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#141D1C">
+<title>Verificar un reporte · Filtro Vehicular+</title>
+<meta name="description" content="Comprueba que un Reporte Vehicular Integral fue emitido por Filtro Vehicular+.">
+<meta name="robots" content="noindex">
+
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=5">
+<link rel="icon" href="/favicon.ico?v=5" sizes="32x32 48x48">
+
+<!-- ============================================================
+     Verificación de un reporte
+
+     Es la página que abre el QR del PDF. Su único trabajo: decir si ese
+     folio salió de aquí, para qué placa y cuándo. Nada más — quien
+     verifica un documento no tiene por qué ver las deudas de nadie.
+
+     Va suelta y sin sesión a propósito: la abre un comprador con el
+     teléfono, delante del vendedor, sin cuenta en la plataforma. Por eso
+     no carga la aplicación entera, solo el cliente de Supabase.
+
+     No se puede listar nada: la consulta va contra una función que
+     devuelve una fila y solo si aciertas el folio completo (ver la
+     migración 20260825120000).
+============================================================ -->
+
+<style>
+  :root {
+    --papel:  #ffffff;
+    --papel2: #f4f6f4;
+    --tinta:  #141d1c;
+    --tenue:  #667370;
+    --linea:  #dde3df;
+    --verde:  #8fc72e;
+    --ambar:  #ffb020;
+    --rojo:   #e53935;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--papel2);
+    color: var(--tinta);
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px 64px;
+  }
+  .caja {
+    width: 100%;
+    max-width: 520px;
+    background: var(--papel);
+    border: 1px solid var(--linea);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .membrete { background: var(--tinta); color: #fff; padding: 26px 28px 0; }
+  .marca { font-size: 14px; letter-spacing: .1em; text-transform: uppercase; opacity: .72; }
+  .membrete h1 { margin: 8px 0 18px; font-size: 25px; font-weight: 700; }
+  .cuatro { display: grid; grid-template-columns: repeat(4, 1fr); height: 4px; }
+  .cuatro i:nth-child(1) { background: #00bcd4; }
+  .cuatro i:nth-child(2) { background: var(--verde); }
+  .cuatro i:nth-child(3) { background: var(--ambar); }
+  .cuatro i:nth-child(4) { background: var(--rojo); }
+
+  .cuerpo { padding: 26px 28px 30px; display: flex; flex-direction: column; gap: 18px; }
+  .estado { display: flex; align-items: center; gap: 14px; }
+  .punto { width: 42px; height: 42px; border-radius: 999px; flex: 0 0 42px; }
+  .punto.ok  { background: var(--verde); }
+  .punto.mal { background: var(--rojo); }
+  .punto.esperando { background: var(--linea); }
+  .estado strong { font-size: 20px; }
+
+  dl { margin: 0; display: flex; flex-direction: column; gap: 2px; }
+  .fila { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 4px 16px; padding: 12px 0; border-bottom: 1px solid var(--linea); }
+  .fila:last-child { border-bottom: none; }
+  dt { margin: 0; font-size: 14px; letter-spacing: .05em; text-transform: uppercase; color: var(--tenue); }
+  dd { margin: 0; font-size: 17px; font-weight: 700; word-break: break-word; }
+
+  .nota { margin: 0; font-size: 15px; color: var(--tenue); }
+  form { display: flex; gap: 4px; }
+  input {
+    flex: 1; min-width: 0;
+    font: inherit; font-size: 17px;
+    padding: 12px 14px;
+    border: 1px solid var(--linea);
+    border-radius: 10px;
+    background: var(--papel);
+    color: var(--tinta);
+    text-transform: uppercase;
+  }
+  input:focus { outline: 2px solid var(--tinta); outline-offset: 1px; }
+  button {
+    font: inherit; font-weight: 700;
+    padding: 12px 20px;
+    border: none; border-radius: 10px;
+    background: var(--tinta); color: #fff;
+    cursor: pointer;
+  }
+  button:hover { background: #0e1312; }
+  .pie { padding: 0 28px 26px; font-size: 14px; color: var(--tenue); }
+  .pie a { color: var(--tinta); }
+</style>
+</head>
+<body>
+
+<main class="caja">
+  <header class="membrete">
+    <div class="marca">Filtro Vehicular+</div>
+    <h1>Verificar un reporte</h1>
+    <div class="cuatro"><i></i><i></i><i></i><i></i></div>
+  </header>
+
+  <div class="cuerpo">
+    <div class="estado">
+      <span class="punto esperando" id="punto" aria-hidden="true"></span>
+      <strong id="titulo">Comprobando…</strong>
+    </div>
+
+    <dl id="datos" hidden></dl>
+
+    <p class="nota" id="nota">Un momento.</p>
+
+    <form id="buscador" hidden>
+      <input id="folio" type="text" inputmode="text" autocomplete="off" spellcheck="false"
+             placeholder="FV-XXXXXXXX" aria-label="Folio del reporte" maxlength="14">
+      <button type="submit">Comprobar</button>
+    </form>
+  </div>
+
+  <div class="pie">
+    Esta página solo confirma que el folio fue emitido por la plataforma, para qué placa y
+    cuándo. No muestra el contenido del reporte.
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/shared/supabase-config.js?v=2"></script>
+<script>
+(function () {
+  var punto  = document.getElementById('punto');
+  var titulo = document.getElementById('titulo');
+  var nota   = document.getElementById('nota');
+  var datos  = document.getElementById('datos');
+  var form   = document.getElementById('buscador');
+  var campo  = document.getElementById('folio');
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function fecha(iso) {
+    try {
+      return new Date(iso).toLocaleString('es-PE', {
+        day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
+      });
+    } catch (e) { return iso; }
+  }
+
+  function pintarNoEncontrado(folio) {
+    punto.className = 'punto mal';
+    titulo.textContent = 'No encontrado';
+    datos.hidden = true;
+    nota.textContent = folio
+      ? 'No hay ningún reporte emitido con el folio ' + folio + '. Comprueba que esté bien escrito.'
+      : 'Escribe el folio que aparece al pie del reporte.';
+    form.hidden = false;
+    campo.value = folio || '';
+    campo.focus();
+  }
+
+  function pintarEncontrado(r) {
+    punto.className = 'punto ok';
+    titulo.textContent = 'Reporte auténtico';
+    datos.hidden = false;
+    datos.innerHTML =
+      '<div class="fila"><dt>Folio</dt><dd>' + esc(r.folio) + '</dd></div>' +
+      '<div class="fila"><dt>Placa</dt><dd>' + esc(r.placa) + '</dd></div>' +
+      '<div class="fila"><dt>Emitido</dt><dd>' + esc(fecha(r.emitido_at)) + '</dd></div>' +
+      (r.veredicto ? '<div class="fila"><dt>Veredicto</dt><dd>' + esc(r.veredicto) + '</dd></div>' : '');
+    nota.textContent = 'Este folio fue emitido por Filtro Vehicular+ para esa placa y en esa fecha.';
+    form.hidden = true;
+  }
+
+  async function comprobar(folio) {
+    folio = String(folio || '').trim().toUpperCase();
+    if (!folio) { pintarNoEncontrado(''); return; }
+
+    punto.className = 'punto esperando';
+    titulo.textContent = 'Comprobando…';
+    nota.textContent = 'Un momento.';
+    datos.hidden = true;
+
+    try {
+      var sb = window.Consultia && window.Consultia.supabase;
+      if (!sb) throw new Error('sin conexión');
+      var res = await sb.rpc('verificar_reporte', { p_folio: folio });
+      if (res.error) throw res.error;
+      var fila = (res.data || [])[0];
+      if (fila) pintarEncontrado(fila);
+      else pintarNoEncontrado(folio);
+    } catch (e) {
+      console.error('[verificar]', e);
+      punto.className = 'punto mal';
+      titulo.textContent = 'No se pudo comprobar';
+      nota.textContent = 'Falló la conexión. Vuelve a intentarlo en un momento.';
+      form.hidden = false;
+    }
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    comprobar(campo.value);
+  });
+
+  // El folio llega en la dirección cuando se entra desde el QR.
+  var f = new URLSearchParams(location.search).get('f');
+  if (f) comprobar(f); else pintarNoEncontrado('');
+})();
+</script>
+</body>
+</html>

@@ -58,6 +58,40 @@
 
   // Las tres respuestas se dicen con la misma palabra en el PDF y en la
   // pantalla. Si una dice «Sí» y la otra «Correcto», parecen dos cosas.
+  /* ── El QR ───────────────────────────────────────────────────────
+     Se dibuja módulo a módulo con rectángulos, no como imagen. Un QR
+     rasterizado a 16 mm se emborrona al imprimir y hay lectores que ya
+     no lo cogen; en vectores sale nítido a cualquier tamaño y ocupa una
+     fracción.
+
+     Si la librería no cargó, no se dibuja nada y el folio impreso sigue
+     sirviendo para verificar a mano. Un hueco es mejor que un cuadrado
+     que no se puede leer. */
+  function dibujarQR(doc, texto, x, y, lado) {
+    if (typeof qrcode !== 'function') return false;
+    var q;
+    try {
+      q = qrcode(0, 'M');          // versión automática, corrección media
+      q.addData(texto);
+      q.make();
+    } catch (e) {
+      console.warn('[metapla] no se pudo armar el QR:', e);
+      return false;
+    }
+    var n = q.getModuleCount();
+    var celda = lado / n;
+    doc.setFillColor(20, 29, 28);
+    for (var f = 0; f < n; f++) {
+      for (var c = 0; c < n; c++) {
+        if (!q.isDark(f, c)) continue;
+        /* Un pelo de solape entre módulos: sin él, el redondeo del
+           visor deja rayas blancas entre columnas y el lector falla. */
+        doc.rect(x + c * celda, y + f * celda, celda + 0.02, celda + 0.02, 'F');
+      }
+    }
+    return true;
+  }
+
   function palabra(estado) {
     return estado === 'si' ? 'Sí' : (estado === 'no' ? 'No' : 'Con reparos');
   }
@@ -549,6 +583,10 @@
     var HEAD_Y = 14;            // línea base del membrete
     var TOP = 32;               // inicio del área de contenido
     var FOOT = H - 20;          // filete del pie
+
+    // El folio se imprime en cada pie y viaja dentro del QR.
+    var folio = meta.folio || '';
+    var VERIFICA = 'https://filtrovehicularperu.com/verificar';
     var COLW = W - M * 2;
 
     var valor = (meta && meta.valor ? String(meta.valor) : '').toUpperCase();
@@ -647,6 +685,29 @@
       doc.setFontSize(6);
       doc.text('Información obtenida de fuentes oficiales · Emitido el ' + fecha,
                M, FOOT + 8.6);
+
+      /* ── El QR, en TODAS las páginas ──────────────────────────────
+         Un reporte se enseña suelto, se fotografía una hoja o se imprime
+         de a poco. Con el QR solo al final, la página que acaba en manos
+         del comprador no se puede comprobar. Va pequeño, a la derecha
+         del pie, y lleva al folio en la página de verificación.
+
+         El folio impreso al lado no es adorno: si el QR se estropea al
+         fotocopiar, se escribe a mano y verifica igual. */
+      if (folio) {
+        var lado = 14;
+        var qx = W - M - lado, qy = FOOT + 1.6;
+        var pintado = dibujarQR(doc, VERIFICA + '?f=' + encodeURIComponent(folio), qx, qy, lado);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(6.2);
+        doc.setTextColor.apply(doc, C_INK);
+        doc.text(folio, qx - 2, FOOT + 5.4, { align: 'right' });
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(5.4);
+        doc.setTextColor.apply(doc, C_MUTED);
+        doc.text(pintado ? 'Verifica este reporte' : 'Verifica en ' + VERIFICA,
+                 qx - 2, FOOT + 8.8, { align: 'right' });
+      }
     }
 
     var y = TOP;
@@ -751,17 +812,27 @@
     if (VER) {
       var vc = riskColor(VER.nivel);
 
+      /* El semáforo, en grande y lo primero. Un disco del color del
+         veredicto: verde, ámbar o rojo. Quien abre el reporte lo
+         entiende antes de leer una sola palabra, y eso es justo lo que
+         tiene que pasar en la primera página de un informe de riesgo. */
+      var discoR = 9;
+      var discoX = M + discoR, discoY = y + discoR + 1;
+      doc.setFillColor.apply(doc, vc);
+      doc.circle(discoX, discoY, discoR, 'F');
+
+      var tx = discoX + discoR + 9;
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(6.6);
       doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('VEREDICTO', M, y + 4);
+      doc.text('VEREDICTO', tx, y + 5);
 
       doc.setFontSize(17);
       doc.setTextColor.apply(doc, vc);
       doc.text(VER.nivel === 'SIN DETERMINAR'
         ? 'Veredicto parcial'
-        : 'Riesgo ' + VER.nivel.charAt(0) + VER.nivel.slice(1).toLowerCase(), M, y + 13);
-      y += 19;
+        : 'Riesgo ' + VER.nivel.charAt(0) + VER.nivel.slice(1).toLowerCase(), tx, y + 14);
+      y += discoR * 2 + 6;
 
       // Las tres respuestas, en tres cajas del mismo ancho.
       var respuestas = [
