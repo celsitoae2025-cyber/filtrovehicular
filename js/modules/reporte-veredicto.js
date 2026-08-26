@@ -90,6 +90,12 @@
   }
 
   function transferir(m) {
+    /* Sin las incidencias mapeadas no hay nada que afirmar. Antes esto
+       leía secciones deducidas por su título y llegó a decir que un
+       vehículo tenía un robo registrado cuando no tenía ninguno. */
+    if (sinInterpretar(m, 'incidencias')) {
+      return { estado: 'sin determinar', razones: [], resumen: 'Requiere revisar el detalle del reporte' };
+    }
     var razones = [];
     (m.incidencias || []).forEach(function (inc) {
       if (BLOQUEAN_TRANSFERENCIA.test(inc.tipo)) {
@@ -121,7 +127,18 @@
     return { estado: 'si', razones: [], resumen: textoLimpio };
   }
 
+  function sinInterpretar(m, que) {
+    return (m.sinInterpretar || []).indexOf(que) !== -1;
+  }
+
   function deuda(m) {
+    if (sinInterpretar(m, 'deudas')) {
+      return {
+        total: null, totalTexto: 'Sin determinar', partes: [],
+        ilegibles: 0, entidadesIlegibles: [], exacta: false,
+        completa: false, fuentesMudas: 0, sinDeterminar: true,
+      };
+    }
     var partes = (m.deudas || []).slice().sort(function (a, b) { return b.monto - a.monto; });
     var total = partes.reduce(function (s, d) { return s + (d.monto || 0); }, 0);
     var mudas = (m.cobertura || []).filter(function (c) { return c.estado === 'sin respuesta'; }).length;
@@ -154,13 +171,19 @@
     var motivos = [];
     if (c.estado === 'no') motivos.push('No puede circular: ' + c.resumen.toLowerCase());
     if (t.estado === 'no') motivos.push('No se puede transferir: ' + t.resumen.toLowerCase());
-    if (d.total > 0) motivos.push('Deuda registrada de ' + d.totalTexto);
+    if (d.sinDeterminar) motivos.push('La deuda y los antecedentes aún no se interpretan: hay que leer el detalle del reporte');
+    else if (d.total > 0) motivos.push('Deuda registrada de ' + d.totalTexto);
     if (d.ilegibles) motivos.push('Hay deuda en ' + d.entidadesIlegibles.join(', ') +
       ' que no se pudo totalizar');
     if (d.fuentesMudas) motivos.push(d.fuentesMudas + ' fuente(s) sin respuesta');
 
+    /* Un nivel es una afirmación. Si media consulta está sin interpretar,
+       la única afirmación honesta es que no se sabe: llamar «BAJO» a un
+       vehículo del que no hemos leído las deudas es peor que no decir
+       nada. */
     var estado;
-    if (t.estado === 'no' || d.total >= 5000 || d.ilegibles) estado = 'ALTO';
+    if (d.sinDeterminar || t.estado === 'sin determinar') estado = 'SIN DETERMINAR';
+    else if (t.estado === 'no' || d.total >= 5000 || d.ilegibles) estado = 'ALTO';
     else if (c.estado === 'no' || d.total > 0 || t.razones.length) estado = 'MEDIO';
     else if (!d.completa) estado = 'MEDIO';
     else estado = 'BAJO';

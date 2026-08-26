@@ -261,14 +261,14 @@
      raras—, no se pinta nada y el reporte sigue saliendo como antes. Un
      veredicto es un extra sobre el documento, no un requisito para que
      el documento exista. */
-  function pintarVeredicto(secciones, placa) {
+  function pintarVeredicto(parsed, placa) {
     if (!Consultia.ReporteModelo || !Consultia.ReporteVeredicto) return;
     var body = $('filter-result-body');
     if (!body || document.getElementById('rep-veredicto')) return;
 
     var r;
     try {
-      var modelo = Consultia.ReporteModelo.desdeSecciones(secciones, placa);
+      var modelo = Consultia.ReporteModelo.desdeParsed(parsed, placa);
       r = Consultia.ReporteVeredicto.nivel(modelo);
       if (modelo.noMapeado.length) {
         // No se le enseña al cliente: es para nosotros, y es el aviso de
@@ -282,7 +282,9 @@
 
     var chip = function (titulo, estado, detalle) {
       var clase = estado === 'si' ? 'ok' : (estado === 'no' ? 'mal' : 'duda');
-      var palabra = estado === 'si' ? 'Sí' : (estado === 'no' ? 'No' : 'Con reparos');
+      var palabra = estado === 'si' ? 'Sí'
+        : (estado === 'no' ? 'No'
+        : (estado === 'sin determinar' ? 'Sin determinar' : 'Con reparos'));
       return '<div class="ver-caja ver-' + clase + '">' +
         '<span class="ver-k">' + escapeHtml(titulo) + '</span>' +
         '<strong class="ver-v">' + palabra + '</strong>' +
@@ -296,7 +298,10 @@
        sabemos. Ahí se dice que no se pudo totalizar. */
     function cajaDeuda(d) {
       var clase, valor, detalle;
-      if (!d.exacta && d.total === 0) {
+      if (d.sinDeterminar) {
+        clase = ' ver-duda'; valor = 'Sin determinar';
+        detalle = 'El detalle del reporte todavía no se interpreta';
+      } else if (!d.exacta && d.total === 0) {
         clase = ' ver-duda'; valor = 'No totalizada';
         detalle = 'Hay registros en ' + d.entidadesIlegibles.join(', ') + ' sin importe legible';
       } else {
@@ -314,19 +319,29 @@
     }
 
     var html =
-      '<div class="rep-veredicto ver-nivel-' + r.nivel.toLowerCase() + '" id="rep-veredicto">' +
+      // El nivel entra en el nombre de la clase, así que un espacio lo
+      // partiría en dos clases: «sin determinar» daba `ver-nivel-sin` y
+      // `determinar` suelta.
+      '<div class="rep-veredicto ver-nivel-' + r.nivel.toLowerCase().replace(/\s+/g, '-') +
+        '" id="rep-veredicto">' +
         '<div class="ver-cabecera">' +
           '<span class="ver-rotulo">Veredicto</span>' +
-          '<strong class="ver-nivel">Riesgo ' + r.nivel.charAt(0) + r.nivel.slice(1).toLowerCase() + '</strong>' +
+          '<strong class="ver-nivel">' + (r.nivel === 'SIN DETERMINAR'
+            ? 'Parcial'
+            : 'Riesgo ' + r.nivel.charAt(0) + r.nivel.slice(1).toLowerCase()) + '</strong>' +
         '</div>' +
         '<div class="ver-cajas">' +
           chip('Puede circular', r.circular.estado, r.circular.resumen) +
           chip('Puede transferirse', r.transferir.estado, r.transferir.resumen) +
           cajaDeuda(r.deuda) +
         '</div>' +
-        (r.deuda.completa ? '' :
-          '<p class="ver-nota">Hay apartados que no devolvieron información. ' +
-          'Lo que no se pudo consultar no significa que esté limpio.</p>') +
+        (r.deuda.sinDeterminar
+          ? '<p class="ver-nota">Este veredicto solo cubre las vigencias. Las deudas y los ' +
+            'antecedentes están en el reporte adjunto: todavía no los interpretamos, y ' +
+            'preferimos no afirmar nada antes que afirmarlo mal.</p>'
+          : (r.deuda.completa ? '' :
+            '<p class="ver-nota">Hay apartados que no devolvieron información. ' +
+            'Lo que no se pudo consultar no significa que esté limpio.</p>')) +
       '</div>';
 
     body.insertAdjacentHTML('afterbegin', html);
@@ -657,6 +672,7 @@
     }
 
     body.innerHTML = html;
+    if (esReporte) pintarVeredicto(p, valorConsultado);
     body.hidden = false;
 
     // Se cablean siempre que existan en el DOM, traiga o no medios.
@@ -694,9 +710,9 @@
                 day: '2-digit', month: 'short', year: 'numeric',
                 hour: '2-digit', minute: '2-digit'
               }),
-              // Las secciones ya leídas: de ahí sale el veredicto, sin
-              // volver a abrir el PDF.
-              onSecciones: function (secs) { pintarVeredicto(secs, valorRef); }
+              // El veredicto del PDF sale de los mismos campos que el de
+              // pantalla, no de las secciones deducidas del documento.
+              parsed: p
             }, function (n, total) {
               metaplaPdfArea.innerHTML =
                 '<div class="cr-pdf-loading">Generando reporte PDF… ' + n + ' de ' + total + '</div>';

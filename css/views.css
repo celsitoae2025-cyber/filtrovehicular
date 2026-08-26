@@ -6840,3 +6840,23 @@ body.auth-locked .inst-fab { z-index: 501; }
   .rep-veredicto { padding: 16px; }
   .ver-cajas { grid-template-columns: 1fr; }
 }
+
+/* ── Sitio para los botones flotantes ────────────────────────────────
+   El de WhatsApp y el de instalar viven fijos en la esquina inferior
+   derecha. El resultado de una consulta termina justo ahí —el botón de
+   descargar el PDF y la tarjeta del archivo van alineados a la derecha—
+   y quedaban debajo de ellos: se veían tapados y no se podían pulsar.
+
+   Se le da al panel un colchón abajo del alto de esa columna, para que
+   siempre se pueda desplazar y sacarlos de debajo. Es preferible a
+   moverles el margen a los botones, que los descolocaría también cuando
+   no hay ningún flotante a la vista. */
+.result-panel { padding-bottom: 118px; }
+
+/* El estado «sin determinar» del veredicto: ni verde ni rojo. Que no se
+   lea como una nota al pie, pero tampoco como una alarma. */
+.ver-nivel-sin-determinar .ver-nivel { color: var(--c-muted); }
+
+@media (max-width: 768px) {
+  .result-panel { padding-bottom: 132px; }
+}

@@ -735,7 +735,12 @@
     var VER = null;
     try {
       if (Consultia.ReporteModelo && Consultia.ReporteVeredicto) {
-        var modelo = Consultia.ReporteModelo.desdeSecciones(secciones, meta.valor);
+        /* Del parsed del bot, no de las secciones del PDF. Deducir el
+           contenido por el título de cada sección llevó a afirmar un robo
+           que no existía; aquí solo entran campos con nombre. */
+        var modelo = meta.parsed
+          ? Consultia.ReporteModelo.desdeParsed(meta.parsed, meta.valor)
+          : Consultia.ReporteModelo.desdeSecciones(secciones, meta.valor);
         VER = Consultia.ReporteVeredicto.nivel(modelo);
         VER.modelo = modelo;
       }
@@ -753,7 +758,9 @@
 
       doc.setFontSize(17);
       doc.setTextColor.apply(doc, vc);
-      doc.text('Riesgo ' + VER.nivel.charAt(0) + VER.nivel.slice(1).toLowerCase(), M, y + 13);
+      doc.text(VER.nivel === 'SIN DETERMINAR'
+        ? 'Veredicto parcial'
+        : 'Riesgo ' + VER.nivel.charAt(0) + VER.nivel.slice(1).toLowerCase(), M, y + 13);
       y += 19;
 
       // Las tres respuestas, en tres cajas del mismo ancho.
@@ -1023,7 +1030,7 @@
        convierte el silencio en información: sin él, una sección que no
        respondió se lee igual que una sección limpia, y alguien puede
        comprar un vehículo confiando en algo que nunca se comprobó. */
-    if (VER && VER.modelo && VER.modelo.cobertura.length) {
+    if (VER && VER.modelo && VER.modelo.cobertura && VER.modelo.cobertura.length) {
       need(40);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(11);

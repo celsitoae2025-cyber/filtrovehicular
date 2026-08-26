@@ -346,8 +346,60 @@
     return modelo;
   }
 
+  /* ── Desde la respuesta del bot, y solo desde ahí ────────────────
+     `desdeSecciones` deduce demasiado. Reconoce las secciones por
+     palabras de su título —ROBO, ATU, PAPELETA— y de ahí saca deudas e
+     incidencias. Con una respuesta real eso se equivocó de la peor
+     manera posible: dijo «Robo registrada (5)» de un vehículo sin una
+     sola denuncia de robo, y sumó como soles unos expedientes.
+
+     Un informe que alguien usa para comprar un auto no puede deducir.
+     Esta función NO deduce: lee los campos que el bot entrega con su
+     nombre —los mismos que se ven en la ficha de pantalla— y no infiere
+     nada de ningún título. Lo que no viene con nombre, no existe.
+
+     Deudas e incidencias se quedan fuera a propósito hasta que estén
+     mapeadas contra una respuesta real. Es preferible un veredicto que
+     dice «sin determinar» a uno que se inventa una denuncia. */
+  function desdeParsed(parsed, placa) {
+    var modelo = {
+      vehiculo: { placa: placa ? limpiar(placa).toUpperCase() : null },
+      titularidad: {},
+      vigencias: { soat: {}, revision: {} },
+      deudas: [],
+      incidencias: [],
+      cobertura: [],
+      deudasIlegibles: [],
+      noMapeado: [],
+      // Lo que todavía no sabemos leer. El veredicto lo usa para decir
+      // «sin determinar» en vez de callar o inventar.
+      sinInterpretar: ['deudas', 'incidencias'],
+    };
+
+    ((parsed && parsed.secciones) || []).forEach(function (sec) {
+      (sec.campos || []).forEach(function (c) {
+        if (!c || !c.campo) return;
+        var k = clave(c.campo);
+        var valor = limpiar(c.valor);
+        if (!valor) return;
+        var regla = null;
+        for (var i = 0; i < ETIQUETAS.length; i++) {
+          if (ETIQUETAS[i].re.test(k)) { regla = ETIQUETAS[i]; break; }
+        }
+        if (!regla) {
+          modelo.noMapeado.push({ campo: limpiar(c.campo), valor: valor });
+          return;
+        }
+        asignar(modelo, regla.a, regla.tipo === 'fecha' ? aFecha(valor) : valor);
+      });
+    });
+
+    return modelo;
+  }
+
   Consultia.ReporteModelo = {
     desdeSecciones: desdeSecciones,
+    desdeParsed: desdeParsed,
     aImporte: aImporte,
     aFecha: aFecha,
     diasHasta: diasHasta,
