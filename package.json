@@ -1,0 +1,8 @@
+{
+  "name": "filtro-vehicular-plus",
+  "private": true,
+  "description": "Plataforma Filtro Vehicular+ — sitio estático servido por Cloudflare Pages.",
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\""
+  }
+}

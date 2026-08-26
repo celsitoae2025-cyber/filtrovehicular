@@ -977,6 +977,13 @@
       var pages = await extractFromPdf(pdfBase64, onProgress);
       var secciones = parseSections(pages, meta && meta.valor);
       if (!secciones.length) throw new Error('No se pudo leer el contenido del PDF');
+      /* Quien llama puede quedarse con las secciones ya leídas. Sirve para
+         montar el modelo y el veredicto sin volver a abrir el PDF: la
+         extracción es lo caro de todo esto —segundos, no milisegundos— y
+         hacerla dos veces por el mismo documento no tiene defensa. */
+      if (meta && typeof meta.onSecciones === 'function') {
+        try { meta.onSecciones(secciones); } catch (e) { console.warn('[metapla] onSecciones falló:', e); }
+      }
       return buildPdf(secciones, meta || {});
     })();
 

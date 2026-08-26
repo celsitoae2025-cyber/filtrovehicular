@@ -6776,3 +6776,67 @@ body.auth-locked .inst-fab { z-index: 501; }
   color: #141d1c;
 }
 .inst-ico svg { width: 21px; height: 21px; }
+
+/* ── Reporte Completo: el veredicto ──────────────────────────────────
+   Va encima de la ficha de datos: es la conclusión, y una conclusión al
+   final de veinte apartados no la lee nadie. Tres cajas, el semáforo de
+   la marca y ni una sombra. */
+.rep-veredicto {
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ver-cabecera { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.ver-rotulo {
+  font-size: 13px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  font-weight: 700;
+}
+.ver-nivel { font-size: 21px; font-weight: 700; }
+/* El nivel manda el color del titular. Los mismos tres del medidor del
+   PDF: verde bajo, ámbar medio, rojo alto. */
+.ver-nivel-bajo  .ver-nivel { color: #8fc72e; }
+.ver-nivel-medio .ver-nivel { color: #ffb020; }
+.ver-nivel-alto  .ver-nivel { color: #e53935; }
+
+.ver-cajas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 4px;
+}
+.ver-caja {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #f4f6f4;
+  /* El estado se lee por el color del valor, no por el fondo: tres
+     cajas de color fuerte una al lado de otra no dejan mirar ninguna. */
+}
+.ver-k { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--c-muted); }
+.ver-v { font-size: 20px; font-weight: 700; color: var(--c-primary); }
+.ver-d { font-size: 15px; color: var(--c-muted); line-height: 1.4; }
+.ver-ok   .ver-v { color: #6f9c24; }
+.ver-mal  .ver-v { color: #e53935; }
+.ver-duda .ver-v { color: #c98700; }
+
+.ver-nota {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--c-primary);
+  border-left: 2px solid #ffb020;
+  padding-left: 12px;
+}
+
+@media (max-width: 560px) {
+  .rep-veredicto { padding: 16px; }
+  .ver-cajas { grid-template-columns: 1fr; }
+}

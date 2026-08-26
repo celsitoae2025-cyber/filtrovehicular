@@ -247,6 +247,74 @@
     return '<div class="cr-sect"><div class="cr-sect-body">' + rows.join('') + '</div></div>';
   }
 
+  /* ── El veredicto en pantalla ────────────────────────────────────────
+     Lo primero que necesita quien va a comprar un auto no son veintiún
+     apartados: es saber si puede circular, si puede transferirlo y cuánto
+     debe. Eso lo calcula js/modules/reporte-veredicto.js a partir del
+     modelo, y aquí solo se pinta.
+
+     Va ENCIMA de la ficha de datos por la misma razón por la que la placa
+     va en la primera fila: es la conclusión, y una conclusión al final de
+     veinte secciones no la lee nadie.
+
+     Si algo falla —el modelo no está cargado, las secciones vienen
+     raras—, no se pinta nada y el reporte sigue saliendo como antes. Un
+     veredicto es un extra sobre el documento, no un requisito para que
+     el documento exista. */
+  function pintarVeredicto(secciones, placa) {
+    if (!Consultia.ReporteModelo || !Consultia.ReporteVeredicto) return;
+    var body = $('filter-result-body');
+    if (!body || document.getElementById('rep-veredicto')) return;
+
+    var r;
+    try {
+      var modelo = Consultia.ReporteModelo.desdeSecciones(secciones, placa);
+      r = Consultia.ReporteVeredicto.nivel(modelo);
+      if (modelo.noMapeado.length) {
+        // No se le enseña al cliente: es para nosotros, y es el aviso de
+        // que el proveedor cambió el nombre de algún campo.
+        console.info('[reporte] campos sin mapear:', modelo.noMapeado);
+      }
+    } catch (e) {
+      console.warn('[reporte] no se pudo armar el veredicto:', e);
+      return;
+    }
+
+    var chip = function (titulo, estado, detalle) {
+      var clase = estado === 'si' ? 'ok' : (estado === 'no' ? 'mal' : 'duda');
+      var palabra = estado === 'si' ? 'Sí' : (estado === 'no' ? 'No' : 'Con reparos');
+      return '<div class="ver-caja ver-' + clase + '">' +
+        '<span class="ver-k">' + escapeHtml(titulo) + '</span>' +
+        '<strong class="ver-v">' + palabra + '</strong>' +
+        '<span class="ver-d">' + escapeHtml(detalle || '') + '</span>' +
+      '</div>';
+    };
+
+    var html =
+      '<div class="rep-veredicto ver-nivel-' + r.nivel.toLowerCase() + '" id="rep-veredicto">' +
+        '<div class="ver-cabecera">' +
+          '<span class="ver-rotulo">Veredicto</span>' +
+          '<strong class="ver-nivel">Riesgo ' + r.nivel.charAt(0) + r.nivel.slice(1).toLowerCase() + '</strong>' +
+        '</div>' +
+        '<div class="ver-cajas">' +
+          chip('Puede circular', r.circular.estado, r.circular.resumen) +
+          chip('Puede transferirse', r.transferir.estado, r.transferir.resumen) +
+          '<div class="ver-caja' + (r.deuda.total > 0 ? ' ver-mal' : ' ver-ok') + '">' +
+            '<span class="ver-k">Deuda registrada</span>' +
+            '<strong class="ver-v">' + escapeHtml(r.deuda.totalTexto) + '</strong>' +
+            '<span class="ver-d">' + (r.deuda.completa
+              ? 'Todas las fuentes respondieron'
+              : r.deuda.fuentesMudas + ' fuente(s) sin respuesta') + '</span>' +
+          '</div>' +
+        '</div>' +
+        (r.deuda.completa ? '' :
+          '<p class="ver-nota">Hay apartados que no devolvieron información. ' +
+          'Lo que no se pudo consultar no significa que esté limpio.</p>') +
+      '</div>';
+
+    body.insertAdjacentHTML('afterbegin', html);
+  }
+
   /* â”€â”€ Catálogo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   async function cargarCatalogo() {
     var comboText = $('filterComboText');
@@ -608,7 +676,10 @@
               fecha: new Date().toLocaleDateString('es-PE', {
                 day: '2-digit', month: 'short', year: 'numeric',
                 hour: '2-digit', minute: '2-digit'
-              })
+              }),
+              // Las secciones ya leídas: de ahí sale el veredicto, sin
+              // volver a abrir el PDF.
+              onSecciones: function (secs) { pintarVeredicto(secs, valorRef); }
             }, function (n, total) {
               metaplaPdfArea.innerHTML =
                 '<div class="cr-pdf-loading">Generando reporte PDF… ' + n + ' de ' + total + '</div>';
