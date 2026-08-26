@@ -208,10 +208,28 @@
   // sin título del bot, sin duplicar campos repetidos y sin el partido en
   // 2 columnas que usa renderDataRows para listas de varios registros
   // (ese modo no aplica acá — /metapla es un solo vehículo).
-  function renderMetaplaData(p) {
+  /* `placa` es la que se consultó. Va delante de todo lo demás.
+
+     El reporte salía sin ella: la ficha listaba propietario, DNI, SOAT,
+     aseguradora y vigencias —todo lo que devuelve el bot— y el dato por
+     el que se pregunta, que es el que encabeza el documento y el que el
+     cliente necesita ver para saber que no se equivocó de vehículo, no
+     aparecía por ningún lado. No sale del bot porque es la pregunta, no
+     la respuesta; hay que ponerla desde aquí.
+
+     Si el bot llegara a devolverla como un campo más, no se repite. */
+  function renderMetaplaData(p, placa) {
     var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
     var seen = Object.create(null);
     var rows = [];
+
+    if (placa) {
+      seen.PLACA = true;
+      rows.push(
+        '<div class="cr-row"><span class="cr-k">Placa</span>' +
+        '<span class="cr-v cr-v-fuerte">' + escapeHtml(placa.toUpperCase()) + '</span></div>'
+      );
+    }
     (p.secciones || []).forEach(function (s) {
       (s.campos || []).forEach(function (c) {
         if (!c.campo) return;
@@ -412,7 +430,7 @@
 
     try {
       var resp = await Consultia.ConsultaRunner.ejecutarConsultaConCobro(user.id, currentConsulta, valor);
-      renderResultado(resp);
+      renderResultado(resp, valor);
       // La información ya se entregó: arrancar el enfriamiento de 60 s del reporte.
       if (esMetapla(currentConsulta)) metaplaCooldownUntil = Date.now() + METAPLA_COOLDOWN_MS;
       if (Consultia.SearchHistory) Consultia.SearchHistory.add(valor, currentConsulta && currentConsulta.categoria);
@@ -463,7 +481,10 @@
   }
 
   /* â”€â”€ Renderizado de resultado â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  function renderResultado(resp) {
+  // `valorConsultado` es lo que escribió el cliente. Llega como argumento
+  // y no se relee del campo: al reintentar o al cambiar de consulta el
+  // campo puede estar ya vacío o con otra cosa.
+  function renderResultado(resp, valorConsultado) {
     revokeActiveBlobUrls();
     var p       = H.recortarAlResumen(resp.parsed || {}, currentConsulta && currentConsulta.comando);
     // Con `H.` por delante: un navegador que arrastre la versión vieja de
@@ -506,7 +527,7 @@
       html = htmlMantenimiento();
     } else if (esReporte) {
       // Los datos van como tabla + placeholder para el PDF rediseñado.
-      html = renderMetaplaData(p) + '<div id="metapla-pdf-area"><div class="cr-pdf-loading">Generando reporte PDF...</div></div>';
+      html = renderMetaplaData(p, valorConsultado) + '<div id="metapla-pdf-area"><div class="cr-pdf-loading">Generando reporte PDF...</div></div>';
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
     } else if (htmlMtc) {
@@ -561,12 +582,12 @@
     // trae su propio Visualizar/Descargar) ni en /metapla (botón aparte).
     var pdfBtn = body.querySelector('.cr-btn-pdf-generic');
     if (pdfBtn) {
-      var valorConsultado = $('filter-input') ? $('filter-input').value.trim() : '';
+      var valorPdf = valorConsultado || ($('filter-input') ? $('filter-input').value.trim() : '');
       pdfBtn.addEventListener('click', function () {
         descargarPdfConOverlay(function () {
           return Consultia.ReportGenerator.generate(pParaPdf, {
             consultaNombre: currentConsulta ? currentConsulta.nombre : 'Consulta',
-            valor: valorConsultado,
+            valor: valorPdf,
             fecha: new Date().toLocaleDateString('es-PE', {
               day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
             })
@@ -604,7 +625,9 @@
             metaplaPdfArea.innerHTML = renderPdfDlBar(pdfsRef, 'Descargar Reporte PDF') + renderDocumentCard(pdfsRef);
           }
         })();
-      })(pdfs, $('filter-input') ? $('filter-input').value.trim() : '');
+      // La placa consultada, no lo que haya en el campo ahora: para cuando
+      // el PDF termina de armarse, el cliente puede haber escrito otra cosa.
+      })(pdfs, valorConsultado || ($('filter-input') ? $('filter-input').value.trim() : ''));
     }
 
     var empty = $('filter-empty');

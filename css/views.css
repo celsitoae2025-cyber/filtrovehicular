@@ -2739,6 +2739,14 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   font-size: var(--cr-fs);
   text-transform: uppercase;
 }
+/* La placa, en la primera fila del Reporte Completo. Es el dato por el que
+   se preguntó y con el que el cliente comprueba que no se equivocó de
+   vehículo, así que se lee antes que el resto. Mismo selector completo que
+   el verde de arriba, por la misma razón de especificidad. */
+.cr-row .cr-v.cr-v-fuerte {
+  font-weight: 700;
+  letter-spacing: .6px;
+}
 /* Layout texto puro — espaciado más compacto */
 .cr-txt-data .cr-row { padding: 6px 0; font-size: var(--cr-fs); line-height: 1.55; }
 
