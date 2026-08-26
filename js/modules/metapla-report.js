@@ -28,16 +28,32 @@
   var C_HAIR   = [223, 227, 222];  // filetes y separadores
   var C_SOFT   = [248, 250, 247];  // fondos muy tenues
 
-  // El color del índice cambia según el nivel de riesgo: verde = bajo,
-  // turquesa = medio, oscuro institucional = alto. Se combinan así los
-  // tres colores de marca sin recurrir a rojos ni ámbares.
-  function riskColor(nivel, score) {
+  // Semáforo del índice de riesgo. Los tres salen de la línea de cuatro
+  // colores de la marca, la que va bajo el nombre en la pantalla de
+  // acceso: aquí no hay colores inventados para el semáforo.
+  var C_OK     = [143, 199, 46];   // #8fc72e — riesgo bajo
+  var C_WARN   = [255, 176, 32];   // #ffb020 — riesgo medio
+  var C_BAD    = [229, 57, 53];    // #e53935 — riesgo alto
+
+  /* El color del índice dice el riesgo de un vistazo, con el código que
+     entiende cualquiera sin leer: verde bajo, ámbar medio, rojo alto.
+
+     Antes iba en verde, turquesa y oscuro, por no salirse de los tres
+     colores de marca. Quedaba bonito y no comunicaba: un reporte de
+     riesgo alto se veía igual de tranquilo que uno de riesgo bajo, y el
+     turquesa del medio no decía nada. El ámbar y el rojo son los otros
+     dos colores de la línea de marca, así que la casa sigue estando.
+
+     Sin nivel no se inventa uno: el puntaje lo pone el proveedor y no
+     está dicho en qué dirección corre —hay reportes de 76 sobre 100
+     etiquetados «medio»—, así que se pinta en el oscuro neutro y se deja
+     que mande el texto. */
+  function riskColor(nivel) {
     var n = String(nivel || '').toUpperCase();
-    if (/BAJO/.test(n)) return C_ACCENT;
-    if (/MEDIO|MODERAD/.test(n)) return C_TURQ;
-    if (/ALTO/.test(n)) return C_INK;
-    var s = +score || 0;                 // sin nivel, se decide por puntaje
-    return s >= 75 ? C_ACCENT : (s >= 45 ? C_TURQ : C_INK);
+    if (/BAJO|LEVE|M[IÍ]NIM/.test(n)) return C_OK;
+    if (/MEDIO|MODERAD|INTERMEDI/.test(n)) return C_WARN;
+    if (/ALTO|CR[IÍ]TIC|GRAVE|SEVER/.test(n)) return C_BAD;
+    return C_INK;
   }
 
   var ROMANS = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
@@ -570,30 +586,24 @@
       if (decoradas[pn]) return;
       decoradas[pn] = true;
 
-      // ── Monograma: cuadro oscuro con "+" verde y esquina turquesa ──
-      var bx = M, by = HEAD_Y - 6.2, bs = 7.4;
-      doc.setFillColor.apply(doc, C_INK);
-      doc.roundedRect(bx, by, bs, bs, 1.5, 1.5, 'F');
-      doc.setFillColor.apply(doc, C_TURQ);
-      doc.roundedRect(bx + bs - 2.4, by, 2.4, 2.4, 1.1, 1.1, 'F'); // esquina turquesa
-      doc.setDrawColor.apply(doc, C_ACCENT);       // "+" verde
-      doc.setLineWidth(0.9);
-      var mx = bx + bs / 2, my = by + bs / 2 + 0.4;
-      doc.line(mx - 1.7, my, mx + 1.7, my);
-      doc.line(mx, my - 1.7, mx, my + 1.7);
-
-      // ── Marca ──
+      /* ── Marca ──
+         Solo el nombre. Aquí había además un cuadradito oscuro con un
+         "+" dentro, a la izquierda: a este tamaño era una mancha que no
+         se leía como nada y le robaba sitio al nombre, que es lo que sí
+         se reconoce. El membrete de un documento no necesita un sello
+         para decir de quién es. */
+      var bx = M;
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(11);
       doc.setTextColor.apply(doc, C_INK);
-      doc.text('Filtro Vehicular', bx + bs + 3, HEAD_Y - 1);
+      doc.text('Filtro Vehicular', bx, HEAD_Y - 1);
       var wm = doc.getTextWidth('Filtro Vehicular');
       doc.setTextColor.apply(doc, C_ACCENT);
-      doc.text('+', bx + bs + 3 + wm + 0.6, HEAD_Y - 1);
+      doc.text('+', bx + wm + 0.6, HEAD_Y - 1);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(5.6);
       doc.setTextColor.apply(doc, C_MUTED);
-      doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', bx + bs + 3, HEAD_Y + 2.4);
+      doc.text('PLATAFORMA DE CONSULTAS VEHICULARES', bx, HEAD_Y + 2.4);
 
       // ── Referencia a la derecha ──
       doc.setFont('helvetica', 'bold');
@@ -698,7 +708,7 @@
     /* ── Índice de riesgo: medidor circular a color ── */
     var R = secciones.resumen || {};
     if (R.score) {
-      var rc = riskColor(R.nivel, R.score);
+      var rc = riskColor(R.nivel);
       var pct = Math.max(0, Math.min(100, +R.score)) / 100;
 
       var ringR = 15, ringW = 3.4;
