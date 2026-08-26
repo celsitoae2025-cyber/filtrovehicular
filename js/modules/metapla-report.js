@@ -621,12 +621,26 @@
        tracking se cambian en un solo sitio. */
     function versalita(texto, x, yy, opts) {
       opts = opts || {};
+      var t = String(texto).toUpperCase();
+      var track = opts.track === undefined ? 0.5 : opts.track;
       doc.setFont('helvetica', opts.bold === false ? 'normal' : 'bold');
       doc.setFontSize(opts.size || 6.8);
       doc.setTextColor.apply(doc, opts.color || C_MUTED);
-      try { doc.setCharSpace(opts.track === undefined ? 0.5 : opts.track); } catch (e) {}
-      doc.text(String(texto).toUpperCase(), x, yy, opts.align ? { align: opts.align } : undefined);
+
+      /* El alineado se calcula aquí y no se delega en jsPDF: su `align`
+         mide el texto SIN el espaciado entre letras, así que un rótulo
+         trackeado y alineado a la derecha se corre tantos milímetros
+         como letras tenga. El del membrete se salía 17 mm fuera de la
+         caja, por el borde de la hoja. */
+      var ancho = doc.getTextWidth(t) + track * Math.max(0, t.length - 1);
+      var x0 = x;
+      if (opts.align === 'right') x0 = x - ancho;
+      else if (opts.align === 'center') x0 = x - ancho / 2;
+
+      try { doc.setCharSpace(track); } catch (e) {}
+      doc.text(t, x0, yy);
       try { doc.setCharSpace(0); } catch (e) {}
+      return ancho;
     }
 
     function rotulo(texto, x, yy, size, color, bold) {
@@ -750,33 +764,39 @@
     /* Recuadro de placa: la matrícula es el identificador del informe y
        se comporta como tal — encerrada, sola y grande. A su derecha, la
        identidad del vehículo en retícula. */
-    var cajaW = 66, cajaH = 24;
+    var cajaW = 62, cajaH = 26;
     doc.setDrawColor.apply(doc, C_INK);
     doc.setLineWidth(0.5);
     doc.rect(M, y, cajaW, cajaH);
-    versalita('Placa', M + 5, y + 6.6, { size: 6, track: 0.8 });
+    versalita('Placa', M + 5, y + 7.4, { size: 6, track: 0.8 });
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(21);
     doc.setTextColor.apply(doc, C_INK);
-    doc.text(placa || '—', M + 5, y + 18, { maxWidth: cajaW - 10 });
+    doc.text(placa || '—', M + 5, y + 19.5, { maxWidth: cajaW - 10 });
 
     var attrs = [
       ['Marca y modelo', marca], ['Año', anio], ['Color', color],
       ['Carrocería', carro], ['Estado', estado]
     ].filter(function (a) { return a[1]; });
 
-    var ax = M + cajaW + 10;
-    var anchoAttr = (W - M - ax) / 2;
+    /* Tres columnas por dos filas, no dos por tres: así el bloque mide
+       exactamente lo mismo que el recuadro de la placa y los dos cierran
+       en la misma línea. Con dos columnas, el quinto atributo colgaba
+       por debajo del recuadro y el conjunto quedaba descuadrado. */
+    var ax = M + cajaW + 12;
+    var COLS = 3;
+    var anchoAttr = (W - M - ax) / COLS;
+    var filaH = cajaH / 2;
     attrs.forEach(function (a, i) {
-      var cx = ax + (i % 2) * anchoAttr;
-      var cy = y + 4 + Math.floor(i / 2) * 11;
+      var cx = ax + (i % COLS) * anchoAttr;
+      var cy = y + 5 + Math.floor(i / COLS) * filaH;
       versalita(a[0], cx, cy, { size: 6, track: 0.4 });
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(9);
       doc.setTextColor.apply(doc, C_INK);
-      doc.text(String(a[1]), cx, cy + 5, { maxWidth: anchoAttr - 5 });
+      doc.text(String(a[1]), cx, cy + 5, { maxWidth: anchoAttr - 4 });
     });
-    y += Math.max(cajaH, 4 + Math.ceil(attrs.length / 2) * 11) + 12;
+    y += Math.max(cajaH, 5 + Math.ceil(attrs.length / COLS) * filaH) + 13;
     hairline(y);
     y += 12;
 
@@ -812,17 +832,42 @@
 
       /* El semáforo: un disco del color del veredicto junto al titular.
          Quien abre el reporte lo entiende antes de leer una palabra, y
-         eso es justo lo que tiene que pasar en un informe de riesgo. */
-      var discoR = 6.5;
-      punto(M + discoR, y - 4, vc, discoR);
+         eso es justo lo que tiene que pasar en un informe de riesgo.
+
+         Cuando no hay nivel, el disco NO se rellena. Relleno con la
+         tinta neutra salía un círculo negro enorme al lado de «Veredicto
+         parcial»: nadie sabía qué era, y un semáforo apagado tiene que
+         parecer apagado. Un aro hueco dice exactamente eso — hay un
+         indicador y está sin respuesta— y el propio texto lo explica.
+
+         El centro va 2,3 mm por encima de la línea base, que es donde
+         cae el centro óptico de una mayúscula de 18 pt: así el disco y
+         el titular se leen como una sola pieza. */
+      var discoR = 6.2;
+      var discoY = y - 2.3;
+      var parcial = VER.nivel === 'SIN DETERMINAR';
+      if (parcial) {
+        doc.setDrawColor.apply(doc, C_MUTED);
+        doc.setLineWidth(1.1);
+        doc.circle(M + discoR, discoY, discoR - 0.55, 'S');
+      } else {
+        punto(M + discoR, discoY, vc, discoR);
+      }
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(18);
       doc.setTextColor.apply(doc, vc);
-      doc.text(VER.nivel === 'SIN DETERMINAR'
+      doc.text(parcial
         ? 'Veredicto parcial'
         : 'Riesgo ' + VER.nivel.charAt(0) + VER.nivel.slice(1).toLowerCase(),
         M + discoR * 2 + 6, y);
-      y += 12;
+      if (parcial) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7.4);
+        doc.setTextColor.apply(doc, C_MUTED);
+        doc.text('Falta información para calificar el riesgo; lo comprobado se detalla abajo.',
+                 M + discoR * 2 + 6, y + 5, { maxWidth: COLW - discoR * 2 - 6 });
+      }
+      y += 13;
 
       // Las tres respuestas, en columnas separadas por filete, sin cajas.
       var respuestas = [
@@ -890,7 +935,7 @@
        dice de dónde sale y hasta dónde llega antes de que alguien tome
        una decisión con él. */
     var notaY = FOOT - 16;
-    if (y < notaY) {
+    if (y < notaY - 8) {          // con menos aire que eso, se pisaría el fundamento
       hairline(notaY - 6);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(6.8);
