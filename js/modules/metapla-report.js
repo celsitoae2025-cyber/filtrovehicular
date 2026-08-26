@@ -606,10 +606,16 @@
 
   /* ── Bandas fijas de la página ──
      Cabecera y pie son zonas muertas para el contenido: se reservan una
-     vez y ningún bloque las invade. */
-  var CAB = { texto: 22, filete: 26 };
-  var PIE = { filete: 265, l1: 270, l2: 274.4, qr: 12 };
-  var CUERPO = { top: 36, bottom: PIE.filete - 6 };               // 36 … 259
+     vez y ningún bloque las invade.
+
+     Van pegadas a los bordes, que es donde se espera encontrarlas: el
+     membrete arranca a 11 mm del filo superior y el QR del pie cierra a
+     10 mm del inferior, holgura de sobra para cualquier impresora. Con
+     la cabecera a 22 y el pie a 265 el documento parecía enmarcado y
+     además desperdiciaba 19 mm de columna en cada página. */
+  var CAB = { texto: 14.5, filete: 18 };
+  var PIE = { filete: 274, l1: 279.4, l2: 283.6, qr: 11 };
+  var CUERPO = { top: 27, bottom: PIE.filete - 6 };               // 27 … 268
 
   // ── Escala tipográfica (pt), razón ≈1,25 ──
   var T = {
