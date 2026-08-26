@@ -730,6 +730,33 @@
       doc.circle(x, yy, r || 1.5, 'F');
     }
 
+    /* Arco por segmentos: jsPDF no sabe dibujar arcos. Ángulos en
+       radianes con el cero arriba, que es como se lee un medidor. */
+    function arco(cx, cy, r, a0, a1, color, grosor) {
+      doc.setDrawColor.apply(doc, color);
+      doc.setLineWidth(grosor);
+      try { doc.setLineCap('round'); } catch (e) {}
+      var pasos = Math.max(12, Math.ceil(Math.abs(a1 - a0) / (Math.PI / 60)));
+      var px, py;
+      for (var i = 0; i <= pasos; i++) {
+        var t = a0 + (a1 - a0) * i / pasos;
+        var x = cx + r * Math.sin(t), yv = cy - r * Math.cos(t);
+        if (i > 0) doc.line(px, py, x, yv);
+        px = x; py = yv;
+      }
+      try { doc.setLineCap('butt'); } catch (e) {}
+    }
+
+    // Medidor circular: aro tenue de fondo y arco lleno hasta la
+    // fracción indicada.
+    function medidor(cx, cy, r, frac, color) {
+      var g = 2.6, rr = r - g / 2;
+      doc.setDrawColor.apply(doc, C_HAIR);
+      doc.setLineWidth(g);
+      doc.circle(cx, cy, rr, 'S');
+      if (frac > 0) arco(cx, cy, rr, 0, Math.PI * 2 * Math.min(frac, 1), color, g);
+    }
+
     /* ── Cabecera y pie ───────────────────────────────────────── */
     var decoradas = {};
     function paginaActual() {
@@ -848,12 +875,16 @@
        ni al revés. */
     av(3.5);                                             // 120
     var fichaTop = y, fichaH = 26;
-    doc.setDrawColor.apply(doc, C_INK);
-    doc.setLineWidth(0.5);
-    doc.rect(gx(0), fichaTop, gw(4), fichaH);
-    versalita('Placa', gx(0) + 5, fichaTop + 7.4, { size: T.micro, track: 0.8 });
-    rotulo(placa || '—', gx(0) + 5, fichaTop + 19.5, T.placa, C_INK, true,
-           { maxWidth: gw(4) - 10 });
+
+    /* La matrícula va suelta, con el filete de marca debajo y del ancho
+       exacto del texto. El recuadro imitaba una chapa, competía con la
+       retícula y obligaba a meter el número 5 mm hacia dentro, así que
+       la placa dejaba de alinear con la columna de atributos. La
+       jerarquía ya la da el cuerpo de 30 pt. */
+    versalita('Placa', gx(0), fichaTop + 5, { size: T.micro, track: 0.8 });
+    rotulo(placa || '—', gx(0), fichaTop + 17, T.placa, C_INK, true, { maxWidth: gw(4) });
+    fileteBicolor(gx(0), fichaTop + 20.5,
+                  Math.min(Math.max(doc.getTextWidth(placa || '—'), 24), gw(4)), 1.2);
 
     var attrs = [
       ['Marca y modelo', marca], ['Año', anio], ['Color', color],
@@ -901,40 +932,62 @@
       var vc = riskColor(VER.nivel);
       var parcial = VER.nivel === 'SIN DETERMINAR';
 
-      av(2);                                             // 162
+      av(1.5);                                           // 158
       versalita('Veredicto de la plataforma', M, y, { size: T.mini, track: 1.2 });
 
-      /* El semáforo: disco lleno del color del veredicto junto al
-         titular. Quien abre el reporte lo entiende antes de leer una
-         palabra, y eso es lo que tiene que pasar en un informe de riesgo.
+      /* ── El medidor ────────────────────────────────────────────
+         El círculo mide algo y lo dice con un número: qué parte de las
+         fuentes consultadas llegó a responder. Antes era un disco de
+         color a secas —y cuando no había nivel, un aro vacío— así que
+         ocupaba el sitio más visible de la portada sin aportar un dato.
 
-         Sin nivel, el disco NO se rellena: pintado con la tinta neutra
-         salía un círculo negro enorme que no significaba nada. Un aro
-         hueco dice justo lo que pasa —hay indicador y está sin
-         respuesta— y el renglón de al lado lo explica. El centro cae
-         2,3 mm sobre la línea base, que es el centro óptico de una
-         mayúscula de 16 pt. */
-      av(3);                                             // 174
-      var discoR = 6.2;
-      if (parcial) {
-        doc.setDrawColor.apply(doc, C_MUTED);
-        doc.setLineWidth(1.1);
-        doc.circle(gx(0) + discoR, y - 2.3, discoR - 0.55, 'S');
+         Lo que mide es la COMPROBACIÓN, no el riesgo: el riesgo lo dice
+         la palabra de al lado y el color del arco. Y no es el índice del
+         proveedor, que se imprime aparte y con su nombre, porque su
+         criterio no está publicado; este porcentaje se calcula con lo
+         que tenemos delante y se puede defender fuente por fuente.
+
+         Cuando el veredicto es parcial el arco va en gris: un semáforo
+         que no puede calificar no debe pintarse de verde ni de rojo. */
+      av(1);                                             // 162
+      var medR = 13, medX = gx(0) + medR, medY = y + medR;
+      var cob = (VER.modelo && VER.modelo.cobertura) || [];
+      var responden = cob.filter(function (c) { return c.estado !== 'sin respuesta'; }).length;
+      var frac = cob.length ? responden / cob.length : null;
+      var colorArco = parcial ? C_MUTED : vc;
+
+      if (frac === null) {
+        // Sin cobertura que medir, el indicador se queda vacío y callado.
+        doc.setDrawColor.apply(doc, C_HAIR);
+        doc.setLineWidth(2.6);
+        doc.circle(medX, medY, medR - 1.3, 'S');
+        versalita('Sin datos', medX, medY + 1, { size: 5.4, track: 0.3, align: 'center' });
       } else {
-        punto(gx(0) + discoR, y - 2.3, vc, discoR);
+        medidor(medX, medY, medR, frac, colorArco);
+        rotulo(Math.round(frac * 100) + '%', medX, medY + 1, T.h3, C_INK, true,
+               { align: 'center' });
+        versalita('Comprobado', medX, medY + 6, { size: 5, track: 0.3, align: 'center' });
       }
+
+      var tx = gx(0) + medR * 2 + 8;
+      var txW = W - M - tx;
       rotulo(parcial ? 'Veredicto parcial'
                      : 'Riesgo ' + VER.nivel.charAt(0) + VER.nivel.slice(1).toLowerCase(),
-             gx(0) + discoR * 2 + 6, y, T.h2, vc, true);
-      if (parcial) {
-        rotulo('Falta información para calificar el riesgo; lo comprobado se detalla abajo.',
-               gx(0) + discoR * 2 + 6, y + 5, T.mini, C_MUTED,
-               false, { maxWidth: CW - discoR * 2 - 6 });
+             tx, y + 11, T.h2, vc, true);
+      rotulo(parcial
+        ? 'Falta información para calificar el riesgo; lo comprobado se detalla abajo.'
+        : 'Lectura de la plataforma sobre los registros consultados.',
+        tx, y + 17, T.mini, C_MUTED, false, { maxWidth: txW });
+      if (cob.length) {
+        rotulo(responden + ' de ' + cob.length + ' fuentes respondieron' +
+               (responden < cob.length ? '; el resto quedó sin comprobar.' : '.'),
+               tx, y + 22.5, T.mini, C_MUTED, false, { maxWidth: txW });
       }
+      y += medR * 2;                                     // 188
 
       /* Las tres respuestas, en tercios de la retícula: sin cajas de
          color, separadas por filete y con el estado en un punto. */
-      av(3);                                             // 186
+      av(1);                                             // 192
       var respuestas = [
         ['¿Puede circular?', palabra(VER.circular.estado), VER.circular.resumen, VER.circular.estado],
         ['¿Puede transferirse?', palabra(VER.transferir.estado), VER.transferir.resumen, VER.transferir.estado],
@@ -947,7 +1000,7 @@
                  : 'Todas las fuentes respondieron')),
          !VER.deuda.exacta ? 'con reparos' : (VER.deuda.total > 0 ? 'no' : 'si')],
       ];
-      var altoCol = 26;
+      var altoCol = 24;
       hairline(y, M, W - M, C_INK, 0.4);
       respuestas.forEach(function (r, i) {
         var x0 = gx(i * 4), ancho = gw(4);
