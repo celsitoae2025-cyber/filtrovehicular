@@ -290,6 +290,29 @@
       '</div>';
     };
 
+    /* La deuda tiene tres estados, no dos. Cuando una sección trae
+       registros pero ninguno se reconoce como importe, decir «S/ 0.00»
+       es afirmar que el vehículo no debe nada — lo contrario de lo que
+       sabemos. Ahí se dice que no se pudo totalizar. */
+    function cajaDeuda(d) {
+      var clase, valor, detalle;
+      if (!d.exacta && d.total === 0) {
+        clase = ' ver-duda'; valor = 'No totalizada';
+        detalle = 'Hay registros en ' + d.entidadesIlegibles.join(', ') + ' sin importe legible';
+      } else {
+        clase = d.total > 0 ? ' ver-mal' : ' ver-ok';
+        valor = d.totalTexto;
+        if (d.ilegibles) { clase = ' ver-duda'; detalle = 'Y hay deuda sin totalizar en ' + d.entidadesIlegibles.join(', '); }
+        else if (d.fuentesMudas) detalle = d.fuentesMudas + ' fuente(s) sin respuesta';
+        else detalle = 'Todas las fuentes respondieron';
+      }
+      return '<div class="ver-caja' + clase + '">' +
+        '<span class="ver-k">Deuda registrada</span>' +
+        '<strong class="ver-v">' + escapeHtml(valor) + '</strong>' +
+        '<span class="ver-d">' + escapeHtml(detalle) + '</span>' +
+      '</div>';
+    }
+
     var html =
       '<div class="rep-veredicto ver-nivel-' + r.nivel.toLowerCase() + '" id="rep-veredicto">' +
         '<div class="ver-cabecera">' +
@@ -299,13 +322,7 @@
         '<div class="ver-cajas">' +
           chip('Puede circular', r.circular.estado, r.circular.resumen) +
           chip('Puede transferirse', r.transferir.estado, r.transferir.resumen) +
-          '<div class="ver-caja' + (r.deuda.total > 0 ? ' ver-mal' : ' ver-ok') + '">' +
-            '<span class="ver-k">Deuda registrada</span>' +
-            '<strong class="ver-v">' + escapeHtml(r.deuda.totalTexto) + '</strong>' +
-            '<span class="ver-d">' + (r.deuda.completa
-              ? 'Todas las fuentes respondieron'
-              : r.deuda.fuentesMudas + ' fuente(s) sin respuesta') + '</span>' +
-          '</div>' +
+          cajaDeuda(r.deuda) +
         '</div>' +
         (r.deuda.completa ? '' :
           '<p class="ver-nota">Hay apartados que no devolvieron información. ' +

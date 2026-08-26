@@ -184,3 +184,58 @@ test('el caso de BAF144: deuda alta y revisión vencida dan riesgo ALTO', () => 
   assert.strictEqual(m.titularidad.propietario, 'SAENZ PORTUGAL MANUEL ERNESTO GONZALO');
   assert.ok(r.motivos.some(x => /No puede circular/.test(x)));
 });
+
+// ── Lo que NO es dinero ─────────────────────────────────────────────
+test('los expedientes, los años y los códigos no son soles', () => {
+  // Este es el fallo que sacó una deuda de cuarenta millones en un Swift:
+  // se cogía el último número de cada fila y se sumaba.
+  const m = Modelo.desdeSecciones([
+    seccion('PAPELETAS ATU', [
+      row('EXPEDIENTE', 'FECHA', 'CODIGO', 'MONTO'),
+      row('2024-000123', '12/03/2025', 'M-01', 'S/ 1,200.00'),
+      row('2024-000456', '04/07/2025', 'M-02', 'S/ 800.00'),
+    ]),
+  ], 'BAF144');
+
+  const d = Veredicto.deuda(m);
+  assert.strictEqual(d.total, 2000, 'solo la columna de montos');
+  assert.strictEqual(m.deudas[0].registros, 2, 'la cabecera no es un registro');
+  assert.ok(d.exacta);
+});
+
+test('una sección de deuda sin importes legibles no vale como cero', () => {
+  const m = Modelo.desdeSecciones([
+    seccion('PAPELETAS SUTRAN', [row('EXPEDIENTE', 'FECHA'), row('2024-000999', '01/02/2025')]),
+  ], 'BAF144');
+
+  const d = Veredicto.deuda(m);
+  assert.strictEqual(d.total, 0);
+  assert.strictEqual(d.exacta, false, 'hay registros y no sabemos cuánto suman');
+  assert.deepStrictEqual(d.entidadesIlegibles, ['SUTRAN']);
+  assert.strictEqual(Veredicto.nivel(m, HOY).nivel, 'ALTO', 'deuda desconocida no es riesgo bajo');
+});
+
+test('un importe sin símbolo cuenta si tiene forma de importe', () => {
+  const m = Modelo.desdeSecciones([seccion('SAT LIMA', [row('R-1', '2025', '350.00')])], 'BAF144');
+  assert.strictEqual(Veredicto.deuda(m).total, 350);
+});
+
+test('una sección no se cuenta dos veces por casar con dos patrones', () => {
+  // «PAPELETAS ATU» casa con ATU y con PAPELETA: sumaba el doble.
+  const m = Modelo.desdeSecciones([
+    seccion('PAPELETAS ATU', [row('E-1', '2025', 'S/ 1,000.00')]),
+  ], 'BAF144');
+  assert.strictEqual(m.deudas.length, 1);
+  assert.strictEqual(Veredicto.deuda(m).total, 1000);
+});
+
+test('los registros de una incidencia se cuentan sin la cabecera', () => {
+  const m = Modelo.desdeSecciones([
+    seccion('DENUNCIAS POR ROBO', [
+      row('TIPO', 'FECHA', 'ESTADO'),
+      row('Hurto', '12/03/2024', 'Vigente'),
+    ]),
+  ], 'BAF144');
+  assert.strictEqual(m.incidencias.length, 1, 'una sección, una incidencia');
+  assert.strictEqual(m.incidencias[0].registros, 1);
+});

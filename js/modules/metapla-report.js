@@ -760,10 +760,14 @@
       var respuestas = [
         ['¿PUEDE CIRCULAR?', palabra(VER.circular.estado), VER.circular.resumen, VER.circular.estado],
         ['¿PUEDE TRANSFERIRSE?', palabra(VER.transferir.estado), VER.transferir.resumen, VER.transferir.estado],
-        ['DEUDA REGISTRADA', VER.deuda.totalTexto,
-         VER.deuda.completa ? 'Todas las fuentes respondieron'
-                            : VER.deuda.fuentesMudas + ' fuente(s) sin respuesta',
-         VER.deuda.total > 0 ? 'no' : (VER.deuda.completa ? 'si' : 'con reparos')],
+        ['DEUDA REGISTRADA',
+         (!VER.deuda.exacta && VER.deuda.total === 0) ? 'No totalizada' : VER.deuda.totalTexto,
+         (!VER.deuda.exacta && VER.deuda.total === 0)
+           ? 'Registros sin importe legible en ' + VER.deuda.entidadesIlegibles.join(', ')
+           : (VER.deuda.ilegibles ? 'Y deuda sin totalizar en ' + VER.deuda.entidadesIlegibles.join(', ')
+              : (VER.deuda.fuentesMudas ? VER.deuda.fuentesMudas + ' fuente(s) sin respuesta'
+                 : 'Todas las fuentes respondieron')),
+         !VER.deuda.exacta ? 'con reparos' : (VER.deuda.total > 0 ? 'no' : 'si')],
       ];
       var hueco = 4, anchoCaja = (COLW - hueco * 2) / 3, altoCaja = 25;
       respuestas.forEach(function (r, i) {

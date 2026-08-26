@@ -125,15 +125,23 @@
     var partes = (m.deudas || []).slice().sort(function (a, b) { return b.monto - a.monto; });
     var total = partes.reduce(function (s, d) { return s + (d.monto || 0); }, 0);
     var mudas = (m.cobertura || []).filter(function (c) { return c.estado === 'sin respuesta'; }).length;
+    /* Secciones con registros donde no se reconoció ningún importe. No
+       son cero: son «hay algo y no sabemos cuánto». Sumarlas como cero
+       diría que el vehículo no debe nada, que es justo lo contrario de
+       lo que sabemos. */
+    var ilegibles = (m.deudasIlegibles || []).length;
     return {
       total: total,
+      ilegibles: ilegibles,
+      entidadesIlegibles: (m.deudasIlegibles || []).map(function (d) { return d.entidad; }),
+      exacta: ilegibles === 0,
       // Redondeado a céntimos: sumar decimales en coma flotante deja
       // colas de 0,000000001 que en un importe quedan ridículas.
       totalTexto: 'S/ ' + (Math.round(total * 100) / 100).toLocaleString('es-PE', {
         minimumFractionDigits: 2, maximumFractionDigits: 2,
       }),
       partes: partes,
-      completa: mudas === 0,
+      completa: mudas === 0 && ilegibles === 0,
       fuentesMudas: mudas,
     };
   }
@@ -147,10 +155,12 @@
     if (c.estado === 'no') motivos.push('No puede circular: ' + c.resumen.toLowerCase());
     if (t.estado === 'no') motivos.push('No se puede transferir: ' + t.resumen.toLowerCase());
     if (d.total > 0) motivos.push('Deuda registrada de ' + d.totalTexto);
-    if (!d.completa) motivos.push(d.fuentesMudas + ' fuente(s) sin respuesta');
+    if (d.ilegibles) motivos.push('Hay deuda en ' + d.entidadesIlegibles.join(', ') +
+      ' que no se pudo totalizar');
+    if (d.fuentesMudas) motivos.push(d.fuentesMudas + ' fuente(s) sin respuesta');
 
     var estado;
-    if (t.estado === 'no' || d.total >= 5000) estado = 'ALTO';
+    if (t.estado === 'no' || d.total >= 5000 || d.ilegibles) estado = 'ALTO';
     else if (c.estado === 'no' || d.total > 0 || t.razones.length) estado = 'MEDIO';
     else if (!d.completa) estado = 'MEDIO';
     else estado = 'BAJO';

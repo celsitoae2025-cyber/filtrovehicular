@@ -193,10 +193,46 @@
     { re: /ROBO|HURTO/,               tipo: 'Robo' },
   ];
 
-  function primerImporte(celdas) {
+  /* ── Qué celda es dinero ─────────────────────────────────────────
+     Aquí hubo un desastre: se cogía el último número de la fila y se
+     sumaba. En una tabla de papeletas eso son expedientes, resoluciones
+     y años, y la deuda de un Swift salía en CUARENTA MILLONES de soles.
+     Un número así no es un error de cálculo, es la credibilidad del
+     documento entera.
+
+     Ahora una celda solo es dinero si lo parece: o lleva el símbolo, o
+     tiene la forma de un importe con sus dos decimales. Un entero pelado
+     NO cuenta —«2024» y «000123» son año y expediente, no soles—, y
+     tampoco cuenta nada que lleve letras o forma de fecha.
+
+     Es deliberadamente estricto. Cuando una sección tiene registros pero
+     ninguno parece dinero, no se inventa un cero: se anota como no
+     totalizable y el veredicto lo dice. Entre equivocarse por exceso y
+     decir «no lo sé», en un documento con el que alguien compra un auto
+     se dice «no lo sé». */
+  var RE_FECHA_SUELTA = /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/;
+  var RE_MONEDA = /S\s*\/|PEN|SOLES/i;
+
+  function pareceImporte(txt) {
+    var s = limpiar(txt);
+    if (!/\d/.test(s)) return false;
+    if (RE_FECHA_SUELTA.test(s)) return false;
+    var conMoneda = RE_MONEDA.test(s);
+    // Letras que no sean el símbolo: es un código, no un importe.
+    var resto = s.replace(/S\s*\/\.?|PEN|SOLES/gi, '');
+    if (/[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(resto)) return false;
+    if (conMoneda) return true;
+    // Sin símbolo hace falta la forma completa, con dos decimales.
+    var n = resto.replace(/\s/g, '');
+    return /^\d{1,3}(?:[.,]\d{3})*[.,]\d{2}$/.test(n) || /^\d+[.,]\d{2}$/.test(n);
+  }
+
+  function importeDeFila(celdas) {
+    // De derecha a izquierda: la columna del monto va al final.
     for (var i = celdas.length - 1; i >= 0; i--) {
+      if (!pareceImporte(celdas[i])) continue;
       var v = aImporte(celdas[i]);
-      if (v != null && v > 0) return v;
+      if (v != null) return v;
     }
     return null;
   }
@@ -215,6 +251,7 @@
       deudas: [],
       incidencias: [],
       cobertura: [],
+      deudasIlegibles: [],
       noMapeado: [],
       proveedor: {
         nivel: (secciones && secciones.resumen && secciones.resumen.nivel) || null,
@@ -256,23 +293,53 @@
 
       if (vacia) return;
 
+      var yaHubo = false;   // ver SECCIONES_INCIDENCIA, más abajo
+
       // ── Deudas ──
+      /* Solo el PRIMER patrón que case. «PAPELETAS ATU» casaba a la vez
+         con ATU y con PAPELETA, y la sección se sumaba dos veces: dos mil
+         soles de multas salían como cuatro mil. El orden de la lista es
+         el que manda, de lo más específico a lo más general. */
+      var yaHuboDeuda = false;
       SECCIONES_DEUDA.forEach(function (d) {
-        if (!d.re.test(titulo)) return;
+        if (yaHuboDeuda || !d.re.test(titulo)) return;
+        yaHuboDeuda = true;
         var total = 0, items = 0;
         filas.forEach(function (f) {
           var celdas = f.t === 'row' ? f.cells : (f.t === 'kv' ? [f.a, f.b] : [f.a]);
-          var imp = primerImporte(celdas);
+          var imp = importeDeFila(celdas);
           if (imp != null) { total += imp; items++; }
         });
-        if (items) modelo.deudas.push({ entidad: d.entidad, monto: total, registros: items });
+        if (items) {
+          modelo.deudas.push({ entidad: d.entidad, monto: total, registros: items });
+        } else {
+          // Hay registros pero ninguno parece un importe. Se dice, no se
+          // da por cero: puede haber deuda y no saber cuánta.
+          modelo.deudasIlegibles.push({ entidad: d.entidad, seccion: limpiar(sec.titulo), filas: filas.length });
+        }
       });
 
       // ── Incidencias ──
       SECCIONES_INCIDENCIA.forEach(function (inc) {
         if (!inc.re.test(titulo)) return;
-        var cuenta = filas.filter(function (f) { return f.t === 'row' || f.t === 'kv'; }).length;
-        modelo.incidencias.push({ tipo: inc.tipo, registros: cuenta || 1, seccion: limpiar(sec.titulo) });
+        /* Solo la PRIMERA que case. Una sección llamada «DENUNCIAS POR
+           ROBO» casaba con dos patrones y se contaba dos veces, y el
+           veredicto acababa diciendo «Robo registrada (6)» por una
+           tabla que tenía una cabecera y cinco filas. */
+        if (yaHubo) return;
+        yaHubo = true;
+        var registros = filas.filter(function (f) {
+          if (f.t !== 'row') return f.t === 'kv';
+          // La fila de cabecera no es un registro: va toda en versalitas
+          // y sin un solo dígito.
+          var texto = f.cells.join(' ');
+          return /\d/.test(texto) || /[a-záéíóúñ]/.test(texto);
+        }).length;
+        modelo.incidencias.push({
+          tipo: inc.tipo,
+          registros: registros || 1,
+          seccion: limpiar(sec.titulo),
+        });
       });
     });
 
