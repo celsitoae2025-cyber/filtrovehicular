@@ -21,21 +21,66 @@
 
 
   /* ============================================================
-     PANEL DE ARTE — la mitad oscura del acceso
-     ------------------------------------------------------------
-     Vuelve tal cual estaba de superficie: el degradado de marca, la
-     trama y la marca de agua. Lo que NO vuelve es la presentación —el
-     saludo, la bajada «Consultas vehiculares oficiales al instante», la
-     lista de quince servicios y la fila de fuentes—: eso era el intro
-     que se retiró.
+     Panel oscuro de la pantalla de acceso
 
-     Queda el nombre y el pie. Un panel entero en blanco sería una
-     mancha oscura sin razón; con la marca, es la portada del acceso.
+     Es el mismo en login y en registro, así que se escribe una vez. Antes
+     estaba duplicado literal en los dos modales y cualquier retoque había
+     que hacerlo por partida doble.
+
+     Lleva, de arriba abajo: de dónde sale la información, la marca, el
+     saludo en grande y lo que se puede consultar.
+
+     Las fuentes van en texto y no con sus logos: en assets/ no hay logos
+     oficiales —lo que hay son iconos propios de cada servicio—, y meter
+     imágenes ajenas aquí sumaría peso a la primera pantalla que ve nadie
+     sin sesión. Sin franjas y sin sombras, como el resto del proyecto.
   ============================================================ */
-  function brandSide() { return [
+  function brandSide(saludo) { return [
     '    <div class="auth-brand-side">',
+    /* Fila de arriba: de dónde sale la información. Va donde la
+       referencia pone su menú de navegación —esta pantalla no tiene
+       menú— y así el panel no arranca vacío por arriba. */
+    '      <div class="auth-brand-top">',
+    '        <span class="auth-src-label">Información oficial de</span>',
+    '        <div class="auth-src-row">',
+    '          <span class="auth-src">Sunarp</span>',
+    '          <span class="auth-src">SAT</span>',
+    '          <span class="auth-src">MTC</span>',
+    '          <span class="auth-src">APESEG</span>',
+    '          <span class="auth-src">Sutran</span>',
+    '          <span class="auth-src">ATU</span>',
+    '          <span class="auth-src">Infracción por regiones</span>',
+    '        </div>',
+    '      </div>',
     '      <div class="auth-brand-content">',
+    /* La marca queda de antetítulo y el saludo ("Bienvenido." / "Crea tu
+       cuenta.") pasa a ser el titular grande, que es lo que manda en el
+       panel. El <h2> del formulario sigue en su sitio y solo se esconde
+       en escritorio (ver auth.css): en móvil este panel no se muestra, y
+       sin el <h2> la pantalla se quedaría sin título. */
     '        <h3 class="auth-brand-title">Filtro Vehicular<span class="brand-plus-lg">+</span></h3>',
+    '        <p class="auth-brand-greeting">' + saludo + '</p>',
+    '        <p class="auth-brand-tagline">Consultas vehiculares oficiales al instante. Accede a:</p>',
+    /* Las quince. Estuvieron recortadas a seis mientras el acceso era una
+       tarjeta de 740×620, donde la lista larga no cabía. A pantalla
+       completa y a dos columnas entran de sobra. */
+    '        <ul class="auth-brand-list">',
+    '          <li>Inscripción de la Placa</li>',
+    '          <li>Papeletas Vigentes</li>',
+    '          <li>ATU y SUTRAN</li>',
+    '          <li>Papeletas con DNI</li>',
+    '          <li>Vigencia del SOAT</li>',
+    '          <li>Inspección Vehicular</li>',
+    '          <li>Siniestralidad</li>',
+    '          <li>Sistema GNV</li>',
+    '          <li>Órdenes de Captura</li>',
+    '          <li>Placas Duplicadas</li>',
+    '          <li>Impuesto Vehicular</li>',
+    '          <li>Historial Completo</li>',
+    '          <li>Cambio de Características</li>',
+    '          <li>Medidas Cautelares</li>',
+    '          <li>Y mucho más</li>',
+    '        </ul>',
     '      </div>',
     '      <div class="auth-brand-foot">© 2026 Filtro Vehicular+ Perú</div>',
     '    </div>'
@@ -92,7 +137,7 @@
     '      <div class="auth-legal-foot"><a href="#" data-modal="terms">Términos y condiciones</a><span class="dot">·</span><a href="#" data-modal="cookies">Política de cookies</a></div>',
     '      </div>',
     '    </div>',
-    brandSide(),
+    brandSide('Crea tu cuenta.'),
     '  </div>',
     '</div>',
 
@@ -159,7 +204,7 @@
     '      <div class="auth-legal-foot"><a href="#" data-modal="terms">Términos y condiciones</a><span class="dot">·</span><a href="#" data-modal="cookies">Política de cookies</a></div>',
     '      </div>',
     '    </div>',
-    brandSide(),
+    brandSide('Bienvenido.'),
     '  </div>',
     '</div>',
 
