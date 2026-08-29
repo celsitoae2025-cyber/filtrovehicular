@@ -20,6 +20,27 @@
   var LOCK_SVG = '<svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
 
+  /* ============================================================
+     PANEL DE ARTE — la mitad oscura del acceso
+     ------------------------------------------------------------
+     Vuelve tal cual estaba de superficie: el degradado de marca, la
+     trama y la marca de agua. Lo que NO vuelve es la presentación —el
+     saludo, la bajada «Consultas vehiculares oficiales al instante», la
+     lista de quince servicios y la fila de fuentes—: eso era el intro
+     que se retiró.
+
+     Queda el nombre y el pie. Un panel entero en blanco sería una
+     mancha oscura sin razón; con la marca, es la portada del acceso.
+  ============================================================ */
+  function brandSide() { return [
+    '    <div class="auth-brand-side">',
+    '      <div class="auth-brand-content">',
+    '        <h3 class="auth-brand-title">Filtro Vehicular<span class="brand-plus-lg">+</span></h3>',
+    '      </div>',
+    '      <div class="auth-brand-foot">© 2026 Filtro Vehicular+ Perú</div>',
+    '    </div>'
+  ].join(''); }
+
   /* Icono de WhatsApp, de trazo como los demás: el auricular dentro del
      bocadillo. Dibujado, no emoji. */
   var WA_SVG = '<svg class="auth-fvc-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.8 20.2l1.2-4a8 8 0 113 3l-4.2 1z"/><path d="M9 9.4c0 3 2.4 5.4 5.4 5.4l1-1.3 1.6.8-.4 1.4c-2.9.5-6.4-2.1-7.6-5.1l1.3-.7z"/></svg>';
@@ -71,6 +92,7 @@
     '      <div class="auth-legal-foot"><a href="#" data-modal="terms">Términos y condiciones</a><span class="dot">·</span><a href="#" data-modal="cookies">Política de cookies</a></div>',
     '      </div>',
     '    </div>',
+    brandSide(),
     '  </div>',
     '</div>',
 
@@ -137,6 +159,7 @@
     '      <div class="auth-legal-foot"><a href="#" data-modal="terms">Términos y condiciones</a><span class="dot">·</span><a href="#" data-modal="cookies">Política de cookies</a></div>',
     '      </div>',
     '    </div>',
+    brandSide(),
     '  </div>',
     '</div>',
 

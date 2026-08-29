@@ -141,7 +141,7 @@ body.auth-modal-open { overflow: hidden; }
   margin-bottom: auto;
 }
 .auth-brand-title {
-  margin: 0 0 14px;
+  margin: 0;
   font-size: 32px;
   font-weight: 700;
   letter-spacing: -.6px;
@@ -1148,14 +1148,8 @@ body.auth-locked .wa-menu {
      El orden se cambia por CSS y no moviendo el marcado: en móvil el
      panel de arte no se muestra y el formulario tiene que seguir siendo
      lo primero que lee un lector de pantalla. */
-  /* Retirado el panel de arte, esta columna es TODA la pantalla de
-     acceso, así que se centra: pegada a la derecha dejaba media hoja
-     vacía a la izquierda y el formulario colgando del borde. Conserva su
-     ancho —un formulario de 1400px de ancho no se lee— y el fondo con
-     trama, que es lo que evita que el centro parezca un recorte. */
   #authModalLogin  .auth-form-side,
   #authModalSignup .auth-form-side {
-    margin-inline: auto;
     order: 2;
     /* Un punto más ancha que antes: con el nombre a tamaño de titular,
        a 400px la marca y los campos se rozaban. */
