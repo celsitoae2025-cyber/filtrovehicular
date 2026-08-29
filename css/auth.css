@@ -1132,6 +1132,16 @@ body.auth-locked .wa-menu {
     height: 100dvh;
     max-height: none;
     border-radius: 0;
+    /* El fondo del acceso es la HOJA ENTERA, no la columna. Mientras
+       hubo panel de arte, el blanco de aquí no se veía: lo tapaban el
+       panel a un lado y la columna al otro. Al retirarlo quedó un
+       rectángulo gris con trama recortado sobre blanco, como si la
+       pantalla estuviera a medio pintar. El mismo gris y la misma trama
+       de la columna, aplicados aquí, hacen que el corte desaparezca. */
+    background-color: #f8f8f8;
+    background-image: var(--auth-tex-dots);
+    background-size: 18px 18px;
+    background-repeat: repeat;
   }
 
   /* ============ Columna del formulario — estrecha, a la DERECHA ============
