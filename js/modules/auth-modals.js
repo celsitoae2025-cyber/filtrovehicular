@@ -19,71 +19,10 @@
 
   var LOCK_SVG = '<svg class="auth-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
-  /* ============================================================
-     Panel oscuro de la pantalla de acceso
 
-     Es el mismo en login y en registro, así que se escribe una vez. Antes
-     estaba duplicado literal en los dos modales y cualquier retoque había
-     que hacerlo por partida doble.
-
-     Lleva, de arriba abajo: de dónde sale la información, la marca, el
-     saludo en grande y lo que se puede consultar.
-
-     Las fuentes van en texto y no con sus logos: en assets/ no hay logos
-     oficiales —lo que hay son iconos propios de cada servicio—, y meter
-     imágenes ajenas aquí sumaría peso a la primera pantalla que ve nadie
-     sin sesión. Sin franjas y sin sombras, como el resto del proyecto.
-  ============================================================ */
-  function brandSide(saludo) { return [
-    '    <div class="auth-brand-side">',
-    /* Fila de arriba: de dónde sale la información. Va donde la
-       referencia pone su menú de navegación —esta pantalla no tiene
-       menú— y así el panel no arranca vacío por arriba. */
-    '      <div class="auth-brand-top">',
-    '        <span class="auth-src-label">Información oficial de</span>',
-    '        <div class="auth-src-row">',
-    '          <span class="auth-src">Sunarp</span>',
-    '          <span class="auth-src">SAT</span>',
-    '          <span class="auth-src">MTC</span>',
-    '          <span class="auth-src">APESEG</span>',
-    '          <span class="auth-src">Sutran</span>',
-    '          <span class="auth-src">ATU</span>',
-    '          <span class="auth-src">Infracción por regiones</span>',
-    '        </div>',
-    '      </div>',
-    '      <div class="auth-brand-content">',
-    /* La marca queda de antetítulo y el saludo ("Bienvenido." / "Crea tu
-       cuenta.") pasa a ser el titular grande, que es lo que manda en el
-       panel. El <h2> del formulario sigue en su sitio y solo se esconde
-       en escritorio (ver auth.css): en móvil este panel no se muestra, y
-       sin el <h2> la pantalla se quedaría sin título. */
-    '        <h3 class="auth-brand-title">Filtro Vehicular<span class="brand-plus-lg">+</span></h3>',
-    '        <p class="auth-brand-greeting">' + saludo + '</p>',
-    '        <p class="auth-brand-tagline">Consultas vehiculares oficiales al instante. Accede a:</p>',
-    /* Las quince. Estuvieron recortadas a seis mientras el acceso era una
-       tarjeta de 740×620, donde la lista larga no cabía. A pantalla
-       completa y a dos columnas entran de sobra. */
-    '        <ul class="auth-brand-list">',
-    '          <li>Inscripción de la Placa</li>',
-    '          <li>Papeletas Vigentes</li>',
-    '          <li>ATU y SUTRAN</li>',
-    '          <li>Papeletas con DNI</li>',
-    '          <li>Vigencia del SOAT</li>',
-    '          <li>Inspección Vehicular</li>',
-    '          <li>Siniestralidad</li>',
-    '          <li>Sistema GNV</li>',
-    '          <li>Órdenes de Captura</li>',
-    '          <li>Placas Duplicadas</li>',
-    '          <li>Impuesto Vehicular</li>',
-    '          <li>Historial Completo</li>',
-    '          <li>Cambio de Características</li>',
-    '          <li>Medidas Cautelares</li>',
-    '          <li>Y mucho más</li>',
-    '        </ul>',
-    '      </div>',
-    '      <div class="auth-brand-foot">© 2026 Filtro Vehicular+ Perú</div>',
-    '    </div>'
-  ].join(''); }
+  /* Icono de WhatsApp, de trazo como los demás: el auricular dentro del
+     bocadillo. Dibujado, no emoji. */
+  var WA_SVG = '<svg class="auth-fvc-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.8 20.2l1.2-4a8 8 0 113 3l-4.2 1z"/><path d="M9 9.4c0 3 2.4 5.4 5.4 5.4l1-1.3 1.6.8-.4 1.4c-2.9.5-6.4-2.1-7.6-5.1l1.3-.7z"/></svg>';
 
   var MODAL_HTML = [
     // ========== Registro (split) ==========
@@ -132,7 +71,6 @@
     '      <div class="auth-legal-foot"><a href="#" data-modal="terms">Términos y condiciones</a><span class="dot">·</span><a href="#" data-modal="cookies">Política de cookies</a></div>',
     '      </div>',
     '    </div>',
-    brandSide('Crea tu cuenta.'),
     '  </div>',
     '</div>',
 
@@ -174,11 +112,31 @@
     '        <button type="submit" class="auth-submit">Iniciar sesión</button>',
     '      </form>',
     '      <p class="auth-switch">¿No tienes cuenta? <button type="button" data-auth-switch="signup">Crear cuenta</button></p>',
+    /* ── Filtro Vehicular Completo, por WhatsApp ──────────────────
+       El reporte completo no se despacha solo: lo pide el cliente y lo
+       emite un operador. Quien llega al acceso sin cuenta no tenía por
+       dónde pedirlo, y es justo la consulta que más deja.
+
+       El cuadro de la placa se abre aquí mismo, sin sacar a nadie del
+       acceso, y el mensaje sale a WhatsApp ya escrito con la placa
+       dentro: el operador no tiene que preguntarla. */
+    '      <div class="auth-fvc">',
+    '        <button type="button" class="auth-fvc-open" id="fvcOpen" aria-expanded="false" aria-controls="fvcBox">' + WA_SVG,
+    '          <span>Solicita tu Filtro Vehicular Completo</span>',
+    '        </button>',
+    '        <div class="auth-fvc-box" id="fvcBox" hidden>',
+    '          <label class="auth-fvc-label" for="fvcPlaca">Placa del vehículo</label>',
+    '          <div class="auth-fvc-row">',
+    '            <input class="auth-fvc-input" id="fvcPlaca" type="text" autocomplete="off" spellcheck="false" maxlength="7" placeholder="ABC-123" aria-describedby="fvcMsg">',
+    '            <button type="button" class="auth-fvc-send" id="fvcSend">Enviar</button>',
+    '          </div>',
+    '          <p class="auth-fvc-msg" id="fvcMsg" hidden></p>',
+    '        </div>',
+    '      </div>',
     '      </div>',
     '      <div class="auth-legal-foot"><a href="#" data-modal="terms">Términos y condiciones</a><span class="dot">·</span><a href="#" data-modal="cookies">Política de cookies</a></div>',
     '      </div>',
     '    </div>',
-    brandSide('Bienvenido.'),
     '  </div>',
     '</div>',
 
@@ -748,6 +706,74 @@
     // los links para tracking y consumen el token al hacer pre-visita.
     // Un código numérico copy-paste es 100% inmune a eso.
     bindForgotFlow();
+
+    bindFiltroCompleto();
+  }
+
+  /* ============================================================
+     PEDIR EL FILTRO VEHICULAR COMPLETO
+     ------------------------------------------------------------
+     Un botón que despliega la placa y la manda a WhatsApp ya escrita.
+     La placa se formatea mientras se escribe con la MISMA regla que el
+     resto de la plataforma —tres caracteres, guion, tres caracteres— y
+     no se envía nada si no está completa: un mensaje con media placa
+     obliga al operador a preguntar y se pierde la mitad de los pedidos.
+  ============================================================ */
+  function formateaPlaca(v) {
+    var s = String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    return s.length > 3 ? s.slice(0, 3) + '-' + s.slice(3) : s;
+  }
+
+  function placaValida(v) { return /^[A-Z0-9]{3}-[A-Z0-9]{3}$/.test(v); }
+
+  function bindFiltroCompleto() {
+    var abrir = document.getElementById('fvcOpen');
+    var caja  = document.getElementById('fvcBox');
+    var input = document.getElementById('fvcPlaca');
+    var enviar = document.getElementById('fvcSend');
+    var aviso = document.getElementById('fvcMsg');
+    if (!abrir || !caja || !input || !enviar) return;
+
+    function mensaje(texto) {
+      if (!aviso) return;
+      aviso.textContent = texto || '';
+      aviso.hidden = !texto;
+    }
+
+    abrir.addEventListener('click', function () {
+      var abierto = !caja.hidden;
+      caja.hidden = abierto;
+      abrir.setAttribute('aria-expanded', String(!abierto));
+      if (!abierto) { mensaje(''); input.focus(); }
+    });
+
+    input.addEventListener('input', function () {
+      input.value = formateaPlaca(input.value);
+      if (aviso && !aviso.hidden) mensaje('');
+    });
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); enviar.click(); }
+    });
+
+    enviar.addEventListener('click', function () {
+      var placa = formateaPlaca(input.value);
+      input.value = placa;
+      if (!placaValida(placa)) {
+        mensaje('Escribe la placa completa, por ejemplo ABC-123.');
+        input.focus();
+        return;
+      }
+      /* El número se lee en el momento del clic y no al cargar: este
+         módulo puede haberse ejecutado antes que main.js. */
+      var numero = (window.Consultia && window.Consultia.WHATSAPP_NUMBER) || '';
+      if (!numero) { mensaje('El WhatsApp no está disponible ahora mismo.'); return; }
+      var texto = 'Hola, quiero solicitar el Filtro Vehicular Completo de la placa ' +
+                  placa + '.';
+      window.open('https://wa.me/' + numero + '?text=' + encodeURIComponent(texto),
+                  '_blank', 'noopener');
+      mensaje('');
+    });
   }
 
   // ============================================================

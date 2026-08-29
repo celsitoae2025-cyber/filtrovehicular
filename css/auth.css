@@ -1138,8 +1138,14 @@ body.auth-locked .wa-menu {
      El orden se cambia por CSS y no moviendo el marcado: en móvil el
      panel de arte no se muestra y el formulario tiene que seguir siendo
      lo primero que lee un lector de pantalla. */
+  /* Retirado el panel de arte, esta columna es TODA la pantalla de
+     acceso, así que se centra: pegada a la derecha dejaba media hoja
+     vacía a la izquierda y el formulario colgando del borde. Conserva su
+     ancho —un formulario de 1400px de ancho no se lee— y el fondo con
+     trama, que es lo que evita que el centro parezca un recorte. */
   #authModalLogin  .auth-form-side,
   #authModalSignup .auth-form-side {
+    margin-inline: auto;
     order: 2;
     /* Un punto más ancha que antes: con el nombre a tamaño de titular,
        a 400px la marca y los campos se rozaban. */
@@ -1205,10 +1211,16 @@ body.auth-locked .wa-menu {
     background: var(--accent-gradient);
   }
 
-  /* El título del formulario se esconde: el saludo lo da el panel de
-     arte. Sigue en el marcado porque en móvil ese panel no existe. */
+  /* El título del formulario se ve también en escritorio. Estuvo oculto
+     mientras el saludo lo daba el panel de arte; sin ese panel, sin esto
+     la pantalla de acceso se quedaba sin una sola palabra que dijera
+     dónde está uno. */
   #authModalLogin  .auth-form-card > .auth-modal-title,
-  #authModalSignup .auth-form-card > .auth-modal-title { display: none; }
+  #authModalSignup .auth-form-card > .auth-modal-title {
+    display: block;
+    font-size: clamp(24px, 2vw, 30px);
+    margin-bottom: 6px;
+  }
 
   /* El acceso va sin bajada: entre el retrato y los campos no hacía
      falta explicar que se entra a la cuenta. La del registro se retiró
@@ -1560,4 +1572,96 @@ body.auth-locked .wa-menu {
    sin acercamiento. */
 @media (prefers-reduced-motion: reduce) {
   .auth-saludo span { animation: saludoPalabra 2.6s cubic-bezier(.4, 0, .2, 1) both; }
+}
+
+
+/* ============================================================
+   PEDIR EL FILTRO VEHICULAR COMPLETO
+   ------------------------------------------------------------
+   Vive al pie del acceso, debajo del enlace de registro: es una
+   salida para quien no quiere crear cuenta todavía, no un segundo
+   botón que compita con «Iniciar sesión».
+
+   Plano, como todo aquí: sin sombras y sin franja de acento. El
+   verde entra en el icono y en el botón de envío, que es lo único
+   que hay que encontrar cuando el cuadro ya está abierto.
+============================================================ */
+.auth-fvc {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--c-border, #e4e8e3);
+}
+
+.auth-fvc-open {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 16px;
+  border: 1px solid #141d1c;
+  border-radius: 10px;
+  background: #141d1c;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: background .16s ease, border-color .16s ease;
+}
+.auth-fvc-open:hover { background: #1d2a28; border-color: #1d2a28; }
+.auth-fvc-open .auth-fvc-ico { width: 20px; height: 20px; color: #8fc72e; flex: none; }
+
+.auth-fvc-box { margin-top: 12px; }
+
+.auth-fvc-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: #6b7472;
+}
+
+.auth-fvc-row { display: flex; gap: 8px; }
+
+.auth-fvc-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--c-border, #e4e8e3);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #141d1c;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.auth-fvc-input:focus { outline: none; border-color: #03a7a4; }
+.auth-fvc-input::placeholder { color: #b3bab8; font-weight: 400; letter-spacing: .5px; }
+
+.auth-fvc-send {
+  flex: none;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 10px;
+  background: #8fc72e;
+  color: #141d1c;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .16s ease;
+}
+.auth-fvc-send:hover { background: #7fb428; }
+
+.auth-fvc-msg {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #c62828;
 }
