@@ -1331,16 +1331,27 @@
 
            Se distinguen por lo que son: un LOGOTIPO es pequeño y ancho
            —marcas, sellos, escudos— y se acota a 46 mm, alineado a la
-           izquierda como un dato más; un DOCUMENTO escaneado trae
-           resolución de sobra y ocupa el ancho de la columna, pero nunca
-           más de lo que da su propia resolución a 300 ppp: ampliar un
-           escaneo pobre solo agranda sus defectos. */
+           izquierda como un dato más.
+
+           Un DOCUMENTO —una partida registral, una tarjeta, una boleta—
+           va a HOJA ENTERA y él solo: es lo que alguien va a leer,
+           imprimir o enseñar en una notaría, y la letra de un asiento
+           registral a media página no se lee. Cada uno abre página, con
+           su pie arriba, y se agranda hasta donde da la columna.
+
+           Aquí hubo un tope por resolución —no pasar de 300 ppp— para no
+           ampliar escaneos pobres. Se retira: un asiento de 1000 px
+           salía a 85 mm, ilegible, y entre un escaneo grande con algo de
+           grano y uno pequeño y nítido que no se puede leer, manda
+           poder leerlo. */
         var caps = sec.caps || [];
         grandes.forEach(function (im, gi) {
           var cap = caps[gi] || '';
           var esLogo = im.px <= 1400 && im.py <= 1000;
-          var anchoMax = esLogo ? 46 : Math.min(CW, (im.px / 300) * 25.4);
-          var altoMax = esLogo ? 34 : CUERPO.bottom - CUERPO.top - U * 3;
+          var anchoMax = esLogo ? 46 : CW;
+          var altoMax = esLogo ? 34 : CUERPO.bottom - CUERPO.top - U * 2;
+          // Un documento no comparte hoja: si la página ya trae algo, se pasa.
+          if (!esLogo && y > CUERPO.top) nuevaPagina();
           var esc = Math.min(anchoMax / im.px, altoMax / im.py);
           var dw = im.px * esc, dh = im.py * esc;
           if (y + dh + (cap ? U * 1.5 : 0) > CUERPO.bottom) nuevaPagina();
