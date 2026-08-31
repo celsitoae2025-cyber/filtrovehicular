@@ -1011,10 +1011,13 @@
 
       if (score !== null) {
         medidor(medX, medY, medR, Math.max(0, Math.min(1, score / 100)), colorIndice);
-        rotulo(String(R.score), medX, medY - 0.6, 15, C_INK, true, { align: 'center' });
-        rotulo('de 100', medX, medY + 3.8, T.micro, C_MUTED, false, { align: 'center' });
-        versalita('Índice del proveedor', medX, medY + 8.2,
-                  { size: 4.4, track: 0.2, align: 'center' });
+        /* Dentro del aro solo caben el número y su escala. La atribución
+           —de quién es el índice— iba también aquí, en un cuerpo de 4,4
+           pt, y a esa altura el aro ya se ha cerrado: el rótulo cruzaba
+           el trazo. Se dice en el renglón de al lado, con sitio de
+           sobra. */
+        rotulo(String(R.score), medX, medY + 1, 15, C_INK, true, { align: 'center' });
+        rotulo('de 100', medX, medY + 5.4, T.micro, C_MUTED, false, { align: 'center' });
       } else if (frac !== null) {
         // Sin índice, se enseña lo que sí se puede afirmar: cuánto se comprobó.
         medidor(medX, medY, medR, frac, colorCobertura);
@@ -1043,12 +1046,13 @@
          entera. El cromo de la segunda página reventaba con «pie is not a
          function». */
       var notas = [];
+      if (score !== null) {
+        notas.push('Índice del proveedor: ' + R.score + ' de 100' +
+                   (R.nivel ? ' (riesgo ' + R.nivel.toLowerCase() + ')' : ''));
+      }
       if (cob.length) {
         notas.push(responden + ' de ' + cob.length + ' fuentes respondieron' +
                    (responden < cob.length ? '; el resto quedó sin comprobar' : ''));
-      }
-      if (score !== null && R.nivel) {
-        notas.push('riesgo ' + R.nivel.toLowerCase() + ' según el proveedor');
       }
       if (notas.length) {
         rotulo(notas.join(' · ') + '.', tx, y + 22.5, T.mini, C_MUTED, false, { maxWidth: txW });
