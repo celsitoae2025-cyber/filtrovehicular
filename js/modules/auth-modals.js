@@ -194,7 +194,7 @@
     '        <div class="auth-fvc-box" id="fvcBox" hidden>',
     '          <label class="auth-fvc-label" for="fvcPlaca">Placa del vehículo</label>',
     '          <div class="auth-fvc-row">',
-    '            <input class="auth-fvc-input" id="fvcPlaca" type="text" autocomplete="off" spellcheck="false" maxlength="7" placeholder="ABC-123" aria-describedby="fvcMsg">',
+    '            <input class="auth-fvc-input" id="fvcPlaca" type="text" autocomplete="off" spellcheck="false" maxlength="6" placeholder="ABC123" aria-describedby="fvcMsg">',
     '            <button type="button" class="auth-fvc-send" id="fvcSend">Enviar</button>',
     '          </div>',
     '          <p class="auth-fvc-msg" id="fvcMsg" hidden></p>',
@@ -786,12 +786,15 @@
      no se envía nada si no está completa: un mensaje con media placa
      obliga al operador a preguntar y se pierde la mitad de los pedidos.
   ============================================================ */
+  /* Sin guion: la placa viaja tal como se lee en el vehículo, seis
+     caracteres seguidos. El guion lo ponía el formateo de la plataforma,
+     que es el de sus buscadores; aquí el texto acaba en un mensaje de
+     WhatsApp que lee una persona, y el separador solo estorba. */
   function formateaPlaca(v) {
-    var s = String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
-    return s.length > 3 ? s.slice(0, 3) + '-' + s.slice(3) : s;
+    return String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
   }
 
-  function placaValida(v) { return /^[A-Z0-9]{3}-[A-Z0-9]{3}$/.test(v); }
+  function placaValida(v) { return /^[A-Z0-9]{6}$/.test(v); }
 
   function bindFiltroCompleto() {
     var abrir = document.getElementById('fvcOpen');
@@ -827,7 +830,7 @@
       var placa = formateaPlaca(input.value);
       input.value = placa;
       if (!placaValida(placa)) {
-        mensaje('Escribe la placa completa, por ejemplo ABC-123.');
+        mensaje('Escribe la placa completa, por ejemplo ABC123.');
         input.focus();
         return;
       }
