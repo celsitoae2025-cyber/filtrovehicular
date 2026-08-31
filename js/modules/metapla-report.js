@@ -1322,19 +1322,34 @@
           y = base + U * 2.5;
         }
 
-        // Documentos: a página ancha, con su pie tomado del original
+        /* Documentos e ilustraciones.
+
+           Ninguna imagen se estira ya a página ancha por el hecho de
+           estar sola. El logotipo de la marca del vehículo venía en unos
+           cientos de píxeles y se imprimía a 170 mm: media hoja de negro
+           para decir «Kia», con más presencia que el veredicto.
+
+           Se distinguen por lo que son: un LOGOTIPO es pequeño y ancho
+           —marcas, sellos, escudos— y se acota a 46 mm, alineado a la
+           izquierda como un dato más; un DOCUMENTO escaneado trae
+           resolución de sobra y ocupa el ancho de la columna, pero nunca
+           más de lo que da su propia resolución a 300 ppp: ampliar un
+           escaneo pobre solo agranda sus defectos. */
         var caps = sec.caps || [];
         grandes.forEach(function (im, gi) {
           var cap = caps[gi] || '';
-          var maxHg = CUERPO.bottom - CUERPO.top - U * 3;
-          var esc = Math.min(CW / im.px, maxHg / im.py);
+          var esLogo = im.px <= 1400 && im.py <= 1000;
+          var anchoMax = esLogo ? 46 : Math.min(CW, (im.px / 300) * 25.4);
+          var altoMax = esLogo ? 34 : CUERPO.bottom - CUERPO.top - U * 3;
+          var esc = Math.min(anchoMax / im.px, altoMax / im.py);
           var dw = im.px * esc, dh = im.py * esc;
           if (y + dh + (cap ? U * 1.5 : 0) > CUERPO.bottom) nuevaPagina();
           if (cap) {
             versalita(cap, M, y, { size: T.micro, track: 0.4 });
             av(1);
           }
-          var ix = M + (CW - dw) / 2;
+          // El documento se centra en la columna; el logotipo va a margen.
+          var ix = esLogo ? M : M + (CW - dw) / 2;
           try {
             doc.addImage(im.dataUrl, 'JPEG', ix, y, dw, dh, undefined, 'FAST');
           } catch (e) { /* imagen no insertable */ }
