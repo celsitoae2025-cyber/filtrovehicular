@@ -974,25 +974,55 @@
 
       var responden = cob.filter(function (c) { return c.estado !== 'sin respuesta'; }).length;
       var frac = cob.length ? responden / cob.length : null;
-      var colorArco = parcial ? C_MUTED : vc;
 
-      if (frac !== null) {
-        medidor(medX, medY, medR, frac, colorArco);
+      /* ── Qué enseña el aro ─────────────────────────────────────────
+         El índice de riesgo, que es lo que alguien busca en la primera
+         página. Estuvo enseñando el porcentaje de fuentes que
+         respondieron —«100 % comprobado»— y eso no es un riesgo: un
+         vehículo con una denuncia y todas las fuentes contestando salía
+         con el aro lleno, como si estuviera limpio.
+
+         El número lo pone el proveedor mientras la plataforma no calcule
+         el suyo, y por eso se rotula como suyo. La cobertura no se
+         pierde: baja al renglón de al lado, que es su sitio.
+
+         El COLOR manda sobre el número y sale del veredicto propio
+         siempre que lo haya —es el criterio que podemos defender—; solo
+         cuando el nuestro queda parcial se toma el nivel del proveedor,
+         y a falta de nivel se deduce del puntaje. Un semáforo de un
+         informe de riesgo no puede quedarse en gris teniendo delante la
+         información para encenderlo. */
+      var score = R.score && !isNaN(Number(R.score)) ? Number(R.score) : null;
+
+      /* El color describe el NÚMERO que hay dentro del aro, no otra cosa.
+         Estuvo saliendo del veredicto propio incluso cuando el aro
+         mostraba el índice del proveedor: un 40 —riesgo alto— se pintaba
+         de verde porque nuestra lectura decía «bajo». Dos afirmaciones
+         opuestas en el mismo dibujo.
+
+         Con el índice dentro manda el nivel del proveedor, y a falta de
+         nivel se deduce del puntaje: de 85 para arriba verde, de 60 a 84
+         ámbar, por debajo rojo. El veredicto propio no se queda sin
+         color — lo lleva el titular de al lado. */
+      var colorIndice = R.nivel
+        ? riskColor(R.nivel)
+        : (score === null ? C_MUTED : (score >= 85 ? C_OK : (score >= 60 ? C_WARN : C_BAD)));
+      var colorCobertura = parcial ? C_MUTED : vc;
+
+      if (score !== null) {
+        medidor(medX, medY, medR, Math.max(0, Math.min(1, score / 100)), colorIndice);
+        rotulo(String(R.score), medX, medY - 0.6, 15, C_INK, true, { align: 'center' });
+        rotulo('de 100', medX, medY + 3.8, T.micro, C_MUTED, false, { align: 'center' });
+        versalita('Índice del proveedor', medX, medY + 8.2,
+                  { size: 4.4, track: 0.2, align: 'center' });
+      } else if (frac !== null) {
+        // Sin índice, se enseña lo que sí se puede afirmar: cuánto se comprobó.
+        medidor(medX, medY, medR, frac, colorCobertura);
         rotulo(Math.round(frac * 100) + '%', medX, medY + 1, T.h3, C_INK, true,
                { align: 'center' });
         versalita('Comprobado', medX, medY + 6, { size: 5, track: 0.3, align: 'center' });
-      } else if (R.score && !isNaN(Number(R.score))) {
-        /* Sin nada propio que medir, el aro muestra el índice del
-           proveedor —el único número que hay— y lo dice con todas las
-           letras. Un medidor vacío en la primera página no informa de
-           nada y hace dudar del resto del informe. */
-        var pv = Math.max(0, Math.min(1, Number(R.score) / 100));
-        medidor(medX, medY, medR, pv, R.nivel ? riskColor(R.nivel) : C_TURQ);
-        rotulo(String(R.score), medX, medY - 0.4, T.h3, C_INK, true, { align: 'center' });
-        rotulo('de 100', medX, medY + 4, T.micro, C_MUTED, false, { align: 'center' });
-        versalita('Proveedor', medX, medY + 8.4, { size: 5, track: 0.3, align: 'center' });
       } else {
-        // Ni cobertura ni índice: el aro se queda vacío y lo admite.
+        // Ni índice ni cobertura: el aro se queda vacío y lo admite.
         doc.setDrawColor.apply(doc, C_HAIR);
         doc.setLineWidth(2.6);
         doc.circle(medX, medY, medR - 1.3, 'S');
@@ -1008,13 +1038,20 @@
         ? 'Falta información para calificar el riesgo; lo comprobado se detalla abajo.'
         : 'Lectura de la plataforma sobre los registros consultados.',
         tx, y + 17, T.mini, C_MUTED, false, { maxWidth: txW });
+      /* `notas`, no `pie`: hay una función pie() —la del pie de página— en
+         este mismo ámbito, y una variable con su nombre la sombreaba
+         entera. El cromo de la segunda página reventaba con «pie is not a
+         function». */
+      var notas = [];
       if (cob.length) {
-        rotulo(responden + ' de ' + cob.length + ' fuentes respondieron' +
-               (responden < cob.length ? '; el resto quedó sin comprobar.' : '.'),
-               tx, y + 22.5, T.mini, C_MUTED, false, { maxWidth: txW });
-      } else if (R.score) {
-        rotulo('Índice del proveedor, con criterio no publicado.',
-               tx, y + 22.5, T.mini, C_MUTED, false, { maxWidth: txW });
+        notas.push(responden + ' de ' + cob.length + ' fuentes respondieron' +
+                   (responden < cob.length ? '; el resto quedó sin comprobar' : ''));
+      }
+      if (score !== null && R.nivel) {
+        notas.push('riesgo ' + R.nivel.toLowerCase() + ' según el proveedor');
+      }
+      if (notas.length) {
+        rotulo(notas.join(' · ') + '.', tx, y + 22.5, T.mini, C_MUTED, false, { maxWidth: txW });
       }
       y += medR * 2;                                     // 188
 
@@ -1063,14 +1100,9 @@
       // El índice del proveedor, dicho de quién es.
       if (R.score) {
         av(0.5);
-        rotulo(cob.length
-          ? 'Índice del proveedor: ' + R.score + ' de 100' +
-            (R.nivel ? ' (' + R.nivel.toLowerCase() + ')' : '') +
-            '. Criterio no publicado; el veredicto de arriba es el de la plataforma.'
-          : 'El número del aro lo pone el proveedor' +
-            (R.nivel ? ' (' + R.nivel.toLowerCase() + ')' : '') +
-            ' y su criterio no está publicado; el veredicto de arriba es el de la plataforma.',
-          M, y, T.mini, C_MUTED, false, { maxWidth: CW });
+        rotulo('El puntaje del aro lo calcula el proveedor y su criterio no está ' +
+               'publicado; el veredicto de esta página es el de la plataforma.',
+               M, y, T.mini, C_MUTED, false, { maxWidth: CW });
         av(1.5);
       }
     }
