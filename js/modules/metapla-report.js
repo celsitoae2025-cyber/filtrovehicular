@@ -958,21 +958,45 @@
       av(1);                                             // 162
       var medR = 13, medX = gx(0) + medR, medY = y + medR;
       var cob = (VER.modelo && VER.modelo.cobertura) || [];
+
+      /* Respaldo de la cobertura. El modelo se arma con el texto del bot,
+         y si ese texto no traía secciones el medidor se quedaba en «sin
+         datos» justo en la portada. Cuando eso pasa se mide lo que sí
+         tenemos delante: las secciones leídas del PDF. */
+      if (!cob.length && Consultia.ReporteModelo && secciones.length) {
+        try {
+          cob = Consultia.ReporteModelo.desdeSecciones(secciones, meta.valor).cobertura || [];
+          if (VER.modelo) VER.modelo.cobertura = cob;
+        } catch (e) {
+          console.warn('[metapla] sin cobertura de respaldo:', e);
+        }
+      }
+
       var responden = cob.filter(function (c) { return c.estado !== 'sin respuesta'; }).length;
       var frac = cob.length ? responden / cob.length : null;
       var colorArco = parcial ? C_MUTED : vc;
 
-      if (frac === null) {
-        // Sin cobertura que medir, el indicador se queda vacío y callado.
-        doc.setDrawColor.apply(doc, C_HAIR);
-        doc.setLineWidth(2.6);
-        doc.circle(medX, medY, medR - 1.3, 'S');
-        versalita('Sin datos', medX, medY + 1, { size: 5.4, track: 0.3, align: 'center' });
-      } else {
+      if (frac !== null) {
         medidor(medX, medY, medR, frac, colorArco);
         rotulo(Math.round(frac * 100) + '%', medX, medY + 1, T.h3, C_INK, true,
                { align: 'center' });
         versalita('Comprobado', medX, medY + 6, { size: 5, track: 0.3, align: 'center' });
+      } else if (R.score && !isNaN(Number(R.score))) {
+        /* Sin nada propio que medir, el aro muestra el índice del
+           proveedor —el único número que hay— y lo dice con todas las
+           letras. Un medidor vacío en la primera página no informa de
+           nada y hace dudar del resto del informe. */
+        var pv = Math.max(0, Math.min(1, Number(R.score) / 100));
+        medidor(medX, medY, medR, pv, R.nivel ? riskColor(R.nivel) : C_TURQ);
+        rotulo(String(R.score), medX, medY - 0.4, T.h3, C_INK, true, { align: 'center' });
+        rotulo('de 100', medX, medY + 4, T.micro, C_MUTED, false, { align: 'center' });
+        versalita('Proveedor', medX, medY + 8.4, { size: 5, track: 0.3, align: 'center' });
+      } else {
+        // Ni cobertura ni índice: el aro se queda vacío y lo admite.
+        doc.setDrawColor.apply(doc, C_HAIR);
+        doc.setLineWidth(2.6);
+        doc.circle(medX, medY, medR - 1.3, 'S');
+        versalita('Sin datos', medX, medY + 1, { size: 5.4, track: 0.3, align: 'center' });
       }
 
       var tx = gx(0) + medR * 2 + 8;
@@ -987,6 +1011,9 @@
       if (cob.length) {
         rotulo(responden + ' de ' + cob.length + ' fuentes respondieron' +
                (responden < cob.length ? '; el resto quedó sin comprobar.' : '.'),
+               tx, y + 22.5, T.mini, C_MUTED, false, { maxWidth: txW });
+      } else if (R.score) {
+        rotulo('Índice del proveedor, con criterio no publicado.',
                tx, y + 22.5, T.mini, C_MUTED, false, { maxWidth: txW });
       }
       y += medR * 2;                                     // 188
@@ -1036,10 +1063,14 @@
       // El índice del proveedor, dicho de quién es.
       if (R.score) {
         av(0.5);
-        rotulo('Índice del proveedor: ' + R.score + ' de 100' +
-               (R.nivel ? ' (' + R.nivel.toLowerCase() + ')' : '') +
-               '. Criterio no publicado; el veredicto de arriba es el de la plataforma.',
-               M, y, T.mini, C_MUTED, false, { maxWidth: CW });
+        rotulo(cob.length
+          ? 'Índice del proveedor: ' + R.score + ' de 100' +
+            (R.nivel ? ' (' + R.nivel.toLowerCase() + ')' : '') +
+            '. Criterio no publicado; el veredicto de arriba es el de la plataforma.'
+          : 'El número del aro lo pone el proveedor' +
+            (R.nivel ? ' (' + R.nivel.toLowerCase() + ')' : '') +
+            ' y su criterio no está publicado; el veredicto de arriba es el de la plataforma.',
+          M, y, T.mini, C_MUTED, false, { maxWidth: CW });
         av(1.5);
       }
     }

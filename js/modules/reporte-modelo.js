@@ -377,7 +377,27 @@
     };
 
     ((parsed && parsed.secciones) || []).forEach(function (sec) {
-      (sec.campos || []).forEach(function (c) {
+      /* ── Cobertura ──────────────────────────────────────────────────
+         Qué preguntó el bot y qué contestó cada fuente. Esto solo lo
+         construía `desdeSecciones`, la vía de respaldo; los reportes
+         reales entran por aquí, así que salían con cobertura vacía: el
+         medidor de la portada quedaba en «sin datos» y el apartado de
+         fuentes consultadas no se imprimía. La regla es la misma que
+         allí — sin campos es que no respondió; con campos que solo dicen
+         «no registra» es que respondió sin registros. */
+      var campos = sec.campos || [];
+      var textoSec = campos.map(function (c) {
+        return (c && c.campo ? c.campo + ' ' : '') + (c && c.valor ? c.valor : '');
+      }).join(' | ');
+      modelo.cobertura.push({
+        fuente: limpiar(sec.titulo) || 'Sin título',
+        estado: !campos.length
+          ? 'sin respuesta'
+          : (RE_SIN_NADA.test(clave(textoSec)) ? 'sin registros' : 'con datos'),
+        filas: campos.length,
+      });
+
+      campos.forEach(function (c) {
         if (!c || !c.campo) return;
         var k = clave(c.campo);
         var valor = limpiar(c.valor);
