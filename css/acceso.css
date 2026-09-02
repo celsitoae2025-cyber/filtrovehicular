@@ -70,22 +70,10 @@
   }
 }
 
-/* ── Los botones flotantes, fuera del formulario ─────────────
-   Mientras no hay sesión, la pantalla entera es el acceso: el botón de
-   WhatsApp y el de instalar se quedaban encima de la columna del
-   formulario, que es justo donde el cliente está escribiendo.
+/* LOS BOTONES FLOTANTES NO SE MUEVEN DE SITIO.
 
-   Se pasan al lado del arte, que es decorativo y no tiene nada debajo.
-   Siguen en la misma esquina inferior, con el mismo tamaño y el mismo
-   orden entre ellos; solo cambian de lado, y solo aquí: en cuanto se
-   inicia sesión vuelven a su sitio de siempre.
-
-   Solo en pantallas con las dos columnas. En móvil no hay panel de arte
-   al lado, así que moverlos no arreglaría nada. */
-@media (min-width: 860px) {
-  body.auth-locked .wa-fab,
-  body.auth-locked .inst-fab {
-    right: auto;
-    left: 24px;
-  }
-}
+   Aquí llegaron a pasarse al lado del arte, porque midiendo caían encima
+   de la columna del formulario. El dueño lo rechazó: el botón de
+   WhatsApp lleva toda la vida abajo a la derecha y ahí se queda. Si
+   alguna vez estorba, se resuelve dándole aire al formulario, no
+   cambiándolo de lado. */
