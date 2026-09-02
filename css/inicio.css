@@ -1,0 +1,154 @@
+/* ============================================================
+   INICIO — la pantalla que ve el cliente al entrar
+   (vista «Filtro vehicular», #view-filter)
+
+   EL PROBLEMA QUE ARREGLA
+
+   La caja de búsqueda eran DOS tarjetas apiladas —una entera solo para
+   un desplegable— más la descripción, más la fila del consumo, más un
+   botón de ancho completo. Medido a 1235px de pantalla: 318px de alto
+   para tres controles, en una columna de 945px de ancho de la que
+   sobraban dos tercios. Todo lo importante iba en vertical, el
+   resultado quedaba empujado fuera de la pantalla, y el cliente tenía
+   que bajar para ver lo que acababa de consultar.
+
+   LO QUE HACE
+
+   Una sola tarjeta, con lo que se usa arriba y en horizontal:
+
+       [ tipo de consulta ] [ dato a consultar ] [ Consultar ]
+       [ qué devuelve esta consulta ]           [ cuánto cuesta ]
+       [ Reporte completo ]
+
+   Lo importante ocupa la primera línea, que es donde se mira. Lo de
+   apoyo queda debajo sin robar altura. Y el botón del reporte deja de
+   ser una franja de 905px para medir lo que mide su texto.
+
+   Esto NO toca el HTML ni el JavaScript: la tarjeta interior suelta su
+   caja con `display: contents` y sus hijos entran en la misma rejilla.
+   Ningún id cambia, así que nada de lo que ya funcionaba puede
+   romperse.
+
+   Solo se aplica a partir de 900px. Por debajo se deja el apilado de
+   siempre, que en un teléfono es lo correcto.
+   ============================================================ */
+
+@media (min-width: 900px) {
+
+  /* La tarjeta única. Toma el fondo y el borde que antes tenían las dos
+     cajas de dentro, con el mismo radio y grosor que el resto de
+     paneles de la app: esto tiene que parecer la misma casa. */
+  #view-filter > .filter-search-box {
+    display: grid;
+    /* La columna del tipo de consulta cede ancho al campo del dato: en un
+       portátil de 960px, con 300px fijos aquí el campo se quedaba en 207
+       y parecía roto. El desplegable aguanta bien en 200. */
+    grid-template-columns: minmax(200px, 280px) 1fr auto;
+    grid-template-areas:
+      "tipo   dato   accion"
+      "ayuda  ayuda  costo"
+      "extra  extra  extra";
+    column-gap: 12px;
+    row-gap: 14px;
+    align-items: end;
+
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+
+  /* El selector conserva su caja interna —la etiqueta encima del
+     desplegable— pero pierde el fondo, el borde y el aire: ya no es una
+     tarjeta suelta, es una celda de esta. */
+  #view-filter > .filter-search-box > .selector-card {
+    grid-area: tipo;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* La tarjeta de abajo sí desaparece del todo: sus cuatro hijos pasan a
+     ser celdas de la rejilla de arriba. */
+  #view-filter > .filter-search-box > .panel {
+    display: contents;
+  }
+
+  /* ── Primera línea: lo que de verdad se usa ─────────────── */
+  /* El campo y el botón ocupan las dos columnas de la derecha, alineados
+     abajo para quedar a la misma altura que el desplegable. */
+  #view-filter .form-row {
+    /* `grid-template-areas` bautiza solas las líneas: la izquierda de
+       «dato» es dato-start y la derecha de «accion» es accion-end. */
+    grid-row: 1;
+    grid-column: dato-start / accion-end;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    margin: 0;
+  }
+  #view-filter .form-row .input { flex: 1 1 auto; min-width: 0; }
+  #view-filter .form-row .btn { flex: 0 0 auto; white-space: nowrap; }
+
+  /* ── Segunda línea: apoyo, sin robar altura ─────────────── */
+  #view-filter .panel-desc {
+    grid-area: ayuda;
+    margin: 0;
+    align-self: center;
+  }
+  #view-filter .consumo-row {
+    grid-area: costo;
+    justify-self: end;
+    align-self: center;
+    margin: 0;
+  }
+
+  /* ── Tercera línea: el reporte completo ──────────────────
+     Deja de ser una franja de ancho completo: mide lo que mide su
+     contenido y se queda a la izquierda, que es donde cae la vista
+     después de leer la descripción. */
+  #view-filter #ctaReporteBtn.cta-reporte-btn {
+    grid-area: extra;
+    justify-self: start;
+    width: auto;
+    max-width: 560px;
+    margin: 0;
+  }
+}
+
+/* ============================================================
+   EL CATÁLOGO DE SERVICIOS
+
+   Veintiún tarjetas en DOS columnas de 469px, cada una de 96px de alto:
+   1136px de catálogo para ver, que son once filas y tres pantallas de
+   scroll. Y una tarjeta de 469px de ancho para un icono y un nombre es
+   casi todo aire.
+
+   El mínimo de columna estaba en 320px. En la columna de contenido real
+   —945px a 1235px de pantalla— tres columnas no llegaban a caber por
+   quince píxeles, así que caía a dos. Bajándolo a 240px entran tres, y
+   cuatro en un monitor grande: el catálogo pasa de once filas a siete y
+   la tarjeta queda en un ancho que se lee de un vistazo.
+
+   Sigue siendo auto-fill y no auto-fit, como estaba: si la última fila
+   va incompleta, las tarjetas conservan su ancho en vez de estirarse.
+   ============================================================ */
+@media (min-width: 900px) {
+  #view-filter .services-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+/* Pantallas anchas de verdad: el campo del dato no necesita crecer sin
+   fin —una placa son seis caracteres— y un input de 800px se lee como un
+   error de maquetación. */
+@media (min-width: 1400px) {
+  #view-filter > .filter-search-box {
+    grid-template-columns: minmax(260px, 320px) minmax(0, 620px) auto;
+    justify-content: start;
+  }
+  #view-filter .panel-desc { max-width: 900px; }
+}
