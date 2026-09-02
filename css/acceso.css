@@ -20,6 +20,22 @@
        formulario, que es lo único con lo que se interactúa aquí.
    ============================================================ */
 
+/* ── Fuera el retrato ────────────────────────────────────────
+   El disco oscuro con la silueta que encabezaba la columna. Se quita
+   con `display: none` y no bajándole el tamaño: así no reserva ni su
+   caja ni su margen, y el espacio que ocupaba se reparte solo entre lo
+   que queda —el bloque sigue centrado sin tocar nada más.
+
+   Solo se retira aquí, en el acceso. El avatar de la aplicación, el que
+   sale arriba a la derecha una vez dentro, es otro elemento y no se
+   toca. */
+#authModalLogin .auth-avatar,
+#authModalSignup .auth-avatar,
+#authModalForgot .auth-avatar,
+#authModalOtp .auth-avatar {
+  display: none !important;
+}
+
 /* ── El formulario, como un bloque ──────────────────────────
    El pie legal ya se empuja al fondo con `margin-top: auto`. Poniendo
    el MISMO auto arriba del todo, el espacio libre se reparte por igual
