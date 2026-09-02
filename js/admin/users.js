@@ -162,24 +162,55 @@
     var sb = getSB();
     if (!sb) return [];
 
-    var res = await sb.rpc('admin_list_users');
-    if (res.error) {
-      console.error('admin_list_users error:', res.error);
-      if (Consultia.toast) Consultia.toast({
-        type: 'error',
-        title: 'Error cargando usuarios',
-        message: res.error.message
-      });
-      return [];
+    /* Se pide POR TRAMOS, no de una vez.
+
+       PostgREST corta cualquier respuesta en 1.000 filas, y el total que
+       muestra el panel es la longitud de esta lista: pasados los mil
+       usuarios el contador se quedaba clavado en «1000» para siempre y
+       los registros nuevos no aparecían por ningún lado. No era que
+       nadie se registrara — era que no se pedían.
+
+       Se pide de mil en mil hasta que un tramo venga incompleto, que es
+       la señal de que ya no hay más. */
+    var users = [];
+    var PASO = 1000;
+    for (var desde = 0; ; desde += PASO) {
+      var res = await sb.rpc('admin_list_users').range(desde, desde + PASO - 1);
+      if (res.error) {
+        console.error('admin_list_users error:', res.error);
+        if (Consultia.toast) Consultia.toast({
+          type: 'error',
+          title: 'Error cargando usuarios',
+          message: res.error.message
+        });
+        return users.length ? users : [];
+      }
+      var tramo = res.data || [];
+      users = users.concat(tramo);
+      if (tramo.length < PASO) break;
+      if (desde > 200000) break;   // freno de seguridad
     }
-    var users = res.data || [];
 
     // Enriquecer: identificar quién pagó por MP, quién fue activado por admin
     // y cuántos consumos tiene cada usuario (para detectar si gastó los 5 free).
     try {
-      var txRes = await sb
-        .from('transactions')
-        .select('user_id, type, amount, payment_method');
+      /* Las transacciones, por el mismo motivo: con más de mil, el
+         reparto de «quién pagó» se hacía con una muestra y había clientes
+         de pago marcados como gratuitos. */
+      var txData = [];
+      var txError = null;
+      for (var td = 0; ; td += 1000) {
+        var txPag = await sb
+          .from('transactions')
+          .select('user_id, type, amount, payment_method')
+          .range(td, td + 999);
+        if (txPag.error) { txError = txPag.error; break; }
+        var txTramo = txPag.data || [];
+        txData = txData.concat(txTramo);
+        if (txTramo.length < 1000) break;
+        if (td > 500000) break;
+      }
+      var txRes = { data: txData, error: txError };
       if (!txRes.error && txRes.data) {
         var paidMpSet = new Set();
         var paidAdminSet = new Set();
