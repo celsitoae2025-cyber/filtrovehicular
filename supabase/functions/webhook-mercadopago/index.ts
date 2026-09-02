@@ -104,8 +104,21 @@ serve(async (req: Request) => {
     // pagos cuando el MP_WEBHOOK_SECRET está mal configurado o desincronizado.
     const signatureValid = await verifySignature(req, String(paymentId));
     if (!signatureValid) {
+      /* Se sigue adelante a propósito —la API de MP es la fuente de verdad
+         y no se pueden perder pagos por un secreto desincronizado—, pero
+         se avisa: una firma que falla siempre significa que el secreto del
+         panel de MP y el de aquí ya no son el mismo, y eso hay que
+         arreglarlo antes de que sirva de algo. */
       console.warn(
         `Firma HMAC inválida para pago ${paymentId} — procediendo con verificación API de MP`,
+      );
+      await notifyTelegram(
+        `⚠️ <b>Firma de Mercado Pago inválida</b>
+` +
+          `El pago se procesa igual (verificado contra la API), pero revisa que ` +
+          `MP_WEBHOOK_SECRET coincida con el del panel de Mercado Pago.
+` +
+          `🆔 MP #${paymentId}`,
       );
     }
 
@@ -190,10 +203,40 @@ serve(async (req: Request) => {
       .select("id")
       .single();
 
-    // Si no se insertó nada (duplicado), el pago ya fue procesado
-    if (insertErr || !inserted) {
-      return new Response("OK", { status: 200 });
+    /* Duplicado y avería NO son lo mismo, y aquí se trataban igual.
+
+       Con `ignoreDuplicates`, un pago ya procesado vuelve sin fila y sin
+       error: ese es el caso bueno y se corta en silencio. Pero un fallo
+       de verdad —la base sin responder, un permiso, una columna que
+       cambió— también entraba por este `if`, y entonces el pago quedaba
+       cobrado, sin créditos y sin que nadie se enterara: el cliente pagó
+       y se quedó mirando su saldo.
+
+       Ahora la avería se avisa por Telegram y se responde 500. Mercado
+       Pago reintenta la notificación durante horas, así que un fallo
+       pasajero se acredita solo en el siguiente intento. */
+    const esDuplicado = !insertErr && !inserted;
+    if (esDuplicado) return new Response("OK", { status: 200 });
+
+    if (insertErr) {
+      console.error("payments_mp insert error:", insertErr);
+      await notifyTelegram(
+        `🚨 <b>PAGO SIN ACREDITAR — revisar</b>
+` +
+          `No se pudo registrar el pago; MP reintentará.
+` +
+          `👤 ${ref.user_email}
+` +
+          `💳 ${ref.plan_id} — S/ ${payment.transaction_amount}
+` +
+          `🆔 MP #${paymentId}
+` +
+          `⚠️ ${insertErr.message || insertErr.code || "error desconocido"}`,
+      );
+      return new Response("ERROR", { status: 500 });
     }
+
+    if (!inserted) return new Response("OK", { status: 200 });
 
     // Si es recarga de créditos, sumar al saldo del usuario ATÓMICAMENTE
     if (planInfo.type === "recarga" && planInfo.credits > 0) {
