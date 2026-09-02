@@ -198,6 +198,70 @@
   height: 44px;
 }
 
+/* ============================================================
+   EN EL TELÉFONO
+
+   Medido a 375x812, con la tarjeta de acceso ocupando 623px:
+
+   1. 72px MUERTOS debajo de la tarjeta. Un margen automático que en
+      escritorio sirve para centrar, pero que aquí, sin pie legal —en
+      móvil se oculta—, solo dejaba un vacío entre el botón de WhatsApp
+      y el borde. Justo donde cae el botón flotante, que parecía suelto
+      en mitad de la nada.
+
+   2. «Recordarme» y «¿Olvidaste tu contraseña?» partidos en DOS líneas.
+      Caben en una: 110 + 169 son 279 de los 297 que hay. Se partían por
+      el hueco entre los dos, que medía más de lo que sobraba. Culpa
+      mía: al subir el enlace de 12,5 a 15px dejó de caber por dos
+      píxeles.
+
+   3. El botón «Solicita tu Filtro Vehicular Completo», con 16px de aire
+      a cada lado, dejaba 265 útiles para un texto de 263. Dos píxeles
+      de margen: en cuanto la fuente del teléfono renderiza un pelo más
+      ancho, parte en dos líneas y se sale de su propia caja.
+   ============================================================ */
+@media (max-width: 859px) {
+
+  /* El bloque, centrado en la pantalla en vez de arriba con un vacío
+     debajo. Sin márgenes automáticos: los reparte el contenedor. */
+  #authModalLogin .auth-form-wrap,
+  #authModalSignup .auth-form-wrap {
+    justify-content: center;
+  }
+  #authModalLogin .auth-form-wrap > .auth-form-card,
+  #authModalSignup .auth-form-wrap > .auth-form-card {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* La casilla y el enlace, en su línea. El hueco entre ellos pasa a ser
+     el que sobra, no uno fijo, y el enlace no se parte nunca. */
+  #authModalLogin .auth-form .auth-row {
+    display: flex;
+    /* En móvil estaba puesta en columna, que es lo que los apilaba.
+       97 + 8 + 169 son 274 de los 297 que hay: caben de sobra. */
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  #authModalLogin .auth-forgot { white-space: nowrap; }
+
+  /* El botón del reporte: se le devuelve el aire quitándoselo a los
+     lados. Y si aun así el texto no entra —hay teléfonos más estrechos
+     que 375—, parte en dos líneas centradas y la píldora crece con
+     ellas, en vez de quedarse a 48 con el texto saliéndose. */
+  #authModalLogin .auth-fvc-open,
+  #authModalSignup .auth-fvc-open {
+    padding-left: 10px;
+    padding-right: 10px;
+    height: auto;
+    line-height: 1.25;
+    text-align: center;
+  }
+}
+
 /* LOS BOTONES FLOTANTES NO SE MUEVEN DE SITIO.
 
    Aquí llegaron a pasarse al lado del arte, porque midiendo caían encima
