@@ -102,23 +102,19 @@ serve(async (req: Request) => {
     // Si falla, NO rechazamos: la verificación contra la API de MP con el
     // MP_ACCESS_TOKEN ya garantiza que el pago es real. Esto evita perder
     // pagos cuando el MP_WEBHOOK_SECRET está mal configurado o desincronizado.
+    /* Se sigue adelante aunque la firma falle —la API de MP es la fuente
+       de verdad y no se pueden perder cobros por un secreto
+       desincronizado—, pero queda anotado para avisar MÁS ABAJO.
+
+       El aviso NO se manda aquí: esta URL es pública y a estas alturas
+       todavía no se sabe si el pago existe. Cualquiera con un POST vacío
+       haría sonar el teléfono del dueño —de hecho pasó con un «MP #1» de
+       prueba—. Se avisa solo cuando el pago resulta ser real y
+       aprobado. */
     const signatureValid = await verifySignature(req, String(paymentId));
     if (!signatureValid) {
-      /* Se sigue adelante a propósito —la API de MP es la fuente de verdad
-         y no se pueden perder pagos por un secreto desincronizado—, pero
-         se avisa: una firma que falla siempre significa que el secreto del
-         panel de MP y el de aquí ya no son el mismo, y eso hay que
-         arreglarlo antes de que sirva de algo. */
       console.warn(
         `Firma HMAC inválida para pago ${paymentId} — procediendo con verificación API de MP`,
-      );
-      await notifyTelegram(
-        `⚠️ <b>Firma de Mercado Pago inválida</b>
-` +
-          `El pago se procesa igual (verificado contra la API), pero revisa que ` +
-          `MP_WEBHOOK_SECRET coincida con el del panel de Mercado Pago.
-` +
-          `🆔 MP #${paymentId}`,
       );
     }
 
@@ -135,6 +131,16 @@ serve(async (req: Request) => {
 
     const payment = await mpRes.json();
     if (payment.status !== "approved") return new Response("OK", { status: 200 });
+
+    // Pago real y aprobado: ahora sí tiene sentido avisar de la firma.
+    if (!signatureValid) {
+      await notifyTelegram(
+        `⚠️ <b>Firma de Mercado Pago inválida</b>\n` +
+          `El pago se acredita igual (verificado contra la API), pero revisa que ` +
+          `MP_WEBHOOK_SECRET coincida con el del panel de Mercado Pago.\n` +
+          `🧾 Operación MP: ${paymentId}`,
+      );
+    }
 
     // Parsear la referencia externa que mandamos al crear la preferencia
     type Ref = {
