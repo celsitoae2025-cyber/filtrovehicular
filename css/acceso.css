@@ -1,0 +1,91 @@
+/* ============================================================
+   ACCESO — la pantalla de entrada (#authModalLogin y hermanas)
+
+   Se respeta lo que ya estaba decidido: a sangre, el formulario a la
+   DERECHA, en crudo, y el color solo en el panel de arte. Aquí no se
+   cambia ni la disposición ni la paleta: se corrige cómo queda
+   repartido el espacio dentro de la columna del formulario, que es
+   donde se ve el problema.
+
+   LO QUE ESTABA MAL, medido a 1235x921:
+
+     · El bloque del formulario nacía pegado arriba (título a 31px) y
+       terminaba a 714px, dejando 141px de hueco negro entre la tarjeta
+       y el pie legal. Tres piezas flotando con un agujero en medio en
+       vez de un bloque.
+     · Entre el retrato y la tarjeta había otros 82px de aire, el doble
+       que entre cualquier otro par de elementos.
+     · Y los dos botones flotantes caían justo dentro de ese hueco
+       —el de WhatsApp en 1147,777— encima de la columna del
+       formulario, que es lo único con lo que se interactúa aquí.
+   ============================================================ */
+
+/* ── El formulario, como un bloque ──────────────────────────
+   El pie legal ya se empuja al fondo con `margin-top: auto`. Poniendo
+   el MISMO auto arriba del todo, el espacio libre se reparte por igual
+   por encima y por debajo del bloque: el formulario queda centrado en
+   su columna y el agujero de 141px desaparece repartido.
+
+   Solo en escritorio: en móvil la columna scrollea y centrar ahí
+   escondería el botón de entrar por debajo del borde. */
+@media (min-width: 860px) {
+  /* Un `auto` ARRIBA del primer elemento y otro DEBAJO del último: el
+     espacio libre se parte en dos mitades iguales y el bloque queda
+     centrado. El pie conserva el suyo y sigue al fondo.
+
+     El `auto` que la tarjeta traía arriba se anula: con tres márgenes
+     automáticos el hueco se repartía en tres y el bloque quedaba a
+     media altura de ninguna parte. Se usa el id porque la regla que lo
+     puso también lo usa, y si no, no gana. */
+  #authModalLogin .auth-form-wrap > .auth-form-mh,
+  #authModalSignup .auth-form-wrap > .auth-form-mh {
+    margin-top: auto;
+  }
+  #authModalLogin .auth-form-wrap > .auth-form-card {
+    margin-top: 0;
+    margin-bottom: auto;
+  }
+  /* Y el del pie también sobra: el hueco de debajo de la tarjeta ya lo
+     empuja al fondo. Dejándoselo, el espacio se partía en TRES y el
+     bloque quedaba descentrado —54px arriba contra 97 abajo—. */
+  /* Con `!important` porque el de auth.css también lo lleva:
+     `body.auth-modal-open #authModalLogin .auth-legal-foot` fija ahí
+     `margin-top: auto !important` a partir de 821px, y sin esto gana él
+     —el bloque se quedaba en 54px arriba contra 97 abajo—. */
+  body.auth-modal-open #authModalLogin .auth-legal-foot,
+  body.auth-modal-open #authModalSignup .auth-legal-foot {
+    margin-top: 0 !important;
+  }
+
+  /* El retrato y la tarjeta se acercan al mismo aire que el resto. */
+  .auth-modal-panel.auth-split .auth-avatar {
+    margin-bottom: 18px;
+  }
+
+  /* Un dedo de aire bajo el pie legal: pegado al borde de la ventana se
+     lee como texto cortado, y con la barra de algunos navegadores
+     encima lo está de verdad. */
+  .auth-modal-panel.auth-split .auth-legal-foot {
+    padding-bottom: 10px;
+  }
+}
+
+/* ── Los botones flotantes, fuera del formulario ─────────────
+   Mientras no hay sesión, la pantalla entera es el acceso: el botón de
+   WhatsApp y el de instalar se quedaban encima de la columna del
+   formulario, que es justo donde el cliente está escribiendo.
+
+   Se pasan al lado del arte, que es decorativo y no tiene nada debajo.
+   Siguen en la misma esquina inferior, con el mismo tamaño y el mismo
+   orden entre ellos; solo cambian de lado, y solo aquí: en cuanto se
+   inicia sesión vuelven a su sitio de siempre.
+
+   Solo en pantallas con las dos columnas. En móvil no hay panel de arte
+   al lado, así que moverlos no arreglaría nada. */
+@media (min-width: 860px) {
+  body.auth-locked .wa-fab,
+  body.auth-locked .inst-fab {
+    right: auto;
+    left: 24px;
+  }
+}
