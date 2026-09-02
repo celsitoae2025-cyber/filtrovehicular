@@ -20,6 +20,33 @@
        formulario, que es lo único con lo que se interactúa aquí.
    ============================================================ */
 
+/* ── La línea de colores no se pega a la tarjeta ─────────────
+   La franja de cuatro colores cierra el nombre de la marca. Medida: 5px
+   de alto, con 9px de aire por encima separándola del nombre… y CERO
+   por debajo. En el teléfono quedaba tocando el borde de la tarjeta,
+   como si se le hubiera caído encima.
+
+   La proporción es la que ya usaba la propia franja: si por arriba
+   respira 9-10px, por abajo le toca el doble. Eso la deja claramente
+   pegada a lo que cierra —el nombre— y claramente separada de lo que
+   empieza debajo, que es otra cosa.
+
+   En escritorio había 14px, que tampoco daban la proporción; se iguala,
+   y así la marca se lee igual en los dos tamaños. */
+#authModalLogin .auth-form-mh,
+#authModalSignup .auth-form-mh {
+  padding-bottom: 20px;
+}
+@media (max-width: 859px) {
+  /* Con `!important`: por debajo de 768 auth.css lo pone a
+     `padding-bottom: 0 !important`, y ese cero es justo el que dejaba la
+     franja tocando la tarjeta. */
+  #authModalLogin .auth-form-mh,
+  #authModalSignup .auth-form-mh {
+    padding-bottom: 18px !important;
+  }
+}
+
 /* ── Fuera el retrato ────────────────────────────────────────
    El disco oscuro con la silueta que encabezaba la columna. Se quita
    con `display: none` y no bajándole el tamaño: así no reserva ni su
