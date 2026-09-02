@@ -242,7 +242,7 @@ serve(async (req: Request) => {
     if (planInfo.type === "recarga" && planInfo.credits > 0) {
       const { data: profile } = await sb
         .from("profiles")
-        .select("full_name")
+        .select("full_name, phone")
         .eq("id", ref.user_id)
         .maybeSingle();
 
@@ -318,19 +318,26 @@ serve(async (req: Request) => {
         console.error("notif credits insert error:", nerr);
       }
 
+      /* La ficha completa, para no tener que abrir el panel: quién pagó,
+         cómo ubicarlo, cuánto puso, con qué operación y cuándo. El
+         teléfono sale del perfil; si el cliente nunca lo cargó se dice
+         que falta, en vez de dejar el renglón en blanco. */
       await notifyTelegram(
         `✅ <b>PAGO APROBADO — Mercado Pago</b>\n` +
-          `👤 ${profile?.full_name || ref.user_email}\n` +
+          `👤 ${profile?.full_name || "Sin nombre"}\n` +
+          `📧 ${ref.user_email || "sin correo"}\n` +
+          `📱 ${profile?.phone || "sin celular"}\n` +
           `💳 ${ref.plan_id}\n` +
           `💰 S/ ${payment.transaction_amount}\n` +
           `🪙 +${planInfo.credits} créditos\n` +
-          `🆔 MP #${paymentId}\n` +
+          `🧾 Operación MP: ${paymentId}\n` +
+          `💠 Medio: ${payment.payment_method_id || "-"}\n` +
           `🕐 ${fechaLima()}`,
       );
     } else if (planInfo.type === "suscripcion") {
       const { data: profile } = await sb
         .from("profiles")
-        .select("subscription_tier, subscription_expires_at, full_name")
+        .select("subscription_tier, subscription_expires_at, full_name, phone")
         .eq("id", ref.user_id)
         .maybeSingle();
 
@@ -392,11 +399,14 @@ serve(async (req: Request) => {
 
       await notifyTelegram(
         `✅ <b>SUSCRIPCIÓN APROBADA — Mercado Pago</b>\n` +
-          `👤 ${profile?.full_name || ref.user_email}\n` +
+          `👤 ${profile?.full_name || "Sin nombre"}\n` +
+          `📧 ${ref.user_email || "sin correo"}\n` +
+          `📱 ${profile?.phone || "sin celular"}\n` +
           `📅 ${ref.days} días · ${ref.tier}\n` +
           `⏰ Vence: ${expires_at.slice(0, 10)}\n` +
           `💰 S/ ${payment.transaction_amount}\n` +
-          `🆔 MP #${paymentId}\n` +
+          `🧾 Operación MP: ${paymentId}\n` +
+          `💠 Medio: ${payment.payment_method_id || "-"}\n` +
           `🕐 ${fechaLima()}`,
       );
     }
