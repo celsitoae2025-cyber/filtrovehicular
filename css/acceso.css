@@ -70,6 +70,118 @@
   }
 }
 
+/* ============================================================
+   LOS BOTONES
+
+   Medidos uno a uno en la pantalla de acceso, esto es lo que había:
+
+     Iniciar sesión ................ 356x47, fondo #0e1312, radio 999px, 14px/700
+     Solicita tu Filtro Vehicular .. 356x48, fondo #141d1c, radio  10px, 15px/700
+     Crear cuenta .................. enlace 13px/700
+     ¿Olvidaste tu contraseña? ..... enlace 12.5px/400
+     Términos · Cookies ............ enlaces 14px/400
+     Ojo de la contraseña .......... 34x34
+
+   Cinco problemas de verdad, no de gusto:
+
+   1. DOS BLOQUES OSCUROS IGUALES, uno pegado al otro. #0e1312 y #141d1c
+      son dos negros distintos que a la vista son el mismo. Entrar y
+      pedir el reporte por WhatsApp pesaban lo mismo, y solo una de las
+      dos es la razón por la que el cliente está en esta pantalla.
+   2. DOS FORMAS distintas pegadas: una píldora y un rectángulo de 10px.
+      Los campos de correo y contraseña son píldoras, así que el
+      rectángulo es el que desentona.
+   3. Alturas de 47 y 48, y letra de 14 y 15. Un píxel y un punto no se
+      ven de uno en uno; juntos hacen que nada parezca alineado.
+   4. TRES tamaños de enlace —13, 12.5 y 14— para tres enlaces que hacen
+      lo mismo. Y todos por debajo de 15px, que es el suelo de esta app.
+   5. El ojo de la contraseña, 34x34: por debajo del área táctil de 44px,
+      así que en el móvil se falla al tocarlo.
+   ============================================================ */
+
+/* ── La acción principal ─────────────────────────────────────
+   Entrar. Es lo único sólido de la columna, y ahora tiene la altura y
+   la letra del otro, para que los dos formen una pieza. */
+#authModalLogin .auth-submit,
+#authModalSignup .auth-submit {
+  height: 48px;
+  min-height: 48px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* ── La acción secundaria ────────────────────────────────────
+   Pedir el reporte por WhatsApp no es entrar. Pasa a contorno: mismo
+   tamaño y misma forma, pero sin el bloque de color. Así la vista cae
+   primero donde tiene que caer y este sigue estando, igual de grande y
+   de fácil de tocar.
+
+   El verde del icono se queda: identifica el canal de un vistazo, como
+   en el botón flotante. */
+#authModalLogin .auth-fvc-open,
+#authModalSignup .auth-fvc-open {
+  height: 48px;
+  min-height: 48px;
+  background: transparent;
+  /* El MISMO oscuro que el botón de entrar (#0e1312), no el #141d1c que
+     traía: dos negros distintos a dos centímetros uno del otro era parte
+     del problema. */
+  color: #0e1312;
+  border: 1px solid #0e1312;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+}
+#authModalLogin .auth-fvc-open:hover,
+#authModalSignup .auth-fvc-open:hover {
+  background: #0e1312;
+  color: #ffffff;
+}
+/* El icono de WhatsApp acompaña el color del texto salvo en reposo, que
+   va en su verde. Sin esto, al pasar por encima se quedaba verde sobre
+   fondo oscuro y se perdía. */
+#authModalLogin .auth-fvc-open svg,
+#authModalSignup .auth-fvc-open svg { color: #25D366; }
+#authModalLogin .auth-fvc-open:hover svg,
+#authModalSignup .auth-fvc-open:hover svg { color: #ffffff; }
+
+/* ── Los enlaces, todos del mismo tamaño ─────────────────────
+   15px es el suelo de la app y aquí había 12.5. Los dos que son una
+   acción —crear cuenta, recuperar contraseña— van en negrita; los
+   legales, en normal. Ni un peso intermedio. */
+#authModalLogin .auth-forgot,
+#authModalSignup .auth-forgot,
+#authModalForgot .auth-forgot {
+  font-size: 15px;
+  font-weight: 400;
+}
+#authModalLogin .auth-switch,
+#authModalSignup .auth-switch { font-size: 15px; }
+#authModalLogin .auth-switch button,
+#authModalSignup .auth-switch button {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* Los legales del pie iban a 14px, el único par de enlaces de la
+   pantalla por debajo del suelo. Con `!important` porque base.css se lo
+   fija así, también con `!important`. */
+#authModalLogin .auth-legal-foot,
+#authModalLogin .auth-legal-foot a,
+#authModalSignup .auth-legal-foot,
+#authModalSignup .auth-legal-foot a {
+  font-size: 15px !important;
+}
+
+/* ── El ojo de la contraseña ─────────────────────────────────
+   Se le da el área táctil de 44px sin agrandar el dibujo: lo que crece
+   es la zona que responde al dedo, no el icono. */
+#authModalLogin .auth-pass-toggle,
+#authModalSignup .auth-pass-toggle {
+  width: 44px;
+  height: 44px;
+}
+
 /* LOS BOTONES FLOTANTES NO SE MUEVEN DE SITIO.
 
    Aquí llegaron a pasarse al lado del arte, porque midiendo caían encima
