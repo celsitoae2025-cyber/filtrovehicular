@@ -183,10 +183,188 @@
 /* El icono de WhatsApp acompaña el color del texto salvo en reposo, que
    va en su verde. Sin esto, al pasar por encima se quedaba verde sobre
    fondo oscuro y se perdía. */
-#authModalLogin .auth-fvc-open svg,
-#authModalSignup .auth-fvc-open svg { color: #25D366; }
-#authModalLogin .auth-fvc-open:hover svg,
-#authModalSignup .auth-fvc-open:hover svg { color: #ffffff; }
+/* El sello va en el verde de la marca, no en el de WhatsApp: lo que
+   distingue este botón es el producto, no el canal por el que se pide. */
+#authModalLogin .auth-fvc-open .auth-fvc-ico,
+#authModalSignup .auth-fvc-open .auth-fvc-ico { color: #8fc72e; }
+#authModalLogin .auth-fvc-open:hover .auth-fvc-ico,
+#authModalSignup .auth-fvc-open:hover .auth-fvc-ico { color: #8fc72e; }
+
+/* ============================================================
+   LA OFERTA DEL FILTRO VEHICULAR COMPLETO
+
+   Lo que se abre al pulsar el botón. Va en oscuro dentro de una tarjeta
+   blanca a propósito: es lo único de esta pantalla que vende algo, y
+   tiene que separarse de todo lo demás sin necesidad de una franja de
+   color ni de una sombra. El oscuro es el mismo de las demás
+   superficies oscuras de la app.
+
+   El orden es el de una venta, no el de un formulario: primero por qué
+   merece la pena, después cuánto cuesta, y solo al final lo que hay que
+   escribir. Antes se abría directamente en «Placa del vehículo», que es
+   pedirle un dato a alguien al que todavía no le has dicho qué compra.
+   ============================================================ */
+#authModalLogin .auth-fvc-box,
+#authModalSignup .auth-fvc-box {
+  margin-top: 12px;
+  padding: 18px;
+  background: #0e1312;
+  border-radius: 14px;
+  color: #ffffff;
+  text-align: left;
+}
+
+/* ── La etiqueta de la promoción ─────────────────────────── */
+#authModalLogin .auth-fvc-flag {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #03a7a4;
+}
+#authModalLogin .auth-fvc-chispa {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+#authModalLogin .auth-fvc-titulo {
+  margin: 0 0 12px;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #ffffff;
+}
+
+/* ── El precio ────────────────────────────────────────────
+   Las tres piezas en una línea y alineadas por su base, para que el
+   número grande mande y los otros dos se lean colgando de él. */
+#authModalLogin .auth-fvc-precio {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+#authModalLogin .auth-fvc-antes {
+  font-size: 17px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration-thickness: 1px;
+}
+#authModalLogin .auth-fvc-ahora {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.5px;
+  color: #8fc72e;
+}
+/* El descuento en contorno y no en bloque: si fuera macizo competiría
+   con el precio, y el precio es lo que tiene que ganar. */
+#authModalLogin .auth-fvc-dto {
+  font-size: 15px;
+  font-weight: 700;
+  color: #03a7a4;
+  border: 1px solid #03a7a4;
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+
+#authModalLogin .auth-fvc-que {
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ── Lo que hay que escribir ──────────────────────────────
+   Sobre fondo oscuro, el campo y el botón de la plataforma no valen: se
+   les da su versión oscura aquí mismo. */
+#authModalLogin .auth-fvc-box .auth-fvc-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+}
+#authModalLogin .auth-fvc-box .auth-fvc-input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  /* Con !important: base.css fija 8px a TODOS los campos, tambien con
+     !important, y los de correo y contrasena de esta misma pantalla ya
+     se saltan esa regla igual. Aqui manda la pildora, que es la forma
+     que habla esta pantalla. */
+  border-radius: 999px !important;
+  height: 44px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+}
+#authModalLogin .auth-fvc-box .auth-fvc-input::placeholder {
+  color: rgba(255, 255, 255, 0.38);
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+#authModalLogin .auth-fvc-box .auth-fvc-input:focus {
+  outline: none;
+  border-color: #8fc72e;
+}
+#authModalLogin .auth-fvc-box .auth-fvc-send {
+  height: 44px;
+  padding: 0 20px;
+  background: #8fc72e;
+  color: #0e1312;
+  border: 1px solid #8fc72e;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+#authModalLogin .auth-fvc-box .auth-fvc-send:hover {
+  background: #9ed637;
+  border-color: #9ed637;
+}
+
+#authModalLogin .auth-fvc-box .auth-fvc-msg {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: #ffd166;
+}
+#authModalLogin .auth-fvc-pie {
+  margin: 12px 0 0;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Para quien no ve el tachado: el lector de pantalla lee «Antes S/ 30». */
+#authModalLogin .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* En el teléfono la caja tiene ~253px útiles: el campo y el botón no
+   caben en una línea sin estrangular uno de los dos. Se apilan, cada uno
+   a lo ancho, que es lo que se toca mejor con el pulgar. */
+@media (max-width: 480px) {
+  #authModalLogin .auth-fvc-row { flex-direction: column; }
+  #authModalLogin .auth-fvc-box .auth-fvc-send { width: 100%; }
+  #authModalLogin .auth-fvc-ahora { font-size: 30px; }
+}
 
 /* ── Los enlaces, todos del mismo tamaño ─────────────────────
    15px es el suelo de la app y aquí había 12.5. Los dos que son una

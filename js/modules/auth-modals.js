@@ -86,9 +86,33 @@
     '    </div>'
   ].join(''); }
 
-  /* Icono de WhatsApp, de trazo como los demás: el auricular dentro del
-     bocadillo. Dibujado, no emoji. */
-  var WA_SVG = '<svg class="auth-fvc-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.8 20.2l1.2-4a8 8 0 113 3l-4.2 1z"/><path d="M9 9.4c0 3 2.4 5.4 5.4 5.4l1-1.3 1.6.8-.4 1.4c-2.9.5-6.4-2.1-7.6-5.1l1.3-.7z"/></svg>';
+  /* El sello del informe completo.
+
+     Antes iba aquí el auricular de WhatsApp, y decía la verdad a medias:
+     WhatsApp es por dónde se pide, no lo que se compra. Lo que se compra
+     es un informe certificado, y eso se dibuja con un sello: la medalla
+     con su marca de comprobado y sus dos cintas.
+
+     De trazo, como todos los iconos de la casa, y dibujado — nunca un
+     emoji. */
+  var SELLO_SVG = [
+    '<svg class="auth-fvc-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"',
+    ' stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">',
+    '<circle cx="12" cy="8.6" r="5.8"/>',
+    '<path d="m9.5 8.7 1.8 1.8 3.4-3.5"/>',
+    '<path d="M8.1 13.7 6.4 21l5.6-2.7L17.6 21l-1.7-7.3"/>',
+    '</svg>'
+  ].join('');
+
+  /* La chispa que acompaña al precio en la oferta. Dos destellos, uno
+     grande y uno pequeño: es lo que separa un precio de una promoción. */
+  var CHISPA_SVG = [
+    '<svg class="auth-fvc-chispa" viewBox="0 0 24 24" fill="none" stroke="currentColor"',
+    ' stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">',
+    '<path d="M10.5 3.2 12 8.1l4.9 1.5-4.9 1.5-1.5 4.9L9 11.1 4.1 9.6 9 8.1Z"/>',
+    '<path d="m18.3 15.4.7 2.2 2.2.7-2.2.7-.7 2.2-.7-2.2-2.2-.7 2.2-.7Z"/>',
+    '</svg>'
+  ].join('');
 
   var MODAL_HTML = [
     // ========== Registro (split) ==========
@@ -188,16 +212,36 @@
        acceso, y el mensaje sale a WhatsApp ya escrito con la placa
        dentro: el operador no tiene que preguntarla. */
     '      <div class="auth-fvc">',
-    '        <button type="button" class="auth-fvc-open" id="fvcOpen" aria-expanded="false" aria-controls="fvcBox">' + WA_SVG,
-    '          <span>Solicita tu Filtro Vehicular Completo</span>',
+    /* El botón nombra el producto y nada más: «Filtro Vehicular
+       Completo». El verbo sobraba —ya se sabe que un botón se pulsa— y
+       comerse dos palabras es lo que hace que el rótulo entre de una
+       línea hasta en los teléfonos estrechos. */
+    '        <button type="button" class="auth-fvc-open" id="fvcOpen" aria-expanded="false" aria-controls="fvcBox">' + SELLO_SVG,
+    '          <span>Filtro Vehicular Completo</span>',
     '        </button>',
+
+    /* Lo que se abre al pulsarlo. El orden es el de una venta y no el de
+       un formulario: primero por qué merece la pena, después el precio,
+       y solo al final lo que hay que escribir.
+
+       El precio viejo va en un <s>, que es lo que dice «esto ya no
+       vale», y con su texto para quien no ve el tachado. */
     '        <div class="auth-fvc-box" id="fvcBox" hidden>',
+    '          <p class="auth-fvc-flag">' + CHISPA_SVG + '<span>Promoción por tiempo limitado</span></p>',
+    '          <h3 class="auth-fvc-titulo">Solicita tu Filtro Vehicular Completo</h3>',
+    '          <div class="auth-fvc-precio">',
+    '            <s class="auth-fvc-antes"><span class="visually-hidden">Antes </span>S/ 30</s>',
+    '            <strong class="auth-fvc-ahora">S/ 15</strong>',
+    '            <span class="auth-fvc-dto">−50%</span>',
+    '          </div>',
+    '          <p class="auth-fvc-que">Un solo PDF con todo el historial del vehículo: propietarios, Sunarp, papeletas, SOAT, revisión técnica, denuncias y orden de captura.</p>',
     '          <label class="auth-fvc-label" for="fvcPlaca">Placa del vehículo</label>',
     '          <div class="auth-fvc-row">',
     '            <input class="auth-fvc-input" id="fvcPlaca" type="text" autocomplete="off" spellcheck="false" maxlength="6" placeholder="ABC123" aria-describedby="fvcMsg">',
-    '            <button type="button" class="auth-fvc-send" id="fvcSend">Enviar</button>',
+    '            <button type="button" class="auth-fvc-send" id="fvcSend">Solicitar</button>',
     '          </div>',
     '          <p class="auth-fvc-msg" id="fvcMsg" hidden></p>',
+    '          <p class="auth-fvc-pie">Lo recibes por WhatsApp. No necesitas cuenta.</p>',
     '        </div>',
     '      </div>',
     '      </div>',
@@ -814,7 +858,34 @@
       var abierto = !caja.hidden;
       caja.hidden = abierto;
       abrir.setAttribute('aria-expanded', String(!abierto));
-      if (!abierto) { mensaje(''); input.focus(); }
+      if (abierto) return;
+
+      mensaje('');
+
+      /* La oferta mide más que el hueco que queda debajo del botón: al
+         abrirla, el precio y el campo de la placa nacían por debajo del
+         borde de la pantalla y desde fuera parecía que el botón no hacía
+         nada. Se lleva la caja a la vista antes de pedirle nada a nadie.
+
+         El foco va DESPUÉS del desplazamiento y no antes: enfocar un
+         campo que está fuera de pantalla provoca su propio salto, brusco,
+         y se comía la animación. */
+      /* Se mueve el CONTENEDOR, no el elemento. `scrollIntoView` sobre la
+         caja no hacía nada aquí —la columna del acceso tiene su propio
+         `overflow-y` y se quedaba en scrollTop 0—, así que se busca esa
+         columna y se la lleva al fondo, que es donde acaba de crecer. */
+      var columna = caja.closest ? caja.closest('.auth-form-side') : null;
+      if (columna && columna.scrollHeight > columna.clientHeight) {
+        if (columna.scrollTo) {
+          columna.scrollTo({ top: columna.scrollHeight, behavior: 'smooth' });
+        } else {
+          columna.scrollTop = columna.scrollHeight;
+        }
+      } else if (caja.scrollIntoView) {
+        caja.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+
+      setTimeout(function () { input.focus({ preventScroll: true }); }, 260);
     });
 
     input.addEventListener('input', function () {
