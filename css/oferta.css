@@ -341,7 +341,18 @@
    La ficha se pega a los bordes y respira menos por dentro: en 375px
    cada píxel de relleno es uno que le falta al texto. */
 @media (max-width: 480px) {
-  .fvc-modal { padding: 12px; align-items: flex-end; }
+  /* Centrada, igual que en escritorio.
+
+     Estuvo anclada abajo, como una hoja que sube desde el borde. Sobre
+     el papel tiene sentido —es donde llega el pulgar— pero aquí la
+     ficha mide 629px de 812: pegarla abajo dejaba noventa y tantos
+     píxeles de vacío ARRIBA y ninguno debajo, y eso no se lee como una
+     decisión, se lee como algo que se cayó.
+
+     Centrada, ese mismo hueco se parte en dos y no hay nada que
+     rellenar. Y el botón sigue estando donde llega el pulgar, porque va
+     al final de la ficha. */
+  .fvc-modal { padding: 12px; }
   .fvc-modal-caja {
     padding: 22px 18px;
     max-height: calc(100vh - 24px);
