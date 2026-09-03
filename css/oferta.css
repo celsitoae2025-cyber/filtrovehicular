@@ -1,173 +1,259 @@
 /* ============================================================
-   LA OFERTA DEL FILTRO VEHICULAR COMPLETO
+   MODAL DEL FILTRO VEHICULAR COMPLETO
 
-   Lo que se abre al pulsar el botón en la pantalla de acceso.
+   Se abre desde el botón de la pantalla de acceso. Antes era una caja
+   oscura que crecía dentro de la tarjeta de acceso: empujaba el
+   formulario, había que desplazar la columna para verla entera, y un
+   bloque negro dentro de una tarjeta blanca pesaba como un anuncio
+   pegado encima.
 
-   POR QUÉ SE REHIZO
+   Ahora es un modal, y por eso va en CLARO: lo que se pone delante de
+   todo no necesita gritar, le basta con estar delante. El fondo queda
+   desenfocado, que es lo que separa una capa de la otra sin usar una
+   sombra —aquí no se usan— ni un color más.
 
-   La primera versión tenía CUATRO cosas gritando a la vez: la etiqueta
-   de promoción en turquesa con su chispa, el precio en verde, una
-   insignia de −50% con su contorno turquesa, y el botón macizo en
-   verde. Cuatro acentos en una caja de trescientos píxeles es ninguno:
-   la vista no sabe dónde caer y el conjunto se lee barato, que es
-   justo lo contrario de lo que vende un informe de pago.
-
-   LA REGLA AHORA: un solo color en toda la caja, y va en el precio,
-   porque el precio es la noticia. Todo lo demás es blanco o blanco
-   apagado sobre el oscuro. El botón, blanco macizo: sobre un fondo
-   oscuro es lo que más contrasta de la caja, así que manda sin
-   necesidad de otro color.
-
-   Y menos texto. La lista de nueve servicios se quedó en una línea: en
-   una oferta, lo que sobra resta.
+   Un solo acento en toda la ficha, el verde de la marca, y va en el
+   precio. Todo lo demás es tinta sobre blanco.
    ============================================================ */
 
-/* ── La caja ─────────────────────────────────────────────────
-   Oscura dentro de la tarjeta blanca a propósito: es lo único de esta
-   pantalla que vende algo, y así se separa sin una franja de color ni
-   una sombra. El oscuro es el mismo de las demás superficies oscuras
-   de la aplicación. */
-#authModalLogin .auth-fvc-box,
-#authModalSignup .auth-fvc-box {
-  margin-top: 12px;
+/* ── La capa ─────────────────────────────────────────────────
+   Por encima del acceso (500) y de su botón de WhatsApp (501-503). */
+.fvc-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
-  background: #0e1312;
-  border-radius: 14px;
-  color: #ffffff;
-  text-align: left;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.fvc-modal.is-abierto { opacity: 1; }
+
+/* El desenfoque. Con un velo claro detrás y no oscuro: la pantalla de
+   acceso ya es oscura por la izquierda, y un velo negro encima la
+   convertía en una mancha. Así se sigue viendo dónde está uno. */
+.fvc-modal-fondo {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 29, 28, 0.45);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
-/* ── La etiqueta ─────────────────────────────────────────────
-   Sin icono y sin color. Dice cuánto dura la oferta, que es un dato de
-   apoyo; en turquesa y con una chispa competía con el precio. */
-#authModalLogin .auth-fvc-flag {
-  margin: 0 0 6px;
+/* ── La ficha ────────────────────────────────────────────────
+   Sin sombra, como todo en esta casa: se despega del fondo por el
+   desenfoque y por su propio borde. */
+.fvc-modal-caja {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e4e8e3;
+  border-radius: 16px;
+  padding: 28px;
+  color: #141d1c;
+  transform: translateY(10px);
+  transition: transform 0.18s ease;
+}
+.fvc-modal.is-abierto .fvc-modal-caja { transform: none; }
+
+.fvc-cerrar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  color: rgba(20, 29, 28, 0.55);
+  cursor: pointer;
+}
+.fvc-cerrar:hover { background: #f2f4f1; color: #141d1c; }
+.fvc-cerrar svg { width: 20px; height: 20px; }
+
+/* ── Cabecera ────────────────────────────────────────────────
+   El sello a la izquierda, el nombre y una línea de qué es. */
+.fvc-cabecera {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-right: 44px;   /* deja sitio a la aspa */
+  margin-bottom: 20px;
+}
+.fvc-sello {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e4e8e3;
+  border-radius: 12px;
+  color: #8fc72e;
+}
+.fvc-sello svg { width: 24px; height: 24px; }
+
+.fvc-titulo {
+  margin: 0 0 4px;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #141d1c;
+}
+.fvc-bajada {
+  margin: 0;
   font-size: 15px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-#authModalLogin .auth-fvc-titulo {
-  margin: 0 0 14px;
-  font-size: 19px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: #ffffff;
+  line-height: 1.45;
+  color: rgba(20, 29, 28, 0.62);
 }
 
 /* ── El precio ───────────────────────────────────────────────
-   El único color de la caja. El precio nuevo va PRIMERO y el viejo
-   detrás, pequeño y tachado: se lee «quince, y antes eran treinta», que
-   es el orden en el que se entiende. Al revés obligaba a leer un número
-   que ya no vale antes que el que importa.
-
-   Alineados por la base para que el pequeño cuelgue del grande. */
-#authModalLogin .auth-fvc-precio {
+   El único color de la ficha. El nuevo delante y el viejo detrás,
+   tachado: se lee «quince, y antes eran treinta», que es el orden en
+   el que se entiende. La promoción baja a su propia línea, en pequeño:
+   es la condición, no la noticia. */
+.fvc-precio {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 14px;
+  padding: 16px 0;
+  border-top: 1px solid #e4e8e3;
+  border-bottom: 1px solid #e4e8e3;
+  margin-bottom: 20px;
 }
-#authModalLogin .auth-fvc-ahora {
-  font-size: 34px;
+.fvc-ahora {
+  font-size: 38px;
   font-weight: 700;
   line-height: 1;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.8px;
   color: #8fc72e;
 }
-#authModalLogin .auth-fvc-antes {
-  font-size: 15px;
+.fvc-antes {
+  font-size: 17px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(20, 29, 28, 0.45);
   text-decoration-thickness: 1px;
 }
-
-#authModalLogin .auth-fvc-que {
-  margin: 0 0 16px;
+.fvc-promo {
+  flex-basis: 100%;
   font-size: 15px;
   font-weight: 400;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(20, 29, 28, 0.55);
 }
 
-/* ── Lo que hay que escribir ─────────────────────────────────
-   Sobre fondo oscuro, el campo y el botón de la plataforma no valen: se
-   les da aquí su versión oscura, con la misma píldora que los campos de
-   correo y contraseña de esta pantalla. */
-#authModalLogin .auth-fvc-box .auth-fvc-label {
+/* ── Qué incluye ─────────────────────────────────────────────
+   Cuatro líneas y no nueve. En una ficha de venta, lo que sobra resta:
+   nadie lee una lista larga, y una larga hace dudar de cada punto. */
+.fvc-sub {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #141d1c;
+}
+.fvc-lista {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.fvc-lista li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: rgba(20, 29, 28, 0.78);
+}
+.fvc-visto {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  color: #8fc72e;
+}
+.fvc-visto svg { width: 100%; height: 100%; }
+
+/* ── La acción ───────────────────────────────────────────────
+   Lo último, y en una columna: etiqueta, campo, botón. Uno debajo de
+   otro y a lo ancho, que es como se rellena sin pensar. */
+.fvc-label {
   display: block;
   margin-bottom: 6px;
   font-size: 15px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: none;
-  letter-spacing: 0;
+  color: rgba(20, 29, 28, 0.62);
 }
-#authModalLogin .auth-fvc-box .auth-fvc-input {
-  background: transparent;
-  /* Solo el borde. Un relleno claro dentro de una caja oscura añadía una
-     superficie más a una caja que ya tenía demasiadas. */
-  /* Con !important, igual que el radio: base.css fija el color del borde
-     de TODOS los campos en oscuro y con !important, y aqui el fondo es
-     oscuro — el borde quedaba invisible. */
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
-  color: #ffffff;
-  /* Con !important: base.css fija 8px a TODOS los campos, también con
-     !important, y los de correo y contraseña de esta misma pantalla ya
-     se saltan esa regla igual. Aquí manda la píldora, que es la forma
-     que habla esta pantalla. */
+.fvc-input {
+  width: 100%;
+  height: 48px;
+  /* Con !important: base.css fija a TODOS los campos su radio y su borde
+     con !important, y aquí manda la píldora, que es la forma que habla
+     esta pantalla. */
+  border: 1px solid #d7ddd6 !important;
   border-radius: 999px !important;
-  height: 44px;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-align: center;
-}
-#authModalLogin .auth-fvc-box .auth-fvc-input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
-  font-weight: 400;
-  letter-spacing: 1px;
-}
-#authModalLogin .auth-fvc-box .auth-fvc-input:focus {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.7) !important;
-}
-
-/* Blanco macizo. Sobre el oscuro es lo que más contrasta de toda la
-   caja, así que es lo que manda — sin gastar el verde, que ya está
-   puesto donde tiene que estar. */
-#authModalLogin .auth-fvc-box .auth-fvc-send {
-  height: 44px;
-  padding: 0 22px;
   background: #ffffff;
-  color: #0e1312;
-  border: 1px solid #ffffff;
-  border-radius: 999px;
-  font-size: 15px;
+  color: #141d1c;
+  font-family: inherit;
+  font-size: 19px;
   font-weight: 700;
-  white-space: nowrap;
-  cursor: pointer;
+  letter-spacing: 2px;
+  text-align: center;
+  text-transform: uppercase;
 }
-#authModalLogin .auth-fvc-box .auth-fvc-send:hover {
-  background: #8fc72e;
-  border-color: #8fc72e;
+.fvc-input::placeholder {
+  color: rgba(20, 29, 28, 0.3);
+  font-weight: 400;
+  letter-spacing: 2px;
+}
+.fvc-input:focus {
+  outline: none;
+  border-color: #8fc72e !important;
 }
 
-#authModalLogin .auth-fvc-box .auth-fvc-msg {
+.fvc-msg {
   margin: 8px 0 0;
   font-size: 15px;
-  color: #ffd166;
+  color: #c2410c;
 }
-#authModalLogin .auth-fvc-pie {
-  margin: 14px 0 0;
+
+.fvc-enviar {
+  width: 100%;
+  height: 48px;
+  margin-top: 12px;
+  background: #0e1312;
+  color: #ffffff;
+  border: 1px solid #0e1312;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.fvc-enviar:hover { background: #8fc72e; border-color: #8fc72e; color: #0e1312; }
+
+.fvc-pie {
+  margin: 12px 0 0;
   font-size: 15px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.45;
+  color: rgba(20, 29, 28, 0.5);
+  text-align: center;
 }
 
 /* Para quien no ve el tachado: el lector de pantalla lee «Antes S/ 30». */
-#authModalLogin .visually-hidden {
+.fvc-modal .visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -180,11 +266,24 @@
   border: 0;
 }
 
-/* En el teléfono la caja tiene ~253px útiles: el campo y el botón no
-   caben en una línea sin estrangular uno de los dos. Se apilan, cada uno
-   a lo ancho, que es lo que mejor se toca con el pulgar. */
+/* ── En el teléfono ──────────────────────────────────────────
+   La ficha se pega a los bordes y respira menos por dentro: en 375px
+   cada píxel de relleno es uno que le falta al texto. */
 @media (max-width: 480px) {
-  #authModalLogin .auth-fvc-row { flex-direction: column; }
-  #authModalLogin .auth-fvc-box .auth-fvc-send { width: 100%; }
-  #authModalLogin .auth-fvc-ahora { font-size: 30px; }
+  .fvc-modal { padding: 12px; align-items: flex-end; }
+  .fvc-modal-caja {
+    padding: 22px 18px;
+    max-height: calc(100vh - 24px);
+    border-radius: 18px;
+  }
+  .fvc-cabecera { gap: 12px; margin-bottom: 16px; }
+  .fvc-titulo { font-size: 19px; }
+  .fvc-ahora { font-size: 34px; }
+  .fvc-lista { margin-bottom: 18px; }
+}
+
+/* Quien pide menos movimiento, no lo tiene: la ficha aparece puesta. */
+@media (prefers-reduced-motion: reduce) {
+  .fvc-modal, .fvc-modal-caja { transition: none; }
+  .fvc-modal-caja { transform: none; }
 }

@@ -207,32 +207,14 @@
        Completo». El verbo sobraba —ya se sabe que un botón se pulsa— y
        comerse dos palabras es lo que hace que el rótulo entre de una
        línea hasta en los teléfonos estrechos. */
-    '        <button type="button" class="auth-fvc-open" id="fvcOpen" aria-expanded="false" aria-controls="fvcBox">' + SELLO_SVG,
+    '        <button type="button" class="auth-fvc-open" id="fvcOpen" aria-haspopup="dialog">' + SELLO_SVG,
     '          <span>Filtro Vehicular Completo</span>',
     '        </button>',
 
-    /* Lo que se abre al pulsarlo. El orden es el de una venta y no el de
-       un formulario: primero por qué merece la pena, después el precio,
-       y solo al final lo que hay que escribir.
-
-       El precio viejo va en un <s>, que es lo que dice «esto ya no
-       vale», y con su texto para quien no ve el tachado. */
-    '        <div class="auth-fvc-box" id="fvcBox" hidden>',
-    '          <p class="auth-fvc-flag">Promoción por tiempo limitado</p>',
-    '          <h3 class="auth-fvc-titulo">Solicita tu Filtro Vehicular Completo</h3>',
-    '          <div class="auth-fvc-precio">',
-    '            <strong class="auth-fvc-ahora">S/ 15</strong>',
-    '            <s class="auth-fvc-antes"><span class="visually-hidden">Antes </span>S/ 30</s>',
-    '          </div>',
-    '          <p class="auth-fvc-que">Un solo PDF con todo el historial del vehículo.</p>',
-    '          <label class="auth-fvc-label" for="fvcPlaca">Placa del vehículo</label>',
-    '          <div class="auth-fvc-row">',
-    '            <input class="auth-fvc-input" id="fvcPlaca" type="text" autocomplete="off" spellcheck="false" maxlength="6" placeholder="ABC123" aria-describedby="fvcMsg">',
-    '            <button type="button" class="auth-fvc-send" id="fvcSend">Solicitar</button>',
-    '          </div>',
-    '          <p class="auth-fvc-msg" id="fvcMsg" hidden></p>',
-    '          <p class="auth-fvc-pie">Lo recibes por WhatsApp. No necesitas cuenta.</p>',
-    '        </div>',
+    /* La oferta ya no cuelga de aquí: se abre en su propio modal, encima
+       del acceso y con el fondo desenfocado (ver fvcModal()). Metida
+       dentro de la tarjeta, empujaba el formulario y obligaba a
+       desplazar la columna para verla entera. */
     '      </div>',
     '      </div>',
     '      <div class="auth-legal-foot"><a href="#" data-modal="terms">Términos y condiciones</a><span class="dot">·</span><a href="#" data-modal="cookies">Política de cookies</a></div>',
@@ -830,13 +812,104 @@
 
   function placaValida(v) { return /^[A-Z0-9]{6}$/.test(v); }
 
-  function bindFiltroCompleto() {
-    var abrir = document.getElementById('fvcOpen');
-    var caja  = document.getElementById('fvcBox');
+  /* ── El modal del Filtro Vehicular Completo ────────────────────
+
+     Antes esto era una caja que crecía DENTRO de la tarjeta de acceso.
+     Dos problemas: empujaba el formulario hacia abajo, y era tan alta
+     que había que desplazar la columna para verla entera — el cliente
+     pulsaba y desde su sitio no pasaba nada.
+
+     Ahora es un modal aparte, encima del acceso y con el fondo
+     desenfocado. En claro, que es lo que le toca a algo que se pone
+     delante de todo: un bloque oscuro dentro de una tarjeta blanca
+     pesaba como un anuncio pegado encima.
+
+     La estructura es la de una ficha de producto y se lee en ese orden:
+     qué es, cuánto cuesta, qué trae y qué hay que hacer. */
+  var VISTO_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.8 12.4 4.8 4.8L19.2 6.8"/></svg>';
+
+  var FVC_INCLUYE = [
+    'Propietarios e historial registral (Sunarp)',
+    'Papeletas de tránsito, ATU y multirregión',
+    'SOAT y revisión técnica vigentes',
+    'Denuncias, requisitorias y orden de captura'
+  ];
+
+  function fvcModalHTML() {
+    var items = FVC_INCLUYE.map(function (t) {
+      return '<li><span class="fvc-visto">' + VISTO_SVG + '</span><span>' + t + '</span></li>';
+    }).join('');
+
+    return [
+      '<div class="fvc-modal" id="fvcModal" role="dialog" aria-modal="true" aria-labelledby="fvcModalTitulo">',
+      '  <div class="fvc-modal-fondo" data-fvc-cerrar></div>',
+      '  <div class="fvc-modal-caja" role="document">',
+      '    <button type="button" class="fvc-cerrar" aria-label="Cerrar" data-fvc-cerrar>' + CLOSE_SVG + '</button>',
+
+      '    <header class="fvc-cabecera">',
+      '      <span class="fvc-sello">' + SELLO_SVG + '</span>',
+      '      <div class="fvc-cabecera-txt">',
+      '        <h2 class="fvc-titulo" id="fvcModalTitulo">Filtro Vehicular Completo</h2>',
+      '        <p class="fvc-bajada">Un solo PDF con todo el historial del vehículo.</p>',
+      '      </div>',
+      '    </header>',
+
+      /* El precio, en su propio bloque. El nuevo delante y el viejo
+         detrás, tachado: se lee «quince, y antes eran treinta», que es
+         el orden en el que se entiende. */
+      '    <div class="fvc-precio">',
+      '      <strong class="fvc-ahora">S/ 15</strong>',
+      '      <s class="fvc-antes"><span class="visually-hidden">Antes </span>S/ 30</s>',
+      '      <span class="fvc-promo">Promoción por tiempo limitado</span>',
+      '    </div>',
+
+      '    <div class="fvc-incluye">',
+      '      <h3 class="fvc-sub">Qué incluye</h3>',
+      '      <ul class="fvc-lista">' + items + '</ul>',
+      '    </div>',
+
+      '    <div class="fvc-accion">',
+      '      <label class="fvc-label" for="fvcPlaca">Placa del vehículo</label>',
+      '      <input class="fvc-input" id="fvcPlaca" type="text" autocomplete="off"',
+      '             spellcheck="false" maxlength="6" placeholder="ABC123" aria-describedby="fvcMsg">',
+      '      <p class="fvc-msg" id="fvcMsg" role="alert" hidden></p>',
+      '      <button type="button" class="fvc-enviar" id="fvcSend">Solicitar por WhatsApp</button>',
+      '      <p class="fvc-pie">Te lo enviamos por WhatsApp. No necesitas crear una cuenta.</p>',
+      '    </div>',
+
+      '  </div>',
+      '</div>'
+    ].join('');
+  }
+
+  var fvcAbridor = null;   // a quién se le devuelve el foco al cerrar
+
+  function fvcTeclado(e) {
+    if (e.key === 'Escape') { e.preventDefault(); cerrarFvc(); }
+  }
+
+  function cerrarFvc() {
+    var modal = document.getElementById('fvcModal');
+    if (!modal) return;
+    document.removeEventListener('keydown', fvcTeclado);
+    modal.classList.remove('is-abierto');
+    /* Se espera a que acabe la transición antes de sacarlo del
+       documento: borrarlo en seco hace que el fondo desenfocado
+       desaparezca de golpe y se ve como un parpadeo. */
+    setTimeout(function () { if (modal.parentNode) modal.remove(); }, 200);
+    if (fvcAbridor && fvcAbridor.focus) fvcAbridor.focus();
+  }
+
+  function abrirFvc(desde) {
+    if (document.getElementById('fvcModal')) return;
+    fvcAbridor = desde || null;
+
+    document.body.insertAdjacentHTML('beforeend', fvcModalHTML());
+    var modal = document.getElementById('fvcModal');
     var input = document.getElementById('fvcPlaca');
     var enviar = document.getElementById('fvcSend');
     var aviso = document.getElementById('fvcMsg');
-    if (!abrir || !caja || !input || !enviar) return;
 
     function mensaje(texto) {
       if (!aviso) return;
@@ -844,45 +917,15 @@
       aviso.hidden = !texto;
     }
 
-    abrir.addEventListener('click', function () {
-      var abierto = !caja.hidden;
-      caja.hidden = abierto;
-      abrir.setAttribute('aria-expanded', String(!abierto));
-      if (abierto) return;
-
-      mensaje('');
-
-      /* La oferta mide más que el hueco que queda debajo del botón: al
-         abrirla, el precio y el campo de la placa nacían por debajo del
-         borde de la pantalla y desde fuera parecía que el botón no hacía
-         nada. Se lleva la caja a la vista antes de pedirle nada a nadie.
-
-         El foco va DESPUÉS del desplazamiento y no antes: enfocar un
-         campo que está fuera de pantalla provoca su propio salto, brusco,
-         y se comía la animación. */
-      /* Se mueve el CONTENEDOR, no el elemento. `scrollIntoView` sobre la
-         caja no hacía nada aquí —la columna del acceso tiene su propio
-         `overflow-y` y se quedaba en scrollTop 0—, así que se busca esa
-         columna y se la lleva al fondo, que es donde acaba de crecer. */
-      var columna = caja.closest ? caja.closest('.auth-form-side') : null;
-      if (columna && columna.scrollHeight > columna.clientHeight) {
-        if (columna.scrollTo) {
-          columna.scrollTo({ top: columna.scrollHeight, behavior: 'smooth' });
-        } else {
-          columna.scrollTop = columna.scrollHeight;
-        }
-      } else if (caja.scrollIntoView) {
-        caja.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }
-
-      setTimeout(function () { input.focus({ preventScroll: true }); }, 260);
+    Array.prototype.forEach.call(modal.querySelectorAll('[data-fvc-cerrar]'), function (b) {
+      b.addEventListener('click', cerrarFvc);
     });
+    document.addEventListener('keydown', fvcTeclado);
 
     input.addEventListener('input', function () {
       input.value = formateaPlaca(input.value);
       if (aviso && !aviso.hidden) mensaje('');
     });
-
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') { e.preventDefault(); enviar.click(); }
     });
@@ -904,7 +947,22 @@
       window.open('https://wa.me/' + numero + '?text=' + encodeURIComponent(texto),
                   '_blank', 'noopener');
       mensaje('');
+      cerrarFvc();
     });
+
+    /* Un cuadro para pintar antes de encenderlo: sin esto no hay
+       transición y el modal aparece de golpe. El foco entra después,
+       con la caja ya en su sitio. */
+    requestAnimationFrame(function () {
+      modal.classList.add('is-abierto');
+      setTimeout(function () { input.focus({ preventScroll: true }); }, 140);
+    });
+  }
+
+  function bindFiltroCompleto() {
+    var abrir = document.getElementById('fvcOpen');
+    if (!abrir) return;
+    abrir.addEventListener('click', function () { abrirFvc(abrir); });
   }
 
   // Estado del flujo de recuperación (vive entre vistas A y B)
