@@ -45,6 +45,80 @@
   #authModalSignup .auth-form-mh {
     padding-bottom: 18px !important;
   }
+
+  /* ── La marca, centrada en el teléfono ─────────────────────
+     En escritorio va a la izquierda a propósito: ahí la columna del
+     formulario es una franja alta y la esquina superior izquierda es
+     donde vive la marca.
+
+     En el teléfono no hay columna: hay una tarjeta centrada en medio de
+     la pantalla, y la marca colgando de la esquina izquierda quedaba
+     descolgada de ella —el nombre parte en dos líneas y la franja
+     asomaba por un lado—. Centrada, el nombre y la franja quedan sobre
+     el eje de la tarjeta y las dos líneas se leen como una decisión.
+
+     No se toca ni el texto, ni el tamaño, ni la franja: solo dónde se
+     apoya. `align-items` con !important porque base.css pone esta caja
+     en columna, también con !important. */
+  #authModalLogin .auth-form-mh,
+  #authModalSignup .auth-form-mh {
+    align-items: center !important;
+    text-align: center;
+  }
+  #authModalLogin .mh-brand,
+  #authModalSignup .mh-brand {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #authModalLogin .auth-form-mh::after,
+  #authModalSignup .auth-form-mh::after {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ============================================================
+   CÓMO ENTRA LA MARCA
+
+   Un solo gesto y dura medio segundo: el nombre asoma desde arriba y,
+   justo detrás, la franja de colores SE DIBUJA de un lado a otro, como
+   si alguien la subrayara.
+
+   Es lo único que se mueve en toda la pantalla de acceso, y por eso
+   funciona: si se moviera algo más, dejaría de mirarse. Y no se repite
+   —`both` deja la marca puesta al terminar—, porque un logo que se
+   reanima cada vez que miras la pantalla deja de ser un logo.
+
+   El logo no se toca: ni el texto, ni el tamaño, ni los colores de la
+   franja. Solo cómo aparece.
+   ============================================================ */
+@keyframes fvMarcaEntra {
+  from { opacity: 0; transform: translateY(-7px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* El nombre asoma desde arriba. La franja NO se toca aquí: ya se dibuja
+   sola desde auth.css —`authFranja`, 0,6 s y la misma curva—, así que
+   poner otra encima sería tener dos animaciones peleando por el mismo
+   pseudo-elemento. Lo único que se le cambia es de dónde arranca el
+   trazo, justo debajo. */
+#authModalLogin .auth-form-mh,
+#authModalSignup .auth-form-mh {
+  animation: fvMarcaEntra 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* La franja ya se abría desde el medio —`transform-origin` sin declarar
+   es el centro— y así se queda en los dos tamaños: sobre un eje
+   simétrico como el del teléfono, salir de un lado se vería torcido. No
+   hace falta ninguna regla para eso; queda escrito para que nadie la
+   añada creyendo que falta. */
+
+/* Quien pide menos movimiento ve la marca puesta, sin nada que entre. */
+@media (prefers-reduced-motion: reduce) {
+  #authModalLogin .auth-form-mh,
+  #authModalSignup .auth-form-mh {
+    animation: none !important;
+  }
 }
 
 /* ── Fuera el retrato ────────────────────────────────────────
