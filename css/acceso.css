@@ -206,12 +206,25 @@
      automáticos el hueco se repartía en tres y el bloque quedaba a
      media altura de ninguna parte. Se usa el id porque la regla que lo
      puso también lo usa, y si no, no gana. */
+  /* LA MARCA VA ARRIBA DEL TODO.
+
+     Estuvo centrada junto con la tarjeta, como un bloque, y quedaba
+     flotando a 140px del borde con una banda vacía por encima que no
+     era de nadie. Una marca encabeza una columna: su sitio es el
+     principio, pegada al margen superior, no a media altura.
+
+     Así que la marca pierde su `auto` de arriba —se queda donde nace— y
+     es la TARJETA la que se lleva los dos `auto`: se centra ella sola en
+     todo el espacio que queda entre la marca y el pie legal. Cada cosa
+     en su sitio: la marca encabeza, la tarjeta ocupa el centro óptico
+     de la columna y el pie cierra abajo. */
   #authModalLogin .auth-form-wrap > .auth-form-mh,
   #authModalSignup .auth-form-wrap > .auth-form-mh {
-    margin-top: auto;
-  }
-  #authModalLogin .auth-form-wrap > .auth-form-card {
     margin-top: 0;
+  }
+  #authModalLogin .auth-form-wrap > .auth-form-card,
+  #authModalSignup .auth-form-wrap > .auth-form-card {
+    margin-top: auto;
     margin-bottom: auto;
   }
   /* Y el del pie también sobra: el hueco de debajo de la tarjeta ya lo
