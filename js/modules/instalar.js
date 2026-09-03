@@ -67,6 +67,41 @@
       navigator.standalone === true;
   }
 
+  /* ── Cuándo se ofrece, y cuántas veces ──────────────────────────
+     DOS REGLAS, las dos del dueño:
+
+     1. NUNCA en la pantalla de acceso. Ahí el cliente está escribiendo
+        su correo y su contraseña; ofrecerle instalar una aplicación en
+        la que todavía no ha entrado es interrumpir lo único que ha
+        venido a hacer. Solo se ofrece ya dentro.
+
+     2. UNA SOLA VEZ. Se ofrece la primera vez que entra y no vuelve a
+        aparecer nunca, acepte o no. Un botón que reaparece cada vez que
+        abres la aplicación deja de ser una oferta y pasa a ser un
+        estorbo — y se acaba tocando sin querer.
+
+     La marca vive en el navegador del cliente. Si borra sus datos
+     volverá a salir una vez: es el precio de no tener que guardar esto
+     en su cuenta, y sale barato. */
+  var CLAVE_OFRECIDO = 'fv:instalar-ofrecido';
+
+  function yaSeOfrecio() {
+    try { return localStorage.getItem(CLAVE_OFRECIDO) === '1'; } catch (e) { return false; }
+  }
+
+  function anotarOfrecido() {
+    try { localStorage.setItem(CLAVE_OFRECIDO, '1'); } catch (e) { /* modo privado */ }
+  }
+
+  /* Dentro de la plataforma = el guardián del acceso ya no está puesto.
+     `auth-locked` tapa la aplicación mientras no hay sesión, e
+     `is-anonymous` marca al visitante sin cuenta; con cualquiera de las
+     dos, aquí no se ofrece nada. */
+  function dentroDeLaPlataforma() {
+    var c = document.body.classList;
+    return !c.contains('auth-locked') && !c.contains('is-anonymous');
+  }
+
   /* ── El botón ───────────────────────────────────────────────────
      Redondo, del tamaño del de WhatsApp y justo encima. Oscuro, para que
      no compita con el verde del otro: son dos cosas distintas y no deben
@@ -150,7 +185,35 @@
        la cabecera de app.html y lo deja en `window.__fvInstalable`; aquí
        se mira si ya está y, si no, se espera al que reenvía. */
     function hayAviso() { return window.__fvInstalable || null; }
-    function revisar() { boton.hidden = !hayAviso(); }
+
+    /* Tres condiciones y las tres tienen que cumplirse: que el navegador
+       lo ofrezca, que ya se haya entrado, y que no se haya ofrecido
+       antes. En cuanto el botón se enseña, queda anotado — aunque el
+       cliente ni lo mire. Eso es lo que significa «una sola vez». */
+    function revisar() {
+      if (yaSeOfrecio() || !dentroDeLaPlataforma() || !hayAviso()) {
+        boton.hidden = true;
+        return;
+      }
+      boton.hidden = false;
+      anotarOfrecido();
+      dejarDeVigilar();
+    }
+
+    /* El acceso se cierra DESPUÉS de que este guion arranque, así que no
+       basta con mirar una vez: se vigila la clase del body hasta que la
+       sesión entra. Cuando el botón ya se ha enseñado, la vigilancia
+       sobra y se suelta. */
+    var vigia = null;
+    function dejarDeVigilar() {
+      if (!vigia) return;
+      vigia.disconnect();
+      vigia = null;
+    }
+    if (window.MutationObserver) {
+      vigia = new MutationObserver(revisar);
+      vigia.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    }
 
     window.addEventListener('fv-instalable', revisar);
     revisar();

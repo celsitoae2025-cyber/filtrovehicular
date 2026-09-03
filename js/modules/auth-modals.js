@@ -104,15 +104,6 @@
     '</svg>'
   ].join('');
 
-  /* La chispa que acompaña al precio en la oferta. Dos destellos, uno
-     grande y uno pequeño: es lo que separa un precio de una promoción. */
-  var CHISPA_SVG = [
-    '<svg class="auth-fvc-chispa" viewBox="0 0 24 24" fill="none" stroke="currentColor"',
-    ' stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">',
-    '<path d="M10.5 3.2 12 8.1l4.9 1.5-4.9 1.5-1.5 4.9L9 11.1 4.1 9.6 9 8.1Z"/>',
-    '<path d="m18.3 15.4.7 2.2 2.2.7-2.2.7-.7 2.2-.7-2.2-2.2-.7 2.2-.7Z"/>',
-    '</svg>'
-  ].join('');
 
   var MODAL_HTML = [
     // ========== Registro (split) ==========
@@ -227,14 +218,13 @@
        El precio viejo va en un <s>, que es lo que dice «esto ya no
        vale», y con su texto para quien no ve el tachado. */
     '        <div class="auth-fvc-box" id="fvcBox" hidden>',
-    '          <p class="auth-fvc-flag">' + CHISPA_SVG + '<span>Promoción por tiempo limitado</span></p>',
+    '          <p class="auth-fvc-flag">Promoción por tiempo limitado</p>',
     '          <h3 class="auth-fvc-titulo">Solicita tu Filtro Vehicular Completo</h3>',
     '          <div class="auth-fvc-precio">',
-    '            <s class="auth-fvc-antes"><span class="visually-hidden">Antes </span>S/ 30</s>',
     '            <strong class="auth-fvc-ahora">S/ 15</strong>',
-    '            <span class="auth-fvc-dto">−50%</span>',
+    '            <s class="auth-fvc-antes"><span class="visually-hidden">Antes </span>S/ 30</s>',
     '          </div>',
-    '          <p class="auth-fvc-que">Un solo PDF con todo el historial del vehículo: propietarios, Sunarp, papeletas, SOAT, revisión técnica, denuncias y orden de captura.</p>',
+    '          <p class="auth-fvc-que">Un solo PDF con todo el historial del vehículo.</p>',
     '          <label class="auth-fvc-label" for="fvcPlaca">Placa del vehículo</label>',
     '          <div class="auth-fvc-row">',
     '            <input class="auth-fvc-input" id="fvcPlaca" type="text" autocomplete="off" spellcheck="false" maxlength="6" placeholder="ABC123" aria-describedby="fvcMsg">',

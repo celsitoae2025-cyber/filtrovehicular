@@ -1,0 +1,190 @@
+/* ============================================================
+   LA OFERTA DEL FILTRO VEHICULAR COMPLETO
+
+   Lo que se abre al pulsar el botón en la pantalla de acceso.
+
+   POR QUÉ SE REHIZO
+
+   La primera versión tenía CUATRO cosas gritando a la vez: la etiqueta
+   de promoción en turquesa con su chispa, el precio en verde, una
+   insignia de −50% con su contorno turquesa, y el botón macizo en
+   verde. Cuatro acentos en una caja de trescientos píxeles es ninguno:
+   la vista no sabe dónde caer y el conjunto se lee barato, que es
+   justo lo contrario de lo que vende un informe de pago.
+
+   LA REGLA AHORA: un solo color en toda la caja, y va en el precio,
+   porque el precio es la noticia. Todo lo demás es blanco o blanco
+   apagado sobre el oscuro. El botón, blanco macizo: sobre un fondo
+   oscuro es lo que más contrasta de la caja, así que manda sin
+   necesidad de otro color.
+
+   Y menos texto. La lista de nueve servicios se quedó en una línea: en
+   una oferta, lo que sobra resta.
+   ============================================================ */
+
+/* ── La caja ─────────────────────────────────────────────────
+   Oscura dentro de la tarjeta blanca a propósito: es lo único de esta
+   pantalla que vende algo, y así se separa sin una franja de color ni
+   una sombra. El oscuro es el mismo de las demás superficies oscuras
+   de la aplicación. */
+#authModalLogin .auth-fvc-box,
+#authModalSignup .auth-fvc-box {
+  margin-top: 12px;
+  padding: 20px;
+  background: #0e1312;
+  border-radius: 14px;
+  color: #ffffff;
+  text-align: left;
+}
+
+/* ── La etiqueta ─────────────────────────────────────────────
+   Sin icono y sin color. Dice cuánto dura la oferta, que es un dato de
+   apoyo; en turquesa y con una chispa competía con el precio. */
+#authModalLogin .auth-fvc-flag {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+#authModalLogin .auth-fvc-titulo {
+  margin: 0 0 14px;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #ffffff;
+}
+
+/* ── El precio ───────────────────────────────────────────────
+   El único color de la caja. El precio nuevo va PRIMERO y el viejo
+   detrás, pequeño y tachado: se lee «quince, y antes eran treinta», que
+   es el orden en el que se entiende. Al revés obligaba a leer un número
+   que ya no vale antes que el que importa.
+
+   Alineados por la base para que el pequeño cuelgue del grande. */
+#authModalLogin .auth-fvc-precio {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+#authModalLogin .auth-fvc-ahora {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.5px;
+  color: #8fc72e;
+}
+#authModalLogin .auth-fvc-antes {
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration-thickness: 1px;
+}
+
+#authModalLogin .auth-fvc-que {
+  margin: 0 0 16px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ── Lo que hay que escribir ─────────────────────────────────
+   Sobre fondo oscuro, el campo y el botón de la plataforma no valen: se
+   les da aquí su versión oscura, con la misma píldora que los campos de
+   correo y contraseña de esta pantalla. */
+#authModalLogin .auth-fvc-box .auth-fvc-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: none;
+  letter-spacing: 0;
+}
+#authModalLogin .auth-fvc-box .auth-fvc-input {
+  background: transparent;
+  /* Solo el borde. Un relleno claro dentro de una caja oscura añadía una
+     superficie más a una caja que ya tenía demasiadas. */
+  /* Con !important, igual que el radio: base.css fija el color del borde
+     de TODOS los campos en oscuro y con !important, y aqui el fondo es
+     oscuro — el borde quedaba invisible. */
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff;
+  /* Con !important: base.css fija 8px a TODOS los campos, también con
+     !important, y los de correo y contraseña de esta misma pantalla ya
+     se saltan esa regla igual. Aquí manda la píldora, que es la forma
+     que habla esta pantalla. */
+  border-radius: 999px !important;
+  height: 44px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+}
+#authModalLogin .auth-fvc-box .auth-fvc-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+#authModalLogin .auth-fvc-box .auth-fvc-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Blanco macizo. Sobre el oscuro es lo que más contrasta de toda la
+   caja, así que es lo que manda — sin gastar el verde, que ya está
+   puesto donde tiene que estar. */
+#authModalLogin .auth-fvc-box .auth-fvc-send {
+  height: 44px;
+  padding: 0 22px;
+  background: #ffffff;
+  color: #0e1312;
+  border: 1px solid #ffffff;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+#authModalLogin .auth-fvc-box .auth-fvc-send:hover {
+  background: #8fc72e;
+  border-color: #8fc72e;
+}
+
+#authModalLogin .auth-fvc-box .auth-fvc-msg {
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: #ffd166;
+}
+#authModalLogin .auth-fvc-pie {
+  margin: 14px 0 0;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Para quien no ve el tachado: el lector de pantalla lee «Antes S/ 30». */
+#authModalLogin .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* En el teléfono la caja tiene ~253px útiles: el campo y el botón no
+   caben en una línea sin estrangular uno de los dos. Se apilan, cada uno
+   a lo ancho, que es lo que mejor se toca con el pulgar. */
+@media (max-width: 480px) {
+  #authModalLogin .auth-fvc-row { flex-direction: column; }
+  #authModalLogin .auth-fvc-box .auth-fvc-send { width: 100%; }
+  #authModalLogin .auth-fvc-ahora { font-size: 30px; }
+}
