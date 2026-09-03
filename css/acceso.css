@@ -50,12 +50,27 @@
      tarjeta, en «Bienvenido», y en la barra del navegador. En
      escritorio la marca se queda, porque allí sí encabeza una columna.
 
-     Se quita con `display: none` y no encogiéndola: así no reserva ni su
-     caja ni su margen, y la tarjeta se lleva la pantalla entera para
-     centrarse. */
+     Lo que SÍ se queda es la franja de cuatro colores. Es la marca sin
+     necesidad de leer nada: se reconoce de lejos, no ocupa más que cinco
+     píxeles de alto y no compite con el «Bienvenido» de la tarjeta. Se
+     va el nombre, se queda el color.
+
+     Se oculta el nombre con `display: none` y no encogiéndolo: así no
+     reserva ni su caja ni su margen. La franja vive en el `::after` de
+     su contenedor, así que sobrevive sola. */
+  #authModalLogin .mh-brand,
+  #authModalSignup .mh-brand {
+    display: none !important;
+  }
+  /* Sin nombre encima, el aire que la separaba de él sobra; el que
+     cuenta es el que la separa de la tarjeta. */
+  #authModalLogin .auth-form-mh::after,
+  #authModalSignup .auth-form-mh::after {
+    margin-top: 0 !important;
+  }
   #authModalLogin .auth-form-mh,
   #authModalSignup .auth-form-mh {
-    display: none !important;
+    padding-bottom: 20px !important;
   }
 
   /* ── La tarjeta, en el medio ────────────────────────────────
