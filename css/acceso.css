@@ -38,70 +38,80 @@
   padding-bottom: 20px;
 }
 @media (max-width: 768px) {
-  /* Con `!important`: por debajo de 768 auth.css lo pone a
-     `padding-bottom: 0 !important`, y ese cero es justo el que dejaba la
-     franja tocando la tarjeta. */
+
+  /* ── En el teléfono, sin marca ──────────────────────────────
+     La marca se retira entera. Aquí no hay panel de arte al lado ni
+     columna que encabezar: hay UNA tarjeta en medio de la pantalla, y
+     el nombre encima —partido en dos líneas, con su franja de colores—
+     no acompañaba a nada, solo empujaba la tarjeta hacia abajo y
+     obligaba a repartir un hueco que no tenía por qué existir.
+
+     El nombre sigue estando donde tiene que estar: dentro de la
+     tarjeta, en «Bienvenido», y en la barra del navegador. En
+     escritorio la marca se queda, porque allí sí encabeza una columna.
+
+     Se quita con `display: none` y no encogiéndola: así no reserva ni su
+     caja ni su margen, y la tarjeta se lleva la pantalla entera para
+     centrarse. */
   #authModalLogin .auth-form-mh,
   #authModalSignup .auth-form-mh {
-    padding-bottom: 18px !important;
+    display: none !important;
   }
 
-  /* ── La marca, centrada en el teléfono ─────────────────────
-     En escritorio va a la izquierda a propósito: ahí la columna del
-     formulario es una franja alta y la esquina superior izquierda es
-     donde vive la marca.
-
-     En el teléfono no hay columna: hay una tarjeta centrada en medio de
-     la pantalla, y la marca colgando de la esquina izquierda quedaba
-     descolgada de ella —el nombre parte en dos líneas y la franja
-     asomaba por un lado—. Centrada, el nombre y la franja quedan sobre
-     el eje de la tarjeta y las dos líneas se leen como una decisión.
-
-     No se toca ni el texto, ni el tamaño, ni la franja: solo dónde se
-     apoya. `align-items` con !important porque base.css pone esta caja
-     en columna, también con !important. */
-  #authModalLogin .auth-form-mh,
-  #authModalSignup .auth-form-mh {
-    align-items: center !important;
-    text-align: center;
+  /* ── La tarjeta, en el medio ────────────────────────────────
+     Sin nada más en la columna, centrarla es literalmente centrarla: el
+     contenedor reparte por igual lo que sobra por arriba y por abajo.
+     Los márgenes automáticos que traía se anulan, porque un `auto` se
+     come todo el hueco antes de que `justify-content` pueda repartirlo, y
+     con ellos puestos la tarjeta acababa pegada a un borde. */
+  /* El relleno tiene que ser SIMÉTRICO o no hay centrado que valga: la
+     columna traía 14px arriba y 40 abajo —20 del contenedor más 20 que
+     el pie legal, oculto en el teléfono, le dejó al marcharse—, y la
+     tarjeta salía 40px alta: 89 arriba contra 129 abajo. Se igualan los
+     dos extremos y el hueco de las barras del sistema se pone por
+     fuera, donde no descuadra nada. */
+  #authModalLogin .auth-form-side,
+  #authModalSignup .auth-form-side {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
   }
-  #authModalLogin .mh-brand,
-  #authModalSignup .mh-brand {
-    margin-left: auto;
-    margin-right: auto;
-  }
-  #authModalLogin .auth-form-mh::after,
-  #authModalSignup .auth-form-mh::after {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  /* ── La marca arriba, la tarjeta centrada debajo ───────────
-     Antes las dos iban pegadas y el bloque entero se centraba: la marca
-     acababa a 56px del borde, flotando, con un vacío por encima que no
-     era de nadie.
-
-     Son dos cosas distintas y ahora se colocan como tales. La marca se
-     ancla arriba, que es donde se espera un logotipo. La tarjeta se
-     lleva el resto y se centra en él —los dos `auto` reparten por igual
-     lo que sobre—, así que sigue cayendo a la altura de la mano.
-
-     El aire de arriba es proporcional al alto de la pantalla, no un
-     número fijo: 3vh, con suelo de 16 y techo de 36. En un teléfono
-     pequeño no come pantalla y en una tableta no se queda pegado al
-     borde. Y se le suma el hueco de la barra del sistema, que en los
-     móviles con muesca es lo que separa el logotipo de la hora. */
   #authModalLogin .auth-form-wrap,
   #authModalSignup .auth-form-wrap {
-    justify-content: flex-start;
-    /* Con !important: auth.css fija aquí `padding: 14px !important`. */
-    padding-top: calc(clamp(16px, 3vh, 36px) + env(safe-area-inset-top, 0px)) !important;
+    justify-content: center;
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
   }
   #authModalLogin .auth-form-wrap > .auth-form-card,
   #authModalSignup .auth-form-wrap > .auth-form-card {
-    margin-top: auto !important;
-    margin-bottom: auto !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
   }
+}
+
+/* ── La marca, centrada también en el ordenador ──────────────
+   Iba a la izquierda: la columna del formulario es una franja alta y la
+   esquina superior izquierda es donde suele vivir una marca. Pero todo
+   lo que hay debajo —el nombre de la tarjeta, los campos, los dos
+   botones, el pie legal— está centrado, así que la marca era lo único
+   descolgado del eje.
+
+   No se toca ni el texto, ni el tamaño, ni la franja: solo sobre qué
+   eje se apoya. `align-items` con !important porque base.css pone esta
+   caja en columna, también con !important. */
+#authModalLogin .auth-form-mh,
+#authModalSignup .auth-form-mh {
+  align-items: center !important;
+  text-align: center;
+}
+#authModalLogin .mh-brand,
+#authModalSignup .mh-brand {
+  margin-left: auto;
+  margin-right: auto;
+}
+#authModalLogin .auth-form-mh::after,
+#authModalSignup .auth-form-mh::after {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ============================================================
