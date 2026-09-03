@@ -26,10 +26,32 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  opacity: 0;
-  transition: opacity 0.18s ease;
 }
-.fvc-modal.is-abierto { opacity: 1; }
+
+/* ============================================================
+   CÓMO ABRE
+
+   Tres cosas a la vez y ninguna llamativa por sí sola. Juntas es lo
+   que hace que se sienta caro:
+
+   1. EL FONDO SE DESENFOCA, no aparece desenfocado. El blur va de 0 a
+      10px en algo menos de medio segundo: la pantalla de detrás se
+      pierde poco a poco, como cuando una cámara cambia de foco. Es el
+      detalle que más se nota y el que nadie sabría nombrar.
+
+   2. LA FICHA SUBE Y SE ASIENTA. Entra 18px más abajo y un pelín más
+      pequeña, y llega con una curva que frena al final
+      —cubic-bezier(.16,1,.3,1)—. No rebota: rebotar es un truco, y los
+      trucos se ven dos veces y cansan.
+
+   3. EL CONTENIDO ENTRA DETRÁS, en cuatro tiempos de sesenta
+      milisegundos: cabecera, precio, qué incluye y la acción. Lee en
+      el mismo orden en el que quieres que lo lean.
+
+   AL CERRAR, NADA DE ESTO. Los retardos y las curvas largas viven solo
+   en el estado abierto, así que al quitar la clase todo vuelve de una
+   vez en 0,16 s. Una salida lenta no es elegante: es esperar.
+   ============================================================ */
 
 /* El desenfoque. Con un velo claro detrás y no oscuro: la pantalla de
    acceso ya es oscura por la izquierda, y un velo negro encima la
@@ -37,9 +59,18 @@
 .fvc-modal-fondo {
   position: absolute;
   inset: 0;
+  background: rgba(20, 29, 28, 0);
+  -webkit-backdrop-filter: blur(0px);
+  backdrop-filter: blur(0px);
+  transition: background-color 0.16s ease, backdrop-filter 0.16s ease,
+              -webkit-backdrop-filter 0.16s ease;
+}
+.fvc-modal.is-abierto .fvc-modal-fondo {
   background: rgba(20, 29, 28, 0.45);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+  transition: background-color 0.32s ease, backdrop-filter 0.46s ease,
+              -webkit-backdrop-filter 0.46s ease;
 }
 
 /* ── La ficha ────────────────────────────────────────────────
@@ -56,10 +87,50 @@
   border-radius: 16px;
   padding: 28px;
   color: #141d1c;
-  transform: translateY(10px);
-  transition: transform 0.18s ease;
+
+  opacity: 0;
+  transform: translateY(18px) scale(0.97);
+  transform-origin: 50% 40%;
+  transition: opacity 0.16s ease, transform 0.16s ease;
 }
-.fvc-modal.is-abierto .fvc-modal-caja { transform: none; }
+.fvc-modal.is-abierto .fvc-modal-caja {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.46s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── El contenido, en cuatro tiempos ─────────────────────────
+   Cada bloque entra ocho píxeles más abajo, sesenta milisegundos
+   después que el anterior. Es lo justo para que el ojo siga el orden
+   sin notar que lo están llevando. */
+.fvc-modal-caja > * {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+.fvc-modal.is-abierto .fvc-modal-caja > * {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.34s ease, transform 0.44s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fvc-modal.is-abierto .fvc-cabecera { transition-delay: 0.08s; }
+.fvc-modal.is-abierto .fvc-precio   { transition-delay: 0.14s; }
+.fvc-modal.is-abierto .fvc-incluye  { transition-delay: 0.20s; }
+.fvc-modal.is-abierto .fvc-accion   { transition-delay: 0.26s; }
+.fvc-modal.is-abierto .fvc-cerrar   { transition-delay: 0.30s; }
+
+/* El sello crece un poco al entrar. Es el único gesto de la ficha que
+   no es un desplazamiento, y por eso se mira: marca dónde empieza a
+   leerse todo lo demás. */
+.fvc-sello {
+  transform: scale(0.82);
+  transition: transform 0.14s ease;
+}
+.fvc-modal.is-abierto .fvc-sello {
+  transform: none;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.12s;
+}
 
 .fvc-cerrar {
   position: absolute;
@@ -282,8 +353,22 @@
   .fvc-lista { margin-bottom: 18px; }
 }
 
-/* Quien pide menos movimiento, no lo tiene: la ficha aparece puesta. */
+/* Quien pide menos movimiento, no lo tiene: la ficha aparece puesta, con
+   su desenfoque ya hecho y sin un solo desplazamiento. Se conserva el
+   fundido, que no es movimiento y evita el corte seco. */
 @media (prefers-reduced-motion: reduce) {
-  .fvc-modal, .fvc-modal-caja { transition: none; }
-  .fvc-modal-caja { transform: none; }
+  .fvc-modal-caja,
+  .fvc-modal-caja > *,
+  .fvc-sello,
+  .fvc-modal.is-abierto .fvc-modal-caja,
+  .fvc-modal.is-abierto .fvc-modal-caja > *,
+  .fvc-modal.is-abierto .fvc-sello {
+    transform: none !important;
+    transition: opacity 0.15s ease !important;
+    transition-delay: 0s !important;
+  }
+  .fvc-modal-fondo,
+  .fvc-modal.is-abierto .fvc-modal-fondo {
+    transition: background-color 0.15s ease !important;
+  }
 }
