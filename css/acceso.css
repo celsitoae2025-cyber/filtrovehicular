@@ -37,7 +37,7 @@
 #authModalSignup .auth-form-mh {
   padding-bottom: 20px;
 }
-@media (max-width: 859px) {
+@media (max-width: 768px) {
   /* Con `!important`: por debajo de 768 auth.css lo pone a
      `padding-bottom: 0 !important`, y ese cero es justo el que dejaba la
      franja tocando la tarjeta. */
@@ -74,6 +74,33 @@
   #authModalSignup .auth-form-mh::after {
     margin-left: auto;
     margin-right: auto;
+  }
+
+  /* ── La marca arriba, la tarjeta centrada debajo ───────────
+     Antes las dos iban pegadas y el bloque entero se centraba: la marca
+     acababa a 56px del borde, flotando, con un vacío por encima que no
+     era de nadie.
+
+     Son dos cosas distintas y ahora se colocan como tales. La marca se
+     ancla arriba, que es donde se espera un logotipo. La tarjeta se
+     lleva el resto y se centra en él —los dos `auto` reparten por igual
+     lo que sobre—, así que sigue cayendo a la altura de la mano.
+
+     El aire de arriba es proporcional al alto de la pantalla, no un
+     número fijo: 3vh, con suelo de 16 y techo de 36. En un teléfono
+     pequeño no come pantalla y en una tableta no se queda pegado al
+     borde. Y se le suma el hueco de la barra del sistema, que en los
+     móviles con muesca es lo que separa el logotipo de la hora. */
+  #authModalLogin .auth-form-wrap,
+  #authModalSignup .auth-form-wrap {
+    justify-content: flex-start;
+    /* Con !important: auth.css fija aquí `padding: 14px !important`. */
+    padding-top: calc(clamp(16px, 3vh, 36px) + env(safe-area-inset-top, 0px)) !important;
+  }
+  #authModalLogin .auth-form-wrap > .auth-form-card,
+  #authModalSignup .auth-form-wrap > .auth-form-card {
+    margin-top: auto !important;
+    margin-bottom: auto !important;
   }
 }
 
@@ -145,7 +172,7 @@
 
    Solo en escritorio: en móvil la columna scrollea y centrar ahí
    escondería el botón de entrar por debajo del borde. */
-@media (min-width: 860px) {
+@media (min-width: 769px) {
   /* Un `auto` ARRIBA del primer elemento y otro DEBAJO del último: el
      espacio libre se parte en dos mitades iguales y el bloque queda
      centrado. El pie conserva el suyo y sigue al fondo.
@@ -325,19 +352,12 @@
       de margen: en cuanto la fuente del teléfono renderiza un pelo más
       ancho, parte en dos líneas y se sale de su propia caja.
    ============================================================ */
-@media (max-width: 859px) {
+@media (max-width: 768px) {
 
-  /* El bloque, centrado en la pantalla en vez de arriba con un vacío
-     debajo. Sin márgenes automáticos: los reparte el contenedor. */
-  #authModalLogin .auth-form-wrap,
-  #authModalSignup .auth-form-wrap {
-    justify-content: center;
-  }
-  #authModalLogin .auth-form-wrap > .auth-form-card,
-  #authModalSignup .auth-form-wrap > .auth-form-card {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
+  /* Lo de centrar el bloque entero vivía aquí y se retiró: ahora la
+     marca se ancla arriba y la tarjeta se centra debajo, un poco más
+     arriba en este mismo archivo. Dos reglas para la misma caja en el
+     mismo archivo es como acabas peleándote contigo mismo. */
 
   /* La casilla y el enlace, en su línea. El hueco entre ellos pasa a ser
      el que sobra, no uno fijo, y el enlace no se parte nunca. */
