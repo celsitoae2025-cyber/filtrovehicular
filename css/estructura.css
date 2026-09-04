@@ -1,0 +1,108 @@
+/* ============================================================
+   ESTRUCTURA — el armazón del interior de la plataforma
+
+   Va la última de todas las hojas a propósito: aquí no se inventa
+   ninguna pieza nueva, se pone de acuerdo a las que ya existen. Tres
+   decisiones y nada más.
+
+   1 · UN SOLO OSCURO. El menú, el pie, la ficha del reporte, las
+       regiones y el acceso ya compartían superficie —`--c-surface-dark`—
+       pero era un casi-negro que no era de nadie. Pasa al esmeralda del
+       panel de entrada. No se toca ninguna regla: se cambia el valor del
+       token en base.css y las cinco superficies viajan juntas, que es
+       justo para lo que estaba puesto.
+
+   2 · UN SOLO LIENZO. El fondo de la aplicación era #d4dade, un gris
+       AZUL. Con la marca en verde y esmeralda, el único color grande de
+       la pantalla tiraba al lado contrario de la paleta: por eso el
+       interior se veía de otra casa que el acceso. Pasa a papel —un
+       gris con una gota de verde— y las tarjetas blancas encima ganan
+       el contraste que antes se comía el fondo.
+
+   3 · UN SOLO MARGEN IZQUIERDO. Esto es lo que se notaba como
+       «descuadrado» sin saber por qué. Medido a 1449px, dentro de la
+       misma columna había TRES bordes izquierdos distintos:
+
+         barra superior ... x282   (relleno de 22)
+         contenido ........ x275   (relleno de 15)
+         pie .............. x297   (relleno de 32 sobre una caja de 1180)
+
+       Siete y quince píxeles de desfase entre cosas que se leen una
+       debajo de otra. A partir de aquí las tres cuelgan del mismo
+       `--gutter` y de la misma `--measure`, así que sus bordes caen en
+       la misma vertical exacta a cualquier ancho de ventana.
+
+       El centrado se hace con relleno y no metiendo un contenedor
+       nuevo: la barra superior tiene cuatro hijos sueltos en fila, y
+       envolverlos habría pedido tocar el marcado de todas las páginas.
+============================================================ */
+
+:root {
+  /* El papel. Muy poco saturado: tiene que leerse como papel, no como
+     un fondo verde. */
+  --c-canvas: #e9ece5;
+
+  /* El margen que separa cualquier contenido del canto de la columna. */
+  --gutter: 28px;
+
+  /* Hasta dónde crece el contenido. Pasado este ancho, lo que sobra se
+     reparte a los dos lados: una línea de texto de 1800px no se lee, y
+     una rejilla de tarjetas que crece sin fin deja de ser una rejilla. */
+  --measure: 1360px;
+}
+
+/* ── 2 · el lienzo ───────────────────────────────────────────
+   Con `!important` porque base.css fija el gris azul en los cuatro
+   sitios también con `!important` —incluido `html`, que es el que evita
+   el fogonazo blanco al recargar—. */
+html,
+body,
+.main,
+.content {
+  background: var(--c-canvas) !important;
+}
+
+/* ── 3 · el margen izquierdo, uno solo ───────────────────────
+   `max()` deja el relleno en el margen normal mientras la ventana es
+   más estrecha que la medida, y a partir de ahí lo abre para centrar el
+   bloque. Las tres cajas cuelgan de la misma anchura (la de `.main`),
+   así que las tres calculan exactamente el mismo número. */
+.topbar,
+.content,
+.foot-main,
+.foot-bar {
+  padding-left: max(var(--gutter), calc((100% - var(--measure)) / 2 + var(--gutter))) !important;
+  padding-right: max(var(--gutter), calc((100% - var(--measure)) / 2 + var(--gutter))) !important;
+}
+
+/* El pie traía su propia medida de 1180px con márgenes automáticos: dos
+   sistemas de centrado peleando dejaban su texto 15px más adentro que
+   el resto. Se queda solo el de arriba. */
+.foot-main,
+.foot-bar {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* El aire de arriba y de abajo del contenido. El de los lados ya lo
+   pone la regla anterior; aquí solo se iguala el vertical, que iba en
+   15px —el mismo número que separa una tarjeta de otra, así que el
+   borde de la página y el hueco entre piezas pesaban lo mismo y no se
+   distinguía dónde empezaba la página. */
+.content {
+  padding-top: var(--gutter) !important;
+  padding-bottom: var(--gutter) !important;
+}
+
+/* ── El acceso, sobre el mismo papel ─────────────────────────
+   La columna del formulario iba en #f8f8f8 y el fondo del cuadro en
+   #f3f3f3: dos grises neutros distintos, y ninguno era el del interior.
+   Quien entra pasaba de un gris a otro y a un tercero sin que nada lo
+   justificara. Los tres son ahora el mismo papel, así que la puerta y
+   lo que hay detrás son el mismo sitio. */
+.auth-modal-overlay,
+#authModalLogin .auth-form-side,
+#authModalSignup .auth-form-side {
+  background-color: var(--c-canvas) !important;
+}

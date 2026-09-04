@@ -18,7 +18,13 @@
      más claro —más verde petróleo— que ese mismo tono en una caja
      pequeña rodeada de blanco. La tarjeta de regiones ya se había
      bajado a #0e1312 por eso; ahora bajan todas y dejan de discutir. */
-  --c-surface-dark: #0e1312;
+  /* Actualizado: pasa al esmeralda del panel de acceso. Las cinco
+     superficies que cuelgan de aquí —menú, pie, ficha del reporte,
+     regiones y acceso— se mueven juntas, que es para lo que está el
+     token; lo que cambia es el tono, no el reparto. El casi-negro
+     anterior no era de nadie: no aparecía en ningún otro sitio de la
+     marca. Blanco encima da 15,5:1. */
+  --c-surface-dark: #0b2a20;
 
   /* El panel de arte del acceso, y solo ese. Es la única superficie
      oscura que se sale de --c-surface-dark: ocupa media pantalla y en
@@ -31,7 +37,7 @@
      Este esmeralda está en 160º, entre el lima y el turquesa, así que
      los dos acentos caen dentro de su familia y el panel se lee de una
      pieza. Blanco encima da 15,5:1. */
-  --c-auth-panel: #0b2a20;
+  --c-auth-panel: var(--c-surface-dark);
 
   --c-secondary: #141d1c;
   --c-text: #141d1c;
