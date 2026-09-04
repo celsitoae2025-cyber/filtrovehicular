@@ -286,10 +286,20 @@
    la letra del otro, para que los dos formen una pieza. */
 #authModalLogin .auth-submit,
 #authModalSignup .auth-submit {
-  height: 48px;
-  min-height: 48px;
+  height: 52px;
+  min-height: 52px;
   font-size: 15px;
   font-weight: 700;
+  border-radius: 12px;
+  /* El MISMO esmeralda del panel de la izquierda. Era un negro suelto
+     (#0e1312) que no era de nadie: la única pieza sólida de la columna
+     no podía ser del único color que no está en ningún otro sitio de
+     la pantalla. Así las dos mitades se dan la mano. */
+  background: var(--c-auth-panel) !important;
+}
+#authModalLogin .auth-submit:hover:not(:disabled),
+#authModalSignup .auth-submit:hover:not(:disabled) {
+  background: #123c30 !important;
 }
 
 /* ── La acción secundaria ────────────────────────────────────
@@ -308,15 +318,16 @@
   /* El MISMO oscuro que el botón de entrar (#0e1312), no el #141d1c que
      traía: dos negros distintos a dos centímetros uno del otro era parte
      del problema. */
-  color: #0e1312;
-  border: 1px solid #0e1312;
-  border-radius: 999px;
+  color: var(--c-auth-panel);
+  border: 1px solid rgba(11, 42, 32, .3);
+  border-radius: 12px;
   font-size: 15px;
   font-weight: 700;
 }
 #authModalLogin .auth-fvc-open:hover,
 #authModalSignup .auth-fvc-open:hover {
-  background: #0e1312;
+  background: var(--c-auth-panel);
+  border-color: var(--c-auth-panel);
   color: #ffffff;
 }
 /* El icono de WhatsApp acompaña el color del texto salvo en reposo, que
@@ -432,3 +443,29 @@
    WhatsApp lleva toda la vida abajo a la derecha y ahí se queda. Si
    alguna vez estorba, se resuelve dándole aire al formulario, no
    cambiándolo de lado. */
+
+/* ============================================================
+   LA MARCA, A LA IZQUIERDA EN EL ORDENADOR
+
+   Arriba se centra el encabezado, y en el móvil eso está bien: allí no
+   hay panel oscuro y la marca es lo único que hay en lo alto de la
+   pantalla, así que su sitio es el eje.
+
+   En el ordenador ya no. La columna arranca ahora con un titular
+   («Iniciar sesión»), su bajada y los campos, todo apoyado en el margen
+   izquierdo; con la marca centrada encima quedaban dos ejes en una
+   columna de 460px y el rótulo se leía descolgado de lo que encabeza.
+   Una sola línea de apoyo para toda la columna.
+============================================================ */
+@media (min-width: 821px) {
+  #authModalLogin .auth-form-mh,
+  #authModalSignup .auth-form-mh {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+  #authModalLogin .mh-brand,
+  #authModalSignup .mh-brand {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

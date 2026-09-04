@@ -121,7 +121,9 @@
        y el retrato sigue leyéndose pegado al formulario. */
     '      <div class="auth-avatar" aria-hidden="true">' + AVATAR_SVG + '</div>',
     '      <div class="auth-form-card">',
-    '      <h2 class="auth-modal-title">Crea tu cuenta</h2>',
+    /* Igual que en el acceso: el panel saluda («Crea tu cuenta.») y la
+       columna nombra la acción. */
+    '      <h2 class="auth-modal-title">Crear cuenta</h2>',
     '      <form class="auth-form" id="signupForm" novalidate>',
     '        <div class="auth-field">',
     '          <label>Nombre de usuario</label>',
@@ -171,8 +173,11 @@
        y el retrato sigue leyéndose pegado al formulario. */
     '      <div class="auth-avatar" aria-hidden="true">' + AVATAR_SVG + '</div>',
     '      <div class="auth-form-card">',
-    '      <h2 class="auth-modal-title">Bienvenido</h2>',
-    '      <p class="auth-modal-sub">Ingresa a tu cuenta para continuar con tus consultas.</p>',
+    /* El titular de esta columna nombra la ACCIÓN, no saluda: el saludo
+       («Bienvenido.») ya lo da el panel oscuro a tamaño de cartel, y
+       repetirlo aquí dejaba la columna sin decir a qué ha venido. */
+    '      <h2 class="auth-modal-title">Iniciar sesión</h2>',
+    '      <p class="auth-modal-sub">Entra con tu correo y contraseña para seguir con tus consultas.</p>',
     '      <form class="auth-form" id="loginForm" novalidate>',
     '        <div class="auth-field">',
     '          <label>Correo electrónico</label>',

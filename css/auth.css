@@ -386,18 +386,22 @@ body.auth-modal-open { overflow: hidden; }
   flex-direction: column;
   gap: 5px;
 }
-.auth-field > .auth-input-wrap { order: 1; }
-.auth-field > label           { order: 2; }
+/* La etiqueta va ENCIMA del campo. Estuvo debajo, y debajo de un cuadro
+   de texto una línea gris no se lee como el nombre del campo: se lee
+   como una nota al pie de lo que acabas de escribir. Se nombra primero
+   y se rellena después, que es el orden en el que se usa. */
+.auth-field > label           { order: 1; }
+.auth-field > .auth-input-wrap { order: 2; }
 .auth-field > .auth-hint      { order: 3; }
 
 .auth-field > label {
   font-size: 13px;
-  font-weight: 400;
-  color: var(--c-muted);
-  letter-spacing: .05px;
-  /* Alineado con el texto de dentro del cuadro, no con su borde: la
-     cápsula mete el contenido 18px hacia dentro. */
-  padding-left: 18px;
+  font-weight: 700;
+  color: #4a5b59;
+  letter-spacing: .2px;
+  /* A plomo con el borde del campo: el cuadro ya no es una cápsula, así
+     que no hay que compensar la curva. */
+  padding-left: 2px;
 }
 
 /* Campos y botón en CÁPSULA (borde totalmente redondeado). Es el rasgo
@@ -405,13 +409,15 @@ body.auth-modal-open { overflow: hidden; }
    dejaba indistinguible de cualquier formulario del panel. */
 .auth-input {
   width: 100%;
-  padding: 12px 18px;
+  /* 52px de alto con 15px de letra. Los 47px de antes venían de una
+     cápsula de 14px de cuerpo, por debajo del suelo de la casa. */
+  padding: 15px 16px;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--c-primary);
   background: #fff;
-  border: 1px solid var(--c-border);
-  border-radius: 999px;
+  border: 1px solid rgba(20, 29, 28, .18);
+  border-radius: 12px;
   transition: border-color .15s;
   -webkit-tap-highlight-color: transparent;
 }
@@ -419,13 +425,18 @@ body.auth-modal-open { overflow: hidden; }
    la app, así que la cápsula solo gana con !important y más
    especificidad. Se acota a .auth-modal para no tocar ni un campo del
    resto de la plataforma. */
-.auth-modal .auth-input { border-radius: 999px !important; }
-.auth-input:hover { border-color: #C8C8C8; }
-.auth-input:focus,
-.auth-input:focus-visible {
+.auth-modal .auth-input { border-radius: 12px !important; }
+.auth-input:hover { border-color: rgba(20, 29, 28, .34); }
+.auth-input:focus {
   outline: none;
   box-shadow: none;
-  border-color: var(--c-primary);
+  border-color: var(--c-auth-panel);
+}
+/* El aro del foco va en `outline`, no en `box-shadow`: aquí no se usan
+   sombras, y el outline no las necesita para verse. */
+.auth-input:focus-visible {
+  outline: 2px solid rgba(11, 42, 32, .3);
+  outline-offset: 2px;
 }
 
 /* Anula la sombra global dentro de cualquier modal de auth */
@@ -445,7 +456,7 @@ body.auth-modal-open { overflow: hidden; }
 }
 .auth-input-icon {
   position: absolute;
-  left: 18px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
   width: 17px;
@@ -586,7 +597,7 @@ body.auth-modal-open { overflow: hidden; }
   color: #fff;
   background: var(--c-primary);
   border: none;
-  border-radius: 999px;
+  border-radius: 12px;
   cursor: pointer;
   transition: background .15s;
   -webkit-tap-highlight-color: transparent;
@@ -1209,30 +1220,36 @@ body.auth-locked .wa-menu {
   #authModalLogin  .mh-plus,
   #authModalSignup .mh-plus { color: #8fc72e; }
 
-  /* La misma franja cuatricolor que en celular, ahora también aquí,
-     bajo el nombre. Ancho acotado y a la izquierda: cruzar la columna
-     de lado a lado la partiría en dos justo donde empieza a leerse.
-     Reusa --accent-gradient para que siga cualquier cambio de paleta. */
+  /* La franja cuatricolor se retira de aquí. Es el distintivo de la
+     ficha de resultados, y en esta pantalla era lo único que metía
+     cian, naranja y rojo —tres colores que no están en la paleta del
+     acceso— a un centímetro del panel esmeralda. Y una barra de acento
+     bajo un rótulo es justo lo que aquí no se usa. */
   #authModalLogin  .auth-form-mh::after,
-  #authModalSignup .auth-form-mh::after {
-    content: '';
-    display: block;
-    width: 132px;
-    height: 5px;
-    margin-top: 10px;
-    border-radius: 2px;
-    background: var(--accent-gradient);
-  }
+  #authModalSignup .auth-form-mh::after { content: none; }
 
-  /* El título del formulario se esconde: el saludo lo da el panel de
-     arte. Sigue en el marcado porque en móvil ese panel no existe. */
+  /* Todo el bloque nace en el margen izquierdo. Estaba centrado por
+     herencia y dejaba un rótulo al medio sobre un formulario alineado a
+     la izquierda: dos ejes en una columna de 460px. */
+  #authModalLogin  .auth-form-mh,
+  #authModalSignup .auth-form-mh { text-align: left; }
+
+  /* El titular vuelve a verse, y ahora dice algo distinto del panel:
+     allí el saludo, aquí la acción. Sin él la columna arrancaba en un
+     campo de correo, sin nada que dijera qué se está haciendo —y con
+     139px de hueco muerto justo encima, porque el bloque era tan corto
+     que el centrado automático no tenía nada que repartir. */
   #authModalLogin  .auth-form-card > .auth-modal-title,
-  #authModalSignup .auth-form-card > .auth-modal-title { display: none; }
-
-  /* El acceso va sin bajada: entre el retrato y los campos no hacía
-     falta explicar que se entra a la cuenta. La del registro se retiró
-     del marcado, así que aquí ya no hay nada que ocultar por su lado. */
-  #authModalLogin .auth-form-card > .auth-modal-sub { display: none; }
+  #authModalSignup .auth-form-card > .auth-modal-title {
+    font-size: 30px;
+    letter-spacing: -.8px;
+    margin: 0 0 8px;
+  }
+  #authModalLogin .auth-form-card > .auth-modal-sub {
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 0 28px;
+  }
 
   /* Centrado vertical sin números fijos: este margen automático y el de
      .auth-legal-foot se reparten el sobrante a partes iguales.
@@ -1370,7 +1387,7 @@ body.auth-locked .wa-menu {
      que se vea centrado. */
   #authModalLogin  .auth-brand-content,
   #authModalSignup .auth-brand-content {
-    gap: 20px !important;
+    gap: 26px !important;
     max-width: 620px;
     justify-content: center !important;
     padding-bottom: 24px;
@@ -1414,7 +1431,7 @@ body.auth-locked .wa-menu {
     /* Los `!important` no son adorno: base.css marca esta bajada con
        `font-size: var(--fs-sm) !important` y sin ellos gana ese, por
        mucha especificidad que tenga esta regla. */
-    font-size: 16px !important;
+    font-size: 17px !important;
     line-height: 1.55 !important;
     color: rgba(255, 255, 255, .74) !important;
   }
@@ -1426,16 +1443,19 @@ body.auth-locked .wa-menu {
     flex: 0 0 auto;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px 44px;
+    /* Más aire entre filas. La lista es lo único que puede crecer en
+       esta columna, y el panel tenía casi doscientos píxeles muertos
+       por arriba y otros tantos por abajo: aquí es donde se gastan. */
+    gap: 20px 48px;
     overflow: visible;
     max-width: 560px;
   }
 
   #authModalLogin  .auth-brand-list li,
   #authModalSignup .auth-brand-list li {
-    font-size: 15.5px;
+    font-size: 16.5px;
     line-height: 1.45;
-    padding-left: 20px;
+    padding-left: 22px;
     color: rgba(255, 255, 255, .86);
   }
 
@@ -1444,7 +1464,7 @@ body.auth-locked .wa-menu {
      una lista de quince, así que vuelven a un solo color. */
   #authModalLogin  .auth-brand-list li::before,
   #authModalSignup .auth-brand-list li::before {
-    top: 7px;
+    top: 8px;
   }
 
   /* La fila de fuentes. Estaba a 12px: el dato de dónde sale la
