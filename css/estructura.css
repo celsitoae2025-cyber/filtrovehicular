@@ -218,3 +218,107 @@ body,
 .combo-panel {
   border-color: rgba(20, 29, 28, .18) !important;
 }
+
+/* ============================================================
+   7 · UN SOLO CAMPO EN TODO EL PROYECTO
+
+   Había dos sistemas de formulario conviviendo, y se veían juntos en la
+   misma sesión:
+
+     dentro de la plataforma ... 40px de alto, radio 8,  letra 14
+     en el acceso .............. 52px de alto, radio 12, letra 15
+
+   Doce píxeles de alto y un punto de letra de diferencia entre el campo
+   donde escribes la contraseña y el campo donde escribes la placa. Y el
+   de dentro iba por debajo del suelo de 15px de la casa, que es el que
+   hace que esto se lea de lejos.
+
+   Gana el del acceso, que es el que está medido: 52 de alto, radio 12,
+   letra de 15 y el mismo filete. A partir de aquí no hay «campos del
+   panel» y «campos del acceso»: hay campos.
+
+   Se excluyen a mano las dos piezas que NO son un campo de escribir
+   aunque lo parezcan: las casillas del código de seis dígitos —que son
+   cuadraditos de 42— y las marcas de verificación.
+============================================================ */
+.input,
+.combo-trigger,
+.filter-form input[type="text"],
+input[type="text"]:not(.otp-digit),
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="search"],
+input[type="date"],
+select,
+textarea {
+  min-height: 52px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  border-color: rgba(20, 29, 28, .18) !important;
+}
+
+/* El texto de dentro respira igual que en el acceso. `textarea` se queda
+   fuera: su relleno se calcula por líneas, no por alto de caja. */
+.input,
+.combo-trigger,
+input[type="text"]:not(.otp-digit),
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="search"] {
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
+}
+
+/* El botón que acompaña a un campo mide lo que el campo. Solo el que va
+   EN una fila de formulario: forzar 52px a todos los botones de la
+   aplicación engordaría cada barra de herramientas. */
+.form-row .btn,
+.filter-form .btn,
+.nm-fields .btn,
+.prem-form-panel .btn {
+  min-height: 52px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+}
+
+/* El foco, el mismo aro de siempre y en el verde de la casa. */
+.input:focus,
+.combo-trigger:focus,
+input[type="text"]:not(.otp-digit):focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--c-surface-dark) !important;
+}
+.input:focus-visible,
+input:not(.otp-digit):focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(11, 42, 32, .3);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   8 · LA FILA DE CONSULTA, A PROPORCIÓN
+
+   El desplegable medía 340 y el campo de la placa 1075: uno tres veces
+   el otro, en la misma fila y con el mismo papel. Se ve antes la
+   diferencia de tamaño que lo que dice cada uno.
+
+   Pasan a una proporción escrita —el dato vale 1,6 veces el tipo— en vez
+   de «uno fijo y el otro se queda con lo que sobre». La fila sigue
+   llenando la tarjeta, así que no reaparece el hueco de la derecha.
+============================================================ */
+@media (min-width: 900px) {
+  #view-filter > .filter-search-box {
+    grid-template-columns: minmax(240px, 1fr) minmax(0, 1.6fr) auto !important;
+  }
+}
