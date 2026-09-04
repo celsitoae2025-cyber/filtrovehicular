@@ -39,38 +39,62 @@
 }
 @media (max-width: 768px) {
 
-  /* ── En el teléfono, sin marca ──────────────────────────────
-     La marca se retira entera. Aquí no hay panel de arte al lado ni
-     columna que encabezar: hay UNA tarjeta en medio de la pantalla, y
-     el nombre encima —partido en dos líneas, con su franja de colores—
-     no acompañaba a nada, solo empujaba la tarjeta hacia abajo y
-     obligaba a repartir un hueco que no tenía por qué existir.
+  /* ── El encabezado del teléfono ─────────────────────────────
+     Hubo dos versiones antes de esta y las dos fallaban por el mismo
+     sitio. La primera era el nombre partido en dos líneas sobre el gris
+     del fondo, con su franja debajo: empujaba la tarjeta y no
+     encabezaba nada, solo estaba puesto. La segunda quitó el nombre y
+     dejó SOLA la franja de cuatro colores, cinco píxeles flotando sobre
+     el gris a media pantalla de la tarjeta: eso no es un encabezado, es
+     una raya suelta.
 
-     El nombre sigue estando donde tiene que estar: dentro de la
-     tarjeta, en «Bienvenido», y en la barra del navegador. En
-     escritorio la marca se queda, porque allí sí encabeza una columna.
+     Esta es una BANDA, a sangre de lado a lado y en el mismo esmeralda
+     que ocupa media pantalla en el ordenador. Dentro, el nombre en
+     blanco de una sola línea y la franja debajo. Tres cosas se arreglan
+     de una vez: el teléfono deja de ser una versión descolorida del
+     ordenador y se reconoce como el mismo producto; la franja pasa a
+     leerse como la firma de la marca y no como un adorno perdido.
 
-     Lo que SÍ se queda es la franja de cuatro colores. Es la marca sin
-     necesidad de leer nada: se reconoce de lejos, no ocupa más que cinco
-     píxeles de alto y no compite con el «Bienvenido» de la tarjeta. Se
-     va el nombre, se queda el color.
-
-     Se oculta el nombre con `display: none` y no encogiéndolo: así no
-     reserva ni su caja ni su margen. La franja vive en el `::after` de
-     su contenedor, así que sobrevive sola. */
-  #authModalLogin .mh-brand,
-  #authModalSignup .mh-brand {
-    display: none !important;
-  }
-  /* Sin nombre encima, el aire que la separaba de él sobra; el que
-     cuenta es el que la separa de la tarjeta. */
-  #authModalLogin .auth-form-mh::after,
-  #authModalSignup .auth-form-mh::after {
-    margin-top: 0 !important;
-  }
+     Va a sangre: el relleno lateral de la columna se anula con márgenes
+     negativos y el de arriba se pone a cero, porque una banda que no
+     muerde los tres bordes no es una banda, es otra tarjeta. */
   #authModalLogin .auth-form-mh,
   #authModalSignup .auth-form-mh {
-    padding-bottom: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    text-align: center !important;
+    background: var(--c-auth-panel) !important;
+    margin: 0 -16px 24px !important;
+    /* El hueco de la barra de estado va DENTRO de la banda: así el
+       oscuro llega hasta arriba del todo y el nombre no se mete debajo
+       de la hora del teléfono. */
+    padding: calc(22px + env(safe-area-inset-top, 0px)) 20px 20px !important;
+  }
+  #authModalLogin .mh-brand,
+  #authModalSignup .mh-brand {
+    display: block !important;
+    color: #ffffff !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    letter-spacing: -.2px !important;
+    line-height: 1.2 !important;
+    margin: 0 auto !important;
+    max-width: none !important;
+  }
+  /* De una línea. El salto del marcado parte el nombre en dos para la
+     columna estrecha del ordenador; en una banda que cruza la pantalla
+     entera cabe entero y de dos líneas se leería como un párrafo. */
+  #authModalLogin .mh-brand br,
+  #authModalSignup .mh-brand br { display: none !important; }
+  #authModalLogin .mh-plus,
+  #authModalSignup .mh-plus { color: #8fc72e !important; }
+  /* La franja, debajo del nombre y más corta: sobre el oscuro tira
+     mucho más que sobre el gris, y a 140px se comía la banda. */
+  #authModalLogin .auth-form-mh::after,
+  #authModalSignup .auth-form-mh::after {
+    width: 96px !important;
+    height: 4px !important;
+    margin-top: 12px !important;
   }
 
   /* ── La tarjeta, en el medio ────────────────────────────────
@@ -90,16 +114,24 @@
     padding-top: env(safe-area-inset-top, 0px) !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
   }
+  /* La banda encabeza y la tarjeta se centra en lo que queda. El
+     `justify-content: center` de antes centraba el grupo entero, y con
+     la banda dentro dejaba una franja de gris por encima de ella: una
+     banda a sangre que no toca el borde de arriba no es una banda. Se
+     apoya arriba, y son los dos `auto` de la tarjeta los que reparten
+     el sobrante —valen 0 en pantallas cortas, así que ahí nada se
+     recorta: se desplaza. */
   #authModalLogin .auth-form-wrap,
   #authModalSignup .auth-form-wrap {
-    justify-content: center;
-    padding-top: 16px !important;
+    justify-content: flex-start;
+    /* El aire de arriba lo pone ahora la banda por dentro. */
+    padding-top: 0 !important;
     padding-bottom: 16px !important;
   }
   #authModalLogin .auth-form-wrap > .auth-form-card,
   #authModalSignup .auth-form-wrap > .auth-form-card {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
+    margin-top: auto !important;
+    margin-bottom: auto !important;
   }
 }
 
