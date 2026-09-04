@@ -59,7 +59,7 @@
   padding: 0;
   background: transparent;
   border: 1px solid rgba(255,255,255,.08);
-  border-radius: 6px;
+  border-radius: 8px;
   color: rgba(255,255,255,.55);
   cursor: pointer;
   display: flex;
@@ -264,7 +264,7 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
 .submenu.open { display: flex; }
 .submenu a {
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   color: rgba(255,255,255,.62);
   text-decoration: none;
   font-size: var(--fs-sm);
@@ -458,7 +458,7 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
   font-weight: 700;
   letter-spacing: .3px;
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   white-space: nowrap;
   z-index: 50;
   box-shadow: none;

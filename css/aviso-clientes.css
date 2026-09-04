@@ -93,7 +93,7 @@ html.avc-abierto body {
   width: 100%;
   margin-top: 26px;
   padding: 13px 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--c-accent, #8fc72e);
   color: var(--c-primary, #141d1c);
   font-family: inherit;
@@ -199,7 +199,7 @@ html.avc-abierto body {
   gap: 12px;
   padding: 14px 16px;
   border: 1px solid var(--c-border, #DCDCDC);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--c-bg, #F3F3F3);
 }
 .avc-admin-state.is-on {
@@ -245,7 +245,7 @@ html.avc-abierto body {
   text-align: left;
   padding: 13px 15px;
   border: 1px solid var(--c-border, #DCDCDC);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--c-surface, #ffffff);
   color: var(--c-text, #141d1c);
   font-family: inherit;
@@ -300,7 +300,7 @@ html.avc-abierto body {
 .avc-previa {
   padding: 14px;
   border: 1px dashed var(--c-border, #DCDCDC);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--c-bg, #F3F3F3);
 }
 /* Dentro de la previa la cinta va tal cual, sin recortes */

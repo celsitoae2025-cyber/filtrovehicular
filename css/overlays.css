@@ -51,7 +51,7 @@ body.modal-open { overflow: hidden; }
   width: 26px;
   height: 26px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: transparent;
   color: var(--c-muted);
   cursor: pointer;
@@ -63,7 +63,7 @@ body.modal-open { overflow: hidden; }
 .cd-close svg { width: 14px; height: 14px; }
 .cd-title {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   margin: 0 0 6px 0;
 }
@@ -105,15 +105,15 @@ body.confirm-dialog-open { overflow: hidden; }
   background: #f4f4f4; border-radius: 8px; padding: 10px 14px;
 }
 .nc-plan-info { flex: 1; font-size: .95em; }
-.nc-plan-price { font-weight: 600; color: var(--c-primary); font-size: .95em; white-space: nowrap; }
+.nc-plan-price { font-weight: 700; color: var(--c-primary); font-size: .95em; white-space: nowrap; }
 .nc-btn-pagar {
-  padding: 7px 18px; font-size: .88em; border-radius: 6px; white-space: nowrap;
+  padding: 7px 18px; font-size: .88em; border-radius: 8px; white-space: nowrap;
 }
 .nc-alt {
   text-align: center; font-size: .85em; color: #5A6B6A; margin-top: 10px; padding-top: 10px;
   border-top: 1px solid #DCDCDC;
 }
-.nc-wa-link { color: #141d1c; font-weight: 600; text-decoration: none; }
+.nc-wa-link { color: #141d1c; font-weight: 700; text-decoration: none; }
 .nc-wa-link:hover { text-decoration: underline; }
 .nc-ver-planes { color: var(--c-primary); text-decoration: underline; }
 @media (max-width: 480px) {
@@ -141,7 +141,7 @@ body.confirm-dialog-open { overflow: hidden; }
   max-width: 400px;
   background: var(--c-surface);
   border: 1px solid var(--c-border);
-  border-radius: 16px;
+  border-radius: 14px;
   box-shadow: none;
   pointer-events: auto;
   transition: transform .32s cubic-bezier(.2,.9,.3,1.25), opacity .22s ease;
@@ -176,7 +176,7 @@ body.confirm-dialog-open { overflow: hidden; }
   content: "";
   position: absolute;
   inset: -4px;
-  border-radius: 16px;
+  border-radius: 14px;
   border: 2px solid rgba(3, 167, 164,.35);
   animation: ip-halo 2s ease-out infinite;
   pointer-events: none;
@@ -224,7 +224,7 @@ body.confirm-dialog-open { overflow: hidden; }
 }
 .ip-bar-sub {
   font-size: var(--fs-xs);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--c-muted, #6b7672);
   letter-spacing: -.005em;
   line-height: 1.3;
@@ -241,7 +241,7 @@ body.confirm-dialog-open { overflow: hidden; }
   font-weight: 700;
   letter-spacing: -.005em;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--c-danger, #141d1c);
   color: #ffffff;
   cursor: pointer;
@@ -294,7 +294,7 @@ body.confirm-dialog-open { overflow: hidden; }
 .ip-step-icon {
   width: 30px;
   height: 30px;
-  border-radius: 7px;
+  border-radius: 8px;
   background: #ffffff;
   border: 1px solid var(--c-border, #e5e9e7);
   display: flex;
@@ -305,14 +305,14 @@ body.confirm-dialog-open { overflow: hidden; }
 }
 .ip-step-icon svg { width: 16px; height: 16px; }
 .ip-step > div { display: flex; flex-direction: column; gap: 1px; }
-.ip-step strong { font-size: var(--fs-sm); color: var(--c-text, #141d1c); font-weight: 600; }
-.ip-step em { font-style: normal; color: var(--c-accent, #141d1c); font-weight: 600; }
+.ip-step strong { font-size: var(--fs-sm); color: var(--c-text, #141d1c); font-weight: 700; }
+.ip-step em { font-style: normal; color: var(--c-accent, #141d1c); font-weight: 700; }
 .ip-step span { font-size: var(--fs-xs); color: var(--c-muted); line-height: 1.4; }
 .ip-confirm {
   align-self: stretch;
   padding: 8px;
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   border: none;
   border-radius: 8px;
   background: var(--c-primary, #141d1c);
@@ -370,7 +370,7 @@ body.confirm-dialog-open { overflow: hidden; }
   width: 32px; height: 32px;
   background: transparent;
   border: none;
-  border-radius: 7px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -430,7 +430,7 @@ body.confirm-dialog-open { overflow: hidden; }
   align-items: center;
   gap: 8px;
   font-size: var(--fs-xs);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 1.1px;
   text-transform: uppercase;
   color: #141d1c;
@@ -450,7 +450,7 @@ body.confirm-dialog-open { overflow: hidden; }
   width: 30px; height: 30px;
   background: transparent;
   border: none;
-  border-radius: 7px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -479,7 +479,7 @@ body.confirm-dialog-open { overflow: hidden; }
 .maint-title {
   font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--fs-lg);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   margin: 0 0 10px;
   line-height: 1.3;
@@ -498,7 +498,7 @@ body.confirm-dialog-open { overflow: hidden; }
   text-align: left;
   background: var(--c-bg);
   border: 1px solid var(--c-border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 13px 15px;
   margin: 0 0 18px;
 }
@@ -513,7 +513,7 @@ body.confirm-dialog-open { overflow: hidden; }
   font-size: var(--fs-sm);
   color: var(--c-primary);
   line-height: 1.55;
-  font-weight: 600;
+  font-weight: 700;
 }
 .maint-sub {
   font-size: var(--fs-sm);
@@ -551,11 +551,11 @@ body.confirm-dialog-open { overflow: hidden; }
   gap: 9px;
   width: 100%;
   padding: 14px 24px;
-  border-radius: 9px;
+  border-radius: 8px;
   background: #8fc72e;
   color: #fff;
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   transition: background .15s;
 }
@@ -616,7 +616,7 @@ body.confirm-dialog-open { overflow: hidden; }
   padding: 14px 16px;
   background: var(--c-surface);
   border: 1px solid var(--c-border);
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-family: inherit;
   text-align: left;
@@ -633,7 +633,7 @@ body.confirm-dialog-open { overflow: hidden; }
 .region-flag {
   width: 42px;
   height: 42px;
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -652,7 +652,7 @@ body.confirm-dialog-open { overflow: hidden; }
 }
 .region-info strong {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   line-height: 1.2;
 }
@@ -671,7 +671,7 @@ body.confirm-dialog-open { overflow: hidden; }
 }
 .modal-body h3 {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   margin: 20px 0 6px;
   letter-spacing: .2px;
@@ -795,7 +795,7 @@ body.confirm-dialog-open { overflow: hidden; }
 .cookie-text strong {
   display: block;
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   margin-bottom: 2px;
 }

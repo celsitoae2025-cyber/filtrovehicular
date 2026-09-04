@@ -24,7 +24,7 @@
 
 .rp-card-title {
   font-size: var(--fs-xs);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase; /* micro-label OK a 11px */
   letter-spacing: .5px;
   color: var(--c-muted);
@@ -33,7 +33,7 @@
 /* â”€â”€ PLAN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .rp-plan {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-muted);
   letter-spacing: .4px;
   text-transform: uppercase; /* nombre del plan como badge compacto */
@@ -85,7 +85,7 @@
 }
 .rp-gauge-text span {
   font-size: var(--fs-xs);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--c-muted);
   text-transform: uppercase;
   letter-spacing: .5px;
@@ -97,7 +97,7 @@
   border: none;
   padding: 0;
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--c-accent);
   cursor: pointer;
   font-family: inherit;
@@ -131,7 +131,7 @@
   font-size: var(--fs-xs);
   color: var(--c-muted);
   text-align: center;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 /* â”€â”€ ACCESOS RÃPIDOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -147,11 +147,11 @@
   gap: 5px;
   padding: 10px 6px;
   border: none;
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--c-bg);
   color: var(--c-secondary);
   font-size: var(--fs-xs);
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
   transition: background .13s, color .13s;
   font-family: inherit;
@@ -193,10 +193,10 @@
 .rp-expiry-text {
   font-size: var(--fs-xs);
   color: var(--c-muted);
-  font-weight: 500;
+  font-weight: 400;
 }
 .rp-expiry-text.is-warning { color: #141d1c; }
-.rp-expiry-text.is-danger  { color: var(--c-danger); font-weight: 600; }
+.rp-expiry-text.is-danger  { color: var(--c-danger); font-weight: 700; }
 
 /* â”€â”€ ÃšLTIMA CONSULTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .rp-last-query-body {
@@ -213,7 +213,7 @@
 }
 .rp-lq-value {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -222,7 +222,7 @@
 .rp-lq-cat {
   font-size: var(--fs-xs);
   color: var(--c-muted);
-  font-weight: 500;
+  font-weight: 400;
   text-transform: capitalize;
 }
 .rp-lq-time {
@@ -259,7 +259,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  border-radius: 7px;
+  border-radius: 8px;
   transition: background .13s;
 }
 .rp-fav-item:hover { background: var(--c-bg); }
@@ -278,7 +278,7 @@
 }
 .rp-fav-q {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -287,7 +287,7 @@
 .rp-fav-cat {
   font-size: var(--fs-xs);
   color: var(--c-muted);
-  font-weight: 500;
+  font-weight: 400;
 }
 .rp-fav-del {
   flex-shrink: 0;

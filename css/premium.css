@@ -19,7 +19,7 @@
 .prem-page-header-text { min-width: 0; }
 .prem-page-title {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   margin: 0 0 4px;
   letter-spacing: -.2px;
@@ -47,14 +47,14 @@
 }
 .prem-stat-label {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: .4px;
   text-transform: uppercase;
   color: var(--c-muted);
 }
 .prem-stat-num {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -85,14 +85,14 @@
 }
 .prem-sidebar-title {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: .8px;
   text-transform: uppercase;
   color: var(--c-muted);
 }
 .prem-sidebar-total {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   font-variant-numeric: tabular-nums;
 }
@@ -112,7 +112,7 @@
   cursor: pointer;
   text-align: left;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--c-secondary);
   font-family: inherit;
 }
@@ -120,8 +120,10 @@
 .prem-cat-btn:hover { background: var(--c-bg); color: var(--c-primary); }
 .prem-cat-btn.active {
   background: var(--c-bg);
+  /* La categoría activa se marca con el fondo y la negrita, no con una
+     franja de color pegada al canto: aquí no hay barras de acento. */
   color: var(--c-primary);
-  box-shadow: inset 3px 0 0 var(--c-accent);
+  font-weight: 700;
 }
 .prem-cat-icon {
   display: flex;
@@ -136,12 +138,12 @@
 .prem-cat-name {
   flex: 1;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 400;
 }
-.prem-cat-btn.active .prem-cat-name { font-weight: 600; }
+.prem-cat-btn.active .prem-cat-name { font-weight: 700; }
 .prem-cat-badge {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--c-muted);
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
@@ -150,7 +152,7 @@
 }
 .prem-cat-btn.active .prem-cat-badge {
   color: var(--c-primary);
-  font-weight: 600;
+  font-weight: 700;
 }
 .prem-sidebar-loading, .prem-sidebar-error {
   padding: 16px 14px;
@@ -173,14 +175,14 @@
 }
 .prem-section-title {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   margin: 0;
   letter-spacing: -.1px;
 }
 .prem-section-count {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--c-muted);
 }
 
@@ -201,7 +203,7 @@
 .prem-form-meta-left { flex: 1; min-width: 0; }
 .prem-form-service-name {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
   display: block;
   margin-bottom: 3px;
@@ -220,9 +222,9 @@
   background: var(--c-accent);
   color: #fff;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 5px 12px;
-  border-radius: 20px;
+  border-radius: 14px;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -269,7 +271,7 @@
   height: 36px;
   flex-shrink: 0;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: rgba(255,255,255,.08);
   color: rgba(255,255,255,.6);
   cursor: pointer;
@@ -280,7 +282,7 @@
 .prem-photo-block { margin-bottom: 10px; }
 .prem-dropzone {
   border: 1px dashed rgba(255,255,255,.25);
-  border-radius: 6px;
+  border-radius: 8px;
   background: rgba(255,255,255,.04);
   cursor: pointer;
   overflow: hidden;
@@ -300,7 +302,7 @@
   color: rgba(255,255,255,.6);
 }
 .prem-dropzone-placeholder svg { color: rgba(255,255,255,.4); }
-.prem-dropzone-title { font-size: 14px; font-weight: 600; color: #fff; }
+.prem-dropzone-title { font-size: 14px; font-weight: 700; color: #fff; }
 .prem-dropzone-sub { font-size: 12px; color: rgba(255,255,255,.5); }
 .prem-dropzone-preview {
   display: flex;
@@ -311,7 +313,7 @@
 .prem-dropzone-preview img {
   width: 56px; height: 56px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 8px;
   flex-shrink: 0;
 }
 .prem-dropzone-info {
@@ -336,7 +338,7 @@
   width: 28px;
   height: 28px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: rgba(255,255,255,.1);
   color: rgba(255,255,255,.6);
   cursor: pointer;
@@ -385,7 +387,7 @@
   width: 28px;
   height: 28px;
   border: 1px solid var(--c-border);
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--c-primary);
   flex-shrink: 0;
 }
@@ -396,7 +398,7 @@
 }
 .prem-card-name {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   line-height: 1.3;
   flex: 1;
@@ -427,20 +429,20 @@
 
 .prem-card-cost {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   font-variant-numeric: tabular-nums;
 }
 .prem-card-cost.is-free { color: #141d1c; }
 .prem-card-cost-unit {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--c-muted);
   margin-left: 3px;
 }
 .prem-card-type {
   font-size: 10.5px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-muted);
   text-transform: uppercase;
   letter-spacing: .5px;

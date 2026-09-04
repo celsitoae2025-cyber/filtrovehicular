@@ -30,9 +30,9 @@
   color: #fff;
   border: none;
   padding: 6px 14px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -66,7 +66,7 @@
   padding: 8px 10px;
   border: none;
   background: transparent;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: var(--fs-sm);
   color: var(--c-primary);
   cursor: pointer;
@@ -90,7 +90,7 @@
 }
 .onboarding-card {
   background: var(--c-surface);
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 40px 36px 32px;
   max-width: 420px;
   width: 100%;
@@ -146,7 +146,7 @@
   padding: 12px 20px;
   border-radius: 8px;
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   border: 1px solid var(--c-border);
   background: var(--c-surface);
@@ -191,7 +191,7 @@
   align-items: center;
   gap: 16px;
   background: var(--c-surface);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 14px 20px;
   margin-bottom: 20px;
 }
@@ -233,7 +233,7 @@
 .fav-star-btn {
   width: 34px;
   height: 34px;
-  border-radius: 7px;
+  border-radius: 8px;
   border: 1px solid var(--c-border);
   background: transparent;
   color: var(--c-muted);
@@ -275,11 +275,11 @@
 .chart-bar-label {
   font-size: var(--fs-xs);
   color: var(--c-muted);
-  font-weight: 500;
+  font-weight: 400;
 }
 .chart-bar-value {
   font-size: var(--fs-xs);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
 }
 

@@ -87,7 +87,7 @@ html.mnt-locked body {
   width: 100%;
   padding: 12px 18px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--c-primary, #141d1c);
   color: #ffffff;
   font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -151,7 +151,7 @@ html.mnt-with-banner body { padding-top: 34px; }
   align-items: flex-start;
   gap: 12px;
   padding: 14px 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #F6F8F5;
   border-left: 3px solid var(--c-accent, #8fc72e);
 }
@@ -252,7 +252,7 @@ html.mnt-with-banner body { padding-top: 34px; }
 .btn-danger {
   padding: 10px 18px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--c-primary, #141d1c);
   color: #ffffff;
   font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;

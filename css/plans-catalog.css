@@ -16,7 +16,7 @@
   padding: 12px 20px;
   font-family: inherit;
   font-size: 13.5px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--c-muted);
   cursor: pointer;
   border-bottom: 2px solid transparent;
@@ -27,7 +27,7 @@
 .plans-tab.active {
   color: var(--c-accent);
   border-bottom-color: var(--c-accent);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .plans-section {
@@ -54,7 +54,7 @@
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: .3px;
   color: var(--c-primary);
   background: var(--c-bg);
@@ -74,7 +74,7 @@
 .plans-grid .plan-card {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 12px 14px;
   display: flex;
   align-items: center;
@@ -104,7 +104,7 @@
 }
 .plans-grid .plan-num-box .num {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   line-height: 1;
   letter-spacing: -.2px;
@@ -114,7 +114,7 @@
   color: var(--c-muted);
   text-transform: uppercase;
   letter-spacing: .5px;
-  font-weight: 600;
+  font-weight: 700;
   margin-top: 3px;
 }
 
@@ -131,15 +131,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.plans-grid .plan-info-top strong { color: var(--c-primary); font-weight: 600; }
+.plans-grid .plan-info-top strong { color: var(--c-primary); font-weight: 700; }
 .plans-grid .plan-info-price {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
 }
 .plans-grid .plan-info-price .cur {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--c-muted);
   margin-right: 2px;
 }
@@ -164,13 +164,13 @@
   flex-shrink: 0;
   padding: 8px 14px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: .4px;
   text-transform: uppercase;
   background: var(--c-accent);
   color: #fff;
   border: none;
-  border-radius: 7px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background var(--t-fast);
 }
@@ -281,14 +281,14 @@
 }
 .pcv2-num {
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-primary);
   line-height: 1;
   letter-spacing: -.5px;
 }
 .pcv2-unit {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-muted);
   text-transform: uppercase;
   letter-spacing: .4px;
@@ -307,18 +307,18 @@
   background: var(--c-bg);
   color: var(--c-muted);
   font-size: 10px;
-  font-weight: 600;
-  border-radius: 20px;
+  font-weight: 700;
+  border-radius: 14px;
   letter-spacing: .3px;
 }
 .pcv2-perprice {
   font-size: 10px;
   color: var(--c-muted);
-  font-weight: 500;
+  font-weight: 400;
 }
 .pcv2-price {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--c-primary);
   line-height: 1;
 }
@@ -351,7 +351,7 @@
   gap: 5px;
   padding: 8px 6px;
   font-size: 11.5px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: .2px;
   color: #fff;
   border: none;

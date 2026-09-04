@@ -120,9 +120,9 @@ h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, textarea, label, li {
   font-size: var(--fs-sm);
 }
 h1 { font-weight: 700; line-height: 1.3; letter-spacing: -.2px; }
-h2 { font-weight: 600; line-height: 1.35; letter-spacing: -.1px; }
-h3 { font-weight: 600; line-height: 1.4; }
-h4 { font-weight: 600; line-height: 1.4; }
+h2 { font-weight: 700; line-height: 1.35; letter-spacing: -.1px; }
+h3 { font-weight: 700; line-height: 1.4; }
+h4 { font-weight: 700; line-height: 1.4; }
 p  { line-height: 1.6; }
 
 /* Excepciones: display numbers / títulos grandes mantienen su tamaño
@@ -286,7 +286,7 @@ body { background: #d4dade !important; }
    que resalte y esté legible. */
 .services-section .services-head {
   background: #ffffff !important;
-  border-radius: 10px !important;
+  border-radius: 12px !important;
   padding: 14px 16px 18px !important;   /* reserva espacio para la barra dentro */
   margin: 0 0 12px !important;
   overflow: hidden !important;          /* recorta la barra al borde redondeado */
@@ -466,7 +466,7 @@ body { background: #d4dade !important; }
   width: 34px; height: 34px;
   flex-shrink: 0;
   padding: 6px;
-  border-radius: 9px;
+  border-radius: 8px;
   background: rgba(255,255,255,.18);
   color: #ffffff;
 }
@@ -515,7 +515,7 @@ body { background: #d4dade !important; }
   }
   .pay-kard {
     padding: 14px 10px !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     gap: 2px !important;
   }
   .pk-credits-num { font-size: var(--fs-lg) !important; }
@@ -712,7 +712,7 @@ body { background: #d4dade !important; }
   border: none; background: transparent;
   color: rgba(20,29,28,.55);
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   z-index: 3;
   transition: background .13s, color .13s;
@@ -844,7 +844,7 @@ body { background: #d4dade !important; }
   border: none; background: transparent;
   color: rgba(20,29,28,.55);
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   z-index: 2;
 }
@@ -886,7 +886,7 @@ body { background: #d4dade !important; }
   gap: 10px 12px;
   padding: 14px 16px;
   border: 2px solid rgba(20,29,28,.12);
-  border-radius: 10px;
+  border-radius: 12px;
   background: #ffffff;
   color: #141d1c;
   cursor: pointer;
@@ -926,7 +926,7 @@ body { background: #d4dade !important; }
   width: 100%;
   padding: 14px 16px;
   border: 2px solid rgba(20,29,28,.15);
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: var(--fs-md);
   font-weight: 700;
   font-family: inherit;
@@ -942,7 +942,7 @@ body { background: #d4dade !important; }
   display: flex; align-items: baseline; justify-content: space-between;
   padding: 14px 16px;
   background: #d4dade;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-top: 4px;
 }
 .custom-pay-summary-label {
@@ -968,7 +968,7 @@ body { background: #d4dade !important; }
   padding: 14px 20px;
   background: #25d366;
   color: #ffffff !important;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: var(--fs-sm);
   font-weight: 700;
   text-decoration: none;
@@ -1054,7 +1054,7 @@ body { background: #d4dade !important; }
   color: rgba(20,29,28,.55);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 0;
 }
 .center-notice-close:hover { background: rgba(20,29,28,.08); color: #141d1c; }
@@ -1510,7 +1510,7 @@ button.btn-primary:hover,
 #view-dashboard .plan-cover {
   width: 100% !important;
   height: 110px !important;
-  border-radius: 10px 10px 0 0 !important;
+  border-radius: 12px 12px 0 0 !important;
   background: #141d1c !important;
 }
 #view-dashboard .plan-avatar { margin-top: -48px !important; }
@@ -1721,7 +1721,7 @@ body.is-anonymous .sb-info-cta:hover { background: #7ab325; border-color: #7ab32
 :focus-visible {
   outline: none;
   box-shadow: none;
-  border-radius: 7px;
+  border-radius: 8px;
 }
 a:focus-visible, button:focus-visible, [role="button"]:focus-visible,
 .nav-item:focus-visible, .sb-action:focus-visible,
