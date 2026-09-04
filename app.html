@@ -103,7 +103,7 @@
 <link rel="stylesheet" href="css/oferta.css?v=9">
 <!-- La ultima de todas: pone de acuerdo el lienzo, el oscuro y el margen
      izquierdo de barra, contenido y pie. Ver el encabezado del archivo. -->
-<link rel="stylesheet" href="css/estructura.css?v=15">
+<link rel="stylesheet" href="css/estructura.css?v=17">
 
 <!-- Anti-flash: pre-aplica is-dashboard-view en <html> si la carga inicial
      es el dashboard (sin hash). Impide que el right-panel aparezca un frame
@@ -235,11 +235,19 @@
         <polyline points="15 9 12 12 15 15"/>
       </svg>
     </button>
-    <div class="brand">
-      <div class="brand-text">
-        <div class="brand-name">Plataforma Filtro<br>Vehicular<span class="brand-plus">+</span></div>
-      </div>
-    </div>
+    <!-- La marca lleva al inicio. Es el atajo que todo el mundo prueba
+         primero en cualquier aplicación, y aquí no hacía nada: era un
+         <div>. Ahora es un botón de verdad —con foco de teclado y su
+         nombre para el lector de pantalla— y hace lo MISMO que el
+         «Inicio» de la miga de pan, cerrando de paso los submenús que
+         hubiera abiertos (ver goHome en js/views.js).
+         Los hijos pasan de <div> a <span> porque un botón solo admite
+         contenido de línea; estructura.css les devuelve el display. -->
+    <button class="brand" id="brandHome" type="button" aria-label="Ir al inicio">
+      <span class="brand-text">
+        <span class="brand-name">Plataforma Filtro<br>Vehicular<span class="brand-plus">+</span></span>
+      </span>
+    </button>
 
     <div class="sidebar-scroll">
       <div class="nav-section">Principal</div>
@@ -2191,7 +2199,7 @@
 <script src="js/sidebar.js?v=1"></script>
 <script src="js/modules/sidebar-nav-group.js?v=5"></script>
 <script src="js/topbar.js?v=1"></script>
-<script src="js/views.js?v=4"></script>
+<script src="js/views.js?v=5"></script>
 <script src="js/overlays.js?v=2"></script>
 <script src="js/main.js?v=4"></script>
 <!-- Modo mantenimiento: aviso global controlado desde el panel admin -->

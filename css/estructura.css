@@ -632,3 +632,111 @@ a.card:hover,
 .auth-modal-panel.auth-split .auth-form-card {
   border-color: var(--c-border) !important;
 }
+
+/* ============================================================
+   14 · SE ACABA EL TURQUESA DE LAS INTERACCIONES
+
+   Al pasar el ratón o pulsar una tarjeta de créditos, la caja entera se
+   pintaba de turquesa #03a7a4. Y no era la única: el borde de la recarga
+   libre, el reclamo del reporte completo y los accesos rápidos del panel
+   hacían lo mismo.
+
+   El problema no es el turquesa —está en la paleta— sino QUÉ dice:
+   ninguna otra pieza del producto lo usa desde que el oscuro pasó a
+   esmeralda, así que aparecía de la nada al tocar algo y desaparecía al
+   soltar. Un color que solo existe medio segundo no es un color de
+   marca, es un parpadeo.
+
+   El sistema nuevo tiene dos estados y los dos ya se usan en el resto de
+   la interfaz:
+
+     al pasar por encima → el canto se tiñe de esmeralda, nada más
+     elegido / pulsado  → la caja se llena de esmeralda con letra blanca
+
+   Así, pasar el ratón sugiere y elegir afirma. Antes los dos gritaban
+   igual y no se distinguía lo que estaba seleccionado de lo que solo
+   tenía el cursor encima.
+============================================================ */
+.pay-kard:hover,
+.pay-kard:focus-visible {
+  background: #ffffff !important;
+  border-color: var(--c-surface-dark) !important;
+  color: var(--c-primary) !important;
+  outline: none;
+}
+.pay-kard:active,
+.pay-kard.is-selected {
+  background: var(--c-surface-dark) !important;
+  border-color: var(--c-surface-dark) !important;
+  color: #ffffff !important;
+  outline: none;
+}
+/* Dentro de la tarjeta elegida todo va en blanco: los rótulos y el
+   precio por unidad heredaban su gris y sobre el esmeralda se perdían. */
+.pay-kard:active *,
+.pay-kard.is-selected * {
+  color: #ffffff !important;
+}
+
+.pay-custom:hover,
+.pay-custom:focus-visible {
+  border-color: var(--c-surface-dark) !important;
+  outline: none;
+}
+
+/* El reclamo del reporte completo saltaba a turquesa entero. Ahora solo
+   aclara su propio esmeralda, que es lo que hace el resto de botones. */
+#ctaReporteBtn.cta-reporte-btn:hover {
+  background: #123c30 !important;
+}
+
+/* Los accesos rápidos del panel eran cuatro bloques turquesa fijos: el
+   único sitio del producto donde ese color ocupaba una superficie. */
+#view-dashboard .quick-compact,
+#view-dashboard .quick-actions-compact > button,
+#view-dashboard .quick-actions-compact > a {
+  background: var(--c-surface-dark) !important;
+}
+#view-dashboard .quick-compact:hover,
+#view-dashboard .quick-actions-compact > button:hover,
+#view-dashboard .quick-actions-compact > a:hover {
+  background: #123c30 !important;
+}
+
+/* Los dos últimos turquesas sueltos: el interruptor del aviso a clientes
+   y el campo de la placa del reporte completo. */
+.avc-switch:hover { border-color: var(--c-surface-dark) !important; }
+.auth-fvc-input:focus { border-color: var(--c-surface-dark) !important; }
+
+/* ============================================================
+   15 · LA MARCA DEL MENÚ, AHORA ES UN BOTÓN
+
+   Pasó de <div> a <button> para poder llevar al inicio, así que hay que
+   devolverle lo que el navegador le quita a un botón —fondo, filete,
+   tipografía— y a sus hijos el display de bloque, porque de <div>
+   pasaron a <span>.
+============================================================ */
+.sidebar .brand {
+  width: 100%;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color .22s cubic-bezier(.16, 1, .3, 1);
+}
+.sidebar .brand-text,
+.sidebar .brand-name { display: block; }
+.sidebar .brand:hover { background: rgba(255, 255, 255, .05); }
+.sidebar .brand:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: -2px;
+}
+
+/* El último turquesa del producto: el icono dentro del reclamo del
+   reporte completo. Sobre el esmeralda de la banda metía un tercer color
+   donde solo hacen falta dos. Pasa al verde de marca, que es el acento
+   que ya llevan los puntos del acceso y el «+» del logotipo. */
+.cta-reporte-ico { color: var(--c-accent) !important; }

@@ -128,9 +128,14 @@
       if (typeof onNavigate === 'function') onNavigate(viewId);
     });
 
-    // Breadcrumb "Inicio"
+    // "Inicio": la miga de pan y la marca del menú lateral. Las dos
+    // llaman a goHome y no al camino genérico de data-nav, porque goHome
+    // además cierra los submenús abiertos: volver al inicio con el menú
+    // desplegado a medias no es volver al inicio.
     const homeBtn = document.getElementById('goHomeBtn');
     if (homeBtn) homeBtn.addEventListener('click', goHome);
+    const brandHome = document.getElementById('brandHome');
+    if (brandHome) brandHome.addEventListener('click', goHome);
 
     // Quick-actions del dashboard que llevan directo a una categoría
     document.querySelectorAll('[data-go-submenu]').forEach(btn => {
