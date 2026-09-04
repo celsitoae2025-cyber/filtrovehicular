@@ -89,18 +89,33 @@
   /* El sello del informe completo.
 
      Antes iba aquí el auricular de WhatsApp, y decía la verdad a medias:
-     WhatsApp es por dónde se pide, no lo que se compra. Lo que se compra
-     es un informe certificado, y eso se dibuja con un sello: la medalla
-     con su marca de comprobado y sus dos cintas.
+     WhatsApp es por dónde se pide, no lo que se compra.
+
+     Luego fue una medalla, y también se quedó corta: una medalla dice
+     «premio», no «informe», y con sus dos cintas cruzándose bajo el
+     disco era la pieza más enredada de la pantalla a 24 píxeles.
+
+     Lo que se compra es UN PDF con todo el historial y con respaldo, así
+     que se dibuja lo que es: la hoja, sus dos renglones y el sello de
+     comprobado posado en la esquina. Se entiende sin leer el botón.
 
      De trazo, como todos los iconos de la casa, y dibujado — nunca un
      emoji. */
   var SELLO_SVG = [
     '<svg class="auth-fvc-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"',
     ' stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">',
-    '<circle cx="12" cy="8.6" r="5.8"/>',
-    '<path d="m9.5 8.7 1.8 1.8 3.4-3.5"/>',
-    '<path d="M8.1 13.7 6.4 21l5.6-2.7L17.6 21l-1.7-7.3"/>',
+    /* La hoja. Se dibuja abierta por la esquina de abajo a la derecha,
+       que es donde se posa el sello: cerrarla ahí cruzaría dos trazos
+       y a 24px eso se ve como un borrón. */
+    '<path d="M13.9 2.9H7.3A2.3 2.3 0 0 0 5 5.2v13.6a2.3 2.3 0 0 0 2.3 2.3h2.4"/>',
+    '<path d="M13.9 2.9 19 8v3"/>',
+    '<path d="M13.9 2.9V8H19"/>',
+    /* Dos rengloncitos: sin ellos la hoja se lee como un cuadro. */
+    '<path d="M8.5 10.7h6.2"/>',
+    '<path d="M8.5 13.8h3.4"/>',
+    /* El sello de comprobado, montado sobre la esquina. */
+    '<circle cx="16.5" cy="16.6" r="4.5"/>',
+    '<path d="m14.6 16.6 1.3 1.4 2.6-2.7"/>',
     '</svg>'
   ].join('');
 

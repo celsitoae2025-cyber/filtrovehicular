@@ -159,6 +159,10 @@
   padding-right: 44px;   /* deja sitio a la aspa */
   margin-bottom: 20px;
 }
+/* Era un recuadro de filete gris con un icono verde lima dentro: dos
+   grises y un verde para una sola pieza, y el lima sobre blanco apenas
+   llega a 2:1. Pasa a bloque esmeralda con el icono en blanco —el mismo
+   verde de la banda del acceso—, que es lo que ancla el encabezado. */
 .fvc-sello {
   flex: none;
   width: 44px;
@@ -166,9 +170,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e4e8e3;
+  border: 0;
   border-radius: 12px;
-  color: #8fc72e;
+  background: var(--c-auth-panel);
+  color: #ffffff;
 }
 .fvc-sello svg { width: 24px; height: 24px; }
 
@@ -202,12 +207,16 @@
   border-bottom: 1px solid #e4e8e3;
   margin-bottom: 20px;
 }
+/* El precio en esmeralda y no en lima. Es la cifra que decide la compra
+   y en lima sobre blanco daba 2:1: se veía desvaída justo donde hay que
+   mirar. El lima se queda donde no hay que leer nada: los vistos de la
+   lista. */
 .fvc-ahora {
   font-size: 38px;
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.8px;
-  color: #8fc72e;
+  color: var(--c-auth-panel);
 }
 .fvc-antes {
   font-size: 17px;
@@ -268,12 +277,12 @@
 }
 .fvc-input {
   width: 100%;
-  height: 48px;
+  height: 52px;
   /* Con !important: base.css fija a TODOS los campos su radio y su borde
      con !important, y aquí manda la píldora, que es la forma que habla
      esta pantalla. */
-  border: 1px solid #d7ddd6 !important;
-  border-radius: 999px !important;
+  border: 1px solid rgba(20, 29, 28, .18) !important;
+  border-radius: 12px !important;
   background: #ffffff;
   color: #141d1c;
   font-family: inherit;
@@ -290,7 +299,23 @@
 }
 .fvc-input:focus {
   outline: none;
-  border-color: #8fc72e !important;
+  border-color: var(--c-auth-panel) !important;
+}
+.fvc-input:focus-visible {
+  outline: 2px solid rgba(11, 42, 32, .3);
+  outline-offset: 2px;
+}
+/* Con el modal por delante en el selector, no por gusto: base.css fija
+   el radio y el borde de todo campo con `input[type="text"] { ...
+   !important }`, y eso pesa más que una clase sola. El !important de
+   arriba nunca llegó a aplicarse —el campo llevaba el radio de 8 de la
+   app, no el que su propia regla pedía—. */
+.fvc-modal .fvc-input {
+  border: 1px solid rgba(20, 29, 28, .18) !important;
+  border-radius: 12px !important;
+}
+.fvc-modal .fvc-input:focus {
+  border-color: var(--c-auth-panel) !important;
 }
 
 .fvc-msg {
@@ -299,20 +324,25 @@
   color: #c2410c;
 }
 
+/* Mismo botón que el de entrar: esmeralda, 52px y radio 12. Era un
+   negro suelto con radio de píldora, y al pasar por encima saltaba
+   entero a verde lima con la letra en oscuro —dos piezas distintas para
+   una sola acción—. Ahora solo aclara. */
 .fvc-enviar {
   width: 100%;
-  height: 48px;
+  height: 52px;
   margin-top: 12px;
-  background: #0e1312;
+  background: var(--c-auth-panel);
   color: #ffffff;
-  border: 1px solid #0e1312;
-  border-radius: 999px;
+  border: 1px solid var(--c-auth-panel);
+  border-radius: 12px;
   font-family: inherit;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
+  transition: background .15s, border-color .15s;
 }
-.fvc-enviar:hover { background: #8fc72e; border-color: #8fc72e; color: #0e1312; }
+.fvc-enviar:hover { background: #123c30; border-color: #123c30; }
 
 .fvc-pie {
   margin: 12px 0 0;
