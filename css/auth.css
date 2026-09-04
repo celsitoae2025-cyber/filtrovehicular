@@ -659,10 +659,13 @@ body.auth-modal-open { overflow: hidden; }
 /* ============================================================
    FOOTER — "¿No tienes cuenta? Regístrate gratis"
 ============================================================ */
+/* Sin línea encima. Iba una regla gris de lado a lado justo debajo de
+   «Iniciar sesión», y ahí no separaba nada: el botón oscuro ya corta
+   por sí solo, y la raya lo dejaba encajonado como el pie de una
+   tabla. El aire del padding hace el mismo trabajo sin dibujar. */
 .auth-switch {
   margin: 0;
-  padding: 14px 0 6px;
-  border-top: 1px solid var(--c-border);
+  padding: 16px 0 6px;
   font-size: 13px;
   color: var(--c-muted);
   text-align: center;
@@ -1283,10 +1286,11 @@ body.auth-locked .wa-menu {
        manchas de luz —turquesa arriba, verde abajo y la vela del borde
        derecho— se retiraron; el casi-negro que quedó en su sitio se
        leía apagado a media pantalla, así que el panel pasa al petróleo
-       de --c-auth-petrol: mismo oscuro, con el turquesa de la casa
-       dentro. Es la única superficie que se separa de
-       --c-surface-dark, y a propósito. */
-    background: var(--c-auth-petrol) !important;
+       esmeralda de --c-auth-panel: el único tono que admite a la vez
+       el verde lima y el turquesa de la casa sin que ninguno chirríe.
+       Es la única superficie que se separa de --c-surface-dark, y a
+       propósito. */
+    background: var(--c-auth-panel) !important;
   }
 
   /* El orden de la columna.
@@ -1323,7 +1327,7 @@ body.auth-locked .wa-menu {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px);
     background-size: 26px 26px;
     pointer-events: none;
     z-index: 0;
@@ -1366,7 +1370,7 @@ body.auth-locked .wa-menu {
     font-weight: 700 !important;
     letter-spacing: 2.4px !important;
     text-transform: uppercase !important;
-    color: rgba(255, 255, 255, .55) !important;
+    color: rgba(255, 255, 255, .5) !important;
     margin-bottom: -6px !important;
   }
 
@@ -1394,7 +1398,7 @@ body.auth-locked .wa-menu {
        mucha especificidad que tenga esta regla. */
     font-size: 16px !important;
     line-height: 1.55 !important;
-    color: rgba(255, 255, 255, .78) !important;
+    color: rgba(255, 255, 255, .74) !important;
   }
 
   /* A dos columnas y a su alto real: en una sola se estiraba sola y
@@ -1414,7 +1418,7 @@ body.auth-locked .wa-menu {
     font-size: 15.5px;
     line-height: 1.45;
     padding-left: 20px;
-    color: rgba(255, 255, 255, .88);
+    color: rgba(255, 255, 255, .86);
   }
 
   /* Los puntos, todos del verde de la casa. Estuvieron alternados en
@@ -1446,19 +1450,20 @@ body.auth-locked .wa-menu {
     gap: 10px;
     margin-top: 26px;
     padding-top: 22px;
-    border-top: 1px solid rgba(255, 255, 255, .13);
+    border-top: 1px solid rgba(255, 255, 255, .11);
   }
   #authModalLogin  .auth-src,
   #authModalSignup .auth-src {
     font-size: 14px;
     padding: 6px 14px;
-    border-color: rgba(255, 255, 255, .26);
+    color: rgba(255, 255, 255, .9);
+    border-color: rgba(255, 255, 255, .18);
     letter-spacing: .4px;
   }
   #authModalLogin  .auth-src-label,
   #authModalSignup .auth-src-label {
     font-size: 13px;
-    color: rgba(255, 255, 255, .5);
+    color: rgba(255, 255, 255, .44);
   }
   #authModalLogin  .auth-src-row,
   #authModalSignup .auth-src-row { gap: 8px; }
@@ -1466,10 +1471,16 @@ body.auth-locked .wa-menu {
   /* El copyright pierde su propia línea: con la de la banda de fuentes
      justo encima quedaban dos rayas a 60px una de otra, y el pie del
      panel parecía una tabla. */
+  /* Seis escalones de blanco y nada más: 100% el titular, 90% las
+     fichas, 86% la lista, 74% la bajada, 50% el rótulo de marca, 44% el
+     de fuentes y 30% esta línea. El color entra dos veces —el «+» y
+     los puntos— y en ningún sitio más: es la escala la que da el
+     orden, no ir pintando cada pieza de un tono distinto. */
   #authModalLogin  .auth-brand-foot,
   #authModalSignup .auth-brand-foot {
     border-top: 0 !important;
     padding-top: 18px !important;
+    color: rgba(255, 255, 255, .3) !important;
   }
 
   /* El botón de cerrar NO necesita retoque de color: con el formulario a

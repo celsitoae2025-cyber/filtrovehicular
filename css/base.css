@@ -22,10 +22,16 @@
 
   /* El panel de arte del acceso, y solo ese. Es la única superficie
      oscura que se sale de --c-surface-dark: ocupa media pantalla y en
-     ese tamaño el casi-negro se lee apagado. Este verde petróleo es el
-     mismo oscuro tirando al turquesa de la casa, así que la pantalla
-     gana color sin salirse de la paleta. Blanco encima da 14:1. */
-  --c-auth-petrol: #0d2e2b;
+     ese tamaño el casi-negro se lee apagado.
+
+     Verde esmeralda oscuro, no petróleo. El petróleo (#0d2e2b) tira al
+     azul —tono 175º— y el verde lima de la casa está en 82º: un
+     acento amarillento sobre un fondo azulado se pelea, y por eso la
+     pantalla no cuadraba por mucho que cada color fuera de la paleta.
+     Este esmeralda está en 160º, entre el lima y el turquesa, así que
+     los dos acentos caen dentro de su familia y el panel se lee de una
+     pieza. Blanco encima da 15,5:1. */
+  --c-auth-panel: #0b2a20;
 
   --c-secondary: #141d1c;
   --c-text: #141d1c;
@@ -1121,7 +1127,7 @@ body { background: #d4dade !important; }
 /* Lado izquierdo del modal (marca) — verde lima con distribución
    vertical clara: título arriba, footer abajo, todo con jerarquía. */
 .auth-brand-side {
-  background: var(--c-auth-petrol) !important;
+  background: var(--c-auth-panel) !important;
   justify-content: space-between !important;
   padding: 32px 34px 26px !important;
 }
