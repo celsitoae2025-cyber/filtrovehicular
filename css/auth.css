@@ -799,11 +799,19 @@ body.auth-modal-open { overflow: hidden; }
     overflow-y: auto;
   }
 
-  .auth-modal-title { font-size: 22px; margin-bottom: 4px; }
-  .auth-modal-sub { margin-bottom: 18px; }
-  .auth-input { padding: 12px 14px; font-size: 14px; }
-  .auth-submit { padding: 13px 18px; font-size: 14px; margin-top: 6px; }
-  .auth-form { gap: 10px; }
+  /* El teléfono hereda el formulario del ordenador y no una versión
+     encogida de él: mismo cuerpo de 15px en el campo y en la bajada,
+     mismo radio de 12 y la etiqueta encima. Lo único que baja es el
+     titular —de 30 a 26—, porque 30px en 375 de ancho parte
+     «Iniciar sesión» en dos líneas. */
+  .auth-modal-title { font-size: 26px; letter-spacing: -.6px; margin-bottom: 6px; }
+  .auth-modal-sub { font-size: 15px; line-height: 1.5; margin-bottom: 22px; }
+  /* 50px de alto: el mínimo táctil cómodo, y con 15px dentro el
+     navegador del iPhone deja de hacer zoom al enfocar —por debajo de
+     16px lo hace, y de ahí sale medio formulario descolocado—. */
+  .auth-input { padding: 14px 14px; font-size: 15px; }
+  .auth-submit { padding: 13px 18px; font-size: 15px; margin-top: 6px; }
+  .auth-form { gap: 13px; }
   .auth-row { flex-direction: column; align-items: flex-start; gap: 10px; }
   .auth-switch { padding: 10px 0 4px; }
 }

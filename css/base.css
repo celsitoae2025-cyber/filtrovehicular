@@ -1902,7 +1902,10 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
      la tarjeta del lienzo (sin sombra, segun la guia del proyecto). */
   .auth-modal-panel.auth-split .auth-form-card {
     background: #ffffff !important;
-    border: 1px solid #a4b1b9 !important;   /* 2.2:1, se distingue sin pesar */
+    /* En el gris de la casa, no en el azulado #a4b1b9 que traía: los
+       campos de dentro cerraron con rgba(20,29,28,.18) y el filete de la
+       tarjeta era el único trazo de la pantalla que tiraba a azul. */
+    border: 1px solid rgba(20, 29, 28, .18) !important;
     border-radius: 14px !important;
     padding: 30px 22px 26px !important;
     margin: 0 0 auto !important;
