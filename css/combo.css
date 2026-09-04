@@ -1,0 +1,165 @@
+/* ============================================================
+   EL DESPLEGABLE DE TIPO DE CONSULTA
+
+   Lo que había: un rectángulo blanco con veintitantas líneas de texto
+   pegadas unas a otras, sin título, sin buscador y con la elegida
+   marcada en un gris tan flojo que había que buscarla. Para llegar a
+   «Certificado SOAT (PDF)» tocaba leer la lista entera.
+
+   Lo que hay: un cuadro con cabecera fija —rótulo y buscador— y la
+   lista debajo, que se desplaza sola sin mover la cabecera. La elegida
+   se marca con su nombre en esmeralda y una palomita a la derecha, no
+   con un fondo gris que se confunde con el de pasar el ratón.
+
+   La estructura la monta combo-buscador.js moviendo las opciones que ya
+   existían; aquí solo se visten.
+============================================================ */
+
+.combo-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;          /* el aire lo ponen la cabecera y la lista */
+  overflow: hidden !important;    /* recorta la lista contra el radio */
+  border-radius: 14px !important;
+}
+
+/* ── La cabecera ────────────────────────────────────────────
+   Fija. Es lo que permite escribir y ver cómo se va vaciando la lista
+   sin perder el campo de vista. */
+.cbx-head {
+  flex: none;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--c-border);
+  background: #ffffff;
+}
+.cbx-title {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+.cbx-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.cbx-search-ico {
+  position: absolute;
+  left: 15px;
+  display: inline-flex;
+  color: var(--c-muted);
+  pointer-events: none;
+}
+.cbx-search-ico svg { width: 18px; height: 18px; }
+
+/* Mismo campo que el resto del proyecto: 52 de alto, radio 12 y letra
+   de 15. Los `!important` pisan la regla global de campos, que no sabe
+   que este lleva un icono a cada lado. */
+.cbx-input {
+  width: 100%;
+  min-height: 52px !important;
+  padding: 14px 44px 14px 44px !important;
+  font-family: inherit;
+  font-size: 15px !important;
+  color: var(--c-primary);
+  background: #ffffff;
+  border: 1px solid rgba(20, 29, 28, .18) !important;
+  border-radius: 12px !important;
+  transition: border-color .18s cubic-bezier(.16, 1, .3, 1);
+}
+.cbx-input::placeholder { color: rgba(20, 29, 28, .42); }
+.cbx-input:focus {
+  outline: none;
+  border-color: var(--c-surface-dark) !important;
+}
+
+.cbx-clear {
+  position: absolute;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--c-muted);
+  cursor: pointer;
+  transition: background-color .18s, color .18s;
+}
+.cbx-clear:hover { background: var(--c-canvas); color: var(--c-primary); }
+.cbx-clear svg { width: 15px; height: 15px; }
+
+/* ── La lista ───────────────────────────────────────────────
+   Se desplaza ella, no el cuadro: por eso la cabecera se queda quieta.
+   Sin barra a la vista, como el resto de la aplicación. */
+.cbx-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior: contain;
+}
+.cbx-list::-webkit-scrollbar { display: none; }
+
+.combo-panel .combo-option {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 46px;
+  padding: 11px 14px !important;
+  border-radius: 10px !important;
+  font-size: 15px;
+  color: var(--c-primary);
+  cursor: pointer;
+  background: transparent !important;
+  transition: background-color .16s cubic-bezier(.16, 1, .3, 1), color .16s;
+}
+.combo-panel .combo-option + .combo-option { margin-top: 2px; }
+
+/* Pasar el ratón y moverse con las flechas dan el MISMO aviso: da igual
+   cómo hayas llegado a una fila, se marca igual. */
+.combo-panel .combo-option:hover,
+.combo-panel .combo-option.is-activa {
+  background: var(--c-canvas) !important;
+}
+
+/* La elegida no se marca con fondo —eso ya lo dice el ratón— sino con
+   el color de marca y su palomita. Así se ve cuál está puesta aunque
+   tengas el cursor encima de otra. */
+.combo-panel .combo-option.selected {
+  color: var(--c-surface-dark) !important;
+  font-weight: 700;
+}
+.combo-panel .combo-option.selected::after {
+  content: '';
+  flex: none;
+  width: 17px;
+  height: 17px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M20 6 9 17l-5-5'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M20 6 9 17l-5-5'/></svg>") center / contain no-repeat;
+}
+
+.cbx-vacio {
+  margin: 0;
+  padding: 22px 16px 26px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--c-muted);
+}
+
+/* En el teléfono el cuadro va casi a lo ancho de la pantalla y la lista
+   necesita todo el alto que quede bajo la cabecera. */
+@media (max-width: 620px) {
+  .cbx-head { padding: 14px 14px 10px; }
+  .cbx-list { padding: 6px; }
+}
