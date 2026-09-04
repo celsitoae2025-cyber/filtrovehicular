@@ -1144,11 +1144,17 @@ body.auth-locked .wa-menu {
   #authModalLogin  .auth-form-side,
   #authModalSignup .auth-form-side {
     order: 2;
-    /* Media pantalla justa. Estuvo en clamp(430px, 34%, 560px), que en
-       un monitor de 1920 dejaba el reparto en 71/29 y la costura muy
-       corrida a la derecha. A partes iguales las dos mitades pesan lo
-       mismo y la pantalla se lee partida a propósito. */
-    flex: 0 0 50%;
+    /* El reparto: 42% para el formulario, el 58% restante para el
+       panel. A partes iguales las dos mitades pesaban lo mismo y la
+       costura se plantaba en el centro exacto, que es justo donde no
+       decide nada; con el oscuro por delante la pantalla tiene un lado
+       que manda y otro que responde.
+
+       Sigue en clamp para que en un portátil de 900px el formulario no
+       baje de 430px: por debajo de ahí los campos y la marca se rozan.
+       El tope de 620px evita el otro extremo, un formulario de medio
+       metro en un monitor ancho. */
+    flex: 0 0 clamp(430px, 42%, 620px);
     padding: clamp(28px, 3.4vh, 44px) clamp(34px, 3vw, 60px) 24px;
     /* El mismo gris que se respira dentro de la plataforma (base.css lo
        fija en body, .main y .content). Así el acceso y lo que hay detrás
@@ -1290,8 +1296,8 @@ body.auth-locked .wa-menu {
   #authModalLogin  .auth-brand-side,
   #authModalSignup .auth-brand-side {
     order: 1;
-    /* La otra mitad exacta. */
-    flex: 0 0 50%;
+    /* Todo lo que deja el formulario: el lado largo del reparto. */
+    flex: 1 1 auto;
     min-width: 0;
     padding: 34px clamp(40px, 4vw, 76px) 30px !important;
     /* Color plano, sin degradados, en verde petróleo. Las cuatro
