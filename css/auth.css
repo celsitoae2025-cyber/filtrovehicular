@@ -1279,12 +1279,34 @@ body.auth-locked .wa-menu {
     order: 1;
     flex: 1 1 auto;
     padding: 34px clamp(40px, 4vw, 76px) 30px !important;
-    /* Color plano, sin degradados. Las cuatro manchas de luz —turquesa
-       arriba, verde abajo y la vela del borde derecho— se retiran: el
-       panel es una sola superficie oscura, la misma del menú y del pie,
-       y se lee limpio. */
-    background: var(--c-surface-dark) !important;
+    /* Color plano, sin degradados, en verde petróleo. Las cuatro
+       manchas de luz —turquesa arriba, verde abajo y la vela del borde
+       derecho— se retiraron; el casi-negro que quedó en su sitio se
+       leía apagado a media pantalla, así que el panel pasa al petróleo
+       de --c-auth-petrol: mismo oscuro, con el turquesa de la casa
+       dentro. Es la única superficie que se separa de
+       --c-surface-dark, y a propósito. */
+    background: var(--c-auth-petrol) !important;
   }
+
+  /* El orden de la columna.
+
+     Estaba: fuentes arriba — bloque de marca centrado — copyright. La
+     fila de fuentes abría el panel con una línea de fichas sueltas
+     antes de que se hubiera dicho de qué va esto, y el tercio de abajo
+     se quedaba con una línea de copyright flotando sola.
+
+     Pasa a leerse de arriba abajo como se cuenta: quién soy (marca),
+     qué te digo (saludo), qué te doy (bajada y las quince consultas) y
+     con qué lo respaldo (las fuentes), y al final la letra pequeña. Se
+     hace con `order` y no tocando el marcado porque en móvil este panel
+     no se muestra y ahí el orden del HTML sigue siendo el bueno. */
+  #authModalLogin  .auth-brand-content,
+  #authModalSignup .auth-brand-content { order: 1; }
+  #authModalLogin  .auth-brand-top,
+  #authModalSignup .auth-brand-top { order: 2; }
+  #authModalLogin  .auth-brand-foot,
+  #authModalSignup .auth-brand-foot { order: 3; }
 
   /* La trama de puntos.
      Un campo de color plano de casi mil píxeles de ancho se ve muerto por
@@ -1326,19 +1348,26 @@ body.auth-locked .wa-menu {
      que se vea centrado. */
   #authModalLogin  .auth-brand-content,
   #authModalSignup .auth-brand-content {
-    gap: 18px !important;
+    gap: 20px !important;
     max-width: 620px;
     justify-content: center !important;
     padding-bottom: 24px;
   }
 
-  /* La marca pasa a antetítulo: quien manda aquí es el saludo. */
+  /* La marca pasa a antetítulo: quien manda aquí es el saludo.
+
+     En versalitas y espaciada. A cuerpo normal competía con la bajada
+     —dos textos del mismo tamaño, uno encima y otro debajo del
+     titular— y el bloque se leía como tres párrafos sueltos. Pequeña y
+     abierta se lee como lo que es: el rótulo de la casa. */
   #authModalLogin  .auth-brand-title,
   #authModalSignup .auth-brand-title {
-    font-size: var(--fs-md) !important;
-    letter-spacing: .2px !important;
-    color: rgba(255, 255, 255, .75) !important;
-    margin-bottom: -10px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 2.4px !important;
+    text-transform: uppercase !important;
+    color: rgba(255, 255, 255, .55) !important;
+    margin-bottom: -6px !important;
   }
 
   /* El titular. Es lo único grande de toda la pantalla, y por eso
@@ -1375,7 +1404,7 @@ body.auth-locked .wa-menu {
     flex: 0 0 auto;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px 30px;
+    gap: 12px 44px;
     overflow: visible;
     max-width: 560px;
   }
@@ -1401,6 +1430,24 @@ body.auth-locked .wa-menu {
      que esto sea oficial— y estaba escrito en el cuerpo más pequeño de
      la pantalla. Sube a 14 y el rótulo a 13; si la fila se parte en dos
      líneas, mejor: llena la banda de arriba, que iba suelta. */
+  /* Baja al pie del panel y se abre en dos líneas: el rótulo encima y
+     las siete fichas debajo. En una sola fila el rótulo empujaba las
+     fichas y la fila se partía por donde caía, dejando dos huecas
+     colgando; separados, las fichas ocupan el ancho entero y la banda
+     cierra la columna en recto.
+
+     La línea de un píxel es la única separación del panel y va aquí
+     porque es donde cambia lo que se cuenta: arriba la oferta, abajo el
+     respaldo. No es una franja de acento —no lleva color—. */
+  #authModalLogin  .auth-brand-top,
+  #authModalSignup .auth-brand-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, .13);
+  }
   #authModalLogin  .auth-src,
   #authModalSignup .auth-src {
     font-size: 14px;
@@ -1415,6 +1462,15 @@ body.auth-locked .wa-menu {
   }
   #authModalLogin  .auth-src-row,
   #authModalSignup .auth-src-row { gap: 8px; }
+
+  /* El copyright pierde su propia línea: con la de la banda de fuentes
+     justo encima quedaban dos rayas a 60px una de otra, y el pie del
+     panel parecía una tabla. */
+  #authModalLogin  .auth-brand-foot,
+  #authModalSignup .auth-brand-foot {
+    border-top: 0 !important;
+    padding-top: 18px !important;
+  }
 
   /* El botón de cerrar NO necesita retoque de color: con el formulario a
      la derecha, la esquina superior derecha es blanca y el gris de

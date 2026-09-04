@@ -20,6 +20,13 @@
      bajado a #0e1312 por eso; ahora bajan todas y dejan de discutir. */
   --c-surface-dark: #0e1312;
 
+  /* El panel de arte del acceso, y solo ese. Es la única superficie
+     oscura que se sale de --c-surface-dark: ocupa media pantalla y en
+     ese tamaño el casi-negro se lee apagado. Este verde petróleo es el
+     mismo oscuro tirando al turquesa de la casa, así que la pantalla
+     gana color sin salirse de la paleta. Blanco encima da 14:1. */
+  --c-auth-petrol: #0d2e2b;
+
   --c-secondary: #141d1c;
   --c-text: #141d1c;
   --c-accent: #8fc72e;
@@ -1114,7 +1121,7 @@ body { background: #d4dade !important; }
 /* Lado izquierdo del modal (marca) — verde lima con distribución
    vertical clara: título arriba, footer abajo, todo con jerarquía. */
 .auth-brand-side {
-  background: var(--c-surface-dark) !important;
+  background: var(--c-auth-petrol) !important;
   justify-content: space-between !important;
   padding: 32px 34px 26px !important;
 }
