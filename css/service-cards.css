@@ -75,7 +75,7 @@
 }
 
 .service-card:hover {
-  border-color: var(--c-primary);
+  border-color: var(--c-surface-dark);
   /* SIN transform, SIN box-shadow */
 }
 .service-card:active {

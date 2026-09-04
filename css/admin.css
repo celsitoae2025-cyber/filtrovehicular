@@ -16,7 +16,7 @@
 .admin-side {
   width: 230px;
   flex-shrink: 0;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -217,7 +217,7 @@
 .admin-user .avatar {
   width: 32px; height: 32px;
   border-radius: 50%;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #fff;
   display: flex;
   align-items: center;
@@ -443,7 +443,7 @@
   background: var(--c-accent);
   animation: usersLivePulse 1.6s ease-in-out infinite;
 }
-.users-live-dot[data-state="error"] { background: #141d1c; }
+.users-live-dot[data-state="error"] { background: var(--c-surface-dark); }
 @keyframes usersLivePulse {
   0%, 100% { opacity: 1; }
   50% { opacity: .35; }
@@ -533,7 +533,7 @@
   cursor: pointer;
   transition: background var(--t-fast), border-color var(--t-fast);
 }
-.btn-ghost:hover { background: var(--c-bg); border-color: var(--c-primary); }
+.btn-ghost:hover { background: var(--c-bg); border-color: var(--c-surface-dark); }
 .btn-ghost svg { width: 13px; height: 13px; }
 
 /* ============ TABLAS ============ */
@@ -579,7 +579,7 @@
 .cell-user .avatar {
   width: 30px; height: 30px;
   border-radius: 50%;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #fff;
   display: flex; align-items: center; justify-content: center;
   font-size: 13px;
@@ -625,11 +625,11 @@
   cursor: pointer;
   transition: background var(--t-fast), border-color var(--t-fast);
 }
-.table-btn:hover { background: var(--c-bg); border-color: var(--c-primary); }
+.table-btn:hover { background: var(--c-bg); border-color: var(--c-surface-dark); }
 .table-btn.primary { color: var(--c-accent); border-color: var(--c-accent); }
 .table-btn.primary:hover { background: var(--c-teal-soft); }
 .table-btn.danger { color: #141d1c; border-color: #DCDCDC; }
-.table-btn.danger:hover { background: #f5f5f5; border-color: #141d1c; }
+.table-btn.danger:hover { background: #f5f5f5; border-color: var(--c-surface-dark); }
 
 /* ============================================================
    ANUNCIOS (broadcasts) — formulario + preview + historial
@@ -912,7 +912,7 @@
   user-select: none;
 }
 .radio-option:hover {
-  border-color: var(--c-primary);
+  border-color: var(--c-surface-dark);
 }
 .radio-option input[type="radio"] {
   margin: 0;
@@ -920,7 +920,7 @@
   flex-shrink: 0;
 }
 .radio-option:has(input[type="radio"]:checked) {
-  border-color: var(--c-primary);
+  border-color: var(--c-surface-dark);
   /* El doble filete gris de fuera se retira: lo marcado se reconoce por
      su borde oscuro, no por un halo. */
   background: rgba(0, 0, 0, 0.02);
@@ -939,7 +939,7 @@
 .user-pill .avatar {
   width: 38px; height: 38px;
   border-radius: 50%;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #fff;
   display: flex; align-items: center; justify-content: center;
   font-size: 13px;
@@ -987,7 +987,7 @@
   border-radius: 12px;
   transition: border-color var(--t-fast);
 }
-.entry-row:hover { border-color: var(--c-primary); }
+.entry-row:hover { border-color: var(--c-surface-dark); }
 .entry-date {
   font-size: 13px;
   color: var(--c-muted);
@@ -1005,7 +1005,7 @@
 .entry-user .avatar {
   width: 32px; height: 32px;
   border-radius: 50%;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #fff;
   display: flex; align-items: center; justify-content: center;
   font-size: 13px;
@@ -1173,7 +1173,7 @@
 .mp-conn-logo {
   width: 42px; height: 42px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #141d1c, #141d1c);
+  background: linear-gradient(135deg, var(--c-surface-dark), var(--c-surface-dark));
   color: #fff;
   display: flex;
   align-items: center;
@@ -1334,7 +1334,7 @@
   cursor: pointer;
   transition: background var(--t-fast), border-color var(--t-fast);
 }
-.plan-edit:hover { background: var(--c-bg); border-color: var(--c-primary); }
+.plan-edit:hover { background: var(--c-bg); border-color: var(--c-surface-dark); }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 768px) {
@@ -1396,7 +1396,7 @@ button.kpi.kpi-clickable {
    píxeles con una sombra debajo: dos efectos prohibidos en el proyecto
    —movimiento y sombra— para decir algo que dice un borde. */
 button.kpi.kpi-clickable:hover {
-  border-color: var(--c-accent, #141d1c);
+  border-color: var(--c-accent, var(--c-surface-dark));
 }
 button.kpi.kpi-clickable:focus-visible {
   outline: 2px solid var(--c-accent, #141d1c);

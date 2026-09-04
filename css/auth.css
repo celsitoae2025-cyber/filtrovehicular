@@ -106,7 +106,7 @@ body.auth-modal-open { overflow: hidden; }
 .auth-brand-side {
   flex: 1 1 50%;
   padding: 48px 40px;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #fff;
   position: relative;
   overflow: hidden;
@@ -595,14 +595,14 @@ body.auth-modal-open { overflow: hidden; }
   font-weight: 700;
   letter-spacing: .1px;
   color: #fff;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   border: none;
   border-radius: 12px;
   cursor: pointer;
   transition: background .15s;
   -webkit-tap-highlight-color: transparent;
 }
-.auth-submit:hover:not(:disabled) { background: #141d1c; }
+.auth-submit:hover:not(:disabled) { background: var(--c-surface-dark); }
 .auth-submit:disabled {
   opacity: .6;
   cursor: wait;
@@ -646,7 +646,7 @@ body.auth-modal-open { overflow: hidden; }
 .otp-digit:focus,
 .otp-digit:focus-visible {
   outline: none;
-  border-color: var(--c-primary);
+  border-color: var(--c-surface-dark);
   background: #FAFBFB;
 }
 .otp-digit::-webkit-outer-spin-button,
@@ -837,7 +837,7 @@ body.auth-modal-open { overflow: hidden; }
   white-space: nowrap;
 }
 .auth-btn-primary {
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #fff;
 }
 /* Al pasar el ratón vira al verde institucional. El texto pasa a oscuro:
@@ -1022,13 +1022,13 @@ body.auth-modal-open { overflow: hidden; }
 }
 
 .auth-confirm-accept {
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #fff;
-  border: 1px solid var(--c-primary);
+  border: 1px solid var(--c-surface-dark);
 }
 .auth-confirm-accept:hover {
-  background: var(--c-primary-2);
-  border-color: var(--c-primary-2);
+  background: var(--c-surface-dark);
+  border-color: var(--c-surface-dark);
 }
 
 @media (max-width: 480px) {
@@ -1600,9 +1600,9 @@ body.auth-locked .wa-menu {
   justify-content: center;
   gap: 10px;
   padding: 13px 16px;
-  border: 1px solid #141d1c;
+  border: 1px solid var(--c-surface-dark);
   border-radius: 12px;
-  background: #141d1c;
+  background: var(--c-surface-dark);
   color: #ffffff;
   font-family: inherit;
   font-size: 15px;

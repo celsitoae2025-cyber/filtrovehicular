@@ -313,7 +313,7 @@ body.is-anonymous .nav-item[data-submenu]:hover .nav-lock { color: #ffffff; }
   position: absolute;
   left: 24px; top: 10px;
   width: 7px; height: 7px;
-  background: #141d1c;
+  background: var(--c-surface-dark);
   border-radius: 50%;
   /* El aro recorta el punto contra el fondo del menú, así que sigue al
      menú: con el oscuro viejo se vería un cerco alrededor. */

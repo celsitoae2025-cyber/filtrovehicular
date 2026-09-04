@@ -17,7 +17,7 @@
   margin-left: auto;
   padding: 7px 16px;
   border-radius: 999px;
-  background: #141d1c;
+  background: var(--c-surface-dark);
   color: #ffffff;
 }
 .socio-saldo-label {

@@ -26,7 +26,7 @@
 .lba-content svg { flex-shrink: 0; color: #141d1c; }
 .lba-content span { flex: 1; }
 .lba-action {
-  background: #141d1c;
+  background: var(--c-surface-dark);
   color: #fff;
   border: none;
   padding: 6px 14px;
@@ -134,7 +134,7 @@
   border-radius: 50%;
   background: var(--c-border);
 }
-.ob-dot.active { background: var(--c-primary); }
+.ob-dot.active { background: var(--c-surface-dark); }
 .ob-actions {
   display: flex;
   gap: 10px;
@@ -154,9 +154,9 @@
   font-family: inherit;
 }
 .ob-btn-primary {
-  background: var(--c-danger, #141d1c);
+  background: var(--c-surface-dark);
   color: #fff;
-  border-color: var(--c-danger, #141d1c);
+  border-color: var(--c-surface-dark);
 }
 .ob-skip {
   background: none;
@@ -244,8 +244,8 @@
   transition: color .15s, border-color .15s;
 }
 .fav-star-btn svg { width: 16px; height: 16px; }
-.fav-star-btn:hover { color: #141d1c; border-color: #141d1c; }
-.fav-star-btn.is-active { color: #141d1c; border-color: #141d1c; }
+.fav-star-btn:hover { color: #141d1c; border-color: var(--c-surface-dark); }
+.fav-star-btn.is-active { color: #141d1c; border-color: var(--c-surface-dark); }
 
 /* â”€â”€ Gráfica real del dashboard â”€â”€ */
 .chart-bar-container {
@@ -268,7 +268,7 @@
   width: 100%;
   max-width: 36px;
   border-radius: 4px 4px 0 0;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   min-height: 2px;
   transition: height .4s ease;
 }

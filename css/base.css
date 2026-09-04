@@ -1244,7 +1244,7 @@ body { background: #d4dade !important; }
   color: #ffffff !important;
   font-weight: 700 !important;
 }
-.auth-submit:hover:not(:disabled) { background: #141d1c !important; }
+.auth-submit:hover:not(:disabled) { background: var(--c-surface-dark) !important; }
 /* Footer "© 2026 Filtro Vehicular+ Perú" al pie del cuadro verde */
 .auth-brand-foot {
   font-size: var(--fs-xs) !important;
@@ -1493,14 +1493,14 @@ button.btn-primary:hover,
 .form-row .btn-primary,
 .nm-fields .btn-primary,
 .filter-form .btn-primary {
-  background: #141d1c !important;
-  border-color: #141d1c !important;
+  background: var(--c-surface-dark) !important;
+  border-color: var(--c-surface-dark) !important;
 }
 .form-row .btn-primary:hover,
 .nm-fields .btn-primary:hover,
 .filter-form .btn-primary:hover {
-  background: #0e1312 !important;
-  border-color: #0e1312 !important;
+  background: #123c30 !important;
+  border-color: #123c30 !important;
 }
 
 /* Plan-card del dashboard: cover con esquinas redondeadas + contenido
@@ -1517,7 +1517,7 @@ button.btn-primary:hover,
   width: 100% !important;
   height: 110px !important;
   border-radius: 12px 12px 0 0 !important;
-  background: #141d1c !important;
+  background: var(--c-surface-dark) !important;
 }
 #view-dashboard .plan-avatar { margin-top: -48px !important; }
 #view-dashboard .plan-name,

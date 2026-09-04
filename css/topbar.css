@@ -132,7 +132,7 @@
 .avatar {
   width: 34px; height: 34px;
   border-radius: 50%;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #ffffff;
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: var(--fs-sm);
@@ -312,7 +312,7 @@
   height: 18px;
   padding: 0 5px;
   border-radius: 999px;
-  background: #141d1c;
+  background: var(--c-surface-dark);
   color: #fff;
   font-size: var(--fs-xs);
   font-weight: 700;

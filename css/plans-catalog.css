@@ -148,7 +148,7 @@
 .plan-pro-badge {
   display: inline-block;
   padding: 1px 6px;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #ffffff;
   font-size: 9px;
   font-weight: 700;
@@ -368,7 +368,7 @@
   height: 13px;
   flex-shrink: 0;
 }
-.pcv2-wa  { background: #141d1c; }
+.pcv2-wa  { background: var(--c-surface-dark); }
 /* .pcv2-wa:hover sin efecto */
 .pcv2-yape { background: #8fc72e; }
 /* .pcv2-yape:hover sin efecto */

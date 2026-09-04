@@ -188,7 +188,7 @@
 
 /* â”€â”€ FORMULARIO (panel oscuro al seleccionar consulta) â”€â”€â”€â”€â”€ */
 .prem-form-panel {
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   border-radius: 8px;
   padding: 18px 20px;
   margin-bottom: 14px;

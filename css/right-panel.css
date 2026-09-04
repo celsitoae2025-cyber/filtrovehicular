@@ -185,10 +185,10 @@
   display: block;
   height: 100%;
   border-radius: 3px;
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   transition: width .4s ease;
 }
-.rp-expiry-fill.is-warning { background: #141d1c; }
+.rp-expiry-fill.is-warning { background: var(--c-surface-dark); }
 .rp-expiry-fill.is-danger  { background: var(--c-danger); }
 .rp-expiry-text {
   font-size: var(--fs-xs);
@@ -245,7 +245,7 @@
 }
 .rp-lq-repeat svg { width: 16px; height: 16px; }
 .rp-lq-repeat:hover {
-  background: var(--c-primary);
+  background: var(--c-surface-dark);
   color: #fff;
 }
 

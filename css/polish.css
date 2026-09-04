@@ -132,7 +132,7 @@
 .result-action-btn:active { transform: translateY(0); }
 .result-action-btn svg { width: 15px; height: 15px; stroke-width: 1.9; }
 .result-action-btn.is-success {
-  border-color: #141d1c;
+  border-color: var(--c-surface-dark);
   color: #141d1c;
   background: rgba(22, 163, 74, .06);
 }

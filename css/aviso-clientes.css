@@ -42,7 +42,7 @@ html.avc-abierto body {
   max-width: 440px;
   padding: 34px 30px 26px;
   border-radius: 14px;
-  background: var(--c-primary, #141d1c);
+  background: var(--c-surface-dark);
   color: #ffffff;
   font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   text-align: center;
@@ -209,7 +209,7 @@ html.avc-abierto body {
 /* Mensaje guardado pero apagado: el estado que más se presta a creer
    que ya está publicado cuando no lo ve nadie. Se marca aparte. */
 .avc-admin-state.is-listo {
-  border-color: var(--c-primary, #141d1c);
+  border-color: var(--c-surface-dark);
   background: var(--c-bg, #F3F3F3);
 }
 .avc-admin-state.is-listo strong { color: var(--c-primary, #141d1c); }
@@ -228,7 +228,7 @@ html.avc-abierto body {
   background: var(--c-muted, #5A6B6A);
 }
 .avc-admin-dot.is-on { background: #03a7a4; }
-.avc-admin-dot.is-listo { background: var(--c-primary, #141d1c); }
+.avc-admin-dot.is-listo { background: var(--c-surface-dark); }
 
 /* Plantillas: se ve el TEXTO COMPLETO de cada una, no solo su nombre.
    Con un rótulo suelto no hay forma de elegir sin ir probando una por
