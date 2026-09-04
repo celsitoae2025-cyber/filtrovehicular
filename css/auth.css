@@ -1279,22 +1279,11 @@ body.auth-locked .wa-menu {
     order: 1;
     flex: 1 1 auto;
     padding: 34px clamp(40px, 4vw, 76px) 30px !important;
-    /* La luz entra por arriba a la izquierda, que es por donde entra la
-       vista, y se apaga antes de llegar al texto. La mancha fuerte
-       estaba antes en la esquina de arriba a la derecha —justo contra
-       la costura del formulario—, y ahí no ilumina nada: solo ensucia
-       el encuentro de los dos lados.
-
-       Turquesa arriba, verde abajo y una vela fría pegada al borde
-       derecho para que la costura se lea buscada y no como un corte.
-       Debajo del texto nada pasa del 20%: el blanco se mantiene muy por
-       encima de 8:1 en toda la esquina donde se lee. */
-    background:
-      radial-gradient(78% 58% at 8% 4%, rgba(3, 167, 164, .42), rgba(3, 167, 164, 0) 58%),
-      radial-gradient(64% 52% at 2% 92%, rgba(143, 199, 46, .20), rgba(143, 199, 46, 0) 62%),
-      radial-gradient(46% 100% at 100% 50%, rgba(3, 167, 164, .16), rgba(3, 167, 164, 0) 70%),
-      radial-gradient(70% 50% at 62% 22%, rgba(143, 199, 46, .07), rgba(143, 199, 46, 0) 74%),
-      var(--c-surface-dark) !important;
+    /* Color plano, sin degradados. Las cuatro manchas de luz —turquesa
+       arriba, verde abajo y la vela del borde derecho— se retiran: el
+       panel es una sola superficie oscura, la misma del menú y del pie,
+       y se lee limpio. */
+    background: var(--c-surface-dark) !important;
   }
 
   /* La trama de puntos.
@@ -1399,22 +1388,12 @@ body.auth-locked .wa-menu {
     color: rgba(255, 255, 255, .88);
   }
 
-  /* Los puntos, en los tres colores de la casa y no todos verdes.
-     Quince puntos del mismo verde son una columna verde; alternando, la
-     lista respira y la marca aparece entera —verde, turquesa y blanco—
-     sin meter una sola franja. El orden es fijo, por posición, así que
-     las dos columnas quedan salteadas entre sí. */
+  /* Los puntos, todos del verde de la casa. Estuvieron alternados en
+     turquesa y blanco por posición; el salteado se lee como ruido en
+     una lista de quince, así que vuelven a un solo color. */
   #authModalLogin  .auth-brand-list li::before,
   #authModalSignup .auth-brand-list li::before {
     top: 7px;
-  }
-  #authModalLogin  .auth-brand-list li:nth-child(3n+2)::before,
-  #authModalSignup .auth-brand-list li:nth-child(3n+2)::before {
-    background: #03a7a4;
-  }
-  #authModalLogin  .auth-brand-list li:nth-child(3n+3)::before,
-  #authModalSignup .auth-brand-list li:nth-child(3n+3)::before {
-    background: rgba(255, 255, 255, .55);
   }
 
   /* La fila de fuentes. Estaba a 12px: el dato de dónde sale la
