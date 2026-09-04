@@ -43,12 +43,18 @@
   --c-canvas: #e9ece5;
 
   /* El margen que separa cualquier contenido del canto de la columna. */
-  --gutter: 28px;
+  --gutter: 32px;
 
   /* Hasta dónde crece el contenido. Pasado este ancho, lo que sobra se
-     reparte a los dos lados: una línea de texto de 1800px no se lee, y
-     una rejilla de tarjetas que crece sin fin deja de ser una rejilla. */
-  --measure: 1360px;
+     reparte a los dos lados.
+
+     Estuvo en 1360 y se quedó corto: en un monitor de 1920, con el menú
+     ocupando 260, la columna útil son 1660, así que el tope dejaba 150
+     píxeles de papel vacío a cada lado —y el de la derecha, sin menú que
+     lo justificara, se leía como un margen olvidado. A 1760 la pantalla
+     de 1920 va a sangre con su margen normal, y el tope solo entra en un
+     monitor de verdad grande, que es para lo que estaba puesto. */
+  --measure: 1760px;
 }
 
 /* ── 2 · el lienzo ───────────────────────────────────────────
@@ -105,4 +111,110 @@ body,
 #authModalLogin .auth-form-side,
 #authModalSignup .auth-form-side {
   background-color: var(--c-canvas) !important;
+}
+
+/* ============================================================
+   4 · TODO A LA MISMA VERTICAL
+
+   Medido a 1449px: dentro de la columna de contenido, el texto de cada
+   panel arrancaba en un sitio distinto porque cada uno traía su propio
+   relleno.
+
+     tarjeta de consulta ...... 20px  → texto en x308
+     cabecera del catálogo .... 16px  → texto en x304
+     tarjeta de servicio ...... 14px  → texto en x302
+
+   Seis píxeles de diferencia entre tres cajas que se leen en columna:
+   no se ve el número, se ve que «una es más pequeña que la otra». Un
+   solo relleno para los tres y las tres columnas de texto caen en la
+   misma línea.
+============================================================ */
+:root { --pad-panel: 20px; }
+
+/* Los selectores llevan un ancestro por delante porque las reglas que
+   fijan estos rellenos ya usaban `!important` con dos clases
+   —`.services-section .services-head`—: con una sola clase, aquí no se
+   ganaba. */
+.filter-search-box,
+#view-filter > .filter-search-box,
+.services-section .services-head,
+.services-grid .service-card,
+.view .service-card {
+  padding-left: var(--pad-panel) !important;
+  padding-right: var(--pad-panel) !important;
+}
+
+/* ============================================================
+   5 · LAS DOS BARRAS DE CUATRO COLORES, IGUALES
+
+   La de «TIPO DE CONSULTA» medía lo que su columna (320px) y la de
+   «CONSULTAS VEHICULARES GRATUITAS» cruzaba el panel entero (1133px):
+   el mismo distintivo de marca contado de dos maneras en la misma
+   pantalla, y la larga leyéndose como un subrayado de mil píxeles.
+
+   Las dos pasan a la misma firma corta bajo su rótulo. La barra a
+   sangre del panel de resultados no se toca: ahí es otra cosa.
+============================================================ */
+.selector-label::after,
+.services-head::after {
+  width: 108px !important;
+  height: 4px !important;
+  border-radius: 2px !important;
+}
+
+/* ============================================================
+   6 · LOS EFECTOS, SUAVES
+
+   Nada que se mueva de sitio ni que proyecte sombra: en esta casa no se
+   usa ninguna de las dos cosas. Lo que se anima es el COLOR, que es lo
+   único que tiene que cambiar cuando algo responde al ratón. Curva de
+   salida larga (`cubic-bezier(.16,1,.3,1)`): arranca y frena sin golpe.
+============================================================ */
+.service-card,
+.combo-trigger,
+.input,
+.btn,
+.kpi,
+.panel {
+  transition:
+    background-color .22s cubic-bezier(.16, 1, .3, 1),
+    border-color .22s cubic-bezier(.16, 1, .3, 1),
+    color .22s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* La tarjeta de servicio, al pasar por encima: el borde se tiñe del
+   oscuro de la casa y el fondo baja al papel. Se nota cuál está debajo
+   del cursor sin que nada salte. */
+.service-card:hover:not(.is-locked-anon) {
+  border-color: var(--c-surface-dark) !important;
+  background-color: var(--c-canvas) !important;
+}
+
+/* La vista entra con un fundido corto. Un cambio de pantalla en seco es
+   lo que hace que una aplicación web se sienta como una web; medio
+   segundo largo la haría lenta. 180ms: se percibe, no se espera.
+
+   SOLO opacidad. Llevó también seis píxeles de subida, y eso rompía el
+   desplegable del tipo de consulta: su panel es `position: fixed`, y un
+   antepasado con `transform` —aunque acabe en la matriz identidad, que
+   es lo que deja `animation-fill-mode: both`— pasa a ser su marco de
+   referencia. El menú se abría a quinientos píxeles de su botón. Un
+   fundido no crea ese marco. */
+@keyframes fvVistaEntra {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.view:not([hidden]) {
+  animation: fvVistaEntra .18s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view:not([hidden]) { animation: none; }
+}
+
+/* El filete del desplegable iba en #a4b1b9, el mismo gris azulado que ya
+   se retiró de la tarjeta del acceso. Sobre el papel se notaba frío y
+   era el último resto del azul en la aplicación. */
+.combo-panel {
+  border-color: rgba(20, 29, 28, .18) !important;
 }

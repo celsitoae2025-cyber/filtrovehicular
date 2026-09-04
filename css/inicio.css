@@ -107,14 +107,17 @@
   }
 
   /* ── Tercera línea: el reporte completo ──────────────────
-     Deja de ser una franja de ancho completo: mide lo que mide su
-     contenido y se queda a la izquierda, que es donde cae la vista
-     después de leer la descripción. */
+     Ocupa la fila entera. Estuvo acotado a 560px y pegado a la
+     izquierda: en un monitor de 1920 eso dejaba OCHOCIENTOS píxeles de
+     blanco a su derecha dentro de la misma tarjeta, el hueco más grande
+     de la pantalla. Y no era un botón cualquiera al que le sobrara
+     sitio: es la venta principal. A lo ancho, cierra la tarjeta en
+     recto y pesa lo que tiene que pesar. */
   #view-filter #ctaReporteBtn.cta-reporte-btn {
     grid-area: extra;
-    justify-self: start;
-    width: auto;
-    max-width: 560px;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
     margin: 0;
   }
 }
@@ -145,10 +148,14 @@
 /* Pantallas anchas de verdad: el campo del dato no necesita crecer sin
    fin —una placa son seis caracteres— y un input de 800px se lee como un
    error de maquetación. */
+/* En pantallas anchas el desplegable crece un punto y el campo se lleva
+   el resto. Estuvo al revés —el campo tope de 620px y la rejilla pegada
+   a la izquierda— con la idea de que una placa son seis caracteres; el
+   precio era una tarjeta de 1300px con la mitad derecha vacía, y eso se
+   ve mucho antes que un campo holgado. */
 @media (min-width: 1400px) {
   #view-filter > .filter-search-box {
-    grid-template-columns: minmax(260px, 320px) minmax(0, 620px) auto;
-    justify-content: start;
+    grid-template-columns: minmax(260px, 340px) 1fr auto;
   }
   #view-filter .panel-desc { max-width: 900px; }
 }
