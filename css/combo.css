@@ -163,3 +163,19 @@
   .cbx-head { padding: 14px 14px 10px; }
   .cbx-list { padding: 6px; }
 }
+
+/* ── El alto, con el teclado abierto ────────────────────────
+   El cuadro se acotaba con `min(70vh, 540px)`. En el teléfono eso es
+   una trampa: `vh` mide la ventana COMPLETA, y cuando sube el teclado la
+   ventana visible se queda en poco más de la mitad. El cuadro seguía
+   midiendo 540px, así que su tercio de abajo —y con él las últimas
+   opciones— quedaba debajo del teclado, sin manera de llegar por mucho
+   que se deslizara.
+
+   `dvh` mide lo que se ve de verdad y se recalcula al abrir y cerrar el
+   teclado. La línea de `vh` se queda delante como respaldo para los
+   navegadores que aún no la entienden. */
+.combo-panel {
+  max-height: min(70vh, 540px) !important;
+  max-height: min(72dvh, 540px) !important;
+}

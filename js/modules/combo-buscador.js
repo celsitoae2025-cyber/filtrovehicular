@@ -46,8 +46,10 @@
         '<span class="cbx-title">Elige una consulta</span>' +
         '<div class="cbx-search">' +
           '<span class="cbx-search-ico">' + LUPA + '</span>' +
-          '<input type="text" class="cbx-input" placeholder="Buscar por nombre…"' +
-            ' autocomplete="off" spellcheck="false" aria-label="Buscar consulta">' +
+          '<input type="text" class="cbx-input" name="cbxBuscarConsulta"' +
+            ' placeholder="Buscar por nombre…" autocomplete="off" autocapitalize="off"' +
+            ' spellcheck="false" inputmode="search" enterkeyhint="search"' +
+            ' data-lpignore="true" data-form-type="other" aria-label="Buscar consulta">' +
           '<button type="button" class="cbx-clear" hidden aria-label="Borrar la búsqueda">' + ASPA + '</button>' +
         '</div>' +
       '</div>';
@@ -136,13 +138,29 @@
     panel.__cbxReset = function () {
       input.value = '';
       filtrar();
-      /* El foco se intenta dos veces. El panel tarda 180ms en pasar de
-         `visibility: hidden` a visible, y un elemento invisible no
-         acepta el cursor: al primer intento aún puede estar oculto, así
-         que se repite cuando la transición ya terminó. */
-      var poner = function () { try { input.focus({ preventScroll: true }); } catch (e) {} };
-      requestAnimationFrame(poner);
-      setTimeout(poner, 220);
+      /* EL FOCO, SOLO CON RATÓN.
+
+         En el ordenador poner el cursor en el buscador al abrir es un
+         regalo: se abre y ya se puede escribir.
+
+         En el teléfono es lo contrario. Enfocar un campo levanta el
+         teclado, y el teclado se come media pantalla: el cliente abre la
+         lista para VERLA y se encuentra tres opciones y un teclado
+         encima. El buscador sigue estando; se usa cuando se toca, que es
+         cuando de verdad se quiere escribir.
+
+         Se distingue por el puntero, no por el ancho de la ventana: lo
+         que decide es si hay ratón, no cuántos píxeles mide la pantalla.
+
+         El foco se intenta dos veces porque el panel tarda 180ms en
+         pasar de `visibility: hidden` a visible, y un elemento invisible
+         no acepta el cursor. */
+      var conRaton = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (conRaton) {
+        var poner = function () { try { input.focus({ preventScroll: true }); } catch (e) {} };
+        requestAnimationFrame(poner);
+        setTimeout(poner, 220);
+      }
       var sel = lista.querySelector('.combo-option.selected');
       if (sel) sel.scrollIntoView({ block: 'nearest' });
     };
