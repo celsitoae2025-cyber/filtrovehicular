@@ -785,3 +785,34 @@ a.card:hover,
 .pay-kard.is-selected .pk-divider {
   background: rgba(255, 255, 255, .4) !important;
 }
+
+/* ============================================================
+   17 · EL TELÉFONO: LA CAJA DE CONSULTA ES UN ENVOLTORIO, NO UNA CAJA
+
+   Fallo mío del bloque 4. Allí le puse el relleno de panel a
+   `.filter-search-box` porque en el ordenador ESA es la tarjeta: los
+   campos son celdas suyas y el canto lo pone ella.
+
+   Por debajo de 900px deja de serlo. La rejilla se deshace y vuelve a
+   ser un envoltorio transparente con DOS tarjetas dentro —el selector y
+   el panel del dato—, que traen su propio canto. Con los 20px puestos
+   en el envoltorio, esas dos quedaban 20px más adentro por cada lado
+   que todo lo de abajo: medido a 390px, el bloque de arriba iba de 35 a
+   355 y el catálogo de 15 a 375. Cuarenta píxeles de diferencia entre
+   cosas que se leen una debajo de otra.
+
+   El envoltorio se queda sin relleno y las dos tarjetas de dentro lo
+   reciben, que es de quien era.
+============================================================ */
+@media (max-width: 899px) {
+  .filter-search-box,
+  #view-filter > .filter-search-box {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .filter-search-box > .selector-card,
+  .filter-search-box > .panel {
+    padding-left: var(--pad-panel) !important;
+    padding-right: var(--pad-panel) !important;
+  }
+}
