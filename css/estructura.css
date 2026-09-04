@@ -359,13 +359,19 @@ textarea:focus-visible {
   padding-right: var(--pad-panel) !important;
 }
 
-/* Y el mismo canto: ninguno. La aplicación decidió hace tiempo que los
-   cuadros se separan del fondo por su color y no por un filete
-   —base.css se lo quita a treinta clases—, pero a estas dos se les
-   quedó puesto: eran las únicas dos cajas con raya de toda la interfaz. */
+/* Estas dos SÍ llevan filete, y me equivoqué al quitárselo.
+
+   La regla general —un cuadro se separa del fondo por su color, no por
+   una raya— vale mientras el cuadro se apoye en el papel. Estas dos no:
+   son tarjetas metidas DENTRO de un panel blanco, así que blanco sobre
+   blanco las dejaba invisibles. Las cuatro tarjetas de créditos de «Mi
+   saldo» se leían como cuatro columnas de texto sueltas, sin caja.
+
+   Vuelve el filete, en el gris de la casa, que es el mismo de los
+   campos: dentro de un panel, el canto es lo único que hay. */
 .pay-kard,
 .anon-cat-card {
-  border-color: transparent !important;
+  border: 1px solid rgba(20, 29, 28, .12) !important;
 }
 
 /* ── El efecto, en todos ─────────────────────────────────────
@@ -527,4 +533,102 @@ a.card:hover,
 .anon-cta {
   background: var(--c-surface-dark) !important;
   border-color: var(--c-surface-dark) !important;
+}
+
+/* ============================================================
+   12 · «MI SALDO», REHECHA
+
+   Tres cosas mal, y las tres se ven de un vistazo en la captura:
+
+   1 · Las cuatro tarjetas de créditos no eran tarjetas. Sin canto y
+       sobre el panel blanco, «200 CRÉDITOS S/ 15» flotaba junto a los
+       otros tres sin nada que dijera dónde acaba uno y empieza el
+       siguiente. Se arregla arriba, devolviéndoles el filete.
+
+   2 · «Configurar» era una barra de verde lima de MIL QUINIENTOS
+       píxeles. Un botón no se hace más importante por ser más largo; a
+       ese tamaño deja de leerse como botón y pasa a ser una franja de
+       color. Se queda en su ancho, apoyado a la izquierda bajo el texto
+       que lo explica.
+
+   3 · El aviso de términos era un bloque TURQUESA a sangre, el color
+       más fuerte de toda la pantalla puesto en la letra pequeña legal:
+       gritaba más que los precios y que el propio botón de pagar. Pasa
+       a nota tranquila sobre papel, con su filete y el icono en verde.
+       Sigue estando, y ahora se lee como lo que es.
+
+   Y las tres cajas de la vista dejan de ir soldadas en un bloque con
+   una esquina cuadrada: son tres tarjetas iguales, con el mismo canto,
+   el mismo radio y el mismo hueco entre ellas que en el resto de la
+   aplicación.
+============================================================ */
+.plans-columns {
+  gap: 15px !important;
+}
+.plans-columns > .plans-section {
+  padding: var(--pad-panel) !important;
+  border-radius: 12px !important;
+  border-bottom: 1px solid var(--c-border) !important;
+}
+.plans-columns > .plans-section:first-child,
+.plans-columns > .terms-notice {
+  border-radius: 12px !important;
+}
+
+/* ── «Configurar», a su medida ─────────────────────────────── */
+.pay-custom-cta {
+  align-self: flex-start !important;
+  width: auto !important;
+  min-width: 240px !important;
+  padding-left: 28px !important;
+  padding-right: 28px !important;
+  margin-top: 4px;
+}
+
+/* ── El aviso de términos, en su sitio ─────────────────────── */
+.terms-notice {
+  background: var(--c-canvas) !important;
+  border: 1px solid rgba(20, 29, 28, .12) !important;
+  color: var(--c-primary) !important;
+  padding: var(--pad-panel) !important;
+}
+.terms-notice-icon {
+  background: var(--c-surface-dark) !important;
+  color: #ffffff !important;
+  border-radius: 8px;
+}
+.terms-notice-body strong { color: var(--c-primary) !important; }
+.terms-notice-body p { color: var(--c-muted) !important; }
+.terms-notice-body a {
+  color: var(--c-primary) !important;
+  text-decoration-color: rgba(20, 29, 28, .35);
+  text-underline-offset: 2px;
+}
+.terms-notice-body a:hover { text-decoration-color: var(--c-surface-dark); }
+
+/* ============================================================
+   13 · UN SOLO FILETE
+
+   Quedaban tres grises distintos haciendo de canto, y se veían juntos
+   en la misma tarjeta de «Mi saldo»:
+
+     --c-border ......... #DCDCDC            (los paneles)
+     tarjetas ........... rgba(20,29,28,.12)
+     recarga libre ...... rgba(20,29,28,.10)
+
+   Ninguno se distingue del otro de un vistazo, y por eso mismo sobran
+   dos: el ojo no ve tres grises, ve que algo no cuadra. El token pasa al
+   gris de la casa —el mismo tinte del texto, rebajado— y todo lo que
+   dibuje un canto cuelga de ahí.
+============================================================ */
+:root {
+  --c-border: rgba(20, 29, 28, .12);
+}
+.pay-custom,
+.pay-kard,
+.anon-cat-card,
+.terms-notice,
+.combo-panel,
+.auth-modal-panel.auth-split .auth-form-card {
+  border-color: var(--c-border) !important;
 }
