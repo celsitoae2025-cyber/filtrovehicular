@@ -740,3 +740,48 @@ a.card:hover,
    donde solo hacen falta dos. Pasa al verde de marca, que es el acento
    que ya llevan los puntos del acceso y el «+» del logotipo. */
 .cta-reporte-ico { color: var(--c-accent) !important; }
+
+/* ============================================================
+   16 · LA TARJETA QUE SE QUEDABA EN BLANCO — error mío
+
+   Al quitar el relleno turquesa del `:hover` no miré lo que había
+   DEBAJO: base.css pintaba de blanco los seis textos de dentro de la
+   tarjeta —el número de créditos, el precio, la moneda, el precio por
+   unidad y la línea divisoria— porque el fondo se volvía turquesa y
+   tenían que leerse encima.
+
+   Sin ese fondo, esas seis reglas seguían ahí: al pasar el ratón la
+   tarjeta se quedaba blanca sobre blanco. No es que cambiara de color,
+   es que su contenido DESAPARECÍA. Ese es el cuadro en blanco.
+
+   Un estado de `:hover` no se cambia a medias: se redefine entero, y
+   aquí eso significa devolver cada texto a su color de reposo.
+============================================================ */
+.pay-kard:hover .pk-credits-num,
+.pay-kard:hover .pk-price {
+  color: var(--c-primary) !important;
+}
+.pay-kard:hover .pk-credits-unit,
+.pay-kard:hover .pk-cur {
+  color: rgba(20, 29, 28, .55) !important;
+}
+.pay-kard:hover .pk-unit-price {
+  color: rgba(20, 29, 28, .45) !important;
+}
+.pay-kard:hover .pk-divider {
+  background: rgba(20, 29, 28, .15) !important;
+  color: var(--c-primary) !important;
+}
+
+/* Elegida sí va en esmeralda, y ahí los blancos de base.css son los
+   correctos: se dejan como están. */
+.pay-kard.is-selected .pk-credits-num,
+.pay-kard.is-selected .pk-price,
+.pay-kard.is-selected .pk-credits-unit,
+.pay-kard.is-selected .pk-cur,
+.pay-kard.is-selected .pk-unit-price {
+  color: #ffffff !important;
+}
+.pay-kard.is-selected .pk-divider {
+  background: rgba(255, 255, 255, .4) !important;
+}
