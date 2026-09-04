@@ -74,18 +74,55 @@
     return '';
   }
 
-  function creditCardHTML(p) {
-    // El precio por crédito se calcula, no se escribe a mano: así la tarjeta
-    // nunca puede contradecir al precio real. Es además lo que deja ver de un
-    // vistazo que los paquetes grandes salen más baratos.
-    var unitario = (p.price / p.credits).toFixed(3);
+  /* ── LA TARJETA DE UN PAQUETE ─────────────────────────────────
+     Rehecha de cero. La anterior era una columna de cuatro cifras
+     sueltas —número, «créditos», precio y precio unitario— sin nada que
+     dijera cuál conviene ni qué pasa al pulsarla. Cuatro columnas de
+     números no son una tienda.
 
-    return '<button type="button" class="pay-kard" data-open-pay="' + p.id + '">' +
-      '<span class="pk-credits-num">' + p.credits.toLocaleString('es-PE') + '</span>' +
-      '<span class="pk-credits-unit">créditos</span>' +
-      '<span class="pk-divider" aria-hidden="true"></span>' +
+     Ahora dice las tres cosas que se preguntan al comprar:
+
+       cuánto llevo ...... el número grande
+       cuánto pago ....... el precio, en su línea
+       cuánto me ahorro ... el sello, calculado contra el paquete más caro
+                            por crédito, que es el de entrada
+
+     Y termina en «Recargar»: hasta ahora la tarjeta entera era pulsable
+     pero no lo parecía.
+
+     El ahorro NO se escribe a mano en ningún sitio: sale de dividir
+     precio entre créditos, así que si mañana cambia una tarifa el sello
+     cambia solo y nunca puede mentir. */
+  function unitPrice(p) { return p.price / p.credits; }
+
+  var FLECHA_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
+    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M5 12h13M12.5 6.5 18 12l-5.5 5.5"/></svg>';
+
+  function creditCardHTML(p, i, todos) {
+    var unitario = unitPrice(p);
+    /* La referencia es el paquete con el crédito MÁS caro —el de entrada—
+       y el destacado, el más barato. Se buscan, no se dan por hechos: el
+       orden del catálogo puede cambiar. */
+    var caro  = Math.max.apply(null, todos.map(unitPrice));
+    var mejor = Math.min.apply(null, todos.map(unitPrice));
+    var ahorro = Math.round((1 - unitario / caro) * 100);
+    var esMejor = unitario === mejor;
+
+    var sello = '';
+    if (esMejor)      sello = '<span class="pk-tag pk-tag-best">Mejor precio</span>';
+    else if (ahorro)  sello = '<span class="pk-tag">Ahorras ' + ahorro + '%</span>';
+
+    return '<button type="button" class="pk' + (esMejor ? ' is-best' : '') + '"' +
+      ' data-open-pay="' + p.id + '">' +
+      sello +
+      '<span class="pk-head">' +
+        '<span class="pk-num">' + p.credits.toLocaleString('es-PE') + '</span>' +
+        '<span class="pk-unit">créditos</span>' +
+      '</span>' +
       '<span class="pk-price"><span class="pk-cur">S/</span>' + p.price + '</span>' +
-      '<span class="pk-unit-price">S/ ' + unitario + ' c/u</span>' +
+      '<span class="pk-rate">S/ ' + unitario.toFixed(3) + ' por crédito</span>' +
+      '<span class="pk-go">Recargar' + FLECHA_SVG + '</span>' +
     '</button>';
   }
 
@@ -128,12 +165,18 @@
     { id: 'cp-biz-2',  credits: 4000, price: 150 }
   ];
 
+  /* La recarga libre pasa a leerse en UNA línea: el texto a la izquierda
+     y la acción a la derecha, como una fila de la misma tienda. Estaba
+     apilada, y su botón —que abarcaba todo el ancho— pesaba más que los
+     cuatro paquetes juntos, que es justo al revés de lo que interesa. */
   function customCardHTML() {
     return '<button type="button" class="pay-custom" data-open-pay="custom">' +
+      '<span class="pay-custom-txt">' +
       '<span class="pay-custom-eyebrow">Elige tu propio monto</span>' +
       '<span class="pay-custom-title">Recarga personalizada</span>' +
       '<span class="pay-custom-sub">Desde S/ ' + (CUSTOM_MIN * CUSTOM_RATE) + '. Paga solo lo que necesitas.</span>' +
-      '<span class="pay-custom-cta">Configurar</span>' +
+      '</span>' +
+      '<span class="pay-custom-cta">Configurar' + FLECHA_SVG + '</span>' +
     '</button>';
   }
 
@@ -217,7 +260,9 @@
   }
 
   function render() {
-    setGrid('catalogGridCredits', FIXED_PLANS.map(creditCardHTML).join(''));
+    setGrid('catalogGridCredits', FIXED_PLANS.map(function (p, i) {
+      return creditCardHTML(p, i, FIXED_PLANS);
+    }).join(''));
     setGrid('catalogGridCustom',  customCardHTML());
     // Inyectar el modal de recarga personalizada si no existe todavía
     if (!document.getElementById('payModal')) {

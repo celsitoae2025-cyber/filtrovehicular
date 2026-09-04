@@ -1,0 +1,211 @@
+/* ============================================================
+   MI SALDO — la tienda de créditos, rehecha
+
+   Lo que había: dos paneles blancos, y dentro cuatro columnas con
+   cuatro cifras cada una. Ni un solo signo de que se pudieran pulsar,
+   ninguna pista de cuál conviene y una barra verde de mil quinientos
+   píxeles al final. Una tabla de datos, no una tienda.
+
+   Lo que hay: cuatro tarjetas de producto que dicen cuánto llevas,
+   cuánto pagas y cuánto te ahorras, con UNA destacada —la del crédito
+   más barato— en el esmeralda de la casa. Es el gesto de siempre en una
+   tabla de precios y funciona porque el ojo tiene dónde caer: sin nada
+   destacado, cuatro cajas iguales obligan a comparar tres cifras a mano.
+
+   Debajo, la recarga libre en una sola línea, y el aviso legal de pie.
+   Nada de degradados, nada de sombras: el peso lo dan el color y el
+   tamaño, como en el resto del proyecto.
+============================================================ */
+
+/* ── La rejilla ─────────────────────────────────────────────
+   Cuatro columnas iguales. `auto-fit` con un mínimo de 220px: en un
+   portátil pasan a dos y en el teléfono a una, sin un solo punto de
+   corte escrito a mano. */
+#catalogGridCredits.plans-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 14px !important;
+}
+
+/* ── La tarjeta ─────────────────────────────────────────────
+   Columna: número, precio, tarifa y la acción abajo del todo. El
+   `margin-top: auto` del pie es lo que hace que las cuatro terminen su
+   botón a la misma altura aunque una lleve sello y otra no. */
+.pk {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 22px 20px 18px;
+  background: #ffffff;
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  text-align: left;
+  font: inherit;
+  color: var(--c-primary);
+  cursor: pointer;
+  transition:
+    background-color .22s cubic-bezier(.16, 1, .3, 1),
+    border-color .22s cubic-bezier(.16, 1, .3, 1);
+}
+
+.pk-head {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+.pk-num {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1.4px;
+}
+.pk-unit {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+.pk-price {
+  margin-top: 14px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.5px;
+}
+.pk-cur {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--c-muted);
+  margin-right: 3px;
+}
+.pk-rate {
+  font-size: 13px;
+  color: var(--c-muted);
+}
+
+/* ── El sello del ahorro ────────────────────────────────────
+   Arriba a la derecha, donde no empuja nada. El porcentaje sale de la
+   propia tarifa (ver saldo-catalog.js): no hay ningún número escrito a
+   mano que pueda quedarse viejo. */
+.pk-tag {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--c-accent);
+  color: var(--c-primary);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: .2px;
+}
+
+/* ── La acción ──────────────────────────────────────────────
+   La tarjeta entera es el botón; esto es lo que lo cuenta. De contorno
+   en reposo para no competir con el precio, y se llena al pasar por
+   encima. */
+.pk-go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 18px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--c-surface-dark);
+  border-radius: 12px;
+  color: var(--c-surface-dark);
+  font-size: 15px;
+  font-weight: 700;
+  transition:
+    background-color .22s cubic-bezier(.16, 1, .3, 1),
+    color .22s cubic-bezier(.16, 1, .3, 1);
+}
+.pk-go svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+
+.pk:hover,
+.pk:focus-visible {
+  border-color: var(--c-surface-dark);
+  outline: none;
+}
+.pk:hover .pk-go,
+.pk:focus-visible .pk-go {
+  background: var(--c-surface-dark);
+  color: #ffffff;
+}
+
+/* ── La destacada ───────────────────────────────────────────
+   Una sola, la del crédito más barato, en esmeralda. Su botón se
+   invierte —relleno claro sobre oscuro— para que siga siendo lo que más
+   pesa DENTRO de la tarjeta que más pesa. */
+.pk.is-best {
+  background: var(--c-surface-dark);
+  border-color: var(--c-surface-dark);
+  color: #ffffff;
+}
+.pk.is-best .pk-unit,
+.pk.is-best .pk-cur,
+.pk.is-best .pk-rate { color: rgba(255, 255, 255, .7); }
+.pk.is-best .pk-tag-best {
+  background: var(--c-accent);
+  color: var(--c-primary);
+}
+.pk.is-best .pk-go {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: var(--c-surface-dark);
+}
+.pk.is-best:hover .pk-go,
+.pk.is-best:focus-visible .pk-go {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  color: var(--c-primary);
+}
+
+/* ── La recarga libre, en una línea ─────────────────────────
+   Texto a la izquierda, acción a la derecha. Por debajo de 620px se
+   apila, que es donde una fila de dos deja de caber. */
+.pay-custom {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  text-align: left !important;
+}
+.pay-custom-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.pay-custom-cta {
+  flex: none !important;
+  align-self: center !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 200px !important;
+  background: var(--c-surface-dark) !important;
+  color: #ffffff !important;
+}
+.pay-custom-cta svg { width: 17px; height: 17px; flex: none; }
+.pay-custom:hover .pay-custom-cta { background: #123c30 !important; }
+
+@media (max-width: 620px) {
+  .pay-custom {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .pay-custom-cta { width: 100% !important; justify-content: center !important; }
+}
