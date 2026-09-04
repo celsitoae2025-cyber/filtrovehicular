@@ -77,7 +77,7 @@ html.mnt-locked body {
 
 .mnt-text {
   margin: 0 0 20px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 1.55;
   color: var(--c-muted, #5A6B6A);
@@ -91,7 +91,7 @@ html.mnt-locked body {
   background: var(--c-primary, #141d1c);
   color: #ffffff;
   font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
 }
@@ -117,7 +117,7 @@ html.mnt-locked body {
   border-bottom: 2px solid var(--c-accent, #8fc72e);
   color: #ffffff;
   font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 400;
   text-align: center;
 }
@@ -159,14 +159,14 @@ html.mnt-with-banner body { padding-top: 34px; }
 
 .mnt-admin-state strong {
   display: block;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--c-primary, #141d1c);
   margin-bottom: 2px;
 }
 .mnt-admin-state p {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--c-muted, #5A6B6A);
@@ -196,7 +196,7 @@ html.mnt-with-banner body { padding-top: 34px; }
 
 .mnt-admin-foot {
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--c-muted, #5A6B6A);
@@ -256,7 +256,7 @@ html.mnt-with-banner body { padding-top: 34px; }
   background: var(--c-primary, #141d1c);
   color: #ffffff;
   font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
 }

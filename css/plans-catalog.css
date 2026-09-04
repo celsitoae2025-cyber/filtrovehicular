@@ -15,7 +15,7 @@
   border: none;
   padding: 12px 20px;
   font-family: inherit;
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 400;
   color: var(--c-muted);
   cursor: pointer;
@@ -53,7 +53,7 @@
   align-items: center;
   padding: 4px 10px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: .3px;
   color: var(--c-primary);
@@ -61,7 +61,7 @@
   border: 1px solid var(--c-border);
 }
 .plans-tier-sub {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--c-muted);
 }
 
@@ -110,7 +110,7 @@
   letter-spacing: -.2px;
 }
 .plans-grid .plan-num-box .unit {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--c-muted);
   text-transform: uppercase;
   letter-spacing: .5px;
@@ -125,7 +125,7 @@
   min-width: 0;
 }
 .plans-grid .plan-info-top {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--c-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -138,7 +138,7 @@
   color: var(--c-primary);
 }
 .plans-grid .plan-info-price .cur {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   color: var(--c-muted);
   margin-right: 2px;
@@ -163,7 +163,7 @@
 .plans-grid .plan-buy {
   flex-shrink: 0;
   padding: 8px 14px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: .4px;
   text-transform: uppercase;
@@ -199,7 +199,7 @@
 
 /* Título de sección */
 .plans-section-title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--c-primary);
   text-transform: uppercase;
@@ -229,7 +229,7 @@
 }
 #view-saldo .plans-tier-badge {
   padding: 5px 12px;
-  font-size: 10.5px;
+  font-size: 13px;
   letter-spacing: .8px;
   text-transform: uppercase;
   background: transparent;
@@ -237,7 +237,7 @@
   color: var(--c-muted);
 }
 #view-saldo .plans-tier-sub {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--c-muted);
 }
 
@@ -287,7 +287,7 @@
   letter-spacing: -.5px;
 }
 .pcv2-unit {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--c-muted);
   text-transform: uppercase;
@@ -306,13 +306,13 @@
   padding: 2px 7px;
   background: var(--c-bg);
   color: var(--c-muted);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 700;
   border-radius: 14px;
   letter-spacing: .3px;
 }
 .pcv2-perprice {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--c-muted);
   font-weight: 400;
 }
@@ -323,7 +323,7 @@
   line-height: 1;
 }
 .pcv2-cur {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   color: var(--c-muted);
   margin-right: 1px;
@@ -331,7 +331,7 @@
 
 /* Detalle base/bonus */
 .pcv2-detail {
-  font-size: 11.5px;
+  font-size: 13px;
   color: var(--c-muted);
   margin: 0;
   line-height: 1.4;
@@ -350,7 +350,7 @@
   justify-content: center;
   gap: 5px;
   padding: 8px 6px;
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: .2px;
   color: #fff;
@@ -411,11 +411,11 @@
     align-items: center;
   }
   .pcv2-num    { font-size: 20px; }
-  .pcv2-unit   { font-size: 10px; }
+  .pcv2-unit   { font-size: 13px; }
   .pcv2-price  { font-size: 15px; }
   .pcv2-bonus  { font-size: 9.5px; padding: 2px 6px; }
   .pcv2-perprice { font-size: 9.5px; }
-  .pcv2-detail { font-size: 11px; }
+  .pcv2-detail { font-size: 13px; }
 
   /* Botones: fila completa, iguales — caben bien en tarjeta ancha */
   .pcv2-actions {
@@ -425,7 +425,7 @@
   }
   .pcv2-btn {
     padding: 9px 8px;
-    font-size: 12px;
+    font-size: 13px;
     gap: 5px;
   }
   .pcv2-btn-icon { width: 14px; height: 14px; }

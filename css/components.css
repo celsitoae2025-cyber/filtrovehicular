@@ -716,7 +716,7 @@
     gap: 10px;
     padding: 2px 0 6px;
   }
-  .wa-menu-titulo { flex: 1; padding: 0; font-size: 14px; }
+  .wa-menu-titulo { flex: 1; padding: 0; font-size: 15px; }
 
   .wa-menu-cerrar {
     display: flex;
@@ -738,7 +738,7 @@
   /* Objetivos de toque más grandes: en el teléfono se pulsa con el pulgar. */
   .wa-menu-opcion {
     padding: 13px 12px;
-    font-size: 14.5px;
+    font-size: 15px;
     border-radius: 12px;
   }
   .wa-menu-flecha { width: 16px; height: 16px; }

@@ -803,7 +803,7 @@
    Es la unica excepcion al minimo de 15px del resto de paneles: aqui se
    pidio expresamente que no se notara. */
 .panel-desc {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--c-muted);
   line-height: 1.5;
   margin: 0 0 12px;
@@ -1173,7 +1173,7 @@
 }
 .dl-cancel {
   font: inherit;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 400;
   letter-spacing: .4px;
   padding: 11px 24px;
@@ -2438,7 +2438,7 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
    y no hace falta ni tamaño ni negrita para que se encuentre. */
 .cr-espera-btn {
   font: inherit;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 400;
   letter-spacing: .4px;
   padding: 11px 24px;
@@ -5797,7 +5797,7 @@ a.nm-download { text-decoration: none; }
 /* ── Rótulo de bloque ── */
 .cr-sect { margin-top: 30px; }
 .cr-sect h4 {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: #7c8785;
   letter-spacing: 1.4px;
@@ -5815,7 +5815,7 @@ a.nm-download { text-decoration: none; }
   border-bottom: 1px solid #eceeed;
 }
 .cr-row .cr-k {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
   letter-spacing: .9px;
   color: #7c8785;
@@ -5842,7 +5842,7 @@ a.nm-download { text-decoration: none; }
   border-radius: 12px;
 }
 .cr-record-index {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 1.2px;
   color: #8fc72e;
@@ -5869,7 +5869,7 @@ a.nm-download { text-decoration: none; }
   background: #141d1c;
   border-color: #141d1c;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 15px;
   padding: 10px 20px;
 }
 .cr-docitem-ver:hover { background: #0e1312; border-color: #0e1312; }
@@ -5907,7 +5907,7 @@ a.nm-download { text-decoration: none; }
 .mtc-punto { margin: 0 8px; color: #c6cdcb; }
 .mtc-estado {
   flex-shrink: 0;
-  font-size: 12px; font-weight: 700; letter-spacing: 1.1px;
+  font-size: 13px; font-weight: 700; letter-spacing: 1.1px;
   padding: 6px 14px; border-radius: 999px;
 }
 .mtc-estado.is-ok  { background: #eef7dc; color: #4f7d00; }
@@ -5926,7 +5926,7 @@ a.nm-download { text-decoration: none; }
 .mtc-dato { background: #ffffff; padding: 10px 14px; min-width: 0; }
 .mtc-dato span {
   display: block;
-  font-size: 11px; letter-spacing: .9px; text-transform: uppercase; color: #7c8785;
+  font-size: 13px; letter-spacing: .9px; text-transform: uppercase; color: #7c8785;
 }
 .mtc-dato strong {
   display: block; margin-top: 2px;
@@ -5938,20 +5938,20 @@ a.nm-download { text-decoration: none; }
 .mtc-bloque h4 {
   display: flex; align-items: center; gap: 8px;
   margin: 0 0 6px;
-  font-size: 11px; font-weight: 700; letter-spacing: 1.4px;
+  font-size: 13px; font-weight: 700; letter-spacing: 1.4px;
   text-transform: uppercase; color: #7c8785;
 }
 .mtc-cuenta {
   background: #141d1c; color: #ffffff;
   border-radius: 999px; padding: 2px 8px;
-  font-size: 11px; letter-spacing: .4px;
+  font-size: 13px; letter-spacing: .4px;
 }
 .mtc-tabla-wrap { overflow-x: auto; }
-.mtc-tabla { width: 100%; border-collapse: collapse; font-size: 14px; }
+.mtc-tabla { width: 100%; border-collapse: collapse; font-size: 15px; }
 .mtc-tabla th {
   text-align: left; white-space: nowrap;
   padding: 0 14px 6px 0;
-  font-size: 11px; font-weight: 400; letter-spacing: .8px;
+  font-size: 13px; font-weight: 400; letter-spacing: .8px;
   text-transform: uppercase; color: #7c8785;
   border-bottom: 1px solid #e6e9e8;
 }
@@ -5998,7 +5998,7 @@ a.nm-download { text-decoration: none; }
 .cr-data .cr-punto { margin: 0 8px; color: #c6cdcb; }
 .cr-data .cr-estado {
   flex-shrink: 0;
-  font-size: 12px; font-weight: 700; letter-spacing: 1.1px;
+  font-size: 13px; font-weight: 700; letter-spacing: 1.1px;
   padding: 6px 14px; border-radius: 999px;
 }
 .cr-data .cr-estado.is-ok  { background: #eef7dc; color: #4f7d00; }
@@ -6007,7 +6007,7 @@ a.nm-download { text-decoration: none; }
 /* El título del organismo queda de antetítulo: la ficha la encabeza el
    nombre, no el membrete del proveedor. */
 .cr-data .cr-tit {
-  font-size: 12px; font-weight: 700; letter-spacing: 1.4px;
+  font-size: 13px; font-weight: 700; letter-spacing: 1.4px;
   text-transform: uppercase; color: #7c8785;
   border-bottom: none; padding-bottom: 0; margin: 0 0 6px;
 }
@@ -6034,7 +6034,7 @@ a.nm-download { text-decoration: none; }
 }
 .cr-data .cr-row > .cr-k {
   display: block;
-  font-size: 11px; font-weight: 400; letter-spacing: .9px;
+  font-size: 13px; font-weight: 400; letter-spacing: .9px;
   line-height: 1.5; color: #7c8785;
 }
 .cr-data .cr-row > .cr-v {
@@ -6052,7 +6052,7 @@ a.nm-download { text-decoration: none; }
 /* ── El sello de emisión y el copiar al clic ──────────────────────── */
 .cr-emision {
   margin-top: 5px;
-  font-size: 12px;
+  font-size: 13px;
   color: #9aa3a1;
   letter-spacing: .3px;
   font-variant-numeric: tabular-nums;
@@ -6072,7 +6072,7 @@ a.nm-download { text-decoration: none; }
   content: 'Copiado';
   position: absolute; top: 8px; right: 10px;
   background: #141d1c; color: #ffffff;
-  font-size: 10px; letter-spacing: .8px;
+  font-size: 13px; letter-spacing: .8px;
   padding: 3px 9px; border-radius: 999px;
 }
 /* Las líneas sin rótulo no son un dato que se copie. */
@@ -6119,7 +6119,7 @@ a.nm-download { text-decoration: none; }
     display: block;
     white-space: normal !important;
     overflow-wrap: anywhere;
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: .6px;
     line-height: 1.45;
     padding: 0 !important;
@@ -6128,7 +6128,7 @@ a.nm-download { text-decoration: none; }
   .cr-data .cr-row > .cr-v {
     display: block;
     margin-top: 2px;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.35;
     overflow-wrap: anywhere;
     padding: 0 !important;
@@ -6140,7 +6140,7 @@ a.nm-download { text-decoration: none; }
   /* Membrete y sello: el nombre puede ser largo, que baje de línea. */
   .cr-data .cr-head { gap: 10px; }
   .cr-data .cr-nombre { font-size: 17px; overflow-wrap: anywhere; }
-  .cr-data .cr-sub, .cr-emision { font-size: 12px; }
+  .cr-data .cr-sub, .cr-emision { font-size: 13px; }
 
   /* La licencia, igual: celdas más estrechas antes que recortadas. */
   .mtc { padding: 14px 12px 16px; }
@@ -6171,7 +6171,7 @@ a.nm-download { text-decoration: none; }
   display: inline-flex; align-items: center; gap: 9px;
   color: #ffffff; background: #141d1c;
   border: none; border-radius: 999px;
-  font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+  font-size: 13px; font-weight: 700; letter-spacing: 1.2px;
   text-transform: uppercase;
   padding: 7px 15px;
 }
@@ -6239,7 +6239,7 @@ a.nm-download { text-decoration: none; }
   display: flex; align-items: baseline; gap: 12px;
   padding: 9px 0;
   border-bottom: 1px solid #f1f3f2;
-  font-size: 14px; color: #141d1c; line-height: 1.4;
+  font-size: 15px; color: #141d1c; line-height: 1.4;
   background: transparent;
   opacity: 0;
   animation: rep-entra .34s ease-out forwards;
@@ -6289,9 +6289,9 @@ a.nm-download { text-decoration: none; }
   /* Dos columnas también en el móvil: en una sola, veintiún renglones
      obligaban a arrastrar el cuadro entero. */
   .rep-espera-lista { grid-template-columns: 1fr 1fr; column-gap: 14px; margin-top: 14px; }
-  .rep-espera-lista li { padding: 5px 0; font-size: 11.5px; gap: 7px; line-height: 1.35; }
+  .rep-espera-lista li { padding: 5px 0; font-size: 13px; gap: 7px; line-height: 1.35; }
   .rep-espera-ico { width: 12px; height: 12px; }
-  .rep-espera-pie { margin-top: 10px; font-size: 11px; }
+  .rep-espera-pie { margin-top: 10px; font-size: 13px; }
   .rep-modal { padding: 10px; }
   .rep-modal-caja { max-height: calc(100vh - 20px); }
 }
@@ -6338,7 +6338,7 @@ a.nm-download { text-decoration: none; }
 .rep-modal-cerrar:hover { background: #f1f3f3; }
 .rep-modal-pie { padding: 0 36px 22px; display: flex; justify-content: flex-end; }
 .rep-modal-ok {
-  font: inherit; font-size: 14px; letter-spacing: .4px;
+  font: inherit; font-size: 15px; letter-spacing: .4px;
   padding: 11px 26px; border: none; border-radius: 999px;
   background: #141d1c; color: #ffffff; cursor: pointer;
   transition: background var(--t-fast);

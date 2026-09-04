@@ -438,3 +438,93 @@ a.card:hover,
   padding-left: var(--pad-panel) !important;
   padding-right: var(--pad-panel) !important;
 }
+
+/* ============================================================
+   10 · EL BOTÓN PRINCIPAL, EN EL VERDE DE LA CASA
+
+   Quedaban diez botones primarios y el de «Iniciar sesión» de la barra
+   superior en #141d1c: un casi-negro que ya no aparece en ninguna otra
+   superficie del producto —el menú, el pie, la ficha del reporte y el
+   panel de acceso son esmeralda desde el bloque 1—. Un negro suelto en
+   la acción más importante de cada pantalla.
+
+   El #141d1c sigue siendo el color del TEXTO (--c-primary): eso no se
+   toca. Lo que cambia es el relleno de los botones sólidos.
+============================================================ */
+/* Se apunta a los que de verdad estaban en negro. El `.btn-primary` a
+   secas es VERDE LIMA —son los reclamos comerciales de los planes, y esos
+   se quedan—; el negro salía de `.form-row .btn-primary` y hermanas, que
+   pesan (0,2,0) con `!important`, así que hay que igualarles el peso o no
+   se mueven. */
+.view .form-row .btn-primary,
+.view .nm-fields .btn-primary,
+.view .filter-form .btn-primary,
+.prem-form-panel .btn-primary,
+.topbar .auth-btn-primary {
+  background: var(--c-surface-dark) !important;
+  border-color: var(--c-surface-dark) !important;
+  color: #ffffff !important;
+}
+.view .form-row .btn-primary:hover:not(:disabled),
+.view .nm-fields .btn-primary:hover:not(:disabled),
+.view .filter-form .btn-primary:hover:not(:disabled),
+.prem-form-panel .btn-primary:hover:not(:disabled),
+.topbar .auth-btn-primary:hover:not(:disabled) {
+  background: #123c30 !important;
+  border-color: #123c30 !important;
+  color: #ffffff !important;
+}
+
+/* Los mismos que ya se pintaban a mano con el casi-negro al pasar por
+   encima: el hover tiene que aclarar el esmeralda, no saltar a otro
+   color. */
+.form-row .btn-primary:hover,
+.nm-fields .btn-primary:hover,
+.filter-form .btn-primary:hover,
+#historialPdfBtn:hover:not(:disabled),
+.nm-download:hover,
+.cr-espera-btn:hover,
+.cr-docitem-ver:hover,
+.rep-modal-ok:hover,
+.inst-fab:hover {
+  background: #123c30 !important;
+  border-color: #123c30 !important;
+}
+
+/* ============================================================
+   11 · LOS BOTONES QUE NO SON <button>
+
+   Dentro de «Mi saldo» la llamada a la acción del importe libre
+   —«.pay-custom-cta»— es un <span> pintado como botón: 41px de alto,
+   radio 8 y letra de 14. Ninguna regla de campos la alcanzaba porque no
+   es un campo ni un botón, y se quedaba fuera del sistema justo en la
+   pantalla donde se paga.
+
+   Aquí entran esa y sus hermanas: cualquier pieza que se lea como
+   botón, la etiqueta que sea.
+============================================================ */
+.pay-custom-cta,
+.pay-kard-cta,
+.plan-cta,
+.saldo-cta,
+[class$="-cta"] {
+  min-height: 52px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* La bajada de las regiones iba en `clamp(13px, 1.1vw, 14px)`: el barrido
+   de tamaños no la alcanzó porque su número vive dentro de un clamp. */
+.regiones-sub {
+  font-size: 15px !important;
+}
+
+/* El reclamo grande del panel anónimo era la última superficie oscura en
+   #141d1c. Es un bloque de media pantalla, así que va con las demás. */
+.anon-cta {
+  background: var(--c-surface-dark) !important;
+  border-color: var(--c-surface-dark) !important;
+}

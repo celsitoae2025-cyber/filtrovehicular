@@ -71,8 +71,8 @@
   /* Escala tipográfica — únicos 5 tamaños permitidos en la app de
      consultas. xs/sm se mantienen fijos en móvil (ya están cerca del
      mínimo legible); md/lg/xl se reducen en el breakpoint de 768px. */
-  --fs-xs: 12px;
-  --fs-sm: 14px;
+  --fs-xs: 13px;
+  --fs-sm: 15px;
   --fs-md: 17px;
   --fs-lg: 21px;
   --fs-xl: 30px;
@@ -451,7 +451,7 @@ body { background: #d4dade !important; }
 }
 .pk-unit-price {
   margin-top: 5px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   color: rgba(20,29,28,.45);
   font-variant-numeric: tabular-nums;
@@ -525,11 +525,11 @@ body { background: #d4dade !important; }
     gap: 2px !important;
   }
   .pk-credits-num { font-size: var(--fs-lg) !important; }
-  .pk-credits-unit { font-size: 10.5px !important; }
+  .pk-credits-unit { font-size: 13px !important; }
   .pk-divider { margin: 8px 0 6px !important; width: 22px !important; }
   .pk-price { font-size: var(--fs-md) !important; }
-  .pk-cur { font-size: 10.5px !important; }
-  .pk-unit-price { font-size: 10.5px !important; margin-top: 4px !important; }
+  .pk-cur { font-size: 13px !important; }
+  .pk-unit-price { font-size: 13px !important; margin-top: 4px !important; }
   #plansSection-credits, #plansSection-custom {
     padding: 14px !important;
   }
@@ -566,7 +566,7 @@ body { background: #d4dade !important; }
   outline: none;
 }
 .pay-custom-eyebrow {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 400;
   color: rgba(20,29,28,.5);
   letter-spacing: .5px;
