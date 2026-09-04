@@ -1137,16 +1137,18 @@ body.auth-locked .wa-menu {
     border-radius: 0;
   }
 
-  /* ============ Columna del formulario — estrecha, a la DERECHA ============
+  /* ============ Columna del formulario — la mitad, a la DERECHA ============
      El orden se cambia por CSS y no moviendo el marcado: en móvil el
      panel de arte no se muestra y el formulario tiene que seguir siendo
      lo primero que lee un lector de pantalla. */
   #authModalLogin  .auth-form-side,
   #authModalSignup .auth-form-side {
     order: 2;
-    /* Un punto más ancha que antes: con el nombre a tamaño de titular,
-       a 400px la marca y los campos se rozaban. */
-    flex: 0 0 clamp(430px, 34%, 560px);
+    /* Media pantalla justa. Estuvo en clamp(430px, 34%, 560px), que en
+       un monitor de 1920 dejaba el reparto en 71/29 y la costura muy
+       corrida a la derecha. A partes iguales las dos mitades pesan lo
+       mismo y la pantalla se lee partida a propósito. */
+    flex: 0 0 50%;
     padding: clamp(28px, 3.4vh, 44px) clamp(34px, 3vw, 60px) 24px;
     /* El mismo gris que se respira dentro de la plataforma (base.css lo
        fija en body, .main y .content). Así el acceso y lo que hay detrás
@@ -1156,8 +1158,16 @@ body.auth-locked .wa-menu {
     background-size: 18px 18px;
     background-repeat: repeat;
   }
+  /* El formulario no se estira con la columna: se queda en su ancho de
+     lectura y se centra en su mitad. Un campo de texto de 800px no se
+     rellena mejor por ser más largo, solo se lee peor. */
   #authModalLogin  .auth-form-wrap,
-  #authModalSignup .auth-form-wrap { width: 100%; }
+  #authModalSignup .auth-form-wrap {
+    width: 100%;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
   /* Marca arriba del todo, como en la referencia. Solo el nombre: el
      distintivo que llevaba al lado se retiró porque ese dibujo no es el
@@ -1280,7 +1290,9 @@ body.auth-locked .wa-menu {
   #authModalLogin  .auth-brand-side,
   #authModalSignup .auth-brand-side {
     order: 1;
-    flex: 1 1 auto;
+    /* La otra mitad exacta. */
+    flex: 0 0 50%;
+    min-width: 0;
     padding: 34px clamp(40px, 4vw, 76px) 30px !important;
     /* Color plano, sin degradados, en verde petróleo. Las cuatro
        manchas de luz —turquesa arriba, verde abajo y la vela del borde
