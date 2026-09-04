@@ -95,6 +95,15 @@
      cambia solo y nunca puede mentir. */
   function unitPrice(p) { return p.price / p.credits; }
 
+  /* El monedero de la recarga libre. De trazo, como todos los iconos de
+     la casa, y dibujado — nunca un emoji. */
+  var MONEDERO_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
+    ' stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M3 7.5A2.5 2.5 0 0 1 5.5 5h11A2.5 2.5 0 0 1 19 7.5V9"/>' +
+    '<path d="M3 7.5v9A2.5 2.5 0 0 0 5.5 19h13a2.5 2.5 0 0 0 2.5-2.5v-6a1.5 1.5 0 0 0-1.5-1.5H5.5A2.5 2.5 0 0 1 3 7.5Z"/>' +
+    '<circle cx="16.6" cy="13.6" r="1.15"/>' +
+    '</svg>';
+
   var FLECHA_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
     ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<path d="M5 12h13M12.5 6.5 18 12l-5.5 5.5"/></svg>';
@@ -171,6 +180,7 @@
      cuatro paquetes juntos, que es justo al revés de lo que interesa. */
   function customCardHTML() {
     return '<button type="button" class="pay-custom" data-open-pay="custom">' +
+      '<span class="pay-custom-ico">' + MONEDERO_SVG + '</span>' +
       '<span class="pay-custom-txt">' +
       '<span class="pay-custom-eyebrow">Elige tu propio monto</span>' +
       '<span class="pay-custom-title">Recarga personalizada</span>' +
