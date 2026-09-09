@@ -53,3 +53,6 @@ consulta-vehicular.md
 # principio es necesaria: sin ella, y con Windows ignorando mayúsculas,
 # la regla se llevaba por delante también `assets/citv/`.
 /CITV/
+
+# Informes internos: no se publican con el sitio
+INFORME-SOCIOS.*
