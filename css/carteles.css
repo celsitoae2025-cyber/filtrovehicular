@@ -14,7 +14,7 @@
    Sin sombras y sin franjas de color, como todo lo demás.
 ============================================================ */
 
-.pub-cartel {
+.cartel-caja {
   position: relative;
   margin: 0 0 var(--gutter, 15px);
   border: 1px solid var(--c-border);
@@ -25,14 +25,14 @@
 
 /* La caja manda la proporción: así el cartel no salta de alto al
    cambiar de imagen ni empuja el contenido al cargar. */
-.pub-marco {
+.cartel-marco {
   position: relative;
   width: 100%;
   aspect-ratio: 1200 / 450;
   background: var(--c-bg);
 }
 
-.pub-lamina {
+.cartel-lamina {
   position: absolute;
   inset: 0;
   display: block;
@@ -45,14 +45,14 @@
   visibility: hidden;
   transition: opacity .35s ease;
 }
-.pub-lamina.esta-visible {
+.cartel-lamina.esta-visible {
   opacity: 1;
   visibility: visible;
 }
 /* Con enlace es un botón de verdad: se nota al pasar y al tocar. */
-.pub-lamina.tiene-enlace { cursor: pointer; }
+.cartel-lamina.tiene-enlace { cursor: pointer; }
 
-.pub-lamina img {
+.cartel-lamina img {
   display: block;
   width: 100%;
   height: 100%;
@@ -61,7 +61,7 @@
 
 /* Los puntos solo aparecen si hay más de una imagen; los pinta el
    módulo. Van dentro del cartel, abajo y centrados. */
-.pub-puntos {
+.cartel-puntos {
   position: absolute;
   left: 0;
   right: 0;
@@ -70,7 +70,7 @@
   justify-content: center;
   gap: 4px;
 }
-.pub-punto {
+.cartel-punto {
   width: 22px;
   height: 4px;
   padding: 0;
@@ -79,15 +79,15 @@
   background: rgba(20, 29, 28, .28);
   cursor: pointer;
 }
-.pub-punto.esta-activo { background: var(--c-accent); }
+.cartel-punto.esta-activo { background: var(--c-accent); }
 
 @media (prefers-reduced-motion: reduce) {
-  .pub-lamina { transition: none; }
+  .cartel-lamina { transition: none; }
 }
 
 /* En el teléfono el cartel ocupa el ancho entero de la columna y los
    puntos se hacen un poco más grandes, que se tocan con el dedo. */
 @media (max-width: 768px) {
-  .pub-cartel { border-radius: 10px; }
-  .pub-punto { width: 26px; height: 5px; }
+  .cartel-caja { border-radius: 10px; }
+  .cartel-punto { width: 26px; height: 5px; }
 }

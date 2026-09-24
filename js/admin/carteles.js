@@ -7,7 +7,7 @@
    Qué NO es: no es un anuncio de la campana (eso es js/admin/
    broadcasts.js, que manda notificaciones) ni la cinta de incidencia
    (eso es aviso-clientes.js). Esto es un cartel, y vive en su propia
-   tabla `public.publicidad` con su depósito de Storage.
+   tabla `public.carteles` con su depósito de Storage.
 
    Dos reglas, las dos del mismo motivo —que nadie publique algo sin
    querer—:
@@ -27,7 +27,7 @@
   window.Consultia.Admin = window.Consultia.Admin || {};
   var A = window.Consultia.Admin;
 
-  var BUCKET = 'publicidad';
+  var BUCKET = 'carteles';
   var MAX_BYTES = 5 * 1024 * 1024;
   var TIPOS = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
 
@@ -60,9 +60,9 @@
   /* ── La imagen que se va a subir ─────────────────────────── */
 
   function mostrarElegida(file) {
-    var previa = $('pubPrevia');
-    var vacio  = $('pubDropVacio');
-    var nombre = $('pubArchivo');
+    var previa = $('ctlPrevia');
+    var vacio  = $('ctlZonaVacio');
+    var nombre = $('ctlArchivo');
     if (!file) {
       elegido = null;
       if (previa) { previa.hidden = true; previa.removeAttribute('src'); }
@@ -103,9 +103,9 @@
 
   function limpiarFormulario() {
     mostrarElegida(null);
-    var f = $('pubFile'); if (f) f.value = '';
-    var t = $('pubTitulo'); if (t) t.value = '';
-    var e = $('pubEnlace'); if (e) e.value = '';
+    var f = $('ctlCampo'); if (f) f.value = '';
+    var t = $('ctlTitulo'); if (t) t.value = '';
+    var e = $('ctlEnlace'); if (e) e.value = '';
   }
 
   /* ── Subir ───────────────────────────────────────────────── */
@@ -116,7 +116,7 @@
     if (!c) { avisar('error', 'Sin conexión', 'No se pudo hablar con la base de datos.'); return; }
     if (!elegido) { avisar('warning', 'Falta la imagen', 'Elige primero la imagen que quieres subir.'); return; }
 
-    var enlace = ($('pubEnlace') && $('pubEnlace').value || '').trim();
+    var enlace = ($('ctlEnlace') && $('ctlEnlace').value || '').trim();
     /* Un enlace que no sea http(s) no se acepta: `javascript:` dentro de
        un cartel que ven todos los clientes es una puerta abierta. */
     if (enlace && !/^https?:\/\//i.test(enlace)) {
@@ -124,7 +124,7 @@
       return;
     }
 
-    var btn = $('pubSubirBtn');
+    var btn = $('ctlSubirBtn');
     trabajando = true;
     if (btn) { btn.disabled = true; btn.dataset.txt = btn.textContent; btn.textContent = 'Subiendo…'; }
 
@@ -150,8 +150,8 @@
         ? Math.max.apply(null, filas.map(function (f) { return f.orden || 0; })) + 1
         : 0;
 
-      var ins = await c.from('publicidad').insert({
-        titulo: ($('pubTitulo') && $('pubTitulo').value || '').trim(),
+      var ins = await c.from('carteles').insert({
+        titulo: ($('ctlTitulo') && $('ctlTitulo').value || '').trim(),
         imagen_url: url,
         imagen_path: ruta,
         enlace: enlace || null,
@@ -170,7 +170,7 @@
       avisar('success', 'Imagen subida', 'Enciéndela abajo cuando quieras que la vean.');
       await cargar();
     } catch (e) {
-      console.error('[publicidad] no se pudo subir:', e);
+      console.error('[carteles] no se pudo subir:', e);
       avisar('error', 'No se pudo subir', (e && e.message) || 'Inténtalo otra vez.');
     } finally {
       trabajando = false;
@@ -181,8 +181,8 @@
   /* ── La lista ────────────────────────────────────────────── */
 
   function pintar() {
-    var lista = $('pubLista');
-    var vacio = $('pubVacio');
+    var lista = $('ctlLista');
+    var vacio = $('ctlVacio');
     if (!lista) return;
 
     if (!filas.length) {
@@ -194,18 +194,18 @@
 
     lista.innerHTML = filas.map(function (f, i) {
       var enlace = f.enlace
-        ? '<a class="pub-fila-enlace" href="' + esc(f.enlace) + '" target="_blank" rel="noopener noreferrer">' + esc(f.enlace) + '</a>'
-        : '<span class="pub-fila-enlace pub-sin">Sin enlace</span>';
+        ? '<a class="cartel-fila-enlace" href="' + esc(f.enlace) + '" target="_blank" rel="noopener noreferrer">' + esc(f.enlace) + '</a>'
+        : '<span class="cartel-fila-enlace cartel-sin">Sin enlace</span>';
       return '' +
-      '<article class="pub-fila' + (f.activa ? ' esta-encendida' : '') + '" data-id="' + esc(f.id) + '">' +
-        '<img class="pub-fila-img" src="' + esc(f.imagen_url) + '" alt="">' +
-        '<div class="pub-fila-txt">' +
+      '<article class="cartel-fila' + (f.activa ? ' esta-encendida' : '') + '" data-id="' + esc(f.id) + '">' +
+        '<img class="cartel-fila-img" src="' + esc(f.imagen_url) + '" alt="">' +
+        '<div class="cartel-fila-txt">' +
           '<strong>' + esc(f.titulo || 'Sin nombre') + '</strong>' +
           enlace +
-          '<span class="pub-fila-meta">' + (f.activa ? 'Encendida' : 'Apagada') +
+          '<span class="cartel-fila-meta">' + (f.activa ? 'Encendida' : 'Apagada') +
             ' · subida el ' + esc(fecha(f.created_at)) + '</span>' +
         '</div>' +
-        '<div class="pub-fila-btns">' +
+        '<div class="cartel-fila-btns">' +
           '<button type="button" class="btn btn-sm ' + (f.activa ? 'btn-outline' : 'btn-primary') +
             '" data-accion="alternar">' + (f.activa ? 'Apagar' : 'Encender') + '</button>' +
           '<button type="button" class="btn btn-sm btn-outline" data-accion="subir"' +
@@ -221,12 +221,12 @@
   async function cargar() {
     var c = sb();
     if (!c) return;
-    var res = await c.from('publicidad').select('*')
+    var res = await c.from('carteles').select('*')
       .order('orden', { ascending: true })
       .order('created_at', { ascending: true });
     if (res.error) {
-      console.error('[publicidad] no se pudo leer la lista:', res.error);
-      avisar('error', 'No se pudo cargar', 'Revisa que la migración de publicidad esté aplicada.');
+      console.error('[carteles] no se pudo leer la lista:', res.error);
+      avisar('error', 'No se pudo cargar', 'Revisa que la migración de los carteles esté aplicada.');
       return;
     }
     filas = res.data || [];
@@ -237,7 +237,7 @@
 
   async function alternar(f) {
     var c = sb();
-    var res = await c.from('publicidad').update({ activa: !f.activa }).eq('id', f.id);
+    var res = await c.from('carteles').update({ activa: !f.activa }).eq('id', f.id);
     if (res.error) {
       avisar('error', 'No se pudo cambiar', res.error.message || '');
       return;
@@ -259,11 +259,11 @@
     var mio = f.orden, suyo = otra.orden;
     if (mio === suyo) { suyo = mio + delta; }
 
-    var a = await c.from('publicidad').update({ orden: suyo }).eq('id', f.id);
+    var a = await c.from('carteles').update({ orden: suyo }).eq('id', f.id);
     if (a.error) { avisar('error', 'No se pudo mover', a.error.message || ''); return; }
-    var b = await c.from('publicidad').update({ orden: mio }).eq('id', otra.id);
+    var b = await c.from('carteles').update({ orden: mio }).eq('id', otra.id);
     if (b.error) {
-      await c.from('publicidad').update({ orden: mio }).eq('id', f.id);
+      await c.from('carteles').update({ orden: mio }).eq('id', f.id);
       avisar('error', 'No se pudo mover', b.error.message || '');
       return;
     }
@@ -285,13 +285,13 @@
     if (!seguro) return;
 
     var c = sb();
-    var res = await c.from('publicidad').delete().eq('id', f.id);
+    var res = await c.from('carteles').delete().eq('id', f.id);
     if (res.error) { avisar('error', 'No se pudo borrar', res.error.message || ''); return; }
     /* El archivo se borra DESPUÉS de la fila: si esto falla, lo que
        queda es un archivo suelto que ya no ve nadie, y no una fila que
        apunta a una imagen borrada. */
     if (f.imagen_path) {
-      try { await c.storage.from('publicidad').remove([f.imagen_path]); } catch (_) {}
+      try { await c.storage.from('carteles').remove([f.imagen_path]); } catch (_) {}
     }
     avisar('success', 'Imagen borrada', 'Ya no se ve en la aplicación.');
     await cargar();
@@ -305,8 +305,8 @@
     if (conectado) return;
     conectado = true;
 
-    var zona = $('pubDropzone');
-    var file = $('pubFile');
+    var zona = $('ctlZona');
+    var file = $('ctlCampo');
 
     if (zona && file) {
       /* Aqui ya NO se abre el explorador por codigo ni se intercepta el
@@ -331,16 +331,16 @@
       });
     }
 
-    var subirBtn = $('pubSubirBtn');
+    var subirBtn = $('ctlSubirBtn');
     if (subirBtn) subirBtn.addEventListener('click', subir);
-    var limpiarBtn = $('pubLimpiarBtn');
+    var limpiarBtn = $('ctlLimpiarBtn');
     if (limpiarBtn) limpiarBtn.addEventListener('click', limpiarFormulario);
 
-    var lista = $('pubLista');
+    var lista = $('ctlLista');
     if (lista) lista.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-accion]');
       if (!btn) return;
-      var art = btn.closest('.pub-fila');
+      var art = btn.closest('.cartel-fila');
       if (!art) return;
       var f = filas.filter(function (x) { return x.id === art.dataset.id; })[0];
       if (!f) return;
@@ -351,7 +351,7 @@
     });
   }
 
-  A.renderPublicidad = function () {
+  A.renderCarteles = function () {
     conectar();
     cargar();
   };

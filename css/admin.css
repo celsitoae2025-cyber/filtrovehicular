@@ -1522,18 +1522,18 @@ button.kpi.kpi-clickable:focus-visible {
    sección más del panel, no una isla con su propio estilo.
 ============================================================ */
 
-.pub-grid {
+.cartel-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
 @media (max-width: 980px) {
-  .pub-grid { grid-template-columns: 1fr; }
+  .cartel-grid { grid-template-columns: 1fr; }
 }
 
 /* La caja donde se suelta o se elige la imagen. El borde discontinuo
    dice «aquí se arrastra» sin necesidad de explicarlo. */
-.pub-dropzone {
+.cartel-dropzone {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1547,15 +1547,15 @@ button.kpi.kpi-clickable:focus-visible {
   cursor: pointer;
   overflow: hidden;
 }
-.pub-dropzone.esta-encima,
-.pub-dropzone:focus-visible {
+.cartel-dropzone.esta-encima,
+.cartel-dropzone:focus-visible {
   border-color: var(--c-accent);
   outline: none;
 }
 /* El campo de archivo, invisible pero VIVO, cubriendo la zona entera:
    es el que recibe el clic y el que recibe la imagen soltada. Va por
    encima del dibujo y del texto, que no reciben nada (pointer-events). */
-.pub-file {
+.cartel-file {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1564,10 +1564,10 @@ button.kpi.kpi-clickable:focus-visible {
   opacity: 0;
   cursor: pointer;
 }
-.pub-dropzone-vacio,
-.pub-dropzone-previa { pointer-events: none; }
+.cartel-dropzone-vacio,
+.cartel-dropzone-previa { pointer-events: none; }
 
-.pub-dropzone-vacio {
+.cartel-dropzone-vacio {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1576,10 +1576,10 @@ button.kpi.kpi-clickable:focus-visible {
   text-align: center;
   padding: 0 16px;
 }
-.pub-dropzone-vacio svg { width: 26px; height: 26px; }
-.pub-dropzone-vacio strong { font-size: 15px; color: var(--c-text); }
-.pub-dropzone-vacio span { font-size: 13px; }
-.pub-dropzone-previa {
+.cartel-dropzone-vacio svg { width: 26px; height: 26px; }
+.cartel-dropzone-vacio strong { font-size: 15px; color: var(--c-text); }
+.cartel-dropzone-vacio span { font-size: 13px; }
+.cartel-dropzone-previa {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1587,30 +1587,30 @@ button.kpi.kpi-clickable:focus-visible {
   object-fit: contain;
 }
 
-.pub-archivo {
+.cartel-archivo {
   margin: 0 0 10px;
   font-size: 13px;
   color: var(--c-muted);
 }
 
-.pub-acciones {
+.cartel-acciones {
   display: flex;
   gap: 10px;
   margin-top: 16px;
 }
-.pub-nota {
+.cartel-nota {
   margin: 10px 0 0;
   font-size: 13px;
   color: var(--c-muted);
 }
 
 /* La lista de lo que ya está subido. */
-.pub-lista {
+.cartel-lista {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.pub-fila {
+.cartel-fila {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1619,8 +1619,8 @@ button.kpi.kpi-clickable:focus-visible {
   border-radius: 12px;
   background: var(--c-surface);
 }
-.pub-fila.esta-encendida { border-color: var(--c-accent); }
-.pub-fila-img {
+.cartel-fila.esta-encendida { border-color: var(--c-accent); }
+.cartel-fila-img {
   width: 96px;
   height: 54px;
   flex-shrink: 0;
@@ -1628,15 +1628,15 @@ button.kpi.kpi-clickable:focus-visible {
   border-radius: 8px;
   background: var(--c-bg);
 }
-.pub-fila-txt {
+.cartel-fila-txt {
   display: flex;
   flex-direction: column;
   gap: 2px;
   flex: 1;
   min-width: 0;
 }
-.pub-fila-txt strong { font-size: 15px; }
-.pub-fila-enlace {
+.cartel-fila-txt strong { font-size: 15px; }
+.cartel-fila-enlace {
   font-size: 13px;
   color: var(--c-muted);
   text-decoration: none;
@@ -1644,15 +1644,15 @@ button.kpi.kpi-clickable:focus-visible {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-a.pub-fila-enlace:hover { text-decoration: underline; }
-.pub-fila-meta { font-size: 13px; color: var(--c-muted); }
-.pub-fila-btns {
+a.cartel-fila-enlace:hover { text-decoration: underline; }
+.cartel-fila-meta { font-size: 13px; color: var(--c-muted); }
+.cartel-fila-btns {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
 }
 @media (max-width: 620px) {
-  .pub-fila { flex-wrap: wrap; }
-  .pub-fila-btns { width: 100%; justify-content: flex-end; }
+  .cartel-fila { flex-wrap: wrap; }
+  .cartel-fila-btns { width: 100%; justify-content: flex-end; }
 }

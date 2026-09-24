@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="css/components.css?v=13">
 <link rel="stylesheet" href="css/overlays.css?v=11">
 <link rel="stylesheet" href="css/plans-catalog.css">
-<link rel="stylesheet" href="css/admin.css?v=13">
+<link rel="stylesheet" href="css/admin.css?v=14">
 <link rel="stylesheet" href="css/maintenance.css?v=12">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
 <link rel="stylesheet" href="css/estructura.css?v=20">
@@ -118,7 +118,7 @@
         Anuncios
       </button>
 
-      <button class="admin-link" data-admin-view="publicidad">
+      <button class="admin-link" data-admin-view="carteles">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m4 16 4.5-4.5 3 3L15 11l5 5"/></svg>
         Publicidad
       </button>
@@ -1161,8 +1161,8 @@
 
       <!-- CONFIGURACIÃ“N -->
       <!-- PUBLICIDAD (imagenes que ven todos los clientes) -->
-      <section class="admin-view" id="adminView-publicidad" hidden>
-        <div class="pub-grid">
+      <section class="admin-view" id="adminView-carteles" hidden>
+        <div class="cartel-grid">
 
           <!-- Subir una imagen -->
           <div class="bc-card">
@@ -1178,35 +1178,35 @@
                  medio no hay nada que pueda fallar ni quedarse en cache:
                  antes se abria el explorador por codigo y el clic rebotaba
                  entre la zona y el campo sin llegar a abrirlo nunca. -->
-            <label class="pub-dropzone" id="pubDropzone">
-              <input type="file" id="pubFile" class="pub-file"
+            <label class="cartel-dropzone" id="ctlZona">
+              <input type="file" id="ctlCampo" class="cartel-file"
                      accept="image/png,image/jpeg,image/webp,image/gif"
                      aria-label="Elegir la imagen publicitaria">
-              <div class="pub-dropzone-vacio" id="pubDropVacio">
+              <div class="cartel-dropzone-vacio" id="ctlZonaVacio">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"/><polyline points="7.5 8.5 12 4 16.5 8.5"/><path d="M4 16.5v2.1A1.9 1.9 0 0 0 5.9 20.5h12.2a1.9 1.9 0 0 0 1.9-1.9v-2.1"/></svg>
                 <strong>Elige la imagen</strong>
                 <span>o arrástrala hasta aquí</span>
               </div>
-              <img class="pub-dropzone-previa" id="pubPrevia" alt="" hidden>
+              <img class="cartel-dropzone-previa" id="ctlPrevia" alt="" hidden>
             </label>
-            <p class="pub-archivo" id="pubArchivo" hidden></p>
+            <p class="cartel-archivo" id="ctlArchivo" hidden></p>
 
             <div class="form-field">
-              <label for="pubTitulo">Nombre (solo lo ves tú)</label>
-              <input type="text" id="pubTitulo" class="input" maxlength="80" placeholder="Promoción de septiembre">
+              <label for="ctlTitulo">Nombre (solo lo ves tú)</label>
+              <input type="text" id="ctlTitulo" class="input" maxlength="80" placeholder="Promoción de septiembre">
             </div>
 
             <div class="form-field">
-              <label for="pubEnlace">Enlace al tocarla (opcional)</label>
-              <input type="url" id="pubEnlace" class="input" maxlength="300" placeholder="https://...">
+              <label for="ctlEnlace">Enlace al tocarla (opcional)</label>
+              <input type="url" id="ctlEnlace" class="input" maxlength="300" placeholder="https://...">
               <div class="field-hint">Si lo dejas vacío, la imagen no lleva a ninguna parte.</div>
             </div>
 
-            <div class="pub-acciones">
-              <button type="button" class="btn btn-primary" id="pubSubirBtn">Subir imagen</button>
-              <button type="button" class="btn btn-outline" id="pubLimpiarBtn">Limpiar</button>
+            <div class="cartel-acciones">
+              <button type="button" class="btn btn-primary" id="ctlSubirBtn">Subir imagen</button>
+              <button type="button" class="btn btn-outline" id="ctlLimpiarBtn">Limpiar</button>
             </div>
-            <p class="pub-nota">Subirla no la publica: entra apagada y la enciendes al lado cuando quieras que se vea.</p>
+            <p class="cartel-nota">Subirla no la publica: entra apagada y la enciendes al lado cuando quieras que se vea.</p>
           </div>
 
           <!-- Las que ya estan -->
@@ -1215,8 +1215,8 @@
               <h3>Imágenes publicitarias</h3>
               <p class="bc-help">Las encendidas se ven ahora mismo en la aplicación, en el orden en que están aquí.</p>
             </header>
-            <div class="pub-lista" id="pubLista"></div>
-            <div class="admin-empty" id="pubVacio" hidden>Todavía no has subido ninguna imagen.</div>
+            <div class="cartel-lista" id="ctlLista"></div>
+            <div class="admin-empty" id="ctlVacio" hidden>Todavía no has subido ninguna imagen.</div>
           </div>
 
         </div>
@@ -1507,9 +1507,9 @@
 <script src="js/admin/settings.js?v=22"></script>
 <script src="js/admin/maintenance.js?v=3"></script>
 <script src="js/admin/aviso-clientes.js?v=14"></script>
-<script src="js/admin/publicidad.js?v=3"></script>
+<script src="js/admin/carteles.js?v=1"></script>
 <script src="js/modules/idle-logout.js?v=2"></script>
-<script src="js/admin/main.js?v=26"></script>
+<script src="js/admin/main.js?v=27"></script>
 
 </body>
 </html>

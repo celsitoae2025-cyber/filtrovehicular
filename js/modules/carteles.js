@@ -1,8 +1,8 @@
 /* ============================================================
    EL CARTEL PUBLICITARIO — lo que ve el cliente
 
-   Lee de `public.publicidad` las imágenes ENCENDIDAS y las pinta en
-   cada hueco marcado con `data-publicidad` del documento. Hoy hay dos
+   Lee de `public.carteles` las imágenes ENCENDIDAS y las pinta en
+   cada hueco marcado con `data-cartel` del documento. Hoy hay dos
    huecos —la pantalla principal y la lista de consultas del teléfono—,
    y para añadir un tercero basta con poner el atributo en el HTML: aquí
    no hay que tocar nada.
@@ -51,7 +51,7 @@
     var laminasHtml = lista.map(function (p, i) {
       var url = enlaceSeguro(p.enlace);
       var alt = esc(p.titulo || 'Publicidad');
-      var clases = 'pub-lamina' + (i === 0 ? ' esta-visible' : '') + (url ? ' tiene-enlace' : '');
+      var clases = 'cartel-lamina' + (i === 0 ? ' esta-visible' : '') + (url ? ' tiene-enlace' : '');
       var img = '<img src="' + esc(p.imagen_url) + '" alt="' + alt + '" loading="lazy">';
       if (url) {
         return '<a class="' + clases + '" href="' + esc(url) + '" target="_blank" ' +
@@ -61,13 +61,13 @@
     }).join('');
 
     var puntos = lista.length > 1
-      ? '<div class="pub-puntos">' + lista.map(function (p, i) {
-          return '<button class="pub-punto' + (i === 0 ? ' esta-activo' : '') + '" type="button" ' +
+      ? '<div class="cartel-puntos">' + lista.map(function (p, i) {
+          return '<button class="cartel-punto' + (i === 0 ? ' esta-activo' : '') + '" type="button" ' +
             'data-i="' + i + '" aria-label="Ver la imagen ' + (i + 1) + '"></button>';
         }).join('') + '</div>'
       : '';
 
-    return '<div class="pub-marco">' + laminasHtml + '</div>' + puntos;
+    return '<div class="cartel-marco">' + laminasHtml + '</div>' + puntos;
   }
 
   function mostrar(cartel, i) {
@@ -90,21 +90,21 @@
 
   function pintar() {
     carteles = [];
-    var huecos = document.querySelectorAll('[data-publicidad]');
+    var huecos = document.querySelectorAll('[data-cartel]');
     Array.prototype.forEach.call(huecos, function (hueco) {
       if (!laminas.length) {
         hueco.innerHTML = '';
         hueco.hidden = true;
         return;
       }
-      hueco.className = 'pub-cartel';
+      hueco.className = 'cartel-caja';
       hueco.innerHTML = html(laminas);
       hueco.hidden = false;
 
       var cartel = {
         raiz: hueco,
-        laminas: Array.prototype.slice.call(hueco.querySelectorAll('.pub-lamina')),
-        puntos: Array.prototype.slice.call(hueco.querySelectorAll('.pub-punto')),
+        laminas: Array.prototype.slice.call(hueco.querySelectorAll('.cartel-lamina')),
+        puntos: Array.prototype.slice.call(hueco.querySelectorAll('.cartel-punto')),
         i: 0
       };
       cartel.puntos.forEach(function (p) {
@@ -121,7 +121,7 @@
     var c = sb();
     if (!c) return;
     try {
-      var res = await c.from('publicidad')
+      var res = await c.from('carteles')
         .select('id, titulo, imagen_url, enlace, orden')
         .eq('activa', true)
         .order('orden', { ascending: true })
@@ -132,12 +132,12 @@
     } catch (e) {
       /* Sin ruido para el cliente: un cartel que no carga no es un
          problema suyo. Queda en la consola para quien lo mire. */
-      console.warn('[publicidad] no se pudo cargar:', e && e.message);
+      console.warn('[carteles] no se pudo cargar:', e && e.message);
     }
   }
 
   function arrancar() {
-    if (!document.querySelector('[data-publicidad]')) return;
+    if (!document.querySelector('[data-cartel]')) return;
     cargar();
     /* Al volver a la pestaña se vuelve a preguntar: si el dueño encendió
        o apagó una imagen mientras tanto, el cliente la ve sin recargar. */
@@ -146,7 +146,7 @@
     });
   }
 
-  Consultia.recargarPublicidad = cargar;
+  Consultia.recargarCarteles = cargar;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', arrancar);
