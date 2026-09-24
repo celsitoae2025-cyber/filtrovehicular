@@ -513,7 +513,11 @@ a.card:hover,
 .pay-kard-cta,
 .plan-cta,
 .saldo-cta,
-[class$="-cta"] {
+/* :not(.anon-cta): la tarjeta de bienvenida del Dashboard se llama
+   «anon-cta» y es una SECCION entera, no un boton. Este selector le
+   ponia display:flex !important y la sacaba tambien a quien ya habia
+   iniciado sesion, pisando el `display: none` de views.css. */
+[class$="-cta"]:not(.anon-cta) {
   min-height: 52px !important;
   border-radius: 12px !important;
   font-size: 15px !important;
