@@ -1539,7 +1539,10 @@ button.kpi.kpi-clickable:focus-visible {
   justify-content: center;
   position: relative;
   width: 100%;
-  aspect-ratio: 1200 / 450;
+  /* 4:3 deja ver bien una imagen cuadrada o vertical sin que la zona
+     ocupe media pantalla del panel. */
+  aspect-ratio: 4 / 3;
+  max-height: 340px;
   margin-bottom: 10px;
   border: 1px dashed var(--c-border);
   border-radius: 12px;

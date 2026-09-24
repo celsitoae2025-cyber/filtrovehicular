@@ -96,7 +96,7 @@
 <link rel="stylesheet" href="css/features.css?v=8">
 <link rel="stylesheet" href="css/mobile.css?v=8">
 <link rel="stylesheet" href="css/app-movil.css?v=4">
-<link rel="stylesheet" href="css/carteles.css?v=1">
+<link rel="stylesheet" href="css/carteles.css?v=2">
 <link rel="stylesheet" href="css/motion.css?v=4">
 <!-- La pantalla de inicio va la ultima: reordena la caja de busqueda y
      tiene que ganar a polish.css y mobile.css, que tocan .form-row. -->
@@ -1147,7 +1147,6 @@
             <button class="mov-buscar-limpiar" id="movBuscarLimpiar" type="button" aria-label="Borrar la busqueda"></button>
           </div>
         </div>
-        <div data-cartel hidden></div>
         <div class="mov-lista" id="movLista"></div>
       </section>
 
@@ -1210,9 +1209,6 @@
         </div>
         </section>
 
-        <!-- Publicidad: lo que el administrador suba se pinta aqui. Si no
-             hay nada encendido, el hueco queda oculto y no ocupa. -->
-        <div data-cartel hidden></div>
 
         <!-- Resultado de la consulta (aparece aquí al hacer click en Consultar) -->
         <section class="panel result-panel" id="filter-result" hidden>
@@ -2241,8 +2237,8 @@
 <script src="js/main.js?v=4"></script>
 <!-- La barra de destinos y la pantalla de consultas del telefono. -->
 <script src="js/modules/app-movil.js?v=3"></script>
-<!-- El cartel publicitario que sube el administrador. -->
-<script src="js/modules/carteles.js?v=1"></script>
+<!-- La ventana flotante con las imagenes que enciende el administrador. -->
+<script src="js/modules/carteles.js?v=2"></script>
 <!-- Modo mantenimiento: aviso global controlado desde el panel admin -->
 <script src="js/modules/maintenance.js?v=6"></script>
 <script src="js/modules/aviso-clientes.js?v=8"></script>
