@@ -305,12 +305,28 @@
     var file = $('pubFile');
 
     if (zona && file) {
-      zona.addEventListener('click', function () { file.click(); });
+      /* El campo de archivo esta fuera de la zona (ver admin.html). Aun
+         asi se comprueba el origen del clic: si alguien lo volviera a
+         meter dentro, esto evita que la zona lo reabra en bucle. */
+      zona.addEventListener('click', function (e) {
+        if (e.target === file) return;
+        file.click();
+      });
+      file.addEventListener('click', function (e) { e.stopPropagation(); });
       zona.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); }
       });
-      zona.addEventListener('dragover', function (e) {
+      /* Para poder soltar hay que decir que NO en los dos eventos:
+         `dragenter` y `dragover`. Con uno solo, el navegador se queda
+         con su comportamiento de siempre —abrir la imagen en la
+         pestana— y el archivo no llega nunca a la zona. */
+      zona.addEventListener('dragenter', function (e) {
         e.preventDefault(); zona.classList.add('esta-encima');
+      });
+      zona.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+        zona.classList.add('esta-encima');
       });
       zona.addEventListener('dragleave', function () { zona.classList.remove('esta-encima'); });
       zona.addEventListener('drop', function (e) {

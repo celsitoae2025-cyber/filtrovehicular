@@ -1171,8 +1171,12 @@
               <p class="bc-help">La imagen aparece dentro de la aplicacion de todos los clientes, en computadora y en telefono. Sube apaisado, 1200 x 450 px, en PNG, JPG o WEBP, hasta 5 MB.</p>
             </header>
 
+            <!-- El campo de archivo va FUERA de la zona a proposito: dentro,
+                 el clic que abre el explorador volvia a subir hasta la zona
+                 y esta lo abria otra vez, en bucle, y el explorador no
+                 llegaba a abrirse nunca. -->
+            <input type="file" id="pubFile" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
             <div class="pub-dropzone" id="pubDropzone" tabindex="0" role="button" aria-label="Elegir la imagen">
-              <input type="file" id="pubFile" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
               <div class="pub-dropzone-vacio" id="pubDropVacio">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"/><polyline points="7.5 8.5 12 4 16.5 8.5"/><path d="M4 16.5v2.1A1.9 1.9 0 0 0 5.9 20.5h12.2a1.9 1.9 0 0 0 1.9-1.9v-2.1"/></svg>
                 <strong>Elige la imagen</strong>
@@ -1498,7 +1502,7 @@
 <script src="js/admin/settings.js?v=22"></script>
 <script src="js/admin/maintenance.js?v=3"></script>
 <script src="js/admin/aviso-clientes.js?v=14"></script>
-<script src="js/admin/publicidad.js?v=1"></script>
+<script src="js/admin/publicidad.js?v=2"></script>
 <script src="js/modules/idle-logout.js?v=2"></script>
 <script src="js/admin/main.js?v=26"></script>
 
