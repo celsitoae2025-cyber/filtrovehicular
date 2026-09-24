@@ -1,0 +1,93 @@
+/* ============================================================
+   EL CARTEL PUBLICITARIO
+
+   Lo que el dueño sube desde el panel y ven todos los clientes, en
+   computadora y en teléfono. Es la MISMA pieza en los dos sitios: no
+   hay una versión de escritorio y otra de móvil, solo una caja que se
+   estrecha.
+
+   La imagen va con `object-fit: contain` y no `cover`: un cartel
+   recortado puede perder justo el texto que importa. Se recomienda
+   subirlo a 1200x450 px, que es la proporción de la caja, y así no
+   sobra ni falta nada.
+
+   Sin sombras y sin franjas de color, como todo lo demás.
+============================================================ */
+
+.pub-cartel {
+  position: relative;
+  margin: 0 0 var(--gutter, 15px);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  background: var(--c-surface);
+  overflow: hidden;
+}
+
+/* La caja manda la proporción: así el cartel no salta de alto al
+   cambiar de imagen ni empuja el contenido al cargar. */
+.pub-marco {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1200 / 450;
+  background: var(--c-bg);
+}
+
+.pub-lamina {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .35s ease;
+}
+.pub-lamina.esta-visible {
+  opacity: 1;
+  visibility: visible;
+}
+/* Con enlace es un botón de verdad: se nota al pasar y al tocar. */
+.pub-lamina.tiene-enlace { cursor: pointer; }
+
+.pub-lamina img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Los puntos solo aparecen si hay más de una imagen; los pinta el
+   módulo. Van dentro del cartel, abajo y centrados. */
+.pub-puntos {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+.pub-punto {
+  width: 22px;
+  height: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: rgba(20, 29, 28, .28);
+  cursor: pointer;
+}
+.pub-punto.esta-activo { background: var(--c-accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pub-lamina { transition: none; }
+}
+
+/* En el teléfono el cartel ocupa el ancho entero de la columna y los
+   puntos se hacen un poco más grandes, que se tocan con el dedo. */
+@media (max-width: 768px) {
+  .pub-cartel { border-radius: 10px; }
+  .pub-punto { width: 26px; height: 5px; }
+}

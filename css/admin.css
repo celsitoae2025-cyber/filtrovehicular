@@ -1514,3 +1514,130 @@ button.kpi.kpi-clickable:focus-visible {
   .admin-login { padding: 16px; }
   .admin-login-card { padding: 28px 20px 22px; }
 }
+
+/* ============================================================
+   PUBLICIDAD — la zona donde se suben las imágenes
+
+   Misma piel que los anuncios (bc-card, input, btn): esto es una
+   sección más del panel, no una isla con su propio estilo.
+============================================================ */
+
+.pub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 980px) {
+  .pub-grid { grid-template-columns: 1fr; }
+}
+
+/* La caja donde se suelta o se elige la imagen. El borde discontinuo
+   dice «aquí se arrastra» sin necesidad de explicarlo. */
+.pub-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1200 / 450;
+  margin-bottom: 10px;
+  border: 1px dashed var(--c-border);
+  border-radius: 12px;
+  background: var(--c-bg);
+  cursor: pointer;
+  overflow: hidden;
+}
+.pub-dropzone.esta-encima,
+.pub-dropzone:focus-visible {
+  border-color: var(--c-accent);
+  outline: none;
+}
+.pub-dropzone-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--c-muted);
+  text-align: center;
+  padding: 0 16px;
+}
+.pub-dropzone-vacio svg { width: 26px; height: 26px; }
+.pub-dropzone-vacio strong { font-size: 15px; color: var(--c-text); }
+.pub-dropzone-vacio span { font-size: 13px; }
+.pub-dropzone-previa {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pub-archivo {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--c-muted);
+}
+
+.pub-acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.pub-nota {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--c-muted);
+}
+
+/* La lista de lo que ya está subido. */
+.pub-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pub-fila {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  background: var(--c-surface);
+}
+.pub-fila.esta-encendida { border-color: var(--c-accent); }
+.pub-fila-img {
+  width: 96px;
+  height: 54px;
+  flex-shrink: 0;
+  object-fit: contain;
+  border-radius: 8px;
+  background: var(--c-bg);
+}
+.pub-fila-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.pub-fila-txt strong { font-size: 15px; }
+.pub-fila-enlace {
+  font-size: 13px;
+  color: var(--c-muted);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+a.pub-fila-enlace:hover { text-decoration: underline; }
+.pub-fila-meta { font-size: 13px; color: var(--c-muted); }
+.pub-fila-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+@media (max-width: 620px) {
+  .pub-fila { flex-wrap: wrap; }
+  .pub-fila-btns { width: 100%; justify-content: flex-end; }
+}

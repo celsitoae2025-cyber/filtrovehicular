@@ -15,6 +15,7 @@
     compras:     'Compras',
     consultas:   'Consultas',
     anuncios:    'Anuncios',
+    publicidad:  'Publicidad',
     mercadopago: 'Mercado Pago',
     webhooks:    'Webhooks',
     team:        'Equipo',
@@ -45,6 +46,7 @@
     if (viewKey === 'compras'     && A.renderCompras)     A.renderCompras();
     if (viewKey === 'consultas'   && A.renderConsultas)   A.renderConsultas();
     if (viewKey === 'anuncios'    && A.renderBroadcasts)  A.renderBroadcasts();
+    if (viewKey === 'publicidad'  && A.renderPublicidad)  A.renderPublicidad();
     if (viewKey === 'mercadopago' && A.renderMercadoPago) A.renderMercadoPago();
     if (viewKey === 'webhooks'    && A.renderWebhooks)    A.renderWebhooks();
     if (viewKey === 'team'        && A.renderTeam)        A.renderTeam();
