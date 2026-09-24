@@ -29,6 +29,8 @@
 <link rel="stylesheet" href="css/polish.css?v=9">
 <link rel="stylesheet" href="css/combo.css?v=3">
 <link rel="stylesheet" href="css/botones.css?v=3">
+<!-- El aviso de mantenimiento: el mismo de app.html -->
+<link rel="stylesheet" href="css/maintenance.css?v=12">
 <link rel="stylesheet" href="css/nueva.css?v=9">
 </head>
 <body class="nv-body">
@@ -312,5 +314,10 @@
 <script src="js/modules/combo-buscador.js?v=5"></script>
 
 <script src="js/nueva/pantallas.js?v=6"></script>
+<!-- Modo mantenimiento: el MISMO módulo que en app.html. Sin él, esta
+     página seguía dejando consultar con el mantenimiento encendido. Al
+     administrador con sesión no lo bloquea (le pone una cinta); sin sesión
+     entra por admin.html, como en la app de siempre. -->
+<script src="js/modules/maintenance.js?v=6"></script>
 </body>
 </html>
