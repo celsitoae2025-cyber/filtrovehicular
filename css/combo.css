@@ -179,3 +179,28 @@
   max-height: min(70vh, 540px) !important;
   max-height: min(72dvh, 540px) !important;
 }
+
+/* ============================================================
+   LAS CABECERAS DE GRUPO
+
+   Desde que el desplegable trae TODAS las consultas —no solo las de
+   la pestaña—, las opciones vienen agrupadas por categoría y cada
+   grupo se anuncia con su nombre. La cabecera no se puede pulsar: es
+   un rótulo, no una opción, y por eso va en gris, en mayúsculas y más
+   pequeña que las consultas que tiene debajo.
+============================================================ */
+.combo-panel .combo-grupo {
+  padding: 12px 14px 4px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  cursor: default;
+  user-select: none;
+}
+/* El primero no necesita aire arriba: ya lo pone la lista. */
+.cbx-list > .combo-grupo:first-child { padding-top: 2px; }
+/* Una consulta pegada a su cabecera no lleva la separación de 2px que
+   sí hay entre consultas: el rótulo ya las separa. */
+.combo-panel .combo-grupo + .combo-option { margin-top: 0; }

@@ -61,14 +61,22 @@
   function montar(panel) {
     if (!panel || panel.querySelector(':scope > .cbx-head')) return;
 
+    /* Tambien se mueven las cabeceras de grupo (.combo-grupo): desde
+       que el desplegable trae TODO el catalogo, las opciones vienen
+       agrupadas por categoria. Si se quedaran fuera de la lista, los
+       nueve titulos se apilarian arriba y las consultas debajo, sueltas
+       y sin saber de quien es cada una. */
     var sueltas = [];
+    var hayOpciones = false;
     for (var i = 0; i < panel.children.length; i++) {
       var n = panel.children[i];
-      if (n.classList && (n.classList.contains('combo-option') || n.classList.contains('combo-empty'))) {
+      if (!n.classList) continue;
+      if (n.classList.contains('combo-option')) { hayOpciones = true; sueltas.push(n); }
+      else if (n.classList.contains('combo-empty') || n.classList.contains('combo-grupo')) {
         sueltas.push(n);
       }
     }
-    if (!sueltas.length) return;
+    if (!sueltas.length || !hayOpciones) return;
 
     var lista = document.createElement('div');
     lista.className = 'cbx-list';
@@ -87,15 +95,39 @@
     var input = panel.querySelector('.cbx-input');
     var borrar = panel.querySelector('.cbx-clear');
 
+    /* Un solo recorrido de la lista, de arriba abajo, porque el orden
+       es justo lo que hace falta: cada opcion pertenece a la ultima
+       cabecera que se vio.
+
+       Escribir el nombre de un grupo —«reniec», «justicia»— ensena el
+       grupo ENTERO. Buscar por la categoria es lo natural cuando la
+       lista las trae todas, y si solo casara el nombre de la consulta,
+       teclear «reniec» dejaria fuera seis de las siete que hay bajo ese
+       rotulo. Una cabecera sin nada vivo debajo se apaga. */
     function filtrar() {
       var q = llano(input.value.trim());
       var vistas = 0;
-      lista.querySelectorAll('.combo-option').forEach(function (o) {
-        var ok = !q || llano(o.textContent).indexOf(q) !== -1;
-        o.hidden = !ok;
-        o.classList.remove('is-activa');
-        if (ok) vistas++;
+      var cabecera = null;
+      var vivas = 0;
+      var grupoCasa = false;
+
+      Array.prototype.forEach.call(lista.children, function (n) {
+        if (!n.classList) return;
+        if (n.classList.contains('combo-grupo')) {
+          if (cabecera) cabecera.hidden = vivas === 0;
+          cabecera = n;
+          vivas = 0;
+          grupoCasa = !!q && llano(n.textContent).indexOf(q) !== -1;
+          return;
+        }
+        if (!n.classList.contains('combo-option')) return;
+        var ok = !q || grupoCasa || llano(n.textContent).indexOf(q) !== -1;
+        n.hidden = !ok;
+        n.classList.remove('is-activa');
+        if (ok) { vistas++; vivas++; }
       });
+      if (cabecera) cabecera.hidden = vivas === 0;
+
       vacio.hidden = vistas > 0;
       borrar.hidden = !input.value;
       lista.scrollTop = 0;

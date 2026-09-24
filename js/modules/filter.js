@@ -454,19 +454,78 @@
   }
 
   /* â”€â”€ Catálogo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* Los grupos del desplegable, en el orden en que se ensenan. Es el
+     mismo orden y los mismos nombres que usa la pantalla de consultas
+     del telefono (js/modules/app-movil.js): una sola manera de nombrar
+     las cosas en toda la aplicacion. */
+  var GRUPOS = {
+    filter:     'Consulta vehicular',
+    vehiculos:  'Vehículos',
+    reniec:     'Reniec',
+    sunarp:     'Sunarp',
+    telefonia:  'Telefonía',
+    familiares: 'Familia',
+    financiero: 'Financiero',
+    delitos:    'Justicia',
+    extras:     'Extras'
+  };
+  var ORDEN_GRUPOS = ['filter', 'vehiculos', 'reniec', 'sunarp', 'telefonia',
+                      'familiares', 'financiero', 'delitos', 'extras'];
+
+  /* Deja el catalogo listo para pintarlo de un tiron: fuera lo que no
+     tiene grupo (premium), luego por grupo y, dentro del grupo, por el
+     mismo `orden` que ya traia cada consulta. */
+  function ordenarPorGrupo(filas) {
+    return filas
+      .filter(function (c) { return ORDEN_GRUPOS.indexOf(c.categoria) !== -1; })
+      .sort(function (a, b) {
+        var ga = ORDEN_GRUPOS.indexOf(a.categoria);
+        var gb = ORDEN_GRUPOS.indexOf(b.categoria);
+        if (ga !== gb) return ga - gb;
+        var oa = typeof a.orden === 'number' ? a.orden : 0;
+        var ob = typeof b.orden === 'number' ? b.orden : 0;
+        if (oa !== ob) return oa - ob;
+        return String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es');
+      });
+  }
+
+  /* â”€â”€ CatÃ¡logo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   async function cargarCatalogo() {
     var comboText = $('filterComboText');
     var panel = $('filterComboPanel');
     try {
-      catalog = await Consultia.ConsultaRunner.loadCatalog('filter');
+      /* TODAS las consultas, no solo las de esta pestana.
+
+         Antes aqui solo entraban las de la categoria 'filter' y el resto
+         vivia en las nueve pestanas del menu lateral: para pedir un
+         Reniec habia que saber que estaba en «Reniec» y cambiar de
+         pantalla. Ahora la lista las trae todas, agrupadas por su
+         categoria y en el orden de siempre dentro de cada grupo, con la
+         Consulta Vehicular la primera porque es la puerta de la casa.
+
+         Las pestanas del menu NO se tocan: siguen ahi y siguen
+         funcionando. Esto solo evita tener que ir a buscarlas.
+
+         Las consultas 'premium' se quedan fuera a proposito: su pantalla
+         no existe en app.html y cobran suscripcion aparte. */
+      var todas = await Consultia.ConsultaRunner.loadCatalog();
+      catalog = ordenarPorGrupo(todas || []);
       if (!catalog.length) {
         if (comboText) comboText.textContent = 'Sin consultas activas';
         if (panel) panel.innerHTML = '<div class="combo-empty">No hay consultas disponibles.</div>';
         return;
       }
       if (panel) {
+        var grupoActual = null;
         panel.innerHTML = catalog.map(function (c, i) {
-          return '<div class="combo-option' + (i === 0 ? ' selected' : '') + '" data-id="' + c.id + '" role="option">' +
+          var html = '';
+          if (c.categoria !== grupoActual) {
+            grupoActual = c.categoria;
+            html += '<div class="combo-grupo" role="presentation">' +
+              escapeHtml(GRUPOS[grupoActual] || grupoActual) + '</div>';
+          }
+          return html +
+            '<div class="combo-option' + (i === 0 ? ' selected' : '') + '" data-id="' + c.id + '" role="option">' +
             '<span class="combo-opt-text">' + escapeHtml(c.nombre) + '</span>' +
           '</div>';
         }).join('');
