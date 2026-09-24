@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="css/components.css?v=13">
 <link rel="stylesheet" href="css/overlays.css?v=11">
 <link rel="stylesheet" href="css/plans-catalog.css">
-<link rel="stylesheet" href="css/admin.css?v=12">
+<link rel="stylesheet" href="css/admin.css?v=13">
 <link rel="stylesheet" href="css/maintenance.css?v=12">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
 <link rel="stylesheet" href="css/estructura.css?v=20">
@@ -1171,19 +1171,24 @@
               <p class="bc-help">La imagen aparece dentro de la aplicación de todos los clientes, en computadora y en teléfono. Súbela apaisada, 1200 x 450 px, en PNG, JPG o WEBP, hasta 5 MB.</p>
             </header>
 
-            <!-- El campo de archivo va FUERA de la zona a proposito: dentro,
-                 el clic que abre el explorador volvia a subir hasta la zona
-                 y esta lo abria otra vez, en bucle, y el explorador no
-                 llegaba a abrirse nunca. -->
-            <input type="file" id="pubFile" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
-            <div class="pub-dropzone" id="pubDropzone" tabindex="0" role="button" aria-label="Elegir la imagen">
+            <!-- La zona es una ETIQUETA y el campo de archivo, invisible,
+                 la cubre entera. Asi el navegador hace el trabajo solo:
+                 pulsar la zona es pulsar el campo, y soltar una imagen
+                 encima es soltarla dentro del campo. Sin JavaScript de por
+                 medio no hay nada que pueda fallar ni quedarse en cache:
+                 antes se abria el explorador por codigo y el clic rebotaba
+                 entre la zona y el campo sin llegar a abrirlo nunca. -->
+            <label class="pub-dropzone" id="pubDropzone">
+              <input type="file" id="pubFile" class="pub-file"
+                     accept="image/png,image/jpeg,image/webp,image/gif"
+                     aria-label="Elegir la imagen publicitaria">
               <div class="pub-dropzone-vacio" id="pubDropVacio">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"/><polyline points="7.5 8.5 12 4 16.5 8.5"/><path d="M4 16.5v2.1A1.9 1.9 0 0 0 5.9 20.5h12.2a1.9 1.9 0 0 0 1.9-1.9v-2.1"/></svg>
                 <strong>Elige la imagen</strong>
                 <span>o arrástrala hasta aquí</span>
               </div>
               <img class="pub-dropzone-previa" id="pubPrevia" alt="" hidden>
-            </div>
+            </label>
             <p class="pub-archivo" id="pubArchivo" hidden></p>
 
             <div class="form-field">
@@ -1502,7 +1507,7 @@
 <script src="js/admin/settings.js?v=22"></script>
 <script src="js/admin/maintenance.js?v=3"></script>
 <script src="js/admin/aviso-clientes.js?v=14"></script>
-<script src="js/admin/publicidad.js?v=2"></script>
+<script src="js/admin/publicidad.js?v=3"></script>
 <script src="js/modules/idle-logout.js?v=2"></script>
 <script src="js/admin/main.js?v=26"></script>
 

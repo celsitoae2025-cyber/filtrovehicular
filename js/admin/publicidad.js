@@ -79,7 +79,11 @@
     lector.readAsDataURL(file);
     if (nombre) {
       nombre.hidden = false;
-      nombre.textContent = file.name + ' · ' + Math.round(file.size / 1024) + ' KB';
+      /* Un archivo de 700 bytes ponia «0 KB» y parecia que algo habia
+         salido mal. */
+      var kb = file.size / 1024;
+      nombre.textContent = file.name + ' · ' +
+        (kb < 1 ? 'menos de 1 KB' : Math.round(kb) + ' KB');
     }
   }
 
@@ -305,38 +309,26 @@
     var file = $('pubFile');
 
     if (zona && file) {
-      /* El campo de archivo esta fuera de la zona (ver admin.html). Aun
-         asi se comprueba el origen del clic: si alguien lo volviera a
-         meter dentro, esto evita que la zona lo reabra en bucle. */
-      zona.addEventListener('click', function (e) {
-        if (e.target === file) return;
-        file.click();
-      });
-      file.addEventListener('click', function (e) { e.stopPropagation(); });
-      zona.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); file.click(); }
-      });
-      /* Para poder soltar hay que decir que NO en los dos eventos:
-         `dragenter` y `dragover`. Con uno solo, el navegador se queda
-         con su comportamiento de siempre —abrir la imagen en la
-         pestana— y el archivo no llega nunca a la zona. */
-      zona.addEventListener('dragenter', function (e) {
-        e.preventDefault(); zona.classList.add('esta-encima');
-      });
-      zona.addEventListener('dragover', function (e) {
-        e.preventDefault();
-        if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
-        zona.classList.add('esta-encima');
-      });
-      zona.addEventListener('dragleave', function () { zona.classList.remove('esta-encima'); });
-      zona.addEventListener('drop', function (e) {
-        e.preventDefault();
-        zona.classList.remove('esta-encima');
-        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
-          aceptar(e.dataTransfer.files[0]);
-        }
-      });
+      /* Aqui ya NO se abre el explorador por codigo ni se intercepta el
+         arrastre. La zona es una <label> y el campo la cubre entera, asi
+         que el navegador hace las dos cosas solo:
+
+           · pulsar la zona = pulsar el campo -> se abre el explorador;
+           · soltar una imagen encima = soltarla en el campo -> el campo
+             se queda con el archivo y avisa con 'change'.
+
+         Lo unico que queda en JavaScript es lo que el navegador no hace:
+         pintar el borde mientras algo se arrastra por encima, y ensenar
+         la imagen elegida. Si este archivo no llegara a cargar, elegir la
+         imagen seguiria funcionando igual. */
       file.addEventListener('change', function () { aceptar(file.files && file.files[0]); });
+
+      ['dragenter', 'dragover'].forEach(function (ev) {
+        zona.addEventListener(ev, function () { zona.classList.add('esta-encima'); });
+      });
+      ['dragleave', 'drop'].forEach(function (ev) {
+        zona.addEventListener(ev, function () { zona.classList.remove('esta-encima'); });
+      });
     }
 
     var subirBtn = $('pubSubirBtn');
