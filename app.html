@@ -27,7 +27,7 @@
 
 <!-- Instalable: sin esta línea el navegador no ofrece instalar nada, por
      muy completo que esté el manifiesto. -->
-<link rel="manifest" href="/manifest.json?v=5">
+<link rel="manifest" href="/manifest.json?v=6">
 
 <!-- El aviso de «esto se puede instalar» llega en cuanto la página cumple,
      y llega UNA vez. js/modules/instalar.js carga al final del documento,
@@ -95,6 +95,8 @@
 <link rel="stylesheet" href="css/right-panel.css?v=5">
 <link rel="stylesheet" href="css/features.css?v=8">
 <link rel="stylesheet" href="css/mobile.css?v=8">
+<link rel="stylesheet" href="css/app-movil.css?v=4">
+<link rel="stylesheet" href="css/publicidad.css?v=1">
 <link rel="stylesheet" href="css/motion.css?v=4">
 <!-- La pantalla de inicio va la ultima: reordena la caja de busqueda y
      tiene que ganar a polish.css y mobile.css, que tocan .form-row. -->
@@ -106,7 +108,7 @@
 <link rel="stylesheet" href="css/estructura.css?v=20">
 <!-- Despues de estructura.css: rehace la tienda de creditos de «Mi saldo». -->
 <link rel="stylesheet" href="css/saldo.css?v=3">
-<link rel="stylesheet" href="css/combo.css?v=2">
+<link rel="stylesheet" href="css/combo.css?v=3">
 
 <!-- Anti-flash: pre-aplica is-dashboard-view en <html> si la carga inicial
      es el dashboard (sin hash). Impide que el right-panel aparezca un frame
@@ -1133,6 +1135,22 @@
       </section>
 
       <!-- VISTA: Filtra tu vehículo (vista principal) -->
+      <!-- ── CONSULTAS (solo en el telefono) ──────────────────────
+           Todo el catalogo en una lista con buscador. En pantalla
+           grande esta seccion queda en display:none (css/app-movil.css)
+           porque alli las consultas ya estan en el menu lateral. -->
+      <section class="view" id="view-consultas" hidden>
+        <div class="mov-buscar" id="movBuscarCaja">
+          <div class="mov-buscar-caja">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="movBuscar" type="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Busca una consulta: placa, DNI, SOAT..." aria-label="Buscar una consulta">
+            <button class="mov-buscar-limpiar" id="movBuscarLimpiar" type="button" aria-label="Borrar la busqueda"></button>
+          </div>
+        </div>
+        <div data-publicidad hidden></div>
+        <div class="mov-lista" id="movLista"></div>
+      </section>
+
       <section class="view" id="view-filter" hidden>
 
         <section class="filter-search-box">
@@ -1191,6 +1209,10 @@
           </button>
         </div>
         </section>
+
+        <!-- Publicidad: lo que el administrador suba se pinta aqui. Si no
+             hay nada encendido, el hueco queda oculto y no ocupa. -->
+        <div data-publicidad hidden></div>
 
         <!-- Resultado de la consulta (aparece aquí al hacer click en Consultar) -->
         <section class="panel result-panel" id="filter-result" hidden>
@@ -2097,6 +2119,28 @@
 <!-- Botón flotante de WhatsApp (soporte) — abre la lista de opciones.
      En móvil el menú se muestra como modal sobre este fondo desenfocado. -->
 <div class="wa-backdrop" id="waBackdrop" hidden></div>
+<!-- ── LA BARRA DE DESTINOS (solo en el telefono) ──────────────
+     Los botones llevan data-nav, asi que quien navega sigue siendo
+     views.js. En pantalla grande la barra queda en display:none. -->
+<nav class="mov-tabbar" id="movTabbar" aria-label="Navegacion principal">
+  <button class="mov-tab" type="button" data-nav="consultas">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <span>Consultas</span>
+  </button>
+  <button class="mov-tab" type="button" data-nav="historial">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+    <span>Historial</span>
+  </button>
+  <button class="mov-tab" type="button" data-nav="saldo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>
+    <span>Saldo</span>
+  </button>
+  <button class="mov-tab" type="button" data-nav="cuenta">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c.9-3.6 3.8-5.5 7.5-5.5s6.6 1.9 7.5 5.5"/></svg>
+    <span>Cuenta</span>
+  </button>
+</nav>
+
 <div class="wa-menu" id="waMenu" role="menu" aria-label="Opciones de soporte" hidden></div>
 <button class="wa-fab"
    type="button"
@@ -2173,7 +2217,7 @@
 <script src="js/modules/reporte-modelo.js?v=5"></script>
 <script src="js/modules/reporte-veredicto.js?v=4"></script>
 <script src="js/modules/metapla-report.js?v=22"></script>
-<script src="js/modules/filter.js?v=47"></script>
+<script src="js/modules/filter.js?v=49"></script>
 <!-- El Duplicado CITV: la hoja, el dibujante del PDF y el trámite. -->
 <script src="js/modules/citv-certificado.js?v=2"></script>
 <script src="js/modules/citv-pdf.js?v=3"></script>
@@ -2182,7 +2226,7 @@
 <script src="js/modules/pull-refresh.js?v=5"></script>
 <script src="js/modules/services-uploader.js?v=1"></script>
 <script src="js/modules/saldo-catalog.js?v=6"></script>
-<script src="js/modules/combo-buscador.js?v=3"></script>
+<script src="js/modules/combo-buscador.js?v=5"></script>
 <!-- Funciones nuevas -->
 <script src="js/modules/low-balance-alert.js?v=1"></script>
 <script src="js/modules/payment-watcher.js?v=2"></script>
@@ -2192,9 +2236,13 @@
 <script src="js/sidebar.js?v=1"></script>
 <script src="js/modules/sidebar-nav-group.js?v=5"></script>
 <script src="js/topbar.js?v=1"></script>
-<script src="js/views.js?v=5"></script>
+<script src="js/views.js?v=6"></script>
 <script src="js/overlays.js?v=2"></script>
 <script src="js/main.js?v=4"></script>
+<!-- La barra de destinos y la pantalla de consultas del telefono. -->
+<script src="js/modules/app-movil.js?v=3"></script>
+<!-- El cartel publicitario que sube el administrador. -->
+<script src="js/modules/publicidad.js?v=1"></script>
 <!-- Modo mantenimiento: aviso global controlado desde el panel admin -->
 <script src="js/modules/maintenance.js?v=6"></script>
 <script src="js/modules/aviso-clientes.js?v=8"></script>

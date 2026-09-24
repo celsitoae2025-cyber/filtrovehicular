@@ -8,6 +8,7 @@
   // Etiquetas del breadcrumb por vista
   const viewLabels = {
     'view-filter':         '',
+    'view-consultas':      'Consultas',
     'view-dashboard':      'Dashboard',
     'view-premium':        'Consultas Premium',
     'view-vehiculos':      'Vehículos',

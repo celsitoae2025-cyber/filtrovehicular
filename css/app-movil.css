@@ -1,0 +1,224 @@
+/* ============================================================
+   LA APP EN EL TELÉFONO
+
+   Bajo 768px la web deja de comportarse como una web con el menú
+   escondido y pasa a comportarse como una aplicación: barra de
+   destinos abajo —donde llega el pulgar—, una pantalla que reúne
+   TODAS las consultas con su buscador, y el resultado ocupando la
+   pantalla entera.
+
+   Todo lo de aquí vive dentro de la media query. En el escritorio
+   este archivo no pinta nada: la barra de abajo y la pantalla de
+   consultas quedan en display:none y la web es exactamente la de
+   siempre. Por eso se puede quitar de app.html y no se rompe nada.
+
+   Reglas de la casa que se respetan aquí: sin sombras, sin franjas
+   de color, huecos de 4px entre cajas, pesos 400 y 700, y las
+   superficies oscuras con --c-surface-dark.
+============================================================ */
+
+/* Fuera del teléfono no existe ninguna de las dos piezas nuevas. */
+.mov-tabbar { display: none; }
+#view-consultas { display: none; }
+
+@media (max-width: 768px) {
+
+  /* ── 1 · La barra de destinos ──────────────────────────────
+     Fija abajo, cuatro destinos, y por debajo el hueco de la barra
+     de gestos del teléfono (safe-area) para que el último renglón
+     no quede debajo del dedo del sistema. */
+  .mov-tabbar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 900;
+    background: var(--c-surface-dark);
+    border-top: 1px solid rgba(255, 255, 255, .10);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .mov-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 56px;
+    padding: 8px 4px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    color: rgba(255, 255, 255, .72);
+    font-family: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 400;
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mov-tab svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 1.8;
+  }
+  .mov-tab.is-active {
+    color: var(--c-accent);
+    font-weight: 700;
+  }
+
+  /* La página entera termina antes de la barra: sin esto el último
+     botón —o el pie— queda debajo y no se puede pulsar. Va en el
+     `body` y no en `.content` a propósito: el pie cuelga fuera del
+     contenido, y estructura.css fija ahí su propio relleno con
+     !important, así que pelear por esa misma línea sería frágil. */
+  body {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* El botón de WhatsApp sube por encima de la barra. */
+  .wa-fab {
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 12px) !important;
+  }
+  .wa-menu {
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 72px) !important;
+  }
+
+  /* ── 2 · La pantalla de consultas ──────────────────────────
+     Una sola lista con todo lo que se puede consultar, y un buscador
+     que se queda pegado arriba mientras se desplaza. */
+  #view-consultas { display: block; }
+
+  /* Se pega justo DEBAJO de la barra de arriba, que tambien es
+     sticky y va en z-index 20: pegarlo en 0 lo metia detras de ella.
+     La medida la pone app-movil.js, que es quien puede medirla. */
+  .mov-buscar {
+    position: sticky;
+    top: var(--mov-arriba, 0px);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0 8px;
+    background: var(--c-canvas);
+  }
+  .mov-buscar-caja {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: 12px;
+  }
+  .mov-buscar-caja svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--c-muted);
+  }
+  .mov-buscar-caja input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    font-family: inherit;
+    font-size: var(--fs-md);
+    color: var(--c-text);
+  }
+  .mov-buscar-caja input::-webkit-search-cancel-button { display: none; }
+  .mov-buscar-limpiar {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--c-bg);
+    color: var(--c-text);
+    cursor: pointer;
+  }
+  .mov-buscar-limpiar svg { width: 16px; height: 16px; }
+  .mov-buscar.tiene-texto .mov-buscar-limpiar { display: flex; }
+
+  .mov-grupo-titulo {
+    margin: 12px 0 4px;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+
+  .mov-lista,
+  .mov-lista-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* Cada consulta: nombre grande, y debajo qué dato pide y cuánto
+     cuesta. Nada más: el resto se lee dentro. */
+  .mov-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 60px;
+    padding: 12px 14px;
+    text-align: left;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mov-item:active { background: var(--c-bg); }
+  .mov-item-txt { flex: 1; min-width: 0; }
+  .mov-item-nombre {
+    display: block;
+    font-size: var(--fs-md);
+    font-weight: 700;
+    color: var(--c-text);
+    line-height: 1.25;
+  }
+  .mov-item-meta {
+    display: block;
+    margin-top: 4px;
+    font-size: var(--fs-sm);
+    font-weight: 400;
+    color: var(--c-muted);
+  }
+  .mov-item-chev {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--c-muted);
+  }
+
+  .mov-vacio {
+    padding: 24px 14px;
+    text-align: center;
+    font-size: var(--fs-md);
+    color: var(--c-muted);
+  }
+
+  /* ── 3 · Aire para el pulgar ───────────────────────────────
+     Los controles con los que se opera —el botón de consultar y el
+     campo del dato— pasan a medida de dedo, no de ratón. */
+  .view .form-row input,
+  .view .form-row .btn,
+  .view [id$="-input"],
+  .view [id$="-consultar"] {
+    min-height: 48px;
+  }
+  .combo-btn { min-height: 48px; }
+}

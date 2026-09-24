@@ -11,7 +11,10 @@
   "theme_color": "#141d1c",
   "lang": "es-PE",
   "dir": "ltr",
-  "categories": ["business", "utilities"],
+  "categories": [
+    "business",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.png?v=5",
@@ -31,5 +34,28 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Buscar una consulta",
+      "short_name": "Consultas",
+      "description": "Todas las consultas con su buscador",
+      "url": "/app#consultas"
+    },
+    {
+      "name": "Mi saldo",
+      "short_name": "Saldo",
+      "description": "Ver el saldo y recargar creditos",
+      "url": "/app#saldo"
+    },
+    {
+      "name": "Mis consultas",
+      "short_name": "Historial",
+      "description": "El historial de consultas hechas",
+      "url": "/app#historial"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
 }
