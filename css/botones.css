@@ -1,0 +1,421 @@
+/* ============================================================
+   LOS BOTONES — un solo sistema para toda la plataforma
+
+   Hasta hoy los botones se decidían en cuatro hojas que se pisaban
+   unas a otras con !important (components, base, polish y
+   estructura). Salía esto, medido en la app:
+
+     · el botón principal en tres alturas (33, 44 y 52 px) y con dos
+       radios de esquina (8 y 12 px);
+     · en negrita unas veces y en fino otras;
+     · el «Iniciar sesión» de la barra con letra de 13 px, por debajo
+       del mínimo de 15;
+     · texto BLANCO sobre el verde: no se leía;
+     · y polish.css anulaba el foco del teclado en todos, así que quien
+       navega con el tabulador no sabía dónde estaba.
+
+   Esta hoja se carga la ÚLTIMA en app.html y admin.html y manda sobre
+   todas. No cambia ningún color de sitio: lo oscuro sigue oscuro
+   (Consultar, Iniciar sesión, los botones del acceso) y lo verde sigue
+   verde (comprar créditos, planes, los del panel). Lo que cambia es la
+   FORMA, que ahora es una sola, y la RESPUESTA al tocarlos.
+
+   Reglas de la casa, todas respetadas:
+     · sin sombras y sin franjas;
+     · pesos 400 y 700, nada más;
+     · letra de 15 px como mínimo;
+     · nada se mueve de sitio al pulsar: lo que responde es el COLOR;
+     · los 4 px entre cajas no se tocan. La escala de 8 px de aquí es
+       solo DENTRO del botón y entre botones de un mismo grupo.
+
+   No se renombra ninguna clase del HTML: cada JavaScript sigue
+   encontrando su botón donde lo dejó.
+============================================================ */
+
+:root {
+  --btn-alto: 48px;
+  --btn-alto-sm: 40px;
+  --btn-alto-lg: 56px;
+  --btn-radio: 12px;
+  --btn-pad: 20px;
+  --btn-pad-sm: 16px;
+  --btn-hueco: 8px;
+  --btn-letra: 16px;
+  --btn-letra-sm: 15px;
+  --btn-letra-lg: 17px;
+  --btn-tiempo: .15s;
+
+  --btn-verde: #8fc72e;
+  --btn-verde-encima: #7ab325;
+  --btn-verde-pulsado: #6a9c20;
+  --btn-oscuro: var(--c-surface-dark);
+  --btn-oscuro-encima: #123c30;
+  --btn-oscuro-pulsado: #071d16;
+  --btn-tinta: #141d1c;
+  --btn-borde: #dcdcdc;
+  --btn-borde-encima: #b9c2c1;
+  --btn-claro-encima: #f3f3f3;
+  --btn-claro-pulsado: #e8ebea;
+
+  /* El aro del teclado: turquesa, de la paleta, y se ve sobre blanco,
+     sobre oscuro y sobre verde. */
+  --btn-aro: #03a7a4;
+}
+
+
+/* ── 1 · La forma, una sola ─────────────────────────────────── */
+
+.btn {
+  /* Sin !important a proposito: con el, un boton oculto con [hidden] o
+     con style.display = 'none' desde JavaScript volveria a aparecer. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--btn-hueco);
+  min-height: var(--btn-alto) !important;
+  padding: 0 var(--btn-pad) !important;
+  border: 1px solid transparent;
+  border-radius: var(--btn-radio) !important;
+  font-family: inherit;
+  font-size: var(--btn-letra) !important;
+  font-weight: 700 !important;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--btn-tiempo) ease,
+    border-color var(--btn-tiempo) ease,
+    color var(--btn-tiempo) ease,
+    opacity var(--btn-tiempo) ease !important;
+}
+.btn[hidden] { display: none !important; }
+.btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.btn.btn-sm {
+  min-height: var(--btn-alto-sm) !important;
+  padding: 0 var(--btn-pad-sm) !important;
+  font-size: var(--btn-letra-sm) !important;
+}
+.btn.btn-sm svg { width: 16px; height: 16px; }
+
+.btn.btn-lg {
+  min-height: var(--btn-alto-lg) !important;
+  padding: 0 24px !important;
+  font-size: var(--btn-letra-lg) !important;
+}
+
+
+/* Los botones claros del panel (Recargar, Exportar, Probar conexión,
+   Guardar mensaje) no llevan la clase .btn: iban en 35 px, radio 8 y
+   letra de 13. Entran al sistema en su tamaño compacto. */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--btn-hueco) !important;
+  min-height: var(--btn-alto-sm) !important;
+  padding: 0 var(--btn-pad-sm) !important;
+  border-radius: var(--btn-radio) !important;
+  font-family: inherit;
+  font-size: var(--btn-letra-sm) !important;
+  font-weight: 700 !important;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--btn-tiempo) ease,
+    border-color var(--btn-tiempo) ease !important;
+}
+.btn-ghost[hidden] { display: none !important; }
+.btn-ghost svg { width: 16px !important; height: 16px !important; }
+
+
+/* ── 2 · Verde: la acción comercial ─────────────────────────── */
+/* Texto oscuro, no blanco: blanco sobre este verde apenas se leía
+   (contraste 2:1). El #141d1c es el de la paleta. */
+
+.btn-primary,
+button.btn-primary,
+.plan-cta,
+.primary-btn {
+  background: var(--btn-verde) !important;
+  border-color: var(--btn-verde) !important;
+  color: var(--btn-tinta) !important;
+}
+
+
+/* ── 3 · Oscuro: la acción de la plataforma ─────────────────── */
+/* Consultar y el acceso. Mismos selectores que ya lo pintaban oscuro
+   en base.css y estructura.css: aquí solo se les da su respuesta. */
+
+.form-row .btn-primary,
+.nm-fields .btn-primary,
+.filter-form .btn-primary,
+.view .form-row .btn-primary,
+.view .nm-fields .btn-primary,
+.view .filter-form .btn-primary,
+.prem-form-panel .btn-primary,
+.topbar .auth-btn-primary,
+#historialPdfBtn,
+.nm-download,
+.cr-espera-btn,
+.cr-docitem-ver,
+.rep-modal-ok {
+  background: var(--btn-oscuro) !important;
+  border-color: var(--btn-oscuro) !important;
+  color: #ffffff !important;
+}
+
+
+/* ── 4 · Claro: la acción secundaria ────────────────────────── */
+
+.btn-secondary,
+.btn-outline,
+.btn-ghost,
+.ghost-btn {
+  background: #ffffff !important;
+  border: 1px solid var(--btn-borde) !important;
+  color: var(--btn-tinta) !important;
+}
+
+
+/* ── 5 · La respuesta al tocar ──────────────────────────────── */
+/* Encima: solo con ratón. En el teléfono un «hover» se queda pegado
+   después del toque y el botón parece seguir pulsado. */
+
+@media (hover: hover) {
+  .btn-primary:hover:not(:disabled),
+  .plan-cta:hover:not(:disabled),
+  .primary-btn:hover:not(:disabled) {
+    background: var(--btn-verde-encima) !important;
+    border-color: var(--btn-verde-encima) !important;
+  }
+  .form-row .btn-primary:hover:not(:disabled),
+  .nm-fields .btn-primary:hover:not(:disabled),
+  .filter-form .btn-primary:hover:not(:disabled),
+  .view .form-row .btn-primary:hover:not(:disabled),
+  .view .nm-fields .btn-primary:hover:not(:disabled),
+  .view .filter-form .btn-primary:hover:not(:disabled),
+  .prem-form-panel .btn-primary:hover:not(:disabled),
+  #historialPdfBtn:hover:not(:disabled),
+  .nm-download:hover:not(:disabled),
+  .cr-espera-btn:hover:not(:disabled),
+  .cr-docitem-ver:hover:not(:disabled),
+  .rep-modal-ok:hover:not(:disabled),
+  .topbar .auth-btn-primary:hover:not(:disabled) {
+    background: var(--btn-oscuro-encima) !important;
+    border-color: var(--btn-oscuro-encima) !important;
+  }
+  .btn-secondary:hover:not(:disabled),
+  .btn-outline:hover:not(:disabled),
+  .btn-ghost:hover:not(:disabled),
+  .ghost-btn:hover:not(:disabled) {
+    background: var(--btn-claro-encima) !important;
+    border-color: var(--btn-borde-encima) !important;
+  }
+}
+
+/* Pulsado: con ratón y con dedo. Un tono más oscuro, sin moverse. */
+.btn-primary:active:not(:disabled),
+.plan-cta:active:not(:disabled),
+.primary-btn:active:not(:disabled) {
+  background: var(--btn-verde-pulsado) !important;
+  border-color: var(--btn-verde-pulsado) !important;
+}
+.form-row .btn-primary:active:not(:disabled),
+.nm-fields .btn-primary:active:not(:disabled),
+.filter-form .btn-primary:active:not(:disabled),
+.view .form-row .btn-primary:active:not(:disabled),
+.view .nm-fields .btn-primary:active:not(:disabled),
+.view .filter-form .btn-primary:active:not(:disabled),
+.prem-form-panel .btn-primary:active:not(:disabled),
+#historialPdfBtn:active:not(:disabled),
+.nm-download:active:not(:disabled),
+.cr-espera-btn:active:not(:disabled),
+.cr-docitem-ver:active:not(:disabled),
+.rep-modal-ok:active:not(:disabled),
+.topbar .auth-btn-primary:active:not(:disabled) {
+  background: var(--btn-oscuro-pulsado) !important;
+  border-color: var(--btn-oscuro-pulsado) !important;
+}
+.btn-secondary:active:not(:disabled),
+.btn-outline:active:not(:disabled),
+.btn-ghost:active:not(:disabled),
+.ghost-btn:active:not(:disabled) {
+  background: var(--btn-claro-pulsado) !important;
+}
+
+/* Desactivado: se nota que no responde, sin cambiar de color. */
+.btn:disabled,
+.btn[aria-disabled="true"],
+.plan-cta:disabled,
+.primary-btn:disabled {
+  opacity: .45 !important;
+  cursor: not-allowed !important;
+}
+
+/* Cargando: el botón conserva su ancho (lo fija el JavaScript al
+   entrar) y enseña un giro junto al texto. Con opacidad completa:
+   no está desactivado, está trabajando. */
+.btn.is-cargando,
+.btn.is-cargando:disabled {
+  opacity: 1 !important;
+  cursor: progress !important;
+}
+.btn-giro {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  opacity: .9;
+  animation: btn-girar .7s linear infinite;
+}
+@keyframes btn-girar { to { transform: rotate(360deg); } }
+
+
+/* ── 6 · El foco del teclado: UN aro ────────────────────────── */
+/* Pegado al borde (offset 0): con separación se veía un borde doble.
+   Solo con teclado (:focus-visible); con ratón o dedo no aparece.
+   polish.css lo quitaba en todos los botones: aquí vuelve. */
+
+:where(button, a, [role="button"], .btn, summary, .combo-trigger, .mov-tab, .mov-item, .service-card, .region-card, .nav-item, .admin-link):focus-visible {
+  outline: 3px solid var(--btn-aro) !important;
+  outline-offset: 0 !important;
+}
+:where(button, a, [role="button"], .btn):focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+
+/* ── 7 · Botones de la barra y del acceso ───────────────────── */
+
+/* «Iniciar sesión» de la barra: 33 px y letra de 13. Pasa al tamaño
+   compacto del sistema, que cabe en la barra y se lee. */
+.topbar .auth-btn,
+.topbar .auth-btn-primary {
+  min-height: var(--btn-alto-sm) !important;
+  padding: 0 var(--btn-pad-sm) !important;
+  border-radius: var(--btn-radio) !important;
+  font-size: var(--btn-letra-sm) !important;
+  font-weight: 700 !important;
+  transition: background-color var(--btn-tiempo) ease, border-color var(--btn-tiempo) ease !important;
+}
+
+/* Las acciones del resultado (Copiar, Descargar, WhatsApp) son
+   pastillas y se quedan pastillas: solo se igualan de alto y de letra. */
+.result-action-btn {
+  min-height: var(--btn-alto-sm);
+  padding: 0 var(--btn-pad-sm) !important;
+  gap: var(--btn-hueco) !important;
+  font-size: var(--btn-letra-sm) !important;
+  font-weight: 700 !important;
+  transition: background-color var(--btn-tiempo) ease, border-color var(--btn-tiempo) ease !important;
+}
+.result-action-btn svg { width: 16px !important; height: 16px !important; }
+
+
+/* ── 8 · El dedo necesita 44 px ─────────────────────────────── */
+/* Los botones pequeños se quedan del tamaño que se ven, pero la zona
+   que recoge el toque crece hasta 44 px con un pseudo-elemento
+   invisible. Nada se descoloca. */
+
+.menu-btn,
+.icon-btn,
+.modal-close,
+.topbar-bell {
+  min-width: 44px !important;
+  min-height: 44px !important;
+}
+
+.crumb-link,
+.auth-forgot,
+.cbx-clear,
+.mov-buscar-limpiar,
+.rp-hist-btn {
+  position: relative;
+}
+.crumb-link::after,
+.auth-forgot::after,
+.cbx-clear::after,
+.mov-buscar-limpiar::after,
+.rp-hist-btn::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+/* «Crear cuenta» / «Inicia sesión» dentro de la frase del acceso. */
+.auth-switch button { position: relative; }
+.auth-switch button::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, 44px);
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+/* Los enlaces del pie miden 20 px y van uno cada 34 px. La zona de
+   toque crece hasta esos 34 px exactos: cubre la fila entera sin
+   pisar al vecino, que es lo máximo que cabe sin rehacer el pie. */
+.foot-links li > button,
+.foot-links li > a { position: relative; }
+.foot-links li > button::after,
+.foot-links li > a::after {
+  content: '';
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  top: 50%;
+  height: 34px;
+  transform: translateY(-50%);
+}
+
+/* El menú lateral en pantallas táctiles: filas de 44 px. */
+@media (pointer: coarse) {
+  .sidebar .nav-item,
+  .sidebar .sb-action,
+  .dropdown-item {
+    min-height: 44px !important;
+  }
+}
+
+
+/* ── 9 · Botones en grupo ───────────────────────────────────── */
+/* 8 px entre botones que van juntos. Es el hueco DENTRO de una caja;
+   el de 4 px entre cajas sigue donde estaba. */
+
+.form-actions,
+.bc-form-footer,
+.cartel-acciones,
+.pub-acciones {
+  gap: var(--btn-hueco) !important;
+}
+
+
+/* ── 10 · Movimiento reducido ───────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .result-action-btn,
+  .topbar .auth-btn {
+    transition: none !important;
+  }
+  .btn-giro { animation-duration: 1.6s; }
+}

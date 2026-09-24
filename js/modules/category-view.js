@@ -768,7 +768,12 @@
       if (btn.disabled) return;
       btn.disabled = true;
       btn.dataset.orig = btn.dataset.orig || btn.innerHTML;
-      btn.innerHTML = 'Consultando…';
+      /* El ancho se fija ANTES de cambiar el texto: «Consultando…» es
+         mas largo que «Consultar» y el boton empujaba lo de al lado. */
+      btn.style.minWidth = btn.offsetWidth + 'px';
+      btn.classList.add('is-cargando');
+      btn.setAttribute('aria-busy', 'true');
+      btn.innerHTML = '<span class="btn-giro" aria-hidden="true"></span>Consultando…';
       mostrarCargando();
       try {
         var resp = await Consultia.ConsultaRunner.ejecutarConsultaConCobro(
@@ -799,6 +804,9 @@
         }
       } finally {
         btn.disabled = false;
+        btn.classList.remove('is-cargando');
+        btn.removeAttribute('aria-busy');
+        btn.style.minWidth = '';
         btn.innerHTML = btn.dataset.orig;
       }
     }

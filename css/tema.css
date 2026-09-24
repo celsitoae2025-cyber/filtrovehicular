@@ -1,0 +1,318 @@
+/* ============================================================
+   EL TEMA NUEVO — la capa visual de toda la plataforma
+
+   Misma paleta de siempre (#141d1c, #8fc72e, #ffffff, el turquesa
+   #03a7a4 y el oscuro de la casa), piel nueva. Esta hoja va la ÚLTIMA,
+   después incluso de botones.css, y solo toca lo que se VE: aire,
+   bordes, radios, jerarquía de títulos, el menú lateral, la barra de
+   arriba y los campos. No toca estructura ni rejillas: ninguna pantalla
+   cambia de sitio sus piezas.
+
+   Lo que había, medido en la app antes de escribir esto:
+     · 15 px entre bloques y 4-8 px entre tarjetas: todo pegado;
+     · paneles SIN borde (0 px) y tarjetas con uno casi invisible;
+     · títulos de 15, 19 y 19 px, unos en negrita y otros no;
+     · el menú lateral con la opción activa apenas distinguible.
+
+   CAMBIO DE REGLA: el hueco fijo de 4 px entre cajas era una regla de
+   la casa. El dueño pidió expresamente mejorar el espaciado (2026-09-24)
+   y aquí pasa a 20 px en computadora y 12 px en teléfono.
+
+   Se mantiene todo lo demás: sin sombras, sin franjas de color, pesos
+   400 y 700, nada por debajo de 15 px.
+============================================================ */
+
+/* ESPECIFICIDAD: todos los selectores empiezan por
+   `html body:not(#fv)`. El :not(#fv) no filtra nada —no existe ningun
+   #fv— pero suma el peso de un ID. Hace falta porque las hojas viejas
+   fijan tamanos y bordes con !important y selectores de dos clases o
+   con ID (p. ej. `.services-section .services-title`), y una capa de
+   tema tiene que mandar sobre todas sin ir regla por regla. */
+
+:root {
+  --t-linea: #dfe4e1;          /* borde de tarjeta: fino y visible */
+  --t-linea-fuerte: #c9d1cd;   /* al pasar por encima */
+  --t-radio: 16px;
+  --t-radio-control: 12px;
+  --t-bloque: 20px;            /* entre bloques de una pantalla */
+  --t-tarjetas: 16px;          /* entre tarjetas de una rejilla */
+  --pad-panel: 24px;           /* estructura.css ya reparte este valor */
+  --t-tiempo: .18s;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --t-radio: 14px;
+    --t-bloque: 12px;
+    --t-tarjetas: 10px;
+    --pad-panel: 16px;
+  }
+}
+
+
+/* ── 1 · Aire ───────────────────────────────────────────────── */
+
+html body:not(#fv) .content,
+html body:not(#fv) .content > .view:not([hidden]) {
+  gap: var(--t-bloque) !important;
+}
+
+html body:not(#fv) .services-grid,
+html body:not(#fv) .regiones-grid,
+html body:not(#fv) .anon-cats-grid,
+html body:not(#fv) .dash-grid,
+html body:not(#fv) .account-grid,
+html body:not(#fv) .quick-actions-compact,
+html body:not(#fv) #catalogGridCredits {
+  gap: var(--t-tarjetas) !important;
+}
+
+
+/* ── 2 · Superficies: tarjeta blanca, borde fino, esquina amplia ── */
+
+/* Solo los bloques de PRIMER nivel de cada pantalla (hijos directos de
+   .view) llevan borde. Una tarjeta dentro de otra tarjeta sin borde: con
+   borde salia una caja dentro de la caja («Tipo de consulta» dentro del
+   buscador). Los bloques oscuros tampoco: sobre el oscuro, un filete
+   claro se lee como un marco pintado. */
+html body:not(#fv) .view > .panel,
+html body:not(#fv) .view > .selector-card,
+html body:not(#fv) .view > .filter-search-box,
+html body:not(#fv) .view > .result-panel,
+html body:not(#fv) .view > .regiones-hero,
+html body:not(#fv) .view > .regiones-toolbar,
+html body:not(#fv) .rp-card,
+html body:not(#fv) .plan-card,
+html body:not(#fv) .kpi {
+  border: 1px solid var(--t-linea) !important;
+  border-radius: var(--t-radio) !important;
+  box-shadow: none !important;
+}
+
+/* Tarjetas que se pulsan: el borde se oscurece al pasar el ratón. Nada
+   se levanta ni proyecta sombra: responde el color. */
+html body:not(#fv) .service-card,
+html body:not(#fv) .region-card,
+html body:not(#fv) .anon-cat-card,
+html body:not(#fv) .quick-compact,
+html body:not(#fv) .rp-quick-btn {
+  border: 1px solid var(--t-linea) !important;
+  border-radius: var(--t-radio) !important;
+  box-shadow: none !important;
+  transition: border-color var(--t-tiempo) ease, background-color var(--t-tiempo) ease !important;
+}
+@media (hover: hover) {
+  html body:not(#fv) .service-card:hover,
+  html body:not(#fv) .region-card:hover,
+  html body:not(#fv) .anon-cat-card:hover,
+  html body:not(#fv) .quick-compact:hover,
+  html body:not(#fv) .rp-quick-btn:hover,
+  html body:not(#fv) .kpi-clickable:hover {
+    border-color: var(--t-linea-fuerte) !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+/* Las tarjetas oscuras (servicios con foto) no llevan borde claro:
+   sobre el oscuro se leería como un marco pintado. */
+html body:not(#fv) .services-grid > .service-card:not(.has-image) {
+  border-color: transparent !important;
+}
+
+
+/* ── 3 · Jerarquía de títulos ───────────────────────────────── */
+/* SOLO tamaño y peso, NUNCA color: cada título conserva el suyo. Hay
+   títulos claros sobre tarjetas oscuras, y forzar el oscuro los deja
+   invisibles (pasó con «Accede a 60+ consultas» del Dashboard). */
+/* Una escala, no cuatro: el título de la pantalla manda, el de cada
+   bloque va detrás y el texto de apoyo en gris de la paleta. */
+
+html body:not(#fv) .view .hero-title,
+html body:not(#fv) .view .simple-title,
+html body:not(#fv) .view .regiones-title,
+html body:not(#fv) .view .anon-cta-title,
+html body:not(#fv) .view > .hero h1,
+html body:not(#fv) .view > .hero h2 {
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.3px !important;
+}
+html body:not(#fv) .view .hero-eyebrow {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  letter-spacing: .2px !important;
+  text-transform: none !important;
+}
+html body:not(#fv) .view .hero-sub,
+html body:not(#fv) .view .regiones-sub {
+  font-size: 17px !important;
+  line-height: 1.5 !important;
+}
+html body:not(#fv) .section-title,
+html body:not(#fv) .services-title,
+html body:not(#fv) .panel-head h3,
+html body:not(#fv) .rp-card-title,
+html body:not(#fv) .selector-label,
+html body:not(#fv) .services-section h2 {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+@media (max-width: 768px) {
+  html body:not(#fv) .view .hero-title,
+  html body:not(#fv) .view .simple-title,
+  html body:not(#fv) .view .regiones-title,
+  html body:not(#fv) .view .anon-cta-title,
+  html body:not(#fv) .view > .hero h1,
+  html body:not(#fv) .view > .hero h2 {
+    font-size: 22px !important;
+  }
+}
+
+
+/* Los títulos de columna del pie iban en 13 px: por debajo del mínimo. */
+html body:not(#fv) .foot-title {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+
+/* ── 4 · Campos ─────────────────────────────────────────────── */
+
+html body:not(#fv) .input,
+html body:not(#fv) .form-row input:not([type="checkbox"]):not([type="radio"]),
+html body:not(#fv) .combo-trigger {
+  border: 1px solid var(--t-linea-fuerte) !important;
+  border-radius: var(--t-radio-control) !important;
+  box-shadow: none !important;
+  transition: border-color var(--t-tiempo) ease !important;
+}
+@media (hover: hover) {
+  html body:not(#fv) .input:hover,
+  html body:not(#fv) .form-row input:hover,
+  html body:not(#fv) .combo-trigger:hover {
+    border-color: #9fb0aa !important;
+  }
+}
+html body:not(#fv) .input:focus,
+html body:not(#fv) .form-row input:focus,
+html body:not(#fv) .combo.open .combo-trigger {
+  border-color: #03a7a4 !important;
+  outline: none !important;
+}
+
+
+/* ── 5 · La barra de arriba ─────────────────────────────────── */
+
+html body:not(#fv) .topbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid var(--t-linea) !important;
+  box-shadow: none !important;
+}
+html body:not(#fv) .breadcrumb .crumb-link {
+  border-radius: 999px !important;
+}
+
+
+/* ── 6 · El menú lateral ────────────────────────────────────── */
+/* Mismo oscuro. La opción activa pasa a ser una pastilla BLANCA con el
+   texto en el oscuro de la casa: se ve de un vistazo dónde estás, sin
+   verde (que ya se probó y cantaba) y sin franja lateral. */
+
+html body:not(#fv) .sidebar .brand {
+  border-bottom: 1px solid rgba(255, 255, 255, .08) !important;
+  margin-bottom: 8px !important;
+}
+html body:not(#fv) .sidebar .sidebar-scroll {
+  padding: 4px 12px 12px !important;
+}
+html body:not(#fv) .sidebar .nav-section {
+  padding: 18px 12px 8px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: rgba(255, 255, 255, .45) !important;
+}
+html body:not(#fv) .sidebar .nav-item,
+html body:not(#fv) .sidebar .sb-action {
+  min-height: 44px !important;
+  padding: 0 12px !important;
+  gap: 12px !important;
+  border-radius: var(--t-radio-control) !important;
+  margin-bottom: 2px !important;
+  color: rgba(255, 255, 255, .78) !important;
+  transition: background-color var(--t-tiempo) ease, color var(--t-tiempo) ease !important;
+}
+@media (hover: hover) {
+  html body:not(#fv) .sidebar .nav-item:hover,
+  html body:not(#fv) .sidebar .sb-action:hover {
+    background: rgba(255, 255, 255, .07) !important;
+    color: #ffffff !important;
+  }
+}
+html body:not(#fv) .sidebar .nav-item.active {
+  background: #ffffff !important;
+  color: var(--c-surface-dark) !important;
+  font-weight: 700 !important;
+}
+html body:not(#fv) .sidebar .nav-item.active .ico,
+html body:not(#fv) .sidebar .nav-item.active svg {
+  color: var(--c-surface-dark) !important;
+}
+html body:not(#fv) .sidebar .nav-item .ico {
+  width: 20px !important;
+  height: 20px !important;
+}
+html body:not(#fv) .sidebar .sidebar-actions {
+  border-top: 1px solid rgba(255, 255, 255, .08) !important;
+  padding: 12px !important;
+}
+
+
+/* ── 7 · El panel derecho (computadora) ─────────────────────── */
+
+html body:not(#fv) .right-panel {
+  gap: var(--t-bloque) !important;
+}
+html body:not(#fv) .rp-card {
+  padding: 20px !important;
+  background: #ffffff !important;
+}
+
+
+/* ── 8 · La barra de abajo del teléfono ─────────────────────── */
+/* El destino activo lleva una pastilla detrás del icono, en el verde de
+   la casa atenuado: se ve dónde estás sin pintar la barra entera. */
+
+@media (max-width: 768px) {
+  html body:not(#fv) .mov-tab svg {
+    box-sizing: content-box;
+    padding: 4px 18px;
+    border-radius: 999px;
+    transition: background-color var(--t-tiempo) ease;
+  }
+  html body:not(#fv) .mov-tab.is-active svg {
+    background: rgba(143, 199, 46, .18);
+  }
+  html body:not(#fv) .mov-item {
+    border-color: var(--t-linea) !important;
+    border-radius: var(--t-radio) !important;
+    padding: 14px 16px !important;
+  }
+}
+
+
+/* ── 9 · Movimiento reducido ────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  html body:not(#fv) .service-card,
+  html body:not(#fv) .region-card,
+  html body:not(#fv) .anon-cat-card,
+  html body:not(#fv) .sidebar .nav-item,
+  html body:not(#fv) .input,
+  html body:not(#fv) .combo-trigger { transition: none !important; }
+}
