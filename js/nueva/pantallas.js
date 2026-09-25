@@ -36,12 +36,15 @@
      ============================================================ */
 
   var catalogo = [];
-  var categoriaActiva = 'todas';
+  /* Arranca en Vehicular, que es lo que más se consulta; 'Todas' queda
+     al final de la fila, como un desvío, no como la puerta de entrada. */
+  var categoriaActiva = 'filter';
 
   function pintarPestanas() {
     var cuenta = {};
     catalogo.forEach(function (c) { cuenta[c.categoria] = (cuenta[c.categoria] || 0) + 1; });
-    var claves = ['todas'].concat(NV.ORDEN.filter(function (k) { return cuenta[k]; }));
+    var claves = NV.ORDEN.filter(function (k) { return cuenta[k]; }).concat(['todas']);
+    if (categoriaActiva !== 'todas' && !cuenta[categoriaActiva]) categoriaActiva = 'todas';
     $('nvPestanas').innerHTML = claves.map(function (k) {
       var n = k === 'todas' ? catalogo.length : cuenta[k];
       return '<button type="button" role="tab" class="nv-pestana' + (k === categoriaActiva ? ' es-activa' : '') +

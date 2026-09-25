@@ -397,8 +397,8 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
    sin que parezca otra cosa clicable. Gris neutro (negro), no el
    --nv-gris de los textos —ese lleva un tinte verdoso de la marca y
    aquí se pidió expresamente que no lo llevara. */
-.nv-op.es-elegida { border-color: transparent; background: #e6e6e6; color: var(--nv-tinta); }
-.nv-op.es-elegida .nv-op-precio { background: #d3d3d3; color: var(--nv-tinta); }
+.nv-op.es-elegida { border-color: transparent; background: #d5d5d5; color: var(--nv-tinta); }
+.nv-op.es-elegida .nv-op-precio { background: #bfbfbf; color: var(--nv-tinta); }
 
 .nv-gratis { border: 1px solid var(--nv-linea); border-radius: var(--nv-r); background: #fff; }
 .nv-gratis summary {
