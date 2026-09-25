@@ -294,9 +294,10 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
       var(--nv-oscuro);
   }
   .nv-puerta > * { position: relative; }
-  /* El pie legal se queda en la banda clara, y ahí el blanco no se lee. */
-  .nv-puerta-legal { left: calc(60% + 20px); color: var(--nv-gris); }
-  .nv-puerta-legal a { color: var(--nv-oscuro); }
+  /* El pie legal va centrado bajo la banda de la foto, no bajo el
+     formulario: ahí el fondo es oscuro y el blanco se lee entero. */
+  .nv-puerta-legal { left: 0; right: 40%; color: rgba(255, 255, 255, .6); }
+  .nv-puerta-legal a { color: #fff; }
 }
 
 @media (prefers-reduced-motion: reduce) {
