@@ -269,37 +269,6 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
   30% { opacity: 1; transform: translateY(-3px); }
 }
 
-/* ── La puerta en ordenador: panel de arte y formulario ───────
-   Dos bandas a sangre. La ancha (60%) es el verde oscuro de la casa con
-   la foto del taller detrás, en marca de agua: se ve el coche, no
-   compite con nada. La estrecha (40%) es verde suave y solo sostiene el
-   cuadro blanco, que queda centrado en su propia banda.
-   Por debajo de 900px no hay bandas: el oscuro a pantalla completa, que
-   es como estaba. */
-@media (min-width: 901px) {
-  .nv-puerta {
-    align-items: center;
-    padding-left: 60%;
-    background: var(--nv-verde-suave);
-  }
-  .nv-puerta::before {
-    content: "";
-    position: absolute;
-    inset: 0 40% 0 0;
-    /* El velo va DELANTE de la foto, en el mismo fondo: una capa menos
-       que pintar y la foto no necesita opacidad propia. */
-    background:
-      linear-gradient(rgba(11, 42, 32, .88), rgba(11, 42, 32, .88)),
-      url("../assets/acceso/taller.webp") center / cover no-repeat,
-      var(--nv-oscuro);
-  }
-  .nv-puerta > * { position: relative; }
-  /* El pie legal va centrado bajo la banda de la foto, no bajo el
-     formulario: ahí el fondo es oscuro y el blanco se lee entero. */
-  .nv-puerta-legal { left: 0; right: 40%; color: rgba(255, 255, 255, .6); }
-  .nv-puerta-legal a { color: #fff; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .nv-puntos i { animation: none; opacity: 1; }
 }
@@ -1012,4 +981,35 @@ body.nv-puerta-encima { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .nv-pantalla, .nv-cargando { animation: none; }
   .nv-body * { transition: none !important; }
+}
+
+/* ── La puerta en ordenador: panel de arte y formulario ───────
+   Dos bandas a sangre. La ancha (60%) es el verde oscuro de la casa con
+   la foto del taller detrás, en marca de agua: se ve el coche, no
+   compite con nada. La estrecha (40%) es verde suave y solo sostiene el
+   cuadro blanco, que queda centrado en su propia banda.
+   Por debajo de 900px no hay bandas: el oscuro a pantalla completa, que
+   es como estaba. */
+@media (min-width: 901px) {
+  .nv-puerta {
+    align-items: center;
+    padding-left: 60%;
+    background: var(--nv-verde-suave);
+  }
+  .nv-puerta::before {
+    content: "";
+    position: absolute;
+    inset: 0 40% 0 0;
+    /* El velo va DELANTE de la foto, en el mismo fondo: una capa menos
+       que pintar y la foto no necesita opacidad propia. */
+    background:
+      linear-gradient(rgba(11, 42, 32, .88), rgba(11, 42, 32, .88)),
+      url("../assets/acceso/taller.webp") center / cover no-repeat,
+      var(--nv-oscuro);
+  }
+  .nv-puerta > * { position: relative; }
+  /* El pie legal va centrado bajo la banda de la foto, no bajo el
+     formulario: ahí el fondo es oscuro y el blanco se lee entero. */
+  .nv-puerta-legal { left: 0; right: 40%; color: rgba(255, 255, 255, .6); }
+  .nv-puerta-legal a { color: #fff; }
 }
