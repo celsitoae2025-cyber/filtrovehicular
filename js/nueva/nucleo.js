@@ -207,6 +207,47 @@
   window.addEventListener('hashchange', function () { mostrar(pantallaDelHash()); });
 
 
+  /* ── Capas y el botón «atrás» ──────────────────────────────
+     Elegir una consulta o abrir el visor de un PDF no cambia de
+     pantalla, así que sin esto el «atrás» del navegador —o el del
+     teléfono— sacaba al cliente de la plataforma y lo devolvía a la
+     página principal, perdiendo lo que estaba consultando.
+
+     Cada capa deja su propia entrada en el historial SIN tocar el hash:
+     así se distingue de un cambio de pantalla (de eso ya se encarga
+     `hashchange`) y «atrás» solo cierra la capa de arriba. */
+  var capas = [];
+  var cerrandoDesdeHistorial = false;
+  var ultimoHash = location.hash;
+
+  NV.abrirCapa = function (nombre, cerrar) {
+    capas.push({ nombre: nombre, cerrar: cerrar });
+    history.pushState({ nvCapa: capas.length }, '', location.href);
+  };
+
+  /* La cerró el cliente (la X, un clic fuera, Escape): se retira su
+     entrada del historial para que «atrás» no tenga que darse dos veces. */
+  NV.cerrarCapa = function (nombre) {
+    for (var i = capas.length - 1; i >= 0; i--) {
+      if (capas[i].nombre === nombre) {
+        capas.splice(i, 1);
+        cerrandoDesdeHistorial = true;
+        history.back();
+        return;
+      }
+    }
+  };
+
+  window.addEventListener('popstate', function () {
+    var cambioDePantalla = location.hash !== ultimoHash;
+    ultimoHash = location.hash;
+    if (cambioDePantalla) return;
+    if (cerrandoDesdeHistorial) { cerrandoDesdeHistorial = false; return; }
+    var capa = capas.pop();
+    if (capa) { try { capa.cerrar(); } catch (e) { console.error('[nueva] capa:', e); } }
+  });
+
+
   /* ── Acceso ───────────────────────────────────────────────── */
 
   var MENSAJES = [

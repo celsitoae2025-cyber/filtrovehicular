@@ -1997,12 +1997,26 @@
     el.querySelector('.cr-pdf-modal-nueva').hidden = !alNuevaConsulta;
     el.hidden = false;
     document.body.classList.add('cr-lightbox-open');
+    /* El visor es una capa: deja su entrada en el historial para que el
+       «atrás» del navegador (y el del teléfono) lo cierre en vez de
+       sacar al cliente de la consulta que estaba mirando. */
+    var NV = window.Consultia && window.Consultia.NV;
+    if (NV && NV.abrirCapa) NV.abrirCapa('pdf', closePdfModal);
   }
+
+  /* Escape cierra el visor: antes solo se podía con la X. */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var el = document.getElementById('cr-pdf-modal');
+    if (el && !el.hidden) { e.preventDefault(); closePdfModal(); }
+  });
 
   function closePdfModal() {
     var el = document.getElementById('cr-pdf-modal');
-    if (!el) return;
+    if (!el || el.hidden) return;
     el.hidden = true;
+    var NV = window.Consultia && window.Consultia.NV;
+    if (NV && NV.cerrarCapa) NV.cerrarCapa('pdf');
     el.querySelector('.cr-pdf-modal-body').innerHTML = '';
     document.body.classList.remove('cr-lightbox-open');
     _alNuevaConsultaPdfModal = null;

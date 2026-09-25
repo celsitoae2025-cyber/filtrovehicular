@@ -97,9 +97,25 @@
      Reporte completo (ver arrancarConsultar). */
   function mostrarBuscador() {
     var caja = $('nvBuscador');
-    if (caja && caja.hidden) caja.hidden = false;
+    var abriendo = caja && caja.hidden;
+    if (abriendo) caja.hidden = false;
     var nota = $('nvEligeNota');
     if (nota) nota.hidden = true;
+    /* Elegir una consulta es un paso atrás desde el catálogo: sin esta
+       entrada, el «atrás» del navegador sacaba de la plataforma. */
+    if (abriendo && NV.abrirCapa) NV.abrirCapa('consulta', volverAlCatalogo);
+  }
+
+  /* Atrás desde una consulta elegida: se vuelve al catálogo, no fuera. */
+  function volverAlCatalogo() {
+    var caja = $('nvBuscador');
+    if (caja) caja.hidden = true;
+    var nm = $('nvNmCampos');
+    if (nm) nm.hidden = true;
+    var nota = $('nvEligeNota');
+    if (nota) nota.hidden = false;
+    var res = $('filter-result');
+    if (res) res.hidden = true;
   }
   NV.mostrarBuscador = mostrarBuscador;
 
@@ -151,6 +167,20 @@
       mostrarBuscador();
       if (NV.actualizarModoNombre) NV.actualizarModoNombre(null);
     });
+
+    var panelRes = $('filter-result');
+    if (panelRes && window.MutationObserver && NV.abrirCapa) {
+      var capaRes = false;
+      new MutationObserver(function () {
+        if (!panelRes.hidden && !capaRes) {
+          capaRes = true;
+          NV.abrirCapa('resultado', function () { panelRes.hidden = true; capaRes = false; });
+        } else if (panelRes.hidden && capaRes) {
+          capaRes = false;
+          if (NV.cerrarCapa) NV.cerrarCapa('resultado');
+        }
+      }).observe(panelRes, { attributes: true, attributeFilter: ['hidden'] });
+    }
 
     var espera = (C.FilterView && C.FilterView.whenReady) ? C.FilterView.whenReady() : Promise.resolve();
     espera.then(function () {
