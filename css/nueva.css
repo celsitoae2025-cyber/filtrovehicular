@@ -1007,7 +1007,9 @@ body.nv-puerta-encima { overflow: hidden; }
       url("../assets/acceso/taller.webp") center / cover no-repeat,
       var(--nv-oscuro);
   }
-  .nv-puerta > * { position: relative; }
+  /* Solo lo que va sobre la banda pintada: al pie legal NO se le toca la
+     posicion, que ya es absoluta y se coloca sola. */
+  .nv-puerta-caja, .nv-puerta-volver { position: relative; z-index: 1; }
   /* El pie legal va centrado bajo la banda de la foto, no bajo el
      formulario: ahí el fondo es oscuro y el blanco se lee entero. */
   .nv-puerta-legal { left: 0; right: 40%; color: rgba(255, 255, 255, .6); }
