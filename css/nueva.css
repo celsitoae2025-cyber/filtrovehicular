@@ -337,7 +337,7 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
 
 .nv-buscador {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
   align-items: center; gap: 10px;
   padding: 10px;
   border: 1px solid var(--nv-linea); border-radius: 22px;
@@ -345,6 +345,18 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
 }
 .nv-buscador .nv-campo, .nv-buscador .nv-combo-boton { border-color: transparent; background: var(--nv-suave); }
 .nv-buscador .nv-campo:focus { border-color: var(--nv-oscuro); background: #fff; }
+/* Búsqueda por nombres: el dato único se esconde y el combo se estira
+   para ocupar su sitio, junto al botón. */
+.nv-buscador.es-nm { grid-template-columns: minmax(0, 1fr) auto; }
+.nv-buscador.es-nm .nv-dato { display: none; }
+.nv-nm-fields { display: flex; flex-direction: column; gap: 8px; margin-top: -8px; }
+.nv-nm-nota { margin: 0; padding: 0 4px; font-size: 14px; color: var(--nv-gris); }
+.nv-nm-fila { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 900px) {
+  .nv-buscador.es-nm { grid-template-columns: minmax(0, 1fr); }
+  .nv-buscador.es-nm .nv-consultar { grid-column: 1; }
+  .nv-nm-fila { grid-template-columns: minmax(0, 1fr); }
+}
 .nv-dato { letter-spacing: .4px; }
 .nv-consultar { min-height: 52px; }
 .nv-costo {

@@ -106,6 +106,7 @@
     if (combo) combo.classList.remove('open');
     marcarElegida();
     mostrarBuscador();
+    if (NV.actualizarModoNombre) NV.actualizarModoNombre(catalogo.find(function (c) { return c.id === id; }));
     var campo = $('filter-input');
     if (campo && window.matchMedia('(hover: hover)').matches) campo.focus();
     document.querySelector('.nv-buscador').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -118,7 +119,10 @@
     filtrarDesplegable();
     if (cat !== 'todas') {
       var primera = catalogo.filter(function (c) { return c.categoria === cat; })[0];
-      if (primera && C.setFilterOption) { C.setFilterOption(primera.id); marcarElegida(); mostrarBuscador(); }
+      if (primera && C.setFilterOption) {
+        C.setFilterOption(primera.id); marcarElegida(); mostrarBuscador();
+        if (NV.actualizarModoNombre) NV.actualizarModoNombre(primera);
+      }
     }
   }
   NV.cambiarCategoria = cambiarCategoria;
@@ -137,9 +141,13 @@
     /* Si se elige desde el desplegable, la lista de abajo lo refleja. */
     $('filterComboPanel').addEventListener('click', function () { setTimeout(marcarElegida, 0); });
     /* El Reporte completo también elige una consulta (la suya): pide el
-       dato igual que cualquier otra. */
+       dato igual que cualquier otra, y nunca es de nombre —si se venía
+       de una búsqueda por nombre, se apaga ese modo. */
     var ctaReporte = $('ctaReporteBtn');
-    if (ctaReporte) ctaReporte.addEventListener('click', mostrarBuscador);
+    if (ctaReporte) ctaReporte.addEventListener('click', function () {
+      mostrarBuscador();
+      if (NV.actualizarModoNombre) NV.actualizarModoNombre(null);
+    });
 
     var espera = (C.FilterView && C.FilterView.whenReady) ? C.FilterView.whenReady() : Promise.resolve();
     espera.then(function () {

@@ -60,7 +60,7 @@
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
 <!-- La ventana del Filtro Vehicular Completo, la de siempre. -->
 <link rel="stylesheet" href="css/oferta.css?v=10">
-<link rel="stylesheet" href="css/nueva.css?v=17">
+<link rel="stylesheet" href="css/nueva.css?v=18">
 </head>
 <body class="nv-body">
 
@@ -312,6 +312,19 @@
           <input class="nv-campo nv-dato" id="filter-input" type="text" autocomplete="off" spellcheck="false" placeholder="Dato" aria-label="Dato a consultar">
           <button class="nv-cta nv-consultar" id="filter-consultar" type="button"><span>Consultar</span></button>
           <span id="filter-desc" hidden></span>
+        </div>
+
+        <!-- Búsqueda por nombres (comando /nm: recuperar el segundo
+             apellido y similares): tres campos en vez del dato único.
+             js/nueva/nombres.js la enseña sola al elegir una de estas
+             consultas, y acepta con solo dos de los tres llenos. -->
+        <div class="nv-nm-fields" id="nvNmCampos" hidden>
+          <p class="nv-nm-nota">Completa al menos dos: nombres y un apellido, o ambos apellidos.</p>
+          <div class="nv-nm-fila">
+            <input class="nv-campo" id="nvNmNombres" type="text" autocomplete="off" spellcheck="false" placeholder="Nombres" aria-label="Nombres">
+            <input class="nv-campo" id="nvNmApPat" type="text" autocomplete="off" spellcheck="false" placeholder="Apellido paterno" aria-label="Apellido paterno">
+            <input class="nv-campo" id="nvNmApMat" type="text" autocomplete="off" spellcheck="false" placeholder="Apellido materno" aria-label="Apellido materno">
+          </div>
         </div>
 
         <section class="panel result-panel nv-resultado" id="filter-result" hidden>
@@ -607,7 +620,8 @@
 <script src="js/modules/citv-pdf.js?v=3"></script>
 <script src="js/modules/citv-aviso.js?v=9"></script>
 
-<script src="js/nueva/pantallas.js?v=9"></script>
+<script src="js/nueva/pantallas.js?v=10"></script>
+<script src="js/nueva/nombres.js?v=1"></script>
 <script src="js/nueva/servicios.js?v=1"></script>
 
 <!-- Lo que corre por su cuenta, igual que en la plataforma de siempre:
