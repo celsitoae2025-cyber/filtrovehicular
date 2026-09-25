@@ -392,8 +392,11 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
   background: var(--nv-suave); color: var(--nv-tinta);
   font-size: 15px; font-weight: 400; text-align: center;
 }
-.nv-op.es-elegida { border-color: var(--nv-oscuro); background: var(--nv-oscuro); color: #fff; }
-.nv-op.es-elegida .nv-op-precio { background: rgba(255, 255, 255, .16); color: #fff; }
+/* Gris, no el oscuro de siempre: el oscuro ya significa «botón,
+   pestaña activa»; aquí solo hace falta que se note cuál está elegida,
+   sin que parezca otra cosa clicable. */
+.nv-op.es-elegida { border-color: var(--nv-gris); background: var(--nv-gris); color: #fff; }
+.nv-op.es-elegida .nv-op-precio { background: rgba(255, 255, 255, .18); color: #fff; }
 
 .nv-gratis { border: 1px solid var(--nv-linea); border-radius: var(--nv-r); background: #fff; }
 .nv-gratis summary {
