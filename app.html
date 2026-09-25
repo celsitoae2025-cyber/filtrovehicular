@@ -60,7 +60,7 @@
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
 <!-- La ventana del Filtro Vehicular Completo, la de siempre. -->
 <link rel="stylesheet" href="css/oferta.css?v=10">
-<link rel="stylesheet" href="css/nueva.css?v=13">
+<link rel="stylesheet" href="css/nueva.css?v=14">
 </head>
 <body class="nv-body">
 
@@ -117,8 +117,8 @@
          escrita (js/nueva/acceso.js). -->
     <button class="nv-fvc" type="button" id="fvcOpen" aria-haspopup="dialog">
       <span class="nv-fvc-ico"><svg viewBox="0 0 24 24"><path d="M13.9 2.9H7.3A2.3 2.3 0 0 0 5 5.2v13.6a2.3 2.3 0 0 0 2.3 2.3h2.4"/><path d="M13.9 2.9 19 8v3"/><path d="M13.9 2.9V8H19"/><path d="M8.5 10.7h6.2"/><path d="M8.5 13.8h3.4"/><circle cx="16.5" cy="16.6" r="4.5"/><path d="m14.6 16.6 1.3 1.4 2.6-2.7"/></svg></span>
-      <span class="nv-fvc-txt"><strong>Filtro Vehicular Completo</strong><small>Todo el historial del vehículo en un PDF</small></span>
-      <span class="nv-fvc-precio"><strong>S/ 15</strong><s>S/ 30</s></span>
+      <span class="nv-fvc-txt">Filtro Vehicular Completo</span>
+      <span class="nv-fvc-precio">S/ 15</span>
     </button>
     <h1>Entra a tu cuenta</h1>
     <label class="nv-etiqueta">Correo
@@ -290,7 +290,11 @@
 
         <div class="nv-pestanas" id="nvPestanas" role="tablist" aria-label="Categorías"></div>
 
-        <div class="nv-buscador">
+        <!-- Se pide el dato solo DESPUÉS de elegir el tipo de consulta,
+             abajo en la lista (o el Reporte completo): antes no hay nada
+             que consultar. js/nueva/pantallas.js la muestra al elegir. -->
+        <p class="nv-elige-nota" id="nvEligeNota">Elige abajo el tipo de consulta que necesitas.</p>
+        <div class="nv-buscador" id="nvBuscador" hidden>
           <div class="combo nv-combo" id="filterCombo">
             <button class="combo-trigger nv-combo-boton" id="filterComboBtn" type="button" tabindex="-1" aria-hidden="true">
               <span class="combo-text" id="filterComboText">Cargando…</span>

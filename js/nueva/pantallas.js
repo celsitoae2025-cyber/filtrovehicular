@@ -88,11 +88,24 @@
     });
   }
 
+  /* La placa/DNI y el botón «Consultar» solo aparecen DESPUÉS de elegir
+     el tipo de consulta: antes no hay nada que pedir. Se enseñan al
+     elegir una tarjeta, una categoría con su primera consulta, o el
+     Reporte completo (ver arrancarConsultar). */
+  function mostrarBuscador() {
+    var caja = $('nvBuscador');
+    if (caja && caja.hidden) caja.hidden = false;
+    var nota = $('nvEligeNota');
+    if (nota) nota.hidden = true;
+  }
+  NV.mostrarBuscador = mostrarBuscador;
+
   function elegir(id) {
     if (C.setFilterOption) C.setFilterOption(id);
     var combo = $('filterCombo');
     if (combo) combo.classList.remove('open');
     marcarElegida();
+    mostrarBuscador();
     var campo = $('filter-input');
     if (campo && window.matchMedia('(hover: hover)').matches) campo.focus();
     document.querySelector('.nv-buscador').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -105,7 +118,7 @@
     filtrarDesplegable();
     if (cat !== 'todas') {
       var primera = catalogo.filter(function (c) { return c.categoria === cat; })[0];
-      if (primera && C.setFilterOption) { C.setFilterOption(primera.id); marcarElegida(); }
+      if (primera && C.setFilterOption) { C.setFilterOption(primera.id); marcarElegida(); mostrarBuscador(); }
     }
   }
   NV.cambiarCategoria = cambiarCategoria;
@@ -123,6 +136,10 @@
     });
     /* Si se elige desde el desplegable, la lista de abajo lo refleja. */
     $('filterComboPanel').addEventListener('click', function () { setTimeout(marcarElegida, 0); });
+    /* El Reporte completo también elige una consulta (la suya): pide el
+       dato igual que cualquier otra. */
+    var ctaReporte = $('ctaReporteBtn');
+    if (ctaReporte) ctaReporte.addEventListener('click', mostrarBuscador);
 
     var espera = (C.FilterView && C.FilterView.whenReady) ? C.FilterView.whenReady() : Promise.resolve();
     espera.then(function () {
