@@ -79,14 +79,14 @@
 .fvc-modal-caja {
   position: relative;
   width: 100%;
-  max-width: 460px;
+  max-width: 420px;
   max-height: calc(100vh - 40px);
   overflow-y: auto;
   background: #ffffff;
-  border: 1px solid #e4e8e3;
-  border-radius: 16px;
-  padding: 28px;
-  color: #141d1c;
+  border: 1px solid var(--nv-linea);
+  border-radius: var(--nv-r-l);
+  padding: 26px;
+  color: var(--nv-tinta);
 
   opacity: 0;
   transform: translateY(18px) scale(0.97);
@@ -144,10 +144,10 @@
   background: transparent;
   border: 0;
   border-radius: 50%;
-  color: rgba(20, 29, 28, 0.55);
+  color: var(--nv-gris);
   cursor: pointer;
 }
-.fvc-cerrar:hover { background: #f2f4f1; color: #141d1c; }
+.fvc-cerrar:hover { background: var(--nv-suave); color: var(--nv-tinta); }
 .fvc-cerrar svg { width: 20px; height: 20px; }
 
 /* ── Cabecera ────────────────────────────────────────────────
@@ -165,31 +165,31 @@
    verde de la banda del acceso—, que es lo que ancla el encabezado. */
 .fvc-sello {
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 0;
-  border-radius: 12px;
-  background: var(--c-auth-panel);
-  color: #ffffff;
+  border-radius: var(--nv-r-s);
+  background: var(--nv-suave);
+  color: var(--nv-oscuro);
 }
-.fvc-sello svg { width: 24px; height: 24px; }
+.fvc-sello svg { width: 22px; height: 22px; }
 
 .fvc-titulo {
   margin: 0 0 4px;
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.25;
-  color: #141d1c;
+  color: var(--nv-tinta);
 }
 .fvc-bajada {
   margin: 0;
   font-size: 15px;
   font-weight: 400;
   line-height: 1.45;
-  color: rgba(20, 29, 28, 0.62);
+  color: var(--nv-gris);
 }
 
 /* ── El precio ───────────────────────────────────────────────
@@ -203,8 +203,8 @@
   flex-wrap: wrap;
   gap: 10px;
   padding: 16px 0;
-  border-top: 1px solid #e4e8e3;
-  border-bottom: 1px solid #e4e8e3;
+  border-top: 1px solid var(--nv-linea);
+  border-bottom: 1px solid var(--nv-linea);
   margin-bottom: 20px;
 }
 /* El precio en esmeralda y no en lima. Es la cifra que decide la compra
@@ -212,23 +212,23 @@
    mirar. El lima se queda donde no hay que leer nada: los vistos de la
    lista. */
 .fvc-ahora {
-  font-size: 38px;
+  font-size: 34px;
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.8px;
-  color: var(--c-auth-panel);
+  color: var(--nv-tinta);
 }
 .fvc-antes {
   font-size: 17px;
   font-weight: 400;
-  color: rgba(20, 29, 28, 0.45);
+  color: var(--nv-gris);
   text-decoration-thickness: 1px;
 }
 .fvc-promo {
   flex-basis: 100%;
   font-size: 15px;
   font-weight: 400;
-  color: rgba(20, 29, 28, 0.55);
+  color: var(--nv-gris);
 }
 
 /* ── Qué incluye ─────────────────────────────────────────────
@@ -238,7 +238,7 @@
   margin: 0 0 10px;
   font-size: 15px;
   font-weight: 700;
-  color: #141d1c;
+  color: var(--nv-tinta);
 }
 .fvc-lista {
   list-style: none;
@@ -254,14 +254,14 @@
   font-size: 15px;
   font-weight: 400;
   line-height: 1.45;
-  color: rgba(20, 29, 28, 0.78);
+  color: var(--nv-tinta);
 }
 .fvc-visto {
   flex: none;
   width: 18px;
   height: 18px;
   margin-top: 2px;
-  color: #8fc72e;
+  color: var(--nv-gris);
 }
 .fvc-visto svg { width: 100%; height: 100%; }
 
@@ -273,7 +273,7 @@
   margin-bottom: 6px;
   font-size: 15px;
   font-weight: 400;
-  color: rgba(20, 29, 28, 0.62);
+  color: var(--nv-gris);
 }
 .fvc-input {
   width: 100%;
@@ -281,10 +281,10 @@
   /* Con !important: base.css fija a TODOS los campos su radio y su borde
      con !important, y aquí manda la píldora, que es la forma que habla
      esta pantalla. */
-  border: 1px solid rgba(20, 29, 28, .18) !important;
-  border-radius: 12px !important;
+  border: 1px solid var(--nv-linea-2) !important;
+  border-radius: var(--nv-r) !important;
   background: #ffffff;
-  color: #141d1c;
+  color: var(--nv-tinta);
   font-family: inherit;
   font-size: 19px;
   font-weight: 700;
@@ -299,7 +299,7 @@
 }
 .fvc-input:focus {
   outline: none;
-  border-color: var(--c-auth-panel) !important;
+  border-color: var(--nv-oscuro) !important;
 }
 .fvc-input:focus-visible {
   outline: 2px solid rgba(11, 42, 32, .3);
@@ -311,11 +311,11 @@
    arriba nunca llegó a aplicarse —el campo llevaba el radio de 8 de la
    app, no el que su propia regla pedía—. */
 .fvc-modal .fvc-input {
-  border: 1px solid rgba(20, 29, 28, .18) !important;
-  border-radius: 12px !important;
+  border: 1px solid var(--nv-linea-2) !important;
+  border-radius: var(--nv-r) !important;
 }
 .fvc-modal .fvc-input:focus {
-  border-color: var(--c-auth-panel) !important;
+  border-color: var(--nv-oscuro) !important;
 }
 
 .fvc-msg {
@@ -332,24 +332,24 @@
   width: 100%;
   height: 52px;
   margin-top: 12px;
-  background: var(--c-auth-panel);
+  background: var(--nv-oscuro);
   color: #ffffff;
-  border: 1px solid var(--c-auth-panel);
-  border-radius: 12px;
+  border: 0;
+  border-radius: 999px;
   font-family: inherit;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 400;
   cursor: pointer;
   transition: background .15s, border-color .15s;
 }
-.fvc-enviar:hover { background: #123c30; border-color: #123c30; }
+.fvc-enviar:hover { background: var(--nv-oscuro-2); }
 
 .fvc-pie {
   margin: 12px 0 0;
   font-size: 15px;
   font-weight: 400;
   line-height: 1.45;
-  color: rgba(20, 29, 28, 0.5);
+  color: var(--nv-gris);
   text-align: center;
 }
 
@@ -386,7 +386,7 @@
   .fvc-modal-caja {
     padding: 22px 18px;
     max-height: calc(100vh - 24px);
-    border-radius: 18px;
+    border-radius: var(--nv-r-l);
   }
   .fvc-cabecera { gap: 12px; margin-bottom: 16px; }
   .fvc-titulo { font-size: 19px; }
