@@ -12,7 +12,7 @@
 
 // IMPORTANTE: incrementar CACHE_VERSION en cada deploy para que los usuarios
 // reciban las actualizaciones de JS/CSS/HTML automáticamente.
-const CACHE_VERSION = "v2.99.0-20260925";
+const CACHE_VERSION = "v2.100.0-20260925";
 const SHELL_CACHE = "fv-shell-" + CACHE_VERSION;
 const ASSETS_CACHE = "fv-assets-" + CACHE_VERSION;
 const IMG_CACHE = "fv-img-" + CACHE_VERSION;
@@ -26,7 +26,7 @@ const PRECACHE_URLS = [
   "/",
   "/app",
   "/manifest.json",
-  "/icons/favicon.svg",
+  "/icons/favicon-marca.png",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
 ];

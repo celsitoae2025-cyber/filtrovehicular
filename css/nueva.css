@@ -843,7 +843,7 @@ button.nv-nav {
 .nv-puerta-pie { align-items: center; }
 .nv-puerta-pie span { font-size: 15px; color: var(--nv-gris); }
 .nv-codigo { letter-spacing: 8px; font-size: 22px; text-align: center; }
-.nv-puerta-legal { margin: 0; font-size: 15px; color: rgba(255, 255, 255, .6); text-align: center; }
+.nv-puerta-legal { margin: auto 0 0; padding-top: 24px; font-size: 15px; color: rgba(255, 255, 255, .6); text-align: center; }
 .nv-puerta-legal a { color: #fff; font-weight: 400; }
 .nv-puerta-volver {
   display: inline-flex; align-items: center; gap: 8px;
@@ -955,7 +955,6 @@ body.nv-puerta-encima { overflow: hidden; }
 }
 .nv-fvc-ico svg { width: 13px; height: 13px; }
 .nv-fvc-txt { font-size: 14px; }
-.nv-body .nv-fvc .nv-fvc-precio { font-size: 14px; font-weight: 700; color: var(--nv-verde-2); }
 
 /* La nota de «elige abajo» donde iría el buscador antes de elegir. */
 .nv-elige-nota {
