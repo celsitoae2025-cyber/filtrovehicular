@@ -475,18 +475,26 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
 /* Paquetes: filas delgadas. Créditos, precio y comprar en una línea. */
 .nv-paquetes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .nv-paq {
-  display: flex; align-items: center; gap: 12px;
-  min-height: 60px; padding: 8px 8px 8px 18px;
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 8px 8px 18px;
   border: 1px solid var(--nv-linea); border-radius: 999px; background: #fff;
 }
-.nv-paq.es-mejor { border: 2px solid var(--nv-oscuro); }
-/* Nunca nowrap+ellipsis aquí: con «Mejor precio» de más, el texto se
-   cortaba entero y la insignia desaparecía sin avisar. Envuelve a dos
-   líneas si hace falta; la fila crece porque min-height no es height. */
-.nv-paq-cred { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; padding: 6px 0; font-size: 15px; color: var(--nv-gris); }
+.nv-paq.es-mejor { border: 2px solid var(--nv-oscuro); padding: 7px 8px 7px 17px; }
+.nv-paq-fila { display: flex; align-items: center; gap: 12px; min-height: 44px; }
+/* «Comprar» y el precio NUNCA se aprietan (flex-shrink: 0): lo único
+   que cede ante un número largo de créditos es este texto, y con
+   puntos suspensivos —nunca escondiendo la insignia, que ahora vive
+   fuera de esta línea, debajo y chica. */
+.nv-paq-cred { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; color: var(--nv-gris); }
 .nv-paq-cred strong { font-size: 20px; color: var(--nv-tinta); letter-spacing: -.3px; }
-.nv-paq-cred small { padding: 2px 8px; border-radius: 999px; background: var(--nv-oscuro); color: #fff; font-size: 15px; font-weight: 400; white-space: nowrap; }
-.nv-paq em { font-style: normal; font-size: 17px; font-weight: 400; color: var(--nv-oscuro); white-space: nowrap; }
+.nv-paq em { flex-shrink: 0; font-style: normal; font-size: 17px; font-weight: 400; color: var(--nv-oscuro); white-space: nowrap; }
+.nv-paq .nv-cta { flex-shrink: 0; }
+.nv-paq-mejor {
+  align-self: flex-start; margin-left: 2px;
+  padding: 1px 7px; border-radius: 999px;
+  background: var(--nv-oscuro); color: #fff;
+  font-size: 11px; font-weight: 700; letter-spacing: .2px;
+}
 .nv-libre {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
   padding: 10px 10px 10px 18px;

@@ -354,11 +354,16 @@
     var mejor = PAQUETES.reduce(function (a, b) { return (b.precio / b.creditos) < (a.precio / a.creditos) ? b : a; });
     $('nvPaquetes').innerHTML = PAQUETES.map(function (p) {
       var es = p === mejor;
+      /* La insignia «Mejor precio» va FUERA de la línea de créditos: ahí
+         adentro competía por el mismo ancho que el precio y «Comprar», y
+         apretaba al botón hasta cortarlo. Aparte, chica, debajo. */
       return '<div class="nv-paq' + (es ? ' es-mejor' : '') + '">' +
-        '<span class="nv-paq-cred"><strong>' + NV.numero(p.creditos) + '</strong> créditos' +
-          (es ? ' <small>Mejor precio</small>' : '') + '</span>' +
-        '<em>' + NV.soles(p.precio) + '</em>' +
-        '<button type="button" class="nv-cta nv-cta-chica" data-plan="' + p.id + '"><span>Comprar</span><i><svg><use href="#i-ir"/></svg></i></button>' +
+        '<div class="nv-paq-fila">' +
+          '<span class="nv-paq-cred"><strong>' + NV.numero(p.creditos) + '</strong> créditos</span>' +
+          '<em>' + NV.soles(p.precio) + '</em>' +
+          '<button type="button" class="nv-cta nv-cta-chica" data-plan="' + p.id + '"><span>Comprar</span><i><svg><use href="#i-ir"/></svg></i></button>' +
+        '</div>' +
+        (es ? '<span class="nv-paq-mejor">Mejor precio</span>' : '') +
       '</div>';
     }).join('');
   }
