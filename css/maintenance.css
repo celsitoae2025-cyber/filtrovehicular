@@ -46,23 +46,10 @@ html.mnt-locked body {
 }
 .mnt-mark-plus { color: var(--c-accent, #8fc72e); }
 
-/* Filete bicolor: verde + turquesa, el acento de la marca */
-.mnt-rule {
-  width: 56px;
-  height: 3px;
-  margin: 14px auto 22px;
-  border-radius: 2px;
-  background: linear-gradient(
-    to right,
-    var(--c-accent, #8fc72e) 0 50%,
-    #03a7a4 50% 100%
-  );
-}
-
 .mnt-icon {
   width: 46px;
   height: 46px;
-  margin: 0 auto 16px;
+  margin: 22px auto 16px;
   color: var(--c-accent, #8fc72e);
 }
 .mnt-icon svg { width: 100%; height: 100%; display: block; }

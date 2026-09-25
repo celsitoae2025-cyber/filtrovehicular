@@ -81,10 +81,9 @@
     el.innerHTML =
       '<div class="mnt-card">' +
         '<div class="mnt-mark">' +
-          '<span class="mnt-mark-text">Filtro Vehicular</span>' +
+          '<span class="mnt-mark-text">Plataforma Filtro Vehicular</span>' +
           '<span class="mnt-mark-plus">+</span>' +
         '</div>' +
-        '<div class="mnt-rule"></div>' +
         '<div class="mnt-icon" aria-hidden="true">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
                'stroke-linecap="round" stroke-linejoin="round">' +

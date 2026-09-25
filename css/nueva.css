@@ -68,7 +68,15 @@
 /* 1/3: el atributo [hidden] esconde siempre, lo pise quien lo pise. */
 .nv-body [hidden] { display: none !important; }
 
-.nv-body svg {
+/* :where() para que esto sea el TAMAÑO POR DEFECTO de un icono, no una
+   orden que gana a todo. nueva.css carga el último de todos: sin
+   :where(), esta regla —de la misma fuerza que casi cualquier «.algo
+   svg»— le ganaba por orden a los tamaños propios de cada pieza vieja
+   (el reloj de mantenimiento, el sello del reporte, los iconos de un
+   resultado…) y los dejaba todos en 20×20, aplastados. Con :where() esta
+   regla vale lo mínimo posible y CUALQUIER selector de clase la vence,
+   sea de la hoja que sea y esté donde esté en el orden de carga. */
+:where(.nv-body) svg {
   width: 20px; height: 20px; flex-shrink: 0;
   fill: none; stroke: currentColor; stroke-width: 1.7;
   stroke-linecap: round; stroke-linejoin: round;
@@ -472,9 +480,12 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
   border: 1px solid var(--nv-linea); border-radius: 999px; background: #fff;
 }
 .nv-paq.es-mejor { border: 2px solid var(--nv-oscuro); }
-.nv-paq-cred { flex: 1; min-width: 0; font-size: 15px; color: var(--nv-gris); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Nunca nowrap+ellipsis aquí: con «Mejor precio» de más, el texto se
+   cortaba entero y la insignia desaparecía sin avisar. Envuelve a dos
+   líneas si hace falta; la fila crece porque min-height no es height. */
+.nv-paq-cred { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; padding: 6px 0; font-size: 15px; color: var(--nv-gris); }
 .nv-paq-cred strong { font-size: 20px; color: var(--nv-tinta); letter-spacing: -.3px; }
-.nv-paq-cred small { margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: var(--nv-oscuro); color: #fff; font-size: 15px; font-weight: 400; }
+.nv-paq-cred small { padding: 2px 8px; border-radius: 999px; background: var(--nv-oscuro); color: #fff; font-size: 15px; font-weight: 400; white-space: nowrap; }
 .nv-paq em { font-style: normal; font-size: 17px; font-weight: 400; color: var(--nv-oscuro); white-space: nowrap; }
 .nv-libre {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
