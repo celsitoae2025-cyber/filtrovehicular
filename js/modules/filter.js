@@ -14,10 +14,75 @@
   var currentConsulta = null;
   var catalogReadyPromise = null;
 
-  // Antispam del reporte /metapla: tras entregar la información hay que
-  // esperar 60 s antes de poder pedir otro reporte. Aplica sólo a /metapla.
-  var METAPLA_COOLDOWN_MS = 60 * 1000;
-  var metaplaCooldownUntil = 0;
+  /* ── Antispam ──────────────────────────────────────────────────────
+     Dos frenos distintos y complementarios:
+
+     1. ENFRIAMIENTO POR COMANDO. Tras ENTREGAR la información, ese
+        comando queda en espera: el reporte completo 60 s y la Boleta
+        Informativa 40 s. Son las dos consultas caras de servir, y
+        pedirlas en cadena es lo que tumba al proveedor.
+
+     2. VIGILANCIA DE RITMO, para todas. Si alguien dispara consultas a
+        destajo se le avisa UNA vez; si sigue, se le suspende media hora.
+        Primero el aviso y solo después el castigo: quien va rápido de
+        buena fe corrige, y quien insiste ya no es un despiste. */
+  var ENFRIAMIENTO_MS = { metapla: 60 * 1000, boin: 40 * 1000 };
+  var enfriamientoHasta = {};
+
+  var SPAM_VENTANA_MS   = 30 * 1000;   // ventana en la que se cuentan los intentos
+  var SPAM_TOPE         = 6;           // intentos en esa ventana antes del aviso
+  var SPAM_TOPE_AVISADO = 3;           // ya avisado: a la tercera, suspensión
+  var SPAM_CASTIGO_MS   = 30 * 60 * 1000;
+  var SPAM_LLAVE        = 'fv:spam:hasta';
+  var intentos = [];
+  var avisadoSpam = false;
+
+  function suspendidoHasta() {
+    try { return parseInt(localStorage.getItem(SPAM_LLAVE), 10) || 0; } catch (e) { return 0; }
+  }
+  function suspender() {
+    try { localStorage.setItem(SPAM_LLAVE, String(Date.now() + SPAM_CASTIGO_MS)); } catch (e) {}
+  }
+  function hora(ms) {
+    return new Date(ms).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+  }
+  function aviso(tipo, titulo, mensaje) {
+    if (Consultia.toast) Consultia.toast({ type: tipo, title: titulo, message: mensaje });
+  }
+
+  /* true = esta consulta NO sale. */
+  function frenarSiEsSpam() {
+    var ahora = Date.now();
+    var hasta = suspendidoHasta();
+    if (hasta > ahora) {
+      aviso('error', 'Acceso suspendido',
+        'Se detectó uso abusivo. Podrás consultar de nuevo a las ' + hora(hasta) + '.');
+      return true;
+    }
+    if (hasta) { try { localStorage.removeItem(SPAM_LLAVE); } catch (e) {} avisadoSpam = false; }
+
+    intentos = intentos.filter(function (t) { return ahora - t < SPAM_VENTANA_MS; });
+    intentos.push(ahora);
+    if (intentos.length <= (avisadoSpam ? SPAM_TOPE_AVISADO : SPAM_TOPE)) return false;
+
+    intentos = [];
+    if (!avisadoSpam) {
+      avisadoSpam = true;
+      aviso('warning', 'No hagas spam',
+        'Estás lanzando consultas demasiado rápido. Espera unos segundos entre una y otra: si sigues, el acceso se suspende 30 minutos.');
+      return true;
+    }
+    suspender();
+    aviso('error', 'Acceso suspendido 30 minutos',
+      'Seguiste lanzando consultas tras el aviso. Podrás consultar de nuevo a las ' + hora(Date.now() + SPAM_CASTIGO_MS) + '.');
+    return true;
+  }
+
+  /* Qué comando se enfría con esta consulta ('' = ninguno). */
+  function claveEnfriamiento(c) {
+    if (esMetapla(c)) return 'metapla';
+    return ((c && c.comando) || '').indexOf('/boin') === 0 ? 'boin' : '';
+  }
 
   /* El Reporte Completo ha cambiado de bot y con él de comando: era
      `/metapla` en fuentesdata y ahora es `/mpla` en ghostdataxxx. Se
@@ -667,15 +732,17 @@
       return;
     }
 
-    // Antispam: sólo el reporte /metapla queda en enfriamiento tras entregarse.
-    if (esMetapla(currentConsulta)) {
-      var restanteMs = metaplaCooldownUntil - Date.now();
+    if (frenarSiEsSpam()) return;
+
+    /* Enfriamiento del comando que se acaba de servir. */
+    var llaveFrio = claveEnfriamiento(currentConsulta);
+    if (llaveFrio) {
+      var restanteMs = (enfriamientoHasta[llaveFrio] || 0) - Date.now();
       if (restanteMs > 0) {
-        var restanteS = Math.ceil(restanteMs / 1000);
         if (Consultia.toast) Consultia.toast({
           type: 'warning',
           title: 'Espera un momento',
-          message: 'Podrás pedir otro reporte en ' + restanteS + ' s.'
+          message: 'Podrás volver a pedirla en ' + Math.ceil(restanteMs / 1000) + ' s.'
         });
         return;
       }
@@ -703,8 +770,8 @@
     try {
       var resp = await Consultia.ConsultaRunner.ejecutarConsultaConCobro(user.id, currentConsulta, valor);
       renderResultado(resp, valor);
-      // La información ya se entregó: arrancar el enfriamiento de 60 s del reporte.
-      if (esMetapla(currentConsulta)) metaplaCooldownUntil = Date.now() + METAPLA_COOLDOWN_MS;
+      // La información ya se entregó: arranca el enfriamiento de su comando.
+      if (llaveFrio) enfriamientoHasta[llaveFrio] = Date.now() + ENFRIAMIENTO_MS[llaveFrio];
       if (Consultia.SearchHistory) Consultia.SearchHistory.add(valor, currentConsulta && currentConsulta.categoria);
       if (Consultia.Favorites && Consultia.Favorites.injectStar) {
         var _rp = document.getElementById('filter-result-panel');
