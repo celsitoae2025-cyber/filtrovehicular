@@ -132,17 +132,6 @@
 .nv-barra-titulo { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
 .nv-barra-acciones { display: flex; align-items: center; gap: 8px; }
 
-.nv-chip-saldo {
-  display: inline-flex; align-items: center; gap: 6px;
-  height: 40px; padding: 0 14px;
-  border-radius: 999px;
-  font-size: 15px; font-weight: 400; text-decoration: none;
-  transition: background-color var(--nv-t) ease, border-color var(--nv-t) ease;
-}
-.nv-chip-saldo { background: var(--nv-oscuro); color: #fff; }
-.nv-chip-saldo svg { width: 16px; height: 16px; }
-@media (hover: hover) { .nv-chip-saldo:hover { background: var(--nv-oscuro-2); } }
-
 /* El avatar: círculo en el oscuro de la casa, iniciales en blanco. */
 .nv-avatar {
   display: inline-flex; align-items: center; justify-content: center;
@@ -619,8 +608,6 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
   .nv-lado { display: none; }
 
   .nv-barra { height: 58px; padding: 0 16px; }
-  /* En el teléfono el saldo vive dentro del menú del avatar. */
-  .nv-chip-saldo { display: none; }
   .nv-yo-menu { width: min(300px, calc(100vw - 24px)); right: -4px; }
   .nv-barra-titulo { font-size: 20px; }
 
@@ -897,25 +884,25 @@ body.nv-puerta-encima { overflow: hidden; }
    se ve antes que nada. En el verde de la marca, con el precio. */
 .nv-fvc {
   display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px;
-  width: 100%; padding: 14px 16px;
-  border: 0; border-radius: var(--nv-r);
-  background: var(--nv-verde); color: var(--nv-oscuro);
+  width: 100%; padding: 12px 14px;
+  border: 1px solid var(--nv-linea); border-radius: var(--nv-r);
+  background: #fff; color: var(--nv-tinta);
   font: inherit; text-align: left; cursor: pointer;
-  transition: background-color var(--nv-t) ease;
+  transition: border-color var(--nv-t) ease;
 }
-@media (hover: hover) { .nv-fvc:hover { background: var(--nv-verde-2); } }
+@media (hover: hover) { .nv-fvc:hover { border-color: var(--nv-verde-2); } }
 .nv-fvc-ico {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 44px; height: 44px; border-radius: 12px;
-  background: var(--nv-oscuro); color: #fff;
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--nv-verde-suave); color: var(--nv-verde-2);
 }
-.nv-fvc-ico svg { width: 24px; height: 24px; }
+.nv-fvc-ico svg { width: 21px; height: 21px; }
 .nv-fvc-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.nv-body .nv-fvc .nv-fvc-txt strong { font-size: 17px; font-weight: 700; line-height: 1.2; }
-.nv-fvc-txt small { font-size: 15px; line-height: 1.3; }
+.nv-body .nv-fvc .nv-fvc-txt strong { font-size: 16px; font-weight: 400; line-height: 1.2; }
+.nv-fvc-txt small { font-size: 15px; line-height: 1.3; color: var(--nv-gris); }
 .nv-fvc-precio { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1; }
-.nv-body .nv-fvc .nv-fvc-precio strong { font-size: 22px; font-weight: 700; }
-.nv-fvc-precio s { font-size: 15px; opacity: .7; }
+.nv-body .nv-fvc .nv-fvc-precio strong { font-size: 19px; font-weight: 700; color: var(--nv-verde-2); }
+.nv-fvc-precio s { font-size: 14px; color: var(--nv-gris); }
 
 @media (max-width: 900px) {
   .nv-buscador { grid-template-columns: minmax(0, 1fr) auto; }

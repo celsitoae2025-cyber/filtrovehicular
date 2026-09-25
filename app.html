@@ -60,7 +60,7 @@
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
 <!-- La ventana del Filtro Vehicular Completo, la de siempre. -->
 <link rel="stylesheet" href="css/oferta.css?v=10">
-<link rel="stylesheet" href="css/nueva.css?v=12">
+<link rel="stylesheet" href="css/nueva.css?v=13">
 </head>
 <body class="nv-body">
 
@@ -255,10 +255,8 @@
     <header class="nv-barra">
       <h1 class="nv-barra-titulo" id="nvTitulo">Consultar</h1>
       <div class="nv-barra-acciones">
-        <a class="nv-chip-saldo" href="#pagos"><svg><use href="#i-rayo"/></svg><strong data-saldo>—</strong></a>
-        <!-- El avatar abre el menú de la cuenta. En el teléfono es donde
-             vive el saldo (la pastilla de al lado se esconde) y el
-             Historial, para dejar la barra de abajo en cuatro destinos. -->
+        <!-- El saldo ya vive en el menú del avatar (y en Cuenta): no se
+             repite aquí al lado. -->
         <div class="nv-yo">
           <button class="nv-avatar" id="nvAvatar" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="nvYoMenu" aria-label="Menú de la cuenta">—</button>
           <div class="nv-yo-menu" id="nvYoMenu" role="menu" hidden>
