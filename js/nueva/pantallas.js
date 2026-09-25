@@ -196,14 +196,36 @@
      ============================================================ */
 
   var consultas = null;
+  /* Si la lectura falla (sesión aún sin cargar, permiso denegado, red),
+     el historial se quedaba mudo con un «Sin consultas» que parecía que
+     el cliente no había consultado nunca. Se guarda el motivo y se
+     enseña. */
+  var fallaHist = '';
   async function leerConsultas() {
-    if (!NV.usuario) return [];
+    fallaHist = '';
+    if (!NV.usuario) {
+      /* La pantalla puede abrirse antes de que la sesión esté puesta:
+         se espera a que llegue en vez de dar la lista por vacía. */
+      for (var i = 0; i < 20 && !NV.usuario; i++) {
+        await new Promise(function (r) { setTimeout(r, 150); });
+      }
+      if (!NV.usuario) {
+        fallaHist = 'No se pudo leer tu sesión. Vuelve a entrar.';
+        consultas = [];
+        return consultas;
+      }
+    }
     var res = await sb().from('consultas')
       .select('id, module, type, input, cost, status, created_at')
       .eq('user_id', NV.usuario.id)
       .order('created_at', { ascending: false })
       .limit(500);
-    consultas = res.error ? [] : (res.data || []);
+    if (res.error) {
+      fallaHist = 'No se pudo leer el historial: ' + res.error.message;
+      consultas = [];
+    } else {
+      consultas = res.data || [];
+    }
     return consultas;
   }
 
@@ -326,7 +348,13 @@
       return !q || NV.llano((c.input || '') + ' ' + nombreCat(c.module)).indexOf(q) !== -1;
     }).slice(0, 300);
 
-    if (!lista.length) { $('nvRegistro').innerHTML = '<p class="nv-vacio">Sin consultas.</p>'; return; }
+    if (!lista.length) {
+      var vacio = fallaHist ? fallaHist
+        : (q || filtroHist !== 'todas') ? 'Ninguna consulta coincide con lo buscado.'
+        : 'Aún no has hecho ninguna consulta.';
+      $('nvRegistro').innerHTML = '<p class="nv-vacio">' + esc(vacio) + '</p>';
+      return;
+    }
 
     var html = '', diaActual = '';
     lista.forEach(function (c) {
