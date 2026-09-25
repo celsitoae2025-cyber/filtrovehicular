@@ -60,7 +60,7 @@
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
 <!-- La ventana del Filtro Vehicular Completo, la de siempre. -->
 <link rel="stylesheet" href="css/oferta.css?v=10">
-<link rel="stylesheet" href="css/nueva.css?v=11">
+<link rel="stylesheet" href="css/nueva.css?v=12">
 </head>
 <body class="nv-body">
 
@@ -111,7 +111,15 @@
   <button class="nv-puerta-volver" type="button" id="nvPuertaVolver" hidden><svg><use href="#i-volver"/></svg><span>Volver a mi cuenta</span></button>
 
   <form class="nv-puerta-caja" id="nvAcceso" data-paso="acceso" novalidate>
-    <div class="nv-marca nv-marca-oscura">Filtro Vehicular<b>+</b></div>
+    <div class="nv-marca nv-marca-oscura">Plataforma Filtro<br>Vehicular<b>+</b></div>
+    <!-- Lo que más se vende va lo primero: el reporte completo se pide
+         sin cuenta. Abre la oferta y sale a WhatsApp con la placa
+         escrita (js/nueva/acceso.js). -->
+    <button class="nv-fvc" type="button" id="fvcOpen" aria-haspopup="dialog">
+      <span class="nv-fvc-ico"><svg viewBox="0 0 24 24"><path d="M13.9 2.9H7.3A2.3 2.3 0 0 0 5 5.2v13.6a2.3 2.3 0 0 0 2.3 2.3h2.4"/><path d="M13.9 2.9 19 8v3"/><path d="M13.9 2.9V8H19"/><path d="M8.5 10.7h6.2"/><path d="M8.5 13.8h3.4"/><circle cx="16.5" cy="16.6" r="4.5"/><path d="m14.6 16.6 1.3 1.4 2.6-2.7"/></svg></span>
+      <span class="nv-fvc-txt"><strong>Filtro Vehicular Completo</strong><small>Todo el historial del vehículo en un PDF</small></span>
+      <span class="nv-fvc-precio"><strong>S/ 15</strong><s>S/ 30</s></span>
+    </button>
     <h1>Entra a tu cuenta</h1>
     <label class="nv-etiqueta">Correo
       <input class="nv-campo" type="email" name="email" autocomplete="email" inputmode="email" required>
@@ -127,16 +135,10 @@
       <a href="#" data-paso-ir="registro">Crear cuenta</a>
       <a href="#" data-paso-ir="olvido">Olvidé mi contraseña</a>
     </div>
-    <!-- El reporte completo se pide sin cuenta: abre la oferta y sale a
-         WhatsApp con la placa escrita (js/nueva/acceso.js). -->
-    <button class="nv-fvc" type="button" id="fvcOpen" aria-haspopup="dialog">
-      <svg viewBox="0 0 24 24"><path d="M13.9 2.9H7.3A2.3 2.3 0 0 0 5 5.2v13.6a2.3 2.3 0 0 0 2.3 2.3h2.4"/><path d="M13.9 2.9 19 8v3"/><path d="M13.9 2.9V8H19"/><path d="M8.5 10.7h6.2"/><path d="M8.5 13.8h3.4"/><circle cx="16.5" cy="16.6" r="4.5"/><path d="m14.6 16.6 1.3 1.4 2.6-2.7"/></svg>
-      <span>Filtro Vehicular Completo</span>
-    </button>
   </form>
 
   <form class="nv-puerta-caja" id="nvRegistro" data-paso="registro" novalidate hidden>
-    <div class="nv-marca nv-marca-oscura">Filtro Vehicular<b>+</b></div>
+    <div class="nv-marca nv-marca-oscura">Plataforma Filtro<br>Vehicular<b>+</b></div>
     <h1>Crea tu cuenta</h1>
     <p class="nv-puerta-nota">Recibes 5 créditos gratis para probar.</p>
     <label class="nv-etiqueta">Nombre
@@ -163,7 +165,7 @@
   </form>
 
   <form class="nv-puerta-caja" id="nvVerificar" data-paso="verificar" novalidate hidden>
-    <div class="nv-marca nv-marca-oscura">Filtro Vehicular<b>+</b></div>
+    <div class="nv-marca nv-marca-oscura">Plataforma Filtro<br>Vehicular<b>+</b></div>
     <h1>Revisa tu correo</h1>
     <p class="nv-puerta-nota">Te enviamos un código de 6 dígitos a <strong id="nvVerificarCorreo">tu correo</strong>.</p>
     <label class="nv-etiqueta">Código
@@ -179,7 +181,7 @@
   </form>
 
   <form class="nv-puerta-caja" id="nvOlvido" data-paso="olvido" novalidate hidden>
-    <div class="nv-marca nv-marca-oscura">Filtro Vehicular<b>+</b></div>
+    <div class="nv-marca nv-marca-oscura">Plataforma Filtro<br>Vehicular<b>+</b></div>
     <h1>Cambia tu contraseña</h1>
     <p class="nv-puerta-nota">Te enviamos un código de 6 dígitos a tu correo.</p>
     <label class="nv-etiqueta">Correo
@@ -195,7 +197,7 @@
   </form>
 
   <form class="nv-puerta-caja" id="nvRestablecer" data-paso="restablecer" novalidate hidden>
-    <div class="nv-marca nv-marca-oscura">Filtro Vehicular<b>+</b></div>
+    <div class="nv-marca nv-marca-oscura">Plataforma Filtro<br>Vehicular<b>+</b></div>
     <h1>Nueva contraseña</h1>
     <p class="nv-puerta-nota">Escribe el código que llegó a <strong id="nvRestablecerCorreo">tu correo</strong>.</p>
     <label class="nv-etiqueta">Código
@@ -223,7 +225,7 @@
 <div class="nv-app" id="nvApp" hidden>
 
   <aside class="nv-lado" aria-label="Navegación principal">
-    <a class="nv-marca" href="#consultar">Filtro Vehicular<b>+</b></a>
+    <a class="nv-marca" href="#consultar">Plataforma Filtro<br>Vehicular<b>+</b></a>
 
     <nav class="nv-lado-nav">
       <a class="nv-nav" href="#consultar" data-ir="consultar"><svg><use href="#i-consultar"/></svg><span>Consultar</span></a>
@@ -292,7 +294,7 @@
 
         <div class="nv-buscador">
           <div class="combo nv-combo" id="filterCombo">
-            <button class="combo-trigger nv-combo-boton" id="filterComboBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+            <button class="combo-trigger nv-combo-boton" id="filterComboBtn" type="button" tabindex="-1" aria-hidden="true">
               <span class="combo-text" id="filterComboText">Cargando…</span>
               <svg class="combo-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </button>
@@ -300,7 +302,6 @@
           </div>
           <input class="nv-campo nv-dato" id="filter-input" type="text" autocomplete="off" spellcheck="false" placeholder="Dato" aria-label="Dato a consultar">
           <button class="nv-cta nv-consultar" id="filter-consultar" type="button"><span>Consultar</span><i><svg><use href="#i-ir"/></svg></i></button>
-          <span class="nv-costo" id="filter-credits">—</span>
           <span id="filter-desc" hidden></span>
         </div>
 

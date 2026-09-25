@@ -817,17 +817,6 @@ button.nv-nav {
 }
 body.nv-puerta-encima { overflow: hidden; }
 
-/* El botón del Filtro Vehicular Completo, al pie del acceso. */
-.nv-fvc {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; min-height: 52px; padding: 0 16px;
-  border: 1px solid var(--nv-oscuro); border-radius: 999px;
-  background: #fff; color: var(--nv-oscuro);
-  font: inherit; font-size: 16px; cursor: pointer;
-  transition: background-color var(--nv-t) ease;
-}
-.nv-fvc svg { width: 22px; height: 22px; }
-@media (hover: hover) { .nv-fvc:hover { background: var(--nv-suave); } }
 .nv-body .fvc-modal svg { stroke-width: 1.8; }
 
 /* ▸ Mis datos */
@@ -877,6 +866,64 @@ body.nv-puerta-encima { overflow: hidden; }
   .nv-body .wa-fab { right: 14px; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
   .nv-body .inst-fab { right: 14px; bottom: calc(155px + env(safe-area-inset-bottom, 0px)); width: 59px; height: 59px; }
   body.auth-locked .wa-fab { bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* ── 9 · Ajustes del dueño (2026-09-24) ─────────────────────── */
+
+/* El logotipo: «Plataforma Filtro / Vehicular+», con el + pequeño y en
+   verde, como la marca. */
+.nv-marca b { font-size: .72em; margin-left: 1px; }
+
+/* La consulta elegida ya no es un desplegable: la lista de abajo es la
+   que elige (y marca la elegida). Aquí queda solo su nombre. */
+.nv-body .nv-combo .nv-combo-boton {
+  pointer-events: none; cursor: default;
+  padding: 0 8px; background: transparent; border-color: transparent;
+  font-weight: 400;
+}
+.nv-body .nv-combo .combo-chev,
+.nv-body .nv-combo .combo-panel { display: none !important; }
+.nv-buscador { grid-template-columns: minmax(0, .9fr) minmax(0, 1.4fr) auto; }
+
+/* Mientras se consulta, el aviso está en el botón oscuro («Consultando…»)
+   y el cuadro del resultado no se enseña. Solo sale si la espera se
+   alarga y aparece la opción de cancelar sin costo; entonces se ve ese
+   aviso y nada más. */
+.nv-body .nv-resultado:has(.cr-spinner):not(:has(.cr-espera)) { display: none; }
+.nv-body .nv-resultado .cr-loading:has(.cr-espera) > :not(.cr-espera) { display: none; }
+.nv-body .nv-resultado:has(.cr-espera) .result-header { display: none; }
+
+/* El Filtro Vehicular Completo en el acceso: es lo que más se vende, y
+   se ve antes que nada. En el verde de la marca, con el precio. */
+.nv-fvc {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px;
+  width: 100%; padding: 14px 16px;
+  border: 0; border-radius: var(--nv-r);
+  background: var(--nv-verde); color: var(--nv-oscuro);
+  font: inherit; text-align: left; cursor: pointer;
+  transition: background-color var(--nv-t) ease;
+}
+@media (hover: hover) { .nv-fvc:hover { background: var(--nv-verde-2); } }
+.nv-fvc-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--nv-oscuro); color: #fff;
+}
+.nv-fvc-ico svg { width: 24px; height: 24px; }
+.nv-fvc-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.nv-body .nv-fvc .nv-fvc-txt strong { font-size: 17px; font-weight: 700; line-height: 1.2; }
+.nv-fvc-txt small { font-size: 15px; line-height: 1.3; }
+.nv-fvc-precio { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1; }
+.nv-body .nv-fvc .nv-fvc-precio strong { font-size: 22px; font-weight: 700; }
+.nv-fvc-precio s { font-size: 15px; opacity: .7; }
+
+@media (max-width: 900px) {
+  .nv-buscador { grid-template-columns: minmax(0, 1fr) auto; }
+  .nv-buscador .nv-combo { grid-column: 1 / -1; }
+  .nv-body .nv-combo .nv-combo-boton { height: 36px; min-height: 36px; }
+  .nv-consultar { grid-column: 1 / -1; }
+  .nv-fvc { gap: 10px; padding: 12px; }
+  .nv-fvc-ico { width: 40px; height: 40px; }
 }
 
 /* 3/3: quien pidió menos movimiento, sin transiciones ni latidos. */
