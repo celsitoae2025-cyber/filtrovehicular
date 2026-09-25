@@ -262,7 +262,7 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
    lado de «Consultando» quedaban por debajo. Ahora son tres circulos
    dibujados, centrados con la palabra y mas gruesos, y el salto se
    cambia por un latido —no mueve nada de sitio, solo respira. */
-.nv-puntos { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; }
+.nv-puntos { display: inline-flex; align-items: center; gap: 4px; margin-left: 6px; vertical-align: middle; }
 .nv-puntos i {
   width: 6px; height: 6px; border-radius: 50%;
   background: currentColor; font-size: 0;
