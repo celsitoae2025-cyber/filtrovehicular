@@ -361,7 +361,7 @@
         '<div class="nv-paq-fila">' +
           '<span class="nv-paq-cred"><strong>' + NV.numero(p.creditos) + '</strong> créditos</span>' +
           '<em>' + NV.soles(p.precio) + '</em>' +
-          '<button type="button" class="nv-cta nv-cta-chica" data-plan="' + p.id + '"><span>Comprar</span><i><svg><use href="#i-ir"/></svg></i></button>' +
+          '<button type="button" class="nv-cta nv-cta-chica" data-plan="' + p.id + '"><span>Comprar</span></button>' +
         '</div>' +
         (es ? '<span class="nv-paq-mejor">Mejor precio</span>' : '') +
       '</div>';

@@ -695,7 +695,9 @@
     btn.style.minWidth = btn.offsetWidth + 'px';
     btn.classList.add('is-cargando');
     btn.setAttribute('aria-busy', 'true');
-    btn.innerHTML = '<span class="btn-giro" aria-hidden="true"></span>Consultando…';
+    /* Sin círculo girando: lo que avisa que sigue trabajando son los tres
+       puntos, que saltan uno detrás de otro (nv-puntos, en nueva.css). */
+    btn.innerHTML = 'Consultando<span class="nv-puntos" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>';
     mostrarCargando();
 
     try {
