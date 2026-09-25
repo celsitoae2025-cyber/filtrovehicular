@@ -18,6 +18,14 @@
   var NV = C.NV = C.NV || {};
 
   C.WHATSAPP_NUMBER = C.WHATSAPP_NUMBER || '51932465820';
+  /* El saludo con que empiezan los mensajes a WhatsApp (soporte y aviso
+     a clientes lo usan). */
+  C.greeting = C.greeting || function () {
+    var h = new Date().getHours();
+    if (h >= 5 && h < 12)  return 'Buenos días';
+    if (h >= 12 && h < 19) return 'Buenas tardes';
+    return 'Buenas noches';
+  };
 
   function $(id) { return document.getElementById(id); }
   NV.$ = $;
@@ -149,17 +157,27 @@
     resumen:   { titulo: 'Resumen' },
     pagos:     { titulo: 'Pagos' },
     historial: { titulo: 'Historial' },
-    cuenta:    { titulo: 'Mi cuenta' }
+    cuenta:    { titulo: 'Mi cuenta' },
+    regiones:  { titulo: 'Infracciones por regiones' }
+  };
+
+  /* Los enlaces de siempre (#saldo en los mensajes del bot, #dashboard,
+     #compras…) siguen llevando a su sitio en esta plataforma. */
+  var ALIAS = {
+    dashboard: 'resumen', saldo: 'pagos', compras: 'pagos', filter: 'consultar',
+    consultas: 'consultar', configuracion: 'cuenta', notificaciones: 'resumen'
   };
 
   NV.alEntrar = {};   // nombre -> función que pinta la pantalla al abrirla
 
   function pantallaDelHash() {
     var h = (location.hash || '').replace(/^#/, '');
+    if (ALIAS[h]) h = ALIAS[h];
     return PANTALLAS[h] ? h : 'consultar';
   }
 
   NV.ir = function (nombre) {
+    if (ALIAS[nombre]) nombre = ALIAS[nombre];
     if (!PANTALLAS[nombre]) nombre = 'consultar';
     if (location.hash !== '#' + nombre) {
       history.pushState(null, '', '#' + nombre);
@@ -203,13 +221,18 @@
     return 'No se pudo entrar. Inténtalo de nuevo.';
   }
 
+  /* `auth-locked` en el body marca que se está en la puerta: el botón de
+     instalar y el de WhatsApp lo miran. */
   function enseñarAcceso() {
     $('nvApp').hidden = true;
     $('nvPuerta').hidden = false;
+    document.body.classList.add('auth-locked');
+    if (NV.verPuerta) { NV.verPuerta(NV.pasoInicial || 'acceso'); return; }
     if (C.Turnstile) C.Turnstile.render('nvTsAcceso');
     var correo = document.querySelector('#nvAcceso [name="email"]');
     if (correo && window.matchMedia('(hover: hover)').matches) correo.focus();
   }
+  NV.enseñarAcceso = enseñarAcceso;
 
   function conectarAcceso() {
     var form = $('nvAcceso');
@@ -257,6 +280,7 @@
 
     $('nvPuerta').hidden = true;
     $('nvApp').hidden = false;
+    document.body.classList.remove('auth-locked');
     NV.pintarSaldo();
 
     var nombre = (NV.perfil && NV.perfil.full_name) || NV.usuario.email || '';
@@ -317,5 +341,17 @@
     conectarAcceso();
     conectarMenuYo();
     entrarALaApp();
+    /* Si la sesión se cierra sin pasar por el botón (inactividad, otra
+       pestaña, sesión vencida), se vuelve a la puerta en vez de dejar
+       la plataforma a la vista sin nadie dentro. */
+    if (C.Auth && C.Auth.onAuthChange) {
+      C.Auth.onAuthChange(function (evento) {
+        if (evento === 'SIGNED_OUT' && !$('nvApp').hidden) {
+          NV.usuario = null;
+          NV.perfil = null;
+          enseñarAcceso();
+        }
+      });
+    }
   });
 })();

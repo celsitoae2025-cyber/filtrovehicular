@@ -162,8 +162,10 @@
     root.querySelector('.rep-modal-ok').addEventListener('click', cerrar);
   }
 
+  /* En el iPhone la opción va en el menú de la cuenta, justo antes de
+     «Cerrar sesión» (el del avatar, [data-salir]). */
   function itemIOS() {
-    var salir = document.querySelector('#userDropdown #logoutBtn');
+    var salir = document.querySelector('#nvYoMenu [data-salir], #userDropdown #logoutBtn');
     if (!salir) return;
     salir.insertAdjacentHTML('beforebegin',
       '<button class="dropdown-item" type="button" role="menuitem" id="itemInstalar">' +

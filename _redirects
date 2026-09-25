@@ -1,0 +1,3 @@
+# Una sola plataforma: la que vivía en /nueva es ahora /app.
+/nueva       /app  301
+/nueva.html  /app  301

@@ -546,7 +546,8 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
 .nv-menu span { flex: 1; }
 .nv-menu-ir { width: 18px; height: 18px; color: var(--nv-gris); }
 @media (hover: hover) { .nv-menu a:hover, .nv-menu button:hover { background: var(--nv-suave); } }
-.nv-menu button { font-weight: 700; }
+.nv-menu button { font-weight: 400; }
+.nv-menu .nv-menu-salir { font-weight: 700; }
 
 /* ▸ Acceso */
 .nv-puerta {
@@ -683,6 +684,180 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
 
 @media (max-width: 520px) {
   .nv-atajos a { min-height: 76px; }
+}
+
+/* ── 8 · Lo que completa la plataforma ───────────────────────── */
+
+/* ▸ Menú lateral: trámites y pie legal */
+.nv-lado-titulo {
+  margin: 18px 12px 4px;
+  font-size: 15px; font-weight: 700; color: rgba(255, 255, 255, .5);
+}
+button.nv-nav {
+  width: 100%; border: 0; background: none;
+  font: inherit; font-size: 16px; text-align: left; cursor: pointer;
+}
+.nv-lado-legal {
+  margin: auto 0 0; padding: 16px 12px 0;
+  font-size: 15px; color: rgba(255, 255, 255, .5);
+}
+.nv-lado-legal a { color: rgba(255, 255, 255, .72); text-decoration: none; }
+@media (hover: hover) { .nv-lado-legal a:hover { color: #fff; } }
+
+/* ▸ Saldo bajo */
+.nv-saldo-bajo {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 10px 10px 10px 18px;
+  border: 2px solid var(--nv-oscuro); border-radius: 22px;
+  background: #fff; font-size: 16px;
+}
+.nv-saldo-bajo > span { flex: 1; min-width: 200px; }
+.nv-saldo-bajo-cerrar {
+  width: 40px; height: 40px; border: 0; border-radius: 50%;
+  background: var(--nv-suave); color: var(--nv-tinta);
+  font: inherit; font-size: 22px; line-height: 1; cursor: pointer;
+}
+
+/* ▸ Trámites */
+.nv-tramites { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.nv-tramite {
+  display: flex; align-items: center; gap: 12px;
+  min-height: 56px; padding: 0 16px;
+  border: 1px solid var(--nv-linea); border-radius: var(--nv-r);
+  background: #fff; color: var(--nv-tinta);
+  font: inherit; font-size: 16px; font-weight: 700; text-align: left; text-decoration: none; cursor: pointer;
+  transition: border-color var(--nv-t) ease;
+}
+.nv-tramite svg { width: 24px; height: 24px; color: var(--nv-oscuro); }
+@media (hover: hover) { .nv-tramite:hover { border-color: var(--nv-oscuro); } }
+
+/* ▸ Consultas gratuitas y regiones */
+.nv-gratuitas { display: flex; flex-direction: column; gap: 12px; }
+.nv-seccion-titulo {
+  position: relative;
+  margin: 0; padding: 18px 22px 20px;
+  border-radius: var(--nv-r-l); background: #fff;
+  font-size: 18px; font-weight: 700;
+}
+/* La línea de cuatro colores bajo el título. */
+.nv-seccion-titulo::after {
+  content: ''; position: absolute; left: 0; bottom: 0;
+  width: 108px; height: 5px; border-radius: 0 3px 0 var(--nv-r-l);
+  background: linear-gradient(to right, #03a7a4 0 25%, #8fc72e 25% 50%, #ffb020 50% 75%, #e53935 75% 100%);
+}
+.nv-servicios { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.nv-servicio {
+  display: flex; align-items: center; gap: 14px;
+  min-width: 0; min-height: 96px; padding: 0 16px;
+  border: 1px solid var(--nv-linea); border-radius: var(--nv-r-l);
+  background: #fff; color: var(--nv-tinta); text-decoration: none;
+  transition: border-color var(--nv-t) ease, background-color var(--nv-t) ease;
+}
+@media (hover: hover) { .nv-servicio:hover { border-color: var(--nv-oscuro); } }
+.nv-servicio-logo {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 48px; height: 48px; overflow: hidden;
+  border: 1px solid var(--nv-linea); border-radius: 10px; background: #fff;
+}
+.nv-servicio-logo img { width: 100%; height: 100%; padding: 6px; object-fit: contain; }
+.nv-servicio-logo svg { width: 24px; height: 24px; }
+.nv-servicio-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.nv-servicio-txt b {
+  font-size: 16px; font-weight: 400; line-height: 1.25;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.nv-servicio-txt small { font-size: 15px; color: var(--nv-gris); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nv-servicio-ir { width: 16px; height: 16px; color: #9aa7a3; }
+.nv-servicio.es-oscuro { border-color: var(--nv-oscuro); background: var(--nv-oscuro); color: #fff; }
+.nv-servicio.es-oscuro .nv-servicio-logo { border-color: transparent; background: rgba(255, 255, 255, .1); color: var(--nv-verde); }
+.nv-servicio.es-oscuro .nv-servicio-txt b { font-weight: 700; }
+.nv-servicio.es-oscuro .nv-servicio-txt small { color: var(--nv-verde); font-weight: 700; }
+.nv-servicio.es-oscuro .nv-servicio-ir { color: rgba(255, 255, 255, .6); }
+@media (hover: hover) { .nv-servicio.es-oscuro:hover { background: var(--nv-oscuro-2); } }
+
+.nv-regiones-barra { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.nv-regiones-barra .nv-campo-chico { flex: 1; min-width: 200px; max-width: 360px; }
+.nv-regiones-n { font-size: 15px; color: var(--nv-gris); }
+.nv-regiones-n strong { color: var(--nv-tinta); }
+.nv-volver {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 0 16px 0 12px;
+  border: 1px solid var(--nv-linea-2); border-radius: 999px;
+  background: #fff; color: var(--nv-tinta);
+  font-size: 15px; font-weight: 700; text-decoration: none;
+}
+@media (hover: hover) { .nv-volver:hover { border-color: var(--nv-oscuro); } }
+
+/* ▸ La puerta: pasos, avisos y encima de la aplicación */
+.nv-puerta { flex-direction: column; gap: 14px; }
+.nv-puerta-nota { margin: -4px 0 0; font-size: 15px; color: var(--nv-gris); }
+.nv-ayuda { font-size: 15px; font-weight: 400; color: var(--nv-gris); }
+.nv-marcar a, .nv-puerta-legal a { color: var(--nv-turquesa); font-weight: 700; text-decoration: none; }
+.nv-puerta-pie { align-items: center; }
+.nv-puerta-pie span { font-size: 15px; color: var(--nv-gris); }
+.nv-codigo { letter-spacing: 8px; font-size: 22px; text-align: center; }
+.nv-puerta-legal { margin: 0; font-size: 15px; color: rgba(255, 255, 255, .6); text-align: center; }
+.nv-puerta-legal a { color: #fff; font-weight: 400; }
+.nv-puerta-volver {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 0 18px 0 12px;
+  border: 0; border-radius: 999px;
+  background: rgba(255, 255, 255, .12); color: #fff;
+  font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+.nv-puerta.es-encima {
+  position: fixed; inset: 0; z-index: 60;
+  justify-content: flex-start; overflow-y: auto; padding-top: 32px;
+}
+body.nv-puerta-encima { overflow: hidden; }
+
+/* ▸ Mis datos */
+.nv-datos { display: flex; flex-direction: column; gap: 12px; }
+.nv-datos .nv-panel-cab { margin-bottom: 0; }
+.nv-datos .nv-campo[readonly] { background: var(--nv-suave); border-color: transparent; }
+.nv-datos .nv-campo:disabled { background: var(--nv-suave); border-color: transparent; color: var(--nv-gris); }
+.nv-datos-botones { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nv-boton-claro {
+  min-height: 44px; padding: 0 18px;
+  border: 1px solid var(--nv-linea-2); border-radius: 999px;
+  background: #fff; color: var(--nv-tinta);
+  font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+
+/* ▸ Pagos */
+.nv-nota-legal { margin: 0; padding: 0 6px; font-size: 15px; color: var(--nv-gris); }
+.nv-nota-legal a { color: var(--nv-turquesa); font-weight: 700; text-decoration: none; }
+
+/* ▸ Términos, cookies y recibo (overlays.css pone la ventana) */
+.nv-body .modal-footer { display: flex; justify-content: flex-end; }
+.nv-body .receipt-body { display: flex; flex-direction: column; gap: 12px; padding: 24px; }
+.nv-body .receipt-body h2 { margin: 0; font-size: 22px; }
+.nv-body .receipt-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--nv-linea); font-size: 15px; }
+
+/* ▸ Los botones flotantes de siempre (WhatsApp e instalar).
+   El logo de WhatsApp es un dibujo relleno: la regla general de los
+   iconos (solo trazo) lo dejaba invisible. */
+.nv-body .wa-fab-icon { width: 33px; height: 33px; fill: currentColor; stroke: none; }
+.nv-body .wa-menu svg { width: 15px; height: 15px; }
+/* El menú de la cuenta: «Instalar la app» (iPhone) no es la salida. */
+.nv-yo-menu > #itemInstalar { margin-top: 0; border-top: 0; border-radius: var(--nv-r-s); font-weight: 400; }
+/* Los avisos flotantes no tapan el botón de WhatsApp. */
+.nv-avisos { right: 104px; }
+
+@media (max-width: 900px) {
+  .nv-tramites { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .nv-servicios { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .nv-servicio { min-height: 76px; }
+  .nv-seccion-titulo { padding: 14px 16px 16px; font-size: 17px; }
+  .nv-regiones-barra .nv-campo-chico { max-width: none; }
+  .nv-puerta-caja { padding: 22px 18px; }
+  .nv-puerta.es-encima { padding-top: 16px; }
+
+  .nv-avisos { right: 84px; }
+  /* WhatsApp e instalar suben por encima de la barra de abajo. */
+  .nv-body .wa-fab { right: 14px; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+  .nv-body .inst-fab { right: 14px; bottom: calc(155px + env(safe-area-inset-bottom, 0px)); width: 59px; height: 59px; }
+  body.auth-locked .wa-fab { bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* 3/3: quien pidió menos movimiento, sin transiciones ni latidos. */

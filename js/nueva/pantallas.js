@@ -38,27 +38,6 @@
   var catalogo = [];
   var categoriaActiva = 'todas';
 
-  var GRATUITAS = [
-    ['Propiedad vehicular SUNARP', 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/inicio'],
-    ['Historial por placa', 'https://sprl.sunarp.gob.pe/sprl/ingreso'],
-    ['Cambio de características', 'https://psi.sunarp.gob.pe/ProyOrganizaSII/pages/solicitudes/solicitudCambio.jsf'],
-    ['SAT Lima', 'https://www.sat.gob.pe/VirtualSAT/principal.aspx'],
-    ['SAT Callao', 'https://pagopapeletascallao.pe/'],
-    ['Papeletas ATU', 'https://pasarela.atu.gob.pe/'],
-    ['Siniestralidad', 'https://servicios.sbs.gob.pe/reportesoat/'],
-    ['Estado de placa', 'https://www.placas.pe/#/home/verificarEstadoPlaca'],
-    ['Cinemómetro SUTRAN', 'https://webexterno.sutran.gob.pe/WebExterno/Pages/frmPapeletasCinemometro.aspx'],
-    ['Revisión técnica CITV', 'https://rec.mtc.gob.pe/Citv/ArConsultaCitv'],
-    ['Vigencia del SOAT', 'https://www.apeseg.org.pe/consultas-soat/'],
-    ['Récord SUTRAN', 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/'],
-    ['Lunas oscurecidas', 'https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas'],
-    ['FISE GNV', 'https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio'],
-    ['Deuda GNV', 'https://infogas.com.pe/consulta-placa/'],
-    ['Órdenes de captura', 'https://www.sat.gob.pe/VirtualSAT/modulos/Capturas.aspx'],
-    ['TIVE', 'https://www2.sunarp.gob.pe/recuperar-codigo-verificacion-tive/inicio'],
-    ['Récord de conductor', 'https://recordconductor.mtc.gob.pe/']
-  ];
-
   function pintarPestanas() {
     var cuenta = {};
     catalogo.forEach(function (c) { cuenta[c.categoria] = (cuenta[c.categoria] || 0) + 1; });
@@ -134,12 +113,6 @@
   var textoBuscado = '';
 
   function arrancarConsultar() {
-    $('nvGratisN').textContent = GRATUITAS.length;
-    $('nvGratuitas').innerHTML = GRATUITAS.map(function (g) {
-      return '<a href="' + esc(g[1]) + '" target="_blank" rel="noopener noreferrer">' + esc(g[0]) +
-        '<svg><use href="#i-fuera"/></svg></a>';
-    }).join('');
-
     $('nvPestanas').addEventListener('click', function (e) {
       var b = e.target.closest('.nv-pestana');
       if (b) cambiarCategoria(b.dataset.cat);
@@ -520,5 +493,8 @@
     NV.alEntrar.historial = entrarHistorial;
     NV.alEntrar.pagos = entrarPagos;
     NV.alEntrar.cuenta = entrarCuenta;
+    /* Lo que rodea a las consultas (js/nueva/servicios.js): va al final
+       porque amplía lo que hace Cuenta al abrirse. */
+    if (NV.arrancarServicios) NV.arrancarServicios();
   };
 })();
