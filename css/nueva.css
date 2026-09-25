@@ -1008,7 +1008,7 @@ body.nv-puerta-encima { overflow: hidden; }
        que pintar y la foto no necesita opacidad propia. */
     background:
       linear-gradient(rgba(11, 42, 32, .88), rgba(11, 42, 32, .88)),
-      url("../assets/acceso/taller.webp") center / cover no-repeat,
+      url("../assets/acceso/taller.webp?v=2") center / cover no-repeat,
       var(--nv-oscuro);
   }
   /* Solo lo que va sobre la banda pintada: al pie legal NO se le toca la
