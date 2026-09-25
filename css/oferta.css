@@ -301,10 +301,6 @@
   outline: none;
   border-color: var(--nv-oscuro) !important;
 }
-.fvc-input:focus-visible {
-  outline: 2px solid rgba(11, 42, 32, .3);
-  outline-offset: 2px;
-}
 /* Con el modal por delante en el selector, no por gusto: base.css fija
    el radio y el borde de todo campo con `input[type="text"] { ...
    !important }`, y eso pesa más que una clase sola. El !important de
