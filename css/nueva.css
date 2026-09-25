@@ -34,6 +34,7 @@
   --nv-linea: #e1e6e3;
   --nv-linea-2: #c9d2cd;
   --nv-suave: #eef1ee;
+  --nv-gris-suave: #f1f1f1;
   --nv-acento: #8fc72e;
 
   --c-auth-panel: #0b2a20;   /* lo que css/oferta.css espera */
@@ -993,8 +994,11 @@ body.nv-puerta-encima { overflow: hidden; }
 @media (min-width: 901px) {
   .nv-puerta {
     align-items: center;
-    padding-left: 60%;
-    background: var(--nv-verde-suave);
+    /* El 60% es la banda de arte; los 20px de mas son el relleno que ya
+       tiene el otro lado, y sin ellos el cuadro quedaba 20px corrido a la
+       izquierda dentro de su banda. */
+    padding-left: calc(60% + 20px);
+    background: var(--nv-gris-suave);
   }
   .nv-puerta::before {
     content: "";
