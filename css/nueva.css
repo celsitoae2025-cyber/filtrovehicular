@@ -268,6 +268,37 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
   0%, 60%, 100% { opacity: .35; transform: translateY(0); }
   30% { opacity: 1; transform: translateY(-3px); }
 }
+
+/* ── La puerta en ordenador: panel de arte y formulario ───────
+   Dos bandas a sangre. La ancha (60%) es el verde oscuro de la casa con
+   la foto del taller detrás, en marca de agua: se ve el coche, no
+   compite con nada. La estrecha (40%) es verde suave y solo sostiene el
+   cuadro blanco, que queda centrado en su propia banda.
+   Por debajo de 900px no hay bandas: el oscuro a pantalla completa, que
+   es como estaba. */
+@media (min-width: 901px) {
+  .nv-puerta {
+    align-items: center;
+    padding-left: 60%;
+    background: var(--nv-verde-suave);
+  }
+  .nv-puerta::before {
+    content: "";
+    position: absolute;
+    inset: 0 40% 0 0;
+    /* El velo va DELANTE de la foto, en el mismo fondo: una capa menos
+       que pintar y la foto no necesita opacidad propia. */
+    background:
+      linear-gradient(rgba(11, 42, 32, .88), rgba(11, 42, 32, .88)),
+      url("../assets/acceso/taller.webp") center / cover no-repeat,
+      var(--nv-oscuro);
+  }
+  .nv-puerta > * { position: relative; }
+  /* El pie legal se queda en la banda clara, y ahí el blanco no se lee. */
+  .nv-puerta-legal { left: calc(60% + 20px); color: var(--nv-gris); }
+  .nv-puerta-legal a { color: var(--nv-oscuro); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nv-puntos i { animation: none; opacity: 1; }
 }
