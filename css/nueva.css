@@ -997,13 +997,13 @@ body.nv-puerta-encima { overflow: hidden; }
     /* El 60% es la banda de arte; los 20px de mas son el relleno que ya
        tiene el otro lado, y sin ellos el cuadro quedaba 20px corrido a la
        izquierda dentro de su banda. */
-    padding-left: calc(68% + 20px);
+    padding-left: calc(72% + 20px);
     background: var(--nv-gris-suave);
   }
   .nv-puerta::before {
     content: "";
     position: absolute;
-    inset: 0 32% 0 0;
+    inset: 0 28% 0 0;
     /* El velo va DELANTE de la foto, en el mismo fondo: una capa menos
        que pintar y la foto no necesita opacidad propia. */
     background:
@@ -1016,6 +1016,6 @@ body.nv-puerta-encima { overflow: hidden; }
   .nv-puerta-caja, .nv-puerta-volver { position: relative; z-index: 1; }
   /* El pie legal va centrado bajo la banda de la foto, no bajo el
      formulario: ahí el fondo es oscuro y el blanco se lee entero. */
-  .nv-puerta-legal { left: 0; right: 32%; color: rgba(255, 255, 255, .6); }
+  .nv-puerta-legal { left: 0; right: 28%; color: rgba(255, 255, 255, .6); }
   .nv-puerta-legal a { color: #fff; }
 }
