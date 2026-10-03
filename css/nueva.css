@@ -1021,18 +1021,22 @@ body.nv-puerta-encima { overflow: hidden; }
 
      En gris, además: en color tiraba a verde y teñía la pantalla entera.
 
-     El movimiento es un minuto de ida y otro de vuelta; a esa velocidad
-     no se ve «una animación», se ve que la imagen respira. El 8% de
-     escala de más es el margen por donde se desplaza sin que asomen los
-     bordes. */
+     SOLO SE MUEVE ESTA CAPA. El cuadro del formulario no lleva ninguna
+     animación —ni entrada, ni desplazamiento—: lo único que se mueve en
+     toda la pantalla es el fondo.
+
+     Medio minuto de ida y otro de vuelta. Antes era un minuto y con un
+     recorrido tan corto que, al 10% de fuerza, no se notaba que hubiera
+     movimiento. El 16% de escala de más es el margen por donde se
+     desplaza sin que asomen los bordes. */
   .nv-puerta::before {
     content: "";
     position: absolute; inset: 0; z-index: 0;
     background: url("../assets/acceso/taller.webp?v=3") center / cover no-repeat;
     filter: grayscale(1) contrast(1.05);
     opacity: .1;
-    transform: scale(1.08);
-    animation: nv-deriva 60s ease-in-out infinite alternate;
+    transform: scale(1.16);
+    animation: nv-deriva 30s ease-in-out infinite alternate;
     will-change: transform;
   }
 
@@ -1044,6 +1048,6 @@ body.nv-puerta-encima { overflow: hidden; }
 }
 
 @keyframes nv-deriva {
-  from { transform: scale(1.08) translate3d(-1.2%, -0.8%, 0); }
-  to   { transform: scale(1.14) translate3d(1.2%, 0.8%, 0); }
+  from { transform: scale(1.16) translate3d(-3%, -1.8%, 0); }
+  to   { transform: scale(1.24) translate3d(3%, 1.8%, 0); }
 }
