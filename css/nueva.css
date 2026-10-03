@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    INTERFAZ NUEVA DE FILTRO VEHICULAR+ — sistema de diseño
 
    Firma propia de la marca, no un catálogo genérico:
@@ -1002,47 +1002,43 @@ body.nv-puerta-encima { overflow: hidden; }
    franja de la derecha—: la mirada tenía que irse a un lado y en
    pantallas anchas el cuadro quedaba descolgado contra el borde.
 
-   La foto y el velo van en capas separadas (::before la foto, ::after
-   el velo). Antes el velo era un degradado dentro del mismo fondo que
-   la foto, y así no se puede ni quitarle color a una sin quitárselo al
-   otro ni mover una sin mover el otro. */
+   La foto va en su propia capa (::before) sobre el fondo oscuro de
+   .nv-puerta. Antes foto y velo compartían el mismo fondo, y así no se
+   podía ni quitarle el color a una sin quitárselo al otro, ni bajarle
+   la fuerza a la foto sin tocar el velo. */
 @media (min-width: 901px) {
   /* La foto se mueve despacio dentro de su marco; esto la recorta. El
      cuadro no corre peligro: .nv-puerta crece con su contenido
      (min-height, no height), así que nunca hay nada que cortar. */
   .nv-puerta { overflow: hidden; }
 
-  /* ▸ La foto: en blanco y negro y a la deriva.
-     En color tiraba a verde y teñía toda la pantalla; en gris acompaña
-     y no compite. El movimiento es un minuto entero de ida y otro de
-     vuelta: a esa velocidad no se ve «una animación», se ve que la
-     imagen respira. El scale() de más es el margen por donde se
-     desplaza sin que asomen los bordes. */
+  /* ▸ La foto: marca de agua en blanco y negro, al 20%.
+     Ya no hay velo encima. El velo era un parche: pintar la foto a plena
+     fuerza y luego taparla. Lo que se quería es una marca de agua, y eso
+     es la propia foto a un quinto de su fuerza sobre el oscuro de la
+     casa — que es justo el fondo que ya tiene .nv-puerta.
+
+     En gris, además: en color tiraba a verde y teñía la pantalla entera.
+
+     El movimiento es un minuto de ida y otro de vuelta; a esa velocidad
+     no se ve «una animación», se ve que la imagen respira. El 8% de
+     escala de más es el margen por donde se desplaza sin que asomen los
+     bordes. */
   .nv-puerta::before {
     content: "";
     position: absolute; inset: 0; z-index: 0;
-    background:
-      url("../assets/acceso/taller.webp?v=3") center / cover no-repeat,
-      var(--nv-oscuro);
+    background: url("../assets/acceso/taller.webp?v=3") center / cover no-repeat;
     filter: grayscale(1) contrast(1.05);
+    opacity: .2;
     transform: scale(1.08);
     animation: nv-deriva 60s ease-in-out infinite alternate;
     will-change: transform;
   }
 
-  /* ▸ El velo: menos opaco que antes (.88 → .66), que para eso la foto
-     ya no tiñe de verde. Lo justo para que el blanco del cuadro y del
-     pie legal se lean sin esfuerzo. */
-  .nv-puerta::after {
-    content: "";
-    position: absolute; inset: 0; z-index: 0;
-    background: rgba(20, 29, 28, .66);
-  }
-
   /* Lo que va por encima de las dos capas. Al pie legal no se le toca la
      posición, que ya es absoluta y se coloca sola. */
   .nv-puerta-caja, .nv-puerta-volver { position: relative; z-index: 1; }
-  .nv-puerta-legal { left: 0; right: 0; z-index: 1; color: rgba(255, 255, 255, .72); }
+  .nv-puerta-legal { left: 0; right: 0; z-index: 1; }
   .nv-puerta-legal a { color: #fff; }
 }
 
