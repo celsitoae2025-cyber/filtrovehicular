@@ -27,7 +27,7 @@ html.ctl-abierto body { overflow: hidden; }
   justify-content: center;
   padding: 16px;
   padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  background: rgba(14, 19, 18, .74);
+  background: rgba(20, 29, 28, .74);
   animation: ctl-entra-fondo .22s ease-out;
 }
 

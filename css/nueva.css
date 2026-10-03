@@ -994,38 +994,33 @@ body.nv-puerta-encima { overflow: hidden; }
   .nv-body * { transition: none !important; }
 }
 
-/* ── La puerta en ordenador: panel de arte y formulario ───────
-   Dos bandas a sangre. La ancha (60%) es el verde oscuro de la casa con
-   la foto del taller detrás, en marca de agua: se ve el coche, no
-   compite con nada. La estrecha (40%) es verde suave y solo sostiene el
-   cuadro blanco, que queda centrado en su propia banda.
-   Por debajo de 900px no hay bandas: el oscuro a pantalla completa, que
-   es como estaba. */
+/* ── La puerta en ordenador: el cuadro en el centro ───────────
+   La foto del taller ocupa la pantalla entera, en marca de agua bajo un
+   velo oscuro, y el formulario va centrado encima.
+
+   Antes eran dos bandas: la foto a la izquierda y el cuadro empujado a
+   una franja de la derecha con un relleno del 72%. Se lee peor —la
+   mirada tiene que irse a un lado— y en pantallas muy anchas el cuadro
+   quedaba descolgado contra el borde. Centrado no hay que acomodar
+   nada: cae donde se mira primero, y la foto sigue viéndose entera
+   alrededor. */
 @media (min-width: 901px) {
-  .nv-puerta {
-    align-items: center;
-    /* El 60% es la banda de arte; los 20px de mas son el relleno que ya
-       tiene el otro lado, y sin ellos el cuadro quedaba 20px corrido a la
-       izquierda dentro de su banda. */
-    padding-left: calc(72% + 20px);
-    background: var(--nv-gris-suave);
-  }
   .nv-puerta::before {
     content: "";
     position: absolute;
-    inset: 0 28% 0 0;
+    inset: 0;
     /* El velo va DELANTE de la foto, en el mismo fondo: una capa menos
        que pintar y la foto no necesita opacidad propia. */
     background:
-      linear-gradient(rgba(11, 42, 32, .88), rgba(11, 42, 32, .88)),
+      linear-gradient(rgba(20, 29, 28, .88), rgba(20, 29, 28, .88)),
       url("../assets/acceso/taller.webp?v=3") center / cover no-repeat,
       var(--nv-oscuro);
   }
-  /* Solo lo que va sobre la banda pintada: al pie legal NO se le toca la
-     posicion, que ya es absoluta y se coloca sola. */
+  /* Solo lo que va sobre la foto: al pie legal NO se le toca la
+     posición, que ya es absoluta y se coloca sola. */
   .nv-puerta-caja, .nv-puerta-volver { position: relative; z-index: 1; }
-  /* El pie legal va centrado bajo la banda de la foto, no bajo el
-     formulario: ahí el fondo es oscuro y el blanco se lee entero. */
-  .nv-puerta-legal { left: 0; right: 28%; color: rgba(255, 255, 255, .6); }
+  /* El pie legal, centrado bajo el cuadro y en blanco: debajo hay foto
+     oscura de lado a lado. */
+  .nv-puerta-legal { left: 0; right: 0; color: rgba(255, 255, 255, .6); }
   .nv-puerta-legal a { color: #fff; }
 }
