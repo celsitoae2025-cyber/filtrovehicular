@@ -183,31 +183,14 @@
     });
   }
 
-  /* ── Verificar el correo con el código ─────────────────────── */
+  /* ── Activar la cuenta ─────────────────────────────────────
+     Ya no se escribe ningún código: el correo trae un botón «Activa tu
+     cuenta» que lleva a Supabase, verifica y devuelve al cliente aquí
+     con la sesión puesta (detectSessionInUrl la recoge sola). Esta
+     pantalla solo espera, avisa de dónde mirar y permite reenviar.
+     Los códigos de 6 dígitos siguen vivos SOLO para recuperar la
+     contraseña. */
   function conectarVerificar() {
-    var form = $('nvVerificar');
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      error('nvVerificarError', '');
-      var codigo = (form.code.value || '').replace(/\D/g, '');
-      if (codigo.length !== 6) return error('nvVerificarError', 'El código tiene 6 dígitos.');
-      if (!correoAlta) return NV.verPuerta('registro');
-
-      var boton = $('nvVerificarBtn');
-      ocupado(boton, true, 'Verificando…');
-      try {
-        var res = await C.Auth.verifyOtp(correoAlta, codigo);
-        if (res.error) throw res.error;
-        form.reset();
-        if (C.toast) C.toast({ type: 'success', title: '¡Cuenta verificada!', message: 'Bienvenido a Filtro Vehicular+' });
-        await NV.entrarALaApp();
-      } catch (ex) {
-        error('nvVerificarError', traducir(ex && ex.message));
-      } finally {
-        ocupado(boton, false);
-      }
-    });
-
     $('nvReenviarAlta').addEventListener('click', async function (e) {
       e.preventDefault();
       if (!correoAlta) return NV.verPuerta('registro');
@@ -217,7 +200,7 @@
         var res = await C.Auth.resendVerification(correoAlta, token);
         quemarToken('verificar');
         if (res && res.error) throw res.error;
-        if (C.toast) C.toast({ type: 'success', title: 'Código reenviado', message: 'Revisa tu correo (y la carpeta de spam).' });
+        if (C.toast) C.toast({ type: 'success', title: 'Correo reenviado', message: 'Ábrelo y pulsa «Activa tu cuenta» (mira también en spam).' });
       } catch (ex) {
         error('nvVerificarError', traducir(ex && ex.message));
       }

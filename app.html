@@ -165,20 +165,16 @@
   <form class="nv-puerta-caja" id="nvVerificar" data-paso="verificar" novalidate hidden>
     <div class="nv-marca nv-marca-oscura">Plataforma Filtro<br>Vehicular<b>+</b></div>
     <h1>Revisa tu correo</h1>
-    <p class="nv-puerta-nota">Te enviamos un código de 6 dígitos a <strong id="nvVerificarCorreo">tu correo</strong>.</p>
+    <p class="nv-puerta-nota">Te enviamos un correo a <strong id="nvVerificarCorreo">tu correo</strong>. Ábrelo y pulsa el botón <strong>Activa tu cuenta</strong>: con eso entras directo, sin escribir nada.</p>
     <!-- El correo sale de un remitente propio (noreply@filtrovehicularperu.com):
          Gmail y Outlook lo mandan a Spam o Promociones con bastante frecuencia,
          y el cliente da por hecho que no llegó. Se le dice aquí. -->
     <p class="nv-ayuda">Si no lo ves en unos segundos, mira en <strong>Spam</strong> o <strong>Promociones</strong>.</p>
-    <label class="nv-etiqueta">Código
-      <input class="nv-campo nv-codigo" type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
-    </label>
     <p class="nv-error" id="nvVerificarError" role="alert" hidden></p>
-    <button class="nv-cta nv-cta-bloque" type="submit" id="nvVerificarBtn"><span>Verificar</span></button>
     <div class="nv-captcha auth-turnstile" id="nvTsReenvio"></div>
     <div class="nv-puerta-pie">
-      <a href="#" id="nvReenviarAlta">Reenviar el código</a>
-      <a href="#" data-paso-ir="acceso">Entrar</a>
+      <a href="#" id="nvReenviarAlta">Reenviar el correo</a>
+      <a href="#" data-paso-ir="acceso">Ya la activé, entrar</a>
     </div>
   </form>
 
@@ -592,7 +588,7 @@
 <script src="js/shared/auth.js?v=24"></script>
 <script src="js/shared/turnstile.js?v=3"></script>
 <script src="js/nueva/nucleo.js?v=7"></script>
-<script src="js/nueva/acceso.js?v=2"></script>
+<script src="js/nueva/acceso.js?v=3"></script>
 <script src="js/overlays.js?v=2"></script>
 
 <script src="js/modules/confirm-dialog.js?v=2"></script>
