@@ -374,6 +374,35 @@
     return await res.json();
   }
 
+  /* RESERVAS COLGADAS: SE BARREN ANTES DE EMPEZAR
+
+     El cobro se hace ANTES de consultar y lo liquida el servidor: con
+     datos se queda cobrado, sin datos se devuelve. Pero una reserva puede
+     quedarse sin liquidar —el cliente cerró la pestaña justo después de
+     cobrar, el proveedor no contestó nunca, la función del servidor se
+     acabó antes de tiempo—, y entonces el crédito se habría pagado sin
+     recibir nada.
+
+     Antes de cada consulta se le pide a la base que liquide las suyas que
+     llevan colgadas demasiado tiempo. Cuesta una llamada y cierra el
+     único camino por el que se cobraba sin entregar. Si falla, no se
+     interrumpe la consulta: es una red, no un requisito. */
+  var barridoHecho = false;
+
+  async function devolverReservasColgadas() {
+    if (barridoHecho) return;
+    barridoHecho = true;
+    try {
+      var sb = getSB();
+      if (!sb) return;
+      var res = await sb.rpc("liquidar_consultas_colgadas");
+      if (res.error) { console.warn("[cobro] no se pudo barrer reservas:", res.error.message); return; }
+      if (res.data > 0) console.info("[cobro] reservas colgadas devueltas:", res.data);
+    } catch (e) {
+      console.warn("[cobro] barrido de reservas:", e);
+    }
+  }
+
   // --- Descontar créditos del usuario y registrar la consulta ---
   // Usa la RPC consume_credits (no requiere admin). Valida saldo atómicamente,
   // descuenta crédito, inserta en `transactions` y en `consultas`.
@@ -598,6 +627,10 @@
     if (typeof precioVenta !== "number" || isNaN(precioVenta)) {
       throw new Error("Precio de venta no definido para esta consulta");
     }
+
+    // 0) Devolver lo que haya quedado colgado de intentos anteriores, para
+    //    que el saldo con el que se trabaja sea el de verdad.
+    await devolverReservasColgadas();
 
     // 1) Comprobación de saldo solo para dar un mensaje claro cuanto antes.
     //    NO es la que manda: consume_credits la revalida en el servidor.

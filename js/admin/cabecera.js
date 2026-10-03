@@ -101,10 +101,30 @@
       sinResultado + ' sin resultado · ' + numero(gastados) + ' créditos gastados');
   }
 
+  /* NADIE PAGA POR LO QUE NO RECIBIÓ
+
+     El servidor devuelve el crédito cuando una consulta no trae datos,
+     pero una reserva puede quedarse sin liquidar si se corta a mitad
+     (pestaña cerrada, proveedor mudo, la función del servidor se acabó).
+     Mientras el panel esté abierto se barren las de TODOS cada dos
+     minutos; cada cliente barre además las suyas al consultar. */
+  async function devolverColgadas() {
+    var c = sb();
+    if (!c) return;
+    try {
+      var res = await c.rpc('liquidar_consultas_colgadas', { p_todos: true });
+      if (res.error) { console.warn('[cabecera] barrido:', res.error.message); return; }
+      if (res.data > 0) console.info('[cabecera] reservas colgadas devueltas:', res.data);
+    } catch (e) {
+      console.warn('[cabecera] barrido:', e);
+    }
+  }
+
   function render() {
     ingresos();
     usuariosYCreditos();
     consultasDeHoy();
+    devolverColgadas();
   }
 
   /* CUÁNTO OCUPA LO QUE SE QUEDA QUIETO ARRIBA

@@ -72,16 +72,26 @@
     if (!sb) return [];
     diaCargado = claveDelDia();
     // Solo lo de hoy, de lo más nuevo a lo más viejo.
-    var res = await sb.from('consultas')
-      .select('id, user_id, module, type, input, cost, status, created_at')
-      .gte('created_at', inicioDeHoy().toISOString())
-      .order('created_at', { ascending: false })
-      .limit(500);
-    if (res.error) {
-      console.error('consultas load error:', res.error);
-      return [];
+    /* TODO el día, no una muestra. PostgREST corta en 1.000 filas, así
+       que se pide de mil en mil hasta que un tramo venga incompleto: con
+       un día movido, las primeras horas desaparecían de la pantalla. */
+    var desdeISO = inicioDeHoy().toISOString();
+    var rows = [];
+    for (var desde = 0; ; desde += 1000) {
+      var res = await sb.from('consultas')
+        .select('id, user_id, module, type, input, cost, status, created_at')
+        .gte('created_at', desdeISO)
+        .order('created_at', { ascending: false })
+        .range(desde, desde + 999);
+      if (res.error) {
+        console.error('consultas load error:', res.error);
+        break;
+      }
+      var tramo = res.data || [];
+      rows = rows.concat(tramo);
+      if (tramo.length < 1000) break;
+      if (desde > 50000) break;   // freno de seguridad
     }
-    var rows = res.data || [];
 
     // Resolver nombres de usuarios
     var ids = {};
@@ -139,7 +149,7 @@
     if (empty) empty.hidden = true;
     if (wrap) wrap.style.display = '';
 
-    body.innerHTML = rows.slice(0, 200).map(function (q) {
+    body.innerHTML = rows.map(function (q) {
       var statusChip;
       if (q.status === 'success')      statusChip = '<span class="chip chip-ok">Exitosa</span>';
       else if (q.status === 'error')   statusChip = '<span class="chip chip-off">Fallida</span>';
