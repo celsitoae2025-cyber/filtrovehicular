@@ -166,6 +166,10 @@
     <div class="nv-marca nv-marca-oscura">Plataforma Filtro<br>Vehicular<b>+</b></div>
     <h1>Revisa tu correo</h1>
     <p class="nv-puerta-nota">Te enviamos un código de 6 dígitos a <strong id="nvVerificarCorreo">tu correo</strong>.</p>
+    <!-- El correo sale de un remitente propio (noreply@filtrovehicularperu.com):
+         Gmail y Outlook lo mandan a Spam o Promociones con bastante frecuencia,
+         y el cliente da por hecho que no llegó. Se le dice aquí. -->
+    <p class="nv-ayuda">Si no lo ves en unos segundos, mira en <strong>Spam</strong> o <strong>Promociones</strong>.</p>
     <label class="nv-etiqueta">Código
       <input class="nv-campo nv-codigo" type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
     </label>
@@ -198,6 +202,7 @@
     <div class="nv-marca nv-marca-oscura">Plataforma Filtro<br>Vehicular<b>+</b></div>
     <h1>Nueva contraseña</h1>
     <p class="nv-puerta-nota">Escribe el código que llegó a <strong id="nvRestablecerCorreo">tu correo</strong>.</p>
+    <p class="nv-ayuda">Si no lo ves en unos segundos, mira en <strong>Spam</strong> o <strong>Promociones</strong>.</p>
     <label class="nv-etiqueta">Código
       <input class="nv-campo nv-codigo" type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
     </label>
