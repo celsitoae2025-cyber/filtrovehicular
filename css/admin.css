@@ -1816,3 +1816,12 @@ body .table-btn, body .ad-ficha, body .ad-pestana { font-weight: 400 !important;
 #userDetailModal .fi-rejilla { gap: 11px 24px; }
 #userDetailModal .fi-dato strong { font-size: 15px; }
 #userDetailModal .user-history-list li { padding: 7px 0; }
+
+/* La actividad en vivo: el «hace cuánto» manda y la hora exacta apoya. */
+.ad-hace { display: block; }
+.admin-nota-pie {
+  margin: 12px 2px 0;
+  font-size: 13px;
+  color: var(--c-muted, #5a6b6a);
+  line-height: 1.5;
+}
