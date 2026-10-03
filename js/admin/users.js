@@ -73,107 +73,89 @@
     return f && SELECTABLE_FILTERS.indexOf(f.value) !== -1;
   }
 
+  /* ICONOS DE LA FILA
+     Un trazo cada uno, del mismo grosor; el título los nombra. */
+  var ICO_VER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var ICO_PLAN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+  var ICO_BORRAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+
+  var TIER_NOMBRE = {
+    profesional: 'Profesional',
+    profesional_plus: 'Prof. Plus',
+    business: 'Business'
+  };
+
   function renderRow(u) {
-    var statusChip = u.status === 'active'
-      ? '<span class="chip chip-ok">Activo</span>'
-      : '<span class="chip chip-off">Suspendido</span>';
-    var adminBadge = u.is_admin ? '<span class="chip chip-admin" style="background:#edf7d9;color:#141d1c;margin-left:4px;">Admin</span>' : '';
     var checkboxCell = '';
     if (isSelectModeActive() && !u.is_admin) {
       var checked = selectedForDelete.has(u.id) ? 'checked' : '';
       checkboxCell = '<td><input type="checkbox" class="user-row-check" data-user-id="' + u.id + '" ' + checked + '></td>';
     } else if (isSelectModeActive()) {
-      // Admin: mostramos celda vacía para mantener la columna alineada
+      // Admin: celda vacía para que la columna no se descuadre
       checkboxCell = '<td></td>';
     }
 
-    // Badges de email confirmado / suscripción / pagó (solo texto, sin emojis)
-    var emailBadge = isEmailConfirmed(u)
-      ? '<span class="chip chip-ok" style="margin-left:4px;font-size:10.5px;" title="Email confirmado">Confirmado</span>'
-      : '<span class="chip chip-off" style="margin-left:4px;font-size:10.5px;" title="Email sin confirmar">Sin confirmar</span>';
-    var subBadge = isSubscriptionActive(u)
-      ? '<span class="chip chip-ok" style="margin-left:4px;background:#edf7d9;color:#141d1c;" title="Suscripción activa">Plan activo</span>'
-      : '';
-    var paidMpBadge = u._paid_mp
-      ? '<span class="chip chip-ok" style="margin-left:4px;background:#edf7d9;color:#8fc72e;" title="Pagó por Mercado Pago">MP</span>'
-      : '';
-    var paidAdminBadge = u._paid_admin
-      ? '<span class="chip chip-ok" style="margin-left:4px;background:#edf7d9;color:#141d1c;" title="Activado por admin (WhatsApp/manual)">Admin</span>'
-      : '';
-    var freeBadge = u._used_free
-      ? '<span class="chip chip-off" style="margin-left:4px;font-size:10.5px;" title="Consumió sus 5 créditos gratis">Consumió free</span>'
-      : '';
+    /* LA FILA SOLO LLEVA LO QUE SE MIRA DE UN VISTAZO.
 
-    var hasCredits = (u.credits_balance || 0) > 0;
+       Antes cargaba ocho columnas y cinco etiquetas por usuario
+       (confirmado, MP, admin, consumió free, plan activo). Con cien
+       filas eso no es información: es ruido. El consumo, las consultas
+       de hoy y esas marcas viven ahora en la ficha del ojo, donde hay
+       sitio para explicarlas. */
 
-    /* Botones de una sola letra: con ocho columnas, tres botones con
-       texto («Ver», «+ Créditos», «− Créditos») empujaban la tabla hasta
-       obligar a desplazarla a lo ancho. El icono dice lo mismo y el
-       title lo nombra para quien dude. */
-    var ICO_VER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
-    var acciones =
-      '<button class="ad-icono" data-action="view" data-user-id="' + u.id + '" title="Ver ficha" aria-label="Ver ficha">' + ICO_VER + '</button>' +
-      '<button class="ad-icono ad-icono-mas" data-action="addcredits" data-user-id="' + u.id + '" title="Añadir créditos" aria-label="Añadir créditos">+</button>' +
-      (hasCredits
-        ? '<button class="ad-icono ad-icono-menos" data-action="subcredits" data-user-id="' + u.id + '" title="Restar o vaciar créditos" aria-label="Restar créditos">−</button>'
-        : '');
-
-    // Plan/Tier column
-    /* EL PLAN SALE DE LA SUSCRIPCIÓN, NO DEL SALDO.
-
-       Antes esta columna se inventaba el plan a partir de los créditos
-       («tiene 1.500 o más → Business»), mientras las fichas de filtro y
-       la ficha del usuario miraban la suscripción de verdad. Resultado:
-       la tabla enseñaba BUSINESS a quien la ficha declaraba «sin plan
-       activo», y el contador de «Plan vencido» decía 3 mientras la lista
-       mostraba decenas. Un panel que se contradice no sirve para
-       decidir nada.
-
-       Ahora hay una sola verdad: `subscription_tier` y
-       `subscription_expires_at`. El saldo de créditos es otra cosa y
-       tiene su propia columna. */
-    var TIER_NOMBRE = {
-      profesional: 'Profesional',
-      profesional_plus: 'Prof. Plus',
-      business: 'Business'
-    };
-    var planCell;
+    // ── Plan: sale de la suscripción, nunca del saldo ──
     var tier = u.subscription_tier;
     var vence = u.subscription_expires_at ? new Date(u.subscription_expires_at).getTime() : 0;
-    var nombrePlan = TIER_NOMBRE[tier] || (tier ? tier : 'Plan');
-
-    if (tier && vence > Date.now()) {
-      planCell = '<span class="chip" style="background:#141d1c;color:#fff;font-weight:400;font-size:12px;white-space:nowrap;">' + nombrePlan + '</span>';
+    var planVivo = !!(tier && vence > Date.now());
+    var nombrePlan = TIER_NOMBRE[tier] || tier || '';
+    var planCell;
+    if (planVivo) {
+      var dias = Math.ceil((vence - Date.now()) / 86400000);
+      planCell = '<strong class="ad-fuerte">' + esc(nombrePlan) + '</strong>' +
+        '<small class="ad-sub">Vence ' + esc(fmtDate(u.subscription_expires_at)) +
+        ' · ' + (dias <= 0 ? 'vence hoy' : (dias === 1 ? 'queda 1 día' : 'quedan ' + dias + ' días')) + '</small>';
     } else if (tier && vence) {
-      planCell = '<span class="chip" style="background:#f1f1f1;color:#5a6b6a;font-weight:400;font-size:12px;white-space:nowrap;">' + nombrePlan + ' · vencido</span>';
+      planCell = '<span class="ad-nada">' + esc(nombrePlan) + '</span>' +
+        '<small class="ad-sub ad-sub-rojo">Venció el ' + esc(fmtDate(u.subscription_expires_at)) + '</small>';
     } else {
       planCell = '<span class="ad-nada">Sin plan</span>';
     }
 
-    /* Cuánto le queda de plan. Es lo primero que se pregunta uno al
-       mirar a un cliente de pago, y hasta ahora había que calcularlo a
-       ojo desde la fecha de vencimiento. */
-    var planPie = '';
-    if (u.subscription_expires_at) {
-      var dias = Math.ceil((new Date(u.subscription_expires_at).getTime() - Date.now()) / 86400000);
-      if (dias > 0) planPie = '<small class="ad-sub">' + (dias === 1 ? 'queda 1 día' : 'quedan ' + dias + ' días') + '</small>';
-      else planPie = '<small class="ad-sub ad-sub-rojo">' + (dias === 0 ? 'vence hoy' : 'vencido hace ' + Math.abs(dias) + ' días') + '</small>';
-    }
+    /* Con plan por días las consultas no gastan créditos (lo decide
+       consulta-runner.js), así que enseñar el saldo ahí engaña. */
+    var creditosCell = planVivo
+      ? '<strong class="ad-fuerte">Ilimitado</strong><small class="ad-sub">mientras dure el plan</small>'
+      : '<strong class="ad-fuerte">' + esc(u.credits_balance || 0) + '</strong>';
+
+    var estadoCell = u.status === 'active'
+      ? '<span class="chip chip-ok">Activo</span>'
+      : '<span class="chip chip-off">Suspendido</span>';
+
+    var hasCredits = (u.credits_balance || 0) > 0;
+    var acciones =
+      '<button class="ad-icono" data-action="view" data-user-id="' + u.id + '" title="Ver ficha completa" aria-label="Ver ficha completa">' + ICO_VER + '</button>' +
+      '<button class="ad-boton-plan" data-action="plan" data-user-id="' + u.id + '" title="Dar o extender un plan por días">' + ICO_PLAN + 'Plan</button>' +
+      '<button class="ad-icono ad-icono-mas" data-action="addcredits" data-user-id="' + u.id + '" title="Añadir créditos" aria-label="Añadir créditos">+</button>' +
+      (hasCredits
+        ? '<button class="ad-icono ad-icono-menos" data-action="subcredits" data-user-id="' + u.id + '" title="Restar o vaciar créditos" aria-label="Restar créditos">−</button>'
+        : '') +
+      (u.is_admin
+        ? ''
+        : '<button class="ad-icono ad-icono-borrar" data-action="borrar" data-user-id="' + u.id + '" title="Eliminar la cuenta" aria-label="Eliminar la cuenta">' + ICO_BORRAR + '</button>');
+
+    var adminChip = u.is_admin ? '<span class="chip chip-off" style="margin-left:6px;">Admin</span>' : '';
 
     return '<tr data-user-id="' + u.id + '">' +
       checkboxCell +
       '<td><div class="cell-user">' +
         '<span class="avatar">' + esc(initialsOf(u.full_name || u.email)) + '</span>' +
-        '<div class="user-info"><strong>' + esc(u.full_name || '—') + adminBadge + subBadge + paidMpBadge + paidAdminBadge + freeBadge + '</strong><span>' + esc(u.email || 'Sin correo') + emailBadge + '</span></div>' +
+        '<div class="user-info"><strong>' + esc(u.full_name || '—') + adminChip + '</strong>' +
+        '<span>' + esc(u.email || 'Sin correo') + '</span></div>' +
       '</div></td>' +
-      '<td>' + planCell + planPie + '</td>' +
-      '<td><strong style="font-size:15px;">' + esc(u.credits_balance || 0) + '</strong></td>' +
-      '<td>' + (u._consumos
-        ? '<strong style="font-size:15px;">' + esc(u._gastados || 0) + '</strong><small class="ad-sub">' + u._consumos + (u._consumos === 1 ? ' consulta' : ' consultas') + '</small>'
-        : '<span class="ad-nada">—</span>') + '</td>' +
-      '<td>' + (u._hoy ? '<strong style="font-size:15px;">' + u._hoy + '</strong>' : '<span class="ad-nada">—</span>') + '</td>' +
+      '<td>' + planCell + '</td>' +
+      '<td>' + creditosCell + '</td>' +
+      '<td>' + estadoCell + '</td>' +
       '<td>' + esc(fmtDate(u.created_at)) + '</td>' +
-      '<td>' + statusChip + '</td>' +
       '<td><div class="cell-actions">' + acciones + '</div></td>' +
     '</tr>';
   }
@@ -876,106 +858,89 @@
         }).join('') + '</ul>'
       : '<p style="color:var(--c-muted);font-size:12.5px;margin:0">Sin movimientos registrados.</p>';
 
-    // Plan activo (suscripción)
+    // ── Plan ──
     var TIER_LABELS = { profesional: 'Profesional', profesional_plus: 'Profesional Plus', business: 'Business' };
     var subTier = u.subscription_tier;
     var subExp = u.subscription_expires_at;
-    var subActive = subTier && subExp && (new Date(subExp).getTime() > Date.now());
-    var hasPremiumAccess = subActive && (subTier === 'profesional_plus' || subTier === 'business');
-    var subHtml = '';
+    var subActive = !!(subTier && subExp && (new Date(subExp).getTime() > Date.now()));
+    var premiumActivo = subActive && (subTier === 'profesional_plus' || subTier === 'business');
+    var subHtml;
     if (subActive) {
-      var daysLeft = Math.max(0, Math.ceil((new Date(subExp).getTime() - Date.now()) / 86400000));
-      var expFmt = new Date(subExp).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' });
-      var premiumSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polygon points="6 3 18 3 22 9 12 22 2 9"/><line x1="11" y1="3" x2="8" y2="9"/><line x1="13" y1="3" x2="16" y2="9"/><line x1="2" y1="9" x2="22" y2="9"/></svg>';
-      var premiumBadgeHtml = hasPremiumAccess
-        ? '<span style="display:inline-flex;align-items:center;margin-left:8px;padding:3px 10px;background:#141d1c;color:#8fc72e;border-radius:20px;font-size:11px;font-weight:700;">' + premiumSvg + 'Acceso Premium activo</span>'
-        : '<span style="display:inline-flex;align-items:center;gap:4px;margin-left:8px;padding:3px 10px;background:#f5f5f5;color:#141d1c;border-radius:20px;font-size:11px;font-weight:600;">Sin acceso Premium</span>';
+      var diasQuedan = Math.max(0, Math.ceil((new Date(subExp).getTime() - Date.now()) / 86400000));
       subHtml =
-        '<div class="fi-bloque">' +
-          '<h4 class="fi-rot">Plan</h4>' +
-          '<div class="sub-card">' +
-            '<div class="sub-card-info">' +
-              '<strong class="sub-tier">' + (TIER_LABELS[subTier] || subTier) + premiumBadgeHtml + '</strong>' +
-              '<span class="sub-meta">Vence el ' + expFmt + ' · <strong>' + daysLeft + '</strong> día' + (daysLeft === 1 ? '' : 's') + ' restante' + (daysLeft === 1 ? '' : 's') + '</span>' +
-            '</div>' +
-            '<button class="btn btn-danger sub-cancel-btn" id="userDetailCancelSub" type="button">Cancelar plan</button>' +
+        '<div class="sub-card">' +
+          '<div class="sub-card-info">' +
+            '<strong class="sub-tier">' + esc(TIER_LABELS[subTier] || subTier) + '</strong>' +
+            '<span class="sub-meta">Vence el ' + esc(fmtDate(subExp)) + ' · ' +
+              (diasQuedan === 1 ? 'queda 1 día' : 'quedan ' + diasQuedan + ' días') + ' · ' +
+              (premiumActivo ? 'con Consultas Premium' : 'sin Consultas Premium') +
+            '</span>' +
+          '</div>' +
+          '<div class="cell-actions">' +
+            '<button class="btn-ghost" id="userDetailPlanBtn" type="button">Extender o cambiar</button>' +
+            '<button class="btn btn-danger" id="userDetailCancelSub" type="button">Cancelar plan</button>' +
           '</div>' +
         '</div>';
     } else {
-      /* Sin suscripción viva, pero puede haber una caducada: decir solo
-         «sin plan activo» escondía que el cliente FUE de pago, que es
-         justo a quien hay que llamar. */
-      var caducado = (subTier && subExp)
-        ? 'Tuvo el plan <strong>' + (TIER_LABELS[subTier] || subTier) + '</strong>, vencido el ' +
-          new Date(subExp).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })
-        : 'Nunca ha tenido un plan: usa créditos sueltos.';
+      /* Sin plan vivo, pero puede haber uno caducado: decir solo «sin
+         plan» escondía que el cliente FUE de pago, que es justo a quien
+         hay que llamar. */
       subHtml =
-        '<div class="fi-bloque">' +
-          '<h4 class="fi-rot">Plan</h4>' +
-          '<p class="fi-vacio">' + caducado + '</p>' +
+        '<p class="fi-vacio">' + ((subTier && subExp)
+          ? 'Tuvo el plan <strong>' + esc(TIER_LABELS[subTier] || subTier) + '</strong>, vencido el ' + esc(fmtDate(subExp))
+          : 'Nunca ha tenido un plan: usa créditos sueltos.') + '</p>' +
+        '<div class="fi-otorgar" style="margin-top:12px;">' +
+          '<button class="btn btn-primary" id="userDetailPlanBtn" type="button">Dar un plan por días</button>' +
         '</div>';
     }
 
-    // Botón "Activar Premium" si NO tiene acceso premium
-    var activatePremiumHtml = '';
-    if (!hasPremiumAccess) {
-      var premiumPlans = (Consultia.Plans && Consultia.Plans.getActiveSubscriptionPlans)
-        ? Consultia.Plans.getActiveSubscriptionPlans().filter(function (p) {
-            return p.tier === 'profesional_plus' || p.tier === 'business';
-          })
-        : [];
-      var premiumOptions = premiumPlans.map(function (p) {
-        return '<option value="' + p.id + '">' + (TIER_LABELS[p.tier] || p.tier) + ' — ' + p.days + ' días — S/ ' + p.price + '</option>';
-      }).join('');
-      if (premiumOptions) {
-        var premiumSvgMd = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#8fc72e;"><polygon points="6 3 18 3 22 9 12 22 2 9"/><line x1="11" y1="3" x2="8" y2="9"/><line x1="13" y1="3" x2="16" y2="9"/><line x1="2" y1="9" x2="22" y2="9"/></svg>';
-        activatePremiumHtml =
-          '<div class="user-detail-section" style="margin-top:8px;">' +
-            '<div style="padding:14px;background:#141d1c;border-radius:10px;">' +
-              '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
-                premiumSvgMd +
-                '<strong style="font-size:14px;color:#8fc72e;">Activar Consultas Premium</strong>' +
-              '</div>' +
-              '<p style="font-size:12.5px;color:#94A3B8;margin:0 0 10px;">Otorga un plan Profesional Plus o Business para desbloquear las Consultas Premium a este usuario.</p>' +
-              '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
-                '<select id="userDetailPremiumPlan" class="admin-select" style="flex:1;min-width:200px;">' +
-                  '<option value="">— Selecciona plan —</option>' +
-                  premiumOptions +
-                '</select>' +
-                '<button class="btn btn-primary" id="userDetailActivatePremium" type="button" style="white-space:nowrap;background:#8fc72e;color:#141d1c;border:none;">Activar Premium</button>' +
-              '</div>' +
-            '</div>' +
-          '</div>';
-      }
-    }
+    /* Las marcas que antes iban pegadas al nombre en la tabla. Aquí
+       caben con su nombre entero y sin abreviar. */
+    var marcas = [];
+    marcas.push(isEmailConfirmed(u)
+      ? '<span class="fi-marca">Correo confirmado</span>'
+      : '<span class="fi-marca fi-marca-no">Correo sin confirmar</span>');
+    if (u.is_admin)     marcas.push('<span class="fi-marca">Administrador</span>');
+    if (u._paid_mp)     marcas.push('<span class="fi-marca">Pagó por Mercado Pago</span>');
+    if (u._paid_admin)  marcas.push('<span class="fi-marca">Activado por un administrador</span>');
+    if (u._used_free)   marcas.push('<span class="fi-marca fi-marca-no">Gastó sus créditos de bienvenida</span>');
 
     var html =
-      /* La ficha, en tres bloques y en este orden: QUIÉN es, QUÉ tiene
-         (plan y saldo) y QUÉ ha hecho. Antes era una rejilla de seis
-         cuadros grises donde el dato de verdad —el consumo— ni aparecía,
-         y los movimientos quedaban enterrados al final sin contexto. */
+      /* La ficha, en este orden: QUIÉN es, CÓMO llegó, QUÉ tiene y QUÉ
+         ha hecho. La tabla solo enseña lo imprescindible; todo lo demás
+         está aquí, escrito con todas las letras. */
       '<div class="fi-bloque">' +
         '<h4 class="fi-rot">Cuenta</h4>' +
         '<div class="fi-rejilla">' +
-          '<div class="fi-dato"><span>Correo</span><strong>' + (u.email || '—') + '</strong></div>' +
-          '<div class="fi-dato"><span>Teléfono</span><strong>' + (u.phone || '—') + '</strong></div>' +
+          '<div class="fi-dato"><span>Correo</span><strong>' + esc(u.email || '—') + '</strong></div>' +
+          '<div class="fi-dato"><span>Teléfono</span><strong>' + esc(u.phone || '—') + '</strong></div>' +
           '<div class="fi-dato"><span>Estado</span><strong>' + (u.status === 'active' ? 'Activo' : 'Suspendido') + '</strong></div>' +
-          '<div class="fi-dato"><span>Registrado</span><strong>' + fmtDate(u.created_at) + '</strong></div>' +
-          '<div class="fi-dato"><span>Último acceso</span><strong>' + fmtRelative(u.last_sign_in_at) + '</strong></div>' +
-          '<div class="fi-dato"><span>Correo verificado</span><strong>' + (u.email_confirmed_at ? 'Sí' : 'No') + '</strong></div>' +
+          '<div class="fi-dato"><span>Registrado</span><strong>' + esc(fmtDate(u.created_at)) + '</strong></div>' +
+          '<div class="fi-dato"><span>Último acceso</span><strong>' + esc(fmtRelative(u.last_sign_in_at)) + '</strong></div>' +
+          '<div class="fi-dato"><span>Identificador</span><strong style="font-size:13px;">' + esc(u.id) + '</strong></div>' +
         '</div>' +
+      '</div>' +
+      '<div class="fi-bloque">' +
+        '<h4 class="fi-rot">Marcas</h4>' +
+        '<div class="fi-marcas">' + marcas.join('') + '</div>' +
       '</div>' +
       '<div class="fi-bloque">' +
         '<h4 class="fi-rot">Créditos y consumo</h4>' +
         '<div class="fi-rejilla">' +
-          '<div class="fi-dato"><span>Saldo actual</span><strong>' + (u.credits_balance || 0) + '</strong></div>' +
-          '<div class="fi-dato"><span>Créditos gastados</span><strong>' + (u._gastados || 0) + '</strong></div>' +
-          '<div class="fi-dato"><span>Consultas totales</span><strong>' + (u._consumos || 0) + '</strong></div>' +
-          '<div class="fi-dato"><span>Consultas hoy</span><strong>' + (u._hoy || 0) + '</strong></div>' +
+          '<div class="fi-dato"><span>Saldo actual</span><strong>' + (subActive ? 'Ilimitado' : esc(u.credits_balance || 0)) + '</strong></div>' +
+          '<div class="fi-dato"><span>Créditos gastados</span><strong>' + esc(u._gastados || 0) + '</strong></div>' +
+          '<div class="fi-dato"><span>Consultas totales</span><strong>' + esc(u._consumos || 0) + '</strong></div>' +
+          '<div class="fi-dato"><span>Consultas hoy</span><strong>' + esc(u._hoy || 0) + '</strong></div>' +
+          (subActive
+            ? '<div class="fi-dato"><span>Saldo guardado</span><strong>' + esc(u.credits_balance || 0) + '</strong></div>'
+            : '') +
         '</div>' +
+        (subActive ? '<p class="fi-vacio" style="margin-top:10px;">Con plan por días las consultas no descuentan créditos; el saldo queda intacto para cuando venza.</p>' : '') +
       '</div>' +
-      subHtml +
-      activatePremiumHtml +
+      '<div class="fi-bloque">' +
+        '<h4 class="fi-rot">Plan</h4>' +
+        subHtml +
+      '</div>' +
       '<div class="fi-bloque">' +
         '<h4 class="fi-rot">Movimientos <small>' + transactions.length + '</small></h4>' +
         txHtml +
@@ -989,10 +954,11 @@
       cancelSubBtn.addEventListener('click', function () { cancelSubscription(userId); });
     }
 
-    // Wire del botón "Activar Premium" (si existe)
-    var activateBtn = document.getElementById('userDetailActivatePremium');
-    if (activateBtn) {
-      activateBtn.addEventListener('click', function () { handleActivatePremium(userId); });
+    // Dar, extender o cambiar el plan: el mismo cuadro que el botón
+    // «Plan» de la fila, para no tener dos sitios donde se otorga.
+    var planBtn = document.getElementById('userDetailPlanBtn');
+    if (planBtn) {
+      planBtn.addEventListener('click', function () { openPlanModal(userId); });
     }
 
     // Botón Suspender/Reactivar — visible para todos los usuarios excepto
@@ -1036,34 +1002,140 @@
   // ============================================================
   // Activar Premium: otorga plan Profesional Plus o Business
   // ============================================================
-  async function handleActivatePremium(userId) {
+  // ============================================================
+  // DAR, EXTENDER O CAMBIAR EL PLAN POR DÍAS
+  //
+  // Un solo cuadro para los dos sitios que lo piden: el botón «Plan» de
+  // la fila y el de la ficha. Antes esto solo vivía dentro de la ficha
+  // y únicamente para los planes que desbloquean Premium, así que dar
+  // un Profesional de 7 días había que hacerlo por otro camino.
+  //
+  // La base suma los días si el plan es el mismo y empieza de cero si
+  // es otro (admin_grant_subscription); aquí solo hay que decirlo claro
+  // antes de que se pulse.
+  // ============================================================
+  var planModalUserId = null;
+
+  function ensurePlanModal() {
+    if (document.getElementById('userPlanModal')) return;
+    var html = ''
+      + '<div class="modal" id="userPlanModal" hidden role="dialog" aria-modal="true">'
+      + '  <div class="modal-overlay" data-close-plan></div>'
+      + '  <div class="modal-panel" style="max-width:520px;">'
+      + '    <header class="modal-header">'
+      + '      <h2 id="userPlanTitle">Dar un plan por días</h2>'
+      + '      <button class="modal-close" type="button" aria-label="Cerrar" data-close-plan>'
+      + '        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+      + '      </button>'
+      + '    </header>'
+      + '    <div class="modal-body">'
+      + '      <p class="fi-vacio" id="userPlanWho"></p>'
+      + '      <div class="field" style="margin-top:14px;">'
+      + '        <label for="userPlanSelect">Plan</label>'
+      + '        <select id="userPlanSelect" class="admin-select" style="width:100%;"></select>'
+      + '      </div>'
+      + '      <p class="field-hint" id="userPlanHint" style="margin-top:10px;"></p>'
+      + '    </div>'
+      + '    <footer class="modal-footer">'
+      + '      <button class="btn-ghost" type="button" data-close-plan>Cancelar</button>'
+      + '      <button class="btn btn-primary" type="button" id="userPlanConfirm">Otorgar plan</button>'
+      + '    </footer>'
+      + '  </div>'
+      + '</div>';
+    var cont = document.createElement('div');
+    cont.innerHTML = html;
+    document.body.appendChild(cont.firstChild);
+
+    document.querySelectorAll('#userPlanModal [data-close-plan]').forEach(function (el) {
+      el.addEventListener('click', closePlanModal);
+    });
+    document.getElementById('userPlanConfirm').addEventListener('click', grantPlan);
+    document.getElementById('userPlanSelect').addEventListener('change', paintPlanHint);
+  }
+
+  function planesDisponibles() {
+    return (Consultia.Plans && Consultia.Plans.getActiveSubscriptionPlans)
+      ? Consultia.Plans.getActiveSubscriptionPlans()
+      : [];
+  }
+
+  function paintPlanHint() {
+    var hint = document.getElementById('userPlanHint');
+    var sel = document.getElementById('userPlanSelect');
+    if (!hint || !sel) return;
+    var u = cachedUsers.find(function (x) { return x.id === planModalUserId; });
+    var plan = planesDisponibles().find(function (p) { return p.id === sel.value; });
+    if (!plan) { hint.textContent = 'Elige un plan para ver en qué queda la cuenta.'; return; }
+
+    var premium = (plan.tier === 'profesional_plus' || plan.tier === 'business');
+    var vivo = !!(u && u.subscription_tier && u.subscription_expires_at &&
+                  new Date(u.subscription_expires_at).getTime() > Date.now());
+    var texto;
+    if (vivo && u.subscription_tier === plan.tier) {
+      texto = 'Se le SUMAN ' + plan.days + ' días a lo que ya tiene (vence el ' + fmtDate(u.subscription_expires_at) + ').';
+    } else if (vivo) {
+      texto = 'Cambia de plan: los ' + plan.days + ' días empiezan hoy y pierde lo que le quedaba del anterior.';
+    } else {
+      texto = 'Empieza hoy y dura ' + plan.days + ' días.';
+    }
+    texto += premium ? ' Desbloquea las Consultas Premium.' : ' No incluye Consultas Premium.';
+    texto += ' Mientras dure, sus consultas no gastan créditos.';
+    hint.textContent = texto;
+  }
+
+  function openPlanModal(userId) {
     var u = cachedUsers.find(function (x) { return x.id === userId; });
     if (!u) return;
-
-    var sel = document.getElementById('userDetailPremiumPlan');
-    var btn = document.getElementById('userDetailActivatePremium');
-    if (!sel || !sel.value) {
+    var planes = planesDisponibles();
+    if (!planes.length) {
       if (Consultia.toast) Consultia.toast({
-        type: 'error',
-        title: 'Selecciona un plan',
-        message: 'Elige un plan Profesional Plus o Business para activar Premium.'
+        type: 'error', title: 'Sin planes', message: 'No hay planes por días activos.'
       });
       return;
     }
 
-    var planId = sel.value;
-    var plan = (Consultia.Plans && Consultia.Plans.getActiveSubscriptionPlans)
-      ? Consultia.Plans.getActiveSubscriptionPlans().find(function (p) { return p.id === planId; })
-      : null;
+    ensurePlanModal();
+    planModalUserId = userId;
+
+    var vivo = !!(u.subscription_tier && u.subscription_expires_at &&
+                  new Date(u.subscription_expires_at).getTime() > Date.now());
+    document.getElementById('userPlanTitle').textContent = vivo ? 'Extender o cambiar el plan' : 'Dar un plan por días';
+    document.getElementById('userPlanWho').textContent = (u.full_name || 'Sin nombre') + ' · ' + (u.email || 'sin correo');
+
+    var TIER = { profesional: 'Profesional', profesional_plus: 'Profesional Plus', business: 'Business' };
+    var sel = document.getElementById('userPlanSelect');
+    sel.innerHTML = '<option value="">— Elige un plan —</option>' + planes.map(function (p) {
+      return '<option value="' + p.id + '">' + (TIER[p.tier] || p.tier) + ' · ' + p.days + ' días · S/ ' + p.price + '</option>';
+    }).join('');
+    paintPlanHint();
+
+    document.getElementById('userPlanModal').hidden = false;
+  }
+
+  function closePlanModal() {
+    var m = document.getElementById('userPlanModal');
+    if (m) m.hidden = true;
+    planModalUserId = null;
+  }
+
+  async function grantPlan() {
+    var userId = planModalUserId;
+    var u = cachedUsers.find(function (x) { return x.id === userId; });
+    if (!u) return;
+
+    var sel = document.getElementById('userPlanSelect');
+    var plan = planesDisponibles().find(function (p) { return p.id === (sel && sel.value); });
     if (!plan) {
-      if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Plan no encontrado', message: 'Recarga la página.' });
+      if (Consultia.toast) Consultia.toast({
+        type: 'error', title: 'Elige un plan', message: 'No has seleccionado ninguno.'
+      });
       return;
     }
 
     var sb = getSB();
     if (!sb) return;
-
-    if (btn) { btn.disabled = true; btn.dataset.orig = btn.textContent; btn.textContent = 'Activando…'; }
+    var btn = document.getElementById('userPlanConfirm');
+    if (btn) { btn.disabled = true; btn.dataset.orig = btn.textContent; btn.textContent = 'Otorgando…'; }
 
     try {
       var res = await sb.rpc('admin_grant_subscription', {
@@ -1071,31 +1143,33 @@
         p_tier: plan.tier,
         p_days: plan.days,
         p_plan_id: plan.id,
-        p_note: 'Activación Premium desde panel admin',
+        p_note: 'Plan otorgado desde el panel',
         p_amount_pen: plan.price ? parseFloat(plan.price) : null
       });
       if (res.error) throw res.error;
 
-      var TIER_LABELS_LOCAL = { profesional: 'Profesional', profesional_plus: 'Profesional Plus', business: 'Business' };
+      var TIER = { profesional: 'Profesional', profesional_plus: 'Profesional Plus', business: 'Business' };
       if (Consultia.toast) Consultia.toast({
         type: 'success',
-        title: 'Premium activado',
-        message: 'Plan ' + (TIER_LABELS_LOCAL[plan.tier] || plan.tier) + ' (' + plan.days + 'd) activado para ' + (u.full_name || u.email) + '. Ya puede acceder a Consultas Premium.'
+        title: 'Plan otorgado',
+        message: (TIER[plan.tier] || plan.tier) + ' de ' + plan.days + ' días para ' + (u.full_name || u.email) + '.'
       });
-
       if (typeof A.logAudit === 'function') {
-        A.logAudit('subscription.activate_premium', u.email, 'Plan ' + plan.tier + ' ' + plan.days + 'd — desde detalle de usuario');
+        A.logAudit('subscription.grant', u.email, plan.tier + ' · ' + plan.days + ' días');
       }
 
-      // Refrescar datos y re-abrir detalle
+      closePlanModal();
       cachedUsers = await loadUsers();
       paint();
-      await openDetail(userId);
+      var ficha = document.getElementById('userDetailModal');
+      if (ficha && !ficha.hidden && ficha.getAttribute('data-current-user') === userId) {
+        await openDetail(userId);
+      }
     } catch (err) {
-      console.error('Error activando Premium:', err);
+      console.error('Error otorgando plan:', err);
       if (Consultia.toast) Consultia.toast({
         type: 'error',
-        title: 'No se pudo activar Premium',
+        title: 'No se pudo otorgar el plan',
         message: (err && err.message) || 'Intenta de nuevo.'
       });
     } finally {
@@ -1290,10 +1364,11 @@
     try { window.open(url, '_blank', 'noopener'); } catch (_) {}
   }
 
-  async function deleteUser() {
+  /* Se llama desde dos sitios: la papelera de la fila (que pasa el id)
+     y el botón del pie de la ficha (que no lo pasa y lo saca de ella). */
+  async function deleteUser(idArg) {
     var modal = document.getElementById('userDetailModal');
-    if (!modal) return;
-    var userId = modal.getAttribute('data-current-user');
+    var userId = idArg || (modal && modal.getAttribute('data-current-user'));
     if (!userId) return;
     var u = cachedUsers.find(function (x) { return x.id === userId; });
     if (!u) return;
@@ -1329,7 +1404,7 @@
 
     var sb = getSB();
     if (!sb) return;
-    var btn = document.getElementById('userDetailDelete');
+    var btn = idArg ? null : document.getElementById('userDetailDelete');
     if (btn) { btn.disabled = true; btn.dataset.orig = btn.textContent; btn.textContent = 'Eliminando…'; }
 
     try {
@@ -1406,8 +1481,10 @@
         if (!btn) return;
         var userId = btn.dataset.userId;
         if (btn.dataset.action === 'view') openDetail(userId);
+        else if (btn.dataset.action === 'plan') openPlanModal(userId);
         else if (btn.dataset.action === 'addcredits' || btn.dataset.action === 'recargar') openCreditsModal(userId, 'add');
         else if (btn.dataset.action === 'subcredits') openCreditsModal(userId, 'sub');
+        else if (btn.dataset.action === 'borrar') deleteUser(userId);
       });
 
       // Checkboxes por fila (modo "Sin confirmar")
@@ -1465,6 +1542,6 @@
 
     // Botón Eliminar cuenta (definitivo + WhatsApp al usuario)
     var deleteUserBtn = document.getElementById('userDetailDelete');
-    if (deleteUserBtn) deleteUserBtn.addEventListener('click', deleteUser);
+    if (deleteUserBtn) deleteUserBtn.addEventListener('click', function () { deleteUser(); });
   };
 })();

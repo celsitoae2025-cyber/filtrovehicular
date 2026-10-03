@@ -539,12 +539,37 @@
 .btn-ghost svg { width: 13px; height: 13px; }
 
 /* ============ TABLAS ============ */
+/* ============================================================
+   EL PANEL NO USA EL VERDE DE LA MARCA
+
+   El verde es para lo que ve el cliente. Aquí dentro se decide
+   mirando datos, y el color de marca repartido por chips, bordes y
+   botones solo hacía ruido: todo va en negro, blanco y grises, y el
+   rojo queda reservado para lo que destruye algo.
+   Basta con redefinir las dos variables: lo que las usaba cambia solo.
+============================================================ */
+.admin-app, .admin-login { --c-accent: #141d1c; --c-teal-soft: #f1f3f1; }
+.admin-app .chip-ok { background: #141d1c; color: #fff; }
+
+/* ── La cabecera de la tabla no se va al desplazar ──
+   Para que «sticky» mire a la página, la caja de la tabla no puede ser
+   un contenedor de desplazamiento; solo lo es cuando la pantalla es
+   estrecha y la tabla no cabe a lo ancho. */
+.admin-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--c-bg, #f4f6f4);
+}
+
 .admin-table-wrap {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: 12px;
-  overflow: hidden;
-  overflow-x: auto;
+  overflow: visible;
+}
+@media (max-width: 1100px) {
+  .admin-table-wrap { overflow-x: auto; }
 }
 .admin-table {
   width: 100%;
@@ -1072,7 +1097,6 @@
 }
 
 /* ============ MODAL DETALLE ============ */
-#userDetailModal .modal-panel { max-width: 560px; }
 .user-detail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -1756,12 +1780,27 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
 }
 .ad-icono svg { width: 17px; height: 17px; }
 .ad-icono:hover { border-color: #141d1c; }
-.ad-icono-mas { background: #141d1c; border-color: #141d1c; color: #fff; }
-.ad-icono-mas:hover { background: #26403a; }
-.ad-icono-menos:hover { border-color: #c2410c; color: #c2410c; }
+.ad-icono-mas, .ad-icono-menos { background: #141d1c; border-color: #141d1c; color: #fff; }
+.ad-icono-mas:hover, .ad-icono-menos:hover { background: #2a3b38; border-color: #2a3b38; }
+/* Lo único con color: lo que destruye la cuenta. */
+.ad-icono-borrar { color: #c2410c; border-color: #e8cabb; }
+.ad-icono-borrar:hover { background: #fdf4f0; border-color: #c2410c; }
+/* Dar o extender un plan por días. Lleva texto porque no hay icono que
+   diga «plan» sin que haya que adivinarlo. */
+.ad-boton-plan {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 32px; padding: 0 12px;
+  border: 1px solid var(--c-border, #e1e6e3); border-radius: 8px;
+  background: #fff; color: var(--c-text, #141d1c);
+  font: inherit; font-size: 14px; line-height: 1; cursor: pointer; white-space: nowrap;
+}
+.ad-boton-plan svg { width: 15px; height: 15px; }
+.ad-boton-plan:hover { border-color: #141d1c; }
 
 /* La segunda línea de una celda: los días que quedan, el nº de
    consultas. Pequeña y gris, para que el dato grande siga mandando. */
+/* El dato grande de una celda: el saldo, el nombre del plan. */
+.ad-fuerte { display: block; font-size: 15px; font-weight: 700; color: var(--c-text, #141d1c); }
 .ad-sub { display: block; margin-top: 2px; font-size: 12px; color: var(--c-muted, #5a6b6a); }
 .ad-sub-rojo { color: #c2410c; }
 .ad-nada { color: var(--c-border, #c9d2cd); }
@@ -1784,9 +1823,36 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
   background: var(--c-bg, #f1f1f1); color: var(--c-text, #141d1c);
   font-size: 11px; letter-spacing: 0;
 }
-.fi-rejilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 18px; }
+.fi-rejilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 24px; }
 .fi-dato { min-width: 0; }
 .fi-dato span { display: block; font-size: 12px; color: var(--c-muted, #5a6b6a); }
-.fi-dato strong { display: block; margin-top: 2px; font-size: 16px; font-weight: 700; color: var(--c-text, #141d1c); word-break: break-word; }
+.fi-dato strong {
+  display: block; margin-top: 3px; font-size: 16px; font-weight: 700;
+  color: var(--c-text, #141d1c);
+  /* Un correo largo partía por la mitad de una palabra en mitad de la
+     celda; que rompa solo cuando no quepa entero. */
+  overflow-wrap: anywhere;
+}
 .fi-vacio { margin: 0; font-size: 14px; color: var(--c-muted, #5a6b6a); }
-@media (max-width: 600px) { .fi-rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Las marcas de la cuenta (correo confirmado, cómo pagó, si gastó sus
+   créditos de bienvenida). Salían en la tabla y la emborronaban. */
+.fi-marcas { display: flex; flex-wrap: wrap; gap: 8px; }
+.fi-marca {
+  padding: 4px 11px; border-radius: 999px;
+  background: #f1f3f1; color: #141d1c; font-size: 13px;
+}
+.fi-marca-no { background: #fff; border: 1px solid var(--c-border, #e1e6e3); color: var(--c-muted, #5a6b6a); }
+
+/* Dar plan premium desde la ficha: un bloque más, no una tarjeta negra. */
+.fi-otorgar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.fi-otorgar .admin-select { flex: 1 1 240px; min-width: 0; }
+
+@media (max-width: 760px) { .fi-rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* La ficha ancha: con 560 px el correo se partía y los cuatro botones
+   del pie se pisaban entre ellos. */
+#userDetailModal .modal-panel { max-width: 820px; }
+#userDetailModal .modal-footer { flex-wrap: wrap; }
+/* «Cerrar» a la izquierda; las acciones, a la derecha. */
+#userDetailModal .modal-footer > :first-child { margin-right: auto; }

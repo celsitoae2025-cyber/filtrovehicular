@@ -160,8 +160,8 @@
 
     tbody.innerHTML = filtered.map(function (r) {
       var sourceBadge = r.source === 'mp'
-        ? '<span class="admin-badge" style="background:#f5f5f5;color:#141d1c;border-color:#8fc72e">Mercado Pago</span>'
-        : '<span class="admin-badge" style="background:#8fc72e;color:#141d1c;border-color:#8fc72e">' + escapeHtml(r.method) + '</span>';
+        ? '<span class="admin-badge" style="background:#f1f3f1;color:#141d1c;border-color:#dcdfdc">Mercado Pago</span>'
+        : '<span class="admin-badge" style="background:#141d1c;color:#fff;border-color:#141d1c">' + escapeHtml(r.method) + '</span>';
       var kindLabel = r.kind === 'subscription' ? 'Suscripción' : 'Créditos';
       var userCell = '<strong>' + escapeHtml(r.email) + '</strong>' +
                      (r.name ? '<br><small style="color:#5A6B6A">' + escapeHtml(r.name) + '</small>' : '');
