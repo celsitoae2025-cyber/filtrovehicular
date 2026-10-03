@@ -46,7 +46,10 @@
   }
 
   async function ingresos() {
-    var filas = await todas('transactions', 'amount_pen, status', function (q) {
+    /* Solo amount_pen. Antes se pedía también `status`, que en
+       transactions no existe: PostgREST devolvía 400 y la cifra de
+       ingresos se quedaba en «cargando…» para siempre. */
+    var filas = await todas('transactions', 'amount_pen', function (q) {
       return q.not('amount_pen', 'is', null);
     });
     var total = 0, pagos = 0;

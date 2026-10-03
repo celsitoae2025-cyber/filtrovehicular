@@ -1,8 +1,15 @@
 /* ============================================================
-   ADMIN AUTH — verifica sesión de Supabase e `is_admin=true`
-   Ya no usa login local: la usuaria se loguea en la landing,
-   y si tiene permiso de admin, puede entrar acá sin pedir
-   credenciales de nuevo.
+   ADMIN AUTH — comprueba la sesión de Supabase e `is_admin`
+
+   El panel NO tiene pantalla de acceso propia. Quien llegue sin sesión,
+   sin perfil o sin permiso de administrador va a app.html, que es la
+   única puerta de la plataforma.
+
+   Tuvo una durante un tiempo porque el aviso de mantenimiento se pintaba
+   encima del acceso de la app y dejaba al dueño fuera de su propia
+   plataforma. Eso ya no pasa: sin sesión, el aviso no tapa nada
+   (js/modules/maintenance.js), así que la puerta siempre está libre y
+   sobraba pedir la contraseña dos veces en dos sitios distintos.
 ============================================================ */
 
 (function () {
@@ -34,131 +41,37 @@
     }
     cachedSession = null;
     cachedLoggedIn = false;
-    // Se queda en el acceso del panel. Mandar a app.html seria un problema
-    // con el mantenimiento encendido: alli el aviso tapa el login.
-    window.location.reload();
+    window.location.replace('app.html');
   };
 
-  function redirectToLanding(reason) {
-    window.location.href = 'app.html';
-  }
-
-  // Pide las credenciales aquí en vez de mandar a app.html. Con el modo
-  // mantenimiento encendido, alli el aviso tapa el login y el
-  // administrador se quedaba sin forma de entrar ni de apagarlo.
-  function mostrarLogin(mensaje) {
-    var pantalla = document.getElementById('adminLogin');
-    var app = document.getElementById('adminApp');
-    if (app) app.hidden = true;
-    if (!pantalla) { redirectToLanding('sin pantalla de acceso'); return; }
-    pantalla.hidden = false;
-    // El widget se monta recién ahora, con la pantalla ya visible:
-    // Turnstile no resuelve el reto dentro de un elemento oculto.
-    if (window.Consultia && window.Consultia.Turnstile) {
-      window.Consultia.Turnstile.render('tsAdminLogin');
-    }
-    if (mensaje) mostrarError(mensaje);
-    var email = document.getElementById('adminLoginEmail');
-    if (email) email.focus();
-  }
-
-  // Supabase responde en inglés; aquí se lee en español.
-  function enEspanol(mensaje) {
-    var m = String(mensaje || '');
-    if (/invalid login credentials/i.test(m)) return 'Correo o contraseña incorrectos.';
-    if (/email not confirmed/i.test(m))       return 'Tu correo aún no está confirmado.';
-    if (/too many requests|rate limit/i.test(m)) {
-      return 'Demasiados intentos seguidos. Espera un momento y vuelve a probar.';
-    }
-    if (/network|failed to fetch/i.test(m))   return 'Sin conexión con el servidor. Revisa tu internet.';
-    if (/captcha/i.test(m)) {
-      return 'No se pudo completar la verificación de seguridad. Recarga la página; si usas un bloqueador de anuncios, desactívalo para este sitio.';
-    }
-    return m || 'No se pudo iniciar sesión.';
-  }
-
-  function mostrarError(texto) {
-    var err = document.getElementById('adminLoginError');
-    if (!err) return;
-    if (!texto) { err.hidden = true; err.textContent = ''; return; }
-    err.textContent = texto;
-    err.hidden = false;
+  /* Fuera del panel. El motivo no se le dice a nadie: quien no tiene
+     permiso no tiene por qué saber si falló la sesión o el rol. */
+  function alAcceso() {
+    window.location.replace('app.html');
   }
 
   A.initAuth = async function (onLoginSuccess) {
-    var loginScreen = document.getElementById('adminLogin');
     var app = document.getElementById('adminApp');
-
-    if (loginScreen) loginScreen.hidden = true;
 
     if (!window.Consultia || !window.Consultia.Auth) {
       console.error('Consultia.Auth no disponible');
-      redirectToLanding('auth no cargado');
+      alAcceso();
       return;
-    }
-
-    // Envío del formulario de acceso. Solo se conecta una vez.
-    var form = document.getElementById('adminLoginForm');
-    if (form && !form.dataset.wired) {
-      form.dataset.wired = '1';
-      form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        mostrarError('');
-        var email = (document.getElementById('adminLoginEmail') || {}).value || '';
-        var pass  = (document.getElementById('adminLoginPass')  || {}).value || '';
-        var btn   = document.getElementById('adminLoginBtn');
-        if (!email.trim() || !pass) {
-          mostrarError('Escribe tu correo y tu contraseña.');
-          return;
-        }
-        if (btn) { btn.disabled = true; btn.textContent = 'Entrando…'; }
-        try {
-          var captchaToken = null;
-          if (window.Consultia.Turnstile) {
-            captchaToken = await window.Consultia.Turnstile.getToken('tsAdminLogin');
-          }
-          var res = await window.Consultia.Auth.signIn(email.trim(), pass, true, captchaToken);
-          // El token es de un solo uso: se quema aunque el acceso falle.
-          if (window.Consultia.Turnstile) window.Consultia.Turnstile.reset('tsAdminLogin');
-          if (res && res.error) throw res.error;
-          // Se recarga en vez de re-inicializar aquí mismo. onLoginSuccess
-          // monta quince módulos con sus oyentes y sus suscripciones;
-          // volver a ejecutarlo sobre la misma página los dejaría por
-          // duplicado y cada clic acabaría disparando dos veces. Con la
-          // recarga el panel se monta una sola vez, exactamente igual que
-          // en una visita normal con la sesión ya abierta.
-          window.location.reload();
-          return;
-        } catch (err) {
-          mostrarError(enEspanol(err && err.message));
-        } finally {
-          if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
-        }
-      });
     }
 
     try {
       var user = await window.Consultia.Auth.getUser();
-      if (!user) {
-        mostrarLogin('');
-        return;
-      }
+      if (!user) { alAcceso(); return; }
 
       var profile = await window.Consultia.Auth.getProfile();
-      if (!profile) {
-        mostrarLogin('No se pudo leer tu perfil. Intenta de nuevo.');
-        return;
-      }
+      if (!profile) { alAcceso(); return; }
 
       if (!profile.is_admin) {
-        // Se cierra la sesión recién abierta: no es una cuenta de admin.
-        try { await window.Consultia.Auth.signOut(); } catch (e) {}
-        mostrarLogin('Esa cuenta no tiene permisos de administrador.');
+        // No es una cuenta de administrador: se la devuelve a la app sin
+        // cerrarle la sesión, que es suya y no molesta a nadie.
+        alAcceso();
         return;
       }
-
-      if (loginScreen) loginScreen.hidden = true;
-      mostrarError('');
 
       cachedSession = {
         email: user.email,
@@ -185,13 +98,12 @@
 
       if (!A._authChangeWired) {
         A._authChangeWired = true;
-        // Si cierra sesión en otra pestaña, se vuelve al acceso de aquí y
-        // no a la app: con el mantenimiento encendido, alli no podria entrar.
+        // Si cierra sesión en otra pestaña, aquí no se queda nada abierto.
         window.Consultia.Auth.onAuthChange(function (event) {
           if (event === 'SIGNED_OUT') {
             cachedSession = null;
             cachedLoggedIn = false;
-            mostrarLogin('Tu sesión se cerró. Vuelve a entrar.');
+            alAcceso();
           }
         });
       }
@@ -199,7 +111,7 @@
       if (typeof onLoginSuccess === 'function') onLoginSuccess();
     } catch (err) {
       console.error('Admin auth error:', err);
-      mostrarLogin('Ocurrió un error al validar tu acceso. Intenta de nuevo.');
+      alAcceso();
     }
   };
 })();

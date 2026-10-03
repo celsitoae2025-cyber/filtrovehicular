@@ -548,7 +548,7 @@
    rojo queda reservado para lo que destruye algo.
    Basta con redefinir las dos variables: lo que las usaba cambia solo.
 ============================================================ */
-.admin-app, .admin-login {
+.admin-app {
   --c-accent: #141d1c;
   --c-teal-soft: #f1f3f1;
   /* botones.css pinta .btn-primary con var(--btn-verde) y !important:
@@ -1462,107 +1462,6 @@ button.kpi.kpi-clickable:focus-visible {
 
    Diseno plano, sin sombras, paleta institucional.
 ============================================================ */
-.admin-login {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  /* Mismo gris que el login principal de la app: los dos accesos se ven
-     igual. La tarjeta blanca y plana se recorta sola sobre el. */
-  background: var(--c-bg, #F3F3F3);
-}
-.admin-login[hidden] { display: none; }
-
-/* Sin borde a proposito: .admin-login-card figura en la regla de diseno
-   plano de base.css (border/box-shadow: none !important). Declararlo aqui
-   seria codigo muerto. Sobre el turquesa la tarjeta se recorta sola. */
-.admin-login-card {
-  width: 100%;
-  max-width: 380px;
-  display: flex;
-  flex-direction: column;
-  padding: 32px 28px 28px;
-  border-radius: 14px;
-  background: #ffffff;
-  text-align: center;
-}
-
-/* Verificación anti-bot (Turnstile). La regla gemela vive en auth.css
-   para la app; se repite aquí porque admin.html no carga esa hoja. */
-.admin-login-card .auth-turnstile {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 14px;
-}
-
-.admin-login-card .auth-turnstile:empty {
-  display: none;
-}
-
-.admin-login-mark {
-  font-size: 17px;
-  font-weight: 400;
-  letter-spacing: -.4px;
-  color: #141d1c;
-}
-.admin-login-plus { color: #8fc72e; margin-left: 1px; }
-
-/* Misma barra cuatricolor que el resto de la plataforma */
-.admin-login-rule {
-  width: 120px;
-  height: 5px;
-  margin: 10px auto 22px;
-  border-radius: 2px;
-  background: var(--accent-gradient);
-}
-
-.admin-login-title {
-  margin: 0 0 6px;
-  font-size: 19px;
-  font-weight: 400;
-  color: #141d1c;
-}
-.admin-login-sub {
-  margin: 0 0 22px;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--c-muted, #5A6B6A);
-}
-
-.admin-login-label {
-  margin-bottom: 6px;
-  font-size: 13px;
-  font-weight: 400;
-  text-align: left;
-  color: #141d1c;
-}
-.admin-login-card .input { margin-bottom: 14px; width: 100%; }
-
-.admin-login-error {
-  margin-bottom: 14px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border-left: 3px solid #141d1c;
-  background: #F6F8F5;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.45;
-  text-align: left;
-  color: #141d1c;
-}
-.admin-login-error[hidden] { display: none; }
-
-.admin-login-btn { width: 100%; margin-top: 4px; }
-
-@media (max-width: 480px) {
-  .admin-login { padding: 16px; }
-  .admin-login-card { padding: 28px 20px 22px; }
-}
-
 /* ============================================================
    PUBLICIDAD — la zona donde se suben las imágenes
 
@@ -1887,5 +1786,4 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
    no tienen estilo propio y vendrían en negrita del navegador. */
 .admin-app strong, .admin-app b, .admin-app th { font-weight: 400; }
 /* botones.css pone 700 con !important en .btn y .btn-ghost; aquí no. */
-.admin-app .btn, .admin-app .btn-ghost, .admin-app button,
-.admin-login .btn, .admin-login .btn-ghost { font-weight: 400 !important; }
+.admin-app .btn, .admin-app .btn-ghost, .admin-app button { font-weight: 400 !important; }
