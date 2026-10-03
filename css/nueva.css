@@ -621,11 +621,23 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
 .nv-etiqueta .nv-campo { font-weight: 400; }
 .nv-marcar { display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 15px; cursor: pointer; }
 .nv-marcar input { width: 20px; height: 20px; accent-color: var(--nv-oscuro); }
-/* El recuadro anti-bot mide 300 px fijos y el cuadro del acceso 364 de
-   ancho útil: pegado a la izquierda quedaba torcido respecto a todo lo
-   demás, que ocupa el ancho entero. Centrado. */
-.nv-captcha { display: flex; justify-content: center; }
-.nv-captcha:empty { display: none; }
+/* EL ANTI-BOT: CENTRADO Y CON SU HUECO RESERVADO
+
+   Mide 300 px fijos dentro de los 364 de ancho útil del cuadro: pegado a
+   la izquierda quedaba torcido respecto a todo lo demás, que ocupa el
+   ancho entero.
+
+   Y el min-height es lo que quita el salto al actualizar. El widget lo
+   monta Cloudflare un momento después de cargar la página; hasta
+   entonces esta caja estaba vacía y escondida, así que al aparecer
+   crecía 70 px de golpe y, como el cuadro va centrado en la pantalla,
+   empujaba el formulario entero hacia arriba. No era una animación: era
+   la página recolocándose. Reservando el hueco desde el primer pintado,
+   el cuadro se dibuja una vez y se queda quieto. */
+.nv-captcha {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 70px;
+}
 .nv-error { margin: 0; padding: 12px 14px; border-radius: var(--nv-r-s); background: var(--nv-suave); font-size: 15px; font-weight: 400; }
 .nv-puerta-pie { display: flex; justify-content: space-between; gap: 12px; }
 .nv-puerta-pie a { color: var(--nv-oscuro); font-size: 15px; font-weight: 400; text-decoration: none; }
