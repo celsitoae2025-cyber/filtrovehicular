@@ -548,17 +548,28 @@
    rojo queda reservado para lo que destruye algo.
    Basta con redefinir las dos variables: lo que las usaba cambia solo.
 ============================================================ */
-.admin-app {
+html, body {
   --c-accent: #141d1c;
   --c-teal-soft: #f1f3f1;
   /* botones.css pinta .btn-primary con var(--btn-verde) y !important:
-     cambiando la variable cambian todos sin pelear con el !important. */
+     cambiando la variable cambian todos sin pelear con el !important.
+
+     --btn-tinta NO se toca: es la tinta del botón verde (oscura sobre
+     verde) pero también la de los botones blancos. Al ponerla en blanco,
+     «Cerrar» y «Cancelar» quedaban blancos sobre blanco. La tinta del
+     primario se cambia abajo, en su propia regla. */
   --btn-verde: #141d1c;
   --btn-verde-encima: #2a3b38;
   --btn-verde-pulsado: #0a1211;
-  --btn-tinta: #ffffff;
 }
-.admin-app .chip-ok { background: #141d1c; color: #fff; }
+body .btn-primary, body button.btn-primary { color: #fff !important; }
+/* Borrar no es verde oscuro: es lo único con color de aviso. */
+body .btn-danger {
+  background: #c2410c !important;
+  border-color: #c2410c !important;
+  color: #fff !important;
+}
+.chip-ok { background: #141d1c; color: #fff; }
 
 /* ── LO DE ARRIBA NO SE MUEVE ──
    La barra negra y las pestañas se quedan pegadas al borde y la cabecera
@@ -1784,6 +1795,24 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
    pantalla se lee pesada. Queda un solo peso; lo que manda lo marca el
    tamaño y el color, no el grosor. Esta regla recoge los <strong> que
    no tienen estilo propio y vendrían en negrita del navegador. */
-.admin-app strong, .admin-app b, .admin-app th { font-weight: 400; }
+body strong, body b, body th, body h1, body h2, body h3, body h4,
+body label, body .chip, body .avatar { font-weight: 400; }
 /* botones.css pone 700 con !important en .btn y .btn-ghost; aquí no. */
-.admin-app .btn, .admin-app .btn-ghost, .admin-app button { font-weight: 400 !important; }
+body .btn, body .btn-ghost, body button, body .modal-header h2,
+body .table-btn, body .ad-ficha, body .ad-pestana { font-weight: 400 !important; }
+
+/* El rótulo de Acciones, encima de los botones y no a dos palmos. */
+.admin-table th:last-child { text-align: right; }
+
+/* ── LA FICHA DEL USUARIO, MÁS ANCHA Y MÁS JUNTA ──
+   Con 820 px y el aire de antes no cabía entera y salía barra de
+   desplazamiento dentro de la ventana. */
+#userDetailModal .modal-panel { max-width: 960px; max-height: 92vh; }
+#userDetailModal .modal-header { padding: 14px 20px; }
+#userDetailModal .modal-body { padding: 4px 20px 12px; }
+#userDetailModal .modal-footer { padding: 12px 20px; }
+#userDetailModal .fi-bloque { padding: 13px 0; }
+#userDetailModal .fi-rot { margin-bottom: 9px; }
+#userDetailModal .fi-rejilla { gap: 11px 24px; }
+#userDetailModal .fi-dato strong { font-size: 15px; }
+#userDetailModal .user-history-list li { padding: 7px 0; }

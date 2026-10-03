@@ -134,7 +134,7 @@
     var hasCredits = (u.credits_balance || 0) > 0;
     var acciones =
       '<button class="ad-icono" data-action="view" data-user-id="' + u.id + '" title="Ver ficha completa" aria-label="Ver ficha completa">' + ICO_VER + '</button>' +
-      '<button class="ad-boton-plan" data-action="plan" data-user-id="' + u.id + '" title="Dar o extender un plan por días">' + ICO_PLAN + 'Plan</button>' +
+      '<button class="ad-boton-plan" data-action="plan" data-user-id="' + u.id + '" title="Dar o extender un plan por días">' + ICO_PLAN + 'Otorgar</button>' +
       '<button class="ad-icono ad-icono-mas" data-action="addcredits" data-user-id="' + u.id + '" title="Añadir créditos" aria-label="Añadir créditos">+</button>' +
       (hasCredits
         ? '<button class="ad-icono ad-icono-menos" data-action="subcredits" data-user-id="' + u.id + '" title="Restar o vaciar créditos" aria-label="Restar créditos">−</button>'
