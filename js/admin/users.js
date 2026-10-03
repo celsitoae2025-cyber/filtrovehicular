@@ -137,8 +137,18 @@
     } else if (tier && vence) {
       planCell = '<span class="ad-nada">' + esc(nombrePlan) + '</span>' +
         '<small class="ad-sub ad-sub-rojo">Venció el ' + esc(fmtDate(u.subscription_expires_at)) + '</small>';
+    } else if ((u.credits_balance || 0) > 0) {
+      /* «Sin plan» a secas era engañoso: quien tiene 1.519 créditos no
+         está sin nada, está en el otro producto. Aquí hay dos formas de
+         pagar —paquete de créditos o plan por días— y esta columna tiene
+         que decir en cuál está, no solo si le falta la segunda. */
+      var origen = u._paid_mp
+        ? 'comprados por Mercado Pago'
+        : (u._paid_admin ? 'cargados desde el panel' : 'de bienvenida');
+      planCell = '<strong class="ad-fuerte">Por créditos</strong>' +
+                 '<small class="ad-sub">' + origen + '</small>';
     } else {
-      planCell = '<span class="ad-nada">Sin plan</span>';
+      planCell = '<span class="ad-nada">Sin plan ni saldo</span>';
     }
 
     /* Con plan por días las consultas no gastan créditos (lo decide

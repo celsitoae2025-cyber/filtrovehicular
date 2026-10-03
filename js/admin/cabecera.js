@@ -64,17 +64,20 @@
   async function usuariosYCreditos() {
     var filas = await todas('profiles', 'credits_balance, subscription_expires_at');
     var ahora = Date.now();
-    var conPlan = 0, vencidos = 0, creditos = 0;
+    var conPlan = 0, vencidos = 0, creditos = 0, soloCreditos = 0;
     filas.forEach(function (u) {
-      creditos += Number(u.credits_balance) || 0;
-      if (!u.subscription_expires_at) return;
-      var t = new Date(u.subscription_expires_at).getTime();
-      if (isNaN(t)) return;
-      if (t > ahora) conPlan += 1; else vencidos += 1;
+      var saldo = Number(u.credits_balance) || 0;
+      creditos += saldo;
+      var t = u.subscription_expires_at ? new Date(u.subscription_expires_at).getTime() : NaN;
+      if (!isNaN(t) && t > ahora) { conPlan += 1; return; }
+      if (!isNaN(t)) { vencidos += 1; return; }
+      /* Sin plan por días pero con saldo: no está «sin nada», está en el
+         otro producto. Contarlos juntos escondía a los clientes de
+         paquetes de créditos, que son casi todos. */
+      if (saldo > 0) soloCreditos += 1;
     });
-    var sinPlan = filas.length - conPlan - vencidos;
     poner('adUsuarios', numero(filas.length),
-      conPlan + ' con plan · ' + vencidos + ' vencidos · ' + sinPlan + ' sin plan');
+      conPlan + ' con plan · ' + vencidos + ' vencidos · ' + soloCreditos + ' solo con créditos');
     poner('adCreditos', numero(creditos),
       filas.length ? Math.round(creditos / filas.length) + ' de media por usuario' : 'sin usuarios');
   }
