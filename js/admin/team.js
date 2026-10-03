@@ -18,12 +18,6 @@
 
   var escapeHtml = Consultia.Utils.escapeHtml;
 
-  function roleTag() {
-    // Por ahora solo distinguimos "Admin" — la matriz de roles compleja
-    // está hardcoded en la matriz de permisos.
-    return '<span class="role-tag" style="background:#141d1c"><span class="dot"></span>Admin</span>';
-  }
-
   async function loadAdmins() {
     var sb = getSB();
     if (!sb) return [];
@@ -68,34 +62,11 @@
       var lastLogin = a.last_sign_in_at ? A.relativeTime(a.last_sign_in_at) : '—';
       return '<tr>' +
         '<td><div class="cell-user"><span class="avatar">' + escapeHtml(A.userInitials(name)) + '</span><div class="user-info"><strong>' + escapeHtml(name) + '</strong><span>' + escapeHtml(a.email || '') + '</span></div></div></td>' +
-        '<td>' + roleTag() + '</td>' +
-        '<td><span class="chip">—</span></td>' +
         '<td>' + lastLogin + '</td>' +
         '<td>' + status + '</td>' +
         '<td><div class="cell-actions">' +
           '<button class="table-btn" data-team-action="revoke" data-email="' + escapeHtml(a.email || '') + '">Revocar</button>' +
         '</div></td>' +
-      '</tr>';
-    }).join('');
-  }
-
-  function renderPermsMatrix() {
-    var s = A.getStore();
-    var body = document.getElementById('permsTableBody');
-    if (!body) return;
-    var perms = s.permissions || A.PERMISSIONS;
-    var roles = ['super_admin', 'admin', 'soporte', 'developer', 'auditor'];
-
-    function chip(level) {
-      if (level === 'full') return '<span class="perm-chip perm-full">Total</span>';
-      if (level === 'read') return '<span class="perm-chip perm-read">Lectura</span>';
-      return '<span class="perm-chip perm-none">—</span>';
-    }
-
-    body.innerHTML = perms.map(function (p) {
-      return '<tr>' +
-        '<td>' + p.label + '</td>' +
-        roles.map(function (r) { return '<td>' + chip(p.by_role[r] || 'none') + '</td>'; }).join('') +
       '</tr>';
     }).join('');
   }
@@ -184,16 +155,13 @@
   A.renderTeam = async function () {
     cachedAdmins = await loadAdmins();
     renderTable();
-    renderPermsMatrix();
     startRealtime();
   };
 
   A.initTeam = function () {
     var s = document.getElementById('teamSearch');
-    var rf = document.getElementById('teamRoleFilter');
     var inv = document.getElementById('teamInviteBtn');
     if (s) s.addEventListener('input', renderTable);
-    if (rf) rf.addEventListener('change', renderTable);
     if (inv) inv.addEventListener('click', openInviteModal);
 
     var body = document.getElementById('teamTableBody');

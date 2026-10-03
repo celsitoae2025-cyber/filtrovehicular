@@ -105,56 +105,76 @@
       : '';
 
     var hasCredits = (u.credits_balance || 0) > 0;
-    var subBtn = hasCredits
-      ? '<button class="table-btn danger" data-action="subcredits" data-user-id="' + u.id + '" title="Restar o vaciar créditos">âˆ’ Créditos</button>'
-      : '';
+
+    /* Botones de una sola letra: con ocho columnas, tres botones con
+       texto («Ver», «+ Créditos», «− Créditos») empujaban la tabla hasta
+       obligar a desplazarla a lo ancho. El icono dice lo mismo y el
+       title lo nombra para quien dude. */
+    var ICO_VER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var acciones =
+      '<button class="ad-icono" data-action="view" data-user-id="' + u.id + '" title="Ver ficha" aria-label="Ver ficha">' + ICO_VER + '</button>' +
+      '<button class="ad-icono ad-icono-mas" data-action="addcredits" data-user-id="' + u.id + '" title="Añadir créditos" aria-label="Añadir créditos">+</button>' +
+      (hasCredits
+        ? '<button class="ad-icono ad-icono-menos" data-action="subcredits" data-user-id="' + u.id + '" title="Restar o vaciar créditos" aria-label="Restar créditos">−</button>'
+        : '');
 
     // Plan/Tier column
-    var TIER_COLORS = {
-      profesional:      { bg: '#f5f5f5', color: '#141d1c', label: 'Profesional' },
-      profesional_plus: { bg: '#141d1c', color: '#8fc72e', label: 'Prof. Plus (Premium)' },
-      business:         { bg: '#141d1c', color: '#8fc72e', label: 'Business (Premium)' }
+    /* EL PLAN SALE DE LA SUSCRIPCIÓN, NO DEL SALDO.
+
+       Antes esta columna se inventaba el plan a partir de los créditos
+       («tiene 1.500 o más → Business»), mientras las fichas de filtro y
+       la ficha del usuario miraban la suscripción de verdad. Resultado:
+       la tabla enseñaba BUSINESS a quien la ficha declaraba «sin plan
+       activo», y el contador de «Plan vencido» decía 3 mientras la lista
+       mostraba decenas. Un panel que se contradice no sirve para
+       decidir nada.
+
+       Ahora hay una sola verdad: `subscription_tier` y
+       `subscription_expires_at`. El saldo de créditos es otra cosa y
+       tiene su propia columna. */
+    var TIER_NOMBRE = {
+      profesional: 'Profesional',
+      profesional_plus: 'Prof. Plus',
+      business: 'Business'
     };
-    var planCell = '';
-    var activeTier = null;
-    
-    // 1. Si tiene suscripción real activa por días
-    if (isSubscriptionActive(u) && u.subscription_tier) {
-      activeTier = u.subscription_tier;
-    } 
-    // 2. Si NO tiene suscripción, pero tiene créditos pagados o más que el saldo gratis
-    else if (u.credits_balance > 5 || u.has_paid_credits) {
-      if (u.credits_balance >= 1500) {
-        activeTier = 'business';
-      } else {
-        activeTier = 'profesional';
-      }
+    var planCell;
+    var tier = u.subscription_tier;
+    var vence = u.subscription_expires_at ? new Date(u.subscription_expires_at).getTime() : 0;
+    var nombrePlan = TIER_NOMBRE[tier] || (tier ? tier : 'Plan');
+
+    if (tier && vence > Date.now()) {
+      planCell = '<span class="chip" style="background:#141d1c;color:#fff;font-weight:400;font-size:12px;white-space:nowrap;">' + nombrePlan + '</span>';
+    } else if (tier && vence) {
+      planCell = '<span class="chip" style="background:#f1f1f1;color:#5a6b6a;font-weight:400;font-size:12px;white-space:nowrap;">' + nombrePlan + ' · vencido</span>';
+    } else {
+      planCell = '<span class="ad-nada">Sin plan</span>';
     }
 
-    if (activeTier && TIER_COLORS[activeTier]) {
-      var tc = TIER_COLORS[activeTier];
-      planCell = '<span class="chip" style="background:' + tc.bg + ';color:' + tc.color + ';font-weight:600;font-size:11px;">' + tc.label + '</span>';
-    } else {
-      planCell = '<span style="color:var(--c-muted);font-size:12px;">Free</span>';
+    /* Cuánto le queda de plan. Es lo primero que se pregunta uno al
+       mirar a un cliente de pago, y hasta ahora había que calcularlo a
+       ojo desde la fecha de vencimiento. */
+    var planPie = '';
+    if (u.subscription_expires_at) {
+      var dias = Math.ceil((new Date(u.subscription_expires_at).getTime() - Date.now()) / 86400000);
+      if (dias > 0) planPie = '<small class="ad-sub">' + (dias === 1 ? 'queda 1 día' : 'quedan ' + dias + ' días') + '</small>';
+      else planPie = '<small class="ad-sub ad-sub-rojo">' + (dias === 0 ? 'vence hoy' : 'vencido hace ' + Math.abs(dias) + ' días') + '</small>';
     }
 
     return '<tr data-user-id="' + u.id + '">' +
       checkboxCell +
       '<td><div class="cell-user">' +
         '<span class="avatar">' + esc(initialsOf(u.full_name || u.email)) + '</span>' +
-        '<div class="user-info"><strong>' + esc(u.full_name || '—') + adminBadge + subBadge + paidMpBadge + paidAdminBadge + freeBadge + '</strong><span>' + esc(u.phone || 'Sin teléfono') + '</span></div>' +
+        '<div class="user-info"><strong>' + esc(u.full_name || '—') + adminBadge + subBadge + paidMpBadge + paidAdminBadge + freeBadge + '</strong><span>' + esc(u.email || 'Sin correo') + emailBadge + '</span></div>' +
       '</div></td>' +
-      '<td>' + esc(u.email || '—') + emailBadge + '</td>' +
-      '<td>' + planCell + '</td>' +
+      '<td>' + planCell + planPie + '</td>' +
+      '<td><strong style="font-size:15px;">' + esc(u.credits_balance || 0) + '</strong></td>' +
+      '<td>' + (u._consumos
+        ? '<strong style="font-size:15px;">' + esc(u._gastados || 0) + '</strong><small class="ad-sub">' + u._consumos + (u._consumos === 1 ? ' consulta' : ' consultas') + '</small>'
+        : '<span class="ad-nada">—</span>') + '</td>' +
+      '<td>' + (u._hoy ? '<strong style="font-size:15px;">' + u._hoy + '</strong>' : '<span class="ad-nada">—</span>') + '</td>' +
       '<td>' + esc(fmtDate(u.created_at)) + '</td>' +
-      '<td><strong style="color:var(--c-primary);font-size:15px;">' + esc(u.credits_balance || 0) + '</strong></td>' +
-      '<td>' + esc(fmtRelative(u.last_sign_in_at)) + '</td>' +
       '<td>' + statusChip + '</td>' +
-      '<td><div class="cell-actions">' +
-        '<button class="table-btn" data-action="view" data-user-id="' + u.id + '">Ver</button>' +
-        '<button class="table-btn primary" data-action="addcredits" data-user-id="' + u.id + '">+ Créditos</button>' +
-        subBtn +
-      '</div></td>' +
+      '<td><div class="cell-actions">' + acciones + '</div></td>' +
     '</tr>';
   }
 
@@ -202,7 +222,7 @@
       for (var td = 0; ; td += 1000) {
         var txPag = await sb
           .from('transactions')
-          .select('user_id, type, amount, payment_method')
+          .select('user_id, type, amount, payment_method, created_at')
           .range(td, td + 999);
         if (txPag.error) { txError = txPag.error; break; }
         var txTramo = txPag.data || [];
@@ -215,6 +235,9 @@
         var paidMpSet = new Set();
         var paidAdminSet = new Set();
         var consumosPorUsuario = {};
+        var gastadoPorUsuario = {};   // créditos consumidos
+        var hoyPorUsuario = {};       // consultas de hoy
+        var inicioDeHoy = new Date(); inicioDeHoy.setHours(0, 0, 0, 0);
         txRes.data.forEach(function (t) {
           if (!t.user_id) return;
           // MP: pagos reales por Mercado Pago (purchase / subscription)
@@ -233,6 +256,10 @@
           // Consumos: aceptamos los dos nombres históricos
           if (t.type === 'consumption' || t.type === 'consultation') {
             consumosPorUsuario[t.user_id] = (consumosPorUsuario[t.user_id] || 0) + 1;
+            gastadoPorUsuario[t.user_id] = (gastadoPorUsuario[t.user_id] || 0) + Math.abs(Number(t.amount) || 0);
+            if (t.created_at && new Date(t.created_at) >= inicioDeHoy) {
+              hoyPorUsuario[t.user_id] = (hoyPorUsuario[t.user_id] || 0) + 1;
+            }
           }
         });
         users.forEach(function (u) {
@@ -240,6 +267,8 @@
           u._paid_admin = paidAdminSet.has(u.id);
           u._has_paid = u._paid_mp || u._paid_admin;
           u._consumos = consumosPorUsuario[u.id] || 0;
+          u._gastados = gastadoPorUsuario[u.id] || 0;
+          u._hoy = hoyPorUsuario[u.id] || 0;
           u._used_free = u._consumos >= 5;
         });
       }
@@ -272,6 +301,9 @@
     var search = (document.getElementById('usersSearch').value || '').toLowerCase().trim();
     var filter = document.getElementById('usersFilter').value;
     var filtered = list.filter(function (u) {
+      if (filter === 'expired' && !(u.subscription_expires_at && new Date(u.subscription_expires_at).getTime() <= Date.now())) return false;
+      if (filter === 'suspended' && u.status !== 'suspended') return false;
+      if (filter === 'team' && !u.is_admin) return false;
       if (filter === 'paid_mp' && !u._paid_mp) return false;
       if (filter === 'paid_admin' && !u._paid_admin) return false;
       if (filter === 'used_free' && !u._used_free) return false;
@@ -297,7 +329,7 @@
       if (filter === 'no_login_30d' && !isStaleLogin(u, 30)) return false;
 
       // "Con saldo, sin consultar": tiene créditos disponibles (sea de
-      // bienvenida o pagados) pero todavía no los gasta. Ãštil para hacer
+      // bienvenida o pagados) pero todavía no los gasta. Útil para hacer
       // recordatorios de uso.
       if (filter === 'has_credits_no_use'
           && (!((u.credits_balance || 0) > 0) || (u._consumos || 0) > 0)) return false;
@@ -332,7 +364,34 @@
     freeEl.textContent = freeUsed;
   }
 
+  /* ── Las fichas de filtro, con su cuenta ──────────────────────
+     Siete atajos a lo que se mira a diario. La cuenta se saca de la
+     lista entera, no de lo que se ve: decir «Suspendidos 0» cuando hay
+     tres escondidos por el buscador sería mentir. */
+  var FICHAS = [
+    ['all',         'Todos',              function () { return true; }],
+    ['has_sub',     'Con plan',           function (u) { return isSubscriptionActive(u); }],
+    ['expired',     'Plan vencido',       function (u) { return u.subscription_expires_at && new Date(u.subscription_expires_at).getTime() <= Date.now(); }],
+    ['paid_admin',  'Activados por admin',function (u) { return u._paid_admin; }],
+    ['unconfirmed', 'Pendientes',         function (u) { return !isEmailConfirmed(u); }],
+    ['suspended',   'Suspendidos',        function (u) { return u.status === 'suspended'; }],
+    ['team',        'Equipo',             function (u) { return u.is_admin; }]
+  ];
+
+  function pintarFichas() {
+    var caja = document.getElementById('usersChips');
+    if (!caja) return;
+    var sel = document.getElementById('usersFilter');
+    var activo = sel ? sel.value : 'all';
+    caja.innerHTML = FICHAS.map(function (f) {
+      var n = cachedUsers.filter(f[2]).length;
+      return '<button type="button" class="ad-ficha' + (f[0] === activo ? ' es-activa' : '') +
+        '" data-users-chip="' + f[0] + '">' + f[1] + ' <b>' + n + '</b></button>';
+    }).join('');
+  }
+
   function paint() {
+    pintarFichas();
     var rows = filterUsers(cachedUsers);
     var body = document.getElementById('usersTableBody');
     var empty = document.getElementById('usersEmpty');
@@ -522,6 +581,14 @@
     setLiveState('off', '');
   }
 
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-users-chip]');
+    if (!b) return;
+    var sel = document.getElementById('usersFilter');
+    if (sel) { sel.value = b.dataset.usersChip; }
+    paint();
+  });
+
   A.renderUsers = async function () {
     cachedUsers = await loadUsers();
     paint();
@@ -553,7 +620,7 @@
       + '      <div class="ac-user-info" id="addCreditsUserInfo" style="padding:12px 14px;background:var(--c-bg);border-radius:8px;margin-bottom:14px;font-size:13px;color:var(--c-muted);"></div>'
       + '      <div class="ac-mode-tabs" role="tablist" style="display:flex;gap:4px;background:var(--c-bg);padding:4px;border-radius:10px;margin-bottom:14px;">'
       + '        <button type="button" class="ac-mode-tab is-active" data-mode="add" role="tab" aria-selected="true" style="flex:1;padding:9px 8px;border:none;background:var(--c-surface);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--c-primary);box-shadow:0 1px 2px rgba(0,0,0,.06);">+ Sumar</button>'
-      + '        <button type="button" class="ac-mode-tab" data-mode="sub" role="tab" aria-selected="false" style="flex:1;padding:9px 8px;border:none;background:transparent;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--c-muted);">âˆ’ Restar</button>'
+      + '        <button type="button" class="ac-mode-tab" data-mode="sub" role="tab" aria-selected="false" style="flex:1;padding:9px 8px;border:none;background:transparent;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--c-muted);">− Restar</button>'
       + '        <button type="button" class="ac-mode-tab" data-mode="clear" role="tab" aria-selected="false" style="flex:1;padding:9px 8px;border:none;background:transparent;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--c-muted);">Vaciar todo</button>'
       + '      </div>'
       + '      <div class="form-field" id="acAmountField"><label for="acAmount" id="acAmountLabel">Cantidad a sumar</label><input type="number" id="acAmount" class="input" min="1" step="1" placeholder="Ej: 200" required></div>'
@@ -760,7 +827,7 @@
         toastMsg = '+' + amount + ' créditos a ' + (currentUser.full_name || currentUser.email);
       } else {
         toastTitle = 'Créditos restados';
-        toastMsg = 'âˆ’' + Math.abs(amount) + ' créditos a ' + (currentUser.full_name || currentUser.email);
+        toastMsg = '−' + Math.abs(amount) + ' créditos a ' + (currentUser.full_name || currentUser.email);
       }
       if (Consultia.toast) Consultia.toast({
         type: 'success',
@@ -824,8 +891,8 @@
         ? '<span style="display:inline-flex;align-items:center;margin-left:8px;padding:3px 10px;background:#141d1c;color:#8fc72e;border-radius:20px;font-size:11px;font-weight:700;">' + premiumSvg + 'Acceso Premium activo</span>'
         : '<span style="display:inline-flex;align-items:center;gap:4px;margin-left:8px;padding:3px 10px;background:#f5f5f5;color:#141d1c;border-radius:20px;font-size:11px;font-weight:600;">Sin acceso Premium</span>';
       subHtml =
-        '<div class="user-detail-section">' +
-          '<h4>Plan activo</h4>' +
+        '<div class="fi-bloque">' +
+          '<h4 class="fi-rot">Plan</h4>' +
           '<div class="sub-card">' +
             '<div class="sub-card-info">' +
               '<strong class="sub-tier">' + (TIER_LABELS[subTier] || subTier) + premiumBadgeHtml + '</strong>' +
@@ -835,10 +902,17 @@
           '</div>' +
         '</div>';
     } else {
+      /* Sin suscripción viva, pero puede haber una caducada: decir solo
+         «sin plan activo» escondía que el cliente FUE de pago, que es
+         justo a quien hay que llamar. */
+      var caducado = (subTier && subExp)
+        ? 'Tuvo el plan <strong>' + (TIER_LABELS[subTier] || subTier) + '</strong>, vencido el ' +
+          new Date(subExp).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })
+        : 'Nunca ha tenido un plan: usa créditos sueltos.';
       subHtml =
-        '<div class="user-detail-section">' +
-          '<h4>Plan activo</h4>' +
-          '<p style="color:var(--c-muted);font-size:12.5px;margin:0">Sin plan activo.</p>' +
+        '<div class="fi-bloque">' +
+          '<h4 class="fi-rot">Plan</h4>' +
+          '<p class="fi-vacio">' + caducado + '</p>' +
         '</div>';
     }
 
@@ -876,18 +950,34 @@
     }
 
     var html =
-      '<div class="user-detail-grid">' +
-        '<div class="user-detail-cell"><span class="label">Correo</span><span class="value">' + (u.email || '—') + '</span></div>' +
-        '<div class="user-detail-cell"><span class="label">Teléfono</span><span class="value">' + (u.phone || '—') + '</span></div>' +
-        '<div class="user-detail-cell"><span class="label">Estado</span><span class="value">' + (u.status === 'active' ? 'Activo' : 'Suspendido') + '</span></div>' +
-        '<div class="user-detail-cell"><span class="label">Créditos actuales</span><span class="value">' + (u.credits_balance || 0) + '</span></div>' +
-        '<div class="user-detail-cell"><span class="label">Registrado</span><span class="value">' + fmtDate(u.created_at) + '</span></div>' +
-        '<div class="user-detail-cell"><span class="label">Ãšltimo acceso</span><span class="value">' + fmtRelative(u.last_sign_in_at) + '</span></div>' +
+      /* La ficha, en tres bloques y en este orden: QUIÉN es, QUÉ tiene
+         (plan y saldo) y QUÉ ha hecho. Antes era una rejilla de seis
+         cuadros grises donde el dato de verdad —el consumo— ni aparecía,
+         y los movimientos quedaban enterrados al final sin contexto. */
+      '<div class="fi-bloque">' +
+        '<h4 class="fi-rot">Cuenta</h4>' +
+        '<div class="fi-rejilla">' +
+          '<div class="fi-dato"><span>Correo</span><strong>' + (u.email || '—') + '</strong></div>' +
+          '<div class="fi-dato"><span>Teléfono</span><strong>' + (u.phone || '—') + '</strong></div>' +
+          '<div class="fi-dato"><span>Estado</span><strong>' + (u.status === 'active' ? 'Activo' : 'Suspendido') + '</strong></div>' +
+          '<div class="fi-dato"><span>Registrado</span><strong>' + fmtDate(u.created_at) + '</strong></div>' +
+          '<div class="fi-dato"><span>Último acceso</span><strong>' + fmtRelative(u.last_sign_in_at) + '</strong></div>' +
+          '<div class="fi-dato"><span>Correo verificado</span><strong>' + (u.email_confirmed_at ? 'Sí' : 'No') + '</strong></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="fi-bloque">' +
+        '<h4 class="fi-rot">Créditos y consumo</h4>' +
+        '<div class="fi-rejilla">' +
+          '<div class="fi-dato"><span>Saldo actual</span><strong>' + (u.credits_balance || 0) + '</strong></div>' +
+          '<div class="fi-dato"><span>Créditos gastados</span><strong>' + (u._gastados || 0) + '</strong></div>' +
+          '<div class="fi-dato"><span>Consultas totales</span><strong>' + (u._consumos || 0) + '</strong></div>' +
+          '<div class="fi-dato"><span>Consultas hoy</span><strong>' + (u._hoy || 0) + '</strong></div>' +
+        '</div>' +
       '</div>' +
       subHtml +
       activatePremiumHtml +
-      '<div class="user-detail-section">' +
-        '<h4>Movimientos (' + transactions.length + ')</h4>' +
+      '<div class="fi-bloque">' +
+        '<h4 class="fi-rot">Movimientos <small>' + transactions.length + '</small></h4>' +
         txHtml +
       '</div>';
 
@@ -1301,7 +1391,7 @@
       exportBtn.addEventListener('click', function () {
         if (!A.exportCSV) return;
         A.exportCSV('usuarios.csv',
-          ['ID', 'Nombre', 'Correo', 'Teléfono', 'Estado', 'Créditos', 'Registrado', 'Ãšltimo acceso'],
+          ['ID', 'Nombre', 'Correo', 'Teléfono', 'Estado', 'Créditos', 'Registrado', 'Último acceso'],
           cachedUsers.map(function (u) {
             return [u.id, u.full_name || '', u.email || '', u.phone || '', u.status, u.credits_balance || 0, u.created_at, u.last_sign_in_at || ''];
           })

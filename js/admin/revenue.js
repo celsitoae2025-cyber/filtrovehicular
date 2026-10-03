@@ -2,8 +2,8 @@
    ADMIN — INGRESOS DEL MES (detalle)
    Vista que se abre al hacer clic en el KPI "Ingresos (mes)"
    del dashboard. Lista TODAS las transacciones del mes:
-     - payments_mp (status='approved')   â†’ Mercado Pago
-     - transactions con amount_pen != null â†’ ventas manuales / suscripciones
+     - payments_mp (status='approved')   → Mercado Pago
+     - transactions con amount_pen != null → ventas manuales / suscripciones
 
    KPIs: total, MP, manual, suscripciones.
    Tabla: fecha+hora, usuario, origen, tipo, descripción, monto.

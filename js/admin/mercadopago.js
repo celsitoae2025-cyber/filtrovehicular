@@ -170,11 +170,6 @@
     var st = document.getElementById('mpStatusFilter');
     if (s) s.addEventListener('input', paint);
     if (st) st.addEventListener('change', paint);
-    var configBtn = document.getElementById('mpConfigBtn');
-    if (configBtn) configBtn.addEventListener('click', function () {
-      var nav = document.querySelector('[data-admin-view="settings"]');
-      if (nav) nav.click();
-    });
     var body = document.getElementById('mpTableBody');
     if (body) body.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-mp-action]');

@@ -26,7 +26,10 @@ as $$
 declare
   caller_is_admin boolean;
 begin
-  select is_admin into caller_is_admin from public.profiles where id = auth.uid();
+  -- Con alias obligatorio: esta función DEVUELVE una columna llamada
+  -- is_admin, así que «select is_admin from profiles» es ambiguo para
+  -- PL/pgSQL (error 42702) y la lista de Equipo salía siempre vacía.
+  select p.is_admin into caller_is_admin from public.profiles p where p.id = auth.uid();
   if not coalesce(caller_is_admin, false) then
     raise exception 'Solo los administradores pueden listar admins';
   end if;

@@ -30,6 +30,9 @@
   }
 
   // ---------- Carga de datos ----------
+  /* Solo las dos cifras del resumen. El total de usuarios, los créditos
+     y las consultas de hoy los pide la cabecera (cabecera.js): pedirlos
+     otra vez aquí era gastar cuatro consultas para pintar lo mismo. */
   async function fetchKpis() {
     var sb = getSB();
     if (!sb) return null;
@@ -37,10 +40,6 @@
     var monthStart = startOfMonthISO();
     var dayStart = startOfDayISO();
 
-    var qUsers = sb.from('profiles').select('id', { count: 'exact', head: true });
-    var qNewMonth = sb.from('profiles').select('id', { count: 'exact', head: true })
-      .gte('created_at', monthStart);
-    var qConsultas = sb.from('consultas').select('id', { count: 'exact', head: true });
     // Ingresos del mes = pagos MP aprobados + ventas manuales (transactions.amount_pen)
     var qIngresosMes = sb.from('payments_mp')
       .select('amount')
@@ -57,8 +56,8 @@
       .select('user_id')
       .gte('created_at', dayStart);
 
-    var [users, newMonth, consultas, ingresos, ingresosManual, activos] = await Promise.all([
-      qUsers, qNewMonth, qConsultas, qIngresosMes, qIngresosManual, qActivosHoy
+    var [ingresos, ingresosManual, activos] = await Promise.all([
+      qIngresosMes, qIngresosManual, qActivosHoy
     ]);
 
     var ingresosTotal = 0;
@@ -71,13 +70,7 @@
       activos.data.forEach(function (r) { if (r.user_id && !seen[r.user_id]) { seen[r.user_id] = 1; activosUnicos++; } });
     }
 
-    return {
-      totalUsers: users.count || 0,
-      newThisMonth: newMonth.count || 0,
-      totalConsultas: consultas.count || 0,
-      ingresosMes: ingresosTotal,
-      activosHoy: activosUnicos
-    };
+    return { ingresosMes: ingresosTotal, activosHoy: activosUnicos };
   }
 
   // Top módulos: cuenta consultas agrupadas por module (últimas 1000 para no traer todo)
@@ -179,11 +172,8 @@
     ]);
 
     if (kpis) {
-      setText('kpiUsers', kpis.totalUsers);
-      setText('kpiUsersTrend', '+' + kpis.newThisMonth + ' este mes');
       setText('kpiActive', kpis.activosHoy);
       setText('kpiRevenue', fmtMoney(kpis.ingresosMes));
-      setText('kpiQueries', kpis.totalConsultas);
     }
 
     var topEl = document.getElementById('topModules');

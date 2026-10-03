@@ -246,6 +246,8 @@
   gap: 16px;
   margin-bottom: 18px;
 }
+/* Dos tarjetas solas no tienen que ocupar media pantalla cada una. */
+.kpi-grid-2 { grid-template-columns: repeat(2, minmax(200px, 320px)); }
 .kpi {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
@@ -1659,3 +1661,132 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
   .cartel-fila { flex-wrap: wrap; }
   .cartel-fila-btns { width: 100%; justify-content: flex-end; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   PANEL 2.0 — cabecera, cifras y pestañas
+
+   El panel tenía una barra lateral con dieciséis entradas, tres de
+   ellas enseñando lo mismo (Recargas, Compras y Mercado Pago son todas
+   movimientos de dinero). Ahora son SEIS pestañas arriba y las cuatro
+   cifras del negocio siempre a la vista: lo que se mira a diario cabe
+   en una pantalla y no hay que ir a buscarlo.
+   ════════════════════════════════════════════════════════════ */
+
+.admin-main { margin-left: 0; width: 100%; }
+
+.ad-cab {
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 20px; min-height: 64px;
+  background: #141d1c; color: #fff;
+}
+.ad-volver, .ad-salir {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; flex: none;
+  border: 0; border-radius: 50%; background: transparent;
+  color: rgba(255, 255, 255, .75); cursor: pointer;
+}
+.ad-volver svg, .ad-salir svg { width: 20px; height: 20px; }
+.ad-volver:hover, .ad-salir:hover { background: rgba(255, 255, 255, .12); color: #fff; }
+.ad-cab-titulo {
+  margin: 0; font-size: 15px; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+}
+.ad-cab-dcha { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.ad-cab .admin-user { color: #fff; }
+.ad-cab .admin-user .avatar { background: rgba(255, 255, 255, .14); color: #fff; }
+
+/* ── Las cuatro cifras ── */
+.ad-cifras {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px; background: var(--c-border, #e1e6e3);
+  border-bottom: 1px solid var(--c-border, #e1e6e3);
+}
+.ad-cifra { padding: 18px 22px; background: #faf9f7; min-width: 0; }
+.ad-cifra-rot {
+  display: block; font-size: 12px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--c-muted, #5a6b6a);
+}
+.ad-cifra strong {
+  display: block; margin: 6px 0 4px;
+  font-size: 30px; font-weight: 700; letter-spacing: -.5px;
+  color: var(--c-text, #141d1c); line-height: 1.1;
+}
+.ad-cifra small { font-size: 13px; color: var(--c-muted, #5a6b6a); }
+
+/* ── Pestañas ── */
+.ad-pestanas {
+  display: flex; align-items: stretch; overflow-x: auto;
+  background: #fff; border-bottom: 1px solid var(--c-border, #e1e6e3);
+}
+.ad-pestana {
+  flex: 1 1 0; min-width: 120px;
+  padding: 16px 12px; border: 0; background: transparent;
+  font: inherit; font-size: 13px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--c-muted, #5a6b6a); cursor: pointer; white-space: nowrap;
+}
+.ad-pestana:hover { color: var(--c-text, #141d1c); }
+.ad-pestana.es-activa { background: #141d1c; color: #fff; }
+
+/* ── Fichas de dentro de una pestaña ── */
+.ad-fichas { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 20px 0; }
+.ad-fichas:empty { display: none; }
+.ad-ficha {
+  padding: 7px 14px; border: 1px solid var(--c-border, #e1e6e3);
+  border-radius: 999px; background: #fff;
+  font: inherit; font-size: 14px; color: var(--c-text, #141d1c); cursor: pointer;
+}
+.ad-ficha.es-activa { background: #141d1c; border-color: #141d1c; color: #fff; }
+
+@media (max-width: 900px) {
+  .ad-cifras { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ad-cifra strong { font-size: 24px; }
+  .ad-pestana { flex: 0 0 auto; }
+  .ad-cab-titulo { font-size: 13px; }
+  .ad-cab .admin-user span:not(.avatar) { display: none; }
+}
+
+/* ── Tabla de usuarios: iconos y líneas de apoyo ── */
+.ad-icono {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  border: 1px solid var(--c-border, #e1e6e3); border-radius: 8px;
+  background: #fff; color: var(--c-text, #141d1c);
+  font: inherit; font-size: 16px; line-height: 1; cursor: pointer;
+}
+.ad-icono svg { width: 17px; height: 17px; }
+.ad-icono:hover { border-color: #141d1c; }
+.ad-icono-mas { background: #141d1c; border-color: #141d1c; color: #fff; }
+.ad-icono-mas:hover { background: #26403a; }
+.ad-icono-menos:hover { border-color: #c2410c; color: #c2410c; }
+
+/* La segunda línea de una celda: los días que quedan, el nº de
+   consultas. Pequeña y gris, para que el dato grande siga mandando. */
+.ad-sub { display: block; margin-top: 2px; font-size: 12px; color: var(--c-muted, #5a6b6a); }
+.ad-sub-rojo { color: #c2410c; }
+.ad-nada { color: var(--c-border, #c9d2cd); }
+
+.ad-fichas-filtro { padding: 0 0 14px; }
+.ad-ficha b { font-weight: 700; color: inherit; opacity: .6; margin-left: 2px; }
+
+/* ── Ficha del usuario ────────────────────────────────────────
+   Tres bloques con el mismo ritmo: rótulo, rejilla de datos, y a
+   otra cosa. Antes eran seis cuadros grises sueltos y todo lo demás
+   escrito con estilos a mano dentro del JS. */
+.fi-bloque { padding: 18px 0; border-top: 1px solid var(--c-border, #e1e6e3); }
+.fi-bloque:first-child { border-top: 0; padding-top: 0; }
+.fi-rot {
+  margin: 0 0 12px; font-size: 12px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--c-muted, #5a6b6a);
+}
+.fi-rot small {
+  margin-left: 6px; padding: 1px 8px; border-radius: 999px;
+  background: var(--c-bg, #f1f1f1); color: var(--c-text, #141d1c);
+  font-size: 11px; letter-spacing: 0;
+}
+.fi-rejilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 18px; }
+.fi-dato { min-width: 0; }
+.fi-dato span { display: block; font-size: 12px; color: var(--c-muted, #5a6b6a); }
+.fi-dato strong { display: block; margin-top: 2px; font-size: 16px; font-weight: 700; color: var(--c-text, #141d1c); word-break: break-word; }
+.fi-vacio { margin: 0; font-size: 14px; color: var(--c-muted, #5a6b6a); }
+@media (max-width: 600px) { .fi-rejilla { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

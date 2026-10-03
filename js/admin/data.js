@@ -34,7 +34,7 @@
       { key: 'financiero',  types: ['Deudas SBS', 'Reporte crediticio', 'Infocorp'],                                         cost: 10, inputType: 'dni' },
       { key: 'facial',      types: ['Reconocimiento facial', 'Comparación'],                                                  cost: 12, inputType: 'imagen' },
       { key: 'telefonia',   types: ['Titular de número', 'Antenas cercanas'],                                                 cost: 6, inputType: 'telefono' },
-      { key: 'familiares',  types: ['Ãrbol genealógico', 'Hijos', 'Cónyuge'],                                                 cost: 9, inputType: 'dni' },
+      { key: 'familiares',  types: ['Árbol genealógico', 'Hijos', 'Cónyuge'],                                                 cost: 9, inputType: 'dni' },
       { key: 'certificados', types: ['Antecedentes penales', 'Antecedentes policiales', 'Judiciales'],                        cost: 8, inputType: 'dni' },
       { key: 'delitos',     types: ['Requisitorias', 'Sentencias'],                                                           cost: 7, inputType: 'dni' },
       { key: 'migraciones', types: ['Movimientos migratorios', 'Visa'],                                                       cost: 8, inputType: 'dni' },
@@ -84,56 +84,9 @@
     return out.sort(function (a, b) { return b.created_at.localeCompare(a.created_at); });
   }
 
-  // -------- ROLES --------
-  var ROLES = {
-    super_admin: { label: 'Super Admin', desc: 'Acceso total al sistema', color: '#8fc72e' },
-    admin:       { label: 'Admin',       desc: 'Operación general',      color: '#141d1c' },
-    soporte:     { label: 'Soporte',     desc: 'Atención y recargas',    color: '#141d1c' },
-    developer:   { label: 'Developer',   desc: 'APIs y webhooks',        color: '#141d1c' },
-    auditor:     { label: 'Auditor',     desc: 'Solo lectura',           color: '#141d1c' }
-  };
-
-  var PERMISSIONS = [
-    { key: 'users',       label: 'Usuarios',              by_role: { super_admin: 'full', admin: 'full',  soporte: 'read', developer: 'read', auditor: 'read' } },
-    { key: 'recargas',    label: 'Recargas de créditos',  by_role: { super_admin: 'full', admin: 'full',  soporte: 'full', developer: 'none', auditor: 'read' } },
-    { key: 'compras',     label: 'Compras',               by_role: { super_admin: 'full', admin: 'read',  soporte: 'read', developer: 'none', auditor: 'read' } },
-    { key: 'consultas',   label: 'Consultas',             by_role: { super_admin: 'full', admin: 'read',  soporte: 'read', developer: 'read', auditor: 'read' } },
-    { key: 'mercadopago', label: 'Mercado Pago',          by_role: { super_admin: 'full', admin: 'read',  soporte: 'none', developer: 'full', auditor: 'read' } },
-    { key: 'webhooks',    label: 'Webhooks',              by_role: { super_admin: 'full', admin: 'none',  soporte: 'none', developer: 'full', auditor: 'read' } },
-    { key: 'team',        label: 'Equipo admin',          by_role: { super_admin: 'full', admin: 'read',  soporte: 'none', developer: 'none', auditor: 'read' } },
-    { key: 'apikeys',     label: 'API Keys',              by_role: { super_admin: 'full', admin: 'none',  soporte: 'none', developer: 'full', auditor: 'read' } },
-    { key: 'audit',       label: 'Auditoría',             by_role: { super_admin: 'full', admin: 'read',  soporte: 'none', developer: 'none', auditor: 'read' } },
-    { key: 'settings',    label: 'Configuración',         by_role: { super_admin: 'full', admin: 'read',  soporte: 'none', developer: 'read', auditor: 'read' } }
-  ];
-
-  // -------- SEED: ADMINS (solo el Super Admin del login demo) --------
-  var SEED_ADMINS = [
-    { id: 'a1', email: 'admin@consultia.pe', name: 'Admin General', role: 'super_admin', status: 'active', two_fa: true, last_login: null, created_at: new Date().toISOString() }
-  ];
-
-  // -------- SEED: limpio --------
-  var SEED_MP = [];
-  var SEED_WEBHOOKS = [];
-  var SEED_API_KEYS = [];
-  var SEED_AUDIT = [];
-
-  // -------- SEED: SETTINGS --------
-  var DEFAULT_SETTINGS = {
-    company_name: 'Plataforma Filtro Vehicular+',
-    legal_name: 'Filtro Vehicular+ SAC',
-    ruc: '20601234567',
-    currency: 'PEN',
-    igv_rate: 18,
-    support_email: 'soporte@consultia.pe',
-    country: 'PE',
-    mp: {
-      connected: true,
-      mode: 'sandbox',
-      public_key: 'TEST-a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-      access_token_suffix: '8912',
-      webhook_url: 'https://consultia.pe/api/webhooks/mercadopago'
-    }
-  };
+  // Lo que había aquí —roles, matriz de permisos, admins de ejemplo y los
+  // ajustes de empresa/Mercado Pago— se retiró con sus pantallas: no se
+  // guardaba en la base, solo en el navegador del administrador.
 
   // -------- STORE --------
   function defaultStore() {
@@ -146,20 +99,10 @@
       compras: SEED_COMPRAS.map(function (c) { return Object.assign({}, c); }),
       consultas: generateConsultas(),
       recargas: [],
-      added_users: [],
-      admins: SEED_ADMINS.map(function (x) { return Object.assign({}, x); }),
-      roles: ROLES,
-      permissions: PERMISSIONS,
-      mp_transactions: SEED_MP.map(function (x) { return Object.assign({}, x); }),
-      webhooks: SEED_WEBHOOKS.map(function (x) { return Object.assign({}, x); }),
-      api_keys: SEED_API_KEYS.map(function (x) { return Object.assign({}, x); }),
-      audit: SEED_AUDIT.map(function (x) { return Object.assign({}, x); }),
-      settings: JSON.parse(JSON.stringify(DEFAULT_SETTINGS))
+      added_users: []
     };
   }
 
-  A.ROLES = ROLES;
-  A.PERMISSIONS = PERMISSIONS;
   A.TIER_LABELS = TIER_LABELS;
 
   A.tierLabel = function (tier) { return TIER_LABELS[tier] || tier; };
@@ -340,9 +283,6 @@
     }
   };
 
-  A.roleLabel = function (key) {
-    return (A.ROLES[key] && A.ROLES[key].label) || key;
-  };
 
   A.roleColor = function (key) {
     return (A.ROLES[key] && A.ROLES[key].color) || 'var(--c-muted)';

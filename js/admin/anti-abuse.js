@@ -48,7 +48,7 @@
     if (!sb) return [];
     // Traemos profiles con motivo + email desde auth.users (vía RPC o join).
     // Como auth.users no es accesible directo desde anon/authenticated,
-    // usamos admin_list_users (ya existente) para mapear ids â†’ email.
+    // usamos admin_list_users (ya existente) para mapear ids → email.
     var profRes = await sb
       .from('profiles')
       .select('id, full_name, email_normalized, signup_block_reason, credits_balance, created_at, device_fingerprint')
@@ -115,7 +115,7 @@
     counter.textContent = list.length + (list.length === 1 ? ' cuenta' : ' cuentas');
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">Sin cuentas sospechosas. âœ…</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">Sin cuentas sospechosas. ✅</td></tr>';
       return;
     }
     tbody.innerHTML = list.map(function (r) {
@@ -143,7 +143,7 @@
     counter.textContent = list.length + (list.length === 1 ? ' dispositivo' : ' dispositivos');
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">Ningún dispositivo compartido. âœ…</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">Ningún dispositivo compartido. ✅</td></tr>';
       return;
     }
     tbody.innerHTML = list.map(function (r) {

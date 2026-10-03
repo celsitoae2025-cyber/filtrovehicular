@@ -134,6 +134,24 @@
     var activo = !!(estado && estado.enabled);
     if (!activo) { ocultarAviso(); ocultarCinta(); return; }
 
+    /* SIN SESIÓN NO SE TAPA NADA. Para saber si alguien es
+       administrador hace falta que haya iniciado sesión, y el aviso se
+       pintaba encima de la propia pantalla de acceso: el dueño activaba
+       el mantenimiento, cerraba sesión o entraba desde otro navegador, y
+       ya no podía ni escribir su contraseña — quedaba fuera de su
+       plataforma sin manera de volver.
+
+       Ahora la puerta queda siempre libre. Quien entre y no sea
+       administrador verá el aviso en cuanto tenga sesión, que es cuando
+       de verdad se sabe quién es. */
+    var c = sb();
+    var sesion = null;
+    try {
+      var u = c ? await c.auth.getUser() : null;
+      sesion = u && u.data ? u.data.user : null;
+    } catch (e) { sesion = null; }
+    if (!sesion) { ocultarAviso(); ocultarCinta(); return; }
+
     if (await esAdmin()) {
       ocultarAviso();
       mostrarCinta();

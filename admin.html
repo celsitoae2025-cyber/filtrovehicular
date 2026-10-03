@@ -21,8 +21,7 @@
 <link rel="stylesheet" href="css/base.css?v=25">
 <link rel="stylesheet" href="css/components.css?v=13">
 <link rel="stylesheet" href="css/overlays.css?v=11">
-<link rel="stylesheet" href="css/plans-catalog.css">
-<link rel="stylesheet" href="css/admin.css?v=15">
+<link rel="stylesheet" href="css/admin.css?v=19">
 <link rel="stylesheet" href="css/maintenance.css?v=13">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
 <link rel="stylesheet" href="css/estructura.css?v=20">
@@ -70,179 +69,98 @@
      Si no hay sesion o no es admin, se muestra #adminLogin. -->
 <div id="adminApp" class="admin-app" hidden>
 
-  <!-- SIDEBAR -->
-  <aside class="admin-side">
-    <div class="admin-brand">
-      <div class="admin-brand-logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
-      </div>
-      <div class="admin-brand-text">
-        Consultia
-        <span class="admin-brand-badge">ADMIN</span>
-      </div>
-    </div>
-
-    <nav class="admin-menu">
-      <div class="admin-menu-section">General</div>
-      <button class="admin-link active" data-admin-view="dashboard">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-        Dashboard
-      </button>
-
-      <div class="admin-menu-section">Operación</div>
-      <button class="admin-link" data-admin-view="users">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Usuarios
-      </button>
-      <button class="admin-link" data-admin-view="addusers">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-        Agregar Usuario
-      </button>
-      <button class="admin-link" data-admin-view="recargas">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M7 12h10"/></svg>
-        Recargas
-      </button>
-      <button class="admin-link" data-admin-view="plans">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4h8z"/></svg>
-        Planes
-      </button>
-      <button class="admin-link" data-admin-view="compras">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        Compras
-      </button>
-      <button class="admin-link" data-admin-view="consultas">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        Consultas
-      </button>
-      <button class="admin-link" data-admin-view="anuncios">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v3a1 1 0 0 0 1 1h2l3.5 4v-12L6 11H4a1 1 0 0 0-1 1z"/><path d="M14 4.5v15"/><path d="M18 7c1.5 1.5 2 3 2 5s-.5 3.5-2 5"/></svg>
-        Anuncios
-      </button>
-
-      <button class="admin-link" data-admin-view="carteles">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m4 16 4.5-4.5 3 3L15 11l5 5"/></svg>
-        Publicidad
-      </button>
-
-      <div class="admin-menu-section">Pagos</div>
-      <button class="admin-link" data-admin-view="mercadopago">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        Mercado Pago
-      </button>
-      <button class="admin-link" data-admin-view="webhooks">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 8 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-8 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
-        Webhooks
-      </button>
-
-      <div class="admin-menu-section">Sistema</div>
-      <button class="admin-link" data-admin-view="team">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Equipo
-      </button>
-      <button class="admin-link" data-admin-view="apikeys">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-        API Keys
-      </button>
-      <button class="admin-link" data-admin-view="antiabuse">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-        Anti-abuso
-      </button>
-      <button class="admin-link" data-admin-view="audit">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        Auditoría
-      </button>
-      <button class="admin-link" data-admin-view="settings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-        Configuración
-      </button>
-    </nav>
-
-    <div class="admin-foot">
-      <button class="admin-foot-btn" id="adminLogout">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Cerrar sesión
-      </button>
-      <div class="admin-version">v1.0</div>
-    </div>
-  </aside>
-
   <!-- MAIN -->
   <main class="admin-main">
-    <header class="admin-bar">
-      <button class="admin-menu-btn" id="adminMenuBtn" type="button" aria-label="Menú">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-      <h1 class="admin-h1" id="adminPageTitle">Dashboard</h1>
-      <!-- Interruptor de mantenimiento: vive en la barra para poder
-           activarlo desde cualquier seccion, sin entrar a Configuracion.
-           Comparte estado y logica con el panel de Configuracion.
-           Sin texto a proposito: verde encendido, rojo apagado. -->
-      <button class="mnt-switch" id="mntBarBtn" type="button"
-              role="switch" aria-checked="false"
-              aria-label="Modo mantenimiento"
-              title="Modo mantenimiento">
-        <span class="mnt-switch-thumb"></span>
-      </button>
-      <!-- Aviso a los clientes: el otro interruptor, tambien en la barra
-           para encenderlo desde cualquier seccion cuando algo se cae.
-           A PROPOSITO NO SE PARECE al de mantenimiento: aquel es un
-           interruptor pelado sin texto, este es una pastilla con punto y
-           la palabra "Aviso". Dos mandos identicos uno al lado del otro
-           serian un accidente esperando a pasar, y confundirlos significa
-           apagar la plataforma entera sin querer. -->
-      <button class="avc-switch" id="avcBarBtn" type="button"
-              role="switch" aria-checked="false"
-              aria-label="Aviso a los clientes"
-              title="Aviso a los clientes">
-        <span class="avc-switch-dot" aria-hidden="true"></span>
-        <span class="avc-switch-txt">Aviso</span>
-      </button>
-      <div class="admin-user">
-        <span class="avatar" id="adminAvatar">AD</span>
-        <span id="adminUserName">Admin</span>
+    <!-- Cabecera: una sola fila negra, como la plataforma. El menú
+         lateral de 16 secciones se sustituyó por seis pestañas: lo que
+         se usa a diario cabe en una pantalla y no hay que buscarlo. -->
+    <header class="ad-cab">
+      <a class="ad-volver" href="app.html" title="Volver a la plataforma" aria-label="Volver a la plataforma">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+      </a>
+      <h1 class="ad-cab-titulo">Panel de administración</h1>
+      <div class="ad-cab-dcha">
+        <button class="mnt-switch" id="mntBarBtn" type="button" role="switch" aria-checked="false" aria-label="Modo mantenimiento" title="Modo mantenimiento">
+          <span class="mnt-switch-thumb"></span>
+        </button>
+        <button class="avc-switch" id="avcBarBtn" type="button" role="switch" aria-checked="false" aria-label="Aviso a los clientes" title="Aviso a los clientes">
+          <span class="avc-switch-dot" aria-hidden="true"></span>
+          <span class="avc-switch-txt">Aviso</span>
+        </button>
+        <div class="admin-user">
+          <span class="avatar" id="adminAvatar">AD</span>
+          <span id="adminUserName">Admin</span>
+        </div>
+        <button class="ad-salir" id="adminLogout" type="button" title="Cerrar sesión" aria-label="Cerrar sesión">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
       </div>
     </header>
-    <div class="admin-overlay" id="adminOverlay"></div>
+
+    <!-- Las cuatro cifras que se miran a diario. Antes vivían en un
+         «Dashboard» aparte; aquí están siempre a la vista, en cualquier
+         pestaña. Las rellena js/admin/cabecera.js. -->
+    <div class="ad-cifras">
+      <div class="ad-cifra">
+        <span class="ad-cifra-rot">Ingresos totales</span>
+        <strong id="adIngresos">—</strong>
+        <small id="adIngresosPie">cargando…</small>
+      </div>
+      <div class="ad-cifra">
+        <span class="ad-cifra-rot">Usuarios totales</span>
+        <strong id="adUsuarios">—</strong>
+        <small id="adUsuariosPie">cargando…</small>
+      </div>
+      <div class="ad-cifra">
+        <span class="ad-cifra-rot">Créditos en sistema</span>
+        <strong id="adCreditos">—</strong>
+        <small id="adCreditosPie">cargando…</small>
+      </div>
+      <div class="ad-cifra">
+        <span class="ad-cifra-rot">Consultas hoy</span>
+        <strong id="adHoy">—</strong>
+        <small id="adHoyPie">cargando…</small>
+      </div>
+    </div>
+
+    <nav class="ad-pestanas" role="tablist" aria-label="Secciones del panel">
+      <button type="button" role="tab" class="ad-pestana es-activa" data-admin-tab="usuarios">Usuarios</button>
+      <button type="button" role="tab" class="ad-pestana" data-admin-tab="pagos">Pagos</button>
+      <button type="button" role="tab" class="ad-pestana" data-admin-tab="actividad">Actividad</button>
+      <button type="button" role="tab" class="ad-pestana" data-admin-tab="publicidad">Publicidad</button>
+      <button type="button" role="tab" class="ad-pestana" data-admin-tab="sistema">Sistema</button>
+    </nav>
+
+    <!-- Dentro de una pestaña puede haber más de una pantalla: estas
+         fichas las eligen. Se pintan solas (main.js) y se esconden
+         cuando la pestaña solo tiene una. -->
+    <div class="ad-fichas" id="adFichas"></div>
+
 
     <div class="admin-body">
 
       <!-- DASHBOARD -->
       <section class="admin-view" id="adminView-dashboard">
-        <div class="kpi-grid">
-          <button type="button" class="kpi kpi-clickable" data-admin-view="users" title="Ver detalle de usuarios">
-            <div class="kpi-head">
-              <span class="kpi-label">Usuarios totales</span>
-              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
-            </div>
-            <strong class="kpi-value" id="kpiUsers">0</strong>
-            <span class="kpi-trend" id="kpiUsersTrend">—</span>
-          </button>
-
+        <!-- Solo las dos cifras que NO están en la cabecera: usuarios,
+             créditos, ingresos totales y consultas de hoy ya se ven
+             arriba en cualquier pestaña y aquí salían repetidas. -->
+        <div class="kpi-grid kpi-grid-2">
           <button type="button" class="kpi kpi-clickable" data-admin-view="consultas" title="Ver consultas recientes">
             <div class="kpi-head">
-              <span class="kpi-label">Activos hoy</span>
+              <span class="kpi-label">Usuarios activos hoy</span>
               <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
             </div>
             <strong class="kpi-value" id="kpiActive">0</strong>
-            <span class="kpi-trend" id="kpiActiveTrend">en las últimas 24 h</span>
+            <span class="kpi-trend">consultaron en las últimas 24 h</span>
           </button>
 
           <button type="button" class="kpi kpi-clickable" data-admin-view="revenue" title="Ver detalle de ingresos del mes">
             <div class="kpi-head">
-              <span class="kpi-label">Ingresos (mes)</span>
+              <span class="kpi-label">Ingresos del mes</span>
               <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
             </div>
             <strong class="kpi-value" id="kpiRevenue">S/ 0</strong>
-            <span class="kpi-trend" id="kpiRevenueTrend">acumulado</span>
-          </button>
-
-          <button type="button" class="kpi kpi-clickable" data-admin-view="consultas" title="Ver todas las consultas">
-            <div class="kpi-head">
-              <span class="kpi-label">Consultas</span>
-              <span class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-            </div>
-            <strong class="kpi-value" id="kpiQueries">0</strong>
-            <span class="kpi-trend" id="kpiQueriesTrend">ejecutadas</span>
+            <span class="kpi-trend" id="kpiRevenueTrend">Mercado Pago + ventas manuales</span>
           </button>
         </div>
 
@@ -407,19 +325,24 @@
           </button>
         </div>
 
+        <!-- Las siete fichas de siempre, con su cuenta al lado: lo que
+             se filtra a diario sin desplegar nada. El desplegable de
+             arriba conserva los quince filtros finos. -->
+        <div class="ad-fichas ad-fichas-filtro" id="usersChips"></div>
+
         <div class="admin-table-wrap">
           <table class="admin-table">
             <thead>
               <tr>
                 <th id="usersSelectAllCol" hidden style="width:36px;"><input type="checkbox" id="usersSelectAll" aria-label="Seleccionar todos"></th>
                 <th>Usuario</th>
-                <th>Correo</th>
                 <th>Plan</th>
-                <th>Registro</th>
                 <th>Créditos</th>
-                <th>Gastado</th>
+                <th>Consumido</th>
+                <th>Hoy</th>
+                <th>Registro</th>
                 <th>Estado</th>
-                <th></th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody id="usersTableBody"></tbody>
@@ -617,82 +540,6 @@
         </div>
       </section>
 
-      <!-- PLANES -->
-      <section class="admin-view" id="adminView-plans" hidden>
-        <div class="plans-tabs">
-          <button class="plans-tab active" data-plans-tab="credits">Planes por créditos</button>
-          <button class="plans-tab" data-plans-tab="subs">Planes por días</button>
-        </div>
-
-        <!-- Créditos -->
-        <div class="plans-section" id="plansSection-credits">
-          <div class="plans-tier">
-            <div class="plans-tier-head">
-              <div class="plans-tier-badge profesional">Profesional</div>
-              <span class="plans-tier-sub">Paquetes de créditos básicos</span>
-            </div>
-            <div class="plans-grid" id="plansGridProfesional"></div>
-          </div>
-
-          <div class="plans-tier">
-            <div class="plans-tier-head">
-              <div class="plans-tier-badge business">Business</div>
-              <span class="plans-tier-sub">Paquetes de créditos premium</span>
-            </div>
-            <div class="plans-grid" id="plansGridBusiness"></div>
-          </div>
-        </div>
-
-        <!-- Suscripciones -->
-        <div class="plans-section" id="plansSection-subs" hidden>
-          <div class="plans-tier">
-            <div class="plans-tier-head">
-              <div class="plans-tier-badge profesional">Profesional</div>
-              <span class="plans-tier-sub">Acceso por días</span>
-            </div>
-            <div class="plans-grid" id="subsGridProfesional"></div>
-          </div>
-
-          <div class="plans-tier">
-            <div class="plans-tier-head">
-              <div class="plans-tier-badge profesional_plus">Profesional Plus</div>
-              <span class="plans-tier-sub">Incluye funciones Business</span>
-              <span class="plans-tier-premium-badge" style="display:inline-flex;align-items:center;margin-left:8px;padding:3px 10px;background:#141d1c;color:#8fc72e;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polygon points="6 3 18 3 22 9 12 22 2 9"/><line x1="11" y1="3" x2="8" y2="9"/><line x1="13" y1="3" x2="16" y2="9"/><line x1="2" y1="9" x2="22" y2="9"/></svg>Desbloquea Premium</span>
-            </div>
-            <div class="plans-grid" id="subsGridProfesionalPlus"></div>
-          </div>
-
-          <div class="plans-tier">
-            <div class="plans-tier-head">
-              <div class="plans-tier-badge business">Business</div>
-              <span class="plans-tier-sub">Acceso completo</span>
-              <span class="plans-tier-premium-badge" style="display:inline-flex;align-items:center;margin-left:8px;padding:3px 10px;background:#141d1c;color:#8fc72e;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polygon points="6 3 18 3 22 9 12 22 2 9"/><line x1="11" y1="3" x2="8" y2="9"/><line x1="13" y1="3" x2="16" y2="9"/><line x1="2" y1="9" x2="22" y2="9"/></svg>Desbloquea Premium</span>
-            </div>
-            <div class="plans-grid" id="subsGridBusiness"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- MODAL EDITAR PLAN -->
-      <div class="modal" id="planEditModal" hidden>
-        <div class="modal-overlay" data-close="planEditModal"></div>
-        <div class="modal-panel">
-          <header class="modal-header">
-            <h2 id="planEditTitle">Editar plan</h2>
-            <button class="modal-close" type="button" data-close="planEditModal" aria-label="Cerrar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </header>
-          <form id="planEditForm">
-            <div class="modal-body" id="planEditBody"></div>
-            <footer class="modal-footer">
-              <button class="btn-ghost" type="button" data-close="planEditModal">Cancelar</button>
-              <button class="btn btn-primary" type="submit">Guardar</button>
-            </footer>
-          </form>
-        </div>
-      </div>
-
       <!-- COMPRAS -->
       <section class="admin-view" id="adminView-compras" hidden>
         <div class="admin-toolbar">
@@ -774,7 +621,6 @@
               <strong>Mercado Pago</strong>
               <span id="mpConnStatus" class="chip chip-ok">Conectado · Sandbox</span>
             </div>
-            <button class="btn-ghost" id="mpConfigBtn">Configurar</button>
           </div>
           <div class="mp-stats">
             <div class="mp-stat"><span>Aprobadas</span><strong id="mpStatApproved">0</strong></div>
@@ -813,42 +659,6 @@
         <div class="admin-empty" id="mpEmpty" hidden>Sin transacciones.</div>
       </section>
 
-      <!-- WEBHOOKS -->
-      <section class="admin-view" id="adminView-webhooks" hidden>
-        <div class="admin-toolbar">
-          <select id="whStatusFilter" class="admin-select">
-            <option value="all">Todos los estados</option>
-            <option value="processed">Procesados</option>
-            <option value="pending">Pendientes</option>
-            <option value="failed">Fallidos</option>
-          </select>
-          <select id="whEventFilter" class="admin-select">
-            <option value="all">Todos los eventos</option>
-            <option value="payment.approved">payment.approved</option>
-            <option value="payment.rejected">payment.rejected</option>
-            <option value="payment.pending">payment.pending</option>
-            <option value="payment.refunded">payment.refunded</option>
-            <option value="payment.created">payment.created</option>
-            <option value="chargeback.created">chargeback.created</option>
-          </select>
-          <div class="admin-stats-inline">
-            <span>Total: <strong id="whTotalCount">0</strong></span>
-          </div>
-        </div>
-
-        <div class="admin-table-wrap">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Fecha</th><th>Evento</th><th>Fuente</th><th>Payload</th><th>Intentos</th><th>Estado</th><th></th>
-              </tr>
-            </thead>
-            <tbody id="whTableBody"></tbody>
-          </table>
-        </div>
-        <div class="admin-empty" id="whEmpty" hidden>Sin eventos registrados.</div>
-      </section>
-
       <!-- EQUIPO -->
       <section class="admin-view" id="adminView-team" hidden>
         <div class="admin-toolbar">
@@ -856,14 +666,6 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="text" id="teamSearch" placeholder="Buscar por nombre o correo...">
           </div>
-          <select id="teamRoleFilter" class="admin-select">
-            <option value="all">Todos los roles</option>
-            <option value="super_admin">Super Admin</option>
-            <option value="admin">Admin</option>
-            <option value="soporte">Soporte</option>
-            <option value="developer">Developer</option>
-            <option value="auditor">Auditor</option>
-          </select>
           <button class="btn btn-primary" id="teamInviteBtn">+ Invitar</button>
         </div>
 
@@ -871,7 +673,7 @@
           <table class="admin-table">
             <thead>
               <tr>
-                <th>Miembro</th><th>Rol</th><th>2FA</th><th>Ãšltimo acceso</th><th>Estado</th><th></th>
+                <th>Miembro</th><th>Último acceso</th><th>Estado</th><th></th>
               </tr>
             </thead>
             <tbody id="teamTableBody"></tbody>
@@ -879,45 +681,6 @@
         </div>
         <div class="admin-empty" id="teamEmpty" hidden>Sin miembros.</div>
 
-        <div class="admin-panel" style="margin-top:18px">
-          <header class="admin-panel-head">
-            <h2>Matriz de permisos</h2>
-            <span class="admin-panel-sub">Por rol</span>
-          </header>
-          <div class="admin-table-wrap" style="border:none">
-            <table class="admin-table perms-table">
-              <thead>
-                <tr>
-                  <th>Módulo</th>
-                  <th>Super Admin</th><th>Admin</th><th>Soporte</th><th>Developer</th><th>Auditor</th>
-                </tr>
-              </thead>
-              <tbody id="permsTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- API KEYS -->
-      <section class="admin-view" id="adminView-apikeys" hidden>
-        <div class="admin-toolbar">
-          <div class="admin-stats-inline" style="margin-left:0">
-            <span>Usa estas claves para autenticar las APIs de Consultia.</span>
-          </div>
-          <button class="btn btn-primary" id="apikeysCreateBtn">+ Generar nueva clave</button>
-        </div>
-
-        <div class="admin-table-wrap">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Nombre</th><th>Tipo</th><th>Clave</th><th>Ãšltimo uso</th><th>Creada</th><th>Estado</th><th></th>
-              </tr>
-            </thead>
-            <tbody id="apikeysTableBody"></tbody>
-          </table>
-        </div>
-        <div class="admin-empty" id="apikeysEmpty" hidden>Sin API keys.</div>
       </section>
 
       <!-- ANTI-ABUSO -->
@@ -993,7 +756,7 @@
                     <th># cuentas</th>
                     <th>Correos asociados</th>
                     <th>Primera</th>
-                    <th>Ãšltima</th>
+                    <th>Última</th>
                     <th>Fingerprint (hash)</th>
                   </tr>
                 </thead>
@@ -1006,7 +769,7 @@
         </div>
       </section>
 
-      <!-- AUDITORÃA -->
+      <!-- AUDITORÍA -->
       <section class="admin-view" id="adminView-audit" hidden>
         <div class="admin-toolbar">
           <div class="admin-search">
@@ -1017,11 +780,10 @@
             <option value="all">Todas las acciones</option>
             <option value="user">Usuarios</option>
             <option value="recarga">Recargas</option>
-            <option value="apikey">API Keys</option>
             <option value="admin">Equipo</option>
-            <option value="settings">Configuración</option>
-            <option value="webhook">Webhooks</option>
-            <option value="login">Accesos</option>
+            <option value="maintenance">Mantenimiento</option>
+            <option value="aviso">Aviso a clientes</option>
+            <option value="broadcast">Anuncios</option>
           </select>
           <button class="btn-ghost" id="auditExport">Exportar CSV</button>
         </div>
@@ -1046,7 +808,7 @@
           <div class="bc-card">
             <header class="bc-card-head">
               <h3>Nuevo anuncio</h3>
-              <p class="bc-help">Envía una notificación in-app a los usuarios. La verán en su campana ðŸ””, con badge y toast.</p>
+              <p class="bc-help">Envía una notificación in-app a los usuarios. La verán en la campana de la aplicación, con contador y aviso emergente.</p>
             </header>
 
             <div class="form-field">
@@ -1135,7 +897,7 @@
           <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
             <div>
               <h3 style="margin:0;">Historial de anuncios</h3>
-              <p style="margin:4px 0 0;color:var(--c-muted);font-size:13px;">Ãšltimos 200 envíos con su tasa de lectura.</p>
+              <p style="margin:4px 0 0;color:var(--c-muted);font-size:13px;">Últimos 200 envíos con su tasa de lectura.</p>
             </div>
             <button class="btn-ghost" type="button" id="bcReloadHistory">Recargar</button>
           </header>
@@ -1160,7 +922,7 @@
         </div>
       </section>
 
-      <!-- CONFIGURACIÃ“N -->
+      <!-- CONFIGURACIÓN -->
       <!-- PUBLICIDAD (imagenes que ven todos los clientes) -->
       <section class="admin-view" id="adminView-carteles" hidden>
         <div class="cartel-grid">
@@ -1324,89 +1086,6 @@
             </div>
           </div>
 
-          <div class="admin-panel">
-            <header class="admin-panel-head">
-              <h2>Empresa</h2>
-              <span class="admin-panel-sub">Datos fiscales</span>
-            </header>
-            <form id="settingsCompanyForm" class="recarga-form" autocomplete="off">
-              <div class="field">
-                <label for="setCompanyName">Nombre comercial</label>
-                <input type="text" id="setCompanyName" class="input" required>
-              </div>
-              <div class="field">
-                <label for="setLegalName">Razón social</label>
-                <input type="text" id="setLegalName" class="input" required>
-              </div>
-              <div class="field">
-                <label for="setRuc">RUC</label>
-                <input type="text" id="setRuc" class="input" pattern="\d{11}" maxlength="11" required>
-              </div>
-              <div class="field">
-                <label for="setSupportEmail">Correo de soporte</label>
-                <input type="email" id="setSupportEmail" class="input" required>
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Guardar</button>
-              </div>
-            </form>
-          </div>
-
-          <div class="admin-panel">
-            <header class="admin-panel-head">
-              <h2>Facturación</h2>
-              <span class="admin-panel-sub">Moneda e impuestos</span>
-            </header>
-            <form id="settingsBillingForm" class="recarga-form" autocomplete="off">
-              <div class="field">
-                <label for="setCurrency">Moneda</label>
-                <select id="setCurrency" class="admin-select" style="width:100%">
-                  <option value="PEN">Soles (PEN)</option>
-                  <option value="USD">Dólares (USD)</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="setIgv">IGV (%)</label>
-                <input type="number" id="setIgv" class="input" min="0" max="100" step="0.01" required>
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Guardar</button>
-              </div>
-            </form>
-          </div>
-
-          <div class="admin-panel" style="grid-column:1/-1">
-            <header class="admin-panel-head">
-              <h2>Mercado Pago</h2>
-              <span class="admin-panel-sub" id="setMpModeLabel">Sandbox</span>
-            </header>
-            <form id="settingsMpForm" class="recarga-form" autocomplete="off">
-              <div class="field">
-                <label for="setMpMode">Modo</label>
-                <select id="setMpMode" class="admin-select" style="width:100%">
-                  <option value="sandbox">Sandbox (pruebas)</option>
-                  <option value="production">Producción</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="setMpPublicKey">Public Key</label>
-                <input type="text" id="setMpPublicKey" class="input" placeholder="TEST-... o APP_USR-...">
-              </div>
-              <div class="field">
-                <label for="setMpAccessToken">Access Token</label>
-                <input type="password" id="setMpAccessToken" class="input" placeholder="Solo últimos 4 caracteres visibles">
-                <div class="field-hint">Se almacena cifrado. Solo se muestran los últimos 4 caracteres.</div>
-              </div>
-              <div class="field">
-                <label for="setMpWebhook">URL del webhook</label>
-                <input type="url" id="setMpWebhook" class="input">
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Guardar integración</button>
-                <button type="button" class="btn-ghost" id="setMpTest">Probar conexión</button>
-              </div>
-            </form>
-          </div>
         </div>
       </section>
 
@@ -1437,21 +1116,6 @@
         <button class="btn btn-primary" type="submit">Otorgar acceso</button>
       </footer>
     </form>
-  </div>
-</div>
-
-<!-- MODAL GENERAR API KEY -->
-<div class="modal" id="apiKeyModal" hidden>
-  <div class="modal-overlay" data-close="apiKeyModal"></div>
-  <div class="modal-panel">
-    <header class="modal-header">
-      <h2 id="apiKeyModalTitle">Generar API Key</h2>
-      <button class="modal-close" type="button" data-close="apiKeyModal" aria-label="Cerrar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </header>
-    <div class="modal-body" id="apiKeyModalBody"></div>
-    <footer class="modal-footer" id="apiKeyModalFooter"></footer>
   </div>
 </div>
 
@@ -1488,29 +1152,26 @@
 <script src="js/modules/toasts.js?v=2"></script>
 <script src="js/modules/confirm-dialog.js?v=2"></script>
 <script src="js/shared/plans-data.js?v=2"></script>
-<script src="js/admin/data.js?v=22"></script>
+<script src="js/admin/data.js?v=23"></script>
 <script src="js/admin/auth.js?v=26"></script>
-<script src="js/admin/dashboard.js?v=23"></script>
+<script src="js/admin/dashboard.js?v=24"></script>
 <script src="js/admin/revenue.js?v=23"></script>
-<script src="js/admin/users.js?v=25"></script>
+<script src="js/admin/users.js?v=26"></script>
 <script src="js/admin/addusers.js?v=22"></script>
 <script src="js/admin/recargas.js?v=22"></script>
-<script src="js/admin/plans.js?v=22"></script>
 <script src="js/admin/compras.js?v=23"></script>
 <script src="js/admin/consultas.js?v=23"></script>
-<script src="js/admin/mercadopago.js?v=23"></script>
-<script src="js/admin/webhooks.js?v=22"></script>
-<script src="js/admin/team.js?v=23"></script>
-<script src="js/admin/apikeys.js?v=23"></script>
+<script src="js/admin/mercadopago.js?v=24"></script>
+<script src="js/admin/team.js?v=24"></script>
 <script src="js/admin/anti-abuse.js?v=23"></script>
 <script src="js/admin/audit.js?v=23"></script>
 <script src="js/admin/broadcasts.js?v=23"></script>
-<script src="js/admin/settings.js?v=22"></script>
 <script src="js/admin/maintenance.js?v=3"></script>
 <script src="js/admin/aviso-clientes.js?v=14"></script>
 <script src="js/admin/carteles.js?v=2"></script>
 <script src="js/modules/idle-logout.js?v=2"></script>
-<script src="js/admin/main.js?v=27"></script>
+<script src="js/admin/cabecera.js?v=1"></script>
+<script src="js/admin/main.js?v=29"></script>
 
 </body>
 </html>
