@@ -849,7 +849,7 @@
     /* Banda de identidad. Es la única superficie oscura del informe y
        usa el mismo tono que las superficies oscuras de la plataforma, no
        un gris inventado para la ocasión. */
-    doc.setFillColor(14, 19, 18);                        // #0e1312
+    doc.setFillColor(20, 29, 28);                        // #141d1c
     doc.rect(0, 0, W, PORTADA.banda, 'F');
 
     rotulo('Filtro Vehicular', M, 32, 18, [255, 255, 255], true);

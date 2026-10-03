@@ -476,8 +476,8 @@ a.card:hover,
 .view .filter-form .btn-primary:hover:not(:disabled),
 .prem-form-panel .btn-primary:hover:not(:disabled),
 .topbar .auth-btn-primary:hover:not(:disabled) {
-  background: #123c30 !important;
-  border-color: #123c30 !important;
+  background: #2a3b38 !important;
+  border-color: #2a3b38 !important;
   color: #ffffff !important;
 }
 
@@ -493,8 +493,8 @@ a.card:hover,
 .cr-docitem-ver:hover,
 .rep-modal-ok:hover,
 .inst-fab:hover {
-  background: #123c30 !important;
-  border-color: #123c30 !important;
+  background: #2a3b38 !important;
+  border-color: #2a3b38 !important;
 }
 
 /* ============================================================
@@ -691,7 +691,7 @@ a.card:hover,
 /* El reclamo del reporte completo saltaba a turquesa entero. Ahora solo
    aclara su propio esmeralda, que es lo que hace el resto de botones. */
 #ctaReporteBtn.cta-reporte-btn:hover {
-  background: #123c30 !important;
+  background: #2a3b38 !important;
 }
 
 /* Los accesos rápidos del panel eran cuatro bloques turquesa fijos: el
@@ -704,7 +704,7 @@ a.card:hover,
 #view-dashboard .quick-compact:hover,
 #view-dashboard .quick-actions-compact > button:hover,
 #view-dashboard .quick-actions-compact > a:hover {
-  background: #123c30 !important;
+  background: #2a3b38 !important;
 }
 
 /* Los dos últimos turquesas sueltos: el interruptor del aviso a clientes

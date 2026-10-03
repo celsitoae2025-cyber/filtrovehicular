@@ -348,8 +348,8 @@
   color: #ffffff !important;
 }
 #historialPdfBtn:hover:not(:disabled) {
-  background: #123c30 !important;
-  border-color: #123c30 !important;
+  background: #2a3b38 !important;
+  border-color: #2a3b38 !important;
 }
 #historialPdfBtn svg {
   width: 16px;
@@ -1097,7 +1097,7 @@
 
 .nm-download { margin: 0 0 12px auto; display: flex; width: auto; max-width: max-content; justify-content: center; align-items: center; gap: 8px; border: none; background: var(--c-surface-dark); color: #ffffff; padding: 10px 20px; border-radius: 8px; font-family: inherit; font-size: var(--fs-sm); font-weight: normal; line-height: 1; cursor: pointer; transition: background var(--t-fast); }
 .nm-download svg { width: 17px; height: 17px; flex-shrink: 0; }
-.nm-download:hover { background: #123c30; }
+.nm-download:hover { background: #2a3b38; }
 .nm-download:disabled { opacity: .65; cursor: not-allowed; }
 
 /* ============================================================
@@ -2450,7 +2450,7 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   cursor: pointer;
   transition: background var(--t-fast);
 }
-.cr-espera-btn:hover { background: #123c30; }
+.cr-espera-btn:hover { background: #2a3b38; }
 
 /* â"€â"€ Mensaje de mantenimiento / error técnico â"€â"€ */
 .cr-mantenimiento {
@@ -5872,7 +5872,7 @@ a.nm-download { text-decoration: none; }
   font-size: 15px;
   padding: 10px 20px;
 }
-.cr-docitem-ver:hover { background: #123c30; border-color: #123c30; }
+.cr-docitem-ver:hover { background: #2a3b38; border-color: #2a3b38; }
 
 /* El móvil de la ficha se resuelve entero más abajo, en la consulta de
    medios de 720px; aquí solo queda el tamaño del antetítulo. */
@@ -6343,7 +6343,7 @@ a.nm-download { text-decoration: none; }
   background: var(--c-surface-dark); color: #ffffff; cursor: pointer;
   transition: background var(--t-fast);
 }
-.rep-modal-ok:hover { background: #123c30; }
+.rep-modal-ok:hover { background: #2a3b38; }
 .rep-modal-caja::-webkit-scrollbar { width: 0; height: 0; }
 .rep-modal .rep-espera { padding-top: 30px; }
 @media (max-width: 720px) {
@@ -6361,7 +6361,7 @@ a.nm-download { text-decoration: none; }
    como protagonista y la barra cuatricolor de siempre.
 ============================================================ */
 .citv-membrete {
-  background: var(--c-surface-dark, #0e1312);
+  background: var(--c-surface-dark, #141d1c);
   color: #ffffff;
   padding: 30px 36px 0;
   border-radius: 14px 14px 0 0;
@@ -6713,7 +6713,7 @@ a.nm-download { text-decoration: none; }
   cursor: pointer;
   transition: background var(--t-fast);
 }
-.inst-fab:hover { background: #123c30; }
+.inst-fab:hover { background: #2a3b38; }
 .inst-fab svg { width: 26px; height: 26px; }
 .inst-fab[hidden] { display: none; }
 

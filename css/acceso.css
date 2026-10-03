@@ -289,7 +289,7 @@
 
    Medidos uno a uno en la pantalla de acceso, esto es lo que había:
 
-     Iniciar sesión ................ 356x47, fondo #0e1312, radio 999px, 14px/700
+     Iniciar sesión ................ 356x47, fondo #141d1c, radio 999px, 14px/700
      Solicita tu Filtro Vehicular .. 356x48, fondo #141d1c, radio  10px, 15px/700
      Crear cuenta .................. enlace 13px/700
      ¿Olvidaste tu contraseña? ..... enlace 12.5px/400
@@ -298,7 +298,7 @@
 
    Cinco problemas de verdad, no de gusto:
 
-   1. DOS BLOQUES OSCUROS IGUALES, uno pegado al otro. #0e1312 y #141d1c
+   1. DOS BLOQUES OSCUROS IGUALES, uno pegado al otro. #141d1c y #141d1c
       son dos negros distintos que a la vista son el mismo. Entrar y
       pedir el reporte por WhatsApp pesaban lo mismo, y solo una de las
       dos es la razón por la que el cliente está en esta pantalla.
@@ -324,14 +324,14 @@
   font-weight: 700;
   border-radius: 12px;
   /* El MISMO esmeralda del panel de la izquierda. Era un negro suelto
-     (#0e1312) que no era de nadie: la única pieza sólida de la columna
+     (#141d1c) que no era de nadie: la única pieza sólida de la columna
      no podía ser del único color que no está en ningún otro sitio de
      la pantalla. Así las dos mitades se dan la mano. */
   background: var(--c-auth-panel) !important;
 }
 #authModalLogin .auth-submit:hover:not(:disabled),
 #authModalSignup .auth-submit:hover:not(:disabled) {
-  background: #123c30 !important;
+  background: #2a3b38 !important;
 }
 
 /* ── La acción secundaria ────────────────────────────────────

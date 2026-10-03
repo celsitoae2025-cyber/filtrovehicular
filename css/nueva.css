@@ -13,7 +13,7 @@
    Orden: 1 tokens · 2 base · 3 estructura · 4 piezas · 5 pantallas ·
    6 motor de consultas · 7 teléfono.
 
-   Reglas de la casa: paleta #0b2a20 / #141d1c / #8fc72e / #03a7a4 /
+   Reglas de la casa: paleta #141d1c / #141d1c / #8fc72e / #03a7a4 /
    blanco; sin sombras ni franjas; pesos 400 y 700; nada bajo 15 px;
    Segoe UI. !important solo en tres sitios, cada uno explicado.
 ============================================================ */
@@ -22,9 +22,9 @@
 /* ── 1 · Tokens ─────────────────────────────────────────────── */
 
 :root {
-  --nv-oscuro: #0b2a20;
-  --nv-oscuro-2: #123c30;
-  --nv-oscuro-3: #071d16;
+  --nv-oscuro: #141d1c;
+  --nv-oscuro-2: #2a3b38;
+  --nv-oscuro-3: #0a1211;
   --nv-tinta: #141d1c;
   --nv-gris: #5a6b6a;
   --nv-verde: #8fc72e;
@@ -37,7 +37,7 @@
   --nv-gris-suave: #f1f1f1;
   --nv-acento: #8fc72e;
 
-  --c-auth-panel: #0b2a20;   /* lo que css/oferta.css espera */
+  --c-auth-panel: #141d1c;   /* lo que css/oferta.css espera */
 
   --nv-r-s: 10px;
   --nv-r: 14px;
@@ -47,7 +47,7 @@
   --nv-lado: 236px;
 
   /* Lo que el motor de resultados (views.css) espera */
-  --c-primary: #141d1c; --c-surface-dark: #0b2a20; --c-text: #141d1c;
+  --c-primary: #141d1c; --c-surface-dark: #141d1c; --c-text: #141d1c;
   --c-accent: #8fc72e; --c-accent-hover: #7ab325; --c-surface: #ffffff;
   --c-bg: #f3f3f3; --c-border: #dcdcdc; --c-muted: #5a6b6a; --c-canvas: #f2f4f1;
   --fs-xs: 13px; --fs-sm: 15px; --fs-md: 17px; --fs-lg: 21px; --fs-xl: 30px;

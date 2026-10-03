@@ -292,7 +292,7 @@
       .sort(function (a, b) { return b[1] - a[1]; });
     var suma = filas.reduce(function (a, f) { return a + f[1]; }, 0);
     /* Del oscuro de la casa al gris claro: la interfaz es monocroma. */
-    var TONOS = ['#0b2a20', '#2f4d43', '#56706a', '#7f948e', '#a8b7b2', '#cdd6d2', '#e3e9e6'];
+    var TONOS = ['#141d1c', '#2f4d43', '#56706a', '#7f948e', '#a8b7b2', '#cdd6d2', '#e3e9e6'];
     if (!suma) {
       $('nvReparto').innerHTML = '<p class="nv-vacio">Aún sin consultas.</p>';
     } else {
