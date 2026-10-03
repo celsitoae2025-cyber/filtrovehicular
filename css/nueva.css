@@ -612,7 +612,9 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
 .nv-puerta-caja {
   width: min(420px, 100%);
   display: flex; flex-direction: column; gap: 14px;
-  padding: 28px; border-radius: 22px; background: #fff;
+  /* La mitad de redondeo que antes (22 → 11): a 22 px el cuadro se leía
+     como una pastilla y aquí lo que manda es el formulario. */
+  padding: 28px; border-radius: 11px; background: #fff;
 }
 .nv-puerta-caja h1 { margin: 0; font-size: 24px; }
 .nv-etiqueta { display: flex; flex-direction: column; gap: 6px; font-size: 15px; font-weight: 400; }
