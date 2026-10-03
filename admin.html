@@ -229,38 +229,18 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="text" id="usersSearch" placeholder="Buscar por nombre, correo o DNI...">
           </div>
+          <!-- Lo de diario está en las fichas de abajo. Aquí solo lo que
+               no cabe ahí, en seis entradas y sin subtítulos: tenía
+               diecisiete repartidas en cinco grupos y había que leerlas
+               todas para elegir. -->
           <select id="usersFilter" class="admin-select">
-            <option value="all">Todos</option>
-            <optgroup label="Suscripción">
-              <option value="has_sub">Con plan activo</option>
-              <option value="expired">Plan vencido</option>
-              <option value="sub_profesional">Plan Profesional</option>
-              <option value="sub_profesional_plus">Plan Profesional Plus (Premium)</option>
-              <option value="sub_business">Plan Business (Premium)</option>
-              <option value="sub_premium">Con acceso Premium</option>
-              <option value="no_sub">Sin plan (Free)</option>
-            </optgroup>
-            <optgroup label="Pagos">
-              <option value="paid_mp">Pagaron por Mercado Pago</option>
-              <option value="paid_admin">Activados por admin</option>
-            </optgroup>
-            <optgroup label="Uso del catálogo">
-              <option value="used_free">Gastaron sus 5 créditos</option>
-              <option value="kept_free">Aún tienen sus 5 créditos</option>
-            </optgroup>
-            <optgroup label="Inactividad">
-              <option value="inactive">Inactivos (no pagó ni consultó)</option>
-              <option value="no_login_30d">Sin login hace 30+ días</option>
-              <option value="has_credits_no_use">Con saldo, sin consultar</option>
-            </optgroup>
-            <optgroup label="Email">
-              <option value="unconfirmed">Sin confirmar email</option>
-              <option value="confirmed">Email confirmado</option>
-            </optgroup>
-            <optgroup label="Cuenta">
-              <option value="suspended">Suspendidos</option>
-              <option value="team">Equipo (administradores)</option>
-            </optgroup>
+            <option value="">Más filtros…</option>
+            <option value="no_sub">Sin plan</option>
+            <option value="sub_premium">Con Premium</option>
+            <option value="has_credits_no_use">Con saldo, sin usar</option>
+            <option value="no_login_30d">Sin entrar 30 días</option>
+            <option value="inactive">Nunca pagó ni consultó</option>
+            <option value="used_free">Gastaron los 5 gratis</option>
           </select>
           <button class="btn btn-primary" id="usersDeleteSelected" hidden style="background:#141d1c;border-color:#141d1c;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
@@ -1116,7 +1096,7 @@
 <script src="js/admin/auth.js?v=27"></script>
 <script src="js/admin/dashboard.js?v=24"></script>
 <script src="js/admin/revenue.js?v=25"></script>
-<script src="js/admin/users.js?v=30"></script>
+<script src="js/admin/users.js?v=31"></script>
 <script src="js/admin/addusers.js?v=22"></script>
 <script src="js/admin/recargas.js?v=23"></script>
 <script src="js/admin/compras.js?v=24"></script>

@@ -68,9 +68,29 @@
     'has_credits_no_use'    // tiene saldo, no consultó
   ];
 
+  /* EL FILTRO NO VIVE EN EL <SELECT>.
+
+     Vivía ahí, y las fichas lo elegían escribiendo su clave dentro. Eso
+     obligaba al desplegable a tener una opción por cada ficha —si no, el
+     navegador rechazaba el valor y se mostraban todos los usuarios— y por
+     eso acabó con diecisiete entradas repartidas en cinco grupos.
+
+     Ahora el filtro es esta variable. Las fichas y el desplegable son dos
+     formas de cambiarla, y cada uno enseña solo lo suyo. */
+  var filtroActivo = 'all';
+
+  function aplicarFiltro(clave) {
+    filtroActivo = clave || 'all';
+    var sel = document.getElementById('usersFilter');
+    if (sel) {
+      var existe = Array.prototype.some.call(sel.options, function (o) { return o.value === filtroActivo; });
+      sel.value = existe ? filtroActivo : '';
+    }
+    paint();
+  }
+
   function isSelectModeActive() {
-    var f = document.getElementById('usersFilter');
-    return f && SELECTABLE_FILTERS.indexOf(f.value) !== -1;
+    return SELECTABLE_FILTERS.indexOf(filtroActivo) !== -1;
   }
 
   /* ICONOS DE LA FILA
@@ -286,7 +306,7 @@
 
   function filterUsers(list) {
     var search = (document.getElementById('usersSearch').value || '').toLowerCase().trim();
-    var filter = document.getElementById('usersFilter').value;
+    var filter = filtroActivo;
     var filtered = list.filter(function (u) {
       if (filter === 'expired' && !(u.subscription_expires_at && new Date(u.subscription_expires_at).getTime() <= Date.now())) return false;
       if (filter === 'suspended' && u.status !== 'suspended') return false;
@@ -357,8 +377,7 @@
   function pintarFichas() {
     var caja = document.getElementById('usersChips');
     if (!caja) return;
-    var sel = document.getElementById('usersFilter');
-    var activo = sel ? sel.value : 'all';
+    var activo = filtroActivo;
     caja.innerHTML = FICHAS.map(function (f) {
       var n = cachedUsers.filter(f[2]).length;
       return '<button type="button" class="ad-ficha' + (f[0] === activo ? ' es-activa' : '') +
@@ -423,7 +442,7 @@
     var ids = Array.from(selectedForDelete);
     var n = ids.length;
 
-    var filterValue = (document.getElementById('usersFilter') || {}).value || 'unconfirmed';
+    var filterValue = filtroActivo;
     var filterLabel = FILTER_LABELS[filterValue] || 'seleccionados';
 
     // El filtro 'unconfirmed' usa una RPC más estricta que solo borra
@@ -558,9 +577,7 @@
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-users-chip]');
     if (!b) return;
-    var sel = document.getElementById('usersFilter');
-    if (sel) { sel.value = b.dataset.usersChip; }
-    paint();
+    aplicarFiltro(b.dataset.usersChip);
   });
 
   A.renderUsers = async function () {
@@ -1483,7 +1500,9 @@
     var searchInput = document.getElementById('usersSearch');
     var filterSelect = document.getElementById('usersFilter');
     if (searchInput) searchInput.addEventListener('input', paint);
-    if (filterSelect) filterSelect.addEventListener('change', paint);
+    if (filterSelect) filterSelect.addEventListener('change', function () {
+      aplicarFiltro(filterSelect.value || 'all');
+    });
 
     var exportBtn = document.getElementById('usersExport');
     if (exportBtn) {
