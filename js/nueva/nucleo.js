@@ -252,7 +252,7 @@
 
   var MENSAJES = [
     [/invalid login credentials/i, 'El correo o la contraseña no son correctos.'],
-    [/email not confirmed/i, 'Tu correo todavía no está confirmado. Revisa tu bandeja de entrada.'],
+    [/email not confirmed/i, 'Tu cuenta aún no está activada. Abre el correo que te mandamos y pulsa «Activa tu cuenta».'],
     [/captcha/i, 'No se pudo comprobar que no eres un robot. Vuelve a intentarlo.'],
     [/rate limit|too many/i, 'Demasiados intentos seguidos. Espera un minuto.'],
     [/network|fetch/i, 'Sin conexión. Revisa tu internet e inténtalo otra vez.']
@@ -301,6 +301,17 @@
         form.password.value = '';
         await entrarALaApp();
       } catch (ex) {
+        /* Cuenta creada pero sin activar: en vez de un error seco, se le
+           reenvía el correo con el botón y se le lleva a la pantalla que
+           lo explica. Es el camino que más gente perdía. */
+        if (/email not confirmed/i.test((ex && ex.message) || '')) {
+          try { await C.Auth.resendVerification(email, null); } catch (e2) { /* el reenvío es un extra */ }
+          if (NV.pendienteDeActivar) {
+            NV.pendienteDeActivar(email);
+            if (C.toast) C.toast({ type: 'info', title: 'Falta activar tu cuenta', message: 'Te reenviamos el correo: ábrelo y pulsa «Activa tu cuenta».' });
+            return;
+          }
+        }
         err.textContent = traducir(ex && ex.message);
         err.hidden = false;
       } finally {

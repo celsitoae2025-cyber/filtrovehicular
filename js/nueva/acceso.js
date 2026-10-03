@@ -190,6 +190,16 @@
      pantalla solo espera, avisa de dónde mirar y permite reenviar.
      Los códigos de 6 dígitos siguen vivos SOLO para recuperar la
      contraseña. */
+  /* Lo usa el acceso: si alguien intenta entrar con una cuenta que
+     todavía no activó, se le trae aquí con su correo ya puesto y se le
+     reenvía el botón sin que tenga que buscar nada. */
+  NV.pendienteDeActivar = function (correo) {
+    correoAlta = correo || '';
+    var et = $('nvVerificarCorreo');
+    if (et) et.textContent = correoAlta || 'tu correo';
+    NV.verPuerta('verificar');
+  };
+
   function conectarVerificar() {
     $('nvReenviarAlta').addEventListener('click', async function (e) {
       e.preventDefault();
@@ -395,6 +405,21 @@
     var p = new URLSearchParams(location.search);
     var h = location.hash || '';
     var paso = null;
+
+    /* El botón «Activa tu cuenta» es de un solo uso. Si el antivirus del
+       correo lo abre antes que el cliente, o si pasan las horas, Supabase
+       devuelve aquí con un error en el hash. Sin esto la pantalla se
+       quedaba muda y el cliente creía que la plataforma estaba rota. */
+    if (h.indexOf('error_code=') !== -1 || h.indexOf('error=') !== -1) {
+      var caducado = h.indexOf('otp_expired') !== -1 || h.indexOf('access_denied') !== -1;
+      if (history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+      setTimeout(function () {
+        error('nvAccesoError', caducado
+          ? 'Ese enlace de activación ya se usó o caducó. Entra con tu correo y contraseña: si la cuenta sigue sin activar, te mandamos otro al momento.'
+          : 'No se pudo completar la activación. Entra con tu correo y contraseña e inténtalo otra vez.');
+      }, 0);
+      return 'acceso';
+    }
     if (p.get('action') === 'signup' || p.get('action') === 'register') paso = 'registro';
     else if (p.get('action') === 'login') paso = 'acceso';
     else if (p.get('recovery') === '1' || p.get('token_hash') || h.indexOf('type=recovery') !== -1) paso = 'olvido';
