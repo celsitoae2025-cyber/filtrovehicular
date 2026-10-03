@@ -57,3 +57,6 @@ consulta-vehicular.md
 # Informes internos: no se publican con el sitio
 INFORME-SOCIOS.*
 VERIFICAR-SOCIOS.bat
+
+# Lo deja Deno al correr las pruebas de las funciones del servidor.
+deno.lock
