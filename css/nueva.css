@@ -621,6 +621,10 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
 .nv-etiqueta .nv-campo { font-weight: 400; }
 .nv-marcar { display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 15px; cursor: pointer; }
 .nv-marcar input { width: 20px; height: 20px; accent-color: var(--nv-oscuro); }
+/* El recuadro anti-bot mide 300 px fijos y el cuadro del acceso 364 de
+   ancho útil: pegado a la izquierda quedaba torcido respecto a todo lo
+   demás, que ocupa el ancho entero. Centrado. */
+.nv-captcha { display: flex; justify-content: center; }
 .nv-captcha:empty { display: none; }
 .nv-error { margin: 0; padding: 12px 14px; border-radius: var(--nv-r-s); background: var(--nv-suave); font-size: 15px; font-weight: 400; }
 .nv-puerta-pie { display: flex; justify-content: space-between; gap: 12px; }
@@ -992,7 +996,7 @@ body.nv-puerta-encima { overflow: hidden; }
 
 /* 3/3: quien pidió menos movimiento, sin transiciones ni latidos. */
 @media (prefers-reduced-motion: reduce) {
-  .nv-pantalla, .nv-cargando, .nv-puerta::before { animation: none; }
+  .nv-pantalla, .nv-cargando { animation: none; }
   .nv-body * { transition: none !important; }
 }
 
@@ -1023,23 +1027,15 @@ body.nv-puerta-encima { overflow: hidden; }
 
      En gris, además: en color tiraba a verde y teñía la pantalla entera.
 
-     SOLO SE MUEVE ESTA CAPA. El cuadro del formulario no lleva ninguna
-     animación —ni entrada, ni desplazamiento—: lo único que se mueve en
-     toda la pantalla es el fondo.
-
-     Medio minuto de ida y otro de vuelta. Antes era un minuto y con un
-     recorrido tan corto que, al 10% de fuerza, no se notaba que hubiera
-     movimiento. El 16% de escala de más es el margen por donde se
-     desplaza sin que asomen los bordes. */
+     SIN MOVIMIENTO. La tuvo —una deriva lenta— y se quitó: con el cuadro
+     blanco encima, el fondo moviéndose detrás hacía que pareciera que el
+     que se movía era el cuadro. Quieta cumple su papel igual. */
   .nv-puerta::before {
     content: "";
     position: absolute; inset: 0; z-index: 0;
     background: url("../assets/acceso/taller.webp?v=3") center / cover no-repeat;
     filter: grayscale(1) contrast(1.05);
     opacity: .1;
-    transform: scale(1.16);
-    animation: nv-deriva 30s ease-in-out infinite alternate;
-    will-change: transform;
   }
 
   /* Lo que va por encima de las dos capas. Al pie legal no se le toca la
@@ -1049,7 +1045,3 @@ body.nv-puerta-encima { overflow: hidden; }
   .nv-puerta-legal a { color: #fff; }
 }
 
-@keyframes nv-deriva {
-  from { transform: scale(1.16) translate3d(-3%, -1.8%, 0); }
-  to   { transform: scale(1.24) translate3d(3%, 1.8%, 0); }
-}
