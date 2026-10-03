@@ -244,6 +244,11 @@
 
     if (submitBtn) { submitBtn.disabled = true; submitBtn.dataset.orig = submitBtn.dataset.orig || submitBtn.textContent; submitBtn.textContent = 'Guardando…'; }
 
+    // Cómo pagó el cliente. Se guarda en la transacción y en la venta:
+    // es lo único que permite cuadrar después Yape, Plin o efectivo.
+    var metodoEl = document.getElementById('recargaMetodo');
+    var metodo = (metodoEl && metodoEl.value) || 'whatsapp';
+
     // Precio en soles del paquete de créditos (si aplica) — para tracking
     // de ingresos. `custom` no tiene precio asociado, solo créditos.
     var creditPlanObj = (paq && paq !== 'custom') ? A.findCreditPlan(paq) : null;
@@ -256,7 +261,7 @@
           target_user_id: u.id,
           delta: credits,
           note: motivo || null,
-          method: 'whatsapp',
+          method: metodo,
           ref: null
         });
         if (res.error) throw res.error;
@@ -270,7 +275,8 @@
               p_amount_pen: creditPricePEN,
               p_kind: 'credits',
               p_plan_id: creditPlanObj.id,
-              p_note: motivo || null
+              p_note: motivo || null,
+              p_method: metodo
             });
           } catch (saleErr) {
             console.warn('No se pudo registrar el ingreso S/:', saleErr);
@@ -287,7 +293,7 @@
                 ? 'Se acreditaron ' + credits + ' créditos a tu cuenta. Motivo: ' + motivo
                 : 'Se acreditaron ' + credits + ' créditos a tu cuenta.',
               n_type: 'credits',
-              n_meta: { credits: credits, method: 'whatsapp' }
+              n_meta: { credits: credits, method: metodo }
             });
           } catch (nerr) {
             console.warn('No se pudo crear la notificación de créditos:', nerr);
@@ -298,18 +304,36 @@
       // 2) Activar/extender suscripción (si aplica)
       var subResult = null;
       if (subPlan) {
+        /* Sin p_amount_pen: si se lo pasamos, la RPC anota ella misma la
+           venta y la marca como «whatsapp» pase lo que pase. La anotamos
+           aquí debajo con el método que se eligió arriba. Sigue siendo
+           una sola fila de venta, igual que antes. */
         var subRes = await sb.rpc('admin_grant_subscription', {
           target_user_id: u.id,
           p_tier:   subPlan.tier,
           p_days:   subPlan.days,
           p_plan_id: subPlan.id,
           p_note:   motivo || null,
-          p_amount_pen: subPlan.price ? parseFloat(subPlan.price) : null
+          p_amount_pen: null
         });
         if (subRes.error) throw subRes.error;
         subResult = subRes.data;
-        // La RPC ya inserta la notificación de "Plan activado" con la fecha
-        // de vencimiento Y registra el ingreso S/ del plan automáticamente.
+        // La RPC ya inserta la notificación de "Plan activado" con su fecha.
+
+        if (subPlan.price) {
+          try {
+            await sb.rpc('admin_record_sale', {
+              target_user_id: u.id,
+              p_amount_pen: parseFloat(subPlan.price),
+              p_kind: 'subscription',
+              p_plan_id: subPlan.id,
+              p_note: motivo || null,
+              p_method: metodo
+            });
+          } catch (saleErr) {
+            console.warn('No se pudo registrar el ingreso S/ del plan:', saleErr);
+          }
+        }
       }
 
       // Toast consolidado

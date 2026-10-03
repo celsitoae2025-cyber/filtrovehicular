@@ -120,7 +120,7 @@
     }
     tbody.innerHTML = list.map(function (r) {
       var reason = REASON_LABEL[r.signup_block_reason] || r.signup_block_reason || '—';
-      var creditsClass = (r.credits_balance === 0) ? 'style="color:#141d1c;font-weight:600"' : '';
+      var creditsClass = (r.credits_balance === 0) ? 'style="color:#141d1c;font-weight:400"' : '';
       return (
         '<tr>' +
           '<td>' + escapeHtml(r.email) + (r.full_name ? '<br><small style="color:#5A6B6A">' + escapeHtml(r.full_name) + '</small>' : '') + '</td>' +

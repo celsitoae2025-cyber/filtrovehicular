@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="css/base.css?v=25">
 <link rel="stylesheet" href="css/components.css?v=13">
 <link rel="stylesheet" href="css/overlays.css?v=11">
-<link rel="stylesheet" href="css/admin.css?v=20">
+<link rel="stylesheet" href="css/admin.css?v=22">
 <link rel="stylesheet" href="css/maintenance.css?v=13">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
 <link rel="stylesheet" href="css/estructura.css?v=20">
@@ -260,24 +260,6 @@
 
       <!-- USUARIOS -->
       <section class="admin-view" id="adminView-users" hidden>
-        <div class="users-stats" id="usersStats">
-          <div class="users-stat-card">
-            <span class="users-stat-label">Total registrados</span>
-            <span class="users-stat-value" id="usersStatTotal">0</span>
-          </div>
-          <div class="users-stat-card">
-            <span class="users-stat-label">Pagaron MP</span>
-            <span class="users-stat-value" id="usersStatPaidMp">0</span>
-          </div>
-          <div class="users-stat-card">
-            <span class="users-stat-label">Activados por admin</span>
-            <span class="users-stat-value" id="usersStatPaidAdmin">0</span>
-          </div>
-          <div class="users-stat-card">
-            <span class="users-stat-label">Gastaron sus 5 créditos</span>
-            <span class="users-stat-value" id="usersStatUsedFree">0</span>
-          </div>
-        </div>
         <div class="users-live-bar">
           <span class="users-live-dot" id="usersLiveDot" data-state="off"></span>
           <span class="users-live-label" id="usersLiveLabel">Conectando…</span>
@@ -291,6 +273,7 @@
             <option value="all">Todos</option>
             <optgroup label="Suscripción">
               <option value="has_sub">Con plan activo</option>
+              <option value="expired">Plan vencido</option>
               <option value="sub_profesional">Plan Profesional</option>
               <option value="sub_profesional_plus">Plan Profesional Plus (Premium)</option>
               <option value="sub_business">Plan Business (Premium)</option>
@@ -313,6 +296,10 @@
             <optgroup label="Email">
               <option value="unconfirmed">Sin confirmar email</option>
               <option value="confirmed">Email confirmado</option>
+            </optgroup>
+            <optgroup label="Cuenta">
+              <option value="suspended">Suspendidos</option>
+              <option value="team">Equipo (administradores)</option>
             </optgroup>
           </select>
           <button class="btn btn-primary" id="usersDeleteSelected" hidden style="background:#141d1c;border-color:#141d1c;">
@@ -513,6 +500,19 @@
               </div>
 
               <div class="form-field">
+                <label for="recargaMetodo">Cómo pagó</label>
+                <select id="recargaMetodo" class="admin-select">
+                  <option value="yape">Yape</option>
+                  <option value="plin">Plin</option>
+                  <option value="efectivo">Efectivo</option>
+                  <option value="transferencia">Transferencia</option>
+                  <option value="mercadopago">Mercado Pago</option>
+                  <option value="otro">Otro</option>
+                </select>
+                <small class="field-hint">Queda guardado con la venta: es lo que luego cuadra la pestaña Compras.</small>
+              </div>
+
+              <div class="form-field">
                 <label for="recargaMotivo">Motivo (opcional)</label>
                 <input type="text" id="recargaMotivo" class="input" placeholder="Regalo, compensación...">
               </div>
@@ -547,10 +547,13 @@
           </div>
           <select id="comprasMethodFilter" class="admin-select">
             <option value="all">Todos los métodos</option>
+            <option value="mercadopago">Mercado Pago</option>
             <option value="yape">Yape</option>
             <option value="plin">Plin</option>
-            <option value="visa">Visa/Mastercard</option>
+            <option value="efectivo">Efectivo</option>
             <option value="transferencia">Transferencia</option>
+            <option value="whatsapp">WhatsApp (sin detallar)</option>
+            <option value="otro">Otro</option>
           </select>
           <div class="admin-stats-inline">
             <span>Total: <strong id="comprasTotalMonto">S/ 0</strong></span>
@@ -561,7 +564,7 @@
           <table class="admin-table">
             <thead>
               <tr>
-                <th>Fecha</th><th>Usuario</th><th>Paquete</th><th>Monto</th><th>Método</th><th>Estado</th>
+                <th>Fecha</th><th>Usuario</th><th>Concepto</th><th>Monto</th><th>Método</th><th>Estado</th>
               </tr>
             </thead>
             <tbody id="comprasTableBody"></tbody>
@@ -1153,22 +1156,22 @@
 <script src="js/admin/data.js?v=23"></script>
 <script src="js/admin/auth.js?v=26"></script>
 <script src="js/admin/dashboard.js?v=24"></script>
-<script src="js/admin/revenue.js?v=24"></script>
-<script src="js/admin/users.js?v=27"></script>
+<script src="js/admin/revenue.js?v=25"></script>
+<script src="js/admin/users.js?v=29"></script>
 <script src="js/admin/addusers.js?v=22"></script>
-<script src="js/admin/recargas.js?v=22"></script>
-<script src="js/admin/compras.js?v=23"></script>
+<script src="js/admin/recargas.js?v=23"></script>
+<script src="js/admin/compras.js?v=24"></script>
 <script src="js/admin/consultas.js?v=23"></script>
 <script src="js/admin/mercadopago.js?v=24"></script>
 <script src="js/admin/team.js?v=24"></script>
-<script src="js/admin/anti-abuse.js?v=23"></script>
+<script src="js/admin/anti-abuse.js?v=24"></script>
 <script src="js/admin/audit.js?v=23"></script>
 <script src="js/admin/broadcasts.js?v=24"></script>
 <script src="js/admin/maintenance.js?v=3"></script>
 <script src="js/admin/aviso-clientes.js?v=14"></script>
 <script src="js/admin/carteles.js?v=2"></script>
 <script src="js/modules/idle-logout.js?v=2"></script>
-<script src="js/admin/cabecera.js?v=1"></script>
+<script src="js/admin/cabecera.js?v=2"></script>
 <script src="js/admin/main.js?v=29"></script>
 
 </body>

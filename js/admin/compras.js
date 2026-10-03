@@ -13,16 +13,52 @@
 
   function getSB() { return (window.Consultia && window.Consultia.supabase) || null; }
 
+  /* QUÉ ES UNA COMPRA
+
+     Dinero que entró. Dos orígenes y nada más:
+
+       - payments_mp           → lo que pagó el cliente por Mercado Pago.
+       - transactions type='sale' → la venta que anota el administrador
+                                 cuando cobra por fuera (Yape, Plin,
+                                 efectivo, transferencia). Lleva el
+                                 importe en amount_pen y, desde ahora,
+                                 el método con el que se cobró.
+
+     Antes esta pantalla listaba los `admin_adjust`, que son el apunte de
+     los CRÉDITOS, no del dinero: su columna de soles iba siempre a 0 y
+     el total decía S/ 0 aunque el día hubiera sido bueno. Y el filtro
+     ofrecía Yape, Plin y Visa cuando en la base todo se guardaba como
+     «whatsapp», así que no devolvía ni una fila. Ahora esta pantalla
+     suma exactamente lo mismo que «Ingresos del mes». */
   var METHOD_LABELS = {
-    mercadopago: 'Mercado Pago',
-    whatsapp: 'WhatsApp (Yape/Plin)',
-    manual: 'Ajuste manual',
-    yape: 'Yape', plin: 'Plin', visa: 'Visa/Mastercard', transferencia: 'Transferencia'
+    mercadopago:   'Mercado Pago',
+    yape:          'Yape',
+    plin:          'Plin',
+    efectivo:      'Efectivo',
+    transferencia: 'Transferencia',
+    whatsapp:      'WhatsApp (sin detallar)',
+    otro:          'Otro',
+    manual:        'Manual',
+    visa:          'Visa/Mastercard'
   };
 
   var cachedRows = [];
   var realtimeChannel = null;
   var refreshTimer = null;
+
+  /* La descripción que guarda la base viene en jerga: «Venta credits
+     (pk-500) · regalo». Aquí se traduce a algo que se pueda leer. */
+  function conceptoDeVenta(t) {
+    var d = t.description || '';
+    var esPlan = d.indexOf('subscription') !== -1;
+    var ref = t.reference || '';
+    var nota = '';
+    var corte = d.indexOf(' · ');
+    if (corte !== -1) nota = d.slice(corte + 3);
+    return (esPlan ? 'Plan por días' : 'Créditos') +
+           (ref ? ' · ' + ref : '') +
+           (nota ? ' · ' + nota : '');
+  }
 
   async function loadCompras() {
     var sb = getSB();
@@ -33,50 +69,47 @@
       .order('created_at', { ascending: false })
       .limit(300);
 
-    var qManual = sb.from('transactions')
-      .select('id, user_id, type, amount, description, payment_method, reference, created_at')
-      .eq('type', 'admin_adjust')
-      .gt('amount', 0)
+    var qVentas = sb.from('transactions')
+      .select('id, user_id, type, amount, amount_pen, description, payment_method, reference, created_at')
+      .not('amount_pen', 'is', null)
       .order('created_at', { ascending: false })
-      .limit(200);
+      .limit(300);
 
-    var [mp, manual] = await Promise.all([qMp, qManual]);
+    var [mp, ventas] = await Promise.all([qMp, qVentas]);
+    if (mp.error) console.error('[compras] payments_mp:', mp.error.message);
+    if (ventas.error) console.error('[compras] transactions:', ventas.error.message);
 
     var rows = [];
 
     (mp.data || []).forEach(function (p) {
       rows.push({
-        kind: 'mp',
         id: 'mp-' + p.id,
         created_at: p.created_at,
         user_id: p.user_id,
         user_email: p.user_email,
-        credits: p.credits,
+        concepto: (p.credits ? p.credits + ' créditos' : 'Compra') + (p.plan_id ? ' · ' + p.plan_id : ''),
         amount: parseFloat(p.amount) || 0,
         method: 'mercadopago',
-        method_detail: METHOD_LABELS.mercadopago + (p.mp_payment_method ? ' · ' + p.mp_payment_method : ''),
-        status: p.status === 'approved' ? 'completed' : (p.status || 'pending'),
-        plan_id: p.plan_id
+        method_detail: p.mp_payment_method || '',
+        status: p.status === 'approved' ? 'completed' : (p.status || 'pending')
       });
     });
 
-    (manual.data || []).forEach(function (t) {
+    (ventas.data || []).forEach(function (t) {
       rows.push({
-        kind: 'manual',
         id: 'tx-' + t.id,
         created_at: t.created_at,
         user_id: t.user_id,
         user_email: '',
-        credits: t.amount,
-        amount: 0,
-        method: t.payment_method || 'manual',
-        method_detail: METHOD_LABELS[t.payment_method] || 'Manual',
-        status: 'completed',
-        plan_id: t.description || ''
+        concepto: conceptoDeVenta(t),
+        amount: parseFloat(t.amount_pen) || 0,
+        method: t.payment_method || 'otro',
+        method_detail: '',
+        status: 'completed'
       });
     });
 
-    // Resolver nombres de los user_id que no tengan email
+    // Resolver nombre y correo de cada user_id
     var ids = {};
     rows.forEach(function (r) { if (r.user_id) ids[r.user_id] = 1; });
     var nameById = {}, emailById = {};
@@ -107,7 +140,7 @@
     var rows = cachedRows.filter(function (c) {
       if (method !== 'all' && c.method !== method) return false;
       if (search) {
-        var hay = (c._user_name + ' ' + c._user_email + ' ' + (c.plan_id || '')).toLowerCase();
+        var hay = (c._user_name + ' ' + c._user_email + ' ' + (c.concepto || '')).toLowerCase();
         if (hay.indexOf(search) === -1) return false;
       }
       return true;
@@ -149,9 +182,10 @@
       return '<tr>' +
         '<td>' + A.fmtDate(c.created_at) + '</td>' +
         '<td>' + userCell + '</td>' +
-        '<td>' + (c.credits || 0) + ' créditos</td>' +
+        '<td>' + escapeHtml(c.concepto || '—') + '</td>' +
         '<td><strong>' + monto + '</strong></td>' +
-        '<td><span class="chip">' + escapeHtml(METHOD_LABELS[c.method] || c.method) + '</span></td>' +
+        '<td><span class="chip">' + escapeHtml(METHOD_LABELS[c.method] || c.method) + '</span>' +
+          (c.method_detail ? '<small class="ad-sub">' + escapeHtml(c.method_detail) + '</small>' : '') + '</td>' +
         '<td>' + statusChip + '</td>' +
       '</tr>';
     }).join('');

@@ -223,16 +223,21 @@
         txRes.data.forEach(function (t) {
           if (!t.user_id) return;
           // MP: pagos reales por Mercado Pago (purchase / subscription)
-          var isMpPay = (t.type === 'purchase' || t.type === 'subscription')
+          var isMpPay = (t.type === 'purchase' || t.type === 'subscription' || t.type === 'sale')
                         && t.payment_method === 'mercadopago';
           if (isMpPay) paidMpSet.add(t.user_id);
 
           // Admin: cualquier ajuste manual hecho por un admin
           //   - admin_adjust: lo emite la RPC admin_adjust_credits
           //   - whatsapp/manual: rutas alternas heredadas
+          /* 'sale' es la venta que anota el administrador cuando cobra
+             por fuera (Yape, Plin, efectivo, transferencia). Antes todas
+             se guardaban como 'whatsapp' y aquí solo se miraban dos
+             métodos, así que quien pagaba por Yape no contaba como
+             cliente de pago en ninguna ficha. */
           var isAdminPay = (t.type === 'admin_adjust' && t.amount > 0)
-                           || ((t.type === 'purchase' || t.type === 'subscription')
-                               && (t.payment_method === 'whatsapp' || t.payment_method === 'manual'));
+                           || ((t.type === 'purchase' || t.type === 'subscription' || t.type === 'sale')
+                               && t.payment_method !== 'mercadopago');
           if (isAdminPay) paidAdminSet.add(t.user_id);
 
           // Consumos: aceptamos los dos nombres históricos
@@ -327,37 +332,26 @@
     return filtered;
   }
 
-  function updateStatCards() {
-    var totalEl = document.getElementById('usersStatTotal');
-    var mpEl = document.getElementById('usersStatPaidMp');
-    var adminEl = document.getElementById('usersStatPaidAdmin');
-    var freeEl = document.getElementById('usersStatUsedFree');
-    if (!totalEl) return;
-    var total = cachedUsers.length;
-    var mp = 0, admin = 0, freeUsed = 0;
-    cachedUsers.forEach(function (u) {
-      if (u._paid_mp) mp++;
-      if (u._paid_admin) admin++;
-      if (u._used_free) freeUsed++;
-    });
-    totalEl.textContent = total;
-    mpEl.textContent = mp;
-    adminEl.textContent = admin;
-    freeEl.textContent = freeUsed;
-  }
-
   /* ── Las fichas de filtro, con su cuenta ──────────────────────
      Siete atajos a lo que se mira a diario. La cuenta se saca de la
      lista entera, no de lo que se ve: decir «Suspendidos 0» cuando hay
      tres escondidos por el buscador sería mentir. */
+  /* CADA FICHA TIENE QUE EXISTIR EN EL DESPLEGABLE.
+
+     Al pulsarla se escribe su clave en el <select>, y «Plan vencido»,
+     «Suspendidos» y «Equipo» no estaban entre sus opciones: el navegador
+     rechazaba el valor, el select se quedaba vacío, el filtro no casaba
+     con ninguna regla y la tabla devolvía los 574 usuarios. Es decir:
+     pulsabas «Suspendidos 1» y salían todos. Ya están las tres. */
   var FICHAS = [
-    ['all',         'Todos',              function () { return true; }],
-    ['has_sub',     'Con plan',           function (u) { return isSubscriptionActive(u); }],
-    ['expired',     'Plan vencido',       function (u) { return u.subscription_expires_at && new Date(u.subscription_expires_at).getTime() <= Date.now(); }],
-    ['paid_admin',  'Activados por admin',function (u) { return u._paid_admin; }],
-    ['unconfirmed', 'Pendientes',         function (u) { return !isEmailConfirmed(u); }],
-    ['suspended',   'Suspendidos',        function (u) { return u.status === 'suspended'; }],
-    ['team',        'Equipo',             function (u) { return u.is_admin; }]
+    ['all',         'Todos',               function () { return true; }],
+    ['has_sub',     'Con plan',            function (u) { return isSubscriptionActive(u); }],
+    ['expired',     'Plan vencido',        function (u) { return u.subscription_expires_at && new Date(u.subscription_expires_at).getTime() <= Date.now(); }],
+    ['paid_mp',     'Pagaron por MP',      function (u) { return u._paid_mp; }],
+    ['paid_admin',  'Activados por admin', function (u) { return u._paid_admin; }],
+    ['unconfirmed', 'Sin confirmar',       function (u) { return !isEmailConfirmed(u); }],
+    ['suspended',   'Suspendidos',         function (u) { return u.status === 'suspended'; }],
+    ['team',        'Equipo',              function (u) { return u.is_admin; }]
   ];
 
   function pintarFichas() {
@@ -378,8 +372,6 @@
     var body = document.getElementById('usersTableBody');
     var empty = document.getElementById('usersEmpty');
     var wrap = document.querySelector('#adminView-users .admin-table-wrap');
-
-    updateStatCards();
 
     // Mostrar/ocultar columna de selección según el filtro activo
     var selectMode = isSelectModeActive();
@@ -601,9 +593,9 @@
       + '    <div class="modal-body">'
       + '      <div class="ac-user-info" id="addCreditsUserInfo" style="padding:12px 14px;background:var(--c-bg);border-radius:8px;margin-bottom:14px;font-size:13px;color:var(--c-muted);"></div>'
       + '      <div class="ac-mode-tabs" role="tablist" style="display:flex;gap:4px;background:var(--c-bg);padding:4px;border-radius:10px;margin-bottom:14px;">'
-      + '        <button type="button" class="ac-mode-tab is-active" data-mode="add" role="tab" aria-selected="true" style="flex:1;padding:9px 8px;border:none;background:var(--c-surface);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--c-primary);box-shadow:0 1px 2px rgba(0,0,0,.06);">+ Sumar</button>'
-      + '        <button type="button" class="ac-mode-tab" data-mode="sub" role="tab" aria-selected="false" style="flex:1;padding:9px 8px;border:none;background:transparent;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--c-muted);">− Restar</button>'
-      + '        <button type="button" class="ac-mode-tab" data-mode="clear" role="tab" aria-selected="false" style="flex:1;padding:9px 8px;border:none;background:transparent;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;color:var(--c-muted);">Vaciar todo</button>'
+      + '        <button type="button" class="ac-mode-tab is-active" data-mode="add" role="tab" aria-selected="true" style="flex:1;padding:9px 8px;border:none;background:var(--c-surface);border-radius:7px;font-size:13px;font-weight:400;cursor:pointer;color:var(--c-primary);box-shadow:0 1px 2px rgba(0,0,0,.06);">+ Sumar</button>'
+      + '        <button type="button" class="ac-mode-tab" data-mode="sub" role="tab" aria-selected="false" style="flex:1;padding:9px 8px;border:none;background:transparent;border-radius:7px;font-size:13px;font-weight:400;cursor:pointer;color:var(--c-muted);">− Restar</button>'
+      + '        <button type="button" class="ac-mode-tab" data-mode="clear" role="tab" aria-selected="false" style="flex:1;padding:9px 8px;border:none;background:transparent;border-radius:7px;font-size:13px;font-weight:400;cursor:pointer;color:var(--c-muted);">Vaciar todo</button>'
       + '      </div>'
       + '      <div class="form-field" id="acAmountField"><label for="acAmount" id="acAmountLabel">Cantidad a sumar</label><input type="number" id="acAmount" class="input" min="1" step="1" placeholder="Ej: 200" required></div>'
       + '      <div id="acClearNotice" hidden style="padding:12px 14px;background:#f5f5f5;border:1px solid #DCDCDC;color:#141d1c;border-radius:8px;font-size:13px;margin-bottom:14px;">Esta acción <strong>vaciará por completo</strong> los créditos del usuario (saldo quedará en <strong>0</strong>). El movimiento queda registrado en el historial.</div>'
@@ -1034,6 +1026,17 @@
       + '        <label for="userPlanSelect">Plan</label>'
       + '        <select id="userPlanSelect" class="admin-select" style="width:100%;"></select>'
       + '      </div>'
+      + '      <div class="field" style="margin-top:12px;">'
+      + '        <label for="userPlanMetodo">Cómo pagó</label>'
+      + '        <select id="userPlanMetodo" class="admin-select" style="width:100%;">'
+      + '          <option value="yape">Yape</option>'
+      + '          <option value="plin">Plin</option>'
+      + '          <option value="efectivo">Efectivo</option>'
+      + '          <option value="transferencia">Transferencia</option>'
+      + '          <option value="mercadopago">Mercado Pago</option>'
+      + '          <option value="otro">Otro</option>'
+      + '        </select>'
+      + '      </div>'
       + '      <p class="field-hint" id="userPlanHint" style="margin-top:10px;"></p>'
       + '    </div>'
       + '    <footer class="modal-footer">'
@@ -1138,15 +1141,36 @@
     if (btn) { btn.disabled = true; btn.dataset.orig = btn.textContent; btn.textContent = 'Otorgando…'; }
 
     try {
+      var metodoEl = document.getElementById('userPlanMetodo');
+      var metodo = (metodoEl && metodoEl.value) || 'whatsapp';
+
+      /* Sin p_amount_pen: con importe, la RPC anota la venta ella misma y
+         la marca «whatsapp» pase lo que pase. Se anota aquí debajo con el
+         método elegido. Sigue siendo una sola fila de venta. */
       var res = await sb.rpc('admin_grant_subscription', {
         target_user_id: u.id,
         p_tier: plan.tier,
         p_days: plan.days,
         p_plan_id: plan.id,
         p_note: 'Plan otorgado desde el panel',
-        p_amount_pen: plan.price ? parseFloat(plan.price) : null
+        p_amount_pen: null
       });
       if (res.error) throw res.error;
+
+      if (plan.price) {
+        try {
+          await sb.rpc('admin_record_sale', {
+            target_user_id: u.id,
+            p_amount_pen: parseFloat(plan.price),
+            p_kind: 'subscription',
+            p_plan_id: plan.id,
+            p_note: 'Plan otorgado desde el panel',
+            p_method: metodo
+          });
+        } catch (saleErr) {
+          console.warn('No se pudo registrar el ingreso S/ del plan:', saleErr);
+        }
+      }
 
       var TIER = { profesional: 'Profesional', profesional_plus: 'Profesional Plus', business: 'Business' };
       if (Consultia.toast) Consultia.toast({

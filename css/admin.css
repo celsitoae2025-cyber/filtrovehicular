@@ -50,12 +50,12 @@
   align-items: center;
   gap: 6px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 400;
   color: #fff;
 }
 .admin-brand-badge {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: .5px;
   background: var(--c-accent);
   color: #fff;
@@ -202,7 +202,7 @@
 .admin-overlay.show { opacity: 1; pointer-events: auto; }
 .admin-h1 {
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-primary);
   margin: 0;
   letter-spacing: -.2px;
@@ -222,7 +222,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  font-weight: 400;
   font-size: 13px;
 }
 
@@ -282,7 +282,7 @@
 .kpi-ico svg { width: 15px; height: 15px; }
 .kpi-value {
   font-size: 26px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-primary);
   line-height: 1.1;
   letter-spacing: -.5px;
@@ -318,7 +318,7 @@
 }
 .admin-panel-head h2 {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-primary);
   margin: 0;
 }
@@ -337,7 +337,7 @@
   justify-content: space-between;
   font-size: 13px;
 }
-.bar-row-head strong { color: var(--c-primary); font-weight: 700; text-transform: capitalize; }
+.bar-row-head strong { color: var(--c-primary); font-weight: 400; text-transform: capitalize; }
 .bar-row-head span { color: var(--c-muted); }
 .bar-track {
   height: 6px;
@@ -370,7 +370,7 @@
   flex-shrink: 0;
 }
 .activity-text { flex: 1; min-width: 0; }
-.activity-text strong { font-weight: 700; color: var(--c-primary); }
+.activity-text strong { font-weight: 400; color: var(--c-primary); }
 .activity-text span { color: var(--c-muted); }
 .activity-time {
   font-size: 13px;
@@ -384,7 +384,7 @@
 }
 .activity-time strong {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-text);
 }
 .activity-time small {
@@ -417,7 +417,7 @@
 }
 .users-stat-value {
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-primary);
 }
 @media (max-width: 720px) {
@@ -515,7 +515,7 @@
 }
 .admin-stats-inline strong {
   color: var(--c-primary);
-  font-weight: 700;
+  font-weight: 400;
   margin-left: 4px;
 }
 
@@ -548,8 +548,30 @@
    rojo queda reservado para lo que destruye algo.
    Basta con redefinir las dos variables: lo que las usaba cambia solo.
 ============================================================ */
-.admin-app, .admin-login { --c-accent: #141d1c; --c-teal-soft: #f1f3f1; }
+.admin-app, .admin-login {
+  --c-accent: #141d1c;
+  --c-teal-soft: #f1f3f1;
+  /* botones.css pinta .btn-primary con var(--btn-verde) y !important:
+     cambiando la variable cambian todos sin pelear con el !important. */
+  --btn-verde: #141d1c;
+  --btn-verde-encima: #2a3b38;
+  --btn-verde-pulsado: #0a1211;
+  --btn-tinta: #ffffff;
+}
 .admin-app .chip-ok { background: #141d1c; color: #fff; }
+
+/* ── LO DE ARRIBA NO SE MUEVE ──
+   La barra negra y las pestañas se quedan pegadas al borde y la cabecera
+   de la tabla se para justo debajo de ellas. La altura real la mide
+   cabecera.js y la deja en --ad-fijo: si cambia el tamaño de letra o se
+   parte en dos líneas, el hueco sigue siendo el correcto. */
+.admin-app { --ad-cab: 64px; --ad-fijo: 113px; }
+.ad-cab {
+  position: sticky; top: 0; z-index: 20;
+}
+.ad-pestanas {
+  position: sticky; top: var(--ad-cab); z-index: 19;
+}
 
 /* ── La cabecera de la tabla no se va al desplazar ──
    Para que «sticky» mire a la página, la caja de la tabla no puede ser
@@ -557,7 +579,7 @@
    estrecha y la tabla no cabe a lo ancho. */
 .admin-table thead th {
   position: sticky;
-  top: 0;
+  top: var(--ad-fijo, 113px);
   z-index: 3;
   background: var(--c-bg, #f4f6f4);
 }
@@ -581,7 +603,7 @@
   text-align: left;
   padding: 12px 16px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-muted);
   text-transform: uppercase;
   letter-spacing: .5px;
@@ -610,10 +632,10 @@
   color: #fff;
   display: flex; align-items: center; justify-content: center;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
 }
 .cell-user .user-info { display: flex; flex-direction: column; }
-.cell-user .user-info strong { font-size: 13px; font-weight: 700; }
+.cell-user .user-info strong { font-size: 13px; font-weight: 400; }
 .cell-user .user-info span { font-size: 13px; color: var(--c-muted); }
 
 .cell-actions {
@@ -630,7 +652,7 @@
   padding: 2px 9px;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: .3px;
   text-transform: uppercase;
   background: var(--c-bg);
@@ -735,7 +757,7 @@
 .bc-preview-content strong {
   display: block;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 400;
   margin-bottom: 4px;
   color: inherit;
   word-wrap: break-word;
@@ -756,7 +778,7 @@
   padding: 3px 9px;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: .2px;
 }
 .bc-chip-info    { background: var(--c-teal-soft, #edf7d9); color: var(--c-accent); }
@@ -881,7 +903,7 @@
 }
 .block-head h2 {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-primary);
   margin: 0;
   letter-spacing: -.1px;
@@ -891,7 +913,7 @@
   color: var(--c-muted);
   letter-spacing: .6px;
   text-transform: uppercase;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 /* Formulario dentro del card */
@@ -903,7 +925,7 @@
 .form-field { display: flex; flex-direction: column; gap: 8px; }
 .form-field label {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-primary);
   letter-spacing: .1px;
 }
@@ -970,13 +992,13 @@
   color: #fff;
   display: flex; align-items: center; justify-content: center;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   flex-shrink: 0;
 }
 .user-pill-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .user-pill-text strong {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-primary);
 }
 .user-pill-text span {
@@ -1036,13 +1058,13 @@
   color: #fff;
   display: flex; align-items: center; justify-content: center;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   flex-shrink: 0;
 }
 .entry-user-info { display: flex; flex-direction: column; min-width: 0; }
 .entry-user-info strong {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1057,7 +1079,7 @@
 }
 .entry-credits {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-accent);
   background: var(--c-teal-soft);
   padding: 5px 12px;
@@ -1115,18 +1137,18 @@
   text-transform: uppercase;
   letter-spacing: .5px;
   margin-bottom: 3px;
-  font-weight: 700;
+  font-weight: 400;
 }
 .user-detail-cell .value {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-primary);
   word-break: break-word;
 }
 .user-detail-section { margin-top: 14px; }
 .user-detail-section h4 {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-muted);
   text-transform: uppercase;
   letter-spacing: .5px;
@@ -1146,7 +1168,7 @@
 .sub-card-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .sub-card-info .sub-tier {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 400;
   color: #141d1c;
   letter-spacing: -.01em;
 }
@@ -1158,7 +1180,7 @@
   flex-shrink: 0;
   padding: 7px 12px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
 }
 @media (max-width: 480px) {
   .sub-card { flex-direction: column; align-items: stretch; }
@@ -1204,13 +1226,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  font-weight: 400;
   font-size: 15px;
   letter-spacing: -.5px;
   flex-shrink: 0;
 }
 .mp-conn-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-.mp-conn-info strong { font-size: 15px; font-weight: 700; color: var(--c-primary); }
+.mp-conn-info strong { font-size: 15px; font-weight: 400; color: var(--c-primary); }
 .mp-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -1229,11 +1251,11 @@
   color: var(--c-muted);
   text-transform: uppercase;
   letter-spacing: .5px;
-  font-weight: 700;
+  font-weight: 400;
 }
 .mp-stat strong {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--c-primary);
 }
 
@@ -1248,7 +1270,7 @@
   padding: 2px 8px;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: .3px;
   text-transform: uppercase;
 }
@@ -1264,7 +1286,7 @@
   padding: 3px 9px;
   border-radius: 8px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   color: #fff;
   letter-spacing: .3px;
 }
@@ -1403,7 +1425,7 @@
   padding: 2px 10px;
   border-radius: 999px;
   font-size: .8rem;
-  font-weight: 700;
+  font-weight: 400;
   background: #f5f5f5;
   color: #141d1c;
   border: 1px solid #f5f5f5;
@@ -1482,7 +1504,7 @@ button.kpi.kpi-clickable:focus-visible {
 
 .admin-login-mark {
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: -.4px;
   color: #141d1c;
 }
@@ -1500,7 +1522,7 @@ button.kpi.kpi-clickable:focus-visible {
 .admin-login-title {
   margin: 0 0 6px;
   font-size: 19px;
-  font-weight: 700;
+  font-weight: 400;
   color: #141d1c;
 }
 .admin-login-sub {
@@ -1514,7 +1536,7 @@ button.kpi.kpi-clickable:focus-visible {
 .admin-login-label {
   margin-bottom: 6px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   text-align: left;
   color: #141d1c;
 }
@@ -1712,7 +1734,7 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
 .ad-volver svg, .ad-salir svg { width: 20px; height: 20px; }
 .ad-volver:hover, .ad-salir:hover { background: rgba(255, 255, 255, .12); color: #fff; }
 .ad-cab-titulo {
-  margin: 0; font-size: 15px; font-weight: 700;
+  margin: 0; font-size: 15px; font-weight: 400;
   letter-spacing: .14em; text-transform: uppercase;
 }
 .ad-cab-dcha { margin-left: auto; display: flex; align-items: center; gap: 12px; }
@@ -1732,7 +1754,7 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
 }
 .ad-cifra strong {
   display: block; margin: 6px 0 4px;
-  font-size: 30px; font-weight: 700; letter-spacing: -.5px;
+  font-size: 30px; font-weight: 400; letter-spacing: -.5px;
   color: var(--c-text, #141d1c); line-height: 1.1;
 }
 .ad-cifra small { font-size: 13px; color: var(--c-muted, #5a6b6a); }
@@ -1745,7 +1767,7 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
 .ad-pestana {
   flex: 1 1 0; min-width: 120px;
   padding: 16px 12px; border: 0; background: transparent;
-  font: inherit; font-size: 13px; font-weight: 700;
+  font: inherit; font-size: 13px; font-weight: 400;
   letter-spacing: .1em; text-transform: uppercase;
   color: var(--c-muted, #5a6b6a); cursor: pointer; white-space: nowrap;
 }
@@ -1800,13 +1822,13 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
 /* La segunda línea de una celda: los días que quedan, el nº de
    consultas. Pequeña y gris, para que el dato grande siga mandando. */
 /* El dato grande de una celda: el saldo, el nombre del plan. */
-.ad-fuerte { display: block; font-size: 15px; font-weight: 700; color: var(--c-text, #141d1c); }
+.ad-fuerte { display: block; font-size: 15px; font-weight: 400; color: var(--c-text, #141d1c); }
 .ad-sub { display: block; margin-top: 2px; font-size: 12px; color: var(--c-muted, #5a6b6a); }
 .ad-sub-rojo { color: #c2410c; }
-.ad-nada { color: var(--c-border, #c9d2cd); }
+.ad-nada { color: #8a9794; }
 
 .ad-fichas-filtro { padding: 0 0 14px; }
-.ad-ficha b { font-weight: 700; color: inherit; opacity: .6; margin-left: 2px; }
+.ad-ficha b { font-weight: 400; color: inherit; opacity: .6; margin-left: 2px; }
 
 /* ── Ficha del usuario ────────────────────────────────────────
    Tres bloques con el mismo ritmo: rótulo, rejilla de datos, y a
@@ -1815,7 +1837,7 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
 .fi-bloque { padding: 18px 0; border-top: 1px solid var(--c-border, #e1e6e3); }
 .fi-bloque:first-child { border-top: 0; padding-top: 0; }
 .fi-rot {
-  margin: 0 0 12px; font-size: 12px; font-weight: 700;
+  margin: 0 0 12px; font-size: 12px; font-weight: 400;
   letter-spacing: .1em; text-transform: uppercase; color: var(--c-muted, #5a6b6a);
 }
 .fi-rot small {
@@ -1827,7 +1849,7 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
 .fi-dato { min-width: 0; }
 .fi-dato span { display: block; font-size: 12px; color: var(--c-muted, #5a6b6a); }
 .fi-dato strong {
-  display: block; margin-top: 3px; font-size: 16px; font-weight: 700;
+  display: block; margin-top: 3px; font-size: 16px; font-weight: 400;
   color: var(--c-text, #141d1c);
   /* Un correo largo partía por la mitad de una palabra en mitad de la
      celda; que rompa solo cuando no quepa entero. */
@@ -1856,3 +1878,14 @@ a.cartel-fila-enlace:hover { text-decoration: underline; }
 #userDetailModal .modal-footer { flex-wrap: wrap; }
 /* «Cerrar» a la izquierda; las acciones, a la derecha. */
 #userDetailModal .modal-footer > :first-child { margin-right: auto; }
+
+/* ── SIN NEGRITAS ──
+   El panel entero iba en 700: nombres, correos, cifras, rótulos y hasta
+   las cabeceras de la tabla. Cuando todo grita, no destaca nada y la
+   pantalla se lee pesada. Queda un solo peso; lo que manda lo marca el
+   tamaño y el color, no el grosor. Esta regla recoge los <strong> que
+   no tienen estilo propio y vendrían en negrita del navegador. */
+.admin-app strong, .admin-app b, .admin-app th { font-weight: 400; }
+/* botones.css pone 700 con !important en .btn y .btn-ghost; aquí no. */
+.admin-app .btn, .admin-app .btn-ghost, .admin-app button,
+.admin-login .btn, .admin-login .btn-ghost { font-weight: 400 !important; }

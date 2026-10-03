@@ -172,7 +172,7 @@
           '<td>' + sourceBadge + '</td>' +
           '<td>' + kindLabel + '</td>' +
           '<td>' + escapeHtml(r.description) + '</td>' +
-          '<td style="text-align:right;font-weight:600">' + fmtMoney(r.amount) + '</td>' +
+          '<td style="text-align:right;font-weight:400">' + fmtMoney(r.amount) + '</td>' +
         '</tr>'
       );
     }).join('');
