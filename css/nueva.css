@@ -619,6 +619,41 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
 .nv-puerta-caja h1 { margin: 0; font-size: 24px; }
 .nv-etiqueta { display: flex; flex-direction: column; gap: 6px; font-size: 15px; font-weight: 400; }
 .nv-etiqueta .nv-campo { font-weight: 400; }
+
+/* LOS CAMPOS DEL ACCESO, A ESCALA DEL CUADRO
+   52 px de alto y 14 de redondeo es la medida de los campos del buscador
+   de la plataforma, donde hay uno o dos y mucho sitio. Aquí hay cuatro
+   seguidos dentro de un cuadro de 420: se comían la pantalla y el
+   redondeo los dejaba casi en pastilla, justo después de bajar el del
+   cuadro a la mitad. Bajan a 44 y a 8, en proporción con lo demás. */
+.nv-puerta-caja { gap: 12px; }
+
+/* ── CREA TU CUENTA, EN DOS COLUMNAS ──
+   Cuatro campos en fila dentro de un cuadro de 420 px daban una columna
+   de casi 850 px de alto: había que desplazarse para llegar al botón y
+   el conjunto se leía como un formulario de tramite, no como una
+   invitación a registrarse.
+
+   Nombre y teléfono comparten fila —son cortos—; correo y contraseña
+   van enteros, que son largos. Con eso el cuadro baja una fila entera y
+   queda cuadrado.
+
+   El :not([hidden]) no es un adorno: display:grid en un #id le ganaría a
+   [hidden]{display:none} y el formulario se vería siempre, encima del
+   de acceso. */
+#nvRegistro:not([hidden]) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 14px;
+  align-content: start;
+}
+#nvRegistro > * { grid-column: 1 / -1; }
+#nvRegistro > .nv-mitad { grid-column: auto; }
+.nv-puerta-caja .nv-campo {
+  min-height: 44px;
+  font-size: 16px;
+  border-radius: 8px;
+}
 .nv-marcar { display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 15px; cursor: pointer; }
 .nv-marcar input { width: 20px; height: 20px; accent-color: var(--nv-oscuro); }
 /* EL ANTI-BOT: CENTRADO Y CON SU HUECO RESERVADO

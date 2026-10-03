@@ -59,7 +59,7 @@
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
 <!-- La ventana del Filtro Vehicular Completo, la de siempre. -->
 <link rel="stylesheet" href="css/oferta.css?v=12">
-<link rel="stylesheet" href="css/nueva.css?v=47">
+<link rel="stylesheet" href="css/nueva.css?v=49">
 </head>
 <body class="nv-body">
 
@@ -139,14 +139,19 @@
     <div class="nv-marca nv-marca-oscura">Plataforma Filtro<br>Vehicular<b>+</b></div>
     <h1>Crea tu cuenta</h1>
     <p class="nv-puerta-nota">Recibes 5 créditos gratis para probar.</p>
-    <label class="nv-etiqueta">Nombre
+    <!-- Nombre y teléfono comparten fila: son cortos y de la misma
+         familia (quién eres y cómo se te llama). El correo y la
+         contraseña van enteros porque son largos. El orden del marcado
+         es el orden en el que se tabula, así que se escribe ya en el
+         orden en que se ve. -->
+    <label class="nv-etiqueta nv-mitad">Nombre
       <input class="nv-campo" type="text" name="full_name" autocomplete="name" required>
+    </label>
+    <label class="nv-etiqueta nv-mitad">Teléfono
+      <input class="nv-campo" type="tel" name="phone" autocomplete="tel" inputmode="tel" required>
     </label>
     <label class="nv-etiqueta">Correo
       <input class="nv-campo" type="email" name="email" autocomplete="email" inputmode="email" required>
-    </label>
-    <label class="nv-etiqueta">Teléfono
-      <input class="nv-campo" type="tel" name="phone" autocomplete="tel" inputmode="tel" required>
     </label>
     <label class="nv-etiqueta">Contraseña
       <input class="nv-campo" type="password" name="password" autocomplete="new-password" minlength="8" required>
