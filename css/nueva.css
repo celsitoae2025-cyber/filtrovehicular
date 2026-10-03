@@ -1012,11 +1012,12 @@ body.nv-puerta-encima { overflow: hidden; }
      (min-height, no height), así que nunca hay nada que cortar. */
   .nv-puerta { overflow: hidden; }
 
-  /* ▸ La foto: marca de agua en blanco y negro, al 20%.
+  /* ▸ La foto: marca de agua en blanco y negro, al 10%.
      Ya no hay velo encima. El velo era un parche: pintar la foto a plena
      fuerza y luego taparla. Lo que se quería es una marca de agua, y eso
-     es la propia foto a un quinto de su fuerza sobre el oscuro de la
-     casa — que es justo el fondo que ya tiene .nv-puerta.
+     es la propia foto a un décimo de su fuerza sobre el oscuro de la
+     casa — que es justo el fondo que ya tiene .nv-puerta. Se adivina el
+     taller y no se lee como una fotografía, que es lo que se buscaba.
 
      En gris, además: en color tiraba a verde y teñía la pantalla entera.
 
@@ -1029,7 +1030,7 @@ body.nv-puerta-encima { overflow: hidden; }
     position: absolute; inset: 0; z-index: 0;
     background: url("../assets/acceso/taller.webp?v=3") center / cover no-repeat;
     filter: grayscale(1) contrast(1.05);
-    opacity: .2;
+    opacity: .1;
     transform: scale(1.08);
     animation: nv-deriva 60s ease-in-out infinite alternate;
     will-change: transform;
