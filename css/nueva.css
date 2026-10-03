@@ -990,37 +990,63 @@ body.nv-puerta-encima { overflow: hidden; }
 
 /* 3/3: quien pidió menos movimiento, sin transiciones ni latidos. */
 @media (prefers-reduced-motion: reduce) {
-  .nv-pantalla, .nv-cargando { animation: none; }
+  .nv-pantalla, .nv-cargando, .nv-puerta::before { animation: none; }
   .nv-body * { transition: none !important; }
 }
 
 /* ── La puerta en ordenador: el cuadro en el centro ───────────
-   La foto del taller ocupa la pantalla entera, en marca de agua bajo un
-   velo oscuro, y el formulario va centrado encima.
+   La foto del taller ocupa la pantalla entera y el formulario va
+   centrado encima.
 
-   Antes eran dos bandas: la foto a la izquierda y el cuadro empujado a
-   una franja de la derecha con un relleno del 72%. Se lee peor —la
-   mirada tiene que irse a un lado— y en pantallas muy anchas el cuadro
-   quedaba descolgado contra el borde. Centrado no hay que acomodar
-   nada: cae donde se mira primero, y la foto sigue viéndose entera
-   alrededor. */
+   Antes eran dos bandas —foto a la izquierda, cuadro empujado a una
+   franja de la derecha—: la mirada tenía que irse a un lado y en
+   pantallas anchas el cuadro quedaba descolgado contra el borde.
+
+   La foto y el velo van en capas separadas (::before la foto, ::after
+   el velo). Antes el velo era un degradado dentro del mismo fondo que
+   la foto, y así no se puede ni quitarle color a una sin quitárselo al
+   otro ni mover una sin mover el otro. */
 @media (min-width: 901px) {
+  /* La foto se mueve despacio dentro de su marco; esto la recorta. El
+     cuadro no corre peligro: .nv-puerta crece con su contenido
+     (min-height, no height), así que nunca hay nada que cortar. */
+  .nv-puerta { overflow: hidden; }
+
+  /* ▸ La foto: en blanco y negro y a la deriva.
+     En color tiraba a verde y teñía toda la pantalla; en gris acompaña
+     y no compite. El movimiento es un minuto entero de ida y otro de
+     vuelta: a esa velocidad no se ve «una animación», se ve que la
+     imagen respira. El scale() de más es el margen por donde se
+     desplaza sin que asomen los bordes. */
   .nv-puerta::before {
     content: "";
-    position: absolute;
-    inset: 0;
-    /* El velo va DELANTE de la foto, en el mismo fondo: una capa menos
-       que pintar y la foto no necesita opacidad propia. */
+    position: absolute; inset: 0; z-index: 0;
     background:
-      linear-gradient(rgba(20, 29, 28, .88), rgba(20, 29, 28, .88)),
       url("../assets/acceso/taller.webp?v=3") center / cover no-repeat,
       var(--nv-oscuro);
+    filter: grayscale(1) contrast(1.05);
+    transform: scale(1.08);
+    animation: nv-deriva 60s ease-in-out infinite alternate;
+    will-change: transform;
   }
-  /* Solo lo que va sobre la foto: al pie legal NO se le toca la
+
+  /* ▸ El velo: menos opaco que antes (.88 → .66), que para eso la foto
+     ya no tiñe de verde. Lo justo para que el blanco del cuadro y del
+     pie legal se lean sin esfuerzo. */
+  .nv-puerta::after {
+    content: "";
+    position: absolute; inset: 0; z-index: 0;
+    background: rgba(20, 29, 28, .66);
+  }
+
+  /* Lo que va por encima de las dos capas. Al pie legal no se le toca la
      posición, que ya es absoluta y se coloca sola. */
   .nv-puerta-caja, .nv-puerta-volver { position: relative; z-index: 1; }
-  /* El pie legal, centrado bajo el cuadro y en blanco: debajo hay foto
-     oscura de lado a lado. */
-  .nv-puerta-legal { left: 0; right: 0; color: rgba(255, 255, 255, .6); }
+  .nv-puerta-legal { left: 0; right: 0; z-index: 1; color: rgba(255, 255, 255, .72); }
   .nv-puerta-legal a { color: #fff; }
+}
+
+@keyframes nv-deriva {
+  from { transform: scale(1.08) translate3d(-1.2%, -0.8%, 0); }
+  to   { transform: scale(1.14) translate3d(1.2%, 0.8%, 0); }
 }
