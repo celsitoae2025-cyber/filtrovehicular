@@ -36,35 +36,80 @@
      ============================================================ */
 
   var catalogo = [];
-  /* Arranca en Vehicular, que es lo que más se consulta; 'Todas' queda
-     al final de la fila, como un desvío, no como la puerta de entrada. */
+  var reporteDestacado = null;
+  var textoBuscado = '';
+  var catalogoExpandido = false;
+  var LIMITE_INICIAL = 6;
+  var datoPendiente = null;
+  /* Arranca en Vehicular; las demás consultas siguen a un filtro o búsqueda. */
   var categoriaActiva = 'filter';
+
+  function esReporteDestacado(c) {
+    var cmd = (c && c.comando) || '';
+    return cmd.indexOf('/mpla') === 0 || cmd.indexOf('/metapla') === 0;
+  }
+  function opcionesCatalogo() {
+    return catalogo.filter(function (c) { return !esReporteDestacado(c); });
+  }
+  function totalCatalogo() { return opcionesCatalogo().length + (reporteDestacado ? 1 : 0); }
+  function costo(c) {
+    if (c.requires_subscription || c.categoria === 'premium') return 'Premium';
+    return c.precio_venta + ' crédito' + (Number(c.precio_venta) === 1 ? '' : 's');
+  }
+  function datoNecesario(c) {
+    return ({
+      placa: 'Por placa', dni: 'Con DNI', telefono: 'Con teléfono',
+      ruc: 'Con RUC', nombre: 'Por nombre', correo: 'Con correo',
+      ce: 'Con carné de extranjería', foto: 'Con foto'
+    })[c.tipo_dato] || 'Dato a ingresar';
+  }
 
   function pintarPestanas() {
     var cuenta = {};
-    catalogo.forEach(function (c) { cuenta[c.categoria] = (cuenta[c.categoria] || 0) + 1; });
+    var opciones = opcionesCatalogo();
+    opciones.forEach(function (c) { cuenta[c.categoria] = (cuenta[c.categoria] || 0) + 1; });
+    if (reporteDestacado) cuenta[reporteDestacado.categoria] = (cuenta[reporteDestacado.categoria] || 0) + 1;
     var claves = NV.ORDEN.filter(function (k) { return cuenta[k]; }).concat(['todas']);
     if (categoriaActiva !== 'todas' && !cuenta[categoriaActiva]) categoriaActiva = 'todas';
     $('nvPestanas').innerHTML = claves.map(function (k) {
-      var n = k === 'todas' ? catalogo.length : cuenta[k];
-      return '<button type="button" role="tab" class="nv-pestana' + (k === categoriaActiva ? ' es-activa' : '') +
-        '" data-cat="' + k + '" aria-selected="' + (k === categoriaActiva) + '">' +
-        '<span>' + esc(k === 'todas' ? 'Todas' : nombreCat(k)) + '</span><b>' + n + '</b></button>';
+      return '<button type="button" class="nv-pestana' + (k === categoriaActiva ? ' es-activa' : '') +
+        '" data-cat="' + k + '" aria-pressed="' + (k === categoriaActiva) + '">' +
+        esc(k === 'todas' ? 'Todas' : nombreCat(k)) + '<b>' + (k === 'todas' ? totalCatalogo() : cuenta[k]) + '</b></button>';
+    }).join('');
+    var cantidadActiva = categoriaActiva === 'todas' ? totalCatalogo() : cuenta[categoriaActiva];
+    $('nvCategoriaActual').textContent = categoriaActiva === 'todas' ? 'Todas las categorías' : nombreCat(categoriaActiva);
+    $('nvCategoriaCuenta').textContent = cantidadActiva + ' consulta' + (cantidadActiva === 1 ? '' : 's');
+    $('nvCategoriaOpciones').innerHTML = ['todas'].concat(claves.filter(function (k) { return k !== 'todas'; })).map(function (k) {
+      var n = k === 'todas' ? totalCatalogo() : cuenta[k];
+      return '<button type="button" class="nv-categoria-opcion' + (k === categoriaActiva ? ' es-activa' : '') +
+        '" data-cat="' + esc(k) + '" aria-pressed="' + (k === categoriaActiva) + '">' +
+        '<span>' + esc(k === 'todas' ? 'Todas' : nombreCat(k)) + '</span><small>' + n + '</small></button>';
     }).join('');
   }
 
   function pintarCatalogo() {
     var q = NV.llano(textoBuscado.trim());
-    var lista = catalogo.filter(function (c) {
+    var reporteVisible = !!(reporteDestacado &&
+      (categoriaActiva === 'todas' || categoriaActiva === reporteDestacado.categoria) &&
+      (!q || NV.llano(reporteDestacado.nombre + ' Reporte completo').indexOf(q) !== -1));
+    var lista = opcionesCatalogo().filter(function (c) {
       if (categoriaActiva !== 'todas' && c.categoria !== categoriaActiva) return false;
       return !q || NV.llano(c.nombre + ' ' + nombreCat(c.categoria)).indexOf(q) !== -1;
     });
-    $('nvCatalogo').innerHTML = lista.length ? lista.map(function (c) {
+    var visibles = catalogoExpandido ? lista : lista.slice(0, LIMITE_INICIAL);
+    var totalResultados = lista.length + (reporteVisible ? 1 : 0);
+    $('nvCatalogoInfo').textContent = totalResultados + ' resultado' + (totalResultados === 1 ? '' : 's');
+    $('ctaReporteBtn').hidden = !reporteVisible;
+    $('nvCatalogo').innerHTML = lista.length ? visibles.map(function (c) {
       return '<button type="button" class="nv-op" data-id="' + esc(c.id) + '">' +
-        '<span class="nv-op-nombre">' + esc(c.nombre) + '</span>' +
-        '<span class="nv-op-precio">' + esc(c.precio_venta) + '</span>' +
+        '<span class="nv-op-principal"><span class="nv-op-nombre">' + esc(c.nombre) + '</span>' +
+          '<span class="nv-op-dato">' + esc(datoNecesario(c)) + '</span></span>' +
+        '<span class="nv-op-precio">' + esc(costo(c)) + '</span>' +
       '</button>';
-    }).join('') : '<p class="nv-vacio">Sin coincidencias.</p>';
+    }).join('') : (reporteVisible ? '' : '<p class="nv-vacio">Sin coincidencias. Prueba otra palabra o categoría.</p>');
+    var mas = $('nvCatalogoMas');
+    mas.hidden = lista.length <= LIMITE_INICIAL;
+    mas.textContent = catalogoExpandido ? 'Ver menos' : 'Ver ' + (lista.length - LIMITE_INICIAL) + ' más';
     marcarElegida();
   }
 
@@ -72,7 +117,7 @@
      se ve de un vistazo qué se va a lanzar. */
   function marcarElegida() {
     var sel = document.querySelector('#filterComboPanel .combo-option.selected');
-    var id = sel ? sel.dataset.id : '';
+    var id = !$('nvConsultaSeleccion').hidden && sel ? sel.dataset.id : '';
     document.querySelectorAll('.nv-op').forEach(function (b) {
       b.classList.toggle('es-elegida', b.dataset.id === id);
     });
@@ -91,16 +136,15 @@
     });
   }
 
-  /* La placa/DNI y el botón «Consultar» solo aparecen DESPUÉS de elegir
-     el tipo de consulta: antes no hay nada que pedir. Se enseñan al
-     elegir una tarjeta, una categoría con su primera consulta, o el
-     Reporte completo (ver arrancarConsultar). */
-  function mostrarBuscador() {
+  /* Elegir una consulta reemplaza la lista por el formulario compacto. */
+  function mostrarBuscador(item) {
     var caja = $('nvBuscador');
     var abriendo = caja && caja.hidden;
     if (abriendo) caja.hidden = false;
-    var nota = $('nvEligeNota');
-    if (nota) nota.hidden = true;
+    $('nvSeleccionNombre').textContent = item ? item.nombre : $('filterComboText').textContent;
+    $('nvSeleccionCosto').textContent = item ? 'Costo: ' + costo(item) : '';
+    $('nvExplorar').hidden = true;
+    $('nvConsultaSeleccion').hidden = false;
     /* Elegir una consulta es un paso atrás desde el catálogo: sin esta
        entrada, el «atrás» del navegador sacaba de la plataforma. */
     if (abriendo && NV.abrirCapa) NV.abrirCapa('consulta', volverAlCatalogo);
@@ -110,10 +154,10 @@
   function volverAlCatalogo() {
     var caja = $('nvBuscador');
     if (caja) caja.hidden = true;
-    var nm = $('nvNmCampos');
-    if (nm) nm.hidden = true;
-    var nota = $('nvEligeNota');
-    if (nota) nota.hidden = false;
+    $('filter-input').value = '';
+    $('nvConsultaSeleccion').hidden = true;
+    $('nvExplorar').hidden = false;
+    if (NV.actualizarModoNombre) NV.actualizarModoNombre(null);
     var res = $('filter-result');
     if (res) res.hidden = true;
   }
@@ -124,48 +168,92 @@
     var combo = $('filterCombo');
     if (combo) combo.classList.remove('open');
     marcarElegida();
-    mostrarBuscador();
-    if (NV.actualizarModoNombre) NV.actualizarModoNombre(catalogo.find(function (c) { return c.id === id; }));
-    var campo = $('filter-input');
-    if (campo && window.matchMedia('(hover: hover)').matches) campo.focus();
-    document.querySelector('.nv-buscador').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    var item = catalogo.find(function (c) { return c.id === id; });
+    mostrarBuscador(item);
+    if (NV.actualizarModoNombre) NV.actualizarModoNombre(item);
+    if (datoPendiente) {
+      if (item && item.categoria === datoPendiente.categoria &&
+          item.tipo_dato === datoPendiente.tipo &&
+          !(item.comando && item.comando.indexOf('/nm') === 0)) {
+        $('filter-input').value = datoPendiente.valor;
+      }
+      datoPendiente = null;
+    }
+    if (window.matchMedia('(hover: hover)').matches && !(item && item.comando && item.comando.indexOf('/nm') === 0)) {
+      $('filter-input').focus();
+    }
+    $('nvConsultaSeleccion').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function cambiarCategoria(cat) {
+    if (!$('nvConsultaSeleccion').hidden) {
+      if (NV.cerrarDesdeCapa) NV.cerrarDesdeCapa('consulta');
+      volverAlCatalogo();
+    }
     categoriaActiva = cat;
+    textoBuscado = '';
+    $('nvBuscarConsulta').value = '';
+    catalogoExpandido = false;
     pintarPestanas();
     pintarCatalogo();
     filtrarDesplegable();
-    if (cat !== 'todas') {
-      var primera = catalogo.filter(function (c) { return c.categoria === cat; })[0];
-      if (primera && C.setFilterOption) {
-        C.setFilterOption(primera.id); marcarElegida(); mostrarBuscador();
-        if (NV.actualizarModoNombre) NV.actualizarModoNombre(primera);
-      }
-    }
   }
   NV.cambiarCategoria = cambiarCategoria;
 
-  var textoBuscado = '';
-
   function arrancarConsultar() {
+    $('nvBuscarConsulta').addEventListener('input', function (e) {
+      $('nvCategoriaMenu').open = false;
+      textoBuscado = e.target.value;
+      catalogoExpandido = false;
+      if (textoBuscado.trim()) {
+        categoriaActiva = 'todas';
+        pintarPestanas();
+        filtrarDesplegable();
+      }
+      pintarCatalogo();
+    });
     $('nvPestanas').addEventListener('click', function (e) {
       var b = e.target.closest('.nv-pestana');
       if (b) cambiarCategoria(b.dataset.cat);
+    });
+    var menuCategorias = $('nvCategoriaMenu');
+    $('nvCategoriaOpciones').addEventListener('click', function (e) {
+      var b = e.target.closest('.nv-categoria-opcion');
+      if (!b) return;
+      menuCategorias.open = false;
+      cambiarCategoria(b.dataset.cat);
+      menuCategorias.querySelector('summary').focus();
+    });
+    menuCategorias.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menuCategorias.open) {
+        menuCategorias.open = false;
+        menuCategorias.querySelector('summary').focus();
+      }
+    });
+    document.addEventListener('click', function (e) {
+      if (!menuCategorias.contains(e.target)) menuCategorias.open = false;
     });
     $('nvCatalogo').addEventListener('click', function (e) {
       var b = e.target.closest('.nv-op');
       if (b) elegir(b.dataset.id);
     });
+    $('nvCatalogoMas').addEventListener('click', function () {
+      catalogoExpandido = !catalogoExpandido;
+      pintarCatalogo();
+      if (!catalogoExpandido) $('nvCatalogoInfo').scrollIntoView({ block: 'nearest' });
+    });
+    $('nvCambiarConsulta').addEventListener('click', function () {
+      if (NV.cerrarDesdeCapa) NV.cerrarDesdeCapa('consulta');
+      volverAlCatalogo();
+      if (window.matchMedia('(hover: hover)').matches) $('nvBuscarConsulta').focus();
+    });
     /* Si se elige desde el desplegable, la lista de abajo lo refleja. */
     $('filterComboPanel').addEventListener('click', function () { setTimeout(marcarElegida, 0); });
-    /* El Reporte completo también elige una consulta (la suya): pide el
-       dato igual que cualquier otra, y nunca es de nombre —si se venía
-       de una búsqueda por nombre, se apaga ese modo. */
+    /* El reporte usa el mismo formulario y la misma navegación que el
+       resto de las consultas. */
     var ctaReporte = $('ctaReporteBtn');
     if (ctaReporte) ctaReporte.addEventListener('click', function () {
-      mostrarBuscador();
-      if (NV.actualizarModoNombre) NV.actualizarModoNombre(null);
+      if (reporteDestacado) elegir(reporteDestacado.id);
     });
 
     var panelRes = $('filter-result');
@@ -185,6 +273,13 @@
     var espera = (C.FilterView && C.FilterView.whenReady) ? C.FilterView.whenReady() : Promise.resolve();
     espera.then(function () {
       catalogo = (C.FilterView && C.FilterView.getCatalog()) || [];
+      reporteDestacado = catalogo.find(function (c) { return ((c && c.comando) || '').indexOf('/mpla') === 0; }) ||
+        catalogo.find(esReporteDestacado) || null;
+      $('ctaReporteBtn').hidden = !reporteDestacado;
+      var precio = $('nvReportePrecio');
+      precio.hidden = !reporteDestacado;
+      if (reporteDestacado) precio.textContent = costo(reporteDestacado);
+      $('nvExplorarTotal').textContent = totalCatalogo() + ' tipos de consulta';
       pintarPestanas();
       pintarCatalogo();
     });
@@ -352,7 +447,7 @@
       var vacio = fallaHist ? fallaHist
         : (q || filtroHist !== 'todas') ? 'Ninguna consulta coincide con lo buscado.'
         : 'Aún no has hecho ninguna consulta.';
-      $('nvRegistro').innerHTML = '<p class="nv-vacio">' + esc(vacio) + '</p>';
+      $('nvHistRegistro').innerHTML = '<p class="nv-vacio">' + esc(vacio) + '</p>';
       return;
     }
 
@@ -372,14 +467,14 @@
         '<span class="nv-reg-txt"><b>' + esc(c.input || '—') + '</b><span>' + esc(nombreCat(c.module)) + '</span></span>' +
         '<span class="nv-punto nv-punto-' + estado + '" title="' + (estado === 'ok' ? 'Con resultado' : estado === 'curso' ? 'En curso' : 'Sin resultado') + '"></span>' +
         '<span class="nv-reg-cobro">' + cobro + '</span>' +
-        '<button type="button" class="nv-repetir" data-mod="' + esc(c.module) + '" data-val="' + esc(c.input || '') + '" title="Repetir"><svg><use href="#i-repetir"/></svg></button>' +
+        '<button type="button" class="nv-repetir" data-mod="' + esc(c.module) + '" data-type="' + esc(c.type) + '" data-val="' + esc(c.input || '') + '" title="Consultar de nuevo" aria-label="Consultar de nuevo"><svg><use href="#i-repetir"/></svg></button>' +
       '</div>';
     });
-    $('nvRegistro').innerHTML = html + '</div>';
+    $('nvHistRegistro').innerHTML = html + '</div>';
   }
 
   async function entrarHistorial() {
-    $('nvRegistro').innerHTML = '<div class="nv-cargando"></div>';
+    $('nvHistRegistro').innerHTML = '<div class="nv-cargando"></div>';
     await leerConsultas();
     pintarRegistro();
   }
@@ -394,14 +489,17 @@
     });
     $('nvHistBuscar').addEventListener('input', pintarRegistro);
 
-    /* Repetir: vuelve a Consultar con la categoría y el dato puestos. */
-    $('nvRegistro').addEventListener('click', function (e) {
+    /* El historial guarda categoría y tipo de dato, pero no el ID del
+       servicio exacto. El usuario elige el servicio y reutiliza el dato
+       solo cuando coincide su categoría y tipo. */
+    $('nvHistRegistro').addEventListener('click', function (e) {
       var b = e.target.closest('.nv-repetir');
       if (!b) return;
+      datoPendiente = { categoria: b.dataset.mod, tipo: b.dataset.type, valor: b.dataset.val };
       NV.ir('consultar');
       if (CORTO[b.dataset.mod]) cambiarCategoria(b.dataset.mod);
-      var campo = $('filter-input');
-      if (campo) { campo.value = b.dataset.val; campo.focus(); }
+      if (C.toast) C.toast({ type: 'info', title: 'Elige una consulta', message: 'El dato anterior se completará si corresponde a la consulta elegida.' });
+      if (window.matchMedia('(hover: hover)').matches) $('nvBuscarConsulta').focus();
     });
   }
 

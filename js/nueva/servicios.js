@@ -20,47 +20,77 @@
      El orden es el de siempre. `logo` es el archivo en assets/services;
      la que no lo tiene lleva su icono. */
   var SERVICIOS = [
-    { nombre: 'Infracciones por regiones', meta: '17 regiones disponibles', ir: 'regiones' },
+    { nombre: 'Infracciones por regiones', meta: '17 regiones disponibles', logo: 'multas-region.png', ir: 'regiones' },
     { nombre: 'Propiedad Vehicular SUNARP', logo: 'sunarp-propiedad.png', url: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/inicio' },
     { nombre: 'Historial Completo por Placa', logo: 'historial-placa.png', url: 'https://sprl.sunarp.gob.pe/sprl/ingreso' },
     { nombre: 'Cambio de Características', logo: 'cambio-caracteristicas.png', url: 'https://psi.sunarp.gob.pe/ProyOrganizaSII/pages/solicitudes/solicitudCambio.jsf' },
-    { nombre: 'Deudas y Multas SAT Lima', logo: 'sat-lima.webp', url: 'https://www.sat.gob.pe/VirtualSAT/principal.aspx' },
-    { nombre: 'Deudas y Multas SAT Callao', logo: 'sat-callao.webp', url: 'https://pagopapeletascallao.pe/' },
-    { nombre: 'Papeletas de Tránsito ATU', logo: 'papeletas-atu.webp', url: 'https://pasarela.atu.gob.pe/' },
-    { nombre: 'Siniestralidad por Placa', logo: 'siniestralidad.webp', url: 'https://servicios.sbs.gob.pe/reportesoat/' },
-    { nombre: 'Estado de Placa', logo: 'estado-placa.webp', url: 'https://www.placas.pe/#/home/verificarEstadoPlaca' },
-    { nombre: 'Papeletas de Infracción por Cinemómetro', logo: 'foto-pit.webp', url: 'https://webexterno.sutran.gob.pe/WebExterno/Pages/frmPapeletasCinemometro.aspx' },
-    { nombre: 'Inspección Técnica Vehicular CITV', logo: 'citv.jpg', url: 'https://rec.mtc.gob.pe/Citv/ArConsultaCitv' },
+    { nombre: 'Deudas y Multas SAT Lima', logo: 'sat-lima.png', url: 'https://www.sat.gob.pe/VirtualSAT/principal.aspx' },
+    { nombre: 'Deudas y Multas SAT Callao', logo: 'sat-callao.png', url: 'https://pagopapeletascallao.pe/' },
+    { nombre: 'Papeletas de Tránsito ATU', logo: 'papeletas-atu.png', url: 'https://pasarela.atu.gob.pe/' },
+    { nombre: 'Siniestralidad por Placa', logo: 'siniestralidad.png', url: 'https://servicios.sbs.gob.pe/reportesoat/' },
+    { nombre: 'Estado de Placa', logo: 'estado-placa.png', url: 'https://www.placas.pe/#/home/verificarEstadoPlaca' },
+    { nombre: 'Papeletas de Infracción por Cinemómetro', logo: 'foto-pit.png', url: 'https://webexterno.sutran.gob.pe/WebExterno/Pages/frmPapeletasCinemometro.aspx' },
+    { nombre: 'Inspección Técnica Vehicular CITV', logo: 'citv.png', url: 'https://rec.mtc.gob.pe/Citv/ArConsultaCitv' },
     { nombre: 'Vigencia del SOAT', logo: 'soat.png', url: 'https://www.apeseg.org.pe/consultas-soat/' },
-    { nombre: 'Papeletas SUTRAN', logo: 'sutran.webp', url: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/' },
-    { nombre: 'Lunas Oscurecidas', logo: 'lunas-oscurecidas.webp', url: 'https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas' },
-    { nombre: 'FISE GNV Subsidio Gas', logo: 'fise-gnv.webp', url: 'https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio' },
-    { nombre: 'Consulta Deuda GNV', logo: 'deuda-gnv.webp', url: 'https://infogas.com.pe/consulta-placa/' },
-    { nombre: 'Denuncias y Órdenes de Captura', logo: 'denuncias.webp', url: 'https://www.sat.gob.pe/VirtualSAT/modulos/Capturas.aspx' },
+    { nombre: 'Papeletas SUTRAN', logo: 'sutran.png', url: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/' },
+    { nombre: 'Lunas Oscurecidas', logo: 'lunas-oscurecidas.png', url: 'https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas' },
+    { nombre: 'FISE GNV Subsidio Gas', logo: 'fise-gnv.png', url: 'https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio' },
+    { nombre: 'Consulta Deuda GNV', logo: 'deuda-gnv.png', url: 'https://infogas.com.pe/consulta-placa/' },
+    { nombre: 'Denuncias y Órdenes de Captura', logo: 'denuncias.png', url: 'https://www.sat.gob.pe/VirtualSAT/modulos/Capturas.aspx' },
     { nombre: 'Boleta Informativa', logo: 'boleta.png', url: 'https://sprl.sunarp.gob.pe/sprl/ingreso' },
     { nombre: 'Tarjeta de Propiedad (TIVE)', logo: 'tive.png', url: 'https://www2.sunarp.gob.pe/recuperar-codigo-verificacion-tive/inicio' },
     { nombre: 'Historial de Propietarios Inscritos', logo: 'propietarios.png', url: 'https://sprl.sunarp.gob.pe/sprl/ingreso' },
-    { nombre: 'Récord de Conductor (DNI)', logo: 'record-conductor.jpg', url: 'https://recordconductor.mtc.gob.pe/' }
+    { nombre: 'Récord de Conductor (DNI)', logo: 'record-conductor.png', url: 'https://recordconductor.mtc.gob.pe/' }
   ];
 
+  var GRUPOS_GRATIS = [
+    { id: 'propiedad', titulo: 'Propiedad e historial' },
+    { id: 'infracciones', titulo: 'Papeletas e infracciones' },
+    { id: 'soat', titulo: 'SOAT e inspección' },
+    { id: 'otros', titulo: 'Trámites y GNV' }
+  ];
+  var DATOS_GRATIS = {
+    'Infracciones por regiones': ['infracciones', 'Explora las consultas de 17 regiones disponibles'],
+    'Propiedad Vehicular SUNARP': ['propiedad', 'Datos del vehículo en SUNARP'],
+    'Historial Completo por Placa': ['propiedad', 'Historial registral por placa'],
+    'Cambio de Características': ['propiedad', 'Trámite de cambio en SUNARP'],
+    'Deudas y Multas SAT Lima': ['infracciones', 'Consulta de deuda en Lima'],
+    'Deudas y Multas SAT Callao': ['infracciones', 'Consulta de deuda en Callao'],
+    'Papeletas de Tránsito ATU': ['infracciones', 'Consulta de papeletas ATU'],
+    'Siniestralidad por Placa': ['soat', 'Consulta de siniestralidad'],
+    'Estado de Placa': ['propiedad', 'Verificación del estado de placa'],
+    'Papeletas de Infracción por Cinemómetro': ['infracciones', 'Infracciones por cinemómetro'],
+    'Inspección Técnica Vehicular CITV': ['soat', 'Consulta de revisión técnica'],
+    'Vigencia del SOAT': ['soat', 'Consulta de vigencia'],
+    'Papeletas SUTRAN': ['infracciones', 'Récord de infracciones SUTRAN'],
+    'Lunas Oscurecidas': ['otros', 'Consulta del permiso de lunas'],
+    'FISE GNV Subsidio Gas': ['otros', 'Consulta FISE GNV'],
+    'Consulta Deuda GNV': ['otros', 'Consulta de deuda por placa'],
+    'Denuncias y Órdenes de Captura': ['infracciones', 'Consulta de capturas SAT Lima'],
+    'Boleta Informativa': ['propiedad', 'Acceso a la boleta en SUNARP'],
+    'Tarjeta de Propiedad (TIVE)': ['propiedad', 'Verificación de la TIVE'],
+    'Historial de Propietarios Inscritos': ['propiedad', 'Historial registral en SUNARP'],
+    'Récord de Conductor (DNI)': ['infracciones', 'Consulta de récord por DNI']
+  };
+
   var REGIONES = [
-    { nombre: 'Lima', detalle: 'Consulta de papeletas SAT Lima', logo: 'region-lima.png', url: 'https://www.sat.gob.pe/WebSiteV9/TributosMultas/Papeletas/ConsultasPapeletas' },
-    { nombre: 'Callao', detalle: 'Consulta de papeletas SAT Callao', logo: 'region-callao.webp', url: 'https://pagopapeletascallao.pe/' },
-    { nombre: 'Arequipa', detalle: 'Infracciones y permisos municipales', logo: 'region-arequipa.webp', url: 'https://www.muniarequipa.gob.pe/oficina-virtual/c0nInfrPermisos/faltas/papeletas.php' },
-    { nombre: 'Trujillo', detalle: 'Récord de infracciones SATT', logo: 'region-trujillo.webp', url: 'https://www.satt.gob.pe/servicios/record-de-infracciones' },
-    { nombre: 'Piura', detalle: 'Multas administrativas municipales', logo: 'region-piura.webp', url: 'http://www.munipiura.gob.pe/consulta-de-multas-administrativas#buscar-por-placa' },
-    { nombre: 'Cusco', detalle: 'Infracciones de tránsito', logo: 'region-cusco.webp', url: 'https://cusco.gob.pe/informatica/infracciones' },
-    { nombre: 'Chiclayo', detalle: 'Récord de infracciones SATCH', logo: 'region-chiclayo.webp', url: 'https://virtualsatch.satch.gob.pe/virtualsatch/record_infracciones/buscar_placa_' },
-    { nombre: 'Huancayo', detalle: 'Multas administrativas SATH', logo: 'region-huancayo.svg', url: 'https://www.sath.gob.pe/tributos.html#multas-administrativas' },
-    { nombre: 'Puno', detalle: 'Papeletas municipales', logo: 'region-puno.png', url: 'https://papeletas.munipuno.gob.pe/' },
-    { nombre: 'Cajamarca', detalle: 'Consultas SAT Cajamarca', logo: 'region-cajamarca.webp', url: 'https://www.satcajamarca.gob.pe/consultas' },
-    { nombre: 'Ica', detalle: 'Consulta de papeletas SATICA', logo: 'region-ica.webp', url: 'https://m.satica.gob.pe/consultapapeletas_web.php' },
-    { nombre: 'Huánuco', detalle: 'Consulta de papeletas por placa', logo: 'region-huanuco.webp', url: 'https://www.munihuanuco.gob.pe/gt_consultapapeletas_placa.php' },
-    { nombre: 'Tacna', detalle: 'Papeletas municipales', logo: 'region-tacna.webp', url: 'https://www.munitacna.gob.pe/pagina/sf/servicios/papeletas' },
-    { nombre: 'Chachapoyas', detalle: 'Consulta de papeletas municipales', logo: 'region-chachapoyas.webp', url: 'https://app.munichachapoyas.gob.pe/servicios/consulta_papeletas/app/papeletas.php' },
-    { nombre: 'Tarapoto', detalle: 'Consulta de papeletas SAT-T', logo: 'region-tarapoto.png', url: 'https://www.sat-t.gob.pe/#consulta-papeletas' },
-    { nombre: 'Coronel Portillo', detalle: 'Consulta vehicular municipal', logo: 'region-coronel-portillo.png', url: 'http://consultas.municportillo.gob.pe:85/consultaVehiculo/consulta/' },
-    { nombre: 'Huarmey', detalle: 'Consultar papeletas municipales', logo: 'region-huarmey.png', url: 'https://munihuarmey.gob.pe/consultar-papeletas/' }
+    { nombre: 'Lima', detalle: 'SAT Lima · papeletas de tránsito', logo: 'region-lima.png', url: 'https://www.sat.gob.pe/WebSiteV9/TributosMultas/Papeletas/ConsultasPapeletas' },
+    { nombre: 'Callao', detalle: 'SAT Callao · papeletas y multas', logo: 'region-callao.webp', url: 'https://pagopapeletascallao.pe/' },
+    { nombre: 'Arequipa', detalle: 'Municipalidad · infracciones y permisos', logo: 'region-arequipa.webp', url: 'https://www.muniarequipa.gob.pe/oficina-virtual/c0nInfrPermisos/faltas/papeletas.php' },
+    { nombre: 'Trujillo', detalle: 'SATT · récord de infracciones', logo: 'region-trujillo.webp', url: 'https://www.satt.gob.pe/servicios/record-de-infracciones' },
+    { nombre: 'Piura', detalle: 'Municipalidad · multas administrativas', logo: 'region-piura.webp', url: 'http://www.munipiura.gob.pe/consulta-de-multas-administrativas#buscar-por-placa' },
+    { nombre: 'Cusco', detalle: 'Municipalidad · infracciones de tránsito', logo: 'region-cusco.webp', url: 'https://cusco.gob.pe/informatica/infracciones' },
+    { nombre: 'Chiclayo', detalle: 'SATCH · récord de infracciones', logo: 'region-chiclayo.webp', url: 'https://virtualsatch.satch.gob.pe/virtualsatch/record_infracciones/buscar_placa_' },
+    { nombre: 'Huancayo', detalle: 'SATH · multas administrativas', logo: 'region-huancayo.svg', url: 'https://www.sath.gob.pe/tributos.html#multas-administrativas' },
+    { nombre: 'Puno', detalle: 'Municipalidad · papeletas de tránsito', logo: 'region-puno.png', url: 'https://papeletas.munipuno.gob.pe/' },
+    { nombre: 'Cajamarca', detalle: 'SAT Cajamarca · consultas de tránsito', logo: 'region-cajamarca.webp', url: 'https://www.satcajamarca.gob.pe/consultas' },
+    { nombre: 'Ica', detalle: 'SATICA · papeletas de tránsito', logo: 'region-ica.webp', url: 'https://m.satica.gob.pe/consultapapeletas_web.php' },
+    { nombre: 'Huánuco', detalle: 'Municipalidad · papeletas por placa', logo: 'region-huanuco.webp', url: 'https://www.munihuanuco.gob.pe/gt_consultapapeletas_placa.php' },
+    { nombre: 'Tacna', detalle: 'Municipalidad · papeletas de tránsito', logo: 'region-tacna.webp', url: 'https://www.munitacna.gob.pe/pagina/sf/servicios/papeletas' },
+    { nombre: 'Chachapoyas', detalle: 'Municipalidad · papeletas de tránsito', logo: 'region-chachapoyas.webp', url: 'https://app.munichachapoyas.gob.pe/servicios/consulta_papeletas/app/papeletas.php' },
+    { nombre: 'Tarapoto', detalle: 'SAT-T · papeletas de tránsito', logo: 'region-tarapoto-clean.png', url: 'https://www.sat-t.gob.pe/#consulta-papeletas' },
+    { nombre: 'Coronel Portillo', detalle: 'Municipalidad · consulta vehicular', logo: 'region-coronel-portillo-clean.png', url: 'http://consultas.municportillo.gob.pe:85/consultaVehiculo/consulta/' },
+    { nombre: 'Huarmey', detalle: 'Municipalidad · papeletas de tránsito', logo: 'region-huarmey-clean.png', url: 'https://munihuarmey.gob.pe/consultar-papeletas/' }
   ];
 
   /* Una tarjeta: el logo (o el icono), el nombre y la marca de que abre
@@ -80,12 +110,36 @@
         '<svg class="nv-servicio-ir"><use href="#i-ir"/></svg></a>';
     }
     return '<a class="nv-servicio" href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer" data-nombre="' + esc(NV.llano(s.nombre + ' ' + (s.detalle || ''))) + '">' +
-      '<span class="nv-servicio-logo">' + logo + '</span>' + texto +
-      '<svg class="nv-servicio-ir"><use href="#i-fuera"/></svg></a>';
+      texto + '<span class="nv-servicio-logo">' + logo + '</span>' +
+      '<span class="nv-gratis-estado" aria-hidden="true"></span></a>';
+  }
+
+  function tarjetaGratis(s) {
+    var datos = DATOS_GRATIS[s.nombre] || ['otros', s.meta || 'Abrir consulta'];
+    var destino = s.ir
+      ? 'href="#' + esc(s.ir) + '"'
+      : 'href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer"';
+    var logo = s.logo
+      ? '<img src="assets/services/' + esc(s.logo) + '" alt="" width="44" height="44" decoding="async" loading="lazy">'
+      : '<svg aria-hidden="true"><use href="#i-region"/></svg>';
+    return '<a class="nv-gratis-tarjeta' + (s.ir ? ' es-regiones' : '') + '" ' + destino + '>' +
+      '<span class="nv-gratis-texto"><b>' + esc(s.nombre) + '</b><small>' + esc(datos[1]) + '</small></span>' +
+      '<span class="nv-servicio-logo">' + logo + '</span>' +
+      '<span class="nv-gratis-estado" aria-hidden="true"></span>' +
+    '</a>';
   }
 
   function pintarServicios() {
-    $('nvServicios').innerHTML = SERVICIOS.map(function (s) { return tarjeta(s, 'services'); }).join('');
+    $('nvServicios').innerHTML = GRUPOS_GRATIS.map(function (grupo) {
+      var lista = SERVICIOS.filter(function (s) { return (DATOS_GRATIS[s.nombre] || ['otros'])[0] === grupo.id; });
+      return '<section class="nv-gratis-grupo" aria-labelledby="nvGratisGrupo-' + grupo.id + '">' +
+        '<div class="nv-gratis-grupo-cab"><h3 id="nvGratisGrupo-' + grupo.id + '">' + esc(grupo.titulo) + '</h3>' +
+        '<span>' + lista.length + '</span></div>' +
+        '<div class="nv-gratis-grid">' + lista.map(tarjetaGratis).join('') + '</div>' +
+      '</section>';
+    }).join('');
+    var cantidad = $('nvGratisCantidad');
+    if (cantidad) cantidad.textContent = SERVICIOS.length + ' accesos';
     $('nvRegiones').innerHTML = REGIONES.map(function (s) { return tarjeta(s, 'regions'); }).join('');
     /* Un logo que no carga deja el hueco limpio, no el icono roto. */
     document.querySelectorAll('.nv-servicio-logo img').forEach(function (img) {
@@ -102,6 +156,7 @@
       if (si) n++;
     });
     $('nvRegionesN').textContent = n;
+    $('nvRegionesVacio').hidden = n !== 0;
   }
 
 

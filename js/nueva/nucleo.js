@@ -182,6 +182,7 @@
     if (location.hash !== '#' + nombre) {
       history.pushState(null, '', '#' + nombre);
     }
+    ultimoHash = location.hash;
     mostrar(nombre);
   };
 
@@ -233,6 +234,23 @@
         capas.splice(i, 1);
         cerrandoDesdeHistorial = true;
         history.back();
+        return;
+      }
+    }
+  };
+
+  /* «Cambiar consulta» retira la consulta y un posible resultado abierto
+     en un solo paso, para que Atrás no recorra capas ya cerradas. */
+  NV.cerrarDesdeCapa = function (nombre) {
+    for (var i = capas.length - 1; i >= 0; i--) {
+      if (capas[i].nombre === nombre) {
+        var pasos = capas.length - i;
+        capas.splice(i, pasos);
+        /* Si ya se visitó otra pantalla, la entrada activa no es una
+           capa. No retroceder hasta una ruta anterior. */
+        if (!history.state || !history.state.nvCapa) return;
+        cerrandoDesdeHistorial = true;
+        history.go(-pasos);
         return;
       }
     }
