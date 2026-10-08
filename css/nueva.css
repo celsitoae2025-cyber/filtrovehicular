@@ -138,8 +138,17 @@
   background: rgba(242, 244, 241, .97);
   border-bottom: 1px solid var(--nv-linea);
 }
-.nv-barra-titulo { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
-.nv-barra-acciones { display: flex; align-items: center; gap: 8px; }
+.nv-barra-titulo { min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
+.nv-barra-acciones { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+.nv-comprar {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 40px; padding: 0 15px;
+  border: 1px solid var(--nv-oscuro); border-radius: var(--nv-r-s);
+  background: #fff; color: var(--nv-oscuro);
+  font-size: 15px; font-weight: 700; text-decoration: none;
+  transition: background-color var(--nv-t) ease, color var(--nv-t) ease;
+}
+@media (hover: hover) { .nv-comprar:hover { background: var(--nv-oscuro); color: #fff; } }
 
 /* El avatar: círculo en el oscuro de la casa, iniciales en blanco. */
 .nv-avatar {
