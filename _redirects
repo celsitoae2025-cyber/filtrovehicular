@@ -1,3 +1,7 @@
 # Una sola plataforma: la que vivía en /nueva es ahora /app.
+# Google debe recibir el archivo de verificación en su URL .html exacta.
+# Pages redirige los .html a rutas sin extensión; esta regla sirve el mismo
+# contenido desde un archivo .txt sin cambiar la URL solicitada.
+/google47a185fce23d53f3.html /google47a185fce23d53f3.txt 200
 /nueva       /app  301
 /nueva.html  /app  301
