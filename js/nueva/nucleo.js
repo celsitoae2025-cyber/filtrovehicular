@@ -198,7 +198,9 @@
     });
     var p = PANTALLAS[nombre];
     $('nvTitulo').textContent = p.titulo;
-    document.title = p.titulo + ' · Filtro Vehicular+';
+    document.title = nombre === 'consultar'
+      ? 'Plataforma Filtro Vehicular+'
+      : p.titulo + ' · Plataforma Filtro Vehicular+';
     window.scrollTo(0, 0);
     if (NV.alEntrar[nombre]) {
       try { NV.alEntrar[nombre](); } catch (e) { console.error('[nueva] ' + nombre + ':', e); }
