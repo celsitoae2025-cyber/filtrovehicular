@@ -20,7 +20,7 @@
      El orden es el de siempre. `logo` es el archivo en assets/services;
      la que no lo tiene lleva su icono. */
   var SERVICIOS = [
-    { nombre: 'Infracciones por regiones', meta: '17 regiones disponibles', logo: 'multas-region.png', ir: 'regiones' },
+    { nombre: 'Infracciones por regiones', meta: '17 regiones disponibles', logo: 'multas-region.svg', ir: 'regiones' },
     { nombre: 'Propiedad Vehicular SUNARP', logo: 'sunarp-propiedad.png', url: 'https://consultavehicular.sunarp.gob.pe/consulta-vehicular/inicio' },
     { nombre: 'Historial Completo por Placa', logo: 'historial-placa.png', url: 'https://sprl.sunarp.gob.pe/sprl/ingreso' },
     { nombre: 'Cambio de Características', logo: 'cambio-caracteristicas.png', url: 'https://psi.sunarp.gob.pe/ProyOrganizaSII/pages/solicitudes/solicitudCambio.jsf' },

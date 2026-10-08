@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="titulo">
+  <title id="titulo">Mapa de regiones con aviso de infracción</title>
+  <path d="M5 15 22 9l18 5 19-6v41l-19 6-18-5-17 6Z" fill="#edf8d8" stroke="#1b3329" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M22 9v41l18 5V14Z" fill="#8dc63f"/>
+  <path d="M40 14v41l19-6V8Z" fill="#d1eba0"/>
+  <path d="M22 9v41m18-36v41" fill="none" stroke="#1b3329" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M9 42c8-2 11-13 18-14 6-1 8 9 14 8 4 0 7-7 14-9" fill="none" stroke="#1b3329" stroke-width="5" stroke-linecap="round"/>
+  <path d="M9 42c8-2 11-13 18-14 6-1 8 9 14 8 4 0 7-7 14-9" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="3 4"/>
+  <path d="M47 3 61 27H33Z" fill="#ffbd3b" stroke="#1b3329" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M47 11v8" stroke="#1b3329" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="47" cy="23" r="2" fill="#1b3329"/>
+</svg>

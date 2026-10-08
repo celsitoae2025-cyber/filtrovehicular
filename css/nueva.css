@@ -1409,7 +1409,8 @@ body.nv-puerta-encima { overflow: hidden; }
 }
 .nv-gratis-tarjeta .nv-servicio-logo img { display: block; width: 100%; height: 100%; padding: 0; object-fit: contain; }
 .nv-gratis-estado { position: absolute; right: 7px; bottom: 6px; width: 5px; height: 5px; border-radius: 50%; background: #34ca72; }
-.nv-gratis-tarjeta.es-regiones { padding: 11px 15px; border: 2px solid var(--nv-verde); background: #eaf5dc; }
+.nv-gratis-tarjeta.es-regiones { grid-template-columns: minmax(0, 1fr) 56px; padding: 11px 15px; border: 2px solid var(--nv-verde); background: #eaf5dc; }
+.nv-gratis-tarjeta.es-regiones .nv-servicio-logo { width: 56px; height: 56px; }
 .nv-gratuitas .nv-gratis-tarjeta.es-regiones .nv-gratis-texto b { color: #263e23; font-size: 15px; font-weight: 800; }
 @media (hover: hover) { .nv-gratis-tarjeta.es-regiones:hover { border-color: #6b9e23; background: #e2f0d1; } }
 
