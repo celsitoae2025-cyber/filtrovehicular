@@ -346,7 +346,10 @@
     return paso;
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  var puertaIniciada = false;
+  function iniciarPuerta() {
+    if (puertaIniciada) return;
+    puertaIniciada = true;
     NV.pasoInicial = pasoDeLaDireccion() || 'acceso';
 
     document.getElementById('nvPuerta').addEventListener('click', function (e) {
@@ -367,6 +370,7 @@
     var fvcForm = $('nvFvcForm');
     var fvcPlaca = $('nvFvcPlaca');
     var fvcError = $('nvFvcError');
+    $('nvAyudaAcceso').href = NV.whatsapp('Hola, necesito ayuda para acceder a Plataforma Filtro Vehicular+.');
     $('fvcOpen').addEventListener('click', function () {
       fvcDialogo.showModal();
       fvcPlaca.focus();
@@ -413,8 +417,12 @@
     /* Términos, cookies y recibo: los modales de siempre. Se conectan
        aquí porque la puerta ya los enlaza antes de entrar. */
     if (C.initOverlays) C.initOverlays();
-    /* Soporte por WhatsApp (también en la puerta: es por donde pregunta
-       quien no sabe registrarse) y el aviso de pago acreditado. */
+  }
+  document.addEventListener('fv:entry-ready', iniciarPuerta);
+  document.addEventListener('DOMContentLoaded', iniciarPuerta);
+
+  /* Estos módulos se descargan después de preparar los formularios. */
+  document.addEventListener('DOMContentLoaded', function () {
     if (C.initWhatsappSupport) C.initWhatsappSupport();
     if (C.PaymentWatcher) C.PaymentWatcher.init();
   });

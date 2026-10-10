@@ -62,7 +62,7 @@
 <!-- La ventana de carteles y el aviso a clientes: los mismos de siempre. -->
 <link rel="stylesheet" href="css/carteles.css?v=3">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
-<link rel="stylesheet" href="css/nueva.css?v=78">
+<link rel="stylesheet" href="css/nueva.css?v=79">
 </head>
 <body class="nv-body">
 
@@ -118,6 +118,7 @@
       <h2>Información vehicular<br>para decidir mejor.</h2>
       <p>Consulta datos de placas, revisa antecedentes y reúne la información que necesitas en un solo lugar.</p>
       <button class="nv-puerta-fvc" id="fvcOpen" type="button" aria-haspopup="dialog" aria-controls="nvFvcDialogo">Solicita tu Filtro Vehicular Completo <span aria-hidden="true">↗</span></button>
+      <p class="nv-puerta-fvc-nota">Tú confirmas el envío en WhatsApp.</p>
     </div>
   </aside>
 
@@ -139,10 +140,10 @@
     <label class="nv-marcar"><input type="checkbox" name="remember" checked> Mantener la sesión abierta</label>
     <p class="nv-error" id="nvAccesoError" role="alert" hidden></p>
     <button class="nv-cta nv-cta-bloque" type="submit" id="nvAccesoBtn"><span>Iniciar sesión</span></button>
-    <div class="nv-captcha auth-turnstile" id="nvTsAcceso"></div>
     <div class="nv-puerta-pie">
       <span>¿Aún no tienes cuenta?</span><a href="#" data-paso-ir="registro">Créala gratis</a>
     </div>
+    <div class="nv-captcha auth-turnstile" id="nvTsAcceso"></div>
   </form>
 
   <form class="nv-puerta-caja" id="nvRegistro" data-paso="registro" novalidate hidden>
@@ -244,6 +245,7 @@
   <nav class="nv-puerta-legal" aria-label="Información legal">
     <a href="#" data-modal="terms">Términos y condiciones</a>
     <a href="#" data-modal="cookies">Política de cookies</a>
+    <a id="nvAyudaAcceso" target="_blank" rel="noopener noreferrer">Ayuda por WhatsApp</a>
   </nav>
   </div>
 </div>
@@ -253,7 +255,16 @@
     <button class="nv-fvc-cerrar" type="button" data-fvc-cerrar aria-label="Cerrar">×</button>
     <p class="nv-fvc-kicker">FILTRO VEHICULAR COMPLETO</p>
     <h2 id="nvFvcTitulo">¿Cuál es la placa del vehículo?</h2>
-    <p class="nv-fvc-descripcion" id="nvFvcDescripcion">Ingresa la placa y prepararemos tu solicitud en WhatsApp.</p>
+    <p class="nv-fvc-descripcion" id="nvFvcDescripcion">Preparamos un mensaje con la placa para que lo revises y envíes desde WhatsApp.</p>
+    <div class="nv-fvc-alcance">
+      <strong>El reporte puede incluir</strong>
+      <ul>
+        <li>Datos del vehículo</li>
+        <li>SOAT y revisión técnica</li>
+        <li>Deudas e incidencias disponibles</li>
+      </ul>
+      <small>El contenido depende de la información disponible en cada fuente.</small>
+    </div>
     <label for="nvFvcPlaca">Placa del vehículo</label>
     <input id="nvFvcPlaca" name="placa" type="text" placeholder="ABC123" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="nvFvcAyuda nvFvcError" required>
     <small id="nvFvcAyuda">6 letras o números. Puedes escribirla con espacios o guion.</small>
@@ -269,7 +280,7 @@
 <div class="nv-app" id="nvApp" hidden>
 
   <aside class="nv-lado" aria-label="Navegación principal">
-    <a class="nv-marca" href="#consultar">Plataforma Filtro<br>Vehicular<b>+</b></a>
+    <a class="nv-marca" href="#consultar" aria-label="Plataforma Filtro Vehicular Plus, ir a Consultar"><img src="icons/logo-filtro.svg" alt=""><span>Plataforma Filtro<br>Vehicular<b>+</b></span></a>
 
     <nav class="nv-lado-nav">
       <a class="nv-nav" href="#consultar" data-ir="consultar"><svg><use href="#i-consultar"/></svg><span>Consultar</span></a>
@@ -283,8 +294,8 @@
     <!-- Trámites de acceso directo: no son consultas del catálogo. SOAT y
          Lunas abren WhatsApp con el mensaje escrito; el Duplicado CITV
          abre su propio trámite (js/modules/citv-aviso.js engancha #navCitv). -->
-    <span class="nv-lado-titulo">Trámites</span>
-    <nav class="nv-lado-nav" aria-label="Trámites">
+    <span class="nv-lado-titulo">Servicios adicionales</span>
+    <nav class="nv-lado-nav" aria-label="Servicios adicionales">
       <a class="nv-nav" data-wa-msg="Hola, necesito comprar mi SOAT con un 40% de descuento." target="_blank" rel="noopener noreferrer"><svg><use href="#i-soat"/></svg><span>SOAT Electrónico</span></a>
       <button class="nv-nav" type="button" id="navCitv"><svg><use href="#i-citv"/></svg><span>Duplicado CITV</span></button>
       <a class="nv-nav" data-wa-msg="Hola, necesito tramitar el permiso de mis lunas oscurecidas." target="_blank" rel="noopener noreferrer"><svg><use href="#i-lunas"/></svg><span>Lunas Oscurecidas</span></a>
@@ -300,7 +311,7 @@
     <header class="nv-barra">
       <h1 class="nv-barra-titulo" id="nvTitulo">Consultar</h1>
       <div class="nv-barra-acciones">
-        <a class="nv-comprar" href="#pagos">Comprar</a>
+        <a class="nv-comprar" href="#pagos" aria-label="Comprar créditos"><span class="nv-comprar-largo">Comprar créditos</span><span class="nv-comprar-corto" aria-hidden="true">Comprar</span></a>
         <div class="nv-yo">
           <button class="nv-avatar" id="nvAvatar" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="nvYoMenu" aria-label="Menú de la cuenta">—</button>
           <div class="nv-yo-menu" id="nvYoMenu" role="menu" hidden>
@@ -715,9 +726,17 @@
 <script src="js/shared/mp-reconciliation.js?v=1"></script>
 <script src="js/shared/auth.js?v=24"></script>
 <script src="js/shared/turnstile.js?v=4"></script>
-<script src="js/nueva/nucleo.js?v=13"></script>
-<script src="js/nueva/acceso.js?v=7"></script>
+<script src="js/nueva/nucleo.js?v=14"></script>
+<script src="js/nueva/acceso.js?v=8"></script>
 <script src="js/overlays.js?v=2"></script>
+<script>
+  // El retorno de verificación/restablecimiento conserva su arranque habitual
+  // para que Supabase procese primero los tokens de la URL.
+  if (!/[?&](?:token_hash|code)=/.test(location.search) &&
+      !/(?:access_token|refresh_token|type=recovery)=/.test(location.hash)) {
+    document.dispatchEvent(new Event('fv:entry-ready'));
+  }
+</script>
 
 <script src="js/modules/confirm-dialog.js?v=2"></script>
 <script src="js/modules/validation.js?v=1"></script>

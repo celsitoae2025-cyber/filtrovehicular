@@ -351,6 +351,14 @@
     await NV.cargarPerfil();
     if (!NV.usuario) { enseñarAcceso(); return; }
 
+    /* La puerta ya puede abrirse antes de descargar el generador de PDF.
+       Una sesión activa espera a que estén cargados los módulos del panel. */
+    if (document.readyState === 'loading') {
+      await new Promise(function (resolver) {
+        document.addEventListener('DOMContentLoaded', resolver, { once: true });
+      });
+    }
+
     $('nvPuerta').hidden = true;
     $('nvApp').hidden = false;
     document.body.classList.remove('auth-locked');
@@ -410,7 +418,10 @@
     window.addEventListener('hashchange', function () { abrir(false); });
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  var accesoIniciado = false;
+  function iniciarAcceso() {
+    if (accesoIniciado) return;
+    accesoIniciado = true;
     conectarAcceso();
     conectarMenuYo();
     entrarALaApp();
@@ -426,5 +437,7 @@
         }
       });
     }
-  });
+  }
+  document.addEventListener('fv:entry-ready', iniciarAcceso);
+  document.addEventListener('DOMContentLoaded', iniciarAcceso);
 })();
