@@ -832,6 +832,7 @@
     var _botValText = /^(la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|obteniendo|consultando|buscando|procesando|generando|cargando|#\w+|∞|♾)/i;
     function renderCampo(c) {
       if (membrete.promovidos.indexOf(c) !== -1) return '';   // ya está en el membrete
+      if (esAvisoExportacion(c)) return ''; // el aviso del bot no es una descarga del usuario
       if (c.campo && _botMeta.test(c.campo.trim())) return '';
       if (!c.campo && c.valor && _botValText.test(c.valor.trim())) return '';
       if (c.campo && isEmptyValue(c.valor)) return '';
@@ -1039,6 +1040,12 @@
       if (!pintoAlgo) dataHtml.length = marca;
     }
     return dataHtml.join('');
+  }
+
+  function esAvisoExportacion(c) {
+    var texto = ((c && c.campo) || '') + ' ' + ((c && c.valor) || '');
+    return /(?:se\s+ha\s+exportado|exportado\s+correctamente)/i.test(texto) &&
+      /(?:archivo|registros)/i.test(texto);
   }
 
   /* â"€â"€ Media helpers â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
@@ -1363,6 +1370,18 @@
     return parts.join('');
   }
 
+  function renderDocumentDownload(medio) {
+    if (!medio || !medio.base64) return '';
+    var nombre = medio.filename || 'resultado.txt';
+    var mime = medio.mimeType || 'text/plain';
+    var url = base64ToBlobUrl(medio.base64, mime);
+    return '<div class="cr-archivo-listo">' +
+      '<strong>Archivo listo</strong>' +
+      '<span>' + escapeHtml(nombre) + '</span>' +
+      '<a class="nm-download cr-archivo-dl" href="' + url + '" download="' + escapeHtml(nombre) + '">Descargar archivo</a>' +
+    '</div>';
+  }
+
   function renderButtonList(p, botones) {
     var parts = [];
     if (p && p.titulo) parts.push('<div class="cr-tit">' + escapeHtml(cleanTitle(p.titulo)) + '</div>');
@@ -1408,13 +1427,21 @@
     // La ficha, a la vista. Estaba detras de un «Ver detalles de la
     // consulta» que el cliente tenia que descubrir para leer lo que habia
     // pagado.
-    var hasData = (p.secciones || []).some(function (s) { return (s.campos || []).length > 0; });
+    var avisoExportacion = (p.secciones || []).some(function (s) {
+      return (s.campos || []).some(esAvisoExportacion);
+    });
+    var hasData = (p.secciones || []).some(function (s) {
+      return (s.campos || []).some(function (c) { return !esAvisoExportacion(c); });
+    });
     if (hasData) {
       parts.push('<div class="cr-btn-details">');
       parts.push(renderDataRows(p));
       parts.push('</div>');
     }
 
+    if (avisoExportacion && botones.some(function (b) { return /descargar|exportar/i.test(b.text || ''); })) {
+      parts.push('<p class="cr-export-notice">El proveedor indica que preparó la lista. Para guardarla en tu dispositivo, pulsa «Descargar TXT».</p>');
+    }
     parts.push(seccionOpciones(botones, recordDetails));
     parts.push('</div>'); // cierra cr-btn-main
 
@@ -1484,10 +1511,16 @@
     btns.forEach(function (btn) {
       btn.addEventListener('click', async function () {
         var consulta = llamar(opts.consulta);
-        if (!consulta) return;
+        if (!consulta) {
+          if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Consulta vencida', message: 'Vuelve a hacer la consulta para elegir esta opción.' });
+          return;
+        }
         var msgId = parseInt(btn.dataset.msgid, 10);
         var data  = btn.dataset.callback;
-        if (!msgId || !data) return;
+        if (!msgId || !data) {
+          if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Opción no disponible', message: 'El proveedor no envió un enlace válido para esta opción.' });
+          return;
+        }
 
         // Sin área de resultado en pantalla, decide el módulo qué hacer.
         if (!resultArea) {
@@ -1523,7 +1556,9 @@
         var cancelarEspera = function () {
           cancelado = true;
           try { abortoEspera.abort(); } catch (_) {}
+          cerrarEspera();
         };
+        cerrarEspera.esperando('Solicitando el resultado', 'Esperamos la respuesta del proveedor. Puedes cancelar esta espera.', cancelarEspera);
 
         var status = llamar(opts.status);
         var statusPrevio = status ? { clase: status.className, html: status.innerHTML } : null;
@@ -1572,6 +1607,15 @@
 
           cerrarEspera();
 
+          if (typeof opts.alPagina === 'function' && opts.alPagina(resp, rp, btn)) {
+            if (status) {
+              status.classList.remove('status-loading', 'status-ok');
+              status.classList.add('status-empty');
+              status.innerHTML = '<span class="status-dot"></span> Elige una opción';
+            }
+            return;
+          }
+
           if (esErrorTecnicoRespuesta(rp, resp)) {
             resultArea.innerHTML = htmlMantenimiento();
           } else if (pdfs.length > 0) {
@@ -1580,6 +1624,14 @@
             resultArea.innerHTML = renderPdfDlBar(pdfs) + renderDocumentCard(pdfs);
             llamar(opts.alResultado);
             abrirVisorDelResultado(resultArea, opts.alNuevaConsulta);
+          } else if ((rp.medios || []).some(function (m) { return m.tipo === 'document' && m.base64; })) {
+            var archivo = (rp.medios || []).find(function (m) { return m.tipo === 'document' && m.base64; });
+            resultArea.innerHTML = renderDocumentDownload(archivo);
+            var enlaceArchivo = resultArea.querySelector('.cr-archivo-dl');
+            if (enlaceArchivo && /descargar/i.test(btn.textContent)) enlaceArchivo.click();
+          } else if (/descargar|exportar/i.test(btn.textContent) &&
+              /se ha exportado|exportado correctamente/i.test((rp.raw || '') + ' ' + (rp.titulo || ''))) {
+            throw new Error('El proveedor indicó que preparó el archivo, pero todavía no entregó la descarga. Intenta de nuevo en unos momentos.');
           } else if (hasDataR) {
             resultArea.innerHTML =
               '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding:16px;">' +
@@ -1813,14 +1865,18 @@
       el.setAttribute('role', 'status');
       el.setAttribute('aria-live', 'polite');
       el.innerHTML =
-        '<div class="dl-ring">' + DL_ICON + '</div>' +
-        '<div class="dl-title"></div>' +
-        '<div class="dl-sub"></div>' +
-        '<div class="dl-actions" hidden></div>';
+        '<div class="dl-panel">' +
+          '<div class="dl-ring" aria-hidden="true">' + DL_ICON + '</div>' +
+          '<div class="dl-title"></div>' +
+          '<div class="dl-sub"></div>' +
+          '<div class="dl-timer" aria-hidden="true" hidden></div>' +
+          '<div class="dl-actions" hidden></div>' +
+        '</div>';
       document.body.appendChild(el);
     }
     var titleEl = el.querySelector('.dl-title');
     var subEl = el.querySelector('.dl-sub');
+    var timerEl = el.querySelector('.dl-timer');
     var actionsEl = el.querySelector('.dl-actions');
     if (!actionsEl) {
       actionsEl = document.createElement('div');
@@ -1831,11 +1887,12 @@
     actionsEl.hidden = true;
     var baseTitulo = opts.titulo || 'Preparando la descarga';
     titleEl.textContent = baseTitulo;
-    subEl.innerHTML = opts.detalle
-      ? escapeHtml(opts.detalle)
-      : 'Esto puede tardar un momento. No cierres esta ventana.';
+    subEl.textContent = opts.detalle || 'Esto puede tardar un momento.';
+    timerEl.hidden = !opts.contador;
+    timerEl.textContent = '';
     el.hidden = false;
     document.body.classList.add('modal-open');
+    var focoAnterior = document.activeElement;
 
     // Contador en vivo: solo si se pide (descargas largas del bot).
     var tick = null;
@@ -1843,7 +1900,7 @@
       var t0 = Date.now();
       var pintar = function () {
         var s = Math.round((Date.now() - t0) / 1000);
-        titleEl.innerHTML = escapeHtml(baseTitulo) + ' <span class="dl-timer">' + s + 's</span>';
+        timerEl.textContent = 'Tiempo transcurrido: ' + s + ' s';
       };
       pintar();
       tick = setInterval(pintar, 1000);
@@ -1859,6 +1916,7 @@
       var acts = node && node.querySelector('.dl-actions');
       if (acts) { acts.innerHTML = ''; acts.hidden = true; }
       document.body.classList.remove('modal-open');
+      if (focoAnterior && focoAnterior.isConnected && focoAnterior.focus) focoAnterior.focus();
     };
 
     /* Cambia el texto del aviso mientras se sigue esperando y, si se pasa
@@ -1877,6 +1935,7 @@
       btn.addEventListener('click', onCancelar);
       actionsEl.appendChild(btn);
       actionsEl.hidden = false;
+      btn.focus();
     };
 
     return cerrar;
@@ -2362,22 +2421,31 @@
 
   // Botón que pide al bot el TXT con TODOS los resultados (la vista inicial viene paginada)
   function nmBotonDescargar(botones) {
-    var dl = (botones || []).filter(function (b) { return /descargar/i.test(b.text); });
-    if (!dl.length) return '';
-    var b = dl[0];
+    var b = nmOpcionTxt(botones);
+    if (!b) return '';
     return '<div class="cr-dl-bar cr-dl-bar-tabla">' +
       '<button type="button" class="nm-download cr-btn-nm-txt" ' +
         'data-msgid="' + escapeHtml(String(b.msgId)) + '" ' +
         'data-callback="' + escapeHtml(b.data) + '">' +
-        'Descargar' +
+        'Descargar TXT' +
       '</button>' +
     '</div>';
+  }
+
+  function nmOpcionTxt(botones) {
+    return (botones || []).find(function (b) { return /descargar.*txt/i.test(b.text || ''); }) ||
+      (botones || []).find(function (b) { return /descargar/i.test(b.text || ''); });
+  }
+
+  function nmOtrasOpciones(botones) {
+    var txt = nmOpcionTxt(botones);
+    return (botones || []).filter(function (b) { return b !== txt; });
   }
 
   // Botón que arma el PDF con los registros ya cargados en pantalla
   function nmBotonPdf() {
     return '<div class="cr-dl-bar cr-dl-bar-tabla">' +
-      '<button type="button" class="nm-download cr-btn-nm-pdf">Descargar</button>' +
+      '<button type="button" class="nm-download cr-btn-nm-pdf">Descargar PDF</button>' +
     '</div>';
   }
 
@@ -2398,6 +2466,155 @@
       valor: valorConsultado,
       total: nmTotalResultados(p, regs.length),
       pie: nmBotonDescargar(botones)
+    }) + renderOpcionesSueltas(nmOtrasOpciones(botones));
+  }
+
+  function textoNmDesdeBase64(base64) {
+    var bin = atob(base64);
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    try { return new TextDecoder('utf-8').decode(bytes); }
+    catch (_) { return bin; }
+  }
+
+  function descargarTextoNm(texto, nombre, archivo) {
+    var url = archivo
+      ? base64ToBlobUrl(archivo.base64, archivo.mimeType || 'text/plain')
+      : URL.createObjectURL(new Blob([texto], { type: 'text/plain;charset=utf-8' }));
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = (nombre || 'Busqueda_Personas.txt').replace(/[\\/:*?"<>|]/g, '_');
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+  }
+
+  /* Una sola ruta para /nm en Consultar y en las vistas por categoría.
+     El aviso del bot no equivale al TXT: solo se anuncia descarga después
+     de recibir un adjunto legible o la lista completa en texto. */
+  function wireNmButtons(container, opts) {
+    opts = opts || {};
+    var valor = opts.valor || '';
+    wireOpcionesDelBot(container, {
+      consulta: opts.consulta,
+      status: opts.status,
+      alNuevaConsulta: opts.alNuevaConsulta,
+      alResultado: opts.alResultado,
+      alPagina: function (resp, rp, boton) {
+        if (!/siguiente|anterior|p[áa]gina/i.test(boton.textContent || '')) return false;
+        var siguiente = renderNmPersonas(rp, rp.botones || [], valor);
+        if (!siguiente) return false;
+        var actual = container.querySelector('.nm-table tbody');
+        var tmp = document.createElement('div');
+        tmp.innerHTML = siguiente;
+        var nuevo = tmp.querySelector('.nm-table tbody');
+        if (actual && nuevo && actual.textContent === nuevo.textContent) {
+          throw new Error('El proveedor repitió la misma página. Intenta de nuevo en unos momentos.');
+        }
+        container.innerHTML = siguiente;
+        container.__nmRegs = null;
+        container.__nmTotal = null;
+        wireNmButtons(container, Object.assign({}, opts, { botones: rp.botones || [] }));
+        if (typeof opts.alResultado === 'function') opts.alResultado();
+        return true;
+      }
+    });
+    var pdfBtn = container.querySelector('.cr-btn-nm-pdf');
+    if (pdfBtn) pdfBtn.addEventListener('click', function () {
+      var regs = container.__nmRegs || [];
+      if (!regs.length) return;
+      descargarPdfConOverlay(function () {
+        return Consultia.ReportGenerator.generateNm(regs, {
+          valor: valor,
+          total: container.__nmTotal || String(regs.length)
+        });
+      });
+    });
+
+    var txtBtn = container.querySelector('.cr-btn-nm-txt');
+    if (!txtBtn) return;
+    txtBtn.addEventListener('click', async function () {
+      var consulta = typeof opts.consulta === 'function' ? opts.consulta() : null;
+      var msgId = parseInt(txtBtn.dataset.msgid, 10);
+      var data = txtBtn.dataset.callback;
+      if (!consulta || !msgId || !data) {
+        if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Opción no disponible', message: 'Vuelve a hacer la consulta para obtener un enlace de descarga vigente.' });
+        return;
+      }
+      txtBtn.disabled = true;
+      var aborto = new AbortController();
+      var cancelado = false;
+      var detener = openDownloadOverlay({
+        titulo: 'Preparando el archivo TXT',
+        detalle: 'Esperamos los registros completos del proveedor.',
+        contador: true
+      });
+      detener.esperando('Preparando el archivo TXT', 'Esperamos los registros completos del proveedor.', function () {
+        cancelado = true;
+        aborto.abort();
+        detener();
+        txtBtn.disabled = false;
+      });
+
+      try {
+        var resp = await Consultia.ConsultaRunner.ejecutarCallback(consulta, msgId, data, {
+          timeoutMs: 150000, signal: aborto.signal
+        });
+        if (cancelado) return;
+        var rp = resp.parsed || {};
+        var candidatos = (rp.medios || []).filter(function (m) {
+          if (!m.base64) return false;
+          if (/text\//i.test(m.mimeType || '') || /\.txt$/i.test(m.filename || '')) return true;
+          return m.tipo !== 'photo' && m.tipo !== 'pdf' &&
+            !/^image\//i.test(m.mimeType || '') && !/pdf/i.test(m.mimeType || '');
+        });
+        var texto = '';
+        var archivo = null;
+        for (var i = 0; i < candidatos.length; i++) {
+          try {
+            var posible = textoNmDesdeBase64(candidatos[i].base64);
+            if (!archivo && posible.trim()) { texto = posible; archivo = candidatos[i]; }
+            if (parseNmTexto(posible).length) { texto = posible; archivo = candidatos[i]; break; }
+          } catch (_) { /* probar el siguiente adjunto */ }
+        }
+        var regs = texto ? parseNmTexto(texto) : nmRegistros(rp);
+        if (!regs.length && rp.raw) regs = parseNmTexto(rp.raw);
+        var totalDeclarado = Number(nmTotalResultados(rp, regs.length));
+        if (!archivo && (!regs.length || totalDeclarado > regs.length)) {
+          throw new Error('El proveedor aún no entregó el archivo completo. Intenta de nuevo en unos momentos.');
+        }
+        if (!texto) texto = rp.raw || '';
+        if (!texto.trim()) throw new Error('El proveedor no entregó texto descargable. Intenta de nuevo.');
+
+        descargarTextoNm(texto, (archivo && archivo.filename) ||
+          ('Busqueda_Personas_' + valor.replace(/[^A-Za-z0-9]/g, '_').slice(0, 40) + '.txt'), archivo);
+        if (regs.length && (!totalDeclarado || regs.length >= totalDeclarado)) {
+          container.__nmRegs = regs;
+          container.__nmTotal = String(Math.max(totalDeclarado || 0, regs.length));
+          container.innerHTML = renderNmTabla(regs, {
+            valor: valor,
+            total: container.__nmTotal,
+            pie: nmBotonPdf()
+          }) + renderOpcionesSueltas(nmOtrasOpciones(opts.botones || []));
+          wireNmButtons(container, opts);
+          if (typeof opts.alResultado === 'function') opts.alResultado();
+        }
+        if (Consultia.toast) Consultia.toast({
+          type: 'success', title: 'Archivo TXT recibido',
+          message: regs.length && totalDeclarado > regs.length
+            ? 'Revisa las descargas. La tabla muestra solo los registros que pudimos leer.'
+            : 'Revisa las descargas de tu navegador.'
+        });
+      } catch (e) {
+        if (!cancelado) {
+          console.error('Error al obtener TXT /nm:', e);
+          if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo descargar', message: (e && e.message) || 'Intenta de nuevo.' });
+        }
+      } finally {
+        detener();
+        txtBtn.disabled = false;
+      }
     });
   }
 
@@ -2627,6 +2844,7 @@
     renderNmTabla:           renderNmTabla,
     parseNmTexto:            parseNmTexto,
     nmRegistros:             nmRegistros,
+    wireNmButtons:           wireNmButtons,
     nmBotonPdf:              nmBotonPdf,
     renderPdfTopButton:      renderPdfTopButton,
     ajustarComboPanel:       ajustarComboPanel,

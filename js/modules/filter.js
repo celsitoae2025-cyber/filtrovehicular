@@ -854,6 +854,8 @@
     // quedó con el nombre viejo del comando cuando el reporte cambió de
     // bot, y el render propio del reporte dejaba de aplicarse.
     var esReporte = esMetapla(currentConsulta);
+    var esNm = !!(currentConsulta && /^\/nm\b/i.test(currentConsulta.comando || ''));
+    var htmlNm = esNm ? H.renderNmPersonas(p, botones, valorConsultado) : '';
 
     var body = $('filter-result-body');
     var html;
@@ -871,6 +873,9 @@
     } else if (esReporte) {
       // Los datos van como tabla + placeholder para el PDF rediseñado.
       html = renderMetaplaData(p, valorConsultado) + '<div id="metapla-pdf-area"><div class="cr-pdf-loading">Generando reporte PDF...</div></div>';
+    } else if (htmlNm) {
+      // /nm necesita su tabla y su descarga real, también desde Consultar.
+      html = htmlNm;
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
     } else if (htmlMtc) {
@@ -919,7 +924,15 @@
     body.hidden = false;
 
     // Se cablean siempre que existan en el DOM, traiga o no medios.
-    if (botones.length > 0) wireResultButtons(body);
+    if (htmlNm && !esReporte) H.wireNmButtons(body, {
+      valor: valorConsultado,
+      botones: botones,
+      consulta: function () { return currentConsulta; },
+      status: function () { return $('filterResultStatus'); },
+      alNuevaConsulta: volverAlFormulario,
+      alResultado: function () { marcarConResultado(true); }
+    });
+    else if (botones.length > 0) wireResultButtons(body);
 
     // «Descargar» de la cabecera: arma el informe al vuelo con los datos que
     // ya estan en pantalla. No existe cuando ya hay una tarjeta de PDF (esa
@@ -987,7 +1000,7 @@
     var status = $('filterResultStatus');
     if (status) {
       status.classList.remove('status-empty', 'status-loading');
-      if (botones.length > 0 && !hasMedia) {
+      if (botones.length > 0 && !hasMedia && !htmlNm) {
         status.classList.remove('status-ok');
         status.classList.add('status-empty');
         status.innerHTML = '<span class="status-dot"></span> Elige una opción';
@@ -1025,13 +1038,19 @@
      comparte el comportamiento entero — antes estaba duplicado aqui y
      era cuestion de tiempo que las dos copias se separaran. */
   function marcarConResultado(hay) {
-    var vista = document.getElementById('view-filter');
+    var vista = document.getElementById('view-filter') || document.querySelector('.nv-pantalla[data-pantalla="consultar"]');
     if (!vista) return;
-    if (hay) H.entrarModoResultado(vista, volverAlFormulario);
-    else H.salirModoResultado(vista);
+    if (hay) {
+      H.entrarModoResultado(vista, volverAlFormulario);
+      if (vista.classList.contains('nv-pantalla')) {
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        catch (_) { window.scrollTo(0, 0); }
+      }
+    } else H.salirModoResultado(vista);
   }
 
   function volverAlFormulario() {
+    marcarConResultado(false);
     var body = $('filter-result-body');
     if (body) { body.hidden = true; body.innerHTML = ''; }
     var prev = $('filter-preview-data');

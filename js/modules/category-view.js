@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    CATEGORY VIEW FACTORY
    Genera la lógica común para cada vista de consulta (reniec,
    telefonia, familiares, etc.) a partir de un prefijo de IDs
@@ -380,6 +380,8 @@
       var hasMedia = pdfs.length > 0 || photos.length > 0;
       var hasFacial = p.facial && p.facial.length > 0;
       var hasTabla  = p.tabla && p.tabla.filas && p.tabla.filas.length > 0;
+      var isNm = !!(currentConsulta && /^\/nm\b/i.test(currentConsulta.comando || ''));
+      var nmHtml = isNm ? renderNmPersonas(p, botones, valorConsultado) : '';
       var esArbol = currentConsulta && currentConsulta.comando && /^\/ag\s/i.test(currentConsulta.comando);
       var htmlArbol = esArbol ? renderArbolGenealogico(p, valorConsultado) : '';
       /* La ficha de la licencia se arma una sola vez: antes se llamaba dos
@@ -403,10 +405,10 @@
         html = htmlMantenimiento();
       } else if (hasFacial) {
         html = renderPdfTopButton() + renderFacialHero(p.facial);
+      } else if (nmHtml) {
+        html = nmHtml;
       } else if (hasTabla) {
         html = renderPdfTopButton() + renderTabla(p.tabla);
-      } else if (currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0) {
-        html = renderNmPersonas(p, botones, valorConsultado);
       } else if (htmlMtc) {
         // La licencia tiene su propia ficha: membrete, rejilla y papeletas.
         html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
@@ -467,8 +469,7 @@
 
       body.innerHTML = html;
       body.hidden = false;
-      var isNm = currentConsulta && currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0;
-      if (isNm) wireNmButtons(body, valorConsultado);
+      if (nmHtml) { body.__nmBotones = botones; wireNmButtons(body, valorConsultado); }
       else if (html === htmlArbol) { body.__arbolRaw = p.raw || ''; wireArbolButtons(body, valorConsultado); }
       // Se cablean SIEMPRE que existan en el DOM, traiga o no medios la respuesta.
       else if (botones.length > 0 && !hasFacial && !hasTabla) wireResultButtons(body);
@@ -515,118 +516,15 @@
     // La respuesta inicial viene paginada; el botón "Descargar" pide al bot
     // el TXT con TODOS los resultados. Lo parseamos, redibujamos la tabla
     // completa y habilitamos la exportación a PDF.
-    function b64ToTexto(b64) {
-      var bin = atob(b64);
-      var bytes = new Uint8Array(bin.length);
-      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-      try {
-        return new TextDecoder('utf-8').decode(bytes);
-      } catch (_) {
-        return bin;
-      }
-    }
-
-    // Arma un PDF mostrando el overlay de descarga. La implementación vive
-    // en render-helpers.js: la comparten estas vistas y «Consulta Vehicular».
-    var descargarPdfConOverlay = H.descargarPdfConOverlay;
-
+    // La descarga TXT y el PDF de /nm comparten la misma ruta con Consultar.
     function wireNmButtons(container, valorConsultado) {
-      var RH = Consultia.RenderHelpers;
-
-      // Exportar a PDF con los registros ya cargados
-      var pdfBtn = container.querySelector('.cr-btn-nm-pdf');
-      if (pdfBtn) {
-        pdfBtn.addEventListener('click', function () {
-          var regs = container.__nmRegs || [];
-          if (!regs.length) return;
-          descargarPdfConOverlay(function () {
-            return Consultia.ReportGenerator.generateNm(regs, {
-              valor: valorConsultado,
-              total: container.__nmTotal || String(regs.length)
-            });
-          });
-        });
-      }
-
-      // Pedir al bot el TXT completo
-      var txtBtn = container.querySelector('.cr-btn-nm-txt');
-      if (!txtBtn) return;
-
-      txtBtn.addEventListener('click', async function () {
-        if (!currentConsulta) return;
-        var msgId = parseInt(txtBtn.dataset.msgid, 10);
-        var data = txtBtn.dataset.callback;
-        if (!msgId || !data) return;
-
-        txtBtn.disabled = true;
-        var textoOriginal = txtBtn.innerHTML;
-        // El bot arma el archivo con TODOS los resultados y puede tardar
-        // más de un minuto: overlay a pantalla completa con contador para
-        // que se vea que sigue trabajando.
-        var detener = RH.openDownloadOverlay({
-          titulo: 'Generando el archivo',
-          detalle: 'Estamos pidiendo al proveedor el listado completo. Puede tardar hasta un par de minutos.',
-          contador: true
-        });
-
-        try {
-          // El bot arma el archivo con todos los resultados: puede tardar más
-          // de un minuto, así que le damos margen amplio antes de cortar.
-          var resp = await Consultia.ConsultaRunner.ejecutarCallback(currentConsulta, msgId, data, { timeoutMs: 150000 });
-          var rp = resp.parsed || {};
-
-          // El TXT llega como documento adjunto. Telegram puede reportarlo como
-          // text/plain o como application/octet-stream, así que aceptamos
-          // cualquier adjunto que no sea imagen ni PDF e intentamos leerlo.
-          var candidatos = (rp.medios || []).filter(function (m) {
-            if (!m.base64) return false;
-            if (/text\//i.test(m.mimeType || '') || /\.txt$/i.test(m.filename || '')) return true;
-            var esImagen = m.tipo === 'photo' || /^image\//i.test(m.mimeType || '');
-            var esPdf = m.tipo === 'pdf' || /pdf/i.test(m.mimeType || '');
-            return !esImagen && !esPdf;
-          });
-
-          var regs = [];
-          for (var i = 0; i < candidatos.length && !regs.length; i++) {
-            try {
-              regs = RH.parseNmTexto(b64ToTexto(candidatos[i].base64));
-            } catch (_) { /* adjunto ilegible: probamos el siguiente */ }
-          }
-          // Si no vino adjunto, el bot pudo mandar el listado como texto
-          if (!regs.length) regs = RH.nmRegistros(rp);
-          if (!regs.length && rp.raw) regs = RH.parseNmTexto(rp.raw);
-
-          if (!regs.length) {
-            detener();
-            if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Sin datos', message: 'El archivo no trajo resultados legibles.' });
-            txtBtn.innerHTML = textoOriginal;
-            txtBtn.disabled = false;
-            return;
-          }
-          detener();
-
-          var total = String(regs.length);
-          container.__nmRegs = regs;
-          container.__nmTotal = total;
-          container.innerHTML = RH.renderNmTabla(regs, {
-            valor: valorConsultado,
-            total: total,
-            pie: RH.nmBotonPdf()
-          });
-          wireNmButtons(container, valorConsultado);
-          container.__nmRegs = regs;
-          container.__nmTotal = total;
-
-          if (resp.costo_deducido > 0 && Consultia.toast) {
-            Consultia.toast({ type: 'info', title: 'Cobro exitoso', message: 'Se han descontado ' + resp.costo_deducido + ' créditos.', duration: 4000 });
-          }
-        } catch (e) {
-          detener();
-          console.error('Error al descargar resultados /nm:', e);
-          if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo descargar', message: (e && e.message) || 'Intenta de nuevo.' });
-          txtBtn.innerHTML = textoOriginal;
-          txtBtn.disabled = false;
-        }
+      H.wireNmButtons(container, {
+        valor: valorConsultado,
+        botones: (container.__nmBotones || []),
+        consulta: function () { return currentConsulta; },
+        status: function () { return $(statusId()); },
+        alNuevaConsulta: volverEstadoInicial,
+        alResultado: function () { marcarConResultado(true); }
       });
     }
 

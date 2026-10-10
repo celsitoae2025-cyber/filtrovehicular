@@ -1084,6 +1084,34 @@ body.nv-puerta-encima { overflow: hidden; }
 .nv-body .nv-resultado .cr-loading:has(.cr-espera) > :not(.cr-espera) { display: none; }
 .nv-body .nv-resultado:has(.cr-espera) .result-header { display: none; }
 
+/* Los resultados deben poder leerse y pulsarse sin recortes ni controles
+   flotantes encima, incluso en una pantalla de 320 px. */
+.nv-body .cr-btn-option { min-height: 52px; font-size: 15px; line-height: 1.4; }
+.nv-body .cr-btn-option-text { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+.nv-body .cr-btn-option-tip { font-size: 13px; }
+.nv-body .cr-btn-option-arrow { width: 28px; height: 28px; padding: 6px; }
+.nv-body .cr-btn-hint { font-size: 13px; }
+.nv-body .cr-export-notice,
+.nv-body .cr-archivo-listo { margin: 0; padding: 14px 16px; border: 1px solid #d6e4c4; border-left: 3px solid var(--nv-verde); border-radius: 8px; background: #f8fbf4; color: var(--nv-tinta); font-size: 14px; line-height: 1.5; }
+.nv-body .cr-archivo-listo { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.nv-body .cr-archivo-listo strong { font-size: 15px; }
+.nv-body .cr-archivo-listo span { overflow-wrap: anywhere; }
+.nv-body .cr-archivo-listo .nm-download { min-height: 44px; margin: 4px 0 0; font-size: 14px; }
+.nv-body .nm-download { min-height: 44px; font-size: 14px; }
+.nv-body .nm-table { font-size: 13px; }
+.nv-body .nm-table thead th { font-size: 12px; }
+.nv-body .nv-pantalla.tiene-resultado #nvConsultaSeleccion { display: none !important; }
+.nv-body .nv-pantalla:not(.tiene-resultado) .cr-nueva { display: none; }
+.nv-body .nv-pantalla.tiene-resultado .result-panel .status-chip { display: none; }
+.nv-body .nv-pantalla .cr-nueva { min-height: 44px; font-size: 14px; }
+.nv-body:has(.nv-pantalla:not([hidden]).tiene-resultado) .wa-fab,
+.nv-body:has(.nv-pantalla:not([hidden]).tiene-resultado) .wa-menu,
+.nv-body:has(.nv-pantalla:not([hidden]).tiene-resultado) .wa-backdrop { display: none; }
+@media (max-width: 620px) {
+  .nv-body .cr-btn-list { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .nv-body .cr-btn-option { padding: 11px 12px 11px 15px; }
+}
+
 /* El Filtro Vehicular Completo en el acceso: es lo que más se vende, y
    se ve antes que nada. En el verde de la marca, con el precio. */
 /* El único sitio de la plataforma con el verde de fondo, y a propósito
