@@ -1,7 +1,6 @@
 # robots.txt — Filtro Vehicular+
-# La app pública (app.html) es la página indexable. El resto de páginas
-# (index, pagos) usan <meta name="robots" content="noindex"> — por eso
-# deben quedar rastreables para que Google lea ese noindex.
+# La portada redirige a /app. Ambas rutas pueden rastrearse para que Google
+# lea el nombre del sitio y el favicon; las páginas de pago tienen noindex.
 
 User-agent: *
 Allow: /

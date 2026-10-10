@@ -32,6 +32,7 @@ const server = http.createServer((req, res) => {
   try {
     let url = decodeURIComponent(req.url.split("?")[0]);
     if (url === "/" || url === "") url = "/index.html";
+    if (url === "/app") url = "/app.html";
     const filePath = path.normalize(path.join(ROOT, url));
     if (!filePath.startsWith(ROOT)) {
       res.writeHead(403); return res.end("forbidden");
