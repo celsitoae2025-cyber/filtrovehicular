@@ -617,14 +617,6 @@ button.nv-avatar.es-abierto { background: var(--nv-oscuro-3); }
   display: flex; align-items: center; justify-content: center;
   padding: 24px 20px; background: var(--nv-oscuro);
 }
-.nv-puerta::before {
-  content: '';
-  position: absolute; inset: 0; z-index: 0;
-  background: url('../assets/acceso/taller.webp?v=3') 66% center / cover no-repeat;
-  filter: grayscale(1) contrast(1.08);
-  opacity: .16;
-  pointer-events: none;
-}
 .nv-puerta-caja, .nv-puerta-volver, .nv-puerta-legal { position: relative; z-index: 1; }
 .nv-puerta-caja {
   width: min(420px, 100%);
@@ -1073,19 +1065,7 @@ body.nv-puerta-encima { overflow: hidden; }
   .nv-body * { transition: none !important; }
 }
 
-/* La foto se lee con más claridad en ordenador; el formulario queda
-   centrado y el fondo permanece inmóvil y sin color. */
-@media (min-width: 901px) {
-  .nv-puerta { overflow: hidden; }
-  .nv-puerta::before {
-    background-position: center;
-    filter: grayscale(1) contrast(1.08);
-    opacity: .28;
-  }
-}
-
-/* La puerta como ficha: jerarquía editorial, bordes nítidos y ninguna
-   sombra. La foto tenue del taller sigue dando contexto a la marca. */
+/* La puerta como ficha: jerarquía editorial, bordes nítidos y ninguna sombra. */
 .nv-puerta-caja {
   width: min(448px, 100%);
   gap: 14px;
