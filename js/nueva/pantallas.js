@@ -8,6 +8,7 @@
                     consultas: eso es el historial.
      · Historial  → el registro: cada consulta, agrupada por día, con
                     «Repetir» para volver a lanzarla.
+     · Vehículos  → placas guardadas por el usuario para elegir otra consulta.
      · Pagos      → comprar créditos y ver los movimientos.
      · Cuenta     → tus datos y los accesos.
 
@@ -326,6 +327,13 @@
 
   function esOk(c) { return c.status === 'success'; }
   function enCurso(c) { return c.status === 'in_flight' || c.status === 'pending'; }
+  function estadoConsulta(c) {
+    if (esOk(c)) return { clase: 'ok', texto: 'Con resultado' };
+    if (c.status === 'pending') return { clase: 'curso', texto: 'En espera' };
+    if (c.status === 'in_flight') return { clase: 'curso', texto: 'En proceso' };
+    if (c.status === 'error') return { clase: 'error', texto: 'Sin resultado' };
+    return { clase: 'error', texto: 'Por revisar' };
+  }
 
 
   /* ============================================================
@@ -439,6 +447,7 @@
     var q = NV.llano(($('nvHistBuscar').value || '').trim());
     var lista = (consultas || []).filter(function (c) {
       if (filtroHist === 'ok' && !esOk(c)) return false;
+      if (filtroHist === 'curso' && !enCurso(c)) return false;
       if (filtroHist === 'error' && (esOk(c) || enCurso(c))) return false;
       return !q || NV.llano((c.input || '') + ' ' + nombreCat(c.module)).indexOf(q) !== -1;
     }).slice(0, 300);
@@ -460,12 +469,14 @@
         diaActual = dia;
       }
       var hora = new Date(c.created_at).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
-      var estado = esOk(c) ? 'ok' : (enCurso(c) ? 'curso' : 'error');
+      var estado = estadoConsulta(c);
       var cobro = esOk(c) && c.cost ? '−' + c.cost : '';
+      var demorada = enCurso(c) && Date.now() - new Date(c.created_at).getTime() > 30 * 60000;
       html += '<div class="nv-reg">' +
         '<span class="nv-reg-hora">' + hora + '</span>' +
         '<span class="nv-reg-txt"><b>' + esc(c.input || '—') + '</b><span>' + esc(nombreCat(c.module)) + '</span></span>' +
-        '<span class="nv-punto nv-punto-' + estado + '" title="' + (estado === 'ok' ? 'Con resultado' : estado === 'curso' ? 'En curso' : 'Sin resultado') + '"></span>' +
+        '<span class="nv-reg-estado nv-reg-estado-' + estado.clase + '"><span><i class="nv-punto nv-punto-' + estado.clase + '"></i>' + esc(estado.texto) + '</span>' +
+        (demorada ? '<a class="nv-reg-ayuda" target="_blank" rel="noopener noreferrer" href="' + esc(NV.whatsapp('Hola, necesito revisar mi consulta ' + c.id + ' que sigue en curso.')) + '">Pedir ayuda</a>' : '') + '</span>' +
         '<span class="nv-reg-cobro">' + cobro + '</span>' +
         '<button type="button" class="nv-repetir" data-mod="' + esc(c.module) + '" data-type="' + esc(c.type) + '" data-val="' + esc(c.input || '') + '" title="Consultar de nuevo" aria-label="Consultar de nuevo"><svg><use href="#i-repetir"/></svg></button>' +
       '</div>';
@@ -480,6 +491,7 @@
   }
 
   function arrancarHistorial() {
+    $('nvHistActualizar').addEventListener('click', entrarHistorial);
     $('nvSegmentos').addEventListener('click', function (e) {
       var b = e.target.closest('button');
       if (!b) return;
@@ -505,6 +517,128 @@
 
 
   /* ============================================================
+     MIS VEHICULOS - guardado voluntario, sin consultar ni cobrar
+     ============================================================ */
+
+  var vehiculos = [];
+  var vehiculosError = '';
+  var Veh = C.Vehicles;
+
+  function pintarVehiculos() {
+    var caja = $('nvVehLista');
+    if (vehiculosError) {
+      caja.innerHTML = '<div class="nv-veh-mensaje" role="alert">' + esc(vehiculosError) +
+        ' <button type="button" class="nv-boton-claro" data-veh-actualizar>Reintentar</button></div>';
+      return;
+    }
+    if (!vehiculos.length) {
+      caja.innerHTML = '<p class="nv-veh-mensaje">Todavía no has guardado placas.</p>';
+      return;
+    }
+    caja.innerHTML = vehiculos.map(function (v) {
+      var ultima = (consultas || []).find(function (c) {
+        return c.type === 'placa' && Veh.normalizePlate(c.input) === v.plate;
+      });
+      var resumen = fallaHist ? 'Consultas recientes no disponibles' : ultima
+        ? 'Última consulta reciente: ' + new Date(ultima.created_at).toLocaleDateString('es-PE') + ' · ' + estadoConsulta(ultima).texto
+        : 'Sin consultas recientes';
+      return '<article class="nv-veh-card">' +
+        '<div class="nv-veh-info"><strong>' + esc(v.plate) + '</strong>' +
+        (v.alias ? '<span>' + esc(v.alias) + '</span>' : '') +
+        '<small>' + esc(resumen) + '</small></div>' +
+        '<div class="nv-veh-acciones"><button class="nv-cta nv-cta-chica" type="button" data-veh-consultar="' + esc(v.id) + '">Elegir consulta</button>' +
+        '<button class="nv-boton-claro" type="button" data-veh-borrar="' + esc(v.id) + '" aria-label="Eliminar placa ' + esc(v.plate) + '">Eliminar</button></div>' +
+        '</article>';
+    }).join('');
+  }
+
+  async function entrarVehiculos() {
+    $('nvVehLista').innerHTML = '<div class="nv-cargando"></div>';
+    await leerConsultas();
+    if (!NV.usuario) {
+      vehiculosError = 'No se pudo leer tu sesión. Vuelve a entrar.';
+      pintarVehiculos();
+      return;
+    }
+    try {
+      var res = await sb().from('saved_vehicles')
+        .select('id, plate, alias, created_at')
+        .eq('user_id', NV.usuario.id)
+        .order('created_at', { ascending: false });
+      if (res.error) throw res.error;
+      vehiculos = res.data || [];
+      vehiculosError = '';
+    } catch (e) {
+      vehiculos = [];
+      vehiculosError = 'No se pudieron cargar las placas guardadas. Inténtalo de nuevo.';
+    }
+    pintarVehiculos();
+  }
+
+  function arrancarVehiculos() {
+    $('nvVehForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var placa = Veh.normalizePlate($('nvVehPlaca').value);
+      var alias = $('nvVehAlias').value.trim();
+      if (!Veh.validPlate(placa)) {
+        C.toast({ type: 'error', title: 'Revisa la placa', message: 'Escribe entre 5 y 8 letras o números.' });
+        $('nvVehPlaca').focus();
+        return;
+      }
+      if (!NV.usuario) {
+        C.toast({ type: 'error', title: 'Sesión no disponible', message: 'Vuelve a entrar para guardar la placa.' });
+        return;
+      }
+      var boton = $('nvVehGuardar');
+      boton.disabled = true;
+      try {
+        var res = await sb().from('saved_vehicles').insert({ user_id: NV.usuario.id, plate: placa, alias: alias });
+        if (res.error) throw res.error;
+        $('nvVehForm').reset();
+        C.toast({ type: 'success', title: 'Placa guardada', message: 'Podrás elegir una consulta cuando la necesites.' });
+        await entrarVehiculos();
+      } catch (error) {
+        C.toast({ type: 'error', title: 'No se pudo guardar', message: error && error.code === '23505' ? 'Esa placa ya está en tu lista.' : 'Reinténtalo en unos momentos.' });
+      } finally {
+        boton.disabled = false;
+      }
+    });
+
+    $('nvVehLista').addEventListener('click', async function (e) {
+      if (e.target.closest('[data-veh-actualizar]')) { entrarVehiculos(); return; }
+      var abrir = e.target.closest('[data-veh-consultar]');
+      if (abrir) {
+        var v = vehiculos.find(function (x) { return x.id === abrir.dataset.vehConsultar; });
+        if (!v) return;
+        datoPendiente = { categoria: 'filter', tipo: 'placa', valor: v.plate };
+        NV.ir('consultar');
+        cambiarCategoria('filter');
+        C.toast({ type: 'info', title: 'Elige una consulta', message: 'La placa se completará al elegir un servicio por placa.' });
+        return;
+      }
+      var borrar = e.target.closest('[data-veh-borrar]');
+      if (!borrar) return;
+      var vehiculo = vehiculos.find(function (x) { return x.id === borrar.dataset.vehBorrar; });
+      if (!vehiculo) return;
+      var ok = C.confirm
+        ? await C.confirm({ title: 'Eliminar placa', message: '¿Quitar ' + vehiculo.plate + ' de tus vehículos?', confirmText: 'Eliminar' })
+        : window.confirm('¿Quitar ' + vehiculo.plate + ' de tus vehículos?');
+      if (!ok) return;
+      borrar.disabled = true;
+      var res = await sb().from('saved_vehicles').delete()
+        .eq('id', vehiculo.id).eq('user_id', NV.usuario.id);
+      if (res.error) {
+        borrar.disabled = false;
+        C.toast({ type: 'error', title: 'No se pudo eliminar', message: 'Reinténtalo en unos momentos.' });
+        return;
+      }
+      vehiculos = vehiculos.filter(function (x) { return x.id !== vehiculo.id; });
+      pintarVehiculos();
+    });
+  }
+
+
+  /* ============================================================
      PAGOS
      ============================================================ */
 
@@ -521,24 +655,23 @@
     var mejor = PAQUETES.reduce(function (a, b) { return (b.precio / b.creditos) < (a.precio / a.creditos) ? b : a; });
     $('nvPaquetes').innerHTML = PAQUETES.map(function (p) {
       var es = p === mejor;
-      /* La insignia «Mejor precio» va FUERA de la línea de créditos: ahí
-         adentro competía por el mismo ancho que el precio y «Comprar», y
-         apretaba al botón hasta cortarlo. Aparte, chica, debajo. */
-      return '<div class="nv-paq' + (es ? ' es-mejor' : '') + '">' +
-        '<div class="nv-paq-fila">' +
-          '<span class="nv-paq-cred"><strong>' + NV.numero(p.creditos) + '</strong> créditos</span>' +
-          '<em>' + NV.soles(p.precio) + '</em>' +
-          '<button type="button" class="nv-cta nv-cta-chica" data-plan="' + p.id + '"><span>Comprar</span></button>' +
-        '</div>' +
-        (es ? '<span class="nv-paq-mejor">Mejor precio</span>' : '') +
-      '</div>';
+      return '<article class="nv-paq' + (es ? ' es-mejor' : '') + '">' +
+        '<div class="nv-paq-top"><span>Paquete</span>' +
+          (es ? '<span class="nv-paq-mejor">Mejor precio</span>' : '') + '</div>' +
+        '<div class="nv-paq-cred"><strong>' + NV.numero(p.creditos) + '</strong><span>créditos</span></div>' +
+        '<div class="nv-paq-precio"><span>' + NV.soles(p.precio) + '</span>' +
+          '<small>' + NV.soles(p.precio / p.creditos * 100) + ' por 100 créditos</small></div>' +
+        '<button type="button" class="nv-cta nv-cta-chica" data-plan="' + p.id +
+          '" aria-label="Comprar ' + NV.numero(p.creditos) + ' créditos por ' + NV.soles(p.precio) + '"><span>Comprar</span></button>' +
+      '</article>';
     }).join('');
   }
 
   async function comprar(planId, boton) {
     var original = boton.innerHTML;
-    boton.disabled = true;
-    boton.innerHTML = '<span>Abriendo…</span><i><span class="nv-giro"></span></i>';
+    var botones = $('nvPaquetes').querySelectorAll('[data-plan]');
+    botones.forEach(function (b) { b.disabled = true; });
+    boton.innerHTML = '<span>Abriendo pago…</span><i><span class="nv-giro"></span></i>';
     try {
       var res = await sb().functions.invoke('crear-preferencia', { body: { plan_id: planId } });
       if (res.error) throw res.error;
@@ -548,16 +681,23 @@
       window.location.href = url;
     } catch (e) {
       console.error('[pagos]', e);
-      boton.disabled = false;
+      botones.forEach(function (b) { b.disabled = false; });
       boton.innerHTML = original;
       C.toast({ type: 'error', title: 'No se pudo abrir el pago', message: 'Inténtalo de nuevo.' });
     }
   }
 
   function actualizarLibre() {
-    var n = parseInt($('nvLibreCreditos').value, 10) || 0;
-    var ok = n >= LIBRE_MINIMO;
+    var campo = $('nvLibreCreditos');
+    var valor = campo.value.trim();
+    var n = /^\d+$/.test(valor) ? Number(valor) : NaN;
+    var ok = Number.isInteger(n) && n >= LIBRE_MINIMO && n % 10 === 0;
     $('nvLibreTotal').textContent = NV.soles(ok ? n * LIBRE_TARIFA : 0);
+    campo.setAttribute('aria-invalid', valor && !ok ? 'true' : 'false');
+    $('nvLibreAyuda').textContent = !valor ? 'Mínimo 400, en múltiplos de 10.'
+      : !Number.isInteger(n) || n % 10 !== 0 ? 'Ingresa créditos en múltiplos de 10.'
+      : n < LIBRE_MINIMO ? 'El mínimo es 400 créditos.'
+      : 'Te llevará a WhatsApp para coordinar la recarga.';
     var ir = $('nvLibreIr');
     ir.classList.toggle('es-inactivo', !ok);
     ir.setAttribute('aria-disabled', ok ? 'false' : 'true');
@@ -581,36 +721,93 @@
      Y SIEMPRE filtrado por el usuario: a una cuenta administradora la
      base le deja leer los movimientos de todos, y sin este filtro le
      salían los de todos los clientes. */
-  async function entrarPagos() {
+  async function cargarPagos() {
+    $('nvPagosN').textContent = 'Cargando pagos…';
+    $('nvPagosTotal').textContent = '';
+    $('nvMovimientos').innerHTML = '<div class="nv-cargando"></div>';
+    var filas = [];
+    var pagosMP = [];
+    var movimientosMP = [];
+    if (NV.usuario) {
+      try {
+        var resultados = await Promise.all([sb().from('transactions')
+          .select('id, user_id, type, amount, amount_pen, payment_method, reference, plan_id, created_at')
+          .eq('user_id', NV.usuario.id)
+          .or('type.in.(purchase,subscription),and(type.eq.admin_adjust,amount.gt.0,payment_method.in.(whatsapp,manual))')
+          .order('created_at', { ascending: false })
+          .limit(200),
+        sb().from('payments_mp')
+          .select('payment_id, user_id, plan_id, credits, amount, status, type, created_at')
+          .eq('user_id', NV.usuario.id)
+          .order('created_at', { ascending: false })
+          .limit(200)]);
+        if (resultados[0].error) throw resultados[0].error;
+        if (resultados[1].error) throw resultados[1].error;
+        filas = resultados[0].data || [];
+        pagosMP = resultados[1].data || [];
+        var ids = pagosMP.map(function (p) { return p.payment_id; });
+        for (var i = 0; i < ids.length; i += 80) {
+          var vinculados = await sb().from('transactions')
+            .select('id, user_id, type, amount, amount_pen, payment_method, reference, plan_id')
+            .eq('user_id', NV.usuario.id)
+            .eq('payment_method', 'mercadopago')
+            .in('reference', ids.slice(i, i + 80));
+          if (vinculados.error) throw vinculados.error;
+          movimientosMP = movimientosMP.concat(vinculados.data || []);
+        }
+      } catch (e) {
+        console.error('[pagos] historial:', e);
+        $('nvPagosN').textContent = 'No disponible';
+        $('nvMovimientos').innerHTML = '<div class="nv-pagos-error"><p>No pudimos cargar tus pagos.</p>' +
+          '<button type="button" class="nv-boton-claro" data-reintentar-pagos>Reintentar</button></div>';
+        return;
+      }
+    }
+
+    var idsMP = {};
+    var entradas = pagosMP.map(function (p) {
+      idsMP[p.payment_id] = true;
+      var estado = C.MPReconciliation.assess(p, movimientosMP);
+      var revisar = estado !== 'movement_recorded';
+      var nombre = p.type === 'suscripcion' ? 'Suscripción' : 'Paquete de ' + NV.numero(p.credits) + ' créditos';
+      var ayuda = revisar ? '<span class="nv-mov-revision">Movimiento por revisar · ' + esc(p.payment_id) +
+        ' <a target="_blank" rel="noopener noreferrer" href="' + esc(NV.whatsapp('Hola, necesito revisar mi pago de Mercado Pago ' + p.payment_id + '.')) + '">Pedir ayuda</a></span>' :
+        '<span class="nv-mov-registrado">Movimiento registrado</span>';
+      return {
+        fecha: p.created_at,
+        monto: Number(p.amount) || 0,
+        html: '<div class="nv-mov"><span class="nv-mov-txt"><b>' + esc(nombre) + '</b>' +
+          '<span>' + esc(NV.fecha(p.created_at, true)) + ' · Mercado Pago</span>' + ayuda +
+          '</span><strong>' + NV.soles(p.amount) + '</strong></div>'
+      };
+    });
+    filas.filter(function (t) {
+      return t.payment_method !== 'mercadopago' || !idsMP[t.reference];
+    }).forEach(function (t) {
+      var metodo = METODO[t.payment_method] || t.payment_method || '';
+      entradas.push({
+        fecha: t.created_at,
+        monto: Number(t.amount_pen) || 0,
+        html: '<div class="nv-mov"><span class="nv-mov-txt"><b>' + esc(nombrePago(t)) + '</b>' +
+          '<span>' + esc(NV.fecha(t.created_at, true)) + (metodo ? ' · ' + esc(metodo) : '') + '</span></span>' +
+          '<strong>' + (Number(t.amount_pen) ? NV.soles(t.amount_pen) : '+' + NV.numero(t.amount)) + '</strong></div>'
+      });
+    });
+    entradas.sort(function (a, b) { return new Date(b.fecha) - new Date(a.fecha); });
+    var total = entradas.reduce(function (a, t) { return a + t.monto; }, 0);
+    $('nvPagosN').textContent = entradas.length + (entradas.length === 1 ? ' pago' : ' pagos');
+    $('nvPagosTotal').textContent = total ? NV.soles(total) : '';
+    $('nvMovimientos').innerHTML = entradas.length ? entradas.map(function (t) { return t.html; }).join('') :
+      '<p class="nv-vacio">Todavía no has hecho ningún pago.</p>';
+  }
+
+  function entrarPagos() {
     /* Cada vez que se entra a Pagos, la lista empieza plegada. */
     var det = $('nvPagosHechos');
     if (det.open) det.open = false;
     $('nvPagosBoton').textContent = 'Ver pagos';
     NV.refrescarSaldo();
-    $('nvMovimientos').innerHTML = '<div class="nv-cargando"></div>';
-    var filas = [];
-    if (NV.usuario) {
-      var res = await sb().from('transactions')
-        .select('id, type, amount, amount_pen, payment_method, created_at')
-        .eq('user_id', NV.usuario.id)
-        .or('type.in.(purchase,subscription),and(type.eq.admin_adjust,amount.gt.0,payment_method.in.(whatsapp,manual))')
-        .order('created_at', { ascending: false })
-        .limit(200);
-      filas = res.error ? [] : (res.data || []);
-    }
-
-    var total = filas.reduce(function (a, t) { return a + (Number(t.amount_pen) || 0); }, 0);
-    $('nvPagosN').textContent = filas.length;
-    $('nvPagosTotal').textContent = total ? NV.soles(total) : '';
-
-    $('nvMovimientos').innerHTML = filas.length ? filas.map(function (t) {
-      var metodo = METODO[t.payment_method] || t.payment_method || '';
-      return '<div class="nv-mov">' +
-        '<span class="nv-mov-txt"><b>' + esc(nombrePago(t)) + '</b>' +
-          '<span>' + esc(NV.fecha(t.created_at, true)) + (metodo ? ' · ' + esc(metodo) : '') + '</span></span>' +
-        '<strong>' + (Number(t.amount_pen) ? NV.soles(t.amount_pen) : '+' + NV.numero(t.amount)) + '</strong>' +
-      '</div>';
-    }).join('') : '<p class="nv-vacio">Todavía no has hecho ningún pago.</p>';
+    cargarPagos();
   }
 
   function arrancarPagos() {
@@ -619,19 +816,17 @@
       var b = e.target.closest('[data-plan]');
       if (b && !b.disabled) comprar(b.dataset.plan, b);
     });
-    /* «Mis pagos» se abre y se cierra SOLO con su botón: tocar el resto
-       de la fila no hace nada. */
-    $('nvPagosHechos').querySelector('summary').addEventListener('click', function (e) {
-      if (!e.target.closest('.nv-pagos-boton')) e.preventDefault();
-    });
     $('nvPagosHechos').addEventListener('toggle', function () {
       $('nvPagosBoton').textContent = this.open ? 'Ocultar' : 'Ver pagos';
+    });
+    $('nvMovimientos').addEventListener('click', function (e) {
+      if (e.target.closest('[data-reintentar-pagos]')) cargarPagos();
     });
     $('nvLibreCreditos').addEventListener('input', actualizarLibre);
     $('nvLibreIr').addEventListener('click', function (e) {
       if (this.getAttribute('aria-disabled') === 'true') {
         e.preventDefault();
-        C.toast({ type: 'info', title: 'Mínimo ' + LIBRE_MINIMO + ' créditos' });
+        C.toast({ type: 'info', title: 'Revisa la cantidad', message: $('nvLibreAyuda').textContent });
       }
     });
     actualizarLibre();
@@ -676,10 +871,12 @@
     arrancarConsultar();
     arrancarResumen();
     arrancarHistorial();
+    arrancarVehiculos();
     arrancarPagos();
     arrancarCuenta();
     NV.alEntrar.resumen = entrarResumen;
     NV.alEntrar.historial = entrarHistorial;
+    NV.alEntrar.vehiculos = entrarVehiculos;
     NV.alEntrar.pagos = entrarPagos;
     NV.alEntrar.cuenta = entrarCuenta;
     /* Lo que rodea a las consultas (js/nueva/servicios.js): va al final

@@ -20,18 +20,21 @@
   };
 
   var cachedRows = [];
+  var loadError = false;
   var realtimeChannel = null;
   var refreshTimer = null;
 
   async function loadPayments() {
     var sb = getSB();
-    if (!sb) return [];
+    if (!sb) { loadError = true; return []; }
+    loadError = false;
     var res = await sb.from('payments_mp')
       .select('id, payment_id, user_id, user_email, plan_id, credits, amount, status, type, mp_payer_email, mp_payment_method, mp_date_approved, created_at')
       .order('created_at', { ascending: false })
       .limit(500);
     if (res.error) {
       console.error('payments_mp load error:', res.error);
+      loadError = true;
       return [];
     }
     var rows = res.data || [];
@@ -44,24 +47,45 @@
       if (prof.data) prof.data.forEach(function (p) { nameById[p.id] = p.full_name || ''; });
     }
     rows.forEach(function (r) { r._user_name = nameById[r.user_id] || (r.user_email || 'Usuario'); });
+    var movements = [];
+    var reconciliationUnavailable = false;
+    for (var offset = 0; offset < rows.length; offset += 80) {
+      var paymentIds = rows.slice(offset, offset + 80).map(function (r) { return r.payment_id; });
+      var ledger = await sb.from('transactions')
+        .select('id, user_id, type, amount, amount_pen, payment_method, reference, plan_id')
+        .eq('payment_method', 'mercadopago')
+        .in('reference', paymentIds);
+      if (ledger.error) {
+        console.error('payments_mp reconciliation error:', ledger.error);
+        reconciliationUnavailable = true;
+        break;
+      }
+      movements = movements.concat(ledger.data || []);
+    }
+    rows.forEach(function (r) {
+      r._reconciliation = reconciliationUnavailable ? 'unavailable' :
+        Consultia.MPReconciliation.assess(r, movements);
+    });
     return rows;
   }
 
   var escapeHtml = Consultia.Utils.escapeHtml;
 
   function renderStats(rows) {
-    var stats = { approved: 0, pending: 0, rejected: 0, refunded: 0, total: 0 };
+    var stats = { approved: 0, pending: 0, rejected: 0, refunded: 0, review: 0, total: 0 };
     rows.forEach(function (t) {
       if (t.status === 'approved')   { stats.approved++;  stats.total += parseFloat(t.amount) || 0; }
       if (t.status === 'pending' || t.status === 'in_process') stats.pending++;
       if (t.status === 'rejected')   stats.rejected++;
       if (t.status === 'refunded')   stats.refunded++;
+      if (t.status === 'approved' && t._reconciliation !== 'movement_recorded') stats.review++;
     });
     setText('mpStatApproved', stats.approved);
     setText('mpStatPending', stats.pending);
     setText('mpStatRejected', stats.rejected);
     setText('mpStatRefunded', stats.refunded);
     setText('mpStatTotal', A.fmtMoney(stats.total));
+    setText('mpStatReview', stats.review);
   }
 
   function setText(id, value) {
@@ -70,16 +94,19 @@
   }
 
   function renderConnection() {
-    // Indicador simple: si tenemos al menos una transacción, hay conexión real.
     var status = document.getElementById('mpConnStatus');
     if (!status) return;
-    if (cachedRows.length > 0) {
-      status.className = 'chip chip-ok';
-      status.textContent = 'Conectado · Producción';
-    } else {
-      status.className = 'chip';
-      status.textContent = 'Sin transacciones aún';
+    if (loadError) {
+      status.className = 'chip chip-off';
+      status.textContent = 'No se pudieron leer los pagos';
+      return;
     }
+    var needsReview = cachedRows.filter(function (r) {
+      return r.status === 'approved' && r._reconciliation !== 'movement_recorded';
+    }).length;
+    status.className = needsReview ? 'chip chip-off' : 'chip';
+    status.textContent = needsReview ? needsReview + ' pagos por revisar' :
+      'Registros consultados · conexión externa no verificada';
   }
 
   function paint() {
@@ -90,7 +117,9 @@
     renderConnection();
 
     var rows = cachedRows.filter(function (t) {
-      if (statusFilter !== 'all' && t.status !== statusFilter) return false;
+      if (statusFilter === 'review') {
+        if (t.status !== 'approved' || t._reconciliation === 'movement_recorded') return false;
+      } else if (statusFilter !== 'all' && t.status !== statusFilter) return false;
       if (search) {
         var hay = ((t._user_name || '') + ' ' + (t.user_email || '') + ' ' + (t.payment_id || '')).toLowerCase();
         if (hay.indexOf(search) === -1) return false;
@@ -104,7 +133,10 @@
     if (!body) return;
     if (!rows.length) {
       body.innerHTML = '';
-      if (empty) empty.hidden = false;
+      if (empty) {
+        empty.hidden = false;
+        empty.textContent = loadError ? 'No se pudieron cargar los pagos. Vuelve a abrir esta sección.' : 'Sin transacciones.';
+      }
       if (wrap) wrap.style.display = 'none';
       return;
     }
@@ -113,6 +145,10 @@
 
     body.innerHTML = rows.map(function (t) {
       var chip = STATUS_CHIP[t.status] || { cls: 'chip', label: t.status };
+      var reconciliation = t.status !== 'approved' ? '—' :
+        t._reconciliation === 'movement_recorded' ? 'Movimiento registrado' :
+        t._reconciliation === 'unavailable' ? 'No se pudo verificar' : 'Revisar movimiento';
+      var reconciliationChip = t._reconciliation === 'movement_recorded' ? 'chip-ok' : 'chip-off';
       var userCell = '<div class="cell-user"><span class="avatar">' + escapeHtml(A.userInitials(t._user_name)) + '</span>' +
         '<div class="user-info"><strong>' + escapeHtml(t._user_name) + '</strong><span>' + escapeHtml(t.user_email || '') + '</span></div></div>';
       var method = t.mp_payment_method || '—';
@@ -124,6 +160,7 @@
         '<td><strong>' + A.fmtMoney(parseFloat(t.amount) || 0) + '</strong></td>' +
         '<td>' + escapeHtml(method) + '</td>' +
         '<td><span class="chip ' + chip.cls + '">' + escapeHtml(chip.label) + '</span></td>' +
+        '<td><span class="chip ' + reconciliationChip + '">' + escapeHtml(reconciliation) + '</span></td>' +
         '<td><div class="cell-actions">' +
           '<button class="table-btn" data-mp-action="detail" data-id="' + escapeHtml(t.payment_id || '') + '">Detalle</button>' +
         '</div></td>' +

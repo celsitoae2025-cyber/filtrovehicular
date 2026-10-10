@@ -126,7 +126,11 @@ serve(async (req: Request) => {
     });
     if (!mpRes.ok) {
       console.error("MP verify failed:", mpRes.status);
-      return new Response("OK", { status: 200 });
+      // An unknown ID is not a recoverable payment; transient/API errors are.
+      if (mpRes.status === 400 || mpRes.status === 404) {
+        return new Response("OK", { status: 200 });
+      }
+      return new Response("ERROR", { status: 500 });
     }
 
     const payment = await mpRes.json();
@@ -182,245 +186,99 @@ serve(async (req: Request) => {
     const sb = getSupabase();
     if (!sb) {
       console.error("Supabase no configurado");
-      return new Response("OK", { status: 200 });
+      return new Response("ERROR", { status: 500 });
     }
 
-    // Idempotencia atómica: INSERT con ON CONFLICT para evitar race condition.
-    // Si payment_id ya existe (UNIQUE constraint), el INSERT no hace nada
-    // y upsertedExisting será true.
-    const { data: inserted, error: insertErr } = await sb
-      .from("payments_mp")
-      .upsert(
-        {
-          payment_id: String(paymentId),
-          user_id: ref.user_id,
-          user_email: ref.user_email,
-          plan_id: ref.plan_id,
-          credits: planInfo.credits,
-          amount: payment.transaction_amount,
-          status: payment.status,
-          type: planInfo.type,
-          mp_payer_email: payment.payer?.email || "",
-          mp_payment_method: payment.payment_method_id || "",
-          mp_date_approved: payment.date_approved || "",
-        },
-        { onConflict: "payment_id", ignoreDuplicates: true },
-      )
-      .select("id")
-      .single();
+    // One database transaction inserts the payment, grants the entitlement,
+    // and writes the ledger row. A failure rolls all three back so MP can retry.
+    const { data: applied, error: applyError } = await sb.rpc(
+      "apply_mp_approved_payment",
+      {
+        p_payment_id: String(paymentId),
+        p_user_id: ref.user_id,
+        p_user_email: ref.user_email,
+        p_plan_id: ref.plan_id,
+        p_credits: planInfo.credits,
+        p_amount: payment.transaction_amount,
+        p_type: planInfo.type,
+        p_tier: plan.tier,
+        p_days: plan.type === "suscripcion" ? plan.days : 0,
+        p_payer_email: payment.payer?.email || "",
+        p_method: payment.payment_method_id || "",
+        p_date_approved: payment.date_approved || "",
+      },
+    );
 
-    /* Duplicado y avería NO son lo mismo, y aquí se trataban igual.
-
-       Con `ignoreDuplicates`, un pago ya procesado vuelve sin fila y sin
-       error: ese es el caso bueno y se corta en silencio. Pero un fallo
-       de verdad —la base sin responder, un permiso, una columna que
-       cambió— también entraba por este `if`, y entonces el pago quedaba
-       cobrado, sin créditos y sin que nadie se enterara: el cliente pagó
-       y se quedó mirando su saldo.
-
-       Ahora la avería se avisa por Telegram y se responde 500. Mercado
-       Pago reintenta la notificación durante horas, así que un fallo
-       pasajero se acredita solo en el siguiente intento. */
-    const esDuplicado = !insertErr && !inserted;
-    if (esDuplicado) return new Response("OK", { status: 200 });
-
-    if (insertErr) {
-      console.error("payments_mp insert error:", insertErr);
+    if (applyError) {
+      console.error("apply_mp_approved_payment error:", applyError);
       await notifyTelegram(
-        `🚨 <b>PAGO SIN ACREDITAR — revisar</b>
-` +
-          `No se pudo registrar el pago; MP reintentará.
-` +
-          `👤 ${ref.user_email}
-` +
-          `💳 ${ref.plan_id} — S/ ${payment.transaction_amount}
-` +
-          `🆔 MP #${paymentId}
-` +
-          `⚠️ ${insertErr.message || insertErr.code || "error desconocido"}`,
+        `<b>PAGO SIN ACREDITAR - revisar</b>\n` +
+          `Usuario: ${ref.user_email}\nPlan: ${ref.plan_id}\n` +
+          `MP #${paymentId}\nError: ${applyError.message || applyError.code || "desconocido"}`,
       );
       return new Response("ERROR", { status: 500 });
     }
 
-    if (!inserted) return new Response("OK", { status: 200 });
-
-    // Si es recarga de créditos, sumar al saldo del usuario ATÓMICAMENTE
-    if (planInfo.type === "recarga" && planInfo.credits > 0) {
-      const { data: profile } = await sb
-        .from("profiles")
-        .select("full_name, phone")
-        .eq("id", ref.user_id)
-        .maybeSingle();
-
-      // Incremento atómico: usa RPC para evitar race condition read-then-write
-      let { error: rpcErr } = await sb.rpc("increment_credits", {
-        p_user_id: ref.user_id,
-        p_amount: planInfo.credits,
-      });
-      if (rpcErr) {
-        // Reintento único: los errores transitorios (red, pool) suelen pasar al segundo intento
-        console.error("increment_credits RPC error (intento 1):", rpcErr);
-        const retry = await sb.rpc("increment_credits", {
-          p_user_id: ref.user_id,
-          p_amount: planInfo.credits,
-        });
-        rpcErr = retry.error;
-      }
-      if (rpcErr) {
-        console.error("increment_credits RPC error (reintento):", rpcErr);
-        // Fallback: update directo NO atómico — bajo concurrencia puede perder
-        // un incremento, por eso se alerta al admin para verificar el saldo.
-        const { data: currentProfile } = await sb
-          .from("profiles")
-          .select("credits_balance")
-          .eq("id", ref.user_id)
-          .maybeSingle();
-        await sb
-          .from("profiles")
-          .update({
-            credits_balance: (currentProfile?.credits_balance || 0) + planInfo.credits,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", ref.user_id);
+    if (applied !== true) {
+      // Historical rows may have been inserted by the older non-atomic flow.
+      // Never credit them automatically: the balance may already have changed.
+      const { data: ledger, error: ledgerError } = await sb.from("transactions")
+        .select("id")
+        .eq("user_id", ref.user_id)
+        .eq("payment_method", "mercadopago")
+        .eq("reference", String(paymentId))
+        .limit(1);
+      if (ledgerError || !ledger?.length) {
         await notifyTelegram(
-          `⚠️ <b>FALLBACK NO ATÓMICO USADO — verificar saldo</b>\n` +
-            `El RPC increment_credits falló 2 veces; se acreditó con update directo.\n` +
-            `👤 user_id: ${ref.user_id}\n` +
-            `🪙 +${planInfo.credits} créditos\n` +
-            `🆔 MP #${paymentId}\n` +
-            `Revisa que el saldo del usuario sea correcto.`,
+          `<b>PAGO EN REVISION - movimiento no encontrado</b>\n` +
+            `Usuario: ${ref.user_email}\nMP #${paymentId}\n` +
+            `Verifica el saldo antes de hacer una recarga manual.`,
         );
       }
-
-      // Registrar la transacción en el historial
-      await sb.from("transactions").insert({
-        user_id: ref.user_id,
-        type: "purchase",
-        amount: planInfo.credits,
-        description: `Pago MP — ${ref.plan_id}`,
-        plan_id: ref.plan_id,
-        payment_method: "mercadopago",
-        reference: String(paymentId),
-      });
-
-      // Notificación in-app para el cliente
-      try {
-        await sb.from("notifications").insert({
-          user_id: ref.user_id,
-          type: "credits",
-          title: `¡Recibiste ${planInfo.credits} créditos!`,
-          body:
-            `Tu pago de S/ ${payment.transaction_amount} fue aprobado. ` +
-            `Se acreditaron ${planInfo.credits} créditos a tu cuenta y ya puedes consultarlos.`,
-          meta: {
-            payment_id: String(paymentId),
-            plan_id: ref.plan_id,
-            amount: payment.transaction_amount,
-            credits: planInfo.credits,
-            method: "mercadopago",
-          },
-        });
-      } catch (nerr) {
-        console.error("notif credits insert error:", nerr);
-      }
-
-      /* La ficha completa, para no tener que abrir el panel: quién pagó,
-         cómo ubicarlo, cuánto puso, con qué operación y cuándo. El
-         teléfono sale del perfil; si el cliente nunca lo cargó se dice
-         que falta, en vez de dejar el renglón en blanco. */
-      await notifyTelegram(
-        `✅ <b>PAGO APROBADO — Mercado Pago</b>\n` +
-          `👤 ${profile?.full_name || "Sin nombre"}\n` +
-          `📧 ${ref.user_email || "sin correo"}\n` +
-          `📱 ${profile?.phone || "sin celular"}\n` +
-          `💳 ${ref.plan_id}\n` +
-          `💰 S/ ${payment.transaction_amount}\n` +
-          `🪙 +${planInfo.credits} créditos\n` +
-          `🧾 Operación MP: ${paymentId}\n` +
-          `💠 Medio: ${payment.payment_method_id || "-"}\n` +
-          `🕐 ${fechaLima()}`,
-      );
-    } else if (planInfo.type === "suscripcion") {
-      const { data: profile } = await sb
-        .from("profiles")
-        .select("subscription_tier, subscription_expires_at, full_name, phone")
-        .eq("id", ref.user_id)
-        .maybeSingle();
-
-      const nowMs = Date.now();
-      const dayMs = 86400 * 1000;
-      let baseMs = nowMs;
-      let started_at_iso = new Date(nowMs).toISOString();
-
-      if (
-        profile?.subscription_expires_at &&
-        new Date(profile.subscription_expires_at).getTime() > nowMs &&
-        profile.subscription_tier === ref.tier
-      ) {
-        baseMs = new Date(profile.subscription_expires_at).getTime();
-        started_at_iso = "";
-      }
-
-      const expires_at = new Date(baseMs + ref.days * dayMs).toISOString();
-      const updatePayload: Record<string, unknown> = {
-        subscription_tier: ref.tier,
-        subscription_plan_id: ref.plan_id,
-        subscription_expires_at: expires_at,
-        updated_at: new Date().toISOString(),
-      };
-      if (started_at_iso) updatePayload.subscription_started_at = started_at_iso;
-
-      await sb.from("profiles").update(updatePayload).eq("id", ref.user_id);
-
-      await sb.from("transactions").insert({
-        user_id: ref.user_id,
-        type: "subscription",
-        amount: 0,
-        description: `Suscripción ${ref.plan_id} (${ref.days} días) — vence ${expires_at.slice(0, 10)}`,
-        plan_id: ref.plan_id,
-        payment_method: "mercadopago",
-        reference: String(paymentId),
-      });
-
-      try {
-        await sb.from("notifications").insert({
-          user_id: ref.user_id,
-          type: "system",
-          title: `¡Suscripción activada por ${ref.days} días!`,
-          body:
-            `Tu pago de S/ ${payment.transaction_amount} fue aprobado. ` +
-            `Disfruta consultas según tu plan ${ref.tier} hasta el ${expires_at.slice(0, 10)}.`,
-          meta: {
-            payment_id: String(paymentId),
-            plan_id: ref.plan_id,
-            tier: ref.tier,
-            days: ref.days,
-            expires_at,
-            method: "mercadopago",
-          },
-        });
-      } catch (nerr) {
-        console.error("notif sub insert error:", nerr);
-      }
-
-      await notifyTelegram(
-        `✅ <b>SUSCRIPCIÓN APROBADA — Mercado Pago</b>\n` +
-          `👤 ${profile?.full_name || "Sin nombre"}\n` +
-          `📧 ${ref.user_email || "sin correo"}\n` +
-          `📱 ${profile?.phone || "sin celular"}\n` +
-          `📅 ${ref.days} días · ${ref.tier}\n` +
-          `⏰ Vence: ${expires_at.slice(0, 10)}\n` +
-          `💰 S/ ${payment.transaction_amount}\n` +
-          `🧾 Operación MP: ${paymentId}\n` +
-          `💠 Medio: ${payment.payment_method_id || "-"}\n` +
-          `🕐 ${fechaLima()}`,
-      );
+      return new Response("OK", { status: 200 });
     }
+
+    const { data: profile } = await sb.from("profiles")
+      .select("full_name, phone, subscription_expires_at")
+      .eq("id", ref.user_id)
+      .maybeSingle();
+
+    const isCredit = planInfo.type === "recarga";
+    const expires = profile?.subscription_expires_at || "";
+    const { error: notificationError } = await sb.from("notifications").insert({
+      user_id: ref.user_id,
+      type: isCredit ? "credits" : "system",
+      title: isCredit
+        ? `Recibiste ${planInfo.credits} creditos`
+        : `Suscripcion activada por ${plan.type === "suscripcion" ? plan.days : 0} dias`,
+      body: isCredit
+        ? `Tu pago de S/ ${payment.transaction_amount} fue aprobado y se acreditaron ${planInfo.credits} creditos.`
+        : `Tu pago de S/ ${payment.transaction_amount} fue aprobado. Tu plan vence el ${String(expires).slice(0, 10)}.`,
+      meta: {
+        payment_id: String(paymentId),
+        plan_id: ref.plan_id,
+        amount: payment.transaction_amount,
+        credits: planInfo.credits,
+        expires_at: expires,
+        method: "mercadopago",
+      },
+    });
+    if (notificationError) console.error("MP notification error:", notificationError);
+
+    await notifyTelegram(
+      `<b>${isCredit ? "RECARGA" : "SUSCRIPCION"} APROBADA - Mercado Pago</b>\n` +
+        `Nombre: ${profile?.full_name || "Sin nombre"}\n` +
+        `Correo: ${ref.user_email || "sin correo"}\n` +
+        `Celular: ${profile?.phone || "sin celular"}\n` +
+        `Plan: ${ref.plan_id}\nMonto: S/ ${payment.transaction_amount}\n` +
+        (isCredit ? `Creditos: +${planInfo.credits}\n` : `Vence: ${String(expires).slice(0, 10)}\n`) +
+        `MP #${paymentId}\n${fechaLima()}`,
+    );
 
     return new Response("OK", { status: 200 });
   } catch (err) {
     console.error("webhook error:", err);
-    // Siempre devolver 200 para que MP no reintente infinitamente
-    return new Response("OK", { status: 200 });
+    // An infrastructure failure must be retried by Mercado Pago.
+    return new Response("ERROR", { status: 500 });
   }
 });

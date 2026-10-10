@@ -157,6 +157,7 @@
     resumen:   { titulo: 'Resumen' },
     pagos:     { titulo: 'Pagos' },
     historial: { titulo: 'Historial' },
+    vehiculos: { titulo: 'Mis vehículos' },
     cuenta:    { titulo: 'Mi cuenta' },
     regiones:  { titulo: 'Infracciones por regiones' }
   };

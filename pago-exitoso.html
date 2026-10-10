@@ -69,18 +69,21 @@
         <polyline points="5 13 10 18 20 7"/>
       </svg>
     </div>
-    <h1>Pago confirmado</h1>
-    <p>Tu pago fue procesado correctamente.<br>Los créditos se acreditaron en tu cuenta de forma automática.</p>
-    <a href="app.html" class="btn">Volver al dashboard</a>
+    <h1>Pago recibido</h1>
+    <p>Estamos comprobando la acreditación en tu cuenta. Verás el movimiento en «Mis pagos» cuando termine.</p>
+    <a href="app.html?payment=success" class="btn" id="volverApp">Volver a la plataforma</a>
     <p class="hint">Redirigiendo en <span id="c">6</span> s…</p>
   </div>
 <script>
+  var paymentId = new URLSearchParams(location.search).get('payment_id') || '';
+  var destino = 'app.html?payment=success' + (/^\d+$/.test(paymentId) ? '&payment_id=' + encodeURIComponent(paymentId) : '');
+  document.getElementById('volverApp').href = destino;
   var s = 6;
   var el = document.getElementById('c');
   var t = setInterval(function () {
     s--;
     el.textContent = s;
-    if (s <= 0) { clearInterval(t); location.href = 'app.html?payment=success'; }
+    if (s <= 0) { clearInterval(t); location.href = destino; }
   }, 1000);
 </script>
 </body>

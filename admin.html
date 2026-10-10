@@ -561,7 +561,7 @@
             <div class="mp-conn-logo">MP</div>
             <div class="mp-conn-info">
               <strong>Mercado Pago</strong>
-              <span id="mpConnStatus" class="chip chip-ok">Conectado · Sandbox</span>
+              <span id="mpConnStatus" class="chip">Comprobando registros…</span>
             </div>
           </div>
           <div class="mp-stats">
@@ -570,6 +570,7 @@
             <div class="mp-stat"><span>Rechazadas</span><strong id="mpStatRejected">0</strong></div>
             <div class="mp-stat"><span>Reembolsadas</span><strong id="mpStatRefunded">0</strong></div>
             <div class="mp-stat"><span>Recaudado</span><strong id="mpStatTotal">S/ 0</strong></div>
+            <div class="mp-stat"><span>Por revisar</span><strong id="mpStatReview">0</strong></div>
           </div>
         </div>
 
@@ -585,6 +586,7 @@
             <option value="in_process">En proceso</option>
             <option value="rejected">Rechazadas</option>
             <option value="refunded">Reembolsadas</option>
+            <option value="review">Por revisar</option>
           </select>
         </div>
 
@@ -592,7 +594,7 @@
           <table class="admin-table">
             <thead>
               <tr>
-                <th>Fecha</th><th>MP ID</th><th>Usuario</th><th>Monto</th><th>Método</th><th>Estado</th><th></th>
+                <th>Fecha</th><th>MP ID</th><th>Usuario</th><th>Monto</th><th>Método</th><th>Estado</th><th>Conciliación</th><th></th>
               </tr>
             </thead>
             <tbody id="mpTableBody"></tbody>
@@ -1089,6 +1091,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/shared/supabase-config.js?v=2"></script>
 <script src="js/shared/utils.js?v=2"></script>
+<script src="js/shared/mp-reconciliation.js?v=1"></script>
 <script src="js/shared/auth.js?v=24"></script>
 <script src="js/modules/toasts.js?v=2"></script>
 <script src="js/modules/confirm-dialog.js?v=2"></script>
@@ -1102,7 +1105,7 @@
 <script src="js/admin/recargas.js?v=23"></script>
 <script src="js/admin/compras.js?v=24"></script>
 <script src="js/admin/consultas.js?v=25"></script>
-<script src="js/admin/mercadopago.js?v=24"></script>
+<script src="js/admin/mercadopago.js?v=25"></script>
 <script src="js/admin/team.js?v=24"></script>
 <script src="js/admin/anti-abuse.js?v=24"></script>
 <script src="js/admin/audit.js?v=23"></script>
