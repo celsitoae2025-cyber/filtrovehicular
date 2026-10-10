@@ -42,6 +42,12 @@ save(brand, ROOT / "favicon.png", 192)
 save(brand, ICONS / "logo-filtro-180.png", 180)
 save(brand, ICONS / "logo-filtro-192.png", 192)
 save(brand, ICONS / "logo-filtro-512.png", 512)
+# Rutas antiguas que todavía pueden estar guardadas por buscadores y PWA.
+# Deben entregar la misma marca aunque se consulte una URL anterior.
+save(brand, ICONS / "favicon-marca.png", 192)
+save(brand, ICONS / "icon-192.png", 192)
+save(brand, ICONS / "icon-512.png", 512)
+save(brand, ICONS / "apple-touch-icon.png", 180)
 save(maskable, ICONS / "logo-filtro-maskable-512.png", 512)
 brand.save(ROOT / "favicon.ico", format="ICO", sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
 print("favicon.ico", "16, 32, 48, 64")
