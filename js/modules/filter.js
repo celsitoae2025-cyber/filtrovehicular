@@ -386,6 +386,25 @@
     return html + '</div>';
   }
 
+  function renderReporteArchivo(medio, original) {
+    if (!medio || !medio.base64) return '';
+    var nombre = medio.filename || 'Reporte_vehicular.pdf';
+    var url = H.base64ToBlobUrl(medio.base64, 'application/pdf');
+    var mb = (medio.base64.length * 3 / 4 / (1024 * 1024)).toFixed(1);
+    return '<section class="rep-pdf-archivo" aria-label="Reporte PDF disponible">' +
+      '<div class="rep-pdf-info">' +
+        '<span class="rep-pdf-k">' + (original ? 'Documento original del proveedor' : 'Reporte completo listo') + '</span>' +
+        '<strong>Tu reporte vehicular en PDF</strong>' +
+        '<span class="rep-pdf-nombre">' + escapeHtml(nombre) + ' · ' + mb + ' MB</span>' +
+      '</div>' +
+      '<div class="rep-pdf-acciones">' +
+        '<a class="rep-pdf-descargar" href="' + url + '" download="' + escapeHtml(nombre) + '">Descargar PDF</a>' +
+        '<button class="rep-pdf-ver cr-doccard-view" type="button" data-blob="' + url + '" data-fn="' + escapeHtml(nombre) + '">Visualizar</button>' +
+      '</div>' +
+      (original ? '<p class="rep-pdf-aviso">No se pudo ordenar este archivo; puedes consultar el documento entregado por el proveedor.</p>' : '') +
+    '</section>';
+  }
+
   // El nivel del último reporte, para guardarlo junto al folio.
   var ultimoVeredicto = null;
 
@@ -872,7 +891,8 @@
       html = htmlMantenimiento();
     } else if (esReporte) {
       // Los datos van como tabla + placeholder para el PDF rediseñado.
-      html = renderMetaplaData(p, valorConsultado) + '<div id="metapla-pdf-area"><div class="cr-pdf-loading">Generando reporte PDF...</div></div>';
+      html = '<div id="metapla-pdf-area" aria-live="polite"><div class="cr-pdf-loading">Ordenando el reporte PDF…</div></div>' +
+        renderMetaplaData(p, valorConsultado);
     } else if (htmlNm) {
       // /nm necesita su tabla y su descarga real, también desde Consultar.
       html = htmlNm;
@@ -977,15 +997,13 @@
                 '<div class="cr-pdf-loading">Generando reporte PDF… ' + n + ' de ' + total + '</div>';
             });
             if (!result) throw new Error('MetaplaReport devolvió null');
-            // Mismo componente que el resto de la plataforma: «Descargar»
-            // reutiliza el reporte ya generado (result.blobUrl/base64), no
-            // el PDF original del bot.
-            var reportePdf = [{ base64: result.base64, filename: result.filename || 'reporte.pdf', mimeType: 'application/pdf' }];
-            metaplaPdfArea.innerHTML = renderPdfDlBar(reportePdf, 'Descargar Reporte PDF') + renderDocumentCard(reportePdf);
+            metaplaPdfArea.innerHTML = renderReporteArchivo({
+              base64: result.base64, filename: result.filename || 'Reporte_vehicular.pdf'
+            }, false);
           } catch (e) {
             console.error('[metapla-report]', e);
-            // Fallback: el PDF original del bot, para no dejar al usuario sin documento.
-            metaplaPdfArea.innerHTML = renderPdfDlBar(pdfsRef, 'Descargar Reporte PDF') + renderDocumentCard(pdfsRef);
+            // El archivo original sigue disponible, claramente identificado.
+            metaplaPdfArea.innerHTML = renderReporteArchivo(pdfsRef[0], true);
           }
         })();
       // La placa consultada, no lo que haya en el campo ahora: para cuando

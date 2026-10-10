@@ -1100,6 +1100,20 @@ body.nv-puerta-encima { overflow: hidden; }
 .nv-body .nm-download { min-height: 44px; font-size: 14px; }
 .nv-body .nm-table { font-size: 13px; }
 .nv-body .nm-table thead th { font-size: 12px; }
+.nv-body .rep-pdf-archivo { margin: 18px 16px 22px; padding: 20px; border: 1px solid #d5ddd4; border-radius: 8px; background: #f8faf6; }
+.nv-body .rep-pdf-info { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.nv-body .rep-pdf-k { color: #537c25; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.nv-body .rep-pdf-info strong { color: var(--nv-oscuro); font-size: 18px; line-height: 1.25; }
+.nv-body .rep-pdf-nombre { color: var(--nv-gris); font-size: 14px; overflow-wrap: anywhere; }
+.nv-body .rep-pdf-acciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.nv-body .rep-pdf-acciones > * { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 18px; border: 1px solid var(--nv-oscuro); border-radius: 6px; font: inherit; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer; }
+.nv-body .rep-pdf-descargar { background: var(--nv-oscuro); color: #fff; }
+.nv-body .rep-pdf-ver { background: transparent; color: var(--nv-oscuro); }
+.nv-body .rep-pdf-aviso { margin: 14px 0 0; color: var(--nv-gris); font-size: 14px; line-height: 1.45; }
+@media (max-width: 620px) {
+  .nv-body .rep-pdf-archivo { margin: 12px 12px 20px; padding: 16px; }
+  .nv-body .rep-pdf-acciones > * { flex: 1 1 130px; }
+}
 .nv-body .nv-pantalla.tiene-resultado #nvConsultaSeleccion { display: none !important; }
 .nv-body .nv-pantalla:not(.tiene-resultado) .cr-nueva { display: none; }
 .nv-body .nv-pantalla.tiene-resultado .result-panel .status-chip { display: none; }

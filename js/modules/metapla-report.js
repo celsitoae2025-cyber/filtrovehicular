@@ -635,6 +635,31 @@
   // ── Portada ──
   var PORTADA = { banda: 58 };
 
+  // Los estados que añade el proveedor no forman parte del nombre de la
+  // sección. Separarlos evita títulos enormes en el índice y la cabecera.
+  function tituloLegible(titulo) {
+    var t = String(titulo || '').trim();
+    var reglas = [
+      [/^RESUMEN EJECUTIVO/i, 'Resumen ejecutivo', ''],
+      [/^DATOS DEL VEH[IÍ]CULO/i, 'Ficha técnica del vehículo', 'Sunarp'],
+      [/^PROPIETARIOS REGISTRADOS/i, 'Propietarios registrados', 'Sunarp'],
+      [/^IDENTIFICACI[OÓ]N DE PROPIETARIOS/i, 'Identificación de propietarios', 'Reniec'],
+      [/^R[EÉ]CORD DE CONDUCIR/i, 'Récord de conducir', 'MTC'],
+      [/^HISTORIAL REGISTRAL/i, 'Historial registral', 'Sunarp'],
+      [/^REQUISITORIAS POR PLACA/i, 'Requisitorias por placa', 'PNP'],
+      [/^DENUNCIAS POLICIALES/i, 'Denuncias policiales', 'PNP'],
+      [/^PAPELETAS DE TR[AÁ]NSITO/i, 'Papeletas de tránsito', 'ATU'],
+      [/^REVISI[OÓ]N T[EÉ]CNICA VEHICULAR/i, 'Revisión técnica vehicular', 'MTC'],
+      [/^SOAT/i, 'SOAT', 'ApeSeg'],
+      [/^TARJETA [UÚ]NICA DE CIRCULACI[OÓ]N/i, 'Tarjeta única de circulación', 'MTC'],
+      [/^PAPELETAS MULTI.REGI[OÓ]N/i, 'Papeletas por regiones', 'Municipalidades']
+    ];
+    for (var i = 0; i < reglas.length; i++) {
+      if (reglas[i][0].test(t)) return { nombre: reglas[i][1], fuente: reglas[i][2] };
+    }
+    return { nombre: t || 'Otros resultados', fuente: '' };
+  }
+
   function buildPdf(secciones, meta) {
     var doc = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     var W = PG.W, H = PG.H, M = MG.x;
@@ -824,7 +849,8 @@
       var pn = paginaActual();
       if (decoradas[pn]) return;
       decoradas[pn] = true;
-      if (pn !== 1) membrete();
+      // El membrete se imprime en la pasada final: autoTable puede pintar
+      // encima de él al continuar una tabla en una página nueva.
       pie(pn);
     }
 
@@ -1211,6 +1237,7 @@
 
     var indice = [];        // para la página de contenido
     var marcas = [];        // running head: qué sección corre en cada página
+    var anexos = [];        // documentos completos, después de los resultados
     var numSec = 0;
 
     secciones.forEach(function (sec) {
@@ -1221,17 +1248,22 @@
 
       numSec++;
       need(U * 8);
+      var tituloSec = tituloLegible(sec.titulo);
 
-      /* Cabecera de sección: el número en gris claro y grande hace de
-         guía al hojear; el título manda y el filete en tinta cierra. */
+      /* La banda reúne número, título y fuente en un solo lugar. */
       var etiqueta = ('0' + numSec).slice(-2);
-      rotulo(etiqueta, M, y, 15, C_HAIR, true);
-      rotulo(sec.titulo, gx(1), y, T.h3, C_INK, true, { maxWidth: gw(11) });
-      indice.push({ n: etiqueta, titulo: sec.titulo, pag: paginaActual() });
-      marcas.push({ pag: paginaActual(), texto: etiqueta + ' · ' + sec.titulo });
-      y += 3.6;
-      hairline(y, M, W - M, C_INK, 0.4);
-      av(2);
+      doc.setFillColor.apply(doc, C_INK);
+      doc.rect(M, y - 7, CW, 13, 'F');
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(M, y - 7, 1.4, 13, 'F');
+      rotulo(etiqueta, M + 4, y + 1, T.base, C_ACCENT, true);
+      rotulo(tituloSec.nombre, M + 17, y + 1, T.h3, [255, 255, 255], true,
+             { maxWidth: gw(8) });
+      if (tituloSec.fuente) versalita(tituloSec.fuente, W - M - 4, y + 1,
+        { size: 5.8, track: 0.3, align: 'right', color: [196, 205, 201] });
+      indice.push({ n: etiqueta, titulo: tituloSec.nombre, pag: paginaActual() });
+      marcas.push({ pag: paginaActual(), texto: etiqueta + ' · ' + tituloSec.nombre });
+      y += 16;
 
       // Campos: etiqueta tenue a la izquierda (4 columnas), valor en tinta.
       if (kv.length) {
@@ -1299,7 +1331,8 @@
       /* ── Imágenes ── */
       if (sec.imgs.length) {
         av(0.5);
-        var chicas = sec.imgs.filter(function (im) { return im.px <= 1000 && im.py <= 700; });
+        var chicas = /IDENTIFICACI[OÓ]N DE PROPIETARIOS/i.test(sec.titulo)
+          ? sec.imgs.filter(function (im) { return im.px <= 1000 && im.py <= 700; }) : [];
         var grandes = chicas.length > 1
           ? sec.imgs.filter(function (im) { return !(im.px <= 1000 && im.py <= 700); })
           : sec.imgs;
@@ -1322,51 +1355,27 @@
           y = base + U * 2.5;
         }
 
-        /* Documentos e ilustraciones.
-
-           Ninguna imagen se estira ya a página ancha por el hecho de
-           estar sola. El logotipo de la marca del vehículo venía en unos
-           cientos de píxeles y se imprimía a 170 mm: media hoja de negro
-           para decir «Kia», con más presencia que el veredicto.
-
-           Se distinguen por lo que son: un LOGOTIPO es pequeño y ancho
-           —marcas, sellos, escudos— y se acota a 46 mm, alineado a la
-           izquierda como un dato más.
-
-           Un DOCUMENTO —una partida registral, una tarjeta, una boleta—
-           va a HOJA ENTERA y él solo: es lo que alguien va a leer,
-           imprimir o enseñar en una notaría, y la letra de un asiento
-           registral a media página no se lee. Cada uno abre página, con
-           su pie arriba, y se agranda hasta donde da la columna.
-
-           Aquí hubo un tope por resolución —no pasar de 300 ppp— para no
-           ampliar escaneos pobres. Se retira: un asiento de 1000 px
-           salía a 85 mm, ilegible, y entre un escaneo grande con algo de
-           grano y uno pequeño y nítido que no se puede leer, manda
-           poder leerlo. */
+        /* Las constancias y partidas se reúnen al final. Intercalarlas aquí
+           separaba los resultados principales por más de diez páginas. */
         var caps = sec.caps || [];
         grandes.forEach(function (im, gi) {
           var cap = caps[gi] || '';
-          var esLogo = im.px <= 1400 && im.py <= 1000;
-          var anchoMax = esLogo ? 46 : CW;
-          var altoMax = esLogo ? 34 : CUERPO.bottom - CUERPO.top - U * 2;
-          // Un documento no comparte hoja: si la página ya trae algo, se pasa.
-          if (!esLogo && y > CUERPO.top) nuevaPagina();
-          var esc = Math.min(anchoMax / im.px, altoMax / im.py);
+          var esLogo = /^(logo|marca|emblema)/i.test(cap) ||
+            (/DATOS DEL VEH/i.test(sec.titulo) && im.px <= 600 && im.py <= 500);
+          if (!esLogo) {
+            anexos.push({ imagen: im, titulo: tituloSec.nombre, cap: cap });
+            return;
+          }
+          var esc = Math.min(46 / im.px, 34 / im.py);
           var dw = im.px * esc, dh = im.py * esc;
-          if (y + dh + (cap ? U * 1.5 : 0) > CUERPO.bottom) nuevaPagina();
+          need(dh + U * 3);
           if (cap) {
             versalita(cap, M, y, { size: T.micro, track: 0.4 });
             av(1);
           }
-          // El documento se centra en la columna; el logotipo va a margen.
-          var ix = esLogo ? M : M + (CW - dw) / 2;
           try {
-            doc.addImage(im.dataUrl, 'JPEG', ix, y, dw, dh, undefined, 'FAST');
+            doc.addImage(im.dataUrl, 'JPEG', M, y, dw, dh, undefined, 'FAST');
           } catch (e) { /* imagen no insertable */ }
-          doc.setDrawColor.apply(doc, C_HAIR);
-          doc.setLineWidth(0.2);
-          doc.rect(ix, y, dw, dh);
           y += dh + U * 2;
         });
       }
@@ -1381,24 +1390,36 @@
        vehículo confiando en algo que nunca se comprobó. */
     if (VER && VER.modelo && VER.modelo.cobertura && VER.modelo.cobertura.length) {
       need(U * 12);
-      rotulo('Fuentes consultadas', M, y, T.h3, C_INK, true);
+      doc.setFillColor.apply(doc, C_INK);
+      doc.rect(M, y - 7, CW, 13, 'F');
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(M, y - 7, 1.4, 13, 'F');
+      rotulo('Fuentes consultadas', M + 4, y + 1, T.h3,
+             [255, 255, 255], true);
       indice.push({ n: '·', titulo: 'Fuentes consultadas', pag: paginaActual() });
       marcas.push({ pag: paginaActual(), texto: 'Fuentes consultadas' });
-      y += 3.6;
-      hairline(y, M, W - M, C_INK, 0.4);
-      av(2);
+      y += 16;
 
       var traduce = {
         'con datos':     'Respondió con registros',
         'sin registros': 'Respondió: sin registros',
         'sin respuesta': 'No respondió',
       };
+      var identificadas = VER.modelo.cobertura.filter(function (c) {
+        return c.fuente && !/^Sin t[ií]tulo$/i.test(c.fuente.trim());
+      });
+      var anonimas = VER.modelo.cobertura.length - identificadas.length;
+      var filasCobertura = identificadas.map(function (c) {
+        return [c.fuente, traduce[c.estado] || c.estado];
+      });
+      if (anonimas) filasCobertura.push([
+        anonimas + ' apartado' + (anonimas === 1 ? '' : 's') + ' sin fuente indicada',
+        'El proveedor no identificó la fuente'
+      ]);
       doc.autoTable({
         startY: y,
         head: [['Fuente', 'Resultado']],
-        body: VER.modelo.cobertura.map(function (c) {
-          return [c.fuente, traduce[c.estado] || c.estado];
-        }),
+        body: filasCobertura,
         margin: margenTabla,
         tableLineWidth: 0,
         didDrawPage: cromo,
@@ -1426,6 +1447,56 @@
       need(notaAlto + U);
       notaAlcance(y);
       y += notaAlto;
+    }
+
+    /* Los resultados terminan antes de las constancias. Se agrupan hasta
+       dos páginas del mismo trámite por hoja, sin descartar ninguna. */
+    if (anexos.length) {
+      var primeraPaginaAnexos = true;
+      for (var ai = 0; ai < anexos.length;) {
+        var grupoTitulo = anexos[ai].titulo;
+        var grupo = [];
+        while (ai < anexos.length && anexos[ai].titulo === grupoTitulo) grupo.push(anexos[ai++]);
+        for (var gi = 0; gi < grupo.length; gi += 2) {
+          var par = grupo.slice(gi, gi + 2);
+          nuevaPagina();
+          if (primeraPaginaAnexos) {
+            indice.push({ n: '·', titulo: 'Anexos documentales', pag: paginaActual() });
+            primeraPaginaAnexos = false;
+          }
+          marcas.push({ pag: paginaActual(), texto: 'Anexos · ' + grupoTitulo });
+          versalita('Documentos de respaldo', M, y, { size: T.mini, track: 0.8 });
+          y += U * 2.5;
+          doc.setFillColor.apply(doc, C_INK);
+          doc.rect(M, y - 7, CW, 13, 'F');
+          doc.setFillColor.apply(doc, C_ACCENT);
+          doc.rect(M, y - 7, 1.4, 13, 'F');
+          rotulo(grupoTitulo, M + 4, y + 1, T.h3,
+                 [255, 255, 255], true, { maxWidth: CW - 8 });
+          y += 18;
+          var anchoCelda = par.length === 2 ? (CW - 6) / 2 : CW;
+          var altoDisponible = CUERPO.bottom - y - U * 3;
+          par.forEach(function (anexo, pi) {
+            var x0 = M + pi * (anchoCelda + 6);
+            var rot = anexo.cap || ('Documento ' + (gi + pi + 1) + ' de ' + grupo.length);
+            var rotLineas = parte(rot, anchoCelda, T.mini, true).slice(0, 2);
+            rotulo(rotLineas, x0, y, T.mini, C_MUTED, true);
+            var iy = y + Math.max(U * 2, rotLineas.length * LH.mini + U);
+            var im = anexo.imagen;
+            var escala = Math.min(anchoCelda / im.px, (altoDisponible - (iy - y)) / im.py);
+            var dw = im.px * escala, dh = im.py * escala;
+            var ix = x0 + (anchoCelda - dw) / 2;
+            try {
+              doc.addImage(im.dataUrl, 'JPEG', ix, iy, dw, dh, undefined, 'FAST');
+              doc.setDrawColor.apply(doc, C_HAIR);
+              doc.setLineWidth(0.2);
+              doc.rect(ix, iy, dw, dh);
+            } catch (e) { console.warn('[metapla] anexo no insertable:', e); }
+            rotulo((gi + pi + 1) + ' de ' + grupo.length, x0, CUERPO.bottom - 2,
+                   T.micro, C_MUTED);
+          });
+        }
+      }
     }
 
     /* ── Índice, insertado como página 2 ──────────────────────────
@@ -1474,19 +1545,16 @@
       marcas.push({ pag: 2, texto: 'Contenido' });
     }
     marcas.sort(function (a, b) { return a.pag - b.pag; });
+    var primerAnexo = marcas.find(function (mk) { return /^Anexos ·/.test(mk.texto); });
 
     var total = typeof doc.getNumberOfPages === 'function' ? doc.getNumberOfPages() : 1;
     for (var pn = 2; pn <= total; pn++) {                // la portada no se rotula ni se numera
       doc.setPage(pn);
-
-      var corre = '';
-      for (var mi = 0; mi < marcas.length; mi++) {
-        if (marcas[mi].pag <= pn) corre = marcas[mi].texto; else break;
-      }
-      if (corre) {
-        if (corre.length > 46) corre = corre.slice(0, 45) + '…';
-        versalita(corre, W - M, CAB.texto, { size: T.micro, track: 0.5, align: 'right' });
-      }
+      membrete();
+      var corre = conIndice && pn === 2 ? 'Contenido' :
+        (primerAnexo && pn >= primerAnexo.pag ? 'Documentos de respaldo' : 'Resultados de la consulta');
+      versalita(corre, W - M, CAB.texto,
+        { size: T.micro, track: 0.5, align: 'right' });
 
       versalita('Página', W - M - PIE.qr - 3, PIE.l1, { size: 5.4, track: 0.4, align: 'right' });
       rotulo(pn + ' de ' + total, W - M - PIE.qr - 3, PIE.l2 + 0.4, T.mini, C_INK, true,
@@ -1497,7 +1565,7 @@
     var d = new Date();
     var stamp = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') +
                 String(d.getDate()).padStart(2, '0');
-    var filename = 'FiltroVehicular-Reporte' + (slug ? '-' + slug : '') + '-' + stamp + '.pdf';
+    var filename = 'REPORTE_VEHICULAR' + (slug ? '_' + slug : '') + '_' + stamp + '.pdf';
 
     var blob = doc.output('blob');
     return {
