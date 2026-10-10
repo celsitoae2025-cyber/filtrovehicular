@@ -337,7 +337,7 @@
         err.hidden = false;
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Entrar';
+        btn.textContent = 'Iniciar sesión';
       }
     });
   }

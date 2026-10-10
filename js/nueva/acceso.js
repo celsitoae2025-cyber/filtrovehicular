@@ -311,92 +311,6 @@
     });
   }
 
-  /* ── Filtro Vehicular Completo ────────────────────────────────
-     El reporte completo lo emite un operador y se pide sin cuenta: la
-     ventana enseña qué incluye y el precio, y el mensaje sale a WhatsApp
-     con la placa ya escrita. Misma ventana y mismos estilos
-     (css/oferta.css) que tenía el acceso de siempre. */
-  var FVC_INCLUYE = [
-    'Propietarios e historial registral (Sunarp)',
-    'Papeletas de tránsito, ATU y multirregión',
-    'SOAT y revisión técnica vigentes',
-    'Denuncias, requisitorias y orden de captura'
-  ];
-  var VISTO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4.8 12.4 4.8 4.8L19.2 6.8"/></svg>';
-  var CERRAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
-  var fvcAbridor = null;
-
-  function placaLimpia(v) { return String(v || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6); }
-
-  function cerrarFvc() {
-    var modal = $('fvcModal');
-    if (!modal) return;
-    document.removeEventListener('keydown', teclaFvc);
-    modal.classList.remove('is-abierto');
-    setTimeout(function () { if (modal.parentNode) modal.remove(); }, 200);
-    if (fvcAbridor && fvcAbridor.focus) fvcAbridor.focus();
-  }
-  function teclaFvc(e) { if (e.key === 'Escape') { e.preventDefault(); cerrarFvc(); } }
-
-  function abrirFvc(desde) {
-    if ($('fvcModal')) return;
-    fvcAbridor = desde || null;
-    var sello = desde ? desde.querySelector('svg').outerHTML : '';
-    document.body.insertAdjacentHTML('beforeend',
-      '<div class="fvc-modal" id="fvcModal" role="dialog" aria-modal="true" aria-labelledby="fvcModalTitulo">' +
-        '<div class="fvc-modal-fondo" data-fvc-cerrar></div>' +
-        '<div class="fvc-modal-caja" role="document">' +
-          '<button type="button" class="fvc-cerrar" aria-label="Cerrar" data-fvc-cerrar>' + CERRAR + '</button>' +
-          '<header class="fvc-cabecera">' +
-            '<span class="fvc-sello">' + sello + '</span>' +
-            '<div class="fvc-cabecera-txt">' +
-              '<h2 class="fvc-titulo" id="fvcModalTitulo">Filtro Vehicular Completo</h2>' +
-              '<p class="fvc-bajada">Un solo PDF con todo el historial del vehículo.</p>' +
-            '</div>' +
-          '</header>' +
-          '<div class="fvc-precio">' +
-            '<strong class="fvc-ahora">S/ 15</strong>' +
-            '<s class="fvc-antes"><span class="visually-hidden">Antes </span>S/ 30</s>' +
-            '<span class="fvc-promo">Promoción por tiempo limitado</span>' +
-          '</div>' +
-          '<div class="fvc-incluye">' +
-            '<h3 class="fvc-sub">Qué incluye</h3>' +
-            '<ul class="fvc-lista">' + FVC_INCLUYE.map(function (t) {
-              return '<li><span class="fvc-visto">' + VISTO + '</span><span>' + t + '</span></li>';
-            }).join('') + '</ul>' +
-          '</div>' +
-          '<div class="fvc-accion">' +
-            '<label class="fvc-label" for="fvcPlaca">Placa del vehículo</label>' +
-            '<input class="fvc-input" id="fvcPlaca" type="text" autocomplete="off" spellcheck="false" maxlength="6" placeholder="ABC123" aria-describedby="fvcMsg">' +
-            '<p class="fvc-msg" id="fvcMsg" role="alert" hidden></p>' +
-            '<button type="button" class="fvc-enviar" id="fvcSend">Solicitar por WhatsApp</button>' +
-            '<p class="fvc-pie">Te lo enviamos por WhatsApp. No necesitas crear una cuenta.</p>' +
-          '</div>' +
-        '</div>' +
-      '</div>');
-
-    var modal = $('fvcModal');
-    var input = $('fvcPlaca');
-    var aviso = $('fvcMsg');
-    function mensaje(t) { aviso.textContent = t || ''; aviso.hidden = !t; }
-
-    modal.querySelectorAll('[data-fvc-cerrar]').forEach(function (b) { b.addEventListener('click', cerrarFvc); });
-    document.addEventListener('keydown', teclaFvc);
-    input.addEventListener('input', function () { input.value = placaLimpia(input.value); mensaje(''); });
-    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('fvcSend').click(); } });
-    $('fvcSend').addEventListener('click', function () {
-      var placa = placaLimpia(input.value);
-      input.value = placa;
-      if (!/^[A-Z0-9]{6}$/.test(placa)) { mensaje('Escribe la placa completa, por ejemplo ABC123.'); input.focus(); return; }
-      window.open(NV.whatsapp('Hola, quiero solicitar el Filtro Vehicular Completo de la placa ' + placa + '.'), '_blank', 'noopener');
-      cerrarFvc();
-    });
-    requestAnimationFrame(function () {
-      modal.classList.add('is-abierto');
-      setTimeout(function () { input.focus({ preventScroll: true }); }, 140);
-    });
-  }
-
   /* ── Lo que pide la dirección al llegar ─────────────────────── */
   /* ?action=signup (landing, anuncios) abre «Crear cuenta»; los enlaces
      viejos de recuperación abren «Cambiar contraseña». Se limpia la
@@ -442,9 +356,52 @@
       NV.verPuerta(a.dataset.pasoIr);
     });
     $('nvPuertaVolver').addEventListener('click', cerrarEncima);
-    $('fvcOpen').addEventListener('click', function () { abrirFvc(this); });
+    $('nvMostrarClave').addEventListener('click', function () {
+      var campo = $('nvAccesoClave');
+      var visible = campo.type === 'password';
+      campo.type = visible ? 'text' : 'password';
+      this.setAttribute('aria-pressed', String(visible));
+      this.setAttribute('aria-label', visible ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    });
+    var fvcDialogo = $('nvFvcDialogo');
+    var fvcForm = $('nvFvcForm');
+    var fvcPlaca = $('nvFvcPlaca');
+    var fvcError = $('nvFvcError');
+    $('fvcOpen').addEventListener('click', function () {
+      fvcDialogo.showModal();
+      fvcPlaca.focus();
+    });
+    fvcDialogo.querySelectorAll('[data-fvc-cerrar]').forEach(function (boton) {
+      boton.addEventListener('click', function () { fvcDialogo.close(); });
+    });
+    fvcDialogo.addEventListener('click', function (e) {
+      if (e.target === fvcDialogo) fvcDialogo.close();
+    });
+    fvcDialogo.addEventListener('close', function () {
+      fvcForm.reset();
+      fvcError.hidden = true;
+      fvcPlaca.removeAttribute('aria-invalid');
+      $('fvcOpen').focus();
+    });
+    fvcPlaca.addEventListener('input', function () {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+      fvcError.hidden = true;
+      this.removeAttribute('aria-invalid');
+    });
+    fvcForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var placa = fvcPlaca.value.trim();
+      if (!/^[A-Z0-9]{6}$/.test(placa)) {
+        fvcError.textContent = 'Ingresa una placa válida de 6 letras o números.';
+        fvcError.hidden = false;
+        fvcPlaca.setAttribute('aria-invalid', 'true');
+        fvcPlaca.focus();
+        return;
+      }
+      window.location.assign(NV.whatsapp('Hola, quiero solicitar mi Filtro Vehicular Completo para la placa ' + placa + '.'));
+    });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && encima && !document.querySelector('.modal:not([hidden])')) cerrarEncima();
+      if (e.key === 'Escape' && encima && !fvcDialogo.open && !document.querySelector('.modal:not([hidden])')) cerrarEncima();
     });
 
     conectarRegistro();
