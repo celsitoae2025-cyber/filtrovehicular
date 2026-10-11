@@ -1769,8 +1769,8 @@ body.nv-puerta-encima { overflow: hidden; }
 .nv-puerta-panel .nv-puerta-legal a { min-height: 40px; color: #53635b; font-size: 13px; }
 .nv-puerta-panel .nv-puerta-legal a:hover { color: var(--nv-oscuro); }
 .nv-puerta-panel #nvAcceso .nv-puerta-pie { margin-top: -4px; }
-body.auth-locked .wa-fab, body.nv-puerta-encima .wa-fab { display: none; }
-body.auth-locked .wa-menu, body.auth-locked .wa-backdrop { display: none; }
+/* La portada de acceso también ofrece el menú de soporte. */
+body.nv-puerta-encima .wa-fab { display: none; }
 .nv-comprar:focus-visible, .nv-puerta-panel a:focus-visible { outline: 2px solid var(--nv-oscuro); outline-offset: 3px; }
 .nv-puerta-panel .nv-puerta-volver {
   position: absolute; top: 28px; left: clamp(20px, 4vw, 60px);
