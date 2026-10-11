@@ -15,7 +15,7 @@
 
    Expone:
      Consultia.MetaplaReport.generate(pdfBase64, meta, onProgress)
-       → Promise<{ blobUrl, base64, filename }>
+       → Promise<{ base64, filename }>
 ============================================================ */
 (function () {
   window.Consultia = window.Consultia || {};
@@ -1546,9 +1546,7 @@
                 String(d.getDate()).padStart(2, '0');
     var filename = 'REPORTE_VEHICULAR' + (slug ? '_' + slug : '') + '_' + stamp + '.pdf';
 
-    var blob = doc.output('blob');
     return {
-      blobUrl: URL.createObjectURL(blob),
       base64: doc.output('datauristring').split(',')[1],
       filename: filename
     };

@@ -389,7 +389,7 @@
   function renderReporteArchivo(medio, original, conFoto) {
     if (!medio || !medio.base64) return '';
     var nombre = medio.filename || 'Reporte_vehicular.pdf';
-    var url = medio.blobUrl || H.base64ToBlobUrl(medio.base64, 'application/pdf');
+    var url = H.base64ToBlobUrl(medio.base64, 'application/pdf');
     var mb = (medio.base64.length * 3 / 4 / (1024 * 1024)).toFixed(1);
     return '<section class="rep-pdf-archivo" aria-label="Reporte PDF disponible">' +
       '<div class="rep-pdf-info">' +
@@ -682,6 +682,7 @@
 
   /* â”€â”€ Selección de consulta â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   function setConsulta(c) {
+    revokeActiveBlobUrls();
     currentConsulta = c;
     $('filterComboText').textContent = c.nombre;
     $('filter-desc').textContent = c.descripcion || '';
@@ -872,14 +873,14 @@
      detalles» ya retirado y buscando una ilustracion que ya no se
      dibuja—, que es justo lo que pasa cuando el mismo flujo se escribe
      dos veces. */
-  function wireResultButtons(container) {
+  function wireResultButtons(container, valorConsultado) {
     H.wireOpcionesDelBot(container, {
       consulta:        function () { return currentConsulta; },
       status:          function () { return $('filterResultStatus'); },
       prefix:          'fl',
       alNuevaConsulta: volverAlFormulario,
       alResultado:     function () { marcarConResultado(true); },
-      alFallback:      function (resp) { renderResultado(resp); }
+      alFallback:      function (resp) { renderResultado(resp, valorConsultado); }
     });
   }
 
@@ -914,6 +915,8 @@
     // quedó con el nombre viejo del comando cuando el reporte cambió de
     // bot, y el render propio del reporte dejaba de aplicarse.
     var esReporte = esMetapla(currentConsulta);
+    var enProceso = H.esRespuestaEnProceso(p);
+    var errorTecnico = esErrorTecnicoRespuesta(p, resp);
     var esNm = !!(currentConsulta && /^\/nm\b/i.test(currentConsulta.comando || ''));
     var htmlNm = esNm ? H.renderNmPersonas(p, botones, valorConsultado) : '';
 
@@ -924,16 +927,22 @@
     var pParaPdf = p;
     var abrirVisor = false;   // el documento es el resultado, no un adjunto
 
-    if (H.esRespuestaEnProceso(p)) {
+    if (enProceso) {
       /* El acuse de recibo del proveedor trae SU logo adjunto: ni el aviso
          ni el logo son el resultado. */
       html = H.htmlEnProceso();
-    } else if (esErrorTecnicoRespuesta(p, resp)) {
+    } else if (errorTecnico) {
       html = htmlMantenimiento();
     } else if (esReporte) {
-      // Los datos van como tabla + placeholder para el PDF rediseñado.
-      html = '<div id="metapla-pdf-area" aria-live="polite"><div class="cr-pdf-loading">Ordenando el reporte PDF…</div></div>' +
-        renderMetaplaData(p, valorConsultado);
+      // Un PDF ausente o un generador no disponible nunca deja una carga eterna.
+      var reporteArchivo = pdfs.length
+        ? (Consultia.MetaplaReport
+          ? '<div class="cr-pdf-loading">Ordenando el reporte PDF…</div>'
+          : renderReporteArchivo(pdfs[0], true))
+        : '<div class="rep-pdf-sin-archivo" role="status"><strong>PDF no disponible</strong>' +
+          '<p>El proveedor no adjuntó el documento. Mostramos los datos recibidos, sin calcular un veredicto.</p></div>';
+      html = '<div id="metapla-pdf-area" aria-live="polite">' + reporteArchivo + '</div>' +
+        renderMetaplaData(p, valorConsultado) + H.renderOpcionesSueltas(botones);
     } else if (htmlNm) {
       // /nm necesita su tabla y su descarga real, también desde Consultar.
       html = htmlNm;
@@ -981,7 +990,10 @@
     }
 
     body.innerHTML = html;
-    if (esReporte) pintarVeredicto(p, valorConsultado);
+    if (esReporte) ultimoVeredicto = null;
+    if (esReporte && !enProceso && !errorTecnico && pdfs.length) {
+      pintarVeredicto(p, valorConsultado);
+    }
     body.hidden = false;
 
     // Se cablean siempre que existan en el DOM, traiga o no medios.
@@ -993,7 +1005,7 @@
       alNuevaConsulta: volverAlFormulario,
       alResultado: function () { marcarConResultado(true); }
     });
-    else if (botones.length > 0) wireResultButtons(body);
+    else if (botones.length > 0) wireResultButtons(body, valorConsultado);
 
     // «Descargar» de la cabecera: arma el informe al vuelo con los datos que
     // ya estan en pantalla. No existe cuando ya hay una tarjeta de PDF (esa
@@ -1035,17 +1047,20 @@
               folio: folio
             };
             function progresoReporte(n, total) {
+              if (!metaplaPdfArea.isConnected) return;
               metaplaPdfArea.innerHTML =
                 '<div class="cr-pdf-loading">Generando reporte PDF… ' + n + ' de ' + total + '</div>';
             }
             function mostrarReporte(result) {
+              if (!metaplaPdfArea.isConnected) return false;
+              revokeActiveBlobUrls();
               metaplaPdfArea.innerHTML = renderReporteArchivo({
-                base64: result.base64, blobUrl: result.blobUrl,
+                base64: result.base64,
                 filename: result.filename || 'Reporte_vehicular.pdf'
               }, false, result.conFoto);
               var elegir = metaplaPdfArea.querySelector('.rep-pdf-foto-btn');
               var inputFoto = metaplaPdfArea.querySelector('.rep-pdf-foto-input');
-              if (!elegir || !inputFoto) return;
+              if (!elegir || !inputFoto) return true;
               elegir.addEventListener('click', function () { inputFoto.click(); });
               inputFoto.addEventListener('change', async function () {
                 if (!inputFoto.files || !inputFoto.files[0]) return;
@@ -1065,21 +1080,23 @@
                   if (aviso) aviso.textContent = e.message || 'No se pudo añadir la foto.';
                 }
               });
+              return true;
             }
             var result = await Consultia.MetaplaReport.generate(
               pdfsRef[0].base64, metaReporte, progresoReporte);
             if (!result) throw new Error('MetaplaReport devolvió null');
-            mostrarReporte(result);
+            if (mostrarReporte(result) && folio) registrarFolio(folio, valorRef, ultimoVeredicto);
           } catch (e) {
             console.error('[metapla-report]', e);
             // El archivo original sigue disponible, claramente identificado.
-            metaplaPdfArea.innerHTML = renderReporteArchivo(pdfsRef[0], true);
+            if (metaplaPdfArea.isConnected) {
+              metaplaPdfArea.innerHTML = renderReporteArchivo(pdfsRef[0], true);
+            }
           }
         })();
       // La placa consultada, no lo que haya en el campo ahora: para cuando
       // el PDF termina de armarse, el cliente puede haber escrito otra cosa.
       })(pdfs, valorConsultado || ($('filter-input') ? $('filter-input').value.trim() : ''), folioRep);
-      if (folioRep) registrarFolio(folioRep, valorConsultado, ultimoVeredicto);
     }
 
     var empty = $('filter-empty');
@@ -1088,7 +1105,12 @@
     var status = $('filterResultStatus');
     if (status) {
       status.classList.remove('status-empty', 'status-loading');
-      if (botones.length > 0 && !hasMedia && !htmlNm) {
+      if (enProceso || errorTecnico || (esReporte && !pdfs.length)) {
+        status.classList.remove('status-ok');
+        status.classList.add('status-empty');
+        status.innerHTML = '<span class="status-dot"></span> ' +
+          (enProceso ? 'En espera' : (errorTecnico ? 'No disponible' : 'Sin PDF'));
+      } else if (botones.length > 0 && !hasMedia && !htmlNm) {
         status.classList.remove('status-ok');
         status.classList.add('status-empty');
         status.innerHTML = '<span class="status-dot"></span> Elige una opción';
@@ -1139,6 +1161,7 @@
 
   function volverAlFormulario() {
     marcarConResultado(false);
+    revokeActiveBlobUrls();
     var body = $('filter-result-body');
     if (body) { body.hidden = true; body.innerHTML = ''; }
     var prev = $('filter-preview-data');
