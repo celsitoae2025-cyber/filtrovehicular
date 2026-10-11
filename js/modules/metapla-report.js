@@ -560,6 +560,26 @@
     return out;
   }
 
+  // La foto sólo se toma del PDF de origen cuando el propio documento la
+  // identifica cerca de la imagen. Logos y escaneos no se confunden con el auto.
+  function fotoDelProveedor(pages) {
+    for (var p = 0; p < Math.min(2, pages.length); p++) {
+      var pg = pages[p];
+      for (var i = 0; i < pg.images.length; i++) {
+        var im = pg.images[i], relacion = im.px / im.py;
+        if (im.px < 400 || im.py < 220 || relacion < 1.15 || relacion > 2.7 ||
+            im.w < 140 || im.h < 75) continue;
+        var identificado = pg.lines.some(function (ln) {
+          var texto = ln.cells.join(' ');
+          return Math.abs(ln.top - (im.top + im.h)) < 90 &&
+            /(fotograf[ií]a|foto|imagen)\s+(del\s+)?veh[ií]culo|fotograf[ií]a\s+referencial/i.test(texto);
+        });
+        if (identificado) return im.dataUrl;
+      }
+    }
+    return null;
+  }
+
   function findVal(secciones, re, secRe) {
     var hit = '';
     secciones.forEach(function (s) {
@@ -872,68 +892,65 @@
     var estado = findVal(secciones, /^Estado$/i, DV);
     var placa  = findVal(secciones, /^N[°º]? de Placa/i) || valor;
 
-    /* Banda de identidad. Es la única superficie oscura del informe y
-       usa el mismo tono que las superficies oscuras de la plataforma, no
-       un gris inventado para la ocasión. */
-    doc.setFillColor(20, 29, 28);                        // #141d1c
-    doc.rect(0, 0, W, PORTADA.banda, 'F');
-
-    rotulo('Filtro Vehicular', M, 32, 18, [255, 255, 255], true);
-    var wmp = doc.getTextWidth('Filtro Vehicular');
-    rotulo('+', M + wmp + 1, 32, 18, C_ACCENT, true);
-    versalita('Plataforma de consultas vehiculares', M, 40,
-              { size: T.micro, color: [150, 158, 156], track: 1 });
-
+    /* Portada compacta: identidad, placa, foto y ficha en un solo vistazo.
+       La fotografía nunca se presenta como prueba de identidad vehicular. */
+    doc.setFillColor.apply(doc, C_INK);
+    doc.rect(0, 0, W, 47, 'F');
+    rotulo('Plataforma Filtro Vehicular', M, 21, 16, [255, 255, 255], true);
+    var wmp = doc.getTextWidth('Plataforma Filtro Vehicular');
+    rotulo('+', M + wmp + 0.8, 21, 16, C_ACCENT, true);
+    versalita('Informe vehicular completo', M, 30,
+              { size: T.micro, color: [196, 205, 201], track: 0.8 });
     if (folio) {
-      versalita('Folio del documento', W - M, 29,
-                { size: 5.8, color: [150, 158, 156], track: 0.8, align: 'right' });
-      rotulo(folio, W - M, 36, 10, [255, 255, 255], true, { align: 'right' });
+      versalita('Folio', W - M, 18,
+                { size: 5.8, color: [196, 205, 201], align: 'right' });
+      rotulo(folio, W - M, 26, 9, [255, 255, 255], true, { align: 'right' });
     }
-    fileteBicolor(M, PORTADA.banda, 46, 1.2);
+    fileteBicolor(M, 47, 46, 1.2);
 
-    y = PORTADA.banda + U * 4;                           // 74
-    versalita('Informe consolidado', M, y, { size: T.mini, color: C_TURQ, track: 1.4 });
+    versalita('Reporte vehicular', M, 58, { size: T.mini, color: C_TURQ, track: 1 });
+    rotulo(placa || valor || 'Sin placa', M, 69, 24, C_INK, true);
+    rotulo('Emitido el ' + fecha, W - M, 67, T.mini, C_MUTED, false,
+           { align: 'right' });
+    hairline(73);
 
-    av(3);                                               // 86
-    rotulo('Reporte Vehicular', M, y, T.h1, C_INK, true);
-    av(3);                                               // 98
-    rotulo('Integral', M, y, T.h1, C_INK, true);
-    av(2);                                               // 106
-    rotulo('Documento emitido el ' + fecha, M, y, T.base, C_MUTED);
+    var fotoX = M, fotoY = 79, fotoW = 70, fotoH = 48;
+    doc.setFillColor.apply(doc, C_SOFT);
+    doc.rect(fotoX, fotoY, fotoW, fotoH, 'F');
+    var foto = meta && meta.fotoDataUrl;
+    var fotoRotulo = meta && meta.fotoOrigen === 'proveedor'
+      ? 'Imagen del proveedor · no acredita identidad' : 'Foto cargada para este reporte';
+    if (foto && /^data:image\/(jpeg|png);base64,/i.test(foto)) {
+      try {
+        var props = doc.getImageProperties(foto);
+        var escalaFoto = Math.min(fotoW / props.width, fotoH / props.height);
+        var fw = props.width * escalaFoto, fh = props.height * escalaFoto;
+        doc.addImage(foto, props.fileType || 'JPEG', fotoX + (fotoW - fw) / 2,
+                     fotoY + (fotoH - fh) / 2, fw, fh, undefined, 'FAST');
+      } catch (e) { foto = null; }
+    }
+    if (!foto) {
+      versalita('Fotografía no disponible', fotoX + fotoW / 2, fotoY + fotoH / 2,
+                { size: 6, track: 0.2, align: 'center' });
+    }
+    doc.setDrawColor.apply(doc, C_HAIR);
+    doc.rect(fotoX, fotoY, fotoW, fotoH);
+    rotulo(foto ? fotoRotulo : 'Puedes añadir una foto al generar el PDF',
+           fotoX, fotoY + fotoH + 4, T.micro, C_MUTED);
 
-    /* ── Ficha del vehículo: 4 columnas de matrícula + 7 de atributos ──
-       Los dos bloques miden lo mismo de alto y cierran en la misma línea:
-       el recuadro no puede quedar colgando sobre una retícula más larga
-       ni al revés. */
-    av(3.5);                                             // 120
-    var fichaTop = y, fichaH = 26;
-
-    /* La matrícula va suelta, con el filete de marca debajo y del ancho
-       exacto del texto. El recuadro imitaba una chapa, competía con la
-       retícula y obligaba a meter el número 5 mm hacia dentro, así que
-       la placa dejaba de alinear con la columna de atributos. La
-       jerarquía ya la da el cuerpo de 30 pt. */
-    versalita('Placa', gx(0), fichaTop + 5, { size: T.micro, track: 0.8 });
-    rotulo(placa || '—', gx(0), fichaTop + 17, T.placa, C_INK, true, { maxWidth: gw(4) });
-    fileteBicolor(gx(0), fichaTop + 20.5,
-                  Math.min(Math.max(doc.getTextWidth(placa || '—'), 24), gw(4)), 1.2);
-
+    var fichaX = 95, fichaW = W - M - fichaX;
     var attrs = [
       ['Marca y modelo', marca], ['Año', anio], ['Color', color],
       ['Carrocería', carro], ['Estado', estado]
     ].filter(function (a) { return a[1]; });
-
-    var ATTR_COLS = 3;
-    var attrW = gw(7) / ATTR_COLS;
-    attrs.forEach(function (a, i) {
-      var cx = gx(5) + (i % ATTR_COLS) * attrW;
-      var cy = fichaTop + 5 + Math.floor(i / ATTR_COLS) * (fichaH / 2);
-      versalita(a[0], cx, cy, { size: T.micro, track: 0.4 });
-      rotulo(String(a[1]), cx, cy + 5, 9, C_INK, true, { maxWidth: attrW - 4 });
+    if (!attrs.length) attrs.push(['Datos del vehículo', 'Ver secciones siguientes']);
+    attrs.slice(0, 5).forEach(function (a, i) {
+      var fy = fotoY + 4 + i * 9.7;
+      versalita(a[0], fichaX, fy, { size: 5.7, track: 0.25 });
+      rotulo(String(a[1]), fichaX, fy + 4.5, 8.3, C_INK, true,
+             { maxWidth: fichaW });
     });
-    y = fichaTop + fichaH;
-
-    av(2);                                               // 154
+    y = 139;
     hairline(y);
 
     /* ── Veredicto ────────────────────────────────────────────────
@@ -1145,8 +1162,8 @@
     var NOTA = 'Este documento reúne la información devuelta por las fuentes oficiales ' +
                'consultadas en la fecha de emisión. El veredicto es una lectura de esos ' +
                'registros y no sustituye la verificación física del vehículo ni el trámite ' +
-               'ante la entidad correspondiente. Su autenticidad se comprueba con el folio y ' +
-               'el código QR impresos en cada página.';
+                'ante la entidad correspondiente. El folio y el QR permiten consultar la emisión; ' +
+                'una foto añadida no certifica la identidad del vehículo.';
 
     /* `splitTextToSize` parte con la fuente ACTIVA, no con la que se
        vaya a usar después: midiendo con la que quedó puesta por el
@@ -1238,6 +1255,66 @@
     var indice = [];        // para la página de contenido
     var marcas = [];        // running head: qué sección corre en cada página
     var anexos = [];        // documentos completos, después de los resultados
+
+    /* ── Cobertura ────────────────────────────────────────────────
+       Qué se consultó y qué contestó cada fuente. Es el apartado que
+       convierte el silencio en información: sin él, una sección que no
+       respondió se lee igual que una limpia, y alguien puede comprar un
+       vehículo confiando en algo que nunca se comprobó. */
+    if (VER && VER.modelo && VER.modelo.cobertura && VER.modelo.cobertura.length) {
+      need(U * 12);
+      doc.setFillColor.apply(doc, C_INK);
+      doc.rect(M, y - 7, CW, 13, 'F');
+      doc.setFillColor.apply(doc, C_ACCENT);
+      doc.rect(M, y - 7, 1.4, 13, 'F');
+      rotulo('Resumen de la consulta', M + 4, y + 1, T.h3,
+             [255, 255, 255], true);
+      indice.push({ n: '·', titulo: 'Resumen de la consulta', pag: paginaActual() });
+      marcas.push({ pag: paginaActual(), texto: 'Resumen de la consulta' });
+      y += 16;
+
+      var traduce = {
+        'con datos':     'Con datos',
+        'sin registros': 'Sin registros indicados',
+        'sin respuesta': 'Sin respuesta',
+      };
+      var identificadas = VER.modelo.cobertura.filter(function (c) {
+        return c.fuente && !/^Sin t[ií]tulo$/i.test(c.fuente.trim());
+      });
+      var anonimas = VER.modelo.cobertura.length - identificadas.length;
+      var filasCobertura = identificadas.map(function (c) {
+        return [c.fuente, traduce[c.estado] || c.estado];
+      });
+      if (anonimas) filasCobertura.push([
+        anonimas + ' apartado' + (anonimas === 1 ? '' : 's') + ' sin fuente indicada',
+        'El proveedor no identificó el apartado'
+      ]);
+      doc.autoTable({
+        startY: y,
+        head: [['Apartado o fuente', 'Resultado entregado']],
+        body: filasCobertura,
+        margin: margenTabla,
+        tableLineWidth: 0,
+        didDrawPage: cromo,
+        headStyles: CABECERA,
+        bodyStyles: CUERPO_TABLA,
+        alternateRowStyles: { fillColor: C_SOFT },
+        columnStyles: { 1: { cellWidth: gw(5) } },
+        // Lo que no respondió, en rojo: es lo que hay que mirar.
+        didParseCell: function (data) {
+          if (data.section === 'body' && data.column.index === 1 &&
+              /Sin respuesta/.test(data.cell.raw)) {
+            data.cell.styles.textColor = C_BAD;
+            data.cell.styles.fontStyle = 'bold';
+          }
+        },
+        styles: { overflow: 'linebreak', lineWidth: 0, fillColor: false },
+        theme: 'plain'
+      });
+      y = (doc.lastAutoTable && doc.lastAutoTable.finalY) || y;
+      av(1.5);
+    }
+
     var numSec = 0;
 
     secciones.forEach(function (sec) {
@@ -1359,6 +1436,7 @@
            separaba los resultados principales por más de diez páginas. */
         var caps = sec.caps || [];
         grandes.forEach(function (im, gi) {
+          if (foto && im.dataUrl === foto) return;
           var cap = caps[gi] || '';
           var esLogo = /^(logo|marca|emblema)/i.test(cap) ||
             (/DATOS DEL VEH/i.test(sec.titulo) && im.px <= 600 && im.py <= 500);
@@ -1382,65 +1460,6 @@
 
       av(2);
     });
-
-    /* ── Cobertura ────────────────────────────────────────────────
-       Qué se consultó y qué contestó cada fuente. Es el apartado que
-       convierte el silencio en información: sin él, una sección que no
-       respondió se lee igual que una limpia, y alguien puede comprar un
-       vehículo confiando en algo que nunca se comprobó. */
-    if (VER && VER.modelo && VER.modelo.cobertura && VER.modelo.cobertura.length) {
-      need(U * 12);
-      doc.setFillColor.apply(doc, C_INK);
-      doc.rect(M, y - 7, CW, 13, 'F');
-      doc.setFillColor.apply(doc, C_ACCENT);
-      doc.rect(M, y - 7, 1.4, 13, 'F');
-      rotulo('Fuentes consultadas', M + 4, y + 1, T.h3,
-             [255, 255, 255], true);
-      indice.push({ n: '·', titulo: 'Fuentes consultadas', pag: paginaActual() });
-      marcas.push({ pag: paginaActual(), texto: 'Fuentes consultadas' });
-      y += 16;
-
-      var traduce = {
-        'con datos':     'Respondió con registros',
-        'sin registros': 'Respondió: sin registros',
-        'sin respuesta': 'No respondió',
-      };
-      var identificadas = VER.modelo.cobertura.filter(function (c) {
-        return c.fuente && !/^Sin t[ií]tulo$/i.test(c.fuente.trim());
-      });
-      var anonimas = VER.modelo.cobertura.length - identificadas.length;
-      var filasCobertura = identificadas.map(function (c) {
-        return [c.fuente, traduce[c.estado] || c.estado];
-      });
-      if (anonimas) filasCobertura.push([
-        anonimas + ' apartado' + (anonimas === 1 ? '' : 's') + ' sin fuente indicada',
-        'El proveedor no identificó la fuente'
-      ]);
-      doc.autoTable({
-        startY: y,
-        head: [['Fuente', 'Resultado']],
-        body: filasCobertura,
-        margin: margenTabla,
-        tableLineWidth: 0,
-        didDrawPage: cromo,
-        headStyles: CABECERA,
-        bodyStyles: CUERPO_TABLA,
-        alternateRowStyles: { fillColor: C_SOFT },
-        columnStyles: { 1: { cellWidth: gw(5) } },
-        // Lo que no respondió, en rojo: es lo que hay que mirar.
-        didParseCell: function (data) {
-          if (data.section === 'body' && data.column.index === 1 &&
-              /No respondió/.test(data.cell.raw)) {
-            data.cell.styles.textColor = C_BAD;
-            data.cell.styles.fontStyle = 'bold';
-          }
-        },
-        styles: { overflow: 'linebreak', lineWidth: 0, fillColor: false },
-        theme: 'plain'
-      });
-      y = (doc.lastAutoTable && doc.lastAutoTable.finalY) || y;
-      av(1.5);
-    }
 
     // La nota de alcance que no cupo en la portada cierra el documento.
     if (!notaEnPortada) {
@@ -1499,51 +1518,11 @@
       }
     }
 
-    /* ── Índice, insertado como página 2 ──────────────────────────
-       Se dibuja al final, cuando ya se sabe en qué página cayó cada
-       sección, y se mueve delante. Si el informe trae tantas secciones
-       que no cabrían en una página, no se imprime: media tabla de
-       contenidos confunde más que ninguna. */
-    var CABE_INDICE = Math.floor((CUERPO.bottom - CUERPO.top - U * 6) / (U * 2));
-    var conIndice = false;
-    if (indice.length > 2 && indice.length <= CABE_INDICE &&
-        typeof doc.movePage === 'function' && typeof doc.deletePage === 'function') {
-      try {
-        doc.addPage();
-        cromo();
-        var iy = CUERPO.top + U;
-        versalita('Contenido', M, iy, { size: T.mini, track: 1.4 });
-        iy += U * 2.5;
-        rotulo('Índice del informe', M, iy, 19, C_INK, true);
-        iy += 4;
-        hairline(iy, M, W - M, C_INK, 0.4);
-        iy += U * 2;
-        indice.forEach(function (it) {
-          // Todo lo que iba de la página 2 en adelante baja un lugar.
-          var pag = it.pag >= 2 ? it.pag + 1 : it.pag;
-          rotulo(it.n, M, iy, T.base, C_MUTED, true);
-          rotulo(it.titulo, gx(1), iy, 9.4, C_INK, true, { maxWidth: gw(9) });
-          rotulo(String(pag), W - M, iy, 9.4, C_MUTED, false, { align: 'right' });
-          hairline(iy + 2.6);
-          iy += U * 2;
-        });
-        doc.movePage(doc.getNumberOfPages(), 2);
-        conIndice = true;
-      } catch (e) {
-        console.warn('[metapla] sin índice:', e);
-        try { doc.deletePage(doc.getNumberOfPages()); } catch (e2) {}
-      }
-    }
-
     /* ── Pasada final: running head y numeración ──────────────────
        Las dos cosas necesitan saber el total de páginas y en cuál acabó
        cada sección, así que se pintan cuando ya no se añade nada. El
        encabezado corriente se resuelve por posición: cada página lleva
        la última sección abierta en ella o antes. */
-    if (conIndice) {
-      marcas.forEach(function (mk) { if (mk.pag >= 2) mk.pag += 1; });
-      marcas.push({ pag: 2, texto: 'Contenido' });
-    }
     marcas.sort(function (a, b) { return a.pag - b.pag; });
     var primerAnexo = marcas.find(function (mk) { return /^Anexos ·/.test(mk.texto); });
 
@@ -1551,8 +1530,8 @@
     for (var pn = 2; pn <= total; pn++) {                // la portada no se rotula ni se numera
       doc.setPage(pn);
       membrete();
-      var corre = conIndice && pn === 2 ? 'Contenido' :
-        (primerAnexo && pn >= primerAnexo.pag ? 'Documentos de respaldo' : 'Resultados de la consulta');
+      var corre = primerAnexo && pn >= primerAnexo.pag
+        ? 'Documentos de respaldo' : 'Resultados de la consulta';
       versalita(corre, W - M, CAB.texto,
         { size: T.micro, track: 0.5, align: 'right' });
 
@@ -1592,6 +1571,10 @@
       var pages = await extractFromPdf(pdfBase64, onProgress);
       var secciones = parseSections(pages, meta && meta.valor);
       if (!secciones.length) throw new Error('No se pudo leer el contenido del PDF');
+      if (meta && !meta.fotoDataUrl) {
+        meta.fotoDataUrl = fotoDelProveedor(pages);
+        if (meta.fotoDataUrl) meta.fotoOrigen = 'proveedor';
+      }
       /* Quien llama puede quedarse con las secciones ya leídas. Sirve para
          montar el modelo y el veredicto sin volver a abrir el PDF: la
          extracción es lo caro de todo esto —segundos, no milisegundos— y
@@ -1599,7 +1582,9 @@
       if (meta && typeof meta.onSecciones === 'function') {
         try { meta.onSecciones(secciones); } catch (e) { console.warn('[metapla] onSecciones falló:', e); }
       }
-      return buildPdf(secciones, meta || {});
+      var resultado = buildPdf(secciones, meta || {});
+      resultado.conFoto = !!(meta && meta.fotoDataUrl);
+      return resultado;
     })();
 
     return Promise.race([trabajo, vencido]);

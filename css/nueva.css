@@ -1109,6 +1109,11 @@ body.nv-puerta-encima { overflow: hidden; }
 .nv-body .rep-pdf-acciones > * { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 18px; border: 1px solid var(--nv-oscuro); border-radius: 6px; font: inherit; font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer; }
 .nv-body .rep-pdf-descargar { background: var(--nv-oscuro); color: #fff; }
 .nv-body .rep-pdf-ver { background: transparent; color: var(--nv-oscuro); }
+.nv-body .rep-pdf-foto { margin-top: 16px; padding-top: 14px; border-top: 1px solid #d5ddd4; }
+.nv-body .rep-pdf-foto-btn { min-height: 44px; padding: 8px 14px; border: 1px solid var(--nv-oscuro); border-radius: 6px; background: #fff; color: var(--nv-oscuro); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.nv-body .rep-pdf-foto-btn:hover { background: #eef4e8; }
+.nv-body .rep-pdf-foto-btn:focus-visible { outline: 2px solid #537c25; outline-offset: 2px; }
+.nv-body .rep-pdf-foto p { margin: 8px 0 0; color: var(--nv-gris); font-size: 13px; line-height: 1.45; }
 .nv-body .rep-pdf-aviso { margin: 14px 0 0; color: var(--nv-gris); font-size: 14px; line-height: 1.45; }
 @media (max-width: 620px) {
   .nv-body .rep-pdf-archivo { margin: 12px 12px 20px; padding: 16px; }

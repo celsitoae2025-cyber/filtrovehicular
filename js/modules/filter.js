@@ -386,10 +386,10 @@
     return html + '</div>';
   }
 
-  function renderReporteArchivo(medio, original) {
+  function renderReporteArchivo(medio, original, conFoto) {
     if (!medio || !medio.base64) return '';
     var nombre = medio.filename || 'Reporte_vehicular.pdf';
-    var url = H.base64ToBlobUrl(medio.base64, 'application/pdf');
+    var url = medio.blobUrl || H.base64ToBlobUrl(medio.base64, 'application/pdf');
     var mb = (medio.base64.length * 3 / 4 / (1024 * 1024)).toFixed(1);
     return '<section class="rep-pdf-archivo" aria-label="Reporte PDF disponible">' +
       '<div class="rep-pdf-info">' +
@@ -401,8 +401,49 @@
         '<a class="rep-pdf-descargar" href="' + url + '" download="' + escapeHtml(nombre) + '">Descargar PDF</a>' +
         '<button class="rep-pdf-ver cr-doccard-view" type="button" data-blob="' + url + '" data-fn="' + escapeHtml(nombre) + '">Visualizar</button>' +
       '</div>' +
+      (!original ? '<div class="rep-pdf-foto">' +
+        '<button class="rep-pdf-foto-btn" type="button">' +
+          (conFoto ? 'Cambiar foto del vehículo' : 'Añadir foto del vehículo') +
+        '</button>' +
+        '<input class="rep-pdf-foto-input" type="file" accept="image/jpeg,image/png,image/webp" hidden>' +
+        '<p>' + (conFoto
+          ? 'La foto aparece en la portada del PDF. Comprueba que corresponda al vehículo consultado.'
+          : 'Opcional. La foto se añade al PDF en este dispositivo; verifica que corresponda a la placa.') +
+        '</p></div>' : '') +
       (original ? '<p class="rep-pdf-aviso">No se pudo ordenar este archivo; puedes consultar el documento entregado por el proveedor.</p>' : '') +
     '</section>';
+  }
+
+  function fotoReporteDataUrl(archivo) {
+    return new Promise(function (resolve, reject) {
+      if (!archivo || !/^image\/(jpeg|png|webp)$/.test(archivo.type)) {
+        reject(new Error('Elige una imagen JPG, PNG o WebP.')); return;
+      }
+      if (archivo.size > 8 * 1024 * 1024) {
+        reject(new Error('La foto debe pesar menos de 8 MB.')); return;
+      }
+      var lector = new FileReader();
+      lector.onerror = function () { reject(new Error('No se pudo leer la foto.')); };
+      lector.onload = function () {
+        var img = new Image();
+        img.onerror = function () { reject(new Error('La imagen no se pudo abrir.')); };
+        img.onload = function () {
+          if (!img.width || !img.height || img.width * img.height > 24000000) {
+            reject(new Error('La foto tiene una resolución no admitida.')); return;
+          }
+          var escala = Math.min(1, 1400 / img.width, 1000 / img.height);
+          var lienzo = document.createElement('canvas');
+          lienzo.width = Math.round(img.width * escala);
+          lienzo.height = Math.round(img.height * escala);
+          try {
+            lienzo.getContext('2d').drawImage(img, 0, 0, lienzo.width, lienzo.height);
+            resolve(lienzo.toDataURL('image/jpeg', 0.84));
+          } catch (e) { reject(new Error('No se pudo preparar la foto.')); }
+        };
+        img.src = lector.result;
+      };
+      lector.readAsDataURL(archivo);
+    });
   }
 
   // El nivel del último reporte, para guardarlo junto al folio.
@@ -982,7 +1023,7 @@
       (function (pdfsRef, valorRef, folio) {
         (async function () {
           try {
-            var result = await Consultia.MetaplaReport.generate(pdfsRef[0].base64, {
+            var metaReporte = {
               valor: valorRef || '',
               fecha: new Date().toLocaleDateString('es-PE', {
                 day: '2-digit', month: 'short', year: 'numeric',
@@ -992,14 +1033,43 @@
               // pantalla, no de las secciones deducidas del documento.
               parsed: p,
               folio: folio
-            }, function (n, total) {
+            };
+            function progresoReporte(n, total) {
               metaplaPdfArea.innerHTML =
                 '<div class="cr-pdf-loading">Generando reporte PDF… ' + n + ' de ' + total + '</div>';
-            });
+            }
+            function mostrarReporte(result) {
+              metaplaPdfArea.innerHTML = renderReporteArchivo({
+                base64: result.base64, blobUrl: result.blobUrl,
+                filename: result.filename || 'Reporte_vehicular.pdf'
+              }, false, result.conFoto);
+              var elegir = metaplaPdfArea.querySelector('.rep-pdf-foto-btn');
+              var inputFoto = metaplaPdfArea.querySelector('.rep-pdf-foto-input');
+              if (!elegir || !inputFoto) return;
+              elegir.addEventListener('click', function () { inputFoto.click(); });
+              inputFoto.addEventListener('change', async function () {
+                if (!inputFoto.files || !inputFoto.files[0]) return;
+                elegir.disabled = true;
+                try {
+                  var fotoDataUrl = await fotoReporteDataUrl(inputFoto.files[0]);
+                  var nuevo = await Consultia.MetaplaReport.generate(pdfsRef[0].base64,
+                    Object.assign({}, metaReporte, {
+                      fotoDataUrl: fotoDataUrl,
+                      fotoOrigen: 'usuario'
+                    }), progresoReporte);
+                  mostrarReporte(nuevo);
+                } catch (e) {
+                  console.error('[metapla-report] foto:', e);
+                  mostrarReporte(result);
+                  var aviso = metaplaPdfArea.querySelector('.rep-pdf-foto p');
+                  if (aviso) aviso.textContent = e.message || 'No se pudo añadir la foto.';
+                }
+              });
+            }
+            var result = await Consultia.MetaplaReport.generate(
+              pdfsRef[0].base64, metaReporte, progresoReporte);
             if (!result) throw new Error('MetaplaReport devolvió null');
-            metaplaPdfArea.innerHTML = renderReporteArchivo({
-              base64: result.base64, filename: result.filename || 'Reporte_vehicular.pdf'
-            }, false);
+            mostrarReporte(result);
           } catch (e) {
             console.error('[metapla-report]', e);
             // El archivo original sigue disponible, claramente identificado.
