@@ -38,6 +38,7 @@ def save(image, file, size):
     print(file.relative_to(ROOT), size)
 
 
+save(brand, ROOT / "favicon-fvplus.png", 192)
 save(brand, ROOT / "favicon.png", 192)
 save(brand, ICONS / "logo-filtro-180.png", 180)
 save(brand, ICONS / "logo-filtro-192.png", 192)
