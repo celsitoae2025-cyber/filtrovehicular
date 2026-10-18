@@ -147,6 +147,7 @@
     var html = '<section class="cr-boin-resumen" aria-label="Boleta informativa">' +
       '<h3>BOLETA INFORMATIVA</h3>';
     if (nombre) html += '<p class="cr-boin-titular">' + esc(nombre) + '</p>';
+    else html += '<p class="cr-boin-titular" data-boin-titular hidden></p>';
     if (placa) html += '<p class="cr-boin-placa"><span>PLACA</span> ' + esc(placa) + '</p>';
     html += '</section>';
 
@@ -159,6 +160,22 @@
         return Object.assign({}, m, { filename: pdfName });
       })
     };
+  }
+
+  async function extraerTitularDePdfBoleta(base64) {
+    if (!base64 || !window.pdfjsLib) return '';
+    var binario = atob(base64);
+    var bytes = new Uint8Array(binario.length);
+    for (var i = 0; i < binario.length; i++) bytes[i] = binario.charCodeAt(i);
+    var doc = await window.pdfjsLib.getDocument({ data: bytes }).promise;
+    var page = await doc.getPage(1);
+    var contenido = await page.getTextContent();
+    var texto = (contenido.items || []).map(function (item) { return item.str || ''; }).join(' ')
+      .replace(/\s+/g, ' ').trim();
+    var m = texto.match(/(?:APELLIDOS\s+Y\s+NOMBRES|NOMBRE\s+COMPLETO|PROPIETARIO(?:S)?|TITULAR)\s*[:\-]?\s*([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ ,.'-]{4,90}?)(?=\s+(?:PLACA|DNI|DOCUMENTO|PARTIDA|FECHA|NRO?\.?|ESTADO)\b|\s{2,}|$)/i);
+    if (!m) return '';
+    var nombre = m[1].trim().replace(/[ ,.'-]+$/, '');
+    return nombre.split(/\s+/).length >= 2 ? nombre : '';
   }
 
   /* ── Reporte Completo: en implementación ──────────────────────────────
@@ -1064,6 +1081,20 @@
     }
 
     body.innerHTML = html;
+    var titularBoin = esBoin ? body.querySelector('[data-boin-titular]') : null;
+    if (esBoin && pdfs.length && titularBoin) {
+      // Si el proveedor solo manda el PDF, intentar leer su texto para
+      // completar el titular en la ficha (sin OCR ni alterar el archivo).
+      (function (archivo, destino) {
+        extraerTitularDePdfBoleta(archivo.base64).then(function (nombre) {
+          if (!nombre || !destino || !destino.isConnected) return;
+          destino.textContent = nombre;
+          destino.hidden = false;
+        }).catch(function (err) {
+          console.warn('[boin] no se pudo leer el titular del PDF:', err);
+        });
+      })(pdfs[0], titularBoin);
+    }
     if (esReporte) ultimoVeredicto = null;
     if (esReporte && !enProceso && !errorTecnico && pdfs.length) {
       pintarVeredicto(p, valorConsultado);
