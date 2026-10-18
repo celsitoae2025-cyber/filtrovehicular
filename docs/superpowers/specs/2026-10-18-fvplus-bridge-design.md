@@ -14,9 +14,9 @@ Restore the production path from the FV+ web platform to the Telegram data bots.
 
 ## Design
 
-Deploy the existing `filtro-bridge` repository as its own Fly application named `filtro-bridge`. Keep the web frontend and `bridge-proxy` request contract unchanged. Set `FV_BRIDGE_URL` in Supabase to the dedicated Fly hostname and put a newly generated `BRIDGE_API_KEY` in both Fly secrets and Supabase Edge Function secrets.
+Deploy the existing `filtro-bridge` repository as its own Fly application. The preferred name `filtro-bridge` is reserved, so the dedicated app is named `filtrovehicular-bridge`. Keep the web frontend and `bridge-proxy` request contract unchanged. Set `FV_BRIDGE_URL` in Supabase to the dedicated Fly hostname and put a newly generated `BRIDGE_API_KEY` in both Fly secrets and Supabase Edge Function secrets.
 
-Remove the tracked secret fallback from the bridge source and load Telegram credentials only from environment variables. Do not copy credentials from the exposed `secrets.js`. Generate fresh Telegram API credentials and a fresh user session for the bridge, then store them as Fly secrets. Leave `verinexo-bridge` and its configuration untouched.
+Remove the tracked secret fallback from the bridge source and load Telegram credentials only from environment variables. Do not copy credentials from the exposed `secrets.js`. Revoke the exposed user session and generate a fresh session. Telegram currently permits only one API ID per phone number, so the fresh API ID/hash must come from another trusted number if those values are also to be rotated. Store the resulting credentials as Fly secrets. Leave `verinexo-bridge` and its configuration untouched.
 
 The request path remains:
 
