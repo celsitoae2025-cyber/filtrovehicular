@@ -96,6 +96,71 @@
     return cmd.indexOf('/metapla') === 0 || cmd.indexOf('/mpla') === 0;
   }
 
+  function esBoletaInformativa(c) {
+    return /^\/boin\b/i.test((c && c.comando) || '');
+  }
+
+  function prepararBoletaInformativa(p, valorConsultado, archivos) {
+    var esc = H.escapeHtml || function (v) {
+      return String(v || '').replace(/[&<>"']/g, function (ch) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+      });
+    };
+    var secciones = (p && p.secciones) || [];
+    var campos = [];
+    secciones.forEach(function (s) {
+      (s.campos || []).forEach(function (c) { campos.push(c); });
+    });
+
+    var nombreCampo = /^(PROPIETARIO|TITULAR|NOMBRE|NOMBRES|NOMBRE COMPLETO|APELLIDOS Y NOMBRES|PROPIETARIO\s*\(S\))$/i;
+    var placaCampo = /^(PLACA|PLACA ACTUAL|NRO\.? PLACA|N[°º]? DE PLACA)$/i;
+    var nombre = '';
+    var placa = '';
+    campos.some(function (c) {
+      var label = String(c.campo || '').trim();
+      var value = String(c.valor || '').trim();
+      if (!nombre && nombreCampo.test(label) && value) nombre = value;
+      if (!placa && placaCampo.test(label) && value) placa = value;
+      return !!(nombre && placa);
+    });
+
+    // Algunas respuestas de SUNARP mandan titular y placa como líneas sin
+    // etiqueta. Solo se toma el nombre si tiene forma clara de nombre propio.
+    var raw = String((p && p.raw) || '');
+    if (!nombre) {
+      var lines = raw.split(/\r?\n/).map(function (line) {
+        return line.replace(/^\s*[-•▪>]+\s*/, '').trim();
+      });
+      nombre = lines.find(function (line) {
+        return line.length >= 8 && line.length <= 90 &&
+          /^[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ ,.'-]+$/.test(line) &&
+          line.split(/\s+/).filter(Boolean).length >= 2 &&
+          !/^(BOLETA INFORMATIVA|DATOS DEL VEH[IÍ]CULO|SUNARP|RESULTADO|CONSULTA EXITOSA)$/i.test(line);
+      }) || '';
+    }
+    if (!placa) {
+      var placaEnTexto = raw.match(/\bPLACA\s*[:\-]?\s*([A-Z0-9-]{5,10})\b/i);
+      if (placaEnTexto) placa = placaEnTexto[1];
+    }
+    if (!placa) placa = String(valorConsultado || '').trim().toUpperCase();
+
+    var html = '<section class="cr-boin-resumen" aria-label="Boleta informativa">' +
+      '<h3>BOLETA INFORMATIVA</h3>';
+    if (nombre) html += '<p class="cr-boin-titular">' + esc(nombre) + '</p>';
+    if (placa) html += '<p class="cr-boin-placa"><span>PLACA</span> ' + esc(placa) + '</p>';
+    html += '</section>';
+
+    var safePlate = placa.replace(/[^A-Z0-9-]/gi, '').slice(0, 16);
+    var pdfName = 'Boleta-informativa' + (safePlate ? '-' + safePlate : '') + '.pdf';
+    return {
+      html: html,
+      pdfs: (archivos || []).map(function (m) {
+        // Clonamos el descriptor: no mutamos la respuesta ni el historial.
+        return Object.assign({}, m, { filename: pdfName });
+      })
+    };
+  }
+
   /* ── Reporte Completo: en implementación ──────────────────────────────
      Todavía no se entrega, pero es lo más grande que va a tener la
      plataforma —veintiún trámites en un solo clic—, así que en vez de
@@ -899,7 +964,10 @@
       ? H.renderMtc(p) : '';
     var pdfs    = H.pdfsDe(p);
     var photos  = (p.medios || []).filter(function (m) { return m.tipo === 'photo'; });
-    var botones = p.botones || [];
+    var esBoin  = esBoletaInformativa(currentConsulta);
+    var botones = esBoin ? [] : (p.botones || []);
+    var resumenBoin = esBoin ? prepararBoletaInformativa(p, valorConsultado, pdfs) : null;
+    if (resumenBoin) pdfs = resumenBoin.pdfs;
     var _metaRe = /^(cr[eé]ditos?|credits?|user(name)?|comando|plan|monedas?|consultado\s+por|usuario|mensaje|costo|uso|info|id)\s*$/i;
     var _valRe = /^(la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|obteniendo|consultando|buscando|procesando|generando|cargando|#\w+|∞|♾)/i;
     var hasData = (p.secciones || []).some(function (s) {
@@ -933,6 +1001,12 @@
       html = H.htmlEnProceso();
     } else if (errorTecnico) {
       html = htmlMantenimiento();
+    } else if (esBoin) {
+      // La Boleta es un resultado final: no se muestran las opciones de
+      // navegación del bot y el PDF se identifica con la placa consultada.
+      html = resumenBoin.html +
+        (pdfs.length ? renderPdfDlBar(pdfs) + renderDocumentCard(pdfs) :
+          '<p class="cr-boin-sin-pdf" role="status">El bot no adjuntó el PDF de la boleta.</p>');
     } else if (esReporte) {
       // Un PDF ausente o un generador no disponible nunca deja una carga eterna.
       var reporteArchivo = pdfs.length

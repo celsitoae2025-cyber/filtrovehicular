@@ -2694,6 +2694,25 @@ body.is-anonymous #view-dashboard #dashHero { display: none; }
   margin: 0 0 12px;
   letter-spacing: .2px;
 }
+.cr-boin-resumen {
+  margin: 0 0 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  background: #fff;
+}
+.cr-boin-resumen h3 {
+  margin: 0 0 12px;
+  color: var(--c-primary);
+  font-size: var(--cr-fs-titulo);
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+.cr-boin-resumen p { margin: 5px 0 0; color: var(--c-primary); }
+.cr-boin-titular { font-size: 17px; font-weight: 700; }
+.cr-boin-placa { font-size: 14px; }
+.cr-boin-placa span { font-weight: 700; }
+.cr-boin-sin-pdf { color: var(--c-muted); }
 .cr-sect { margin-top: 18px; }
 .cr-sect:first-child { margin-top: 0; }
 .cr-sect h4 {
