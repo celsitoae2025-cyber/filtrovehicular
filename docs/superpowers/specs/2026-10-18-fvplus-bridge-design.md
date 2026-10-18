@@ -14,9 +14,9 @@ Restore the production path from the FV+ web platform to the Telegram data bots.
 
 ## Design
 
-Deploy the existing `filtro-bridge` repository as its own Fly application. The preferred name `filtro-bridge` is reserved, so the dedicated app is named `filtrovehicular-bridge`. Keep the web frontend and `bridge-proxy` request contract unchanged. Set `FV_BRIDGE_URL` in Supabase to the dedicated Fly hostname and put a newly generated `BRIDGE_API_KEY` in both Fly secrets and Supabase Edge Function secrets.
+Deploy the existing `filtro-bridge` repository as its own Fly application. The preferred name `filtro-bridge` is reserved, so the dedicated app is named `filtrovehicular-bridge`. Keep the web frontend and `bridge-proxy` request contract unchanged. Reuse the current Telegram API credentials, Telegram session, and bridge API key as requested. Set only `FV_BRIDGE_URL` in Supabase to the dedicated Fly hostname after the new service is healthy.
 
-Remove the tracked secret fallback from the bridge source and load Telegram credentials only from environment variables. Do not copy credentials from the exposed `secrets.js`. Revoke the exposed user session and generate a fresh session. Telegram currently permits only one API ID per phone number, so the fresh API ID/hash must come from another trusted number if those values are also to be rotated. Store the resulting credentials as Fly secrets. Leave `verinexo-bridge` and its configuration untouched.
+Remove the tracked secret fallback from the bridge source and load Telegram credentials only from environment variables. Transfer the existing values from the prior local credential source directly into ignored local `.env` and Fly secrets without displaying them. Do not log out, revoke, or rotate any existing key or Telegram credential. Leave `verinexo-bridge` and its configuration untouched.
 
 The request path remains:
 
@@ -30,12 +30,12 @@ The existing bridge-proxy remains responsible for rejecting unauthenticated user
 
 1. Confirm the deployed bridge health and readiness endpoints report Telegram connected.
 2. Confirm the bridge bot list covers the active bot IDs in the FV+ catalog.
-3. Confirm Supabase has both bridge secrets set, without printing their values.
+3. Confirm Supabase has both bridge secrets set, without printing their values; update only `FV_BRIDGE_URL`.
 4. Send one controlled end-to-end FV+ query and confirm the result reaches the page; verify the credit outcome for both success and a no-result/error response.
 5. Confirm neither production requests nor configuration were redirected through `verinexo-bridge`.
 
 ## Scope
 
-Included: dedicated bridge deployment, credential rotation, removal of tracked secrets, Supabase bridge URL/key update, and focused verification.
+Included: dedicated bridge deployment, removal of tracked secret fallbacks, reuse of current credentials, Supabase bridge URL update, and focused verification.
 
 Excluded: changes to catalog entries, consultation pricing, credit reservation logic, result rendering, or VeriNexo's bridge.

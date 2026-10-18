@@ -7,22 +7,22 @@
 - Update `filtro-bridge/login.js` to persist a newly generated Telegram session only to the ignored local `.env`, without printing the session.
 - Check `git status`, ignored-file behavior, syntax, and that repository searches find no credential literals or secret-module references.
 
-## Task 2: Prepare fresh Telegram credentials
+## Task 2: Transfer current Telegram credentials without rotation
 
-- Revoke the exposed Telegram user session from Telegram's active-device settings. Telegram allows only one API ID per phone number; use credentials from another trusted number to rotate the exposed API ID/hash, then create a fresh session for the FV+ Telegram account.
-- Generate a new `cuenta1` session with the safe login flow. Keep all values in local ignored files until they are transferred directly to Fly secrets.
-- Stop here for user authentication input if Telegram requests an SMS/Telegram login code or two-step verification password. Never print those values. If no second trusted number is available, ask before deciding whether to reuse the existing API ID/hash while rotating only the session and bridge key.
+- Reuse the current Telegram API ID/hash, `cuenta1` session, and bridge API key, as explicitly requested by the user.
+- Transfer the existing values into the ignored local `.env` and Fly secrets without displaying them.
+- Do not log out, revoke, or rotate the Telegram session or any existing key.
 
 ## Task 3: Create and deploy the dedicated Fly app
 
 - Use the existing `filtro-bridge/fly.toml` and `filtro-bridge` source. The preferred name `filtro-bridge` was reserved, so use the created app `filtrovehicular-bridge` and record its hostname.
-- Set `TELEGRAM_API_ID`, `TELEGRAM_API_HASH`, `TELEGRAM_SESSION_CUENTA1`, and a newly generated `BRIDGE_API_KEY` as Fly secrets. Do not put them in command output or source control.
+- Set `TELEGRAM_API_ID`, `TELEGRAM_API_HASH`, `TELEGRAM_SESSION_CUENTA1`, and the current `BRIDGE_API_KEY` as Fly secrets. Do not put them in command output or source control.
 - Deploy the bridge and confirm `/health`, `/ready`, and authenticated `/bots` results. The bot IDs must cover all active IDs from FV+'s `consultas_catalog`.
 - If the process does not become ready, inspect only redacted deployment logs, fix the cause, and do not redirect Supabase yet.
 
 ## Task 4: Point Supabase at the FV+ app
 
-- Set `FV_BRIDGE_URL` and `FV_BRIDGE_API_KEY` in the linked Supabase project to the new dedicated bridge URL and key.
+- Set only `FV_BRIDGE_URL` in the linked Supabase project. Keep the current `FV_BRIDGE_API_KEY` unchanged.
 - Confirm only variable names/status are printed. Confirm unauthenticated requests are still rejected and the deployed function remains active.
 - Do not change frontend code, catalog, billing rules, or `verinexo-bridge`.
 
@@ -34,7 +34,6 @@
 
 ## Dependencies and recovery
 
-- Tasks 3 and 4 depend on a fresh Telegram session and bridge key from Tasks 1 and 2.
+- Tasks 3 and 4 use the current Telegram session and bridge key from the ignored local `.env`.
 - If the new app fails health checks, leave the old Supabase URL in place until the new app is ready.
-- Do not restore the exposed bridge key. If the new app fails before routing is changed, leave Supabase untouched. If routing fails after the change, keep the rotated key and either repair the new app or use a verified fallback host configured with that same fresh key.
-- The old Telegram session and key stay revoked even if deployment has to pause. `verinexo-bridge` remains untouched throughout.
+- If the new app fails before routing is changed, leave Supabase untouched. If routing fails after the change, restore the prior `FV_BRIDGE_URL` while preserving the current key. `verinexo-bridge` remains untouched throughout.
