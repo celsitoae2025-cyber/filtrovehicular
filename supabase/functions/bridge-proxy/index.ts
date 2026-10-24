@@ -47,6 +47,7 @@ import { esRespuestaVacia } from "../_shared/empty-response.ts";
 const ALLOWED_ORIGINS = [
   "https://filtrovehicularperu.com",
   "https://www.filtrovehicularperu.com",
+  "https://fvplus-celsio-rivera.fly.dev",
   "http://localhost:5500",
   "http://127.0.0.1:5500",
   "http://localhost:3000",
