@@ -1434,28 +1434,37 @@
       var n = resumenIndicadores.length;
       versalita('Resumen de indicadores', M, y, { size: T.micro, track: 0.8 });
       av(1.5);
-      var colsIndicadores = n >= 9 ? 3 : Math.min(4, n);
+      /* Mantener filas equilibradas y centrar la última cuando queda
+         incompleta. Así 5 indicadores forman 3+2 y 7 forman 4+3, en vez
+         de dejar una tarjeta suelta pegada al margen izquierdo. */
+      var colsIndicadores = n <= 4 ? n : (n <= 6 || n === 9 ? 3 : 4);
       var gapIndicadores = 2.5;
       var cardW = (CW - gapIndicadores * (colsIndicadores - 1)) / colsIndicadores;
       var cardH = 16.5;
       var rowsIndicadores = Math.ceil(n / colsIndicadores);
+      var basePorFila = Math.floor(n / rowsIndicadores);
+      var filasLargas = n % rowsIndicadores;
       need(rowsIndicadores * (cardH + gapIndicadores) + U);
-      for (var ci = 0; ci < n; ci++) {
-        var colIndicador = ci % colsIndicadores;
-        var filaIndicador = Math.floor(ci / colsIndicadores);
-        var cx0 = M + colIndicador * (cardW + gapIndicadores);
-        var cy0 = y + filaIndicador * (cardH + gapIndicadores);
-        var estado = estadoIndicador(resumenIndicadores[ci].label, resumenIndicadores[ci].value);
-        var fondo = estado === C_BAD ? [255, 245, 245] : [246, 250, 243];
-        var borde = estado === C_BAD ? [242, 205, 205] : [216, 232, 205];
-        doc.setFillColor.apply(doc, fondo);
-        doc.setDrawColor.apply(doc, borde);
-        doc.setLineWidth(0.25);
-        doc.roundedRect(cx0, cy0, cardW, cardH, 2, 2, 'FD');
-        var etiquetaIndicador = parte(String(resumenIndicadores[ci].label || ''), cardW - 6, 5, true).slice(0, 2);
-        rotulo(etiquetaIndicador, cx0 + 3, cy0 + 3.8, 5, C_MUTED, true);
-        rotulo(String(resumenIndicadores[ci].value || '—'), cx0 + 3, cy0 + 12, 7.8, estado, true,
-               { maxWidth: cardW - 6 });
+      var ci = 0;
+      for (var filaIndicador = 0; filaIndicador < rowsIndicadores; filaIndicador++) {
+        var cantidadFila = basePorFila + (filaIndicador < filasLargas ? 1 : 0);
+        var anchoFila = cantidadFila * cardW + (cantidadFila - 1) * gapIndicadores;
+        var inicioFila = M + (CW - anchoFila) / 2;
+        for (var colIndicador = 0; colIndicador < cantidadFila; colIndicador++, ci++) {
+          var cx0 = inicioFila + colIndicador * (cardW + gapIndicadores);
+          var cy0 = y + filaIndicador * (cardH + gapIndicadores);
+          var estado = estadoIndicador(resumenIndicadores[ci].label, resumenIndicadores[ci].value);
+          var fondo = estado === C_BAD ? [255, 245, 245] : [246, 250, 243];
+          var borde = estado === C_BAD ? [242, 205, 205] : [216, 232, 205];
+          doc.setFillColor.apply(doc, fondo);
+          doc.setDrawColor.apply(doc, borde);
+          doc.setLineWidth(0.25);
+          doc.roundedRect(cx0, cy0, cardW, cardH, 2, 2, 'FD');
+          var etiquetaIndicador = parte(String(resumenIndicadores[ci].label || ''), cardW - 6, 5, true).slice(0, 2);
+          rotulo(etiquetaIndicador, cx0 + 3, cy0 + 3.8, 5, C_MUTED, true);
+          rotulo(String(resumenIndicadores[ci].value || '—'), cx0 + 3, cy0 + 12, 7.8, estado, true,
+                 { maxWidth: cardW - 6 });
+        }
       }
       y += rowsIndicadores * (cardH + gapIndicadores) - gapIndicadores;
       av(2);
