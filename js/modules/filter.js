@@ -784,6 +784,15 @@
       input.setAttribute('aria-label', input.placeholder);
       input.maxLength   = maxLenFor(c.tipo_dato);
       input.inputMode   = inputModeFor(c.tipo_dato);
+      if (esMetapla(c)) {
+        input.placeholder = 'Placa sin guiones (ej. ABC123)';
+        input.setAttribute('aria-label', 'Placa del vehículo, sin guiones ni espacios');
+        input.title = 'Escribe solo letras y números, sin guiones ni espacios.';
+        input.setAttribute('autocapitalize', 'characters');
+      } else {
+        input.removeAttribute('title');
+        input.removeAttribute('autocapitalize');
+      }
       input.value       = '';
     }
 
@@ -856,12 +865,16 @@
     if (!currentConsulta) return;
     var input = $('filter-input');
     var valor = input.value.trim();
+    if (esMetapla(currentConsulta)) valor = valor.toUpperCase();
     if (!valor) {
       input.focus();
       if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Falta el dato', message: 'Ingresa el dato para consultar.' });
       return;
     }
     var err = validarValor(currentConsulta.tipo_dato, valor);
+    if (!err && esMetapla(currentConsulta) && !/^[A-Z0-9]{5,8}$/.test(valor.toUpperCase())) {
+      err = 'La placa debe tener entre 5 y 8 letras o números, sin guiones ni espacios.';
+    }
     if (err) {
       if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Formato inválido', message: err });
       input.focus();
@@ -1327,7 +1340,14 @@
     var btn   = $('filter-consultar');
     var input = $('filter-input');
     if (btn)   btn.addEventListener('click', ejecutar);
-    if (input) input.addEventListener('keydown', function (e) { if (e.key === 'Enter') ejecutar(); });
+    if (input) {
+      input.addEventListener('input', function () {
+        if (!esMetapla(currentConsulta)) return;
+        var limpio = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+        if (input.value !== limpio) input.value = limpio;
+      });
+      input.addEventListener('keydown', function (e) { if (e.key === 'Enter') ejecutar(); });
+    }
 
     catalogReadyPromise = cargarCatalogo();
 
