@@ -28,32 +28,18 @@
   var C_HAIR   = [223, 227, 222];  // filetes y separadores
   var C_SOFT   = [248, 250, 247];  // fondos muy tenues
 
-  // Semáforo del índice de riesgo. Los tres salen de la línea de cuatro
-  // colores de la marca, la que va bajo el nombre en la pantalla de
-  // acceso: aquí no hay colores inventados para el semáforo.
-  var C_OK     = [143, 199, 46];   // #8fc72e — riesgo bajo
-  var C_WARN   = [255, 176, 32];   // #ffb020 — riesgo medio
+  // Colores de estado: verde favorable y rojo con observaciones.
+  var C_OK     = [143, 199, 46];   // #8fc72e — favorable o sin hallazgos graves
   var C_BAD    = [229, 57, 53];    // #e53935 — riesgo alto
 
-  /* El color del índice dice el riesgo de un vistazo, con el código que
-     entiende cualquiera sin leer: verde bajo, ámbar medio, rojo alto.
-
-     Antes iba en verde, turquesa y oscuro, por no salirse de los tres
-     colores de marca. Quedaba bonito y no comunicaba: un reporte de
-     riesgo alto se veía igual de tranquilo que uno de riesgo bajo, y el
-     turquesa del medio no decía nada. El ámbar y el rojo son los otros
-     dos colores de la línea de marca, así que la casa sigue estando.
-
-     Sin nivel no se inventa uno: el puntaje lo pone el proveedor y no
-     está dicho en qué dirección corre —hay reportes de 76 sobre 100
-     etiquetados «medio»—, así que se pinta en el oscuro neutro y se deja
-     que mande el texto. */
+  /* El nivel medio se representa en verde como pidió la plataforma;
+     los niveles alto y grave quedan en rojo. */
   function riskColor(nivel) {
     var n = String(nivel || '').toUpperCase();
     if (/BAJO|LEVE|M[IÍ]NIM/.test(n)) return C_OK;
-    if (/MEDIO|MODERAD|INTERMEDI/.test(n)) return C_WARN;
+    if (/MEDIO|MODERAD|INTERMEDI/.test(n)) return C_OK;
     if (/ALTO|CR[IÍ]TIC|GRAVE|SEVER/.test(n)) return C_BAD;
-    return C_INK;
+    return C_OK;
   }
 
   // Las tres respuestas se dicen con la misma palabra en el PDF y en la
@@ -98,8 +84,122 @@
 
   function estadoColor(estado) {
     if (estado === 'si') return C_OK;
-    if (estado === 'no') return C_BAD;
-    return C_WARN;
+    return C_BAD;
+  }
+
+  function normalizaIdentidad(texto) {
+    return String(texto || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
+  }
+
+  // El resumen del proveedor cuenta filas. Para mostrar propietarios,
+  // contamos identidades distintas por DNI y usamos el nombre solo si falta.
+  function contarPropietarios(secciones) {
+    var seccion = secciones.find(function (s) {
+      return /PROPIETARIOS REGISTRADOS/i.test(String(s.titulo || ''));
+    });
+    if (!seccion) return null;
+    var identidades = new Set();
+    var nombres = new Set();
+    (seccion.filas || []).forEach(function (fila) {
+      var texto = fila.t === 'kv' ? String(fila.a || '') + ' ' + String(fila.b || '')
+        : fila.t === 'row' ? (fila.cells || []).join(' ') : String(fila.a || '');
+      var dnies = texto.match(/\b(?:DNI|DOC(?:UMENTO)?\s*(?:DE\s*)?IDENTIDAD)\s*[:#-]?\s*(\d{8})\b/ig) || [];
+      if (dnies.length) {
+        dnies.forEach(function (dni) {
+          var numero = dni.match(/\d{8}/);
+          if (numero) identidades.add('DNI:' + numero[0]);
+        });
+        return;
+      }
+      var limpio = normalizaIdentidad(texto);
+      if (limpio && !/^(NOMBRE|PROPIETARIO|PROPIETARIOS|DNI|DOCUMENTO|DIRECCION|DOMICILIO)$/.test(limpio)) {
+        nombres.add('NOMBRE:' + limpio);
+      }
+    });
+    return identidades.size || nombres.size;
+  }
+
+  function estadoIndicador(etiqueta, valor) {
+    var label = normalizaIdentidad(etiqueta);
+    var text = normalizaIdentidad(valor);
+    if (/PAPELETA|MULTA|INFRACCION|DENUNCIA|DEUDA/.test(label)) {
+      var amount = Number(String(valor || '').replace(/[^\d.,-]/g, '').replace(',', '.'));
+      if (/SIN REGISTRO|SIN DEUDA|VIGENTE|NINGUNO|NINGUNA/.test(text)) return C_OK;
+      if (/REGISTRO|PENDIENTE|DEBE|VENCID|DENUNCIA|PAPELETA|INFRACCION/.test(text) || amount > 0) return C_BAD;
+      return C_OK;
+    }
+    if (/REVISION|TECNICA|SOAT/.test(label) && /VENCID|NO VIGENTE|NO REGISTRA|SIN SOAT|SIN REVISION|NO TIENE/.test(text)) return C_BAD;
+    if (/RIESGO|NIVEL/.test(label) && /ALTO|GRAVE|CRITICO|SEVERO/.test(text)) return C_BAD;
+    if (/PUNTAJE|SCORE/.test(label)) {
+      var score = Number(String(valor || '').replace(/[^\d.,-]/g, '').replace(',', '.'));
+      return Number.isFinite(score) && score < 60 ? C_BAD : C_OK;
+    }
+    return C_OK;
+  }
+
+  function indicadoresPdf(secciones, resumen) {
+    var items = Array.isArray(resumen.indEtiquetas) && Array.isArray(resumen.indValores)
+      ? resumen.indEtiquetas.map(function (label, i) {
+        return { label: label, value: resumen.indValores[i] };
+      }) : [];
+    var propietarios = contarPropietarios(secciones);
+    if (propietarios !== null) {
+      var owner = items.find(function (item) { return /PROPIETARIOS/i.test(item.label); });
+      if (owner) owner.value = String(propietarios);
+      else items.push({ label: 'Propietarios', value: String(propietarios) });
+    }
+
+    var seccionesPapeletas = secciones.filter(function (section) {
+      return /PAPELETA|MULTA|INFRACCION/.test(normalizaIdentidad(section.titulo));
+    });
+    if (seccionesPapeletas.length) {
+      var registros = 0, monto = 0, tieneMonto = false;
+      seccionesPapeletas.forEach(function (section) {
+        var title = normalizaIdentidad(section.titulo);
+        var titleCount = title.match(/(\d+)\s*REGISTRO/);
+        var text = normalizaIdentidad((section.filas || []).map(function (row) {
+          return row.t === 'kv' ? String(row.a || '') + ' ' + String(row.b || '')
+            : row.t === 'row' ? (row.cells || []).join(' ') : String(row.a || '');
+        }).join(' '));
+        if (titleCount) registros += Number(titleCount[1]);
+        else if (!/SIN PAPELETAS|SIN MULTAS|SIN INFRACCIONES|NO REGISTRA/.test(title + ' ' + text)) {
+          registros += (section.filas || []).length ? 1 : 0;
+        }
+        (section.filas || []).forEach(function (row) {
+          if (row.t !== 'kv' || !/DEUDA|MONTO|IMPORTE|TOTAL/.test(normalizaIdentidad(row.a))) return;
+          var parsed = Number(String(row.b || '').replace(/[^\d,.-]/g, '').replace(',', '.'));
+          if (Number.isFinite(parsed)) { monto += parsed; tieneMonto = true; }
+        });
+      });
+      items = items.filter(function (item) { return !/PAPELETA|MULTA|INFRACCION/.test(normalizaIdentidad(item.label)); });
+      var ticketValue = registros ? registros + (registros === 1 ? ' registro' : ' registros') : 'Sin registros';
+      if (tieneMonto && monto > 0) ticketValue += ' · S/ ' + monto.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      items.push({ label: 'Papeletas', value: ticketValue });
+    }
+
+    var soat = secciones.find(function (section) { return /\bSOAT\b/i.test(section.titulo || ''); });
+    if (soat) {
+      var soatText = normalizaIdentidad(soat.titulo + ' ' + (soat.filas || []).map(function (row) {
+        return row.t === 'kv' ? String(row.a || '') + ' ' + String(row.b || '') : String(row.a || '');
+      }).join(' '));
+      var soatStatus = /VENCID|CADUC|SIN SOAT|NO VIGENTE|NO TIENE/.test(soatText) ? 'VENCIDO'
+        : /VIGENTE|VALIDO|ACTIVO/.test(soatText) ? 'VIGENTE' : 'Ver detalle';
+      items = items.filter(function (item) { return !/\bSOAT\b/i.test(item.label); });
+      items.push({ label: 'SOAT', value: soatStatus });
+    }
+
+    var tive = secciones.find(function (section) {
+      return /TARJETA UNICA DE CIRCULACION|TIVE/.test(normalizaIdentidad(section.titulo));
+    });
+    if (tive) {
+      var tiveText = normalizaIdentidad(tive.titulo);
+      var tiveStatus = /ANULAD|CANCELAD|NO REGISTRA|NO TIENE/.test(tiveText) ? 'NO VIGENTE'
+        : /TRAMITAD|EMITID|REGISTRAD|VIGENTE/.test(tiveText) ? 'TRAMITADO' : 'Ver detalle';
+      items = items.filter(function (item) { return !/TIVE|TARJETA.*PROPIEDAD|TARJETA UNICA/.test(normalizaIdentidad(item.label)); });
+      items.push({ label: 'Tarjeta de propiedad electrónica', value: tiveStatus });
+    }
+    return items;
   }
 
   var ROMANS = ['I','II','III','IV','V','VI','VII','VIII','IX','X',
@@ -961,6 +1061,13 @@
        debajo, dicho de quién es, para que quien compare las dos cifras
        entienda por qué no coinciden en vez de sospechar de las dos. */
     var R = secciones.resumen || {};
+    var propietariosUnicos = contarPropietarios(secciones);
+    if (propietariosUnicos !== null && Array.isArray(R.indEtiquetas) && Array.isArray(R.indValores)) {
+      R.indEtiquetas.forEach(function (etiqueta, i) {
+        if (/PROPIETARIOS/i.test(String(etiqueta || ''))) R.indValores[i] = String(propietariosUnicos);
+      });
+    }
+    var resumenIndicadores = indicadoresPdf(secciones, R);
     var VER = null;
     try {
       if (Consultia.ReporteModelo && Consultia.ReporteVeredicto) {
@@ -1049,8 +1156,8 @@
          color — lo lleva el titular de al lado. */
       var colorIndice = R.nivel
         ? riskColor(R.nivel)
-        : (score === null ? C_MUTED : (score >= 85 ? C_OK : (score >= 60 ? C_WARN : C_BAD)));
-      var colorCobertura = parcial ? C_MUTED : vc;
+        : (score === null ? C_OK : (score >= 60 ? C_OK : C_BAD));
+      var colorCobertura = parcial ? C_OK : vc;
 
       if (score !== null) {
         medidor(medX, medY, medR, Math.max(0, Math.min(1, score / 100)), colorIndice);
@@ -1198,25 +1305,37 @@
        ══════════════════════════════════════════════════════════ */
     nuevaPagina();
 
-    /* Recuento del proveedor: trae cifras que el veredicto no da
-       —propietarios, denuncias— pero rotulado, porque es su resumen y no
-       el nuestro. Sin ese rótulo, dos bloques de cifras seguidos parecen
-       el mismo análisis partido en dos. */
-    if (R.indEtiquetas && R.indValores && R.indEtiquetas.length === R.indValores.length) {
-      var n = R.indEtiquetas.length;
-      versalita('Recuento del proveedor', M, y, { size: T.micro, track: 0.8 });
-      av(1);
-      hairline(y, M, W - M, C_INK, 0.4);
-      var cardW = CW / n, cardH = U * 5;
+    /* El resumen junta los indicadores de origen con los datos que se
+       recuperan de las secciones, como SOAT, papeletas y tarjeta. */
+    if (resumenIndicadores.length) {
+      var n = resumenIndicadores.length;
+      versalita('Resumen de indicadores', M, y, { size: T.micro, track: 0.8 });
+      av(1.5);
+      var colsIndicadores = Math.min(4, n);
+      var gapIndicadores = 3;
+      var cardW = (CW - gapIndicadores * (colsIndicadores - 1)) / colsIndicadores;
+      var cardH = 21;
+      var rowsIndicadores = Math.ceil(n / colsIndicadores);
+      need(rowsIndicadores * (cardH + 3) + U);
       for (var ci = 0; ci < n; ci++) {
-        var cx0 = M + ci * cardW;
-        if (ci) vline(cx0 - GRID.gutter / 2, y, y + cardH - U);
-        rotulo(String(R.indValores[ci] || '—'), cx0, y + 9, 15, C_INK, true,
+        var colIndicador = ci % colsIndicadores;
+        var filaIndicador = Math.floor(ci / colsIndicadores);
+        var cx0 = M + colIndicador * (cardW + gapIndicadores);
+        var cy0 = y + filaIndicador * (cardH + 3);
+        var estado = estadoIndicador(resumenIndicadores[ci].label, resumenIndicadores[ci].value);
+        var fondo = estado === C_BAD ? [255, 245, 245] : [246, 250, 243];
+        var borde = estado === C_BAD ? [242, 205, 205] : [216, 232, 205];
+        doc.setFillColor.apply(doc, fondo);
+        doc.setDrawColor.apply(doc, borde);
+        doc.setLineWidth(0.25);
+        doc.roundedRect(cx0, cy0, cardW, cardH, 2, 2, 'FD');
+        var etiquetaIndicador = parte(String(resumenIndicadores[ci].label || ''), cardW - 6, 5.8, true).slice(0, 2);
+        versalita(etiquetaIndicador.join(' '), cx0 + 3, cy0 + 5.3,
+                  { size: 5.8, track: 0.15, color: C_MUTED });
+        rotulo(String(resumenIndicadores[ci].value || '—'), cx0 + 3, cy0 + 14.5, 9.5, estado, true,
                { maxWidth: cardW - 6 });
-        versalita(String(R.indEtiquetas[ci] || ''), cx0, y + 14.5,
-                  { size: 5.8, track: 0.3 });
       }
-      y += cardH;
+      y += rowsIndicadores * (cardH + 3) - 3;
       av(2);
     }
 

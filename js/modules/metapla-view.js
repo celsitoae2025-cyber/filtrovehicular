@@ -70,6 +70,32 @@
     return { rows: rows, title: title, topic: topic, text: text, records: records, total: total, hasAmount: hasAmount };
   }
 
+  function uniqueOwnerCount(secciones) {
+    var section = secciones.find(function (item) {
+      return /propietarios registrados/.test(normal(item.titulo));
+    });
+    if (!section) return null;
+    var identities = new Set();
+    var names = new Set();
+    (section.filas || []).forEach(function (row) {
+      var raw = row.t === 'kv' ? String(row.a || '') + ' ' + String(row.b || '')
+        : row.t === 'row' ? (row.cells || []).join(' ') : String(row.a || '');
+      var dniMatches = raw.match(/\b(?:DNI|DOC(?:UMENTO)?\s*(?:DE\s*)?IDENTIDAD)\s*[:#-]?\s*\d{8}\b/ig) || [];
+      if (dniMatches.length) {
+        dniMatches.forEach(function (dni) {
+          var number = dni.match(/\d{8}/);
+          if (number) identities.add('dni:' + number[0]);
+        });
+        return;
+      }
+      var name = normal(raw);
+      if (name && !/^(nombre|propietario|propietarios|dni|documento|direccion|domicilio)$/.test(name)) {
+        names.add('nombre:' + name);
+      }
+    });
+    return identities.size || names.size;
+  }
+
   function classifyValue(topic, value) {
     var text = normal(value);
     if (!text || /^(-|n a|sin dato|no disponible|no informado)$/.test(text)) return 'warn';
@@ -157,7 +183,12 @@
     var denunciaSections = facts.filter(function (item) { return item.topic === 'denuncia'; });
     var hasDenunciaSections = denunciaSections.length > 0;
     var denunciaRecords = denunciaSections.reduce(function (sum, item) { return sum + (item.records == null ? 0 : item.records); }, 0);
-    var out = indicadores.filter(function (item) {
+    var ownerCount = uniqueOwnerCount(secciones);
+    var normalizedIndicators = indicadores.map(function (item) {
+      if (ownerCount === null || !/propietario/.test(normal(item.label))) return item;
+      return { label: item.label, value: String(ownerCount), status: 'ok' };
+    });
+    var out = normalizedIndicators.filter(function (item) {
       var label = normal(item.label);
       return !(hasTicketSections && /papeleta|multa|infraccion/.test(label)) &&
         !(hasDenunciaSections && /denuncia|antecedente/.test(label));
@@ -266,6 +297,6 @@
     return html + '</div>';
   }
 
-  Consultia.MetaplaView = { render: render, escapeHtml: esc, _markerFor: markerFor, _sectionFacts: sectionFacts };
+  Consultia.MetaplaView = { render: render, escapeHtml: esc, _markerFor: markerFor, _sectionFacts: sectionFacts, _uniqueOwnerCount: uniqueOwnerCount };
   if (typeof module !== 'undefined' && module.exports) module.exports = Consultia.MetaplaView;
 })(typeof window !== 'undefined' ? window : globalThis);
