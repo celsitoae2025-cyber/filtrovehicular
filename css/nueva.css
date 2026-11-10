@@ -87,6 +87,18 @@
 .nv-cargando { height: 60px; border-radius: var(--nv-r); background: var(--nv-suave); animation: nv-latido 1.2s ease-in-out infinite; }
 @keyframes nv-latido { 50% { opacity: .5; } }
 
+/* Primera etapa del acceso: Turnstile se completa antes de revelar las
+   credenciales; el mismo token se entrega después al login de Supabase. */
+.nv-acceso-verificacion { text-align: center; }
+.nv-acceso-verificacion .nv-puerta-cabecera { margin-bottom: 12px; }
+.nv-acceso-marca { margin: 0 0 8px; color: var(--nv-gris); font-size: 12px; font-weight: 700; letter-spacing: .14em; }
+.nv-acceso-verificacion h1 { margin: 0 0 8px; }
+.nv-acceso-verificacion .nv-puerta-nota { margin: 0 auto 18px; max-width: 360px; }
+.nv-acceso-verificacion .nv-captcha { display: flex; justify-content: center; min-height: 66px; margin: 0 auto 8px; }
+.nv-acceso-estado { min-height: 21px; margin: 0 0 14px; color: var(--nv-gris); font-size: 14px; }
+.nv-acceso-reintentar { display: block; margin: -8px auto 12px; padding: 6px 10px; border: 0; background: transparent; color: var(--nv-tinta); font: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }
+.nv-acceso-verificacion .nv-cta[disabled] { cursor: wait; opacity: .55; }
+
 :where(.nv-body) :focus-visible { outline: 3px solid var(--nv-oscuro); outline-offset: 0; }
 
 

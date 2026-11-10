@@ -314,8 +314,11 @@
       }
       btn.disabled = true;
       btn.innerHTML = '<span class="nv-giro" aria-hidden="true"></span>Entrando…';
+      var envioIntentado = false;
       try {
         var token = C.Turnstile ? await C.Turnstile.getToken('nvTsAcceso') : null;
+        if (!token) throw new Error('captcha verification required');
+        envioIntentado = true;
         var res = await C.Auth.signIn(email, pass, !!form.remember.checked, token);
         if (C.Turnstile) C.Turnstile.reset('nvTsAcceso');
         if (res.error) throw res.error;
@@ -336,6 +339,10 @@
         err.textContent = traducir(ex && ex.message);
         err.hidden = false;
       } finally {
+        if (envioIntentado && !NV.usuario && NV.prepararVerificacionAcceso) {
+          if (C.Turnstile) C.Turnstile.reset('nvTsAcceso');
+          NV.prepararVerificacionAcceso('Verifica de nuevo para intentar iniciar sesión.');
+        }
         btn.disabled = false;
         btn.textContent = 'Iniciar sesión';
       }

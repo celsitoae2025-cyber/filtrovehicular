@@ -56,6 +56,8 @@
     s.onerror = function () {
       // Bloqueado por un adblocker o sin red. No rompemos nada: los
       // getToken pendientes vencerán por timeout y devolverán null.
+      scriptPedido = false;
+      document.dispatchEvent(new CustomEvent('consultia:turnstile-script-error'));
       console.warn('[Turnstile] no se pudo cargar el script de Cloudflare');
     };
     document.head.appendChild(s);
@@ -119,6 +121,15 @@
     w.token = token;
     var waiters = w.waiters.splice(0);
     waiters.forEach(function (resolve) { resolve(token); });
+    if (token) {
+      document.dispatchEvent(new CustomEvent('consultia:turnstile-verified', {
+        detail: { containerId: containerId }
+      }));
+    } else {
+      document.dispatchEvent(new CustomEvent('consultia:turnstile-error', {
+        detail: { containerId: containerId }
+      }));
+    }
   }
 
   Consultia.Turnstile = {
@@ -151,6 +162,9 @@
             'expired-callback': function () {
               w.token = null;
               if (window.turnstile && w.id !== null) window.turnstile.reset(w.id);
+              document.dispatchEvent(new CustomEvent('consultia:turnstile-expired', {
+                detail: { containerId: containerId }
+              }));
             },
             'error-callback': function () {
               // Fallo de red o del reto: liberamos a quien esté esperando

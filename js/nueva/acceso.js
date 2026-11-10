@@ -23,6 +23,72 @@
 
   function $(id) { return document.getElementById(id); }
 
+  var accesoVerificado = false;
+
+  function estadoVerificacion(texto) {
+    var estado = $('nvAccesoVerificacionEstado');
+    if (estado && texto) estado.textContent = texto;
+  }
+
+  function prepararVerificacionAcceso(mensaje) {
+    accesoVerificado = false;
+    var verificacion = $('nvAccesoVerificacion');
+    var credenciales = $('nvAccesoCredenciales');
+    var continuar = $('nvAccesoContinuar');
+    var reintentar = $('nvAccesoReintentar');
+    if (!verificacion || !credenciales) return;
+    verificacion.hidden = false;
+    credenciales.hidden = true;
+    if (continuar) continuar.disabled = true;
+    if (reintentar) reintentar.hidden = true;
+    estadoVerificacion(mensaje || 'Completa la verificaciÃ³n para continuar.');
+  }
+
+  function habilitarCredenciales() {
+    if (!C.Turnstile || !C.Turnstile.getToken) return;
+    C.Turnstile.getToken('nvTsAcceso').then(function (token) {
+      if (!token) {
+        prepararVerificacionAcceso('No pudimos completar la verificaciÃ³n. IntÃ©ntalo otra vez.');
+        return;
+      }
+      accesoVerificado = true;
+      $('nvAccesoVerificacion').hidden = true;
+      $('nvAccesoCredenciales').hidden = false;
+      var correo = document.querySelector('#nvAcceso [name="email"]');
+      if (correo && window.matchMedia('(hover: hover)').matches) correo.focus();
+    });
+  }
+
+  document.addEventListener('consultia:turnstile-verified', function (e) {
+    if (!e.detail || e.detail.containerId !== 'nvTsAcceso') return;
+    var continuar = $('nvAccesoContinuar');
+    if (continuar) continuar.disabled = false;
+    var reintentar = $('nvAccesoReintentar');
+    if (reintentar) reintentar.hidden = true;
+    estadoVerificacion('VerificaciÃ³n completada. Ya puedes continuar.');
+  });
+  document.addEventListener('consultia:turnstile-error', function (e) {
+    if (!e.detail || e.detail.containerId !== 'nvTsAcceso') return;
+    estadoVerificacion('No se pudo completar la verificaciÃ³n. Revisa tu conexiÃ³n e intÃ©ntalo otra vez.');
+    var reintentar = $('nvAccesoReintentar');
+    if (reintentar) reintentar.hidden = false;
+  });
+  document.addEventListener('consultia:turnstile-script-error', function () {
+    estadoVerificacion('No se pudo cargar la verificaciÃ³n. Revisa tu conexiÃ³n e intÃ©ntalo otra vez.');
+    var reintentar = $('nvAccesoReintentar');
+    if (reintentar) reintentar.hidden = false;
+  });
+  document.addEventListener('consultia:turnstile-expired', function (e) {
+    if (!e.detail || e.detail.containerId !== 'nvTsAcceso') return;
+    if (accesoVerificado) prepararVerificacionAcceso('La verificaciÃ³n venciÃ³. Confirma de nuevo para continuar.');
+    else {
+      var continuar = $('nvAccesoContinuar');
+      if (continuar) continuar.disabled = true;
+      estadoVerificacion('La verificaciÃ³n venciÃ³. Confirma de nuevo para continuar.');
+    }
+  });
+  NV.prepararVerificacionAcceso = prepararVerificacionAcceso;
+
   /* Qué recuadro anti-bot lleva cada paso. */
   var CAPTCHA = {
     acceso: 'nvTsAcceso',
@@ -99,6 +165,7 @@
     $('nvPuertaVolver').hidden = !encima;
     document.querySelectorAll('#nvPuerta [data-solo-fuera]').forEach(function (el) { el.hidden = encima; });
 
+    if (paso === 'acceso') prepararVerificacionAcceso();
     if (C.Turnstile && CAPTCHA[paso]) C.Turnstile.render(CAPTCHA[paso]);
     var puerta = $('nvPuerta');
     if (puerta) puerta.scrollTop = 0;
@@ -413,6 +480,22 @@
     conectarOlvido();
     conectarRestablecer();
     soloDigitos();
+
+    var continuarAcceso = $('nvAccesoContinuar');
+    if (continuarAcceso && !continuarAcceso.dataset.conectado) {
+      continuarAcceso.dataset.conectado = '1';
+      continuarAcceso.addEventListener('click', habilitarCredenciales);
+    }
+    var reintentarAcceso = $('nvAccesoReintentar');
+    if (reintentarAcceso && !reintentarAcceso.dataset.conectado) {
+      reintentarAcceso.dataset.conectado = '1';
+      reintentarAcceso.addEventListener('click', function () {
+        reintentarAcceso.hidden = true;
+        if (continuarAcceso) continuarAcceso.disabled = true;
+        estadoVerificacion('Cargando la verificaciÃ³n de seguridad...');
+        if (C.Turnstile) C.Turnstile.render('nvTsAcceso');
+      });
+    }
 
     /* Términos, cookies y recibo: los modales de siempre. Se conectan
        aquí porque la puerta ya los enlaza antes de entrar. */
