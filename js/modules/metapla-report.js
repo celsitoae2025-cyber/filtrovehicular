@@ -1438,9 +1438,9 @@
          incompleta. Así 5 indicadores forman 3+2 y 7 forman 4+3, en vez
          de dejar una tarjeta suelta pegada al margen izquierdo. */
       var colsIndicadores = n <= 4 ? n : (n <= 6 || n === 9 ? 3 : 4);
-      var gapIndicadores = 2.5;
+      var gapIndicadores = 2.2;
       var cardW = (CW - gapIndicadores * (colsIndicadores - 1)) / colsIndicadores;
-      var cardH = 16.5;
+      var cardH = 14.5;
       var rowsIndicadores = Math.ceil(n / colsIndicadores);
       var basePorFila = Math.floor(n / rowsIndicadores);
       var filasLargas = n % rowsIndicadores;
@@ -1460,14 +1460,16 @@
           doc.setDrawColor.apply(doc, borde);
           doc.setLineWidth(0.25);
           doc.roundedRect(cx0, cy0, cardW, cardH, 2, 2, 'FD');
-          var etiquetaIndicador = parte(String(resumenIndicadores[ci].label || ''), cardW - 6, 5, true).slice(0, 2);
-          rotulo(etiquetaIndicador, cx0 + 3, cy0 + 3.8, 5, C_MUTED, true);
-          rotulo(String(resumenIndicadores[ci].value || '—'), cx0 + 3, cy0 + 12, 7.8, estado, true,
+          var etiquetaIndicador = parte(String(resumenIndicadores[ci].label || ''), cardW - 6, 4.5, true).slice(0, 2);
+          rotulo(etiquetaIndicador, cx0 + 3, cy0 + 3.3, 4.5, C_MUTED, true);
+          rotulo(String(resumenIndicadores[ci].value || '—'), cx0 + 3, cy0 + 9.8, 6.8, estado, true,
                  { maxWidth: cardW - 6 });
         }
       }
       y += rowsIndicadores * (cardH + gapIndicadores) - gapIndicadores;
-      av(2);
+      // El encabezado siguiente se dibuja desde y - 7 mm; reserva 4 U para
+      // que quede un espacio visible y no parezca pegado a las tarjetas.
+      av(4);
     }
 
     // ── Estilos comunes de tabla ──
