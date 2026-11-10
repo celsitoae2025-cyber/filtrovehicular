@@ -6981,3 +6981,33 @@ body.auth-locked .inst-fab { z-index: 501; }
   .rep-veredicto { margin: 4px 16px 18px; }
   .det-fila { grid-template-columns: 1fr; gap: 2px; padding: 10px 0; }
 }
+
+/* Texto y tablas extraídos del PDF del Reporte Completo. */
+.rep-pdf-datos { padding: 8px 26px 28px; color: var(--c-primary); }
+.rep-pdf-datos-head { margin: 18px 0 22px; }
+.rep-pdf-datos-head h3 { margin: 4px 0; font-size: 22px; }
+.rep-pdf-eyebrow { margin: 0; color: var(--c-muted); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.rep-pdf-placa { margin: 8px 0 0; color: var(--c-muted); }
+.rep-pdf-placa strong { color: var(--c-primary); }
+.rep-pdf-resumen { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px; margin-bottom: 24px; }
+.rep-pdf-indicador { display: flex; min-width: 0; flex-direction: column; gap: 5px; padding: 13px 15px; border-radius: 10px; background: #f4f6f4; }
+.rep-pdf-indicador span { color: var(--c-muted); font-size: 12px; }
+.rep-pdf-indicador strong { font-size: 17px; overflow-wrap: anywhere; }
+.rep-pdf-seccion { margin-top: 22px; }
+.rep-pdf-seccion > h4 { margin: 0 0 8px; padding-bottom: 9px; border-bottom: 1px solid var(--c-border); font-size: 15px; letter-spacing: .04em; }
+.rep-pdf-kv { margin: 0; }
+.rep-pdf-kv > div { display: grid; grid-template-columns: minmax(150px, 32%) minmax(0, 1fr); gap: 8px 18px; padding: 10px 0; border-bottom: 1px solid var(--c-border); }
+.rep-pdf-kv dt { color: var(--c-muted); font-size: 13px; font-weight: 600; }
+.rep-pdf-kv dd { margin: 0; overflow-wrap: anywhere; line-height: 1.5; }
+.rep-pdf-tabla-wrap { overflow-x: auto; margin: 8px 0 14px; }
+.rep-pdf-tabla { width: 100%; border-collapse: collapse; font-size: 14px; }
+.rep-pdf-tabla td { padding: 9px 10px; border: 1px solid var(--c-border); vertical-align: top; overflow-wrap: anywhere; }
+.rep-pdf-sub { margin: 14px 0 5px; font-size: 14px; }
+.rep-pdf-texto { margin: 7px 0; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.rep-pdf-aviso { margin: 16px 26px 0; padding: 12px 14px; border-left: 3px solid #d59b2a; background: #fff9e9; color: #604b1f; line-height: 1.45; }
+@media (max-width: 720px) {
+  .rep-pdf-datos { padding: 4px 16px 22px; }
+  .rep-pdf-kv > div { grid-template-columns: 1fr; gap: 3px; }
+  .rep-pdf-tabla { min-width: 520px; }
+  .rep-pdf-aviso { margin-right: 16px; margin-left: 16px; }
+}

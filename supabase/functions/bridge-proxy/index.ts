@@ -42,6 +42,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { esRespuestaVacia } from "../_shared/empty-response.ts";
+import { checkMaintenance } from "../_shared/maintenance.ts";
 
 // Orígenes permitidos — restringir CORS al dominio de producción y desarrollo.
 const ALLOWED_ORIGINS = [
@@ -87,6 +88,8 @@ const CLAIM_ERRORS: Record<string, string> = {
   CONSULTA_AJENA: "Esa consulta no es tuya.",
   CONSULTA_YA_USADA: "Esa consulta ya se usó. Vuelve a solicitarla.",
   CONSULTA_CADUCADA: "La consulta caducó. Vuelve a solicitarla.",
+  MANTENIMIENTO_ACTIVO: "La plataforma está en mantenimiento. No se ejecutó la consulta.",
+  MANTENIMIENTO_NO_DISPONIBLE: "No se pudo confirmar la disponibilidad de la plataforma. Intenta de nuevo.",
 };
 
 function json(body: unknown, status = 200, req?: Request) {
@@ -116,17 +119,27 @@ async function authenticate(req: Request): Promise<{ userId: string } | null> {
   return { userId: data.user.id };
 }
 
-async function userIsActive(userId: string): Promise<boolean> {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return false;
+async function getUserAccess(userId: string): Promise<{ active: boolean; isAdmin: boolean }> {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return { active: false, isAdmin: false };
   const sb = serviceClient();
   const { data, error } = await sb
     .from("profiles")
-    .select("status")
+    .select("status, is_admin")
     .eq("id", userId)
     .single();
-  if (error || !data) return false;
-  if (!data.status) return true;
-  return data.status === "active";
+  if (error || !data) return { active: false, isAdmin: false };
+  return { active: !data.status || data.status === "active", isAdmin: data.is_admin === true };
+}
+
+async function refundPendingReservation(sb: ReturnType<typeof serviceClient>, consultaId: string, userId: string): Promise<boolean> {
+  const { data, error } = await sb.from("consultas").select("user_id, status")
+    .eq("id", consultaId).maybeSingle();
+  if (error || !data || data.user_id !== userId || data.status !== "pending") return false;
+  const { error: settleError } = await sb.rpc("bridge_settle_consulta", {
+    p_consulta_id: consultaId, p_ok: false, p_reason: "Mantenimiento: consulta no ejecutada",
+  });
+  if (settleError) console.error(`[bridge-proxy] no se pudo devolver reserva en mantenimiento consulta=${consultaId}: ${settleError.message}`);
+  return !settleError;
 }
 
 /** Llama al bridge con la API key inyectada en el servidor. */
@@ -166,8 +179,8 @@ serve(async (req: Request) => {
 
   const auth = await authenticate(req);
   if (!auth) return json({ error: "No autenticado" }, 401, req);
-  const active = await userIsActive(auth.userId);
-  if (!active) return json({ error: "Cuenta no activa" }, 403, req);
+  const access = await getUserAccess(auth.userId);
+  if (!access.active) return json({ error: "Cuenta no activa" }, 403, req);
 
   const rawBody = await req.text();
   if (!rawBody) return json({ error: "Body vacío" }, 400, req);
@@ -194,6 +207,13 @@ serve(async (req: Request) => {
 
   const sb = serviceClient();
 
+  const maintenance = await checkMaintenance(sb, access.isAdmin);
+  if (!maintenance.allowed) {
+    const refunded = endpoint === "query"
+      ? await refundPendingReservation(sb, consultaId, auth.userId) : false;
+    return json({ error: maintenance.message, code: maintenance.code, credito_devuelto: refunded }, 503, req);
+  }
+
   if (endpoint === "callback") {
     // El callback es la segunda fase de una consulta YA pagada y en curso
     // (el bot ofrece botones y el usuario elige). No se cobra ni se liquida
@@ -216,11 +236,13 @@ serve(async (req: Request) => {
       p_user_id: auth.userId,
     });
     if (claimErr) {
-      const code = (claimErr.message || "").match(
-        /CONSULTA_[A-Z_]+/,
-      )?.[0] || "";
+      const code = (claimErr.message || "").match(/MANTENIMIENTO_[A-Z_]+|CONSULTA_[A-Z_]+/)?.[0] || "";
       const msg = CLAIM_ERRORS[code] || "No se pudo validar el pago de la consulta.";
       console.warn(`[bridge-proxy] claim rechazado (${code || claimErr.message}) user=${auth.userId}`);
+      if (code === "MANTENIMIENTO_ACTIVO" || code === "MANTENIMIENTO_NO_DISPONIBLE") {
+        await refundPendingReservation(sb, consultaId, auth.userId);
+        return json({ error: msg, code, credito_devuelto: true }, 503, req);
+      }
       return json({ error: msg }, 402, req);
     }
   }

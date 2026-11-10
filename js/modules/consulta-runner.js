@@ -23,6 +23,11 @@
   function safeError(errData, fallbackMsg) {
     if (!errData || typeof errData !== 'object') return fallbackMsg;
     var raw = errData.error || '';
+    if (errData.code === 'MANTENIMIENTO_ACTIVO' || errData.code === 'MANTENIMIENTO_NO_DISPONIBLE') {
+      return raw || (errData.code === 'MANTENIMIENTO_ACTIVO'
+        ? 'La plataforma está en mantenimiento. No se ejecutó la consulta.'
+        : 'No se pudo confirmar la disponibilidad de la plataforma. Intenta de nuevo.');
+    }
     // Si es mensaje de "negocio" del bridge, lo dejamos pasar.
     if (/Falta|requerid|inv[áa]lido|no existe|insuficient|no conectado/i.test(raw)) {
       return raw;
@@ -419,7 +424,17 @@
       q_type: consulta.tipo_dato || "texto",
       q_input: (valor || "").slice(0, 200),
     });
-    if (res.error) throw res.error;
+    if (res.error) {
+      var code = String(res.error.message || '').match(/MANTENIMIENTO_[A-Z_]+/);
+      if (code) {
+        var aviso = new Error(code[0] === 'MANTENIMIENTO_ACTIVO'
+          ? 'La plataforma está en mantenimiento. No se ejecutó la consulta.'
+          : 'No se pudo confirmar la disponibilidad de la plataforma. Intenta de nuevo.');
+        aviso.code = code[0];
+        throw aviso;
+      }
+      throw res.error;
+    }
     return res.data; // uuid de la consulta creada
   }
 

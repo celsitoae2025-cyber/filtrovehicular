@@ -1033,7 +1033,8 @@
         : '<div class="rep-pdf-sin-archivo" role="status"><strong>PDF no disponible</strong>' +
           '<p>El proveedor no adjuntó el documento. Mostramos los datos recibidos, sin calcular un veredicto.</p></div>';
       html = '<div id="metapla-pdf-area" aria-live="polite">' + reporteArchivo + '</div>' +
-        renderMetaplaData(p, valorConsultado) + H.renderOpcionesSueltas(botones);
+        '<div id="metapla-data-area">' + renderMetaplaData(p, valorConsultado) + '</div>' +
+        H.renderOpcionesSueltas(botones);
     } else if (htmlNm) {
       // /nm necesita su tabla y su descarga real, también desde Consultar.
       html = htmlNm;
@@ -1149,7 +1150,12 @@
               // El veredicto del PDF sale de los mismos campos que el de
               // pantalla, no de las secciones deducidas del documento.
               parsed: p,
-              folio: folio
+              folio: folio,
+              onSecciones: function (secciones) {
+                var destino = document.getElementById('metapla-data-area');
+                if (!destino || !destino.isConnected || !Consultia.MetaplaView) return;
+                destino.innerHTML = Consultia.MetaplaView.render(secciones, valorRef || '');
+              }
             };
             function progresoReporte(n, total) {
               if (!metaplaPdfArea.isConnected) return;
@@ -1196,6 +1202,14 @@
             // El archivo original sigue disponible, claramente identificado.
             if (metaplaPdfArea.isConnected) {
               metaplaPdfArea.innerHTML = renderReporteArchivo(pdfsRef[0], true);
+            }
+            var datosArea = document.getElementById('metapla-data-area');
+            if (datosArea && datosArea.isConnected) {
+              var avisoLectura = document.createElement('p');
+              avisoLectura.className = 'rep-pdf-aviso';
+              avisoLectura.setAttribute('role', 'status');
+              avisoLectura.textContent = 'No se pudo extraer el texto completo del PDF. Se conservan los datos recibidos y el documento original para consulta.';
+              datosArea.insertBefore(avisoLectura, datosArea.firstChild);
             }
           }
         })();

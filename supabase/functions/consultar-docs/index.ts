@@ -20,6 +20,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkMaintenance } from "../_shared/maintenance.ts";
 
 const DOCSJSON_TOKEN = Deno.env.get("DOCSJSON_TOKEN") || "";
 
@@ -88,6 +89,19 @@ serve(async (req) => {
   // (falla si ya usó 2 — ese es el tope)
   const svc = getServiceClient();
   if (!svc) return jsonResponse(500, { error: "Supabase no disponible" });
+
+  const { data: profile, error: profileError } = await svc.from("profiles")
+    .select("is_admin").eq("id", userId).maybeSingle();
+  if (profileError || !profile) {
+    return jsonResponse(503, {
+      error: "No se pudo confirmar la disponibilidad de la plataforma. Intenta de nuevo.",
+      code: "MANTENIMIENTO_NO_DISPONIBLE"
+    });
+  }
+  const maintenance = await checkMaintenance(svc, profile.is_admin === true);
+  if (!maintenance.allowed) {
+    return jsonResponse(503, { error: maintenance.message, code: maintenance.code });
+  }
 
   // Primero consultar la API — si falla no consumimos la consulta gratis
   const endpoint = ENDPOINTS[type];
