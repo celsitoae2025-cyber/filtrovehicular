@@ -144,6 +144,8 @@
     return classifyValue('', item.value);
   }
 
+  function visualState(state) { return state === 'issue' ? 'issue' : 'ok'; }
+
   function collectPageIndicators(secciones, indicadores) {
     var facts = secciones.map(sectionFacts);
     var tickets = facts.filter(function (item) { return item.topic === 'deuda' && /papeleta|multa|infraccion/.test(item.title); });
@@ -177,6 +179,29 @@
     return out;
   }
 
+  function rowsForDisplay(section, rows) {
+    if (labelTopic(section.titulo) !== 'tive') return rows;
+    var omittingTitular = false;
+    return rows.filter(function (row) {
+      var raw = row.t === 'kv' ? String(row.a || '') + ' ' + String(row.b || '')
+        : row.t === 'row' ? (row.cells || []).join(' ') : String(row.a || '');
+      var text = normal(raw);
+      if (/titular.*tive|titular.*vehiculo|propietario/.test(text)) {
+        omittingTitular = true;
+        return false;
+      }
+      if (/\bdni\b|documento nacional de identidad/.test(text)) return false;
+      if (omittingTitular) {
+        if (row.t === 'kv' && /codigo de verificacion|numero de titulo|numero de partida|fecha de consulta/.test(normal(row.a))) {
+          omittingTitular = false;
+          return true;
+        }
+        return false;
+      }
+      return true;
+    });
+  }
+
   function render(secciones, placa) {
     if (!Array.isArray(secciones) || !secciones.length) return '';
     var resumen = secciones.resumen || {};
@@ -193,10 +218,11 @@
     indicadores = collectPageIndicators(secciones, indicadores);
     if (resumen.score || resumen.nivel || indicadores.length) {
       html += '<section class="rep-pdf-resumen" aria-label="Resumen del documento">';
-      if (resumen.score) html += '<div class="rep-pdf-indicador rep-pdf-indicador--' + indicatorState({ label: 'Puntaje', value: resumen.nivel || resumen.score }) + '"><span>Puntaje del documento</span><strong>' + esc(resumen.score) + '</strong></div>';
-      if (resumen.nivel) html += '<div class="rep-pdf-indicador rep-pdf-indicador--' + indicatorState({ label: 'Nivel', value: resumen.nivel }) + '"><span>Nivel indicado en el documento</span><strong>' + esc(resumen.nivel) + '</strong></div>';
+      if (resumen.score) html += '<div class="rep-pdf-indicador rep-pdf-indicador--' + visualState(indicatorState({ label: 'Puntaje', value: resumen.nivel || resumen.score })) + '"><span>Puntaje del documento</span><strong>' + esc(resumen.score) + '</strong></div>';
+      if (resumen.nivel) html += '<div class="rep-pdf-indicador rep-pdf-indicador--' + visualState(indicatorState({ label: 'Nivel', value: resumen.nivel })) + '"><span>Nivel indicado en el documento</span><strong>' + esc(resumen.nivel) + '</strong></div>';
       indicadores.forEach(function (item) {
         var state = item.status || indicatorState(item);
+        state = visualState(state);
         html += '<div class="rep-pdf-indicador rep-pdf-indicador--' + state + '"><span>' + esc(item.label) + '</span><strong>' + esc(item.value) + '</strong></div>';
       });
       html += '</section>';
@@ -206,7 +232,9 @@
       var filas = Array.isArray(section.filas) ? section.filas : [];
       if (!section.titulo && !filas.length) return;
       var marker = markerFor(section, indicadores);
-      html += '<section class="rep-pdf-seccion' + (marker ? ' rep-pdf-seccion--' + marker : '') + '"><h4>' + esc(section.titulo || 'Información adicional') + '</h4>';
+      var visibleMarker = marker === 'issue' ? 'issue' : 'ok';
+      filas = rowsForDisplay(section, filas);
+      html += '<section class="rep-pdf-seccion rep-pdf-seccion--' + visibleMarker + '"><h4>' + esc(section.titulo || 'Información adicional') + '</h4>';
       for (var i = 0; i < filas.length;) {
         var fila = filas[i] || {};
         if (fila.t === 'kv') {
