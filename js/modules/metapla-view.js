@@ -9,6 +9,70 @@
     });
   }
 
+  function normal(value) {
+    return String(value == null ? '' : value).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+
+  function topicOf(section, rows) {
+    var title = normal(section.titulo);
+    var labels = rows.map(function (row) {
+      if (row.t === 'kv') return normal(row.a);
+      if (row.t === 'row') return normal((row.cells || []).join(' '));
+      return '';
+    }).join(' ');
+    var source = title + ' ' + labels;
+    if (/denuncia|antecedente/.test(source)) return 'denuncia';
+    if (/\bsoat\b/.test(source)) return 'soat';
+    if (/revision.*tecnica|rev tecnica/.test(source)) return 'revision';
+    if (/deuda|papeleta|infraccion/.test(source)) return 'deuda';
+    return '';
+  }
+
+  function markerFor(section, rows, summaryItems) {
+    var topic = topicOf(section, rows);
+    if (!topic) return '';
+    var normalizedTitle = normal(section.titulo);
+    var titleNamesTopic = topic === 'soat' ? /\bsoat\b/.test(normalizedTitle)
+      : topic === 'revision' ? /revision.*tecnica|rev tecnica/.test(normalizedTitle)
+      : false;
+    var matches = summaryItems.filter(function (item) {
+      var label = normal(item.label);
+      return topic === 'denuncia' ? /denuncia|antecedente/.test(label)
+        : topic === 'soat' ? /\bsoat\b/.test(label)
+        : topic === 'revision' ? /revision.*tecnica|rev tecnica/.test(label)
+        : /deuda|papeleta|infraccion/.test(label);
+    });
+    var sectionEvidence = rows.map(function (row) {
+      if (row.t === 'kv') return String(row.a || '') + ' ' + String(row.b || '');
+      if (row.t === 'row') return (row.cells || []).join(' ');
+      return String(row.a || '');
+    }).join(' ');
+    var evidence = normal(matches.length ? matches.map(function (x) { return x.value; }).join(' ') : sectionEvidence);
+    if (!evidence || /^(-|n a|sin dato|no disponible|no informado)$/.test(evidence)) {
+      return titleNamesTopic && (topic === 'soat' || topic === 'revision') ? 'issue' : '';
+    }
+
+    if (topic === 'denuncia') {
+      if (/sin denuncias|no registra|ningun antecedente|sin antecedentes|sin registros/.test(evidence)) return 'ok';
+      var count = evidence.match(/\b\d+\b/);
+      if (count) return Number(count[0]) > 0 ? 'issue' : 'ok';
+      if (/registra|denuncia|antecedente|hallazgo/.test(evidence)) return 'issue';
+      return '';
+    }
+    if (topic === 'deuda') {
+      if (/sin deuda|no registra deuda|sin papeletas|sin infracciones/.test(evidence)) return 'ok';
+      var amount = evidence.match(/(?:s\s*)?\b\d[\d,.]*/);
+      if (amount) {
+        var numeric = Number(amount[0].replace(/[^\d,.-]/g, '').replace(',', '.'));
+        if (Number.isFinite(numeric)) return numeric > 0 ? 'issue' : 'ok';
+      }
+    }
+    if (/vencid|caduc|expir|no vigente|no registra|sin soat|sin revision|no tiene|no cuenta|no hay|no existe|no encontrado|inexistente|falta/.test(evidence)) return 'issue';
+    if (/vigente|activo|habil|valido|correcto|\bok\b/.test(evidence)) return 'ok';
+    return '';
+  }
+
   function render(secciones, placa) {
     if (!Array.isArray(secciones) || !secciones.length) return '';
     var resumen = secciones.resumen || {};
@@ -35,7 +99,8 @@
     secciones.forEach(function (section) {
       var filas = Array.isArray(section.filas) ? section.filas : [];
       if (!section.titulo && !filas.length) return;
-      html += '<section class="rep-pdf-seccion"><h4>' + esc(section.titulo || 'Información adicional') + '</h4>';
+      var marker = markerFor(section, filas, indicadores);
+      html += '<section class="rep-pdf-seccion' + (marker ? ' rep-pdf-seccion--' + marker : '') + '"><h4>' + esc(section.titulo || 'Información adicional') + '</h4>';
       for (var i = 0; i < filas.length;) {
         var fila = filas[i] || {};
         if (fila.t === 'kv') {
@@ -67,6 +132,6 @@
     return html + '</div>';
   }
 
-  Consultia.MetaplaView = { render: render, escapeHtml: esc };
+  Consultia.MetaplaView = { render: render, escapeHtml: esc, _markerFor: markerFor };
   if (typeof module !== 'undefined' && module.exports) module.exports = Consultia.MetaplaView;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -480,8 +480,10 @@
         '<span class="rep-pdf-nombre">' + escapeHtml(nombre) + ' · ' + mb + ' MB</span>' +
       '</div>' +
       '<div class="rep-pdf-acciones">' +
-        '<a class="rep-pdf-descargar" href="' + url + '" download="' + escapeHtml(nombre) + '">Descargar PDF</a>' +
-        '<button class="rep-pdf-ver cr-doccard-view" type="button" data-blob="' + url + '" data-fn="' + escapeHtml(nombre) + '">Visualizar</button>' +
+        '<a class="rep-pdf-descargar" href="' + url + '" download="' + escapeHtml(nombre) + '" aria-label="Descargar PDF" title="Descargar PDF">' +
+          '<svg class="rep-pdf-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a>' +
+        '<button class="rep-pdf-ver cr-doccard-view" type="button" data-blob="' + url + '" data-fn="' + escapeHtml(nombre) + '" aria-label="Visualizar PDF" title="Visualizar PDF">' +
+          '<svg class="rep-pdf-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button>' +
       '</div>' +
       (!original ? '<div class="rep-pdf-foto">' +
         '<button class="rep-pdf-foto-btn" type="button">' +

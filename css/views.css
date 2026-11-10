@@ -7008,7 +7008,9 @@ body.auth-locked .inst-fab { z-index: 501; }
 .rep-pdf-indicador span { color: var(--c-muted); font-size: 12px; }
 .rep-pdf-indicador strong { font-size: 17px; line-height: 1.35; overflow-wrap: anywhere; }
 .rep-pdf-seccion { min-width: 0; padding: 19px 21px 20px; border: 1px solid var(--c-border); border-radius: 14px; background: #fff; }
-.rep-pdf-seccion > h4 { margin: 0 0 13px; padding: 2px 0 11px 12px; border-bottom: 1px solid var(--c-border); border-left: 3px solid #8fc72e; font-size: 15px; line-height: 1.4; letter-spacing: .045em; }
+.rep-pdf-seccion > h4 { margin: 0 0 13px; padding: 2px 0 11px 12px; border-bottom: 1px solid var(--c-border); border-left: 3px solid #aab3ad; font-size: 15px; line-height: 1.4; letter-spacing: .045em; }
+.rep-pdf-seccion--ok > h4 { border-left-color: #39a85a; }
+.rep-pdf-seccion--issue > h4 { border-left-color: #d43c3c; }
 .rep-pdf-kv { margin: 0 0 6px; }
 .rep-pdf-kv > div { display: grid; grid-template-columns: minmax(145px, 30%) minmax(0, 1fr); gap: 8px 16px; padding: 11px 13px; border-radius: 8px; background: #f7f9f7; }
 .rep-pdf-kv dt { color: var(--c-muted); font-size: 12px; line-height: 1.45; font-weight: 700; letter-spacing: .035em; text-transform: uppercase; }
