@@ -1108,8 +1108,8 @@ body.nv-puerta-encima { overflow: hidden; }
 .nv-body .rep-pdf-acciones { display: flex; flex-wrap: nowrap; gap: 7px; }
 .nv-body .rep-pdf-acciones > * { display: inline-flex; flex: 0 0 40px; align-items: center; justify-content: center; width: 40px; height: 40px; min-height: 40px; padding: 0; border: 1px solid var(--nv-oscuro); border-radius: 9px; font: inherit; text-decoration: none; cursor: pointer; transition: background .16s ease, transform .16s ease; }
 .nv-body .rep-pdf-icon { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.nv-body .rep-pdf-descargar { border-color: #bd3434; background: #bd3434; color: #fff; }
-.nv-body .rep-pdf-descargar:hover { border-color: #9f2929; background: #9f2929; transform: translateY(-1px); }
+.nv-body .rep-pdf-descargar { border-color: #ff1733; background: #ff1733; color: #fff; }
+.nv-body .rep-pdf-descargar:hover { border-color: #d90b24; background: #d90b24; transform: translateY(-1px); }
 .nv-body .rep-pdf-ver { background: #fff; color: var(--nv-oscuro); }
 .nv-body .rep-pdf-ver:hover { background: #eef4e8; transform: translateY(-1px); }
 .nv-body .rep-pdf-acciones > *:focus-visible { outline: 3px solid #537c25; outline-offset: 2px; }

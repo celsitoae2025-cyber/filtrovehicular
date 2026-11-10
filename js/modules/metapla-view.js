@@ -276,8 +276,18 @@
           while (i < filas.length && filas[i] && filas[i].t === 'row' && Array.isArray(filas[i].cells) && filas[i].cells.length === width) {
             group.push(filas[i].cells); i++;
           }
-          html += '<div class="rep-pdf-tabla-wrap"><table class="rep-pdf-tabla"><tbody>';
-          group.forEach(function (cells) {
+          var header = group.length > 1 && group[0].filter(function (cell) {
+            return /region|fecha|infraccion|estado|deuda|monto|importe|placa|documento|titular/.test(normal(cell));
+          }).length >= Math.min(3, group[0].length);
+          var papeletas = header && /region/.test(normal(group[0].join(' '))) &&
+            /fecha/.test(normal(group[0].join(' '))) && /deuda/.test(normal(group[0].join(' ')));
+          html += '<div class="rep-pdf-tabla-wrap"><table class="rep-pdf-tabla' +
+            (papeletas ? ' rep-pdf-tabla--papeletas' : '') + '">';
+          if (header) {
+            html += '<thead><tr>' + group[0].map(function (cell) { return '<th scope="col">' + esc(cell) + '</th>'; }).join('') + '</tr></thead>';
+          }
+          html += '<tbody>';
+          (header ? group.slice(1) : group).forEach(function (cells) {
             html += '<tr>' + cells.map(function (cell) { return '<td>' + esc(cell) + '</td>'; }).join('') + '</tr>';
           });
           html += '</tbody></table></div>';

@@ -203,18 +203,29 @@
     var wrap = document.createElement("div");
     wrap.className = "cr-espera";
     wrap.innerHTML =
-      '<p class="cr-espera-texto">El proveedor está tardando más de lo normal. ' +
-      'Seguimos esperando su respuesta todo lo que haga falta; si prefieres no esperar, ' +
-      'cancela sin costo.</p>' +
-      '<button type="button" class="cr-espera-btn">Cancelar y volver al inicio</button>';
+      '<section class="cr-espera-dialog" role="dialog" aria-modal="true" ' +
+        'aria-labelledby="cr-espera-titulo" tabindex="-1">' +
+        '<span class="cr-espera-indicador" aria-hidden="true"></span>' +
+        '<h2 class="cr-espera-titulo" id="cr-espera-titulo">La consulta está tardando más</h2>' +
+        '<p class="cr-espera-texto">Puede demorar un poco más de lo habitual. ' +
+        'Seguimos esperando el reporte: mantén esta ventana abierta si aún lo necesitas. ' +
+        'Si prefieres detener la consulta, pulsa «Cancelar consulta»; no se descontarán créditos.</p>' +
+        '<button type="button" class="cr-espera-btn">Cancelar consulta</button>' +
+      '</section>';
     wrap.querySelector(".cr-espera-btn").addEventListener("click", cancelarConsulta);
     caja.appendChild(wrap);
+    document.body.classList.add("consulta-espera-abierta");
+    var botonCancelar = wrap.querySelector(".cr-espera-btn");
+    if (botonCancelar && typeof botonCancelar.focus === "function") {
+      try { botonCancelar.focus({ preventScroll: true }); } catch (_) { botonCancelar.focus(); }
+    }
   }
 
   function quitarAvisoEspera() {
     if (avisoTimer) { clearTimeout(avisoTimer); avisoTimer = null; }
     var w = document.querySelector(".cr-espera");
     if (w && w.parentNode) w.parentNode.removeChild(w);
+    document.body.classList.remove("consulta-espera-abierta");
   }
 
   function iniciarEspera() {

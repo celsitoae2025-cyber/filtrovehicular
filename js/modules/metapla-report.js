@@ -1437,7 +1437,7 @@
       var colsIndicadores = n >= 9 ? 3 : Math.min(4, n);
       var gapIndicadores = 2.5;
       var cardW = (CW - gapIndicadores * (colsIndicadores - 1)) / colsIndicadores;
-      var cardH = 19;
+      var cardH = 16.5;
       var rowsIndicadores = Math.ceil(n / colsIndicadores);
       need(rowsIndicadores * (cardH + gapIndicadores) + U);
       for (var ci = 0; ci < n; ci++) {
@@ -1452,9 +1452,9 @@
         doc.setDrawColor.apply(doc, borde);
         doc.setLineWidth(0.25);
         doc.roundedRect(cx0, cy0, cardW, cardH, 2, 2, 'FD');
-        var etiquetaIndicador = parte(String(resumenIndicadores[ci].label || ''), cardW - 6, 5.4, true).slice(0, 2);
-        rotulo(etiquetaIndicador, cx0 + 3, cy0 + 4.4, 5.4, C_MUTED, true);
-        rotulo(String(resumenIndicadores[ci].value || '—'), cx0 + 3, cy0 + 13.6, 8.3, estado, true,
+        var etiquetaIndicador = parte(String(resumenIndicadores[ci].label || ''), cardW - 6, 5, true).slice(0, 2);
+        rotulo(etiquetaIndicador, cx0 + 3, cy0 + 3.8, 5, C_MUTED, true);
+        rotulo(String(resumenIndicadores[ci].value || '—'), cx0 + 3, cy0 + 12, 7.8, estado, true,
                { maxWidth: cardW - 6 });
       }
       y += rowsIndicadores * (cardH + gapIndicadores) - gapIndicadores;
@@ -1709,52 +1709,45 @@
       y += notaAlto;
     }
 
-    /* Los resultados terminan antes de las constancias. Se agrupan hasta
-       dos páginas del mismo trámite por hoja, sin descartar ninguna. */
+    /* Los resultados terminan antes de las constancias. Cada escaneo ocupa
+       una página; el título del trámite solo aparece al abrir cada grupo. */
     if (anexos.length) {
       var primeraPaginaAnexos = true;
       for (var ai = 0; ai < anexos.length;) {
         var grupoTitulo = anexos[ai].titulo;
         var grupo = [];
         while (ai < anexos.length && anexos[ai].titulo === grupoTitulo) grupo.push(anexos[ai++]);
-        for (var gi = 0; gi < grupo.length; gi += 2) {
-          var par = grupo.slice(gi, gi + 2);
+        for (var gi = 0; gi < grupo.length; gi++) {
           nuevaPagina();
           if (primeraPaginaAnexos) {
             indice.push({ n: '·', titulo: 'Anexos documentales', pag: paginaActual() });
             primeraPaginaAnexos = false;
           }
           marcas.push({ pag: paginaActual(), texto: 'Anexos · ' + grupoTitulo });
-          versalita('Documentos de respaldo', M, y, { size: T.mini, track: 0.8 });
-          y += U * 2.5;
-          doc.setFillColor.apply(doc, C_INK);
-          doc.rect(M, y - 7, CW, 13, 'F');
-          doc.setFillColor.apply(doc, C_ACCENT);
-          doc.rect(M, y - 7, 1.4, 13, 'F');
-          rotulo(grupoTitulo, M + 4, y + 1, T.h3,
-                 [255, 255, 255], true, { maxWidth: CW - 8 });
-          y += 18;
-          var anchoCelda = par.length === 2 ? (CW - 6) / 2 : CW;
-          var altoDisponible = CUERPO.bottom - y - U * 3;
-          par.forEach(function (anexo, pi) {
-            var x0 = M + pi * (anchoCelda + 6);
-            var rot = anexo.cap || ('Documento ' + (gi + pi + 1) + ' de ' + grupo.length);
-            var rotLineas = parte(rot, anchoCelda, T.mini, true).slice(0, 2);
-            rotulo(rotLineas, x0, y, T.mini, C_MUTED, true);
-            var iy = y + Math.max(U * 2, rotLineas.length * LH.mini + U);
-            var im = anexo.imagen;
-            var escala = Math.min(anchoCelda / im.px, (altoDisponible - (iy - y)) / im.py);
-            var dw = im.px * escala, dh = im.py * escala;
-            var ix = x0 + (anchoCelda - dw) / 2;
-            try {
-              doc.addImage(im.dataUrl, 'JPEG', ix, iy, dw, dh, undefined, 'FAST');
-              doc.setDrawColor.apply(doc, C_HAIR);
-              doc.setLineWidth(0.2);
-              doc.rect(ix, iy, dw, dh);
-            } catch (e) { console.warn('[metapla] anexo no insertable:', e); }
-            rotulo((gi + pi + 1) + ' de ' + grupo.length, x0, CUERPO.bottom - 2,
-                   T.micro, C_MUTED);
-          });
+          var yAnexo = CUERPO.top;
+          if (gi === 0) {
+            versalita('Documentos de respaldo', M, yAnexo, { size: T.micro, track: 0.65 });
+            rotulo(grupoTitulo, M, yAnexo + 9, T.h3, C_INK, true, { maxWidth: CW });
+            hairline(yAnexo + 13, M, W - M, C_HAIR, 0.25);
+            yAnexo += 17;
+          }
+          var anexo = grupo[gi];
+          var capRepetida = gi > 0 && anexo.cap && anexo.cap === grupo[gi - 1].cap;
+          var rot = capRepetida ? '' : (anexo.cap || ('Documento ' + (gi + 1) + ' de ' + grupo.length));
+          var rotLineas = rot ? parte(rot, CW, T.mini, true).slice(0, 2) : [];
+          if (rotLineas.length) rotulo(rotLineas, M, yAnexo + 2.5, T.mini, C_MUTED, true);
+          var iy = yAnexo + Math.max(U * 2.4, rotLineas.length * LH.mini + U * 1.5);
+          var im = anexo.imagen;
+          var altoDisponible = CUERPO.bottom - iy - U;
+          var escala = Math.min(CW / im.px, altoDisponible / im.py);
+          var dw = im.px * escala, dh = im.py * escala;
+          var ix = M + (CW - dw) / 2;
+          try {
+            doc.addImage(im.dataUrl, 'JPEG', ix, iy, dw, dh, undefined, 'FAST');
+            doc.setDrawColor.apply(doc, C_HAIR);
+            doc.setLineWidth(0.2);
+            doc.rect(ix, iy, dw, dh);
+          } catch (e) { console.warn('[metapla] anexo no insertable:', e); }
         }
       }
     }
