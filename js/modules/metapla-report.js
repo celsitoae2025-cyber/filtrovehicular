@@ -139,10 +139,13 @@
   }
 
   function indicadoresPdf(secciones, resumen) {
-    var items = Array.isArray(resumen.indEtiquetas) && Array.isArray(resumen.indValores)
+    var items = [];
+    if (resumen.score) items.push({ label: 'Puntaje del documento', value: resumen.score });
+    if (resumen.nivel) items.push({ label: 'Nivel de riesgo', value: resumen.nivel });
+    items = items.concat(Array.isArray(resumen.indEtiquetas) && Array.isArray(resumen.indValores)
       ? resumen.indEtiquetas.map(function (label, i) {
         return { label: label, value: resumen.indValores[i] };
-      }) : [];
+      }) : []);
     var propietarios = contarPropietarios(secciones);
     if (propietarios !== null) {
       var owner = items.find(function (item) { return /PROPIETARIOS/i.test(item.label); });
@@ -680,6 +683,98 @@
     return null;
   }
 
+  function fichaVehiculoDelProveedor(pages) {
+    var pg = pages && pages[0];
+    if (!pg || !Array.isArray(pg.lines)) return [];
+    var lines = pg.lines;
+    var inicio = lines.findIndex(function (line) {
+      return /IDENTIFICACI[OÓ]N DEL VEH[IÍ]CULO/i.test(line.cells.join(' '));
+    });
+    if (inicio < 0) return [];
+    var fin = lines.findIndex(function (line, i) {
+      return i > inicio && (/^\d+\.\d+\s+FICHA/i.test(line.cells.join(' ')) ||
+        (line.cells.length > 1 && ROMANS.indexOf(line.cells[0].trim()) >= 0));
+    });
+    if (fin < 0) fin = lines.length;
+
+    var etiquetas = [
+      [/^MARCA$/, 'Marca'], [/^MODELO$/, 'Modelo'],
+      [/^ANO FAB(?:RICACION)?(?: MODELO| MOD)?$/, 'Año fab. / modelo'],
+      [/^COLOR$/, 'Color'], [/^CARROCERIA$/, 'Carrocería'],
+      [/^COMBUSTIBLE$/, 'Combustible'], [/^VIN SERIE$/, 'VIN / serie'],
+      [/^N MOTOR$/, 'N° motor'], [/^CATEGORIA$/, 'Categoría'],
+      [/^PARTIDA REGISTRAL$/, 'Partida registral'], [/^VERSION$/, 'Versión'],
+      [/^TRANSMISION$/, 'Transmisión'], [/^TRACCION$/, 'Tracción'],
+      [/^ASIENTOS?$/, 'Asientos'], [/^CILINDROS?$/, 'Cilindros'],
+      [/^PASAJEROS$/, 'Pasajeros'], [/^RUEDAS$/, 'Ruedas'],
+      [/^POTENCIA$/, 'Potencia'], [/^CILINDRADA$/, 'Cilindrada'],
+      [/^LONGITUD$/, 'Longitud'], [/^ALTURA$/, 'Altura'],
+      [/^ANCHO$/, 'Ancho'], [/^P BRUTO$/, 'P. bruto'], [/^P NETO$/, 'P. neto'],
+      [/^CARGA UTIL$/, 'Carga útil']
+    ];
+    function etiquetaDe(texto) {
+      var value = normalizaIdentidad(texto);
+      for (var i = 0; i < etiquetas.length; i++) if (etiquetas[i][0].test(value)) return etiquetas[i][1];
+      return '';
+    }
+
+    var campos = [], vistos = new Set();
+    for (var i = inicio + 1; i < fin; i++) {
+      var line = lines[i];
+      for (var c = 0; c < line.cells.length; c++) {
+        var etiqueta = etiquetaDe(line.cells[c]);
+        if (!etiqueta || vistos.has(normalizaIdentidad(etiqueta))) continue;
+        var x = line.xs[c] || 0, valor = '';
+        var inline = String(line.cells[c]).match(/[:\-]\s*(.+)$/);
+        if (inline) valor = limpiar(inline[1]);
+        for (var j = i + 1; !valor && j < Math.min(fin, i + 5); j++) {
+          if (lines[j].top - line.top > 22) break;
+          for (var k = 0; k < lines[j].cells.length; k++) {
+            if (Math.abs((lines[j].xs[k] || 0) - x) > 46 || etiquetaDe(lines[j].cells[k])) continue;
+            var candidate = limpiar(lines[j].cells[k]);
+            if (candidate && !/^(IDENTIFICACION DEL VEHICULO|LOGO REFERENCIAL)$/i.test(normalizaIdentidad(candidate))) {
+              valor = candidate;
+              break;
+            }
+          }
+        }
+        if (!valor) continue;
+        campos.push({ t: 'kv', a: etiqueta, b: valor });
+        vistos.add(normalizaIdentidad(etiqueta));
+      }
+    }
+    return campos;
+  }
+
+  // Conserva el emblema que el PDF original ubica junto a la ficha técnica.
+  function logoDelProveedor(pages) {
+    var pg = pages && pages[0];
+    if (!pg || !pg.images || !pg.images.length) return null;
+    var referencia = (pg.lines || []).find(function (line) {
+      return /LOGO\s+REFERENCIAL/i.test(line.cells.join(' '));
+    });
+    var referenciaX = referencia && referencia.xs && referencia.xs.length ? referencia.xs[0] : null;
+    var referenciaY = referencia ? referencia.top : null;
+    var candidatos = pg.images.filter(function (im) {
+      var ratio = im.px / im.py;
+      return im.px >= 70 && im.py >= 70 && ratio >= 0.48 && ratio <= 2.5 &&
+        im.w >= 24 && im.h >= 24 && im.x < 260 && im.top < 720;
+    });
+    candidatos.sort(function (a, b) {
+      function score(im) {
+        var horizontal = referenciaX == null ? Math.abs(im.x - 60) : Math.abs((im.x + im.w / 2) - referenciaX);
+        var vertical = referenciaY == null ? 0 : Math.abs((im.top + im.h) - referenciaY);
+        var aspect = Math.abs(Math.log((im.px / im.py) / 0.9));
+        return (referenciaX == null ? horizontal * 0.7 : horizontal) + vertical * 1.5 + aspect * 18;
+      }
+      return score(a) - score(b);
+    });
+    if (!candidatos.length) return null;
+    var logo = candidatos[0];
+    if (referencia && Math.abs((logo.top + logo.h) - referenciaY) > 70) return null;
+    return logo.dataUrl;
+  }
+
   function findVal(secciones, re, secRe) {
     var hit = '';
     secciones.forEach(function (s) {
@@ -1018,37 +1113,65 @@
     doc.setFillColor.apply(doc, C_SOFT);
     doc.rect(fotoX, fotoY, fotoW, fotoH, 'F');
     var foto = meta && meta.fotoDataUrl;
+    var logo = meta && meta.logoDataUrl;
     var fotoRotulo = meta && meta.fotoOrigen === 'proveedor'
       ? 'Imagen del proveedor · no acredita identidad' : 'Foto cargada para este reporte';
-    if (foto && /^data:image\/(jpeg|png);base64,/i.test(foto)) {
+    function imagenAjustada(dataUrl, x0, y0, ancho, alto) {
+      if (!dataUrl || !/^data:image\/(jpeg|png);base64,/i.test(dataUrl)) return false;
       try {
-        var props = doc.getImageProperties(foto);
-        var escalaFoto = Math.min(fotoW / props.width, fotoH / props.height);
-        var fw = props.width * escalaFoto, fh = props.height * escalaFoto;
-        doc.addImage(foto, props.fileType || 'JPEG', fotoX + (fotoW - fw) / 2,
-                     fotoY + (fotoH - fh) / 2, fw, fh, undefined, 'FAST');
-      } catch (e) { foto = null; }
+        var props = doc.getImageProperties(dataUrl);
+        var escala = Math.min(ancho / props.width, alto / props.height);
+        var iw = props.width * escala, ih = props.height * escala;
+        doc.addImage(dataUrl, props.fileType || 'JPEG', x0 + (ancho - iw) / 2,
+                     y0 + (alto - ih) / 2, iw, ih, undefined, 'FAST');
+        return true;
+      } catch (e) { return false; }
     }
-    if (!foto) {
+    var logoValido = !!(logo && /^data:image\/(jpeg|png);base64,/i.test(logo));
+    var fotoValida = !!(foto && /^data:image\/(jpeg|png);base64,/i.test(foto));
+    if (logoValido && fotoValida) {
+      imagenAjustada(logo, fotoX + 3, fotoY + 3, 30, fotoH - 10);
+      vline(fotoX + 36, fotoY + 3, fotoY + fotoH - 3, C_HAIR);
+      imagenAjustada(foto, fotoX + 39, fotoY + 3, 28, fotoH - 10);
+      versalita('Logo', fotoX + 18, fotoY + fotoH - 2, { size: 5.2, track: 0.2, align: 'center' });
+      versalita('Vehículo', fotoX + 53, fotoY + fotoH - 2, { size: 5.2, track: 0.2, align: 'center' });
+    } else if (logoValido && imagenAjustada(logo, fotoX + 4, fotoY + 3, fotoW - 8, fotoH - 9)) {
+      versalita('Logo referencial', fotoX + fotoW / 2, fotoY + fotoH - 2,
+                { size: 5.2, track: 0.25, align: 'center' });
+    } else if (fotoValida && imagenAjustada(foto, fotoX + 3, fotoY + 3, fotoW - 6, fotoH - 6)) {
+      rotulo(fotoRotulo, fotoX, fotoY + fotoH + 4, T.micro, C_MUTED);
+    } else {
       versalita('Fotografía no disponible', fotoX + fotoW / 2, fotoY + fotoH / 2,
                 { size: 6, track: 0.2, align: 'center' });
+      rotulo('Puedes añadir una foto al generar el PDF', fotoX, fotoY + fotoH + 4, T.micro, C_MUTED);
     }
     doc.setDrawColor.apply(doc, C_HAIR);
     doc.rect(fotoX, fotoY, fotoW, fotoH);
-    rotulo(foto ? fotoRotulo : 'Puedes añadir una foto al generar el PDF',
-           fotoX, fotoY + fotoH + 4, T.micro, C_MUTED);
 
     var fichaX = 95, fichaW = W - M - fichaX;
-    var attrs = [
+    var attrs = (secciones.fichaVehiculo || []).map(function (field) {
+      return [field.a, field.b];
+    }).filter(function (field) { return field[0] && field[1]; });
+    if (!attrs.length) attrs = [
       ['Marca y modelo', marca], ['Año', anio], ['Color', color],
       ['Carrocería', carro], ['Estado', estado]
     ].filter(function (a) { return a[1]; });
     if (!attrs.length) attrs.push(['Datos del vehículo', 'Ver secciones siguientes']);
-    attrs.slice(0, 5).forEach(function (a, i) {
-      var fy = fotoY + 4 + i * 9.7;
-      versalita(a[0], fichaX, fy, { size: 5.7, track: 0.25 });
-      rotulo(String(a[1]), fichaX, fy + 4.5, 8.3, C_INK, true,
-             { maxWidth: fichaW });
+    rotulo('IDENTIFICACIÓN DEL VEHÍCULO', fichaX, fotoY + 4, T.mini, C_INK, true);
+    rotulo(placa || valor, W - M, fotoY + 4, T.h3, C_TURQ, true, { align: 'right' });
+    var attrCols = 2, attrGap = 7;
+    var attrWidth = (fichaW - attrGap) / attrCols;
+    var attrRows = Math.ceil(attrs.length / attrCols);
+    var attrRowH = Math.min(7.3, (fotoH - 11) / attrRows);
+    attrs.forEach(function (a, i) {
+      var col = i % attrCols, row = Math.floor(i / attrCols);
+      var ax = fichaX + col * (attrWidth + attrGap);
+      var ay = fotoY + 9 + row * attrRowH;
+      var small = attrRowH < 5.4;
+      rotulo(String(a[0]).toUpperCase(), ax, ay + (small ? 1.4 : 1.8), small ? 4.2 : 5.1, C_TURQ, true,
+             { maxWidth: attrWidth });
+      rotulo(String(a[1]), ax, ay + (small ? 3.8 : 4.6), small ? 5.3 : 6.7, C_INK, true,
+             { maxWidth: attrWidth });
     });
     y = 139;
     hairline(y);
@@ -1311,17 +1434,17 @@
       var n = resumenIndicadores.length;
       versalita('Resumen de indicadores', M, y, { size: T.micro, track: 0.8 });
       av(1.5);
-      var colsIndicadores = Math.min(4, n);
-      var gapIndicadores = 3;
+      var colsIndicadores = n >= 9 ? 3 : Math.min(4, n);
+      var gapIndicadores = 2.5;
       var cardW = (CW - gapIndicadores * (colsIndicadores - 1)) / colsIndicadores;
-      var cardH = 21;
+      var cardH = 19;
       var rowsIndicadores = Math.ceil(n / colsIndicadores);
-      need(rowsIndicadores * (cardH + 3) + U);
+      need(rowsIndicadores * (cardH + gapIndicadores) + U);
       for (var ci = 0; ci < n; ci++) {
         var colIndicador = ci % colsIndicadores;
         var filaIndicador = Math.floor(ci / colsIndicadores);
         var cx0 = M + colIndicador * (cardW + gapIndicadores);
-        var cy0 = y + filaIndicador * (cardH + 3);
+        var cy0 = y + filaIndicador * (cardH + gapIndicadores);
         var estado = estadoIndicador(resumenIndicadores[ci].label, resumenIndicadores[ci].value);
         var fondo = estado === C_BAD ? [255, 245, 245] : [246, 250, 243];
         var borde = estado === C_BAD ? [242, 205, 205] : [216, 232, 205];
@@ -1329,13 +1452,12 @@
         doc.setDrawColor.apply(doc, borde);
         doc.setLineWidth(0.25);
         doc.roundedRect(cx0, cy0, cardW, cardH, 2, 2, 'FD');
-        var etiquetaIndicador = parte(String(resumenIndicadores[ci].label || ''), cardW - 6, 5.8, true).slice(0, 2);
-        versalita(etiquetaIndicador.join(' '), cx0 + 3, cy0 + 5.3,
-                  { size: 5.8, track: 0.15, color: C_MUTED });
-        rotulo(String(resumenIndicadores[ci].value || '—'), cx0 + 3, cy0 + 14.5, 9.5, estado, true,
+        var etiquetaIndicador = parte(String(resumenIndicadores[ci].label || ''), cardW - 6, 5.4, true).slice(0, 2);
+        rotulo(etiquetaIndicador, cx0 + 3, cy0 + 4.4, 5.4, C_MUTED, true);
+        rotulo(String(resumenIndicadores[ci].value || '—'), cx0 + 3, cy0 + 13.6, 8.3, estado, true,
                { maxWidth: cardW - 6 });
       }
-      y += rowsIndicadores * (cardH + 3) - 3;
+      y += rowsIndicadores * (cardH + gapIndicadores) - gapIndicadores;
       av(2);
     }
 
@@ -1688,10 +1810,27 @@
       var pages = await extractFromPdf(pdfBase64, onProgress);
       var secciones = parseSections(pages, meta && meta.valor);
       if (!secciones.length) throw new Error('No se pudo leer el contenido del PDF');
+      var fichaVehiculo = fichaVehiculoDelProveedor(pages);
+      if (fichaVehiculo.length) {
+        var seccionVehiculo = secciones.find(function (section) {
+          return /DATOS DEL VEH/i.test(section.titulo || '');
+        });
+        if (!seccionVehiculo) {
+          seccionVehiculo = { titulo: 'DATOS DEL VEHÍCULO', filas: [], pag: 1, top: 0, imgs: [], caps: [] };
+          secciones.unshift(seccionVehiculo);
+        }
+        var etiquetasFicha = new Set(fichaVehiculo.map(function (field) { return normalizaIdentidad(field.a); }));
+        seccionVehiculo.filas = fichaVehiculo.concat(seccionVehiculo.filas.filter(function (row) {
+          var texto = row.t === 'kv' ? row.a : row.t === 'row' ? (row.cells || []).join(' ') : row.a;
+          return !etiquetasFicha.has(normalizaIdentidad(texto));
+        }));
+      }
+      secciones.fichaVehiculo = fichaVehiculo;
       if (meta && !meta.fotoDataUrl) {
         meta.fotoDataUrl = fotoDelProveedor(pages);
         if (meta.fotoDataUrl) meta.fotoOrigen = 'proveedor';
       }
+      if (meta && !meta.logoDataUrl) meta.logoDataUrl = logoDelProveedor(pages);
       /* Quien llama puede quedarse con las secciones ya leídas. Sirve para
          montar el modelo y el veredicto sin volver a abrir el PDF: la
          extracción es lo caro de todo esto —segundos, no milisegundos— y
@@ -1701,6 +1840,7 @@
       }
       var resultado = buildPdf(secciones, meta || {});
       resultado.conFoto = !!(meta && meta.fotoDataUrl);
+      resultado.conLogo = !!(meta && meta.logoDataUrl);
       return resultado;
     })();
 
