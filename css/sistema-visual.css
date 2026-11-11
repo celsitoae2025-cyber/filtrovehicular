@@ -612,13 +612,3 @@
     background: #2b3831 !important;
   }
 }
-.nv-app #nvLibreCreditos {
-  border-color: #35433c !important;
-  background: #17211d !important;
-  color: #f5f7f5 !important;
-}
-.nv-app #nvLibreCreditos::placeholder { color: #bdc7c1 !important; opacity: 1; }
-.nv-app #nvLibreCreditos:focus {
-  border-color: #669526 !important;
-  box-shadow: var(--fv-foco) !important;
-}
