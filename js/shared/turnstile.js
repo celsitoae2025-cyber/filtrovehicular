@@ -20,9 +20,14 @@
   window.Consultia = window.Consultia || {};
 
   // Widget "Filtro Vehicular+ registro y acceso" (modo managed).
-  // La clave pública se publica a propósito: va en el HTML. La clave
-  // secreta NO vive aquí, vive en el panel de Supabase.
-  var SITEKEY = '0x4AAAAAAERUke2Lfxh4Dhjb';
+  // En localhost se usa la clave oficial de pruebas de Cloudflare: funciona
+  // en cualquier hostname y devuelve un token ficticio. La clave real se
+  // conserva para todos los dominios publicados.
+  var host = String(window.location && window.location.hostname || '').replace(/^\[|\]$/g, '').toLowerCase();
+  var LOCAL_TEST_MODE = host === 'localhost' || host === '127.0.0.1' || host === '::1';
+  var SITEKEY = LOCAL_TEST_MODE
+    ? '1x00000000000000000000AA'
+    : '0x4AAAAAAERUke2Lfxh4Dhjb';
 
   var SCRIPT_URL = 'https://challenges.cloudflare.com/turnstile/v0/api.js' +
                    '?render=explicit&onload=__consultiaTurnstileReady';
@@ -134,6 +139,7 @@
 
   Consultia.Turnstile = {
     SITEKEY: SITEKEY,
+    LOCAL_TEST_MODE: LOCAL_TEST_MODE,
 
     /* Monta el widget en un contenedor. Es idempotente: llamarlo dos
        veces sobre el mismo contenedor no duplica nada. Conviene llamarlo
@@ -166,9 +172,10 @@
                 detail: { containerId: containerId }
               }));
             },
-            'error-callback': function () {
+            'error-callback': function (errorCode) {
               // Fallo de red o del reto: liberamos a quien esté esperando
               // con null para que el formulario no se quede colgado.
+              console.warn('[Turnstile] error del widget:', errorCode || 'sin código');
               entregarToken(containerId, null);
               return true;
             }

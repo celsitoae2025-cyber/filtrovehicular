@@ -279,6 +279,9 @@
     [/network|fetch/i, 'Sin conexión. Revisa tu internet e inténtalo otra vez.']
   ];
   function traducir(msg) {
+    if (/captcha/i.test(msg || '') && C.Turnstile && C.Turnstile.LOCAL_TEST_MODE) {
+      return 'La verificación local pasó, pero Supabase exige un CAPTCHA validado por el servidor. Para usar el Supabase remoto desde localhost, autoriza localhost en la clave real de Turnstile; la clave de prueba requiere un Supabase de desarrollo con su clave secreta de prueba.';
+    }
     for (var i = 0; i < MENSAJES.length; i++) if (MENSAJES[i][0].test(msg || '')) return MENSAJES[i][1];
     return 'No se pudo entrar. Inténtalo de nuevo.';
   }
@@ -346,7 +349,8 @@
           err.hidden = false;
         }
       } finally {
-        if (envioIntentado && !NV.usuario && !conservarPantalla && NV.prepararVerificacionAcceso) {
+        if (envioIntentado && !NV.usuario && !conservarPantalla && NV.prepararVerificacionAcceso &&
+            !(C.Turnstile && C.Turnstile.LOCAL_TEST_MODE)) {
           if (C.Turnstile) C.Turnstile.reset('nvTsAcceso');
           NV.prepararVerificacionAcceso('Verifica de nuevo para intentar iniciar sesión.');
         }

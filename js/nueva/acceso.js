@@ -141,6 +141,7 @@
   function traducir(msg) {
     var m = String(msg || '').toLowerCase();
     if (!m) return 'Algo salió mal. Inténtalo de nuevo.';
+    if (m.indexOf('captcha') !== -1 && C.Turnstile && C.Turnstile.LOCAL_TEST_MODE) return 'La verificación local pasó, pero Supabase exige un CAPTCHA validado por el servidor. Para usar el Supabase remoto desde localhost, autoriza localhost en la clave real de Turnstile; la clave de prueba requiere un Supabase de desarrollo con su clave secreta de prueba.';
     if (m.indexOf('captcha') !== -1) return 'No se pudo completar la verificación de seguridad. Recarga la página e inténtalo otra vez; si usas un bloqueador de anuncios, desactívalo para este sitio.';
     if (m.indexOf('sending confirmation email') !== -1) return 'No pudimos enviar el correo de verificación. Intenta en unos minutos o escríbenos por WhatsApp.';
     if (m.indexOf('sending recovery email') !== -1) return 'No pudimos enviar el correo con el código. Intenta en unos minutos.';
@@ -303,8 +304,12 @@
         NV.verPuerta('verificar');
       } catch (ex) {
         if (/captcha/i.test((ex && ex.message) || '')) {
-          quemarToken('acceso');
-          NV.prepararVerificacionAcceso('La verificación venció. Completa el control otra vez para crear tu cuenta.', 'registro');
+          if (C.Turnstile && C.Turnstile.LOCAL_TEST_MODE) {
+            error('nvRegistroError', traducir(ex && ex.message));
+          } else {
+            quemarToken('acceso');
+            NV.prepararVerificacionAcceso('La verificación venció. Completa el control otra vez para crear tu cuenta.', 'registro');
+          }
         } else {
           error('nvRegistroError', traducir(ex && ex.message));
         }

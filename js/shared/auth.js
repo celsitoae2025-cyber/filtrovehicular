@@ -13,6 +13,14 @@
 
   var sb = Consultia.supabase;
 
+  // Las claves de prueba de Turnstile solo validan con una clave secreta de
+  // prueba. En localhost dejamos que el widget habilite el formulario, pero
+  // no enviamos su token ficticio al proyecto Supabase remoto.
+  function captchaTokenParaAuth(token) {
+    if (Consultia.Turnstile && Consultia.Turnstile.LOCAL_TEST_MODE) return undefined;
+    return token || undefined;
+  }
+
   function redirectUrl() {
     // URL de retorno para verificación / reset password
     return window.location.origin + window.location.pathname;
@@ -98,7 +106,7 @@
             user_agent: (navigator && navigator.userAgent) ? navigator.userAgent.slice(0, 500) : ''
           },
           emailRedirectTo: redirectUrl(),
-          captchaToken: data.captchaToken || undefined
+          captchaToken: captchaTokenParaAuth(data.captchaToken)
         }
       });
       return res; // { data, error }
@@ -118,7 +126,7 @@
       var res = await sb.auth.signInWithPassword({
         email: email,
         password: password,
-        options: { captchaToken: captchaToken || undefined }
+        options: { captchaToken: captchaTokenParaAuth(captchaToken) }
       });
       if (res.error) {
         // Si falló el login, dejamos los flags como estaban antes (limpios)
@@ -139,7 +147,7 @@
     requestPasswordReset: async function (email, captchaToken) {
       return await sb.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl() + '?recovery=1',
-        captchaToken: captchaToken || undefined
+        captchaToken: captchaTokenParaAuth(captchaToken)
       });
     },
 
@@ -177,7 +185,7 @@
         email: email,
         options: {
           emailRedirectTo: redirectUrl(),
-          captchaToken: captchaToken || undefined
+          captchaToken: captchaTokenParaAuth(captchaToken)
         }
       });
     },
