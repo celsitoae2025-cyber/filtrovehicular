@@ -60,6 +60,7 @@
     if (reintentar) reintentar.hidden = true;
     actualizarPestanas('acceso', false);
     $('nvPuerta').classList.remove('es-acceso-limpio');
+    $('nvPuerta').classList.add('es-verificacion');
     estadoVerificacion(mensaje || 'Completa la verificación para continuar.');
   }
 
@@ -81,6 +82,7 @@
       verificacionAvanzando = false;
       var siguiente = pasoTrasVerificacion;
       pasoTrasVerificacion = 'acceso';
+      $('nvPuerta').classList.remove('es-verificacion');
       if (siguiente === 'registro' && !encima) {
         NV.verPuerta('registro');
       } else {
@@ -198,6 +200,7 @@
     if (!existe) return NV.verPuerta('acceso');
 
     var puerta = $('nvPuerta');
+    if (paso !== 'acceso' || accesoVerificado) puerta.classList.remove('es-verificacion');
     if (paso === 'acceso') {
       if (!accesoVerificado) prepararVerificacionAcceso(undefined, pasoTrasVerificacion);
       else {
