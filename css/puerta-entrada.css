@@ -307,3 +307,60 @@ body:has(#nvPuerta.es-verificacion:not([hidden])) .wa-fab {
   #nvPuerta:not(.es-encima) .nv-puerta-panel { padding-right: 13px; padding-left: 13px; }
   #nvPuerta:not(.es-verificacion):not(.es-encima) #nvAuthShell { padding: 21px 18px; }
 }
+
+#nvPuerta .nv-auth-fvc-label {
+  display: block;
+  min-width: 0;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+/* Dos enlaces legales centrados; sin las reglas de la antigua tercera fila. */
+#nvPuerta .nv-puerta-panel .nv-puerta-legal a {
+  flex: 0 1 auto;
+  grid-column: auto;
+  justify-self: auto;
+  justify-content: center;
+}
+
+@media (max-width: 860px) {
+  #nvPuerta.es-acceso-limpio .nv-auth-fvc-mobile {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) 28px;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 448px;
+    min-height: 64px;
+    margin: 0 auto;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.45;
+    text-align: center;
+  }
+  #nvPuerta .nv-auth-fvc-mobile::before { content: ''; }
+  #nvPuerta .nv-auth-fvc-mobile > .nv-auth-fvc-arrow {
+    width: 28px;
+    height: 28px;
+    line-height: 1;
+  }
+  #nvPuerta:not(.es-encima) .nv-puerta-panel .nv-puerta-legal {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 12px 0 max(8px, env(safe-area-inset-bottom, 0px));
+  }
+  #nvPuerta:not(.es-encima) .nv-puerta-panel .nv-puerta-legal a {
+    flex-basis: auto;
+    min-height: 40px;
+    font-size: 12px;
+    text-align: center;
+    white-space: normal;
+    text-wrap: balance;
+  }
+  body.auth-locked .wa-fab {
+    bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  }
+}

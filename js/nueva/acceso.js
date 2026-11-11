@@ -520,7 +520,6 @@
     var fvcPlaca = $('nvFvcPlaca');
     var fvcError = $('nvFvcError');
     var ultimoAbridorFvc = $('fvcOpen');
-    $('nvAyudaAcceso').href = NV.whatsapp('Hola, necesito ayuda para acceder a Plataforma Filtro Vehicular+.');
     document.querySelectorAll('#nvPuerta [data-fvc-abrir]').forEach(function (boton) {
       boton.addEventListener('click', function () {
         ultimoAbridorFvc = boton;
