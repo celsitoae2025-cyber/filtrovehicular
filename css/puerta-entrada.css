@@ -71,6 +71,64 @@
 #nvPuerta .nv-auth-tabs { padding: 4px; border-radius: 12px; }
 #nvPuerta .nv-auth-tab { min-height: 44px; font-size: 13px; }
 
+/* Transiciones discretas para entrar y cambiar entre acceso y registro. */
+@keyframes nv-auth-presentar {
+  from { opacity: 0; transform: translateY(8px) scale(.995); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+#nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) #nvAccesoCredenciales:not([hidden]),
+#nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) #nvRegistro:not([hidden]) {
+  animation: nv-auth-presentar 300ms cubic-bezier(.2, .7, .25, 1) both;
+}
+
+#nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-auth-tab,
+#nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-campo,
+#nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-cta,
+#nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-puerta-pie a {
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease,
+    box-shadow 180ms ease, transform 180ms ease;
+}
+
+#nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-campo:focus {
+  box-shadow: 0 0 0 3px rgb(143 199 46 / 18%);
+}
+
+#nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-cta:active:not(:disabled) {
+  transform: scale(.985);
+}
+
+@media (hover: hover) {
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-auth-tab:hover {
+    transform: translateY(-1px);
+  }
+
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-cta:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 7px 16px rgb(20 29 28 / 14%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) #nvAccesoCredenciales:not([hidden]),
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) #nvRegistro:not([hidden]) {
+    animation: none;
+  }
+
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-auth-tab,
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-campo,
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-cta,
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-puerta-pie a {
+    transition: none;
+  }
+
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-auth-tab:hover,
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-cta:hover,
+  #nvPuerta.es-acceso-limpio:not(.es-encima):not(.es-verificacion) .nv-cta:active {
+    transform: none;
+  }
+}
+
 #nvPuerta .nv-auth-shell .nv-puerta-caja h1 {
   font-size: clamp(24px, 2.2vw, 27px);
   line-height: 1.2;
