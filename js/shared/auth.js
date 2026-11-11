@@ -135,7 +135,7 @@
       return res;
     },
 
-    // ===== Inicio de sesiÃ³n con Google =====
+    // ===== Inicio de sesión con Google =====
     // ===== Logout =====
     signOut: async function () {
       var res = await sb.auth.signOut();

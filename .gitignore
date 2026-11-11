@@ -21,6 +21,7 @@ tools/
 # === Archivos de debug y temporales ===
 bridge-debug.json
 *.tmp
+/.qa-chrome-*/
 
 # === Estado local del CLI de Supabase (no versionar) ===
 supabase/.temp/

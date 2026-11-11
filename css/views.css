@@ -3243,7 +3243,7 @@ body.cr-lightbox-open { overflow: hidden; }
 .cr-btn-grid .cr-btn-details { max-width: none; }
 .cr-btn-details > .cr-tit { display: none; }
 
-/* Ãrea de resultado (PDF aparece aquí sin reemplazar botones) */
+/* Área de resultado (PDF aparece aquí sin reemplazar botones) */
 .cr-btn-result-area { border-radius: 12px; overflow: hidden; }
 .cr-btn-result-area[hidden] { display: none; }
 .cr-btn-result-area .cr-pdf-layout { padding: 0; }
@@ -4584,7 +4584,7 @@ body.cr-lightbox-open { overflow: hidden; }
   text-align: center;
 }
 
-/* Botones rápidos Â±50 debajo de cada slider */
+/* Botones rápidos ±50 debajo de cada slider */
 .le-field-quick {
   display: flex;
   justify-content: center;

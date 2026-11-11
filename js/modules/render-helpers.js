@@ -302,13 +302,13 @@
     }
   }
 
-  /* â"€â"€ Record splitting â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
+  /* Separación de registros */
   function isRecordStart(cu) {
     if (!cu) return false;
-    if (cu === 'DNI' || cu === 'NUMERO' || cu === 'NÃšMERO' ||
+    if (cu === 'DNI' || cu === 'NUMERO' || cu === 'NÚMERO' ||
         cu.indexOf('DNI ') === 0 || cu.indexOf('DNI(') === 0) return true;
-    // Campos tipo "NÂº DENUNCIA", "N° EXPEDIENTE", "NRO CASO", etc.
-    if (/^N[°ÂºRO.]*\s*(DENUNCIA|EXPEDIENTE|CASO|PARTIDA|ORDEN|REGISTRO|RESOLUCI[OÃ"]N)/i.test(cu)) return true;
+    // Campos tipo "Nº DENUNCIA", "N° EXPEDIENTE", "NRO CASO", etc.
+    if (/^N[°ºRO.]*\s*(DENUNCIA|EXPEDIENTE|CASO|PARTIDA|ORDEN|REGISTRO|RESOLUCI[OÓ]N)/i.test(cu)) return true;
     return false;
   }
 
@@ -814,7 +814,7 @@
     var seenSec = Object.create(null);
     var uniqSec = [];
     secsUnidas.forEach(function (s) {
-      var sig = (s.campos || []).map(function (c) { return (c.campo || '_') + '::' + (c.valor || ''); }).join('Â§Â§');
+      var sig = (s.campos || []).map(function (c) { return (c.campo || '_') + '::' + (c.valor || ''); }).join('§§');
       if (!sig || seenSec[sig]) return;
       seenSec[sig] = true;
       uniqSec.push(s);
@@ -977,10 +977,10 @@
 
         // Suprime el índice si el primer campo ya identifica al registro
         function skipIndex(fld) {
-          if (fld === 'NUMERO' || fld === 'NÃšMERO') return true;
+          if (fld === 'NUMERO' || fld === 'NÚMERO') return true;
           // El bot ya numeró el registro en el propio rótulo («1. ENTIDAD»).
           if (/^\d+\.\s/.test(fld)) return true;
-          if (/^N[°ÂºRO.]*\s*(DENUNCIA|EXPEDIENTE|CASO|PARTIDA|ORDEN|RESOLUCI)/i.test(fld)) return true;
+          if (/^N[°ºRO.]*\s*(DENUNCIA|EXPEDIENTE|CASO|PARTIDA|ORDEN|RESOLUCI)/i.test(fld)) return true;
           return false;
         }
 
@@ -1110,7 +1110,7 @@
       // Rostro: la foto con mayor saturación (única a color)
       var bySat = results.slice().sort(function (a, b) { return b.sat - a.sat; });
       var face = bySat[0];
-      // Si la saturación es muy baja no es el patrón DNI típico — dejamos el layout 2Ã—2
+      // Si la saturación es muy baja no es el patrón DNI típico — dejamos el layout 2 × 2
       if (face.sat < 0.08) return;
       var rest = results.filter(function (r) { return r !== face; });
       // Firma: la más ancha entre las 3 grises (ratio mayor)
@@ -1397,9 +1397,9 @@
           var tip = '', fecha = '';
           rec.forEach(function (c) {
             var cf = (c.campo || '').toUpperCase().trim();
-            if (!tip && (cf.indexOf('TIPIFICACION') !== -1 || cf.indexOf('TIPIFICACIÃ"N') !== -1 ||
+            if (!tip && (cf.indexOf('TIPIFICACION') !== -1 || cf.indexOf('TIPIFICACIÓN') !== -1 ||
                 cf === 'TIPO' || cf === 'DELITO' || cf.indexOf('DESCRIPCION') !== -1 ||
-                cf.indexOf('DESCRIPCIÃ"N') !== -1 || cf === 'MOTIVO' || cf === 'CONCEPTO')) {
+                cf.indexOf('DESCRIPCIÓN') !== -1 || cf === 'MOTIVO' || cf === 'CONCEPTO')) {
               tip = c.valor || '';
             }
             if (!fecha && (cf.indexOf('FECHA') !== -1 || cf.indexOf('F.') !== -1 || cf === 'F. REGISTRO' || cf === 'REGISTRO')) {
@@ -1411,7 +1411,7 @@
       });
     });
 
-    // Ãrea de resultado (full-width, arriba del grid)
+    // Área de resultado (ancho completo, arriba del grid)
     parts.push('<div class="cr-btn-result-area" hidden></div>');
 
     // Grid: columna izquierda (contenido) + columna derecha (ilustración)

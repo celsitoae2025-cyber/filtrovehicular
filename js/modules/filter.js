@@ -698,7 +698,7 @@
       });
   }
 
-  /* â”€â”€ CatÃ¡logo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  /* Catálogo */
   async function cargarCatalogo() {
     var comboText = $('filterComboText');
     var panel = $('filterComboPanel');
