@@ -19,7 +19,7 @@ html.mnt-locked body {
   overflow-y: auto;
   padding: clamp(18px, 4vw, 44px);
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(143, 199, 46, .12), transparent 42%),
+    radial-gradient(ellipse at 50% 0%, rgba(217, 119, 6, .10), transparent 42%),
     linear-gradient(145deg, #101816 0%, #17211f 52%, #101715 100%);
   font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-overflow-scrolling: touch;
@@ -37,13 +37,6 @@ html.mnt-locked body {
   text-align: center;
   box-shadow: 0 32px 90px rgba(0, 0, 0, .34), 0 4px 16px rgba(0, 0, 0, .12);
   animation: mnt-card-in .38s cubic-bezier(.2, .8, .2, 1) both;
-}
-.mnt-card::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 4px;
-  background: linear-gradient(90deg, #79b927, #a7d64c 50%, #79b927);
 }
 
 /* Marca */
@@ -71,10 +64,10 @@ html.mnt-locked body {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  border: 1px solid #e2edcf;
+  border: 1px solid #f1dfc3;
   border-radius: 999px;
-  background: #f5f9ee;
-  color: #40552b;
+  background: #fff8ed;
+  color: #75450c;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: .075em;
@@ -85,8 +78,8 @@ html.mnt-locked body {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #8fc72e;
-  box-shadow: 0 0 0 3px rgba(143, 199, 46, .15);
+  background: #d97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, .15);
   animation: mnt-status-pulse 1.8s ease-in-out infinite;
 }
 
@@ -96,10 +89,10 @@ html.mnt-locked body {
   width: 68px;
   height: 68px;
   margin: 22px auto 17px;
-  border: 1px solid #e8efd9;
+  border: 1px solid #f2e3cf;
   border-radius: 20px;
-  background: linear-gradient(145deg, #f7faef, #edf5df);
-  color: #75b521;
+  background: linear-gradient(145deg, #fffaf2, #f8eddc);
+  color: #aa5d08;
 }
 .mnt-icon svg { width: 38px; height: 38px; display: block; }
 
@@ -144,8 +137,8 @@ html.mnt-locked body {
   height: 17px;
   margin-top: 1px;
   border-radius: 50%;
-  background: #e4efd3;
-  color: #5a8528;
+  background: #f5e4ca;
+  color: #794808;
   font-size: 11px;
   font-weight: 700;
 }
@@ -174,7 +167,7 @@ html.mnt-locked body {
   box-shadow: 0 5px 14px rgba(20, 29, 28, .17);
   transform: translateY(-1px);
 }
-.mnt-retry:focus-visible { outline: 3px solid rgba(143, 199, 46, .6); outline-offset: 3px; }
+.mnt-retry:focus-visible { outline: 3px solid rgba(217, 119, 6, .6); outline-offset: 3px; }
 .mnt-retry:active { transform: translateY(0); }
 .mnt-footer {
   margin: 15px 0 0;
@@ -188,7 +181,7 @@ html.mnt-locked body {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes mnt-status-pulse {
-  50% { box-shadow: 0 0 0 5px rgba(143, 199, 46, .08); }
+  50% { box-shadow: 0 0 0 5px rgba(217, 119, 6, .08); }
 }
 
 /* El aviso no lleva ninguna entrada de administracion: el administrador

@@ -11,8 +11,8 @@
   var OVERLAY_ID = 'maintenanceOverlay';
   var POLL_MS = 5000;
   var MENSAJE_POR_DEFECTO =
-    'Nuestro equipo realiza trabajos técnicos para mantener la plataforma estable. ' +
-    'El servicio volverá a estar disponible al concluir la intervención.';
+    'El equipo de Filtro Vehicular+ está realizando trabajos de mantenimiento. ' +
+    'Las consultas volverán a estar disponibles al finalizar.';
 
   function sb() {
     return window.Consultia && window.Consultia.supabase;
@@ -47,7 +47,7 @@
         '</div>' +
         '<div class="mnt-divider" aria-hidden="true"></div>' +
         '<div class="mnt-status"><span class="mnt-status-dot" aria-hidden="true"></span>' +
-          '<span>Mantenimiento en curso</span></div>' +
+          '<span>Mantenimiento activo</span></div>' +
         '<div class="mnt-icon" aria-hidden="true">' +
           '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" ' +
                'stroke-linecap="round" stroke-linejoin="round">' +
@@ -55,11 +55,11 @@
             '<path d="m10.6 33.4 4 4"/>' +
           '</svg>' +
         '</div>' +
-        '<h1 class="mnt-title" id="mntTitle">Estamos trabajando en mejoras</h1>' +
+        '<h1 class="mnt-title" id="mntTitle">Consultas temporalmente pausadas</h1>' +
         '<p class="mnt-text" id="mntText">' + esc(mensaje || MENSAJE_POR_DEFECTO) + '</p>' +
         '<div class="mnt-note">' +
           '<span class="mnt-note-icon" aria-hidden="true">i</span>' +
-          '<span>El acceso se restablecerá aquí cuando finalicen los trabajos.</span>' +
+          '<span>Vuelve a comprobar aquí más tarde para saber si el servicio ya está disponible.</span>' +
         '</div>' +
         '<button type="button" class="mnt-retry" id="mntRetry">' +
           '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
