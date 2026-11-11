@@ -102,6 +102,7 @@
 #nvPuerta.es-verificacion:not(.es-encima) .nv-puerta-presentacion { display: none; }
 
 #nvPuerta.es-verificacion:not(.es-encima) .nv-puerta-panel {
+  grid-template-rows: minmax(0, 1fr);
   width: 100%;
   max-width: none;
   overflow: visible;
@@ -109,7 +110,16 @@
 }
 
 #nvPuerta.es-verificacion:not(.es-encima) .nv-puerta-formularios {
-  padding: 28px 0 54px;
+  min-height: 100%;
+  padding: 28px 0;
+}
+
+#nvPuerta.es-verificacion:not(.es-encima) .nv-puerta-panel .nv-puerta-legal {
+  display: none !important;
+}
+
+body:has(#nvPuerta.es-verificacion:not([hidden])) .wa-fab {
+  display: none !important;
 }
 
 #nvPuerta.es-verificacion:not(.es-encima) #nvAuthShell {
@@ -155,8 +165,6 @@
 
 #nvPuerta.es-verificacion .nv-auth-shell .nv-captcha { min-height: 70px; }
 #nvPuerta.es-verificacion .nv-auth-shell .nv-acceso-estado { color: #5e6b63; }
-#nvPuerta.es-verificacion .nv-puerta-panel .nv-puerta-legal { border-color: #e2e8e2; }
-#nvPuerta.es-verificacion .nv-puerta-panel .nv-puerta-legal a { color: #53635b; }
 
 @media (max-width: 860px) {
   body.auth-locked {
@@ -209,9 +217,7 @@
 
   #nvPuerta.es-verificacion:not(.es-encima) { background: #fff; }
   #nvPuerta.es-verificacion:not(.es-encima) .nv-puerta-panel { background: #fff; }
-  #nvPuerta.es-verificacion:not(.es-encima) .nv-puerta-formularios { padding: 28px 0 54px; }
-  #nvPuerta.es-verificacion:not(.es-encima) .nv-puerta-panel .nv-puerta-legal { border-color: #e2e8e2; }
-  #nvPuerta.es-verificacion:not(.es-encima) .nv-puerta-panel .nv-puerta-legal a { color: #53635b; }
+  #nvPuerta.es-verificacion:not(.es-encima) .nv-puerta-formularios { padding: 28px 0; }
 
   body.auth-locked .wa-fab {
     position: absolute;
