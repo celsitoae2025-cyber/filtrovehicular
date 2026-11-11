@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -795,10 +795,9 @@
 <script src="js/modules/aviso-clientes.js?v=8"></script>
 <script src="js/modules/idle-logout.js?v=2"></script>
 <script src="js/modules/instalar.js?v=5"></script>
-<!-- Modo mantenimiento: el MISMO módulo que en app.html. Sin él, esta
-     página seguía dejando consultar con el mantenimiento encendido. Al
-     administrador con sesión no lo bloquea (le pone una cinta); sin sesión
-     entra por admin.html, como en la app de siempre. -->
-<script src="js/modules/maintenance.js?v=8"></script>
+<!-- Modo mantenimiento: bloquea la página de consulta para todos los visitantes,
+     también antes de iniciar sesión. El panel admin.html permanece accesible
+     para gestionar la plataforma. -->
+<script src="js/modules/maintenance.js?v=9"></script>
 </body>
 </html>

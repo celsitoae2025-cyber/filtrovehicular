@@ -1,27 +1,15 @@
-/* ============================================================
-   MODO MANTENIMIENTO — aviso para los usuarios.
-
-   Lee el interruptor global (app_settings.maintenance) y, si está
-   activo, cubre la aplicación con un aviso a pantalla completa.
-
-   Los administradores no quedan bloqueados: ven una cinta superior
-   que les recuerda que el modo está activo y siguen trabajando, que
-   es justamente cuando hace falta entrar a revisar.
-
-   El estado se revisa al cargar y cada 60 s, para que un usuario que
-   ya tenía la página abierta también se entere.
-
-   Expone:
-     Consultia.Maintenance.check()          — fuerza una revisión
-     Consultia.Maintenance.applyState(est)  — pinta un estado dado
-============================================================ */
+/*
+ * MODO MANTENIMIENTO — aviso para todos los visitantes de la consulta.
+ *
+ * Consulta el estado compartido en Supabase al cargar, escucha cambios
+ * Realtime y vuelve a consultar cada 5 segundos como respaldo. Este módulo
+ * solo se carga en app.html; admin.html permanece accesible para operar.
+ */
 (function () {
   window.Consultia = window.Consultia || {};
 
   var OVERLAY_ID = 'maintenanceOverlay';
-  var BANNER_ID  = 'maintenanceBanner';
-  var POLL_MS    = 60000;
-
+  var POLL_MS = 5000;
   var MENSAJE_POR_DEFECTO =
     'Estamos realizando tareas de mejora en la plataforma. ' +
     'El servicio se restablecerá en breve.';
@@ -36,42 +24,14 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  // ── ¿La sesión actual es de un administrador? ──
-  // El resultado se guarda POR USUARIO, nunca "en general". La primera
-  // revisión ocurre al cargar la página, normalmente antes de que
-  // Supabase haya restaurado la sesión: si ese "todavía no hay usuario"
-  // se guardaba como "no es administrador", el admin quedaba encerrado
-  // tras su propio aviso y ya no salía de ahí ni iniciando sesión.
-  //
-  // Por eso solo se guarda una respuesta del servidor sobre un usuario
-  // concreto. Sin sesión, o si la consulta falla, se responde que no
-  // pero sin recordarlo, y la próxima revisión vuelve a preguntar.
-  var adminPorUsuario = Object.create(null);
-  async function esAdmin() {
-    try {
-      var c = sb();
-      if (!c) return false;
-      var u = await c.auth.getUser();
-      var user = u && u.data && u.data.user;
-      if (!user) return false;
-      if (user.id in adminPorUsuario) return adminPorUsuario[user.id];
-      var res = await c.from('profiles').select('is_admin').eq('id', user.id).single();
-      if (res.error) return false;
-      adminPorUsuario[user.id] = !!(res.data && res.data.is_admin);
-      return adminPorUsuario[user.id];
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function quitar(id) {
-    var el = document.getElementById(id);
+  function quitarAviso() {
+    var el = document.getElementById(OVERLAY_ID);
     if (el) el.remove();
+    document.documentElement.classList.remove('mnt-locked');
   }
 
-  /* ── Aviso a pantalla completa (usuarios) ── */
   function mostrarAviso(mensaje) {
-    if (document.getElementById(OVERLAY_ID)) return;   // ya visible
+    if (document.getElementById(OVERLAY_ID)) return;
     var el = document.createElement('div');
     el.id = OVERLAY_ID;
     el.className = 'mnt-overlay';
@@ -99,71 +59,21 @@
 
     var btn = document.getElementById('mntRetry');
     if (btn) btn.addEventListener('click', function () { window.location.reload(); });
-
-    // Aquí no hay ninguna entrada de administración: el administrador
-    // entra por admin.html, que pide sus credenciales y nunca muestra
-    // este aviso. El cliente no ve nada que no le corresponda.
   }
 
-  function ocultarAviso() {
-    quitar(OVERLAY_ID);
-    document.documentElement.classList.remove('mnt-locked');
-  }
-
-  /* ── Cinta para el administrador ── */
-  function mostrarCinta() {
-    if (document.getElementById(BANNER_ID)) return;
-    var el = document.createElement('div');
-    el.id = BANNER_ID;
-    el.className = 'mnt-banner';
-    el.innerHTML =
-      '<span class="mnt-banner-dot" aria-hidden="true"></span>' +
-      '<strong>Modo mantenimiento activo.</strong>' +
-      '<span>Los usuarios ven el aviso; tú puedes seguir operando.</span>';
-    document.body.appendChild(el);
-    document.documentElement.classList.add('mnt-with-banner');
-  }
-
-  function ocultarCinta() {
-    quitar(BANNER_ID);
-    document.documentElement.classList.remove('mnt-with-banner');
-  }
-
-  /* ── Pintar un estado ── */
-  async function applyState(estado) {
-    var activo = !!(estado && estado.enabled);
-    if (!activo) { ocultarAviso(); ocultarCinta(); return; }
-
-    /* SIN SESIÓN NO SE TAPA NADA. Para saber si alguien es
-       administrador hace falta que haya iniciado sesión, y el aviso se
-       pintaba encima de la propia pantalla de acceso: el dueño activaba
-       el mantenimiento, cerraba sesión o entraba desde otro navegador, y
-       ya no podía ni escribir su contraseña — quedaba fuera de su
-       plataforma sin manera de volver.
-
-       Ahora la puerta queda siempre libre. Quien entre y no sea
-       administrador verá el aviso en cuanto tenga sesión, que es cuando
-       de verdad se sabe quién es. */
-    var c = sb();
-    var sesion = null;
-    try {
-      var u = c ? await c.auth.getUser() : null;
-      sesion = u && u.data ? u.data.user : null;
-    } catch (e) { sesion = null; }
-    if (!sesion) { ocultarAviso(); ocultarCinta(); return; }
-
-    if (await esAdmin()) {
-      ocultarAviso();
-      mostrarCinta();
-    } else {
-      ocultarCinta();
-      mostrarAviso(estado.message);
+  function applyState(estado) {
+    if (!estado || !estado.enabled) {
+      quitarAviso();
+      return;
     }
+    // Todos los visitantes de app.html quedan bloqueados, incluso antes
+    // de iniciar sesión o si usan una cuenta administradora. admin.html
+    // es independiente y sigue disponible para gestionar el servicio.
+    mostrarAviso(estado.message);
   }
 
-  /* ── Consultar el interruptor ── */
-  var enVuelo = false;   // evita solaparse consigo mismo
-  var apagado = false;   // deja de insistir si la RPC no existe
+  var enVuelo = false;
+  var apagado = false;
   var timer = null;
 
   async function check() {
@@ -174,16 +84,13 @@
     try {
       var res = await c.rpc('get_maintenance');
       if (res.error) throw res.error;
-      await applyState(res.data || null);
+      applyState(res.data || null);
     } catch (e) {
-      // Si la función todavía no está creada, no tiene sentido seguir
-      // preguntando: se deja de consultar y la aplicación sigue normal.
       var msg = (e && e.message) || '';
       if (/not find|does not exist|404|PGRST202/i.test(msg)) {
         apagado = true;
         if (timer) { clearInterval(timer); timer = null; }
-        console.info('[mantenimiento] inactivo: falta ejecutar ' +
-                     'supabase/admin/maintenance_mode.sql');
+        console.info('[mantenimiento] falta ejecutar supabase/admin/maintenance_mode.sql');
       } else {
         console.warn('[mantenimiento] no se pudo leer el estado:', msg || e);
       }
@@ -195,17 +102,22 @@
   function iniciar() {
     check();
     timer = setInterval(check, POLL_MS);
-    // Al volver a la pestaña conviene revisar de inmediato.
     document.addEventListener('visibilitychange', function () {
       if (!document.hidden) check();
     });
-    // Y en cuanto cambia la sesión, sin esperar al siguiente sondeo: si
-    // quien acaba de entrar es administrador, el aviso tiene que
-    // levantarse ya, no un minuto después.
+    window.addEventListener('focus', check);
+
+    // Realtime da respuesta inmediata cuando app_settings está publicado;
+    // el sondeo de 5 segundos cubre desconexiones o falta de publicación.
     try {
       var c = sb();
-      if (c && c.auth && c.auth.onAuthStateChange) {
-        c.auth.onAuthStateChange(function () { check(); });
+      if (c && c.channel) {
+        c.channel('fv-maintenance-status')
+          .on('postgres_changes', {
+            event: '*', schema: 'public', table: 'app_settings',
+            filter: 'key=eq.maintenance'
+          }, check)
+          .subscribe();
       }
     } catch (e) {}
   }
