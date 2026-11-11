@@ -1,7 +1,5 @@
 /* ==========================================================
-   MODO MANTENIMIENTO
-   Aviso a pantalla completa para usuarios y cinta para el
-   administrador. Diseño plano, sin sombras, paleta institucional.
+   MODO MANTENIMIENTO — identidad visual de Filtro Vehicular+
    ========================================================== */
 
 /* Mientras el aviso está puesto, la página de fondo no se desplaza */
@@ -18,71 +16,180 @@ html.mnt-locked body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  background: var(--c-surface-dark);
+  overflow-y: auto;
+  padding: clamp(18px, 4vw, 44px);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(143, 199, 46, .12), transparent 42%),
+    linear-gradient(145deg, #101816 0%, #17211f 52%, #101715 100%);
+  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mnt-card {
   width: 100%;
-  max-width: 460px;
-  background: var(--c-surface, #ffffff);
-  border: 1px solid var(--c-border, #DCDCDC);
-  border-radius: 14px;
-  padding: 36px 32px;
+  max-width: 540px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfa 100%);
+  border: 1px solid rgba(255, 255, 255, .76);
+  border-radius: 22px;
+  padding: clamp(28px, 5vw, 48px) clamp(24px, 6vw, 54px) 30px;
   text-align: center;
-  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, .34), 0 4px 16px rgba(0, 0, 0, .12);
+  animation: mnt-card-in .38s cubic-bezier(.2, .8, .2, 1) both;
+}
+.mnt-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, #79b927, #a7d64c 50%, #79b927);
 }
 
 /* Marca */
-.mnt-mark {
+.mnt-brand {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
-  gap: 1px;
-  font-size: 15px;
+  gap: 9px;
+  color: #17201e;
+  font-size: 16px;
   font-weight: 700;
-  color: var(--c-primary, #141d1c);
-  letter-spacing: -0.2px;
+  letter-spacing: -.35px;
 }
-.mnt-mark-plus { color: var(--c-accent, #8fc72e); }
+.mnt-brand-logo { width: 31px; height: 31px; object-fit: contain; }
+.mnt-mark-plus { color: #78b927; }
+.mnt-divider {
+  width: 42px;
+  height: 1px;
+  margin: 23px auto 19px;
+  background: #e5e9e4;
+}
+
+.mnt-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #e2edcf;
+  border-radius: 999px;
+  background: #f5f9ee;
+  color: #40552b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .075em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.mnt-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #8fc72e;
+  box-shadow: 0 0 0 3px rgba(143, 199, 46, .15);
+  animation: mnt-status-pulse 1.8s ease-in-out infinite;
+}
 
 .mnt-icon {
-  width: 46px;
-  height: 46px;
-  margin: 22px auto 16px;
-  color: var(--c-accent, #8fc72e);
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  margin: 22px auto 17px;
+  border: 1px solid #e8efd9;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #f7faef, #edf5df);
+  color: #75b521;
 }
-.mnt-icon svg { width: 100%; height: 100%; display: block; }
+.mnt-icon svg { width: 38px; height: 38px; display: block; }
 
 .mnt-title {
-  margin: 0 0 10px;
-  font-size: 21px;
+  max-width: 390px;
+  margin: 0 auto 11px;
+  color: #17201e;
+  font-size: clamp(23px, 4vw, 29px);
   font-weight: 700;
-  color: var(--c-primary, #141d1c);
-  line-height: 1.25;
+  letter-spacing: -.75px;
+  line-height: 1.18;
 }
 
 .mnt-text {
-  margin: 0 0 20px;
+  max-width: 410px;
+  margin: 0 auto 19px;
+  color: #56635f;
   font-size: 15px;
   font-weight: 400;
-  line-height: 1.55;
-  color: var(--c-muted, #5A6B6A);
+  line-height: 1.65;
+}
+
+.mnt-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 23px;
+  padding: 13px 15px;
+  border: 1px solid #e9ece8;
+  border-radius: 12px;
+  background: #f7f8f6;
+  color: #59635f;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+}
+.mnt-note-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 17px;
+  height: 17px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: #e4efd3;
+  color: #5a8528;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .mnt-retry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   width: 100%;
-  padding: 12px 18px;
+  min-height: 50px;
+  padding: 13px 18px;
   border: none;
-  border-radius: 12px;
-  background: var(--c-surface-dark);
+  border-radius: 13px;
+  background: #17201e;
   color: #ffffff;
-  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 15px;
+  font: inherit;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+  transition: background .18s ease, transform .18s ease, box-shadow .18s ease;
 }
-.mnt-retry:hover { background: #1e2b2a; }
+.mnt-retry svg { width: 19px; height: 19px; }
+.mnt-retry:hover {
+  background: #26332f;
+  box-shadow: 0 5px 14px rgba(20, 29, 28, .17);
+  transform: translateY(-1px);
+}
+.mnt-retry:focus-visible { outline: 3px solid rgba(143, 199, 46, .6); outline-offset: 3px; }
+.mnt-retry:active { transform: translateY(0); }
+.mnt-footer {
+  margin: 15px 0 0;
+  color: #858e89;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+@keyframes mnt-card-in {
+  from { opacity: 0; transform: translateY(9px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes mnt-status-pulse {
+  50% { box-shadow: 0 0 0 5px rgba(143, 199, 46, .08); }
+}
 
 /* El aviso no lleva ninguna entrada de administracion: el administrador
    entra por admin.html, que pide credenciales y nunca muestra el aviso. */
@@ -123,9 +230,16 @@ html.mnt-locked body {
 html.mnt-with-banner body { padding-top: 34px; }
 
 @media (max-width: 480px) {
-  .mnt-card { padding: 28px 22px; }
-  .mnt-title { font-size: 19px; }
+  .mnt-card { border-radius: 18px; }
+  .mnt-divider { margin: 19px auto 16px; }
+  .mnt-title { font-size: 23px; }
   html.mnt-with-banner body { padding-top: 48px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mnt-card,
+  .mnt-status-dot { animation: none; }
+  .mnt-retry { transition: none; }
 }
 
 /* ==========================================================

@@ -11,8 +11,8 @@
   var OVERLAY_ID = 'maintenanceOverlay';
   var POLL_MS = 5000;
   var MENSAJE_POR_DEFECTO =
-    'Estamos realizando tareas de mejora en la plataforma. ' +
-    'El servicio se restablecerá en breve.';
+    'Nuestro equipo realiza trabajos técnicos para mantener la plataforma estable. ' +
+    'El servicio volverá a estar disponible al concluir la intervención.';
 
   function sb() {
     return window.Consultia && window.Consultia.supabase;
@@ -37,22 +37,38 @@
     el.className = 'mnt-overlay';
     el.setAttribute('role', 'alertdialog');
     el.setAttribute('aria-live', 'assertive');
-    el.setAttribute('aria-label', 'Sistema en mantenimiento');
+    el.setAttribute('aria-labelledby', 'mntTitle');
+    el.setAttribute('aria-describedby', 'mntText');
     el.innerHTML =
       '<div class="mnt-card">' +
-        '<div class="mnt-mark">' +
-          '<span class="mnt-mark-text">Plataforma Filtro Vehicular</span>' +
-          '<span class="mnt-mark-plus">+</span>' +
+        '<div class="mnt-brand">' +
+          '<img class="mnt-brand-logo" src="/icons/logo-filtro.svg" alt="" />' +
+          '<span>Filtro Vehicular<span class="mnt-mark-plus">+</span></span>' +
         '</div>' +
+        '<div class="mnt-divider" aria-hidden="true"></div>' +
+        '<div class="mnt-status"><span class="mnt-status-dot" aria-hidden="true"></span>' +
+          '<span>Mantenimiento en curso</span></div>' +
         '<div class="mnt-icon" aria-hidden="true">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+          '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" ' +
                'stroke-linecap="round" stroke-linejoin="round">' +
-            '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' +
+            '<path d="M28.2 10.2a10.7 10.7 0 0 0-13.9 13.9L7.5 31a4.6 4.6 0 0 0 6.5 6.5l6.9-6.8a10.7 10.7 0 0 0 13.9-13.9l-6.1 6.1-5.6-5.6 5.1-7.1Z"/>' +
+            '<path d="m10.6 33.4 4 4"/>' +
           '</svg>' +
         '</div>' +
-        '<h1 class="mnt-title">Sistema en mantenimiento</h1>' +
-        '<p class="mnt-text">' + esc(mensaje || MENSAJE_POR_DEFECTO) + '</p>' +
-        '<button type="button" class="mnt-retry" id="mntRetry">Reintentar</button>' +
+        '<h1 class="mnt-title" id="mntTitle">Estamos trabajando en mejoras</h1>' +
+        '<p class="mnt-text" id="mntText">' + esc(mensaje || MENSAJE_POR_DEFECTO) + '</p>' +
+        '<div class="mnt-note">' +
+          '<span class="mnt-note-icon" aria-hidden="true">i</span>' +
+          '<span>El acceso se restablecerá aquí cuando finalicen los trabajos.</span>' +
+        '</div>' +
+        '<button type="button" class="mnt-retry" id="mntRetry">' +
+          '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
+            '<path d="M16.2 8a6.5 6.5 0 0 0-11.6-2L3 8m0 0V4.5M3 8h3.5M3.8 12a6.5 6.5 0 0 0 11.6 2L17 12m0 0v3.5M17 12h-3.5" ' +
+              'stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '</svg>' +
+          '<span>Volver a comprobar</span>' +
+        '</button>' +
+        '<p class="mnt-footer">Gracias por tu comprensión.</p>' +
       '</div>';
     document.body.appendChild(el);
     document.documentElement.classList.add('mnt-locked');
