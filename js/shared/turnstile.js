@@ -3,10 +3,10 @@
    Expone: Consultia.Turnstile.render/getToken/reset
 
    Para qué está: Cloudflare NO ve las peticiones de registro ni de
-   login. Esas van directas a kkqpayfyhvxatskkrqdg.supabase.co, que
-   está fuera de la zona, así que ni el rate limiting ni Bot Fight Mode
-   las tocan. La única forma de frenar el registro masivo y la fuerza
-   bruta contra el login es que Supabase Auth exija un token de
+   login. Esas van directas al endpoint de Supabase definido en
+   js/shared/supabase-config.js. Cloudflare no aplica el rate limiting
+   ni Bot Fight Mode del sitio a esas peticiones. Para frenar el registro
+   masivo y los intentos de fuerza bruta, Supabase Auth debe exigir un token de
    Turnstile: el navegador lo consigue aquí y Supabase lo verifica
    contra Cloudflare antes de crear la cuenta o dar la sesión.
 

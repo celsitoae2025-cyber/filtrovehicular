@@ -24,75 +24,120 @@
   function $(id) { return document.getElementById(id); }
 
   var accesoVerificado = false;
+  var pasoTrasVerificacion = 'acceso';
+  var verificacionAvanzando = false;
+
+  function actualizarGoogleButtons(habilitado) {
+    document.querySelectorAll('#nvAuthShell .nv-google-btn').forEach(function (boton) {
+      boton.disabled = !habilitado;
+      boton.removeAttribute('aria-busy');
+      var etiqueta = boton.querySelector('span');
+      if (etiqueta) etiqueta.textContent = 'Continuar con Google';
+      boton.title = habilitado ? '' : 'Completa la verificación para continuar con Google';
+    });
+  }
 
   function estadoVerificacion(texto) {
     var estado = $('nvAccesoVerificacionEstado');
     if (estado && texto) estado.textContent = texto;
   }
 
-  function prepararVerificacionAcceso(mensaje) {
+  function actualizarPestanas(paso, visible) {
+    var tabs = $('nvPuertaTabs');
+    if (!tabs) return;
+    tabs.hidden = !visible;
+    tabs.querySelectorAll('[role="tab"]').forEach(function (tab) {
+      var activo = visible && tab.dataset.pasoIr === paso;
+      tab.setAttribute('aria-selected', String(activo));
+      tab.tabIndex = activo ? 0 : -1;
+    });
+  }
+
+  function prepararVerificacionAcceso(mensaje, destino) {
+    pasoTrasVerificacion = destino === 'registro' ? 'registro' : 'acceso';
     accesoVerificado = false;
+    NV.accesoVerificado = false;
+    verificacionAvanzando = false;
     var verificacion = $('nvAccesoVerificacion');
     var credenciales = $('nvAccesoCredenciales');
-    var continuar = $('nvAccesoContinuar');
     var reintentar = $('nvAccesoReintentar');
     if (!verificacion || !credenciales) return;
+    document.querySelectorAll('#nvPuerta [data-paso]').forEach(function (formulario) {
+      formulario.hidden = formulario.dataset.paso !== 'acceso';
+    });
     verificacion.hidden = false;
     credenciales.hidden = true;
-    if (continuar) continuar.disabled = true;
     if (reintentar) reintentar.hidden = true;
-    estadoVerificacion(mensaje || 'Completa la verificaciÃ³n para continuar.');
+    actualizarGoogleButtons(false);
+    actualizarPestanas('acceso', false);
+    $('nvPuerta').classList.remove('es-acceso-limpio');
+    estadoVerificacion(mensaje || 'Completa la verificación para continuar.');
   }
 
   function habilitarCredenciales() {
-    if (!C.Turnstile || !C.Turnstile.getToken) return;
+    if (verificacionAvanzando || accesoVerificado) return;
+    if (!C.Turnstile || !C.Turnstile.getToken) {
+      estadoVerificacion('No se pudo cargar la verificación. Revisa tu conexión e inténtalo otra vez.');
+      return;
+    }
+    verificacionAvanzando = true;
     C.Turnstile.getToken('nvTsAcceso').then(function (token) {
       if (!token) {
-        prepararVerificacionAcceso('No pudimos completar la verificaciÃ³n. IntÃ©ntalo otra vez.');
+        verificacionAvanzando = false;
+        prepararVerificacionAcceso('No pudimos completar la verificación. Inténtalo otra vez.', pasoTrasVerificacion);
         return;
       }
       accesoVerificado = true;
-      $('nvAccesoVerificacion').hidden = true;
-      $('nvAccesoCredenciales').hidden = false;
-      var correo = document.querySelector('#nvAcceso [name="email"]');
-      if (correo && window.matchMedia('(hover: hover)').matches) correo.focus();
+      NV.accesoVerificado = true;
+      verificacionAvanzando = false;
+      var siguiente = pasoTrasVerificacion;
+      pasoTrasVerificacion = 'acceso';
+      actualizarGoogleButtons(!encima);
+      if (siguiente === 'registro' && !encima) {
+        NV.verPuerta('registro');
+      } else {
+        $('nvAccesoVerificacion').hidden = true;
+        $('nvAccesoCredenciales').hidden = false;
+        $('nvPuerta').classList.add('es-acceso-limpio');
+        actualizarPestanas('acceso', !encima);
+        var correo = document.querySelector('#nvAcceso [name="email"]');
+        if (correo && window.matchMedia('(hover: hover)').matches) correo.focus();
+      }
+    }).catch(function () {
+      verificacionAvanzando = false;
+      prepararVerificacionAcceso('No pudimos completar la verificación. Inténtalo otra vez.', pasoTrasVerificacion);
     });
   }
 
   document.addEventListener('consultia:turnstile-verified', function (e) {
-    if (!e.detail || e.detail.containerId !== 'nvTsAcceso') return;
-    var continuar = $('nvAccesoContinuar');
-    if (continuar) continuar.disabled = false;
+    if (!e.detail || e.detail.containerId !== 'nvTsAcceso' || accesoVerificado || verificacionAvanzando) return;
     var reintentar = $('nvAccesoReintentar');
     if (reintentar) reintentar.hidden = true;
-    estadoVerificacion('VerificaciÃ³n completada. Ya puedes continuar.');
+    estadoVerificacion('Verificación completada. Abriendo el acceso…');
+    habilitarCredenciales();
   });
   document.addEventListener('consultia:turnstile-error', function (e) {
     if (!e.detail || e.detail.containerId !== 'nvTsAcceso') return;
-    estadoVerificacion('No se pudo completar la verificaciÃ³n. Revisa tu conexiÃ³n e intÃ©ntalo otra vez.');
+    estadoVerificacion('No se pudo completar la verificación. Revisa tu conexión e inténtalo otra vez.');
     var reintentar = $('nvAccesoReintentar');
     if (reintentar) reintentar.hidden = false;
   });
   document.addEventListener('consultia:turnstile-script-error', function () {
-    estadoVerificacion('No se pudo cargar la verificaciÃ³n. Revisa tu conexiÃ³n e intÃ©ntalo otra vez.');
+    estadoVerificacion('No se pudo cargar la verificación. Revisa tu conexión e inténtalo otra vez.');
     var reintentar = $('nvAccesoReintentar');
     if (reintentar) reintentar.hidden = false;
   });
   document.addEventListener('consultia:turnstile-expired', function (e) {
     if (!e.detail || e.detail.containerId !== 'nvTsAcceso') return;
-    if (accesoVerificado) prepararVerificacionAcceso('La verificaciÃ³n venciÃ³. Confirma de nuevo para continuar.');
-    else {
-      var continuar = $('nvAccesoContinuar');
-      if (continuar) continuar.disabled = true;
-      estadoVerificacion('La verificaciÃ³n venciÃ³. Confirma de nuevo para continuar.');
-    }
+    var pasoActual = $('nvRegistro') && !$('nvRegistro').hidden ? 'registro' : 'acceso';
+    if (accesoVerificado) prepararVerificacionAcceso('La verificación venció. Confirma de nuevo para continuar.', pasoActual);
+    else estadoVerificacion('La verificación venció. Confirma de nuevo para continuar.');
   });
   NV.prepararVerificacionAcceso = prepararVerificacionAcceso;
 
-  /* Qué recuadro anti-bot lleva cada paso. */
+  /* La verificación de entrada también sirve para crear cuenta y Google. */
   var CAPTCHA = {
     acceso: 'nvTsAcceso',
-    registro: 'nvTsRegistro',
     verificar: 'nvTsReenvio',
     olvido: 'nvTsOlvido',
     restablecer: 'nvTsReenvioClave'
@@ -151,6 +196,10 @@
 
   /* ── Cambiar de paso ────────────────────────────────────────── */
   NV.verPuerta = function (paso) {
+    if ((paso === 'acceso' || paso === 'registro') && !accesoVerificado) {
+      pasoTrasVerificacion = paso;
+      paso = 'acceso';
+    }
     var formularios = document.querySelectorAll('#nvPuerta [data-paso]');
     var existe = false;
     formularios.forEach(function (f) {
@@ -160,14 +209,34 @@
     });
     if (!existe) return NV.verPuerta('acceso');
 
+    var puerta = $('nvPuerta');
+    if (paso === 'acceso') {
+      if (!accesoVerificado) prepararVerificacionAcceso(undefined, pasoTrasVerificacion);
+      else {
+        $('nvAccesoVerificacion').hidden = true;
+        $('nvAccesoCredenciales').hidden = false;
+        puerta.classList.add('es-acceso-limpio');
+      }
+    } else {
+      if (paso === 'registro') puerta.classList.add('es-acceso-limpio');
+      else puerta.classList.remove('es-acceso-limpio');
+    }
+
     /* Desde Mi cuenta solo se cambia la contraseña: sin enlaces a
        entrar ni a crear cuenta, y con «Volver a mi cuenta». */
     $('nvPuertaVolver').hidden = !encima;
     document.querySelectorAll('#nvPuerta [data-solo-fuera]').forEach(function (el) { el.hidden = encima; });
 
-    if (paso === 'acceso') prepararVerificacionAcceso();
-    if (C.Turnstile && CAPTCHA[paso]) C.Turnstile.render(CAPTCHA[paso]);
-    var puerta = $('nvPuerta');
+    var mostrarTabs = !encima && accesoVerificado && (paso === 'registro' || paso === 'acceso');
+    actualizarPestanas(paso, mostrarTabs);
+    actualizarGoogleButtons(mostrarTabs);
+    if (paso === 'registro' || paso === 'acceso') {
+      ['nvGoogleLoginError', 'nvGoogleRegistroError'].forEach(function (id) {
+        var googleError = $(id);
+        if (googleError) { googleError.hidden = true; googleError.textContent = ''; }
+      });
+    }
+    if (C.Turnstile && CAPTCHA[paso] && (paso !== 'acceso' || !accesoVerificado)) C.Turnstile.render(CAPTCHA[paso]);
     if (puerta) puerta.scrollTop = 0;
     window.scrollTo(0, 0);
 
@@ -232,18 +301,30 @@
       var boton = $('nvRegistroBtn');
       ocupado(boton, true, 'Creando…');
       try {
-        var token = await tokenAntiBot('registro');
+        var token = await tokenAntiBot('acceso');
+        if (!token) {
+          NV.prepararVerificacionAcceso('Completa la verificación de seguridad para crear tu cuenta.', 'registro');
+          return;
+        }
         var res = await C.Auth.signUp({
           email: correo, password: clave, full_name: nombre, phone: telefono, captchaToken: token
         });
-        quemarToken('registro');
+        quemarToken('acceso');
         if (res.error) throw res.error;
+        accesoVerificado = false;
+        NV.accesoVerificado = false;
+        actualizarGoogleButtons(false);
         correoAlta = correo;
         $('nvVerificarCorreo').textContent = correo;
         form.reset();
         NV.verPuerta('verificar');
       } catch (ex) {
-        error('nvRegistroError', traducir(ex && ex.message));
+        if (/captcha/i.test((ex && ex.message) || '')) {
+          quemarToken('acceso');
+          NV.prepararVerificacionAcceso('La verificación venció. Completa el control otra vez para crear tu cuenta.', 'registro');
+        } else {
+          error('nvRegistroError', traducir(ex && ex.message));
+        }
       } finally {
         ocupado(boton, false);
       }
@@ -425,6 +506,19 @@
       e.preventDefault();
       NV.verPuerta(a.dataset.pasoIr);
     });
+    var tabs = $('nvPuertaTabs');
+    if (tabs) {
+      tabs.addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        var actuales = Array.from(tabs.querySelectorAll('[role="tab"]'));
+        var indice = actuales.indexOf(document.activeElement);
+        if (indice < 0) return;
+        e.preventDefault();
+        var siguiente = actuales[(indice + (e.key === 'ArrowRight' ? 1 : actuales.length - 1)) % actuales.length];
+        NV.verPuerta(siguiente.dataset.pasoIr);
+        siguiente.focus();
+      });
+    }
     $('nvPuertaVolver').addEventListener('click', cerrarEncima);
     $('nvMostrarClave').addEventListener('click', function () {
       var campo = $('nvAccesoClave');
@@ -437,10 +531,14 @@
     var fvcForm = $('nvFvcForm');
     var fvcPlaca = $('nvFvcPlaca');
     var fvcError = $('nvFvcError');
+    var ultimoAbridorFvc = $('fvcOpen');
     $('nvAyudaAcceso').href = NV.whatsapp('Hola, necesito ayuda para acceder a Plataforma Filtro Vehicular+.');
-    $('fvcOpen').addEventListener('click', function () {
-      fvcDialogo.showModal();
-      fvcPlaca.focus();
+    document.querySelectorAll('#nvPuerta [data-fvc-abrir]').forEach(function (boton) {
+      boton.addEventListener('click', function () {
+        ultimoAbridorFvc = boton;
+        fvcDialogo.showModal();
+        fvcPlaca.focus();
+      });
     });
     fvcDialogo.querySelectorAll('[data-fvc-cerrar]').forEach(function (boton) {
       boton.addEventListener('click', function () { fvcDialogo.close(); });
@@ -452,7 +550,7 @@
       fvcForm.reset();
       fvcError.hidden = true;
       fvcPlaca.removeAttribute('aria-invalid');
-      $('fvcOpen').focus();
+      if (ultimoAbridorFvc && ultimoAbridorFvc.isConnected) ultimoAbridorFvc.focus();
     });
     fvcPlaca.addEventListener('input', function () {
       this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
@@ -481,18 +579,12 @@
     conectarRestablecer();
     soloDigitos();
 
-    var continuarAcceso = $('nvAccesoContinuar');
-    if (continuarAcceso && !continuarAcceso.dataset.conectado) {
-      continuarAcceso.dataset.conectado = '1';
-      continuarAcceso.addEventListener('click', habilitarCredenciales);
-    }
     var reintentarAcceso = $('nvAccesoReintentar');
     if (reintentarAcceso && !reintentarAcceso.dataset.conectado) {
       reintentarAcceso.dataset.conectado = '1';
       reintentarAcceso.addEventListener('click', function () {
         reintentarAcceso.hidden = true;
-        if (continuarAcceso) continuarAcceso.disabled = true;
-        estadoVerificacion('Cargando la verificaciÃ³n de seguridad...');
+        estadoVerificacion('Cargando la verificación de seguridad...');
         if (C.Turnstile) C.Turnstile.render('nvTsAcceso');
       });
     }

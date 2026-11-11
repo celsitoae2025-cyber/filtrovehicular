@@ -6,7 +6,13 @@
 (function () {
   window.Consultia = window.Consultia || {};
 
-  var SUPABASE_URL = 'https://kkqpayfyhvxatskkrqdg.supabase.co';
+  // El dominio propio debe activarse primero en Supabase y en DNS. Mantener
+  // este campo vacío conserva el endpoint actual y evita romper el acceso.
+  // Cuando Supabase confirme el dominio, colocar aquí su URL base, por ejemplo:
+  // var SUPABASE_CUSTOM_DOMAIN_URL = 'https://auth.filtrovehicularperu.com';
+  var SUPABASE_CUSTOM_DOMAIN_URL = '';
+  var SUPABASE_DEFAULT_URL = 'https://kkqpayfyhvxatskkrqdg.supabase.co';
+  var SUPABASE_URL = (SUPABASE_CUSTOM_DOMAIN_URL || SUPABASE_DEFAULT_URL).replace(/\/+$/, '');
   var SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_8_jKLgXupm7hybBYdXrNMA_w9YRYJpm';
 
   // El SDK de Supabase se carga vía CDN en el HTML y expone window.supabase

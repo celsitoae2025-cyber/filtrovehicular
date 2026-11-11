@@ -127,6 +127,26 @@
       return res;
     },
 
+    // ===== Inicio de sesiÃ³n con Google =====
+    signInWithGoogle: async function (remember) {
+      if (remember) setRememberFlags(true);
+      else clearRememberFlags();
+      try {
+        var res = await sb.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: redirectUrl(),
+            queryParams: { prompt: 'select_account' }
+          }
+        });
+        if (res.error && !remember) clearRememberFlags();
+        return res;
+      } catch (error) {
+        if (!remember) clearRememberFlags();
+        throw error;
+      }
+    },
+
     // ===== Logout =====
     signOut: async function () {
       var res = await sb.auth.signOut();

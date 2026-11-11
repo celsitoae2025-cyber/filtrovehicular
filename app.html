@@ -62,7 +62,7 @@
 <!-- La ventana de carteles y el aviso a clientes: los mismos de siempre. -->
 <link rel="stylesheet" href="css/carteles.css?v=3">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
-<link rel="stylesheet" href="css/nueva.css?v=88">
+<link rel="stylesheet" href="css/nueva.css?v=108">
 </head>
 <body class="nv-body">
 
@@ -117,55 +117,65 @@
       <p class="nv-puerta-sobretitulo">PLATAFORMA DE CONSULTAS</p>
       <h2>Información vehicular<br>para decidir mejor.</h2>
       <p>Consulta datos de placas, revisa antecedentes y reúne la información que necesitas en un solo lugar.</p>
-      <button class="nv-puerta-fvc" id="fvcOpen" type="button" aria-haspopup="dialog" aria-controls="nvFvcDialogo">Solicita tu Filtro Vehicular Completo <span aria-hidden="true">↗</span></button>
-      <p class="nv-puerta-fvc-nota">Tú confirmas el envío en WhatsApp.</p>
+      <button class="nv-auth-fvc nv-auth-fvc-desktop" id="fvcOpen" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo">SOLICITA TU FILTRO VEHICULAR COMPLETO <span aria-hidden="true">↗</span></button>
     </div>
   </aside>
 
   <div class="nv-puerta-panel">
     <button class="nv-puerta-volver" type="button" id="nvPuertaVolver" hidden><svg><use href="#i-volver"/></svg><span>Volver a mi cuenta</span></button>
     <div class="nv-puerta-formularios">
+    <div class="nv-auth-shell" id="nvAuthShell">
+      <div class="nv-auth-brand" aria-label="Plataforma Filtro Vehicular Plus">Plataforma Filtro Vehicular<span>+</span></div>
+      <div class="nv-auth-tabs" id="nvPuertaTabs" role="tablist" aria-label="Acceso a la plataforma" hidden>
+        <button class="nv-auth-tab" type="button" id="nvAuthTabAcceso" role="tab" aria-controls="nvAcceso" aria-selected="true" tabindex="0" data-paso-ir="acceso">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5M10 16l4-4-4-4M14 12H3"/></svg>
+          <span>Iniciar sesión</span>
+        </button>
+        <button class="nv-auth-tab" type="button" id="nvAuthTabRegistro" role="tab" aria-controls="nvRegistro" aria-selected="false" tabindex="-1" data-paso-ir="registro">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.8 19c.7-3 2.8-4.7 6.2-4.7 2.1 0 3.7.7 4.8 2M19 8v6M16 11h6"/></svg>
+          <span>Regístrate</span>
+        </button>
+      </div>
 
   <form class="nv-puerta-caja" id="nvAcceso" data-paso="acceso" novalidate>
     <section class="nv-acceso-verificacion" id="nvAccesoVerificacion" aria-labelledby="nvVerificacionTitulo">
-      <div class="nv-puerta-cabecera">
-        <img class="nv-puerta-sello" src="icons/logo-filtro.svg" alt="">
-      </div>
-      <p class="nv-acceso-marca">FILTRO VEHICULAR</p>
       <h1 id="nvVerificacionTitulo">Verificación de seguridad</h1>
       <p class="nv-puerta-nota">Confirma que eres una persona para proteger tu cuenta.</p>
       <div class="nv-captcha auth-turnstile" id="nvTsAcceso"></div>
       <p class="nv-acceso-estado" id="nvAccesoVerificacionEstado" role="status" aria-live="polite">Completa la verificación para continuar.</p>
       <button class="nv-acceso-reintentar" type="button" id="nvAccesoReintentar" hidden>Reintentar verificación</button>
-      <button class="nv-cta nv-cta-bloque" type="button" id="nvAccesoContinuar" disabled><span>Continuar al inicio de sesión</span></button>
     </section>
 
     <div id="nvAccesoCredenciales" hidden>
-      <div class="nv-puerta-cabecera">
-        <img class="nv-puerta-sello" src="icons/logo-filtro.svg" alt="">
+      <div class="nv-auth-intro">
+        <h1>Inicia sesión</h1>
+        <p class="nv-puerta-nota">Ingresa para consultar historiales vehiculares.</p>
       </div>
-      <h1>Inicia sesión</h1>
-      <p class="nv-puerta-nota">Tus consultas y créditos te esperan.</p>
-      <label class="nv-etiqueta">Correo
-        <input class="nv-campo" type="email" name="email" autocomplete="email" inputmode="email" placeholder="tu@correo.com" required>
+      <label class="nv-etiqueta">Correo electrónico
+        <input class="nv-campo" type="email" name="email" autocomplete="email" inputmode="email" placeholder="nombre@correo.com" required>
       </label>
       <div class="nv-puerta-clave-encabezado"><label for="nvAccesoClave">Contraseña</label><a href="#" data-paso-ir="olvido">¿Olvidaste tu contraseña?</a></div>
       <div class="nv-puerta-clave-campo"><input class="nv-campo" id="nvAccesoClave" type="password" name="password" autocomplete="current-password" placeholder="Contraseña" required><button type="button" id="nvMostrarClave" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-5.5 10-5.5S22 12 22 12s-3.6 5.5-10 5.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg></button></div>
       <label class="nv-marcar"><input type="checkbox" name="remember" checked> Mantener la sesión abierta</label>
       <p class="nv-error" id="nvAccesoError" role="alert" hidden></p>
       <button class="nv-cta nv-cta-bloque" type="submit" id="nvAccesoBtn"><span>Iniciar sesión</span></button>
-      <div class="nv-puerta-pie">
+      <div class="nv-auth-divider" aria-hidden="true"><span>o también</span></div>
+      <button class="nv-google-btn" id="nvGoogleLoginBtn" type="button" data-google-paso="acceso" disabled title="Completa la verificación para continuar con Google">
+        <img class="nv-google-mark" src="icons/google-g.svg" alt="" aria-hidden="true">
+        <span>Continuar con Google</span>
+      </button>
+      <p class="nv-error" id="nvGoogleLoginError" role="alert" hidden></p>
+      <div class="nv-puerta-pie" id="nvAccesoPie">
         <span>¿Aún no tienes cuenta?</span><a href="#" data-paso-ir="registro">Créala gratis</a>
       </div>
     </div>
   </form>
 
   <form class="nv-puerta-caja" id="nvRegistro" data-paso="registro" novalidate hidden>
-    <div class="nv-puerta-cabecera">
-      <img class="nv-puerta-sello" src="icons/logo-filtro.svg" alt="">
+    <div class="nv-auth-intro">
+      <h1>Regístrate</h1>
+      <p class="nv-puerta-nota">Crea tu cuenta de acceso vehicular.</p>
     </div>
-    <h1>Crea tu cuenta</h1>
-    <p class="nv-puerta-nota">Recibes 5 créditos gratis para probar.</p>
     <!-- Nombre y teléfono comparten fila: son cortos y de la misma
          familia (quién eres y cómo se te llama). El correo y la
          contraseña van enteros porque son largos. El orden del marcado
@@ -184,10 +194,15 @@
       <input class="nv-campo" type="password" name="password" autocomplete="new-password" minlength="8" required>
       <small class="nv-ayuda">8 o más caracteres, con mayúscula, minúscula, número y un símbolo.</small>
     </label>
-    <label class="nv-marcar"><input type="checkbox" name="terms"> <span>Acepto los <a href="#" data-modal="terms">términos y condiciones</a></span></label>
+    <label class="nv-marcar"><input type="checkbox" name="terms"> <span>He leído y acepto las condiciones de uso</span></label>
     <p class="nv-error" id="nvRegistroError" role="alert" hidden></p>
     <button class="nv-cta nv-cta-bloque" type="submit" id="nvRegistroBtn"><span>Crear cuenta</span></button>
-    <div class="nv-captcha auth-turnstile" id="nvTsRegistro"></div>
+    <div class="nv-auth-divider" aria-hidden="true"><span>o también</span></div>
+    <button class="nv-google-btn" id="nvGoogleRegistroBtn" type="button" data-google-paso="registro" disabled title="Completa la verificación para continuar con Google">
+      <img class="nv-google-mark" src="icons/google-g.svg" alt="" aria-hidden="true">
+      <span>Continuar con Google</span>
+    </button>
+    <p class="nv-error" id="nvGoogleRegistroError" role="alert" hidden></p>
     <div class="nv-puerta-pie">
       <span>¿Ya tienes cuenta?</span>
       <a href="#" data-paso-ir="acceso">Entrar</a>
@@ -195,9 +210,6 @@
   </form>
 
   <form class="nv-puerta-caja" id="nvVerificar" data-paso="verificar" novalidate hidden>
-    <div class="nv-puerta-cabecera">
-      <img class="nv-puerta-sello" src="icons/logo-filtro.svg" alt="">
-    </div>
     <h1>Revisa tu correo</h1>
     <p class="nv-puerta-nota">Te enviamos un correo a <strong id="nvVerificarCorreo">tu correo</strong>. Ábrelo y pulsa el botón <strong>Activa tu cuenta</strong>: con eso entras directo, sin escribir nada.</p>
     <!-- El correo sale de un remitente propio (noreply@filtrovehicularperu.com):
@@ -213,9 +225,6 @@
   </form>
 
   <form class="nv-puerta-caja" id="nvOlvido" data-paso="olvido" novalidate hidden>
-    <div class="nv-puerta-cabecera">
-      <img class="nv-puerta-sello" src="icons/logo-filtro.svg" alt="">
-    </div>
     <h1>Cambia tu contraseña</h1>
     <p class="nv-puerta-nota">Te enviamos un código de 6 dígitos a tu correo.</p>
     <label class="nv-etiqueta">Correo
@@ -231,9 +240,6 @@
   </form>
 
   <form class="nv-puerta-caja" id="nvRestablecer" data-paso="restablecer" novalidate hidden>
-    <div class="nv-puerta-cabecera">
-      <img class="nv-puerta-sello" src="icons/logo-filtro.svg" alt="">
-    </div>
     <h1>Nueva contraseña</h1>
     <p class="nv-puerta-nota">Escribe el código que llegó a <strong id="nvRestablecerCorreo">tu correo</strong>.</p>
     <p class="nv-ayuda">Si no lo ves en unos segundos, mira en <strong>Spam</strong> o <strong>Promociones</strong>.</p>
@@ -254,6 +260,8 @@
       <a href="#" data-paso-ir="olvido">Otro correo</a>
     </div>
   </form>
+    <button class="nv-auth-fvc nv-auth-fvc-mobile" id="fvcOpenMobile" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo">SOLICITA TU FILTRO VEHICULAR COMPLETO <span aria-hidden="true">↗</span></button>
+    </div>
     </div>
 
   <nav class="nv-puerta-legal" aria-label="Información legal">
@@ -738,10 +746,10 @@
 <script src="js/shared/device-fingerprint.js?v=1"></script>
 <script src="js/shared/email-validator.js?v=1"></script>
 <script src="js/shared/mp-reconciliation.js?v=1"></script>
-<script src="js/shared/auth.js?v=24"></script>
+<script src="js/shared/auth.js?v=26"></script>
 <script src="js/shared/turnstile.js?v=5"></script>
-<script src="js/nueva/nucleo.js?v=15"></script>
-<script src="js/nueva/acceso.js?v=9"></script>
+<script src="js/nueva/nucleo.js?v=19"></script>
+<script src="js/nueva/acceso.js?v=16"></script>
 <script src="js/overlays.js?v=2"></script>
 <script>
   // El retorno de verificación/restablecimiento conserva su arranque habitual

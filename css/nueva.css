@@ -1794,7 +1794,6 @@ body.nv-puerta-encima { overflow: hidden; }
 .nv-puerta-panel .nv-puerta-legal a:hover { color: var(--nv-oscuro); }
 .nv-puerta-panel #nvAcceso .nv-puerta-pie { margin-top: -4px; }
 /* La portada de acceso también ofrece el menú de soporte. */
-body.nv-puerta-encima .wa-fab { display: none; }
 .nv-comprar:focus-visible, .nv-puerta-panel a:focus-visible { outline: 2px solid var(--nv-oscuro); outline-offset: 3px; }
 .nv-puerta-panel .nv-puerta-volver {
   position: absolute; top: 28px; left: clamp(20px, 4vw, 60px);
@@ -1836,5 +1835,787 @@ body.nv-puerta-encima .wa-fab { display: none; }
   .nv-puerta-panel .nv-puerta-caja h1 { font-size: 23px; }
   .nv-puerta-panel .nv-puerta-legal { flex-direction: row; }
   .nv-puerta-panel .nv-puerta-legal { gap: 2px 16px; }
+}
+
+/* Acceso previo: espaciado claro y estable para el reto de seguridad. */
+.nv-puerta-panel .nv-acceso-verificacion {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: center;
+}
+.nv-puerta-panel .nv-acceso-verificacion .nv-puerta-cabecera { margin: 0 0 2px; }
+.nv-puerta-panel .nv-acceso-marca { margin: 0; line-height: 1.4; }
+.nv-puerta-panel .nv-acceso-verificacion h1 { margin: 0; font-size: 25px; line-height: 1.25; letter-spacing: -.035em; }
+.nv-puerta-panel .nv-acceso-verificacion .nv-puerta-nota { max-width: 32ch; margin: 0; line-height: 1.5; }
+.nv-puerta-panel .nv-acceso-verificacion .nv-captcha { display: grid; place-items: center; width: 100%; min-height: 68px; margin: 0; }
+.nv-puerta-panel .nv-acceso-estado { min-height: 21px; margin: 0; line-height: 1.5; }
+.nv-puerta-panel .nv-acceso-verificacion .nv-cta { width: 100%; min-height: 50px; margin-top: 2px; }
+.nv-puerta-panel .nv-acceso-reintentar { margin: -6px 0 0; }
+
+@media (max-width: 860px) {
+  .nv-puerta-panel .nv-acceso-verificacion { gap: 11px; }
+  .nv-puerta-panel .nv-acceso-verificacion h1 { font-size: 23px; }
+  .nv-puerta-panel .nv-acceso-verificacion .nv-puerta-nota { max-width: 34ch; }
+}
+@media (max-width: 520px) {
+  .nv-puerta-panel .nv-puerta-caja { padding: 28px 22px; }
+  .nv-puerta-panel .nv-acceso-verificacion { gap: 10px; }
+  .nv-puerta-panel .nv-acceso-verificacion h1 { font-size: 22px; }
+}
+
+/* Credenciales: flujo vertical con separación uniforme entre cada campo. */
+.nv-puerta-panel #nvAcceso {
+  width: min(448px, 100%);
+  padding: 34px 36px;
+}
+.nv-puerta-panel #nvAccesoCredenciales:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+.nv-puerta-panel #nvAccesoCredenciales h1 {
+  margin: 0;
+  font-size: 27px;
+  line-height: 1.22;
+  letter-spacing: -.035em;
+}
+.nv-puerta-panel #nvAccesoCredenciales .nv-puerta-nota {
+  max-width: none;
+  margin: 0;
+  line-height: 1.45;
+}
+.nv-puerta-panel #nvAccesoCredenciales .nv-etiqueta {
+  gap: 7px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.nv-puerta-panel #nvAccesoCredenciales .nv-campo {
+  width: 100%;
+  min-height: 49px;
+  margin: 0;
+}
+.nv-puerta-panel #nvAccesoCredenciales .nv-puerta-clave-encabezado {
+  min-height: 20px;
+  margin-bottom: 0;
+  line-height: 1.35;
+}
+.nv-puerta-panel #nvAccesoCredenciales .nv-puerta-clave-encabezado a {
+  min-height: 24px;
+  white-space: nowrap;
+}
+.nv-puerta-panel #nvAccesoCredenciales .nv-puerta-clave-campo { margin: 0; }
+.nv-puerta-panel #nvAccesoCredenciales .nv-marcar { min-height: 28px; }
+.nv-puerta-panel #nvAccesoCredenciales .nv-cta { width: 100%; min-height: 50px; margin: 0; }
+.nv-puerta-panel #nvAccesoCredenciales .nv-puerta-pie {
+  gap: 4px 8px;
+  margin: 0;
+  padding-top: 13px;
+  border-top: 1px solid #e5e7e4;
+  line-height: 1.45;
+}
+.nv-puerta-panel #nvAccesoCredenciales .nv-puerta-pie a { min-height: 28px; }
+
+@media (max-width: 520px) {
+  .nv-puerta-panel #nvAcceso { padding: 28px 22px; }
+  .nv-puerta-panel #nvAccesoCredenciales:not([hidden]) { gap: 13px; }
+  .nv-puerta-panel #nvAccesoCredenciales h1 { font-size: 24px; }
+  .nv-puerta-panel #nvAccesoCredenciales .nv-puerta-clave-encabezado { flex-wrap: wrap; row-gap: 3px; }
+  .nv-puerta-panel #nvAccesoCredenciales .nv-puerta-clave-encabezado a { white-space: normal; }
+}
+
+/* En móvil, la presentación se vuelve una cabecera compacta y deja el
+   primer plano a la verificación y al acceso. */
+@media (max-width: 700px) {
+  .nv-puerta {
+    grid-template-rows: max-content minmax(0, 1fr);
+    align-content: stretch;
+  }
+  .nv-puerta-presentacion {
+    min-height: auto;
+    justify-content: flex-start;
+    padding: 14px 20px 13px;
+  }
+  .nv-puerta-firma { font-size: 15px; }
+  .nv-puerta-relato { width: min(100%, 440px); margin: 0 auto; padding: 8px 0 0; }
+  .nv-puerta-emblema { width: 40px; height: 40px; margin-bottom: 1px; }
+  .nv-puerta-relato h2 { margin: 3px 0 9px; font-size: clamp(23px, 6vw, 28px); line-height: 1.06; }
+  .nv-puerta-fvc { min-height: 46px; margin-top: 0; padding: 7px 10px 7px 14px; border-radius: 9px; font-size: 15px; }
+  .nv-puerta-fvc span { width: 32px; height: 32px; }
+  .nv-puerta-relato > p.nv-puerta-fvc-nota { margin-top: 5px; font-size: 12px; }
+
+  .nv-puerta-panel { min-height: 0; justify-content: space-between; padding: 18px 16px max(24px, env(safe-area-inset-bottom, 0px)); }
+  .nv-puerta-formularios { flex: 0 0 auto; align-items: stretch; padding: 0; }
+  .nv-puerta-panel .nv-puerta-caja { margin: 0 auto; }
+  .nv-puerta-panel .nv-puerta-legal {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    justify-content: initial;
+    gap: 4px 10px;
+    padding: 0 68px 0 0;
+  }
+  .nv-puerta-panel .nv-puerta-legal a { justify-content: center; min-height: 34px; font-size: 13px; text-align: center; }
+  .nv-puerta-panel .nv-puerta-legal a:last-child { grid-column: 1 / -1; justify-self: center; }
+}
+
+@media (max-width: 360px) {
+  .nv-puerta-presentacion { padding-right: 16px; padding-left: 16px; }
+  .nv-puerta-panel { padding-right: 12px; padding-left: 12px; }
+  .nv-puerta-panel #nvAcceso { padding: 24px 16px; }
+  .nv-puerta-panel .nv-puerta-legal { padding-right: 62px; gap: 3px 6px; }
+  .nv-puerta-panel .nv-puerta-legal a { font-size: 12px; }
+}
+
+/* Acceso y registro: una sola tarjeta centrada, basada en la referencia FV+. */
+.nv-puerta {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 0 clamp(20px, 5vw, 72px);
+  overflow-x: hidden;
+  background: #141d1c;
+  color: #f5f7f4;
+}
+.nv-puerta-presentacion {
+  flex: none;
+  width: min(100%, 920px);
+  min-height: 0;
+  margin: 0 auto;
+  padding: 23px 2px 15px;
+  overflow: visible;
+  background: transparent;
+  color: #f5f7f4;
+}
+.nv-puerta-firma { font-size: 16px; line-height: 1.4; }
+.nv-puerta-firma span { color: var(--nv-verde); }
+.nv-puerta-relato { display: none; }
+.nv-puerta-panel {
+  position: static;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--nv-tinta);
+}
+.nv-puerta-formularios {
+  position: relative;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 22px 0 28px;
+}
+.nv-auth-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  margin: 0 auto 12px;
+  color: #dce5dd;
+  font-size: 14px;
+  line-height: 1.4;
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+.nv-auth-volver span { font-size: 19px; line-height: 1; }
+.nv-auth-volver:hover { color: #fff; text-decoration: underline; }
+.nv-auth-shell {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: min(448px, 100%);
+  padding: 28px 32px 30px;
+  border: 1px solid #e1e6e3;
+  border-radius: 18px;
+  background: #fff;
+  color: var(--nv-tinta);
+  box-shadow: 0 18px 48px rgb(0 0 0 / 14%);
+}
+#nvAuthShell { width: min(448px, calc(100vw - 40px)); max-width: calc(100vw - 40px); }
+.nv-auth-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  width: 100%;
+  padding: 4px;
+  border-radius: 11px;
+  background: #eef2f0;
+}
+.nv-auth-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #66736d;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: color .16s ease, background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.nv-auth-tab svg { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.nv-auth-tab[aria-selected="true"] {
+  border-color: #e4e9e5;
+  background: #fff;
+  color: var(--nv-oscuro);
+  box-shadow: 0 1px 3px rgb(20 29 28 / 9%);
+}
+.nv-auth-tab:focus-visible,
+.nv-auth-volver:focus-visible,
+.nv-auth-fvc:focus-visible { outline: 3px solid var(--nv-verde); outline-offset: 3px; }
+.nv-puerta-panel .nv-auth-shell .nv-puerta-caja,
+.nv-puerta-panel .nv-auth-shell #nvRegistro:not([hidden]) {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  gap: 14px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.nv-puerta-panel .nv-auth-shell #nvAcceso { width: 100%; padding: 0; }
+.nv-puerta-panel .nv-auth-shell .nv-puerta-caja h1 {
+  margin: 0;
+  color: var(--nv-tinta);
+  font-size: 25px;
+  line-height: 1.2;
+  letter-spacing: -.035em;
+  text-align: left;
+}
+.nv-puerta-panel .nv-auth-shell .nv-puerta-caja .nv-puerta-cabecera { display: none; }
+.nv-puerta-panel .nv-auth-shell .nv-auth-intro { display: grid; gap: 7px; }
+.nv-puerta-panel .nv-auth-shell .nv-puerta-nota {
+  max-width: 42ch;
+  margin: 0;
+  color: #64716b;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+}
+.nv-puerta-panel .nv-auth-shell .nv-etiqueta { gap: 7px; color: #34423b; font-size: 13px; font-weight: 600; line-height: 1.35; }
+.nv-puerta-panel .nv-auth-shell .nv-campo {
+  width: 100%;
+  min-height: 47px;
+  margin: 0;
+  padding: 10px 13px;
+  border: 1px solid #cbd5cf;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--nv-tinta);
+  font-size: 15px;
+}
+.nv-puerta-panel .nv-auth-shell .nv-campo::placeholder { color: #89938d; }
+.nv-puerta-panel .nv-auth-shell .nv-campo:focus,
+.nv-puerta-panel .nv-auth-shell .nv-campo:focus-visible { border-color: #669526; outline: 3px solid rgb(143 199 46 / 20%); outline-offset: 1px; }
+.nv-puerta-panel .nv-auth-shell .nv-puerta-clave-encabezado { margin-bottom: -8px; color: #34423b; font-size: 13px; font-weight: 600; }
+.nv-puerta-panel .nv-auth-shell .nv-puerta-clave-encabezado a { color: #53665b; font-size: 12px; }
+.nv-puerta-panel .nv-auth-shell .nv-puerta-clave-campo { margin: 0; }
+.nv-puerta-panel .nv-auth-shell .nv-puerta-clave-campo .nv-campo { padding-right: 50px; }
+.nv-puerta-panel .nv-auth-shell .nv-marcar { min-height: 25px; color: #59665f; font-size: 13px; }
+.nv-puerta-panel .nv-auth-shell .nv-marcar input { width: 17px; height: 17px; accent-color: #578a19; }
+.nv-puerta-panel .nv-auth-shell .nv-cta {
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  border: 1px solid var(--nv-verde);
+  border-radius: 9px;
+  background: var(--nv-verde);
+  color: #14200d;
+  font-size: 14px;
+  font-weight: 700;
+}
+.nv-puerta-panel .nv-auth-shell .nv-cta:hover:not(:disabled) { background: #9bd43f; border-color: #9bd43f; }
+.nv-puerta-panel .nv-auth-shell .nv-cta:disabled { border-color: #d8ded9; background: #e8ece9; color: #737e77; opacity: 1; cursor: not-allowed; }
+.nv-puerta-panel .nv-auth-shell .nv-cta::after { display: none; }
+.nv-puerta-panel .nv-auth-shell .nv-puerta-pie {
+  justify-content: center;
+  gap: 5px;
+  margin: 0;
+  padding: 13px 0 0;
+  border-top: 1px solid #e7ebe8;
+  color: #68746e;
+  line-height: 1.4;
+}
+.nv-puerta-panel .nv-auth-shell .nv-puerta-pie span,
+.nv-puerta-panel .nv-auth-shell .nv-puerta-pie a { font-size: 13px; }
+.nv-puerta-panel .nv-auth-shell .nv-puerta-pie a { min-height: 24px; color: var(--nv-oscuro); font-weight: 600; text-underline-offset: 3px; }
+.nv-puerta-panel .nv-auth-shell #nvAcceso .nv-puerta-pie { margin-top: 0; }
+.nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales:not([hidden]) { gap: 14px; }
+.nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales h1 { font-size: 25px; }
+.nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-puerta-nota { margin: 0; }
+.nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-puerta-clave-encabezado { min-height: 18px; margin: 0 0 -8px; }
+.nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-puerta-clave-encabezado a { min-height: 22px; white-space: nowrap; }
+.nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-puerta-clave-campo .nv-campo { padding-right: 50px; }
+.nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-marcar { min-height: 24px; }
+.nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-cta { min-height: 48px; }
+.nv-puerta-panel .nv-auth-shell #nvRegistro:not([hidden]) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; }
+.nv-puerta-panel .nv-auth-shell #nvRegistro > * { grid-column: 1 / -1; }
+.nv-puerta-panel .nv-auth-shell #nvRegistro > .nv-mitad { grid-column: auto; }
+.nv-puerta-panel .nv-auth-shell #nvRegistro .nv-ayuda { color: #68746e; font-size: 12px; line-height: 1.4; }
+.nv-puerta-panel .nv-auth-shell #nvRegistro .nv-marcar { align-items: flex-start; }
+.nv-puerta-panel .nv-auth-shell #nvRegistro .nv-marcar a { color: var(--nv-oscuro); }
+.nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion { gap: 14px; text-align: left; }
+.nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion h1 { width: 100%; font-size: 25px; text-align: left; }
+.nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion .nv-puerta-nota { width: 100%; max-width: none; text-align: left; }
+.nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion .nv-captcha { min-height: 72px; }
+.nv-puerta-panel .nv-auth-shell .nv-acceso-estado { width: 100%; min-height: 21px; margin: 0; color: #64716b; font-size: 13px; line-height: 1.45; text-align: center; }
+.nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion .nv-cta { min-height: 48px; margin: 0; }
+.nv-auth-fvc {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 42px;
+  margin: 12px auto 18px;
+  padding: 7px 14px;
+  border: 1px solid rgb(143 199 46 / 55%);
+  border-radius: 8px;
+  background: transparent;
+  color: #dff1c3;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  cursor: pointer;
+}
+.nv-auth-fvc span { color: var(--nv-verde); font-size: 17px; }
+.nv-auth-fvc:hover { background: rgb(143 199 46 / 10%); }
+.nv-puerta-panel .nv-puerta-legal {
+  flex: none;
+  width: min(100%, 920px);
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 0 max(18px, env(safe-area-inset-bottom, 0px));
+}
+.nv-puerta-panel .nv-puerta-legal a { color: #c5d0c8; }
+.nv-puerta-panel .nv-puerta-legal a:hover { color: #fff; }
+.nv-puerta-panel .nv-puerta-volver {
+  position: absolute;
+  top: 24px;
+  left: max(20px, calc((100% - 920px) / 2));
+  z-index: 3;
+  border-color: rgb(255 255 255 / 26%);
+  background: #141d1c;
+  color: #f5f7f4;
+}
+.nv-puerta.es-encima { display: flex; flex-direction: column; padding: 0 clamp(20px, 5vw, 72px); }
+body.nv-puerta-encima .nv-puerta-panel .nv-puerta-volver { position: static; align-self: flex-start; margin: 16px 0 0; }
+body.nv-puerta-encima .nv-auth-volver,
+body.nv-puerta-encima .nv-auth-tabs,
+body.nv-puerta-encima .nv-auth-fvc { display: none; }
+body.nv-puerta-encima .nv-puerta-panel .nv-puerta-legal { padding-top: 0; }
+body.nv-puerta-encima .nv-puerta-panel .nv-puerta-legal a { color: #c5d0c8; }
+
+@media (max-width: 560px) {
+  .nv-puerta { box-sizing: border-box; width: 100%; max-width: 100vw; padding: 0 16px; }
+  .nv-puerta-panel,
+  .nv-puerta-formularios { box-sizing: border-box; width: 100%; min-width: 0; }
+  .nv-puerta-presentacion { padding: 18px 1px 9px; }
+  .nv-puerta-firma { font-size: 15px; }
+  .nv-puerta-formularios { justify-content: center; padding: 22px 0 24px; }
+  .nv-auth-volver { min-height: 36px; margin-bottom: 10px; font-size: 13px; }
+  #nvAuthShell { box-sizing: border-box; flex: none; width: min(448px, calc(100vw - 40px)); max-width: 100%; min-width: 0; margin-inline: auto; gap: 19px; padding: 22px 20px 23px; border-radius: 16px; box-shadow: 0 10px 30px rgb(0 0 0 / 12%); }
+  .nv-auth-tab { min-height: 42px; gap: 6px; padding: 7px 5px; font-size: 13px; }
+  .nv-auth-tab svg { width: 15px; height: 15px; }
+  .nv-puerta-panel .nv-auth-shell .nv-puerta-caja,
+  .nv-puerta-panel .nv-auth-shell #nvRegistro:not([hidden]) { gap: 12px; }
+  .nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion { gap: 12px; }
+  .nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion h1,
+  .nv-puerta-panel .nv-auth-shell .nv-puerta-caja h1 { font-size: 22px; }
+  .nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion .nv-captcha { min-height: 68px; }
+  .nv-puerta-panel .nv-auth-shell .nv-campo { min-height: 46px; font-size: 16px; }
+  .nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales:not([hidden]) { gap: 12px; }
+  .nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-puerta-clave-encabezado { flex-wrap: wrap; row-gap: 1px; }
+  .nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-puerta-clave-encabezado a { white-space: normal; }
+  .nv-puerta-panel .nv-auth-shell #nvRegistro .nv-puerta-pie { padding-right: 52px; }
+  .nv-auth-fvc { box-sizing: border-box; width: min(448px, calc(100vw - 32px)); max-width: 100%; margin: 10px auto 14px; }
+  .nv-puerta-panel .nv-puerta-legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 14px; padding-right: 52px; }
+  .nv-puerta-panel .nv-puerta-legal a { min-height: 34px; font-size: 12px; }
+  .nv-puerta-panel .nv-puerta-legal a:last-child { flex-basis: 100%; justify-content: center; }
+}
+@media (max-width: 370px) {
+  .nv-puerta { padding-right: 12px; padding-left: 12px; }
+  .nv-auth-shell { gap: 16px; padding: 19px 16px 20px; }
+  .nv-auth-tab { font-size: 12px; }
+  .nv-puerta-panel .nv-auth-shell .nv-puerta-clave-encabezado { flex-wrap: wrap; }
+  .nv-puerta-panel .nv-auth-shell .nv-puerta-clave-encabezado a { white-space: normal; }
+}
+
+/* Composición recuperada: panel de marca oscuro + formulario claro. */
+.nv-puerta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 0;
+  overflow-x: hidden;
+  background: #f7f6f3;
+  color: var(--nv-tinta);
+}
+.nv-puerta-presentacion {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: auto;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  padding: 30px clamp(26px, 4vw, 64px);
+  overflow: hidden;
+  background: #141d1c;
+  color: #f5f2e9;
+}
+.nv-puerta-firma { font-size: 17px; line-height: 1.4; }
+.nv-puerta-firma span { color: var(--nv-verde); }
+.nv-puerta-relato { display: block; width: min(100%, 520px); margin: auto; text-align: center; }
+.nv-puerta-emblema { display: inline-block; width: 62px; height: 62px; margin: 0 0 20px; filter: brightness(0) invert(1); }
+.nv-puerta-sobretitulo { margin: 0; color: #aeb9b2; font-size: 11px; font-weight: 600; letter-spacing: .18em; }
+.nv-puerta-relato h2 { margin: 14px 0 18px; font: 400 clamp(34px, 3.2vw, 49px)/1.08 Georgia, 'Times New Roman', serif; letter-spacing: -.045em; }
+.nv-puerta-relato > p:not(.nv-puerta-sobretitulo) { max-width: 39ch; margin: 0 auto; color: #c9cec4; font-size: 15px; line-height: 1.7; }
+.nv-puerta-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 28px clamp(20px, 3vw, 48px) 15px;
+  background: #f7f6f3;
+  color: var(--nv-tinta);
+}
+.nv-puerta-formularios {
+  display: flex;
+  flex: 1 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  padding: 18px 0;
+}
+#nvAuthShell { width: min(448px, 100%); max-width: 100%; }
+.nv-auth-shell { gap: 17px; padding: 26px 28px 24px; }
+.nv-auth-volver { display: none; }
+.nv-puerta-panel .nv-auth-shell .nv-puerta-caja { gap: 12px; }
+.nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales:not([hidden]) { gap: 12px; }
+.nv-puerta-panel .nv-auth-shell .nv-auth-intro { gap: 5px; }
+.nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-puerta-clave-encabezado { margin: 0 0 -7px; }
+.nv-puerta-panel .nv-auth-shell .nv-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  color: #6a756e;
+  font-size: 12px;
+  line-height: 1;
+}
+.nv-auth-divider::before,
+.nv-auth-divider::after { content: ""; flex: 1; height: 1px; background: #e4e9e5; }
+.nv-google-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 14px;
+  border: 1px solid #cbd5cf;
+  border-radius: 8px;
+  background: #fff;
+  color: #17211d;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease;
+}
+.nv-google-btn svg,
+.nv-google-btn .nv-google-mark { display: block; flex: none; width: 19px; height: 19px; }
+.nv-google-btn:hover:not(:disabled) { border-color: #98a69e; background: #f8faf8; }
+.nv-google-btn:disabled { opacity: .72; cursor: progress; }
+.nv-google-btn:focus-visible { outline: 3px solid rgb(143 199 46 / 35%); outline-offset: 2px; }
+.nv-auth-fvc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 7px 9px 7px 14px;
+  border: 1px solid var(--nv-verde);
+  border-radius: 9px;
+  background: var(--nv-verde);
+  color: #14200d;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+}
+.nv-auth-fvc span {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #141d1c;
+  color: #fff;
+  font-size: 17px;
+}
+.nv-auth-fvc:hover { background: #9bd43f; border-color: #9bd43f; }
+.nv-auth-fvc:focus-visible { outline: 3px solid #6c9c25; outline-offset: 3px; }
+.nv-puerta-panel .nv-puerta-legal {
+  flex: none;
+  width: min(100%, 448px);
+  max-width: 448px;
+  margin: 0 auto;
+  padding: 0 0 max(12px, env(safe-area-inset-bottom, 0px));
+  justify-content: center;
+}
+.nv-puerta-panel .nv-puerta-legal a { color: #53635b; }
+.nv-puerta-panel .nv-puerta-legal a:hover { color: var(--nv-oscuro); }
+.nv-puerta-panel .nv-puerta-volver { top: 20px; left: 24px; }
+
+@media (max-width: 860px) {
+  .nv-puerta { display: flex; flex-direction: column; min-height: 100vh; min-height: 100svh; }
+  .nv-puerta-presentacion { width: 100%; min-height: 248px; padding: 18px 22px 20px; }
+  .nv-puerta-firma { font-size: 15px; }
+  .nv-puerta-relato { width: min(100%, 440px); margin: auto; }
+  .nv-puerta-emblema { width: 42px; height: 42px; margin-bottom: 8px; }
+  .nv-puerta-sobretitulo { font-size: 10px; }
+  .nv-puerta-relato h2 { margin: 7px 0 9px; font-size: clamp(26px, 5vw, 33px); }
+  .nv-puerta-relato > p:not(.nv-puerta-sobretitulo) { max-width: 43ch; font-size: 13px; line-height: 1.5; }
+  .nv-puerta-panel { flex: 1; min-height: 0; padding: 22px 16px 18px; }
+  .nv-puerta-formularios { flex: 0 0 auto; padding: 0; }
+  .nv-auth-shell { gap: 15px; }
+  .nv-puerta-panel .nv-puerta-legal { gap: 4px 15px; padding-right: 0; }
+  .nv-puerta-panel .nv-puerta-legal a { min-height: 34px; font-size: 12px; }
+}
+@media (max-width: 560px) {
+  .nv-puerta-presentacion { min-height: 238px; padding: 16px 18px 18px; }
+  .nv-puerta-panel { padding: 20px 16px 14px; }
+  .nv-auth-shell { gap: 14px; padding: 21px 19px 20px; border-radius: 16px; box-shadow: 0 10px 30px rgb(0 0 0 / 10%); }
+  .nv-puerta-panel .nv-auth-shell .nv-puerta-caja,
+  .nv-puerta-panel .nv-auth-shell #nvRegistro:not([hidden]) { gap: 11px; }
+  .nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales:not([hidden]) { gap: 11px; }
+  .nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion { gap: 11px; }
+  .nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion h1,
+  .nv-puerta-panel .nv-auth-shell .nv-puerta-caja h1 { font-size: 22px; }
+  .nv-puerta-panel .nv-auth-shell .nv-campo { min-height: 46px; font-size: 16px; }
+  .nv-puerta-panel .nv-auth-shell #nvRegistro .nv-puerta-pie { padding-right: 52px; }
+  .nv-puerta-panel .nv-puerta-legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 12px; }
+  .nv-puerta-panel .nv-puerta-legal a:last-child { flex-basis: 100%; justify-content: center; }
+}
+@media (max-width: 370px) {
+  .nv-puerta-presentacion { min-height: 226px; padding-right: 15px; padding-left: 15px; }
+  .nv-puerta-panel { padding-right: 12px; padding-left: 12px; }
+  .nv-auth-shell { padding-right: 16px; padding-left: 16px; }
+  .nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-puerta-clave-encabezado { flex-wrap: wrap; }
+}
+
+/* Acceso móvil: una tarjeta blanca sobre una superficie oscura continua. */
+.nv-auth-brand { display: none; color: #17211d; font-size: 15px; font-weight: 750; letter-spacing: -.02em; }
+.nv-auth-brand span { color: var(--nv-verde); }
+.nv-registro-google-estado { margin: -5px 0 0; color: #64716b; font-size: 12px; line-height: 1.45; text-align: center; }
+.nv-puerta-relato .nv-auth-fvc { width: min(100%, 420px); margin: 28px auto 0; }
+
+@media (max-width: 860px) {
+  .nv-puerta {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    height: 100svh;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 0 18px;
+    overflow: hidden;
+    background: #141d1c;
+    color: #f5f7f4;
+  }
+  .nv-puerta-presentacion {
+    position: fixed;
+    z-index: 460;
+    left: 12px;
+    right: 84px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    width: auto;
+    height: 59px;
+    min-height: 59px;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    justify-content: center;
+    background: transparent;
+    color: #f5f7f4;
+  }
+  .nv-puerta-firma,
+  .nv-puerta-relato > img,
+  .nv-puerta-relato .nv-puerta-sobretitulo,
+  .nv-puerta-relato h2,
+  .nv-puerta-relato > p:not(.nv-puerta-sobretitulo) { display: none; }
+  .nv-puerta-relato { width: 100%; margin: 0; text-align: left; }
+  .nv-puerta-relato .nv-auth-fvc { width: 100%; min-height: 59px; margin: 0; padding: 8px 9px 8px 13px; font-size: 11px; line-height: 1.25; }
+  body.nv-puerta-encima .nv-puerta-presentacion { display: none; }
+  .nv-puerta-panel {
+    box-sizing: border-box;
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    min-height: 0;
+    padding: max(18px, env(safe-area-inset-top, 0px)) 0 calc(112px + env(safe-area-inset-bottom, 0px));
+    justify-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: transparent;
+    color: #17211d;
+  }
+  .nv-puerta-formularios { flex: 0 0 auto; margin-block: auto; padding: 0; }
+  #nvAuthShell { box-sizing: border-box; width: 100%; max-width: 448px; }
+  .nv-auth-shell {
+    gap: 15px;
+    padding: 26px 26px 24px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 20px 56px rgb(0 0 0 / 24%);
+  }
+  .nv-auth-brand { display: block; margin: 0 0 2px; }
+  .nv-puerta.es-acceso-limpio .nv-auth-brand { display: none; }
+  .nv-puerta-panel .nv-puerta-legal {
+    gap: 5px 18px;
+    width: 100%;
+    max-width: 448px;
+    margin: 20px auto 0;
+    padding: 0;
+    justify-content: center;
+    text-align: center;
+  }
+  .nv-puerta-panel .nv-puerta-legal a { color: #d0d8d3; }
+  .nv-puerta-panel .nv-puerta-legal a:hover { color: #fff; }
+  .nv-puerta-panel .nv-puerta-legal a:last-child { flex-basis: auto; }
+  body.nv-puerta-encima .nv-puerta-panel .nv-puerta-legal { padding-top: 0; }
+}
+
+@media (max-width: 560px) {
+  .nv-puerta,
+  .nv-puerta-panel,
+  .nv-puerta-formularios {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+  }
+  #nvAuthShell {
+    width: min(448px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+    min-width: 0;
+    margin-inline: auto;
+  }
+  .nv-puerta-panel .nv-puerta-legal {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: calc(100vw - 24px);
+    margin-inline: auto;
+    padding-inline: 4px;
+  }
+  .nv-puerta { padding-right: 12px; padding-left: 12px; }
+  .nv-puerta-panel {
+    max-width: 448px;
+    height: auto;
+    padding-top: max(14px, env(safe-area-inset-top, 0px));
+    padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+  }
+  .nv-auth-shell { gap: 13px; padding: 22px 19px 21px; border-radius: 18px; }
+  .nv-auth-brand { font-size: 14px; }
+  .nv-auth-tab { min-height: 44px; gap: 6px; padding: 7px 5px; font-size: 13px; }
+  .nv-auth-tab svg { width: 15px; height: 15px; }
+  .nv-puerta-panel .nv-auth-shell .nv-puerta-caja,
+  .nv-puerta-panel .nv-auth-shell #nvRegistro:not([hidden]) { gap: 11px; }
+  .nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion { gap: 11px; }
+  .nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion h1,
+  .nv-puerta-panel .nv-auth-shell .nv-puerta-caja h1 { font-size: 22px; }
+  .nv-puerta-panel .nv-auth-shell .nv-acceso-verificacion .nv-captcha { min-height: 68px; }
+  .nv-puerta-panel .nv-auth-shell .nv-campo { min-height: 46px; font-size: 16px; }
+  .nv-puerta-panel .nv-auth-shell #nvRegistro .nv-puerta-pie { padding-right: 52px; }
+  .nv-puerta-panel .nv-puerta-legal { gap: 2px 12px; }
+  .nv-puerta-panel .nv-puerta-legal a { min-height: 34px; font-size: 12px; }
+  .wa-fab { display: flex; right: 16px; bottom: calc(44px + env(safe-area-inset-bottom, 0px)); }
+}
+
+@media (max-width: 370px) {
+  .nv-auth-shell { padding-right: 16px; padding-left: 16px; }
+  .nv-puerta-panel .nv-auth-shell .nv-puerta-clave-encabezado { flex-wrap: wrap; }
+}
+
+/* CTA del filtro completo: naranja de marca y ubicado dentro de la tarjeta móvil. */
+.nv-auth-fvc-mobile { display: none; }
+.nv-auth-fvc {
+  border-color: #f3ad22;
+  background: #f3ad22;
+  color: #17211d;
+  box-shadow: 0 5px 14px rgb(156 103 0 / 14%);
+  transition: background-color .16s ease, border-color .16s ease, transform .16s ease;
+}
+.nv-auth-fvc span { color: #f3ad22; }
+.nv-auth-fvc:hover { border-color: #ffbd3b; background: #ffbd3b; transform: translateY(-1px); }
+.nv-auth-fvc:focus-visible { outline: 3px solid rgb(243 173 34 / 42%); outline-offset: 3px; }
+
+@media (max-width: 860px) {
+  .nv-puerta {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100vw;
+    margin: 0;
+    align-items: center;
+  }
+  .nv-puerta-presentacion { display: none; }
+  .nv-puerta-panel,
+  .nv-puerta-formularios { box-sizing: border-box; width: 100%; min-width: 0; }
+  #nvAuthShell { box-sizing: border-box; width: 100%; max-width: 448px; min-width: 0; margin-inline: auto; }
+  #nvAuthShell > .nv-puerta-caja,
+  #nvAuthShell > .nv-auth-tabs,
+  #nvAuthShell > .nv-acceso-verificacion { box-sizing: border-box; width: 100%; min-width: 0; }
+  #nvPuertaTabs[hidden] { display: none !important; }
+  .nv-auth-fvc-desktop { display: none; }
+  .nv-auth-fvc-mobile {
+    display: flex;
+    width: 100%;
+    min-height: 52px;
+    margin: 1px 0 0;
+    padding: 8px 9px 8px 14px;
+    border-radius: 9px;
+    font-size: 12px;
+  }
 }
 
