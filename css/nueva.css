@@ -2324,40 +2324,6 @@ body.nv-puerta-encima .nv-puerta-panel .nv-puerta-legal a { color: #c5d0c8; }
 .nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales:not([hidden]) { gap: 12px; }
 .nv-puerta-panel .nv-auth-shell .nv-auth-intro { gap: 5px; }
 .nv-puerta-panel .nv-auth-shell #nvAccesoCredenciales .nv-puerta-clave-encabezado { margin: 0 0 -7px; }
-.nv-puerta-panel .nv-auth-shell .nv-auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  color: #6a756e;
-  font-size: 12px;
-  line-height: 1;
-}
-.nv-auth-divider::before,
-.nv-auth-divider::after { content: ""; flex: 1; height: 1px; background: #e4e9e5; }
-.nv-google-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 46px;
-  padding: 8px 14px;
-  border: 1px solid #cbd5cf;
-  border-radius: 8px;
-  background: #fff;
-  color: #17211d;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color .16s ease, border-color .16s ease;
-}
-.nv-google-btn svg,
-.nv-google-btn .nv-google-mark { display: block; flex: none; width: 19px; height: 19px; }
-.nv-google-btn:hover:not(:disabled) { border-color: #98a69e; background: #f8faf8; }
-.nv-google-btn:disabled { opacity: .72; cursor: progress; }
-.nv-google-btn:focus-visible { outline: 3px solid rgb(143 199 46 / 35%); outline-offset: 2px; }
 .nv-auth-fvc {
   display: inline-flex;
   align-items: center;
@@ -2501,7 +2467,15 @@ body.nv-puerta-encima .nv-puerta-panel .nv-puerta-legal a { color: #c5d0c8; }
     background: transparent;
     color: #17211d;
   }
-  .nv-puerta-formularios { flex: 0 0 auto; margin-block: auto; padding: 0; }
+  .nv-puerta-formularios {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-block: auto;
+    padding: 0;
+  }
   #nvAuthShell { box-sizing: border-box; width: 100%; max-width: 448px; }
   .nv-auth-shell {
     gap: 15px;
@@ -2578,7 +2552,7 @@ body.nv-puerta-encima .nv-puerta-panel .nv-puerta-legal a { color: #c5d0c8; }
   .nv-puerta-panel .nv-auth-shell .nv-puerta-clave-encabezado { flex-wrap: wrap; }
 }
 
-/* CTA del filtro completo: naranja de marca y ubicado dentro de la tarjeta móvil. */
+/* CTA móvil separado de la tarjeta de acceso y oculto durante la verificación. */
 .nv-auth-fvc-mobile { display: none; }
 .nv-auth-fvc {
   border-color: #f3ad22;
@@ -2609,13 +2583,14 @@ body.nv-puerta-encima .nv-puerta-panel .nv-puerta-legal a { color: #c5d0c8; }
   #nvPuertaTabs[hidden] { display: none !important; }
   .nv-auth-fvc-desktop { display: none; }
   .nv-auth-fvc-mobile {
-    display: flex;
-    width: 100%;
+    display: none;
+    width: min(100%, 448px);
     min-height: 52px;
-    margin: 1px 0 0;
+    margin: 0;
     padding: 8px 9px 8px 14px;
     border-radius: 9px;
     font-size: 12px;
   }
+  .nv-puerta.es-acceso-limpio .nv-auth-fvc-mobile { display: flex; }
 }
 

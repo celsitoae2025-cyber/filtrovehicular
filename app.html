@@ -62,7 +62,7 @@
 <!-- La ventana de carteles y el aviso a clientes: los mismos de siempre. -->
 <link rel="stylesheet" href="css/carteles.css?v=3">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=17">
-<link rel="stylesheet" href="css/nueva.css?v=108">
+<link rel="stylesheet" href="css/nueva.css?v=109">
 </head>
 <body class="nv-body">
 
@@ -159,12 +159,6 @@
       <label class="nv-marcar"><input type="checkbox" name="remember" checked> Mantener la sesión abierta</label>
       <p class="nv-error" id="nvAccesoError" role="alert" hidden></p>
       <button class="nv-cta nv-cta-bloque" type="submit" id="nvAccesoBtn"><span>Iniciar sesión</span></button>
-      <div class="nv-auth-divider" aria-hidden="true"><span>o también</span></div>
-      <button class="nv-google-btn" id="nvGoogleLoginBtn" type="button" data-google-paso="acceso" disabled title="Completa la verificación para continuar con Google">
-        <img class="nv-google-mark" src="icons/google-g.svg" alt="" aria-hidden="true">
-        <span>Continuar con Google</span>
-      </button>
-      <p class="nv-error" id="nvGoogleLoginError" role="alert" hidden></p>
       <div class="nv-puerta-pie" id="nvAccesoPie">
         <span>¿Aún no tienes cuenta?</span><a href="#" data-paso-ir="registro">Créala gratis</a>
       </div>
@@ -197,12 +191,6 @@
     <label class="nv-marcar"><input type="checkbox" name="terms"> <span>He leído y acepto las condiciones de uso</span></label>
     <p class="nv-error" id="nvRegistroError" role="alert" hidden></p>
     <button class="nv-cta nv-cta-bloque" type="submit" id="nvRegistroBtn"><span>Crear cuenta</span></button>
-    <div class="nv-auth-divider" aria-hidden="true"><span>o también</span></div>
-    <button class="nv-google-btn" id="nvGoogleRegistroBtn" type="button" data-google-paso="registro" disabled title="Completa la verificación para continuar con Google">
-      <img class="nv-google-mark" src="icons/google-g.svg" alt="" aria-hidden="true">
-      <span>Continuar con Google</span>
-    </button>
-    <p class="nv-error" id="nvGoogleRegistroError" role="alert" hidden></p>
     <div class="nv-puerta-pie">
       <span>¿Ya tienes cuenta?</span>
       <a href="#" data-paso-ir="acceso">Entrar</a>
@@ -260,15 +248,15 @@
       <a href="#" data-paso-ir="olvido">Otro correo</a>
     </div>
   </form>
+    </div>
     <button class="nv-auth-fvc nv-auth-fvc-mobile" id="fvcOpenMobile" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo">SOLICITA TU FILTRO VEHICULAR COMPLETO <span aria-hidden="true">↗</span></button>
     </div>
-    </div>
 
-  <nav class="nv-puerta-legal" aria-label="Información legal">
+  <footer class="nv-puerta-legal" aria-label="Información legal">
     <a href="#" data-modal="terms">Términos y condiciones</a>
     <a href="#" data-modal="cookies">Política de cookies</a>
     <a id="nvAyudaAcceso" target="_blank" rel="noopener noreferrer">Ayuda por WhatsApp</a>
-  </nav>
+  </footer>
   </div>
 </div>
 
@@ -746,10 +734,10 @@
 <script src="js/shared/device-fingerprint.js?v=1"></script>
 <script src="js/shared/email-validator.js?v=1"></script>
 <script src="js/shared/mp-reconciliation.js?v=1"></script>
-<script src="js/shared/auth.js?v=26"></script>
+<script src="js/shared/auth.js?v=27"></script>
 <script src="js/shared/turnstile.js?v=5"></script>
-<script src="js/nueva/nucleo.js?v=19"></script>
-<script src="js/nueva/acceso.js?v=16"></script>
+<script src="js/nueva/nucleo.js?v=20"></script>
+<script src="js/nueva/acceso.js?v=17"></script>
 <script src="js/overlays.js?v=2"></script>
 <script>
   // El retorno de verificación/restablecimiento conserva su arranque habitual

@@ -272,7 +272,6 @@
   /* ── Acceso ───────────────────────────────────────────────── */
 
   var MENSAJES = [
-    [/provider.*not enabled|unsupported provider|provider is not enabled/i, 'El acceso con Google todavía no está habilitado en la configuración de autenticación.'],
     [/invalid login credentials/i, 'El correo o la contraseña no son correctos.'],
     [/email not confirmed/i, 'Tu cuenta aún no está activada. Abre el correo que te mandamos y pulsa «Activa tu cuenta».'],
     [/captcha/i, 'No se pudo comprobar que no eres un robot. Vuelve a intentarlo.'],
@@ -356,48 +355,6 @@
       }
     });
 
-    document.querySelectorAll('#nvAuthShell .nv-google-btn').forEach(function (googleBtn) {
-      if (googleBtn.dataset.conectado) return;
-      googleBtn.dataset.conectado = '1';
-      googleBtn.addEventListener('click', async function () {
-        var paso = googleBtn.dataset.googlePaso === 'registro' ? 'registro' : 'acceso';
-        var err = $(paso === 'registro' ? 'nvGoogleRegistroError' : 'nvGoogleLoginError');
-        var etiqueta = googleBtn.querySelector('span');
-        if (err) { err.hidden = true; err.textContent = ''; }
-        googleBtn.disabled = true;
-        googleBtn.setAttribute('aria-busy', 'true');
-        if (etiqueta) etiqueta.textContent = 'Conectando con Google…';
-        try {
-          var token = C.Turnstile ? await C.Turnstile.getToken('nvTsAcceso') : null;
-          if (!token || !NV.accesoVerificado) {
-            if (C.Turnstile) C.Turnstile.reset('nvTsAcceso');
-            if (NV.prepararVerificacionAcceso) {
-              NV.prepararVerificacionAcceso('Completa la verificación de seguridad para continuar con Google.', paso);
-              return;
-            }
-            throw new Error('captcha verification required');
-          }
-          var accesoForm = $('nvAcceso');
-          var recordar = paso === 'acceso' && !!(accesoForm && accesoForm.remember.checked);
-          var res = await C.Auth.signInWithGoogle(recordar);
-          if (res.error) throw res.error;
-          if (res.data && res.data.url) location.assign(res.data.url);
-          else throw new Error('Google sign-in did not return a redirect URL');
-        } catch (ex) {
-          if (/captcha/i.test((ex && ex.message) || '') && NV.prepararVerificacionAcceso) {
-            NV.prepararVerificacionAcceso('Completa la verificación de seguridad para continuar con Google.', paso);
-          } else {
-            if (err) {
-              err.textContent = traducir(ex && ex.message);
-              err.hidden = false;
-            }
-            googleBtn.disabled = false;
-            googleBtn.removeAttribute('aria-busy');
-            if (etiqueta) etiqueta.textContent = 'Continuar con Google';
-          }
-        }
-      });
-    });
   }
 
 

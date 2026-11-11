@@ -27,16 +27,6 @@
   var pasoTrasVerificacion = 'acceso';
   var verificacionAvanzando = false;
 
-  function actualizarGoogleButtons(habilitado) {
-    document.querySelectorAll('#nvAuthShell .nv-google-btn').forEach(function (boton) {
-      boton.disabled = !habilitado;
-      boton.removeAttribute('aria-busy');
-      var etiqueta = boton.querySelector('span');
-      if (etiqueta) etiqueta.textContent = 'Continuar con Google';
-      boton.title = habilitado ? '' : 'Completa la verificación para continuar con Google';
-    });
-  }
-
   function estadoVerificacion(texto) {
     var estado = $('nvAccesoVerificacionEstado');
     if (estado && texto) estado.textContent = texto;
@@ -68,7 +58,6 @@
     verificacion.hidden = false;
     credenciales.hidden = true;
     if (reintentar) reintentar.hidden = true;
-    actualizarGoogleButtons(false);
     actualizarPestanas('acceso', false);
     $('nvPuerta').classList.remove('es-acceso-limpio');
     estadoVerificacion(mensaje || 'Completa la verificación para continuar.');
@@ -92,7 +81,6 @@
       verificacionAvanzando = false;
       var siguiente = pasoTrasVerificacion;
       pasoTrasVerificacion = 'acceso';
-      actualizarGoogleButtons(!encima);
       if (siguiente === 'registro' && !encima) {
         NV.verPuerta('registro');
       } else {
@@ -135,7 +123,7 @@
   });
   NV.prepararVerificacionAcceso = prepararVerificacionAcceso;
 
-  /* La verificación de entrada también sirve para crear cuenta y Google. */
+  /* La verificación de entrada habilita el acceso y el registro. */
   var CAPTCHA = {
     acceso: 'nvTsAcceso',
     verificar: 'nvTsReenvio',
@@ -229,13 +217,6 @@
 
     var mostrarTabs = !encima && accesoVerificado && (paso === 'registro' || paso === 'acceso');
     actualizarPestanas(paso, mostrarTabs);
-    actualizarGoogleButtons(mostrarTabs);
-    if (paso === 'registro' || paso === 'acceso') {
-      ['nvGoogleLoginError', 'nvGoogleRegistroError'].forEach(function (id) {
-        var googleError = $(id);
-        if (googleError) { googleError.hidden = true; googleError.textContent = ''; }
-      });
-    }
     if (C.Turnstile && CAPTCHA[paso] && (paso !== 'acceso' || !accesoVerificado)) C.Turnstile.render(CAPTCHA[paso]);
     if (puerta) puerta.scrollTop = 0;
     window.scrollTo(0, 0);
@@ -313,7 +294,6 @@
         if (res.error) throw res.error;
         accesoVerificado = false;
         NV.accesoVerificado = false;
-        actualizarGoogleButtons(false);
         correoAlta = correo;
         $('nvVerificarCorreo').textContent = correo;
         form.reset();
