@@ -49,18 +49,13 @@
         '<div class="mnt-status"><span class="mnt-status-dot" aria-hidden="true"></span>' +
           '<span>Mantenimiento activo</span></div>' +
         '<div class="mnt-icon" aria-hidden="true">' +
-          '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" ' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" ' +
                'stroke-linecap="round" stroke-linejoin="round">' +
-            '<path d="M28.2 10.2a10.7 10.7 0 0 0-13.9 13.9L7.5 31a4.6 4.6 0 0 0 6.5 6.5l6.9-6.8a10.7 10.7 0 0 0 13.9-13.9l-6.1 6.1-5.6-5.6 5.1-7.1Z"/>' +
-            '<path d="m10.6 33.4 4 4"/>' +
+            '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94L14.7 6.3Z"/>' +
           '</svg>' +
         '</div>' +
         '<h1 class="mnt-title" id="mntTitle">Consultas temporalmente pausadas</h1>' +
         '<p class="mnt-text" id="mntText">' + esc(mensaje || MENSAJE_POR_DEFECTO) + '</p>' +
-        '<div class="mnt-note">' +
-          '<span class="mnt-note-icon" aria-hidden="true">i</span>' +
-          '<span>Vuelve a comprobar aquí más tarde para saber si el servicio ya está disponible.</span>' +
-        '</div>' +
         '<button type="button" class="mnt-retry" id="mntRetry">' +
           '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
             '<path d="M16.2 8a6.5 6.5 0 0 0-11.6-2L3 8m0 0V4.5M3 8h3.5M3.8 12a6.5 6.5 0 0 0 11.6 2L17 12m0 0v3.5M17 12h-3.5" ' +
@@ -68,7 +63,7 @@
           '</svg>' +
           '<span>Volver a comprobar</span>' +
         '</button>' +
-        '<p class="mnt-footer">Gracias por tu comprensión.</p>' +
+        '<p class="mnt-footer">Esta pantalla comprueba la disponibilidad automáticamente.</p>' +
       '</div>';
     document.body.appendChild(el);
     document.documentElement.classList.add('mnt-locked');
