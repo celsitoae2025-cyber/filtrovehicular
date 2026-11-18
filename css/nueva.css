@@ -1150,7 +1150,7 @@ body.nv-puerta-encima { overflow: hidden; }
   .nv-body .rep-pdf-foto { margin-top: 2px; padding-top: 7px; }
   .nv-body .rep-pdf-sin-archivo { margin: 12px 12px 20px; padding: 16px; }
 }
-.nv-body .nv-pantalla.tiene-resultado #nvConsultaSeleccion { display: none !important; }
+/* La búsqueda permanece disponible encima de su resultado. */
 .nv-body .nv-pantalla:not(.tiene-resultado) .cr-nueva { display: none; }
 .nv-body .nv-pantalla.tiene-resultado .result-panel .status-chip { display: none; }
 .nv-body .nv-pantalla .cr-nueva { min-height: 44px; font-size: 14px; }

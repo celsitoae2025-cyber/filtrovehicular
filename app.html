@@ -65,10 +65,10 @@
 <!-- La ventana de carteles y el aviso a clientes: los mismos de siempre. -->
 <link rel="stylesheet" href="css/carteles.css?v=5">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=19">
-<link rel="stylesheet" href="css/nueva.css?v=116">
+<link rel="stylesheet" href="css/nueva.css?v=117">
 <link rel="stylesheet" href="css/puerta-entrada.css?v=10">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
-<link rel="stylesheet" href="css/interfaz-poppins.css?v=6">
+<link rel="stylesheet" href="css/interfaz-poppins.css?v=7">
 </head>
 <body class="nv-body">
 
@@ -430,8 +430,11 @@
               </button>
               <div class="combo-panel" role="listbox" id="filterComboPanel"></div>
             </div>
-            <input class="nv-campo nv-dato" id="filter-input" type="text" autocomplete="off" spellcheck="false" placeholder="Dato" aria-label="Dato a consultar">
-            <button class="nv-cta nv-consultar" id="filter-consultar" type="button"><span>Consultar</span></button>
+            <div class="nv-dato-campo">
+              <label class="nv-dato-etiqueta" id="nvDatoEtiqueta" for="filter-input">Dato a consultar</label>
+              <input class="nv-campo nv-dato" id="filter-input" type="text" autocomplete="off" spellcheck="false" enterkeyhint="search" placeholder="Dato" aria-label="Dato a consultar">
+            </div>
+            <button class="nv-cta nv-consultar" id="filter-consultar" type="button"><svg aria-hidden="true"><use href="#i-consultar"/></svg><span>Buscar</span></button>
             <span id="filter-desc" hidden></span>
           </div>
         </section>
@@ -804,7 +807,7 @@
 <script src="js/modules/reporte-veredicto.js?v=4"></script>
 <script src="js/modules/metapla-report.js?v=32"></script>
 <script src="js/modules/metapla-view.js?v=7"></script>
-<script src="js/modules/filter.js?v=65"></script>
+<script src="js/modules/filter.js?v=66"></script>
 <script src="js/modules/combo-buscador.js?v=5"></script>
 
 <!-- El Duplicado CITV: la hoja, el dibujante del PDF y el trámite. -->
@@ -813,7 +816,7 @@
 <script src="js/modules/citv-aviso.js?v=9"></script>
 
 <script src="js/shared/vehicles.js?v=1"></script>
-<script src="js/nueva/pantallas.js?v=23"></script>
+<script src="js/nueva/pantallas.js?v=24"></script>
 <script src="js/nueva/nombres.js?v=1"></script>
 <script src="js/nueva/servicios.js?v=9"></script>
 

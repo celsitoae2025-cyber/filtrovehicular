@@ -13,6 +13,8 @@
   var catalog = [];
   var currentConsulta = null;
   var catalogReadyPromise = null;
+  var consultaEnCurso = false;
+  var revisionBusqueda = 0;
 
   /* ── Antispam ──────────────────────────────────────────────────────
      Dos frenos distintos y complementarios:
@@ -766,6 +768,7 @@
 
   /* â”€â”€ Selección de consulta â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   function setConsulta(c) {
+    revisionBusqueda++;
     revokeActiveBlobUrls();
     currentConsulta = c;
     $('filterComboText').textContent = c.nombre;
@@ -780,6 +783,8 @@
 
     var input = $('filter-input');
     if (input) {
+      var etiqueta = $('nvDatoEtiqueta');
+      if (etiqueta) etiqueta.textContent = ({ placa: 'Placa del vehículo', dni: 'DNI', ruc: 'RUC', telefono: 'Teléfono', correo: 'Correo electrónico', nombre: 'Nombre', ce: 'Carné de extranjería' })[c.tipo_dato] || 'Dato a consultar';
       input.placeholder = placeholderFor(c.tipo_dato);
       input.setAttribute('aria-label', input.placeholder);
       input.maxLength   = maxLenFor(c.tipo_dato);
@@ -825,6 +830,8 @@
 
   /* â”€â”€ Estado de carga â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   function mostrarCargando() {
+    marcarConResultado(false);
+    revokeActiveBlobUrls();
     var body  = $('filter-result-body');
     var empty = $('filter-empty');
     var rp = $('filter-result');
@@ -848,6 +855,9 @@
   }
 
   function volverEstadoInicial() {
+    marcarConResultado(false);
+    var panel = $('filter-result');
+    if (panel) panel.hidden = true;
     var body  = $('filter-result-body');
     var empty = $('filter-empty');
     if (body) { body.hidden = true; body.innerHTML = ''; }
@@ -862,7 +872,7 @@
 
   /* â”€â”€ Ejecución de consulta â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   async function ejecutar() {
-    if (!currentConsulta) return;
+    if (!currentConsulta || consultaEnCurso) return;
     var input = $('filter-input');
     var valor = input.value.trim();
     if (esMetapla(currentConsulta)) valor = valor.toUpperCase();
@@ -907,13 +917,29 @@
       }
     }
 
-    var user = await Consultia.Auth.getUser();
+    /* También bloquea Enter repetido durante la lectura de la sesión,
+       antes de que el botón pueda pasar al estado deshabilitado. */
+    consultaEnCurso = true;
+    var consultaSolicitada = currentConsulta;
+    var revisionSolicitada = revisionBusqueda;
+    var user;
+    try { user = await Consultia.Auth.getUser(); }
+    catch (e) {
+      consultaEnCurso = false;
+      if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo comprobar la sesión', message: 'Revisa tu conexión e inténtalo de nuevo.' });
+      return;
+    }
     if (!user) {
+      consultaEnCurso = false;
       if (Consultia.AuthModals) Consultia.AuthModals.openLogin();
       return;
     }
+    if (revisionSolicitada !== revisionBusqueda) { consultaEnCurso = false; return; }
 
     var btn = $('filter-consultar');
+    var controles = ['filter-input', 'nvNmNombres', 'nvNmApPat', 'nvNmApMat', 'nvCambiarConsulta'].map($).filter(Boolean);
+    var estados = controles.map(function (el) { return el.disabled; });
+    controles.forEach(function (el) { el.disabled = true; });
     btn.disabled = true;
     btn.dataset.orig = btn.dataset.orig || btn.innerHTML;
     /* Se fija el ancho ANTES de cambiar el texto: «Consultando…» es
@@ -927,33 +953,36 @@
     mostrarCargando();
 
     try {
-      var resp = await Consultia.ConsultaRunner.ejecutarConsultaConCobro(user.id, currentConsulta, valor);
-      renderResultado(resp, valor);
+      var resp = await Consultia.ConsultaRunner.ejecutarConsultaConCobro(user.id, consultaSolicitada, valor);
+      if (revisionSolicitada === revisionBusqueda) renderResultado(resp, valor);
+      else if (Consultia.toast) Consultia.toast({ type: 'info', title: 'Consulta finalizada', message: 'Puedes revisar la consulta anterior en tu historial.' });
       // La información ya se entregó: arranca el enfriamiento de su comando.
       if (llaveFrio) enfriamientoHasta[llaveFrio] = Date.now() + ENFRIAMIENTO_MS[llaveFrio];
-      if (Consultia.SearchHistory) Consultia.SearchHistory.add(valor, currentConsulta && currentConsulta.categoria);
+      if (Consultia.SearchHistory) Consultia.SearchHistory.add(valor, consultaSolicitada.categoria);
       if (Consultia.Favorites && Consultia.Favorites.injectStar) {
         var _rp = document.getElementById('filter-result-panel');
-        if (_rp) Consultia.Favorites.injectStar(_rp, valor, currentConsulta && currentConsulta.categoria);
+        if (_rp && revisionSolicitada === revisionBusqueda) Consultia.Favorites.injectStar(_rp, valor, consultaSolicitada.categoria);
       }
       if (Consultia.renderDashboardStats) Consultia.renderDashboardStats();
       if (Consultia.AuthUI && Consultia.AuthUI.refresh) Consultia.AuthUI.refresh();
       if (Consultia.Subscription && Consultia.Subscription.refresh) Consultia.Subscription.refresh();
     } catch (e) {
-      volverEstadoInicial();
+      if (revisionSolicitada === revisionBusqueda) volverEstadoInicial();
       if (e && e.code === 'CANCELLED') return;
       console.error('Error ejecutando consulta filter:', e);
       if (e && e.message && /cr[eé]ditos?\s+insuficientes?/i.test(e.message)) {
         if (Consultia.SubscriptionGate && Consultia.SubscriptionGate.openNoCreditsModal) {
-          Consultia.SubscriptionGate.openNoCreditsModal(currentConsulta);
+          Consultia.SubscriptionGate.openNoCreditsModal(consultaSolicitada);
         } else if (Consultia.toast) {
-          Consultia.toast({ type: 'warning', title: 'Saldo insuficiente', message: 'Necesitas ' + currentConsulta.precio_venta + ' créditos.' });
+          Consultia.toast({ type: 'warning', title: 'Saldo insuficiente', message: 'Necesitas ' + consultaSolicitada.precio_venta + ' créditos.' });
         }
       } else {
         var errTitle = (e && e.code === 'EMPTY_RESPONSE') ? 'Búsqueda sin resultados' : 'No se pudo consultar';
         if (Consultia.toast) Consultia.toast({ type: 'error', title: errTitle, message: (e && e.message) || 'Intenta de nuevo.' });
       }
     } finally {
+      consultaEnCurso = false;
+      controles.forEach(function (el, i) { el.disabled = estados[i]; });
       btn.disabled = false;
       btn.classList.remove('is-cargando');
       btn.removeAttribute('aria-busy');
@@ -1293,7 +1322,9 @@
     } else H.salirModoResultado(vista);
   }
 
-  function volverAlFormulario() {
+  function volverAlFormulario(opciones) {
+    revisionBusqueda++;
+    opciones = opciones || {};
     marcarConResultado(false);
     revokeActiveBlobUrls();
     var body = $('filter-result-body');
@@ -1304,6 +1335,19 @@
     if (rp) rp.hidden = true;
     var empty = $('filter-empty');
     if (empty) empty.hidden = false;
+    if (opciones.limpiar !== false) {
+      var input = $('filter-input');
+      if (input) input.value = '';
+      ['nvNmNombres', 'nvNmApPat', 'nvNmApMat'].forEach(function (id) { var el = $(id); if (el) el.value = ''; });
+    }
+    if (opciones.enfocar !== false) {
+      var nombres = $('nvNmCampos');
+      var campo = nombres && !nombres.hidden ? $('nvNmNombres') : $('filter-input');
+      if (campo) campo.focus({ preventScroll: true });
+      var seleccion = $('nvConsultaSeleccion');
+      if (seleccion) seleccion.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+    if (Consultia.NV && Consultia.NV.actualizarInicio) Consultia.NV.actualizarInicio();
   }
 
   /* â”€â”€ API pública â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -1346,7 +1390,9 @@
         var limpio = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
         if (input.value !== limpio) input.value = limpio;
       });
-      input.addEventListener('keydown', function (e) { if (e.key === 'Enter') ejecutar(); });
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); if (btn && !btn.disabled) btn.click(); }
+      });
     }
 
     catalogReadyPromise = cargarCatalogo();
@@ -1373,6 +1419,7 @@
 
   // API pública para otros módulos (ej. CTAs) que necesiten leer el catálogo.
   Consultia.FilterView = {
+    resetResult: function () { volverAlFormulario({ limpiar: false, enfocar: false }); },
     getCatalog: function () { return catalog; },
     whenReady: function () { return catalogReadyPromise || Promise.resolve(); },
   };

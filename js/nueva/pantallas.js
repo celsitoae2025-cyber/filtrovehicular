@@ -154,6 +154,7 @@
 
   /* Atrás desde una consulta elegida: se vuelve al catálogo, no fuera. */
   function volverAlCatalogo() {
+    if (C.FilterView && C.FilterView.resetResult) C.FilterView.resetResult();
     var caja = $('nvBuscador');
     if (caja) caja.hidden = true;
     $('filter-input').value = '';
