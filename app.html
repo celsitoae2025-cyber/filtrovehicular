@@ -68,7 +68,7 @@
 <link rel="stylesheet" href="css/nueva.css?v=117">
 <link rel="stylesheet" href="css/puerta-entrada.css?v=10">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
-<link rel="stylesheet" href="css/interfaz-poppins.css?v=7">
+<link rel="stylesheet" href="css/interfaz-poppins.css?v=8">
 </head>
 <body class="nv-body">
 
@@ -331,14 +331,19 @@
       <div class="nv-barra-acciones">
         <a class="nv-comprar" href="#pagos" aria-label="Comprar"><svg class="nv-comprar-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 13h.01M15 13h.01"/></svg><span>Comprar</span></a>
         <div class="nv-yo">
-          <button class="nv-avatar" id="nvAvatar" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="nvYoMenu" aria-label="Menú de la cuenta">—</button>
-          <div class="nv-yo-menu" id="nvYoMenu" role="menu" hidden>
-            <div class="nv-yo-cab"><strong id="nvYoNombre">—</strong><span id="nvYoCorreo">—</span></div>
+          <button class="nv-avatar" id="nvAvatar" data-avatar-iniciales type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="nvYoMenu" aria-label="Menú de la cuenta">—</button>
+          <div class="nv-yo-menu" id="nvYoMenu" role="menu" aria-label="Opciones de tu cuenta" hidden>
+            <div class="nv-yo-cab" role="presentation">
+              <span class="nv-yo-avatar" data-avatar-iniciales aria-hidden="true">—</span>
+              <div class="nv-yo-identidad">
+                <strong id="nvYoNombre">Mi cuenta</strong>
+                <span class="nv-yo-correo" id="nvYoCorreo"></span>
+                <span class="nv-yo-rol" id="nvYoRol" data-solo-admin hidden>Administrador</span>
+              </div>
+            </div>
             <a class="nv-yo-saldo" href="#pagos" role="menuitem">
-              <span>Saldo</span>
-              <strong data-saldo>—</strong>
-              <em data-saldo-uni>créditos</em>
-              <b>Recargar</b>
+              <span class="nv-yo-saldo-datos"><span>Saldo disponible</span><span class="nv-yo-saldo-cifra"><strong data-saldo>—</strong><em data-saldo-uni>créditos</em></span></span>
+              <span class="nv-yo-saldo-accion"><span id="nvYoAccionSaldo">Recargar</span><svg aria-hidden="true"><use href="#i-ir"/></svg></span>
             </a>
             <a href="#historial" role="menuitem"><svg><use href="#i-historial"/></svg><span>Historial</span></a>
             <a href="#vehiculos" role="menuitem"><svg><use href="#i-filter"/></svg><span>Mis vehículos</span></a>
@@ -629,7 +634,7 @@
       <!-- ═══ CUENTA ═══ -->
       <section class="nv-pantalla" data-pantalla="cuenta" hidden>
         <div class="nv-perfil">
-          <span class="nv-avatar nv-avatar-xl" id="nvAvatarGrande">—</span>
+          <span class="nv-avatar nv-avatar-xl" id="nvAvatarGrande" data-avatar-iniciales>—</span>
           <div><strong id="nvNombre">—</strong><span id="nvCorreo">—</span></div>
           <span class="nv-plan" id="nvPlan"></span>
         </div>
@@ -774,7 +779,7 @@
 <script src="js/shared/mp-reconciliation.js?v=1"></script>
 <script src="js/shared/auth.js?v=28"></script>
 <script src="js/shared/turnstile.js?v=6"></script>
-<script src="js/nueva/nucleo.js?v=22"></script>
+<script src="js/nueva/nucleo.js?v=23"></script>
 <script src="js/nueva/acceso.js?v=20"></script>
 <script src="js/overlays.js?v=2"></script>
 <script>
@@ -818,7 +823,7 @@
 <script src="js/shared/vehicles.js?v=1"></script>
 <script src="js/nueva/pantallas.js?v=24"></script>
 <script src="js/nueva/nombres.js?v=1"></script>
-<script src="js/nueva/servicios.js?v=9"></script>
+<script src="js/nueva/servicios.js?v=10"></script>
 
 <!-- Lo que corre por su cuenta, igual que en la plataforma de siempre:
      el aviso de pago acreditado, el soporte por WhatsApp, los carteles,

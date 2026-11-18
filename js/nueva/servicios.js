@@ -256,7 +256,7 @@
         modoEditar(false);
         rellenarDatos();
         var n = $('nvNombre'); if (n) n.textContent = nombre;
-        var yo = $('nvYoNombre'); if (yo) yo.textContent = nombre;
+        if (NV.pintarIdentidad) NV.pintarIdentidad();
         C.toast({ type: 'success', title: 'Datos guardados' });
       } catch (ex) {
         console.error('[cuenta]', ex);

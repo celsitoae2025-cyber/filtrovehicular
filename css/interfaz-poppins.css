@@ -259,6 +259,17 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   font-weight: 600;
 }
 .nv-body .nv-avatar:hover { background: #e5e5e5; }
+.nv-body #nvAvatar {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--ui-ink);
+  background: var(--ui-ink);
+  color: var(--ui-surface);
+  font-size: var(--fv-tipo-auxiliar) !important;
+}
+.nv-body #nvAvatar:hover { background: var(--ui-ink-2); }
+.nv-body #nvAvatar.es-abierto { background: var(--ui-soft); color: var(--ui-ink); }
 .nv-body .nv-contenido {
   width: 100%;
   max-width: 1500px;
@@ -620,6 +631,91 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
 .nv-body .nv-fvc-dialogo::backdrop { background: rgb(0 0 0 / 45%); }
 .nv-body .nv-avisos > * { border: 1px solid var(--ui-line); border-radius: 8px; background: #ffffff; }
 
+/* Cuenta: identidad legible, saldo independiente y accesos del mismo alto. */
+.nv-body .nv-yo-menu {
+  width: 320px;
+  max-width: calc(100vw - 24px);
+  max-height: min(520px, calc(100dvh - 100px));
+  padding: 8px;
+  gap: 2px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.nv-body .nv-yo-cab {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  margin: 0 0 5px;
+  padding: 12px 8px 16px;
+  border-bottom: 1px solid var(--ui-line-soft);
+}
+.nv-body .nv-yo-cab .nv-yo-avatar {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--ui-ink);
+  color: var(--ui-surface);
+  font-size: var(--fv-tipo-base) !important;
+  font-weight: 600;
+}
+.nv-body .nv-yo-identidad { display: grid; min-width: 0; gap: 4px; }
+.nv-body .nv-yo-cab .nv-yo-identidad > :is(strong, span) {
+  max-width: 100%;
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.nv-body .nv-yo-identidad > strong { color: var(--ui-ink); font-size: var(--fv-tipo-base) !important; }
+.nv-body .nv-yo-identidad .nv-yo-correo { color: var(--ui-muted); font-size: var(--fv-tipo-auxiliar) !important; }
+.nv-body .nv-yo-identidad .nv-yo-rol {
+  justify-self: start;
+  padding: 2px 7px;
+  border: 1px solid var(--ui-line-soft);
+  border-radius: 5px;
+  background: var(--ui-soft);
+  color: var(--ui-ink-2);
+  font-size: var(--fv-tipo-auxiliar) !important;
+}
+.nv-body .nv-yo-menu .nv-yo-saldo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 3px 0 7px;
+  padding: 12px;
+  border: 1px solid var(--ui-line-soft);
+  border-radius: 8px;
+  background: var(--ui-soft) !important;
+  color: var(--ui-ink);
+}
+.nv-body .nv-yo-saldo .nv-yo-saldo-datos { display: grid; gap: 4px; min-width: 0; color: var(--ui-muted); font-size: var(--fv-tipo-auxiliar) !important; }
+.nv-body .nv-yo-saldo-cifra { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; }
+.nv-body .nv-yo-saldo .nv-yo-saldo-cifra strong { color: var(--ui-ink); font-size: var(--fv-tipo-base) !important; line-height: 1.4; }
+.nv-body .nv-yo-saldo .nv-yo-saldo-cifra em { color: var(--ui-muted); font-size: var(--fv-tipo-auxiliar) !important; }
+.nv-body .nv-yo-saldo .nv-yo-saldo-accion { display: inline-flex; flex: none; align-items: center; gap: 5px; color: var(--ui-ink); font-size: var(--fv-tipo-auxiliar) !important; font-weight: 500; }
+.nv-body .nv-yo-saldo .nv-yo-saldo-accion svg { width: 16px; height: 16px; }
+.nv-body .nv-yo-menu .nv-yo-saldo:hover { border-color: var(--ui-line); }
+.nv-body .nv-yo-menu > :is(a:not(.nv-yo-saldo), button) {
+  min-height: 44px;
+  height: auto;
+  gap: 10px;
+  margin: 0;
+  padding: 10px;
+  border: 0;
+  border-radius: 7px;
+  color: var(--ui-ink-2);
+  font-size: var(--fv-tipo-base) !important;
+  line-height: 1.5;
+}
+.nv-body .nv-yo-menu > :is(a, button) > svg { flex: 0 0 18px; width: 18px; height: 18px; color: var(--ui-muted); }
+.nv-body .nv-yo-menu > button[data-salir] { margin-top: 5px; padding-top: 13px; border-top: 1px solid var(--ui-line-soft); border-radius: 0 0 7px 7px; }
+
 /* Verde real de WhatsApp, reservado a las acciones de ese canal. */
 .nv-body .wa-fab {
   width: 56px;
@@ -719,6 +815,13 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   .nv-body .nv-barra-acciones { gap: 7px; }
   .nv-body .nv-comprar { min-height: 36px; padding: 0 12px; }
   .nv-body .nv-avatar { width: 36px; height: 36px; }
+  .nv-body .nv-yo-menu {
+    position: fixed;
+    top: 68px;
+    right: 14px;
+    width: min(320px, calc(100vw - 28px));
+    max-height: calc(100dvh - 150px - env(safe-area-inset-bottom, 0px));
+  }
   .nv-body .nv-contenido { padding: 20px 18px calc(84px + env(safe-area-inset-bottom, 0px)); }
   .nv-body .nv-pantalla { gap: 15px; }
   .nv-body .nv-resumen-top,
@@ -852,7 +955,7 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   .nv-body .nv-pagos summary { flex-wrap: wrap; gap: 10px; }
   .nv-body .nv-pagos summary .nv-pagos-info { flex: 1 1 140px; }
   .nv-body .nv-regiones-barra { flex-wrap: wrap; }
-  .nv-body .nv-yo-menu { right: -4px; max-width: calc(100vw - 24px); }
+  .nv-body .nv-yo-menu { top: 66px; right: 12px; width: min(320px, calc(100vw - 24px)); max-width: calc(100vw - 24px); }
   .fv-admin .ad-cab { min-height: 56px; padding-inline: 13px; }
   .fv-admin .ad-cab-titulo { font-size: var(--fv-tipo-base) !important; }
   .fv-admin .ad-cab { flex-wrap: wrap; gap: 8px; padding-block: 10px; }

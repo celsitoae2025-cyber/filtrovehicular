@@ -128,6 +128,21 @@
 
   NV.esAdmin = function () { return !!(NV.perfil && NV.perfil.is_admin); };
 
+  NV.pintarIdentidad = function () {
+    var usuario = NV.usuario || {};
+    var perfil = NV.perfil || {};
+    var metadata = usuario.user_metadata || {};
+    var nombre = String(perfil.full_name || metadata.full_name || metadata.name || '').trim();
+    var correo = usuario.email || '';
+    if (!nombre) nombre = correo.split('@')[0] || 'Mi cuenta';
+    var palabras = nombre.split(/\s+/).filter(Boolean);
+    var iniciales = palabras[0].charAt(0) + (palabras.length > 1 ? palabras[palabras.length - 1].charAt(0) : '');
+    document.querySelectorAll('[data-avatar-iniciales]').forEach(function (el) { el.textContent = iniciales.toUpperCase(); });
+    var nombreEl = $('nvYoNombre'); if (nombreEl) nombreEl.textContent = nombre;
+    var correoEl = $('nvYoCorreo'); if (correoEl) correoEl.textContent = correo;
+    var avatar = $('nvAvatar'); if (avatar) avatar.setAttribute('aria-label', 'Menú de la cuenta de ' + nombre);
+  };
+
   NV.pintarSaldo = function () {
     var ilimitado = NV.esAdmin();
     var n = NV.perfil ? NV.perfil.credits_balance : null;
@@ -137,10 +152,13 @@
     document.querySelectorAll('[data-saldo-uni]').forEach(function (el) {
       el.hidden = ilimitado;
     });
+    var accion = $('nvYoAccionSaldo');
+    if (accion) accion.textContent = ilimitado ? 'Ver pagos' : 'Recargar';
   };
 
   NV.refrescarSaldo = async function () {
     await NV.cargarPerfil();
+    NV.pintarIdentidad();
     NV.pintarSaldo();
   };
 
@@ -417,14 +435,7 @@
     document.body.classList.remove('auth-locked');
     NV.pintarSaldo();
 
-    var nombre = (NV.perfil && NV.perfil.full_name) || NV.usuario.email || '';
-    var iniciales = nombre.split(/[\s@.]+/).filter(Boolean).slice(0, 2)
-      .map(function (p) { return p.charAt(0).toUpperCase(); }).join('') || '·';
-    $('nvAvatar').textContent = iniciales;
-    $('nvYoNombre').textContent = (NV.perfil && NV.perfil.full_name) || 'Mi cuenta';
-    $('nvYoCorreo').textContent = NV.usuario.email || '';
-    var grande = $('nvAvatarGrande');
-    if (grande) grande.textContent = iniciales;
+    NV.pintarIdentidad();
     /* Administración: en el menú lateral, en la barra de arriba (que es
        lo que se ve en el teléfono) y en Mi cuenta. Solo para el rol. */
     document.querySelectorAll('[data-solo-admin]').forEach(function (el) {
@@ -449,27 +460,56 @@
   function conectarMenuYo() {
     var boton = $('nvAvatar');
     var menu = $('nvYoMenu');
-    if (!boton || !menu) return;
+    if (!boton || !menu || boton.dataset.menuConectado) return;
+    boton.dataset.menuConectado = '1';
     function abrir(si) {
       menu.hidden = !si;
       boton.setAttribute('aria-expanded', String(si));
       boton.classList.toggle('es-abierto', si);
     }
+    function opciones() {
+      return Array.prototype.filter.call(menu.querySelectorAll('[role="menuitem"]'), function (el) {
+        return !el.disabled && !el.closest('[hidden]');
+      });
+    }
     boton.addEventListener('click', function (e) {
       e.stopPropagation();
       abrir(menu.hidden);
+      if (!menu.hidden && e.detail === 0) { var items = opciones(); if (items[0]) items[0].focus(); }
+    });
+    boton.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      e.preventDefault();
+      abrir(true);
+      var items = opciones();
+      var destino = e.key === 'ArrowUp' ? items[items.length - 1] : items[0];
+      if (destino) destino.focus();
+    });
+    menu.addEventListener('keydown', function (e) {
+      if (['ArrowDown', 'ArrowUp', 'Home', 'End'].indexOf(e.key) === -1) return;
+      var items = opciones();
+      if (!items.length) return;
+      e.preventDefault();
+      var actual = items.indexOf(document.activeElement);
+      var siguiente = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1 :
+        (actual + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+      items[siguiente].focus();
+    });
+    menu.addEventListener('focusout', function (e) {
+      if (!menu.contains(e.relatedTarget) && e.relatedTarget !== boton) abrir(false);
     });
     menu.addEventListener('click', function (e) {
       if (e.target.closest('a, button')) abrir(false);
     });
     document.addEventListener('click', function (e) {
-      if (!menu.hidden && !menu.contains(e.target) && e.target !== boton) abrir(false);
+      if (!menu.hidden && !menu.contains(e.target) && !boton.contains(e.target)) abrir(false);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && !menu.hidden) { abrir(false); boton.focus(); }
     });
     window.addEventListener('hashchange', function () { abrir(false); });
   }
+  NV.conectarMenuCuenta = conectarMenuYo;
 
   var accesoIniciado = false;
   function iniciarAcceso() {
