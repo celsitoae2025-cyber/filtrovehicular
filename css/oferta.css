@@ -59,14 +59,14 @@
 .fvc-modal-fondo {
   position: absolute;
   inset: 0;
-  background: rgba(20, 29, 28, 0);
+  background: rgb(27 27 27 / 0);
   -webkit-backdrop-filter: blur(0px);
   backdrop-filter: blur(0px);
   transition: background-color 0.16s ease, backdrop-filter 0.16s ease,
               -webkit-backdrop-filter 0.16s ease;
 }
 .fvc-modal.is-abierto .fvc-modal-fondo {
-  background: rgba(20, 29, 28, 0.45);
+  background: rgb(27 27 27 / 0.45);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   transition: background-color 0.32s ease, backdrop-filter 0.46s ease,
@@ -293,7 +293,7 @@
   text-transform: uppercase;
 }
 .fvc-input::placeholder {
-  color: rgba(20, 29, 28, 0.3);
+  color: rgb(27 27 27 / 0.3);
   font-weight: 400;
   letter-spacing: 2px;
 }
@@ -317,7 +317,7 @@
 .fvc-msg {
   margin: 8px 0 0;
   font-size: 15px;
-  color: #c2410c;
+  color: #595959;
 }
 
 /* Mismo botón que el de entrar: esmeralda, 52px y radio 12. Era un

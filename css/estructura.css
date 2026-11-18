@@ -12,7 +12,7 @@
        token en base.css y las cinco superficies viajan juntas, que es
        justo para lo que estaba puesto.
 
-   2 · UN SOLO LIENZO. El fondo de la aplicación era #d4dade, un gris
+   2 · UN SOLO LIENZO. El fondo de la aplicación era #d9d9d9, un gris
        AZUL. Con la marca en verde y esmeralda, el único color grande de
        la pantalla tiraba al lado contrario de la paleta: por eso el
        interior se veía de otra casa que el acceso. Pasa a papel —un
@@ -40,7 +40,7 @@
 :root {
   /* El papel. Muy poco saturado: tiene que leerse como papel, no como
      un fondo verde. */
-  --c-canvas: #e9ece5;
+  --c-canvas: #f3f3f3;
 
   /* El margen que separa cualquier contenido del canto de la columna. */
   --gutter: 32px;
@@ -207,11 +207,11 @@ body,
   .view:not([hidden]) { animation: none; }
 }
 
-/* El filete del desplegable iba en #a4b1b9, el mismo gris azulado que ya
+/* El filete del desplegable iba en #afafaf, el mismo gris azulado que ya
    se retiró de la tarjeta del acceso. Sobre el papel se notaba frío y
    era el último resto del azul en la aplicación. */
 .combo-panel {
-  border-color: rgba(20, 29, 28, .18) !important;
+  border-color: rgb(27 27 27 / .18) !important;
 }
 
 /* ============================================================
@@ -250,8 +250,8 @@ select,
 textarea {
   min-height: 52px !important;
   border-radius: 12px !important;
-  font-size: 15px !important;
-  border-color: rgba(20, 29, 28, .18) !important;
+  font-size: var(--fv-tipo-base, 1rem) !important;
+  border-color: rgb(27 27 27 / .18) !important;
 }
 
 /* El texto de dentro respira igual que en el acceso. `textarea` se queda
@@ -277,7 +277,7 @@ input[type="search"] {
 .prem-form-panel .btn {
   min-height: 52px !important;
   border-radius: 12px !important;
-  font-size: 15px !important;
+  font-size: var(--fv-tipo-base, 1rem) !important;
 }
 
 /* El foco, el mismo aro de siempre y en el verde de la casa. */
@@ -297,7 +297,7 @@ textarea:focus {
 input:not(.otp-digit):focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid rgba(20, 29, 28, .3);
+  outline: 2px solid rgb(27 27 27 / .3);
   outline-offset: 2px;
 }
 
@@ -371,7 +371,7 @@ textarea:focus-visible {
    campos: dentro de un panel, el canto es lo único que hay. */
 .pay-kard,
 .anon-cat-card {
-  border: 1px solid rgba(20, 29, 28, .12) !important;
+  border: 1px solid rgb(27 27 27 / .12) !important;
 }
 
 /* ── El efecto, en todos ─────────────────────────────────────
@@ -449,12 +449,12 @@ a.card:hover,
    10 · EL BOTÓN PRINCIPAL, EN EL VERDE DE LA CASA
 
    Quedaban diez botones primarios y el de «Iniciar sesión» de la barra
-   superior en #141d1c: un casi-negro que ya no aparece en ninguna otra
+   superior en #171717: un casi-negro que ya no aparece en ninguna otra
    superficie del producto —el menú, el pie, la ficha del reporte y el
    panel de acceso son esmeralda desde el bloque 1—. Un negro suelto en
    la acción más importante de cada pantalla.
 
-   El #141d1c sigue siendo el color del TEXTO (--c-primary): eso no se
+   El #171717 sigue siendo el color del TEXTO (--c-primary): eso no se
    toca. Lo que cambia es el relleno de los botones sólidos.
 ============================================================ */
 /* Se apunta a los que de verdad estaban en negro. El `.btn-primary` a
@@ -476,8 +476,8 @@ a.card:hover,
 .view .filter-form .btn-primary:hover:not(:disabled),
 .prem-form-panel .btn-primary:hover:not(:disabled),
 .topbar .auth-btn-primary:hover:not(:disabled) {
-  background: #2a3b38 !important;
-  border-color: #2a3b38 !important;
+  background: #2f2f2f !important;
+  border-color: #2f2f2f !important;
   color: #ffffff !important;
 }
 
@@ -493,8 +493,8 @@ a.card:hover,
 .cr-docitem-ver:hover,
 .rep-modal-ok:hover,
 .inst-fab:hover {
-  background: #2a3b38 !important;
-  border-color: #2a3b38 !important;
+  background: #2f2f2f !important;
+  border-color: #2f2f2f !important;
 }
 
 /* ============================================================
@@ -520,7 +520,7 @@ a.card:hover,
 [class$="-cta"]:not(.anon-cta) {
   min-height: 52px !important;
   border-radius: 12px !important;
-  font-size: 15px !important;
+  font-size: var(--fv-tipo-base, 1rem) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -529,11 +529,11 @@ a.card:hover,
 /* La bajada de las regiones iba en `clamp(13px, 1.1vw, 14px)`: el barrido
    de tamaños no la alcanzó porque su número vive dentro de un clamp. */
 .regiones-sub {
-  font-size: 15px !important;
+  font-size: var(--fv-tipo-base, 1rem) !important;
 }
 
 /* El reclamo grande del panel anónimo era la última superficie oscura en
-   #141d1c. Es un bloque de media pantalla, así que va con las demás. */
+   #171717. Es un bloque de media pantalla, así que va con las demás. */
 .anon-cta {
   background: var(--c-surface-dark) !important;
   border-color: var(--c-surface-dark) !important;
@@ -592,7 +592,7 @@ a.card:hover,
 /* ── El aviso de términos, en su sitio ─────────────────────── */
 .terms-notice {
   background: var(--c-canvas) !important;
-  border: 1px solid rgba(20, 29, 28, .12) !important;
+  border: 1px solid rgb(27 27 27 / .12) !important;
   color: var(--c-primary) !important;
   padding: var(--pad-panel) !important;
 }
@@ -605,7 +605,7 @@ a.card:hover,
 .terms-notice-body p { color: var(--c-muted) !important; }
 .terms-notice-body a {
   color: var(--c-primary) !important;
-  text-decoration-color: rgba(20, 29, 28, .35);
+  text-decoration-color: rgb(27 27 27 / .35);
   text-underline-offset: 2px;
 }
 .terms-notice-body a:hover { text-decoration-color: var(--c-surface-dark); }
@@ -616,9 +616,9 @@ a.card:hover,
    Quedaban tres grises distintos haciendo de canto, y se veían juntos
    en la misma tarjeta de «Mi saldo»:
 
-     --c-border ......... #DCDCDC            (los paneles)
-     tarjetas ........... rgba(20,29,28,.12)
-     recarga libre ...... rgba(20,29,28,.10)
+     --c-border ......... #dcdcdc            (los paneles)
+     tarjetas ........... rgb(27 27 27 / .12)
+     recarga libre ...... rgb(27 27 27 / .10)
 
    Ninguno se distingue del otro de un vistazo, y por eso mismo sobran
    dos: el ojo no ve tres grises, ve que algo no cuadra. El token pasa al
@@ -626,7 +626,7 @@ a.card:hover,
    dibuje un canto cuelga de ahí.
 ============================================================ */
 :root {
-  --c-border: rgba(20, 29, 28, .12);
+  --c-border: #d8d8d8;
 }
 .pay-custom,
 .pay-kard,
@@ -641,7 +641,7 @@ a.card:hover,
    14 · SE ACABA EL TURQUESA DE LAS INTERACCIONES
 
    Al pasar el ratón o pulsar una tarjeta de créditos, la caja entera se
-   pintaba de turquesa #03a7a4. Y no era la única: el borde de la recarga
+   pintaba de turquesa #292929. Y no era la única: el borde de la recarga
    libre, el reclamo del reporte completo y los accesos rápidos del panel
    hacían lo mismo.
 
@@ -691,7 +691,7 @@ a.card:hover,
 /* El reclamo del reporte completo saltaba a turquesa entero. Ahora solo
    aclara su propio esmeralda, que es lo que hace el resto de botones. */
 #ctaReporteBtn.cta-reporte-btn:hover {
-  background: #2a3b38 !important;
+  background: #2f2f2f !important;
 }
 
 /* Los accesos rápidos del panel eran cuatro bloques turquesa fijos: el
@@ -704,7 +704,7 @@ a.card:hover,
 #view-dashboard .quick-compact:hover,
 #view-dashboard .quick-actions-compact > button:hover,
 #view-dashboard .quick-actions-compact > a:hover {
-  background: #2a3b38 !important;
+  background: #2f2f2f !important;
 }
 
 /* Los dos últimos turquesas sueltos: el interruptor del aviso a clientes
@@ -724,7 +724,7 @@ a.card:hover,
   width: 100%;
   background: none;
   border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  border-bottom: 1px solid rgb(255 255 255 / .07);
   font: inherit;
   color: inherit;
   text-align: left;
@@ -733,7 +733,7 @@ a.card:hover,
 }
 .sidebar .brand-text,
 .sidebar .brand-name { display: block; }
-.sidebar .brand:hover { background: rgba(255, 255, 255, .05); }
+.sidebar .brand:hover { background: rgb(255 255 255 / .05); }
 .sidebar .brand:focus-visible {
   outline: 2px solid var(--c-accent);
   outline-offset: -2px;
@@ -767,13 +767,13 @@ a.card:hover,
 }
 .pay-kard:hover .pk-credits-unit,
 .pay-kard:hover .pk-cur {
-  color: rgba(20, 29, 28, .55) !important;
+  color: rgb(27 27 27 / .55) !important;
 }
 .pay-kard:hover .pk-unit-price {
-  color: rgba(20, 29, 28, .45) !important;
+  color: rgb(27 27 27 / .45) !important;
 }
 .pay-kard:hover .pk-divider {
-  background: rgba(20, 29, 28, .15) !important;
+  background: rgb(27 27 27 / .15) !important;
   color: var(--c-primary) !important;
 }
 
@@ -787,7 +787,7 @@ a.card:hover,
   color: #ffffff !important;
 }
 .pay-kard.is-selected .pk-divider {
-  background: rgba(255, 255, 255, .4) !important;
+  background: rgb(255 255 255 / .4) !important;
 }
 
 /* ============================================================

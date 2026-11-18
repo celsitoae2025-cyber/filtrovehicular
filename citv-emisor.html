@@ -6,9 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificado CITV - MTC</title>
 
-    <meta name="theme-color" content="#141d1c">
+    <meta name="theme-color" content="#171717">
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/png" href="/favicon-fvplus.png" sizes="192x192">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -31,7 +34,7 @@
             background: white;
             padding: 25mm 10mm 10mm 10mm;
             /* Updated padding from previous steps */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            box-shadow: none;
             position: relative;
             transform: scale(1.3);
             transform-origin: top center;
@@ -61,7 +64,7 @@
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            background: #333;
+            background: #333333;
             padding: 8px 15px;
             border-radius: 8px;
             display: flex;
@@ -70,7 +73,7 @@
         }
 
         .toolbar button {
-            background: #4CAF50;
+            background: #939393;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -80,7 +83,7 @@
         }
 
         .toolbar button:hover {
-            background: #45a049;
+            background: #868686;
         }
 
         /* Header */
@@ -107,7 +110,7 @@
             justify-content: center;
             font-size: 11px;
             font-weight: bold;
-            color: #333;
+            color: #333333;
             margin-left: 25px;
             cursor: pointer;
             position: relative;
@@ -117,7 +120,7 @@
         }
 
         .logo-box:hover {
-            border: 1px dashed #999;
+            border: 1px dashed #999999;
         }
 
         .logo-box img,
@@ -137,7 +140,7 @@
         }
 
         .logo-box.has-image:hover {
-            border: 1px dashed #999;
+            border: 1px dashed #999999;
         }
 
         .logo-placeholder,
@@ -195,7 +198,7 @@
             font-size: 20px;
             font-weight: bold;
             font-style: italic;
-            color: red;
+            color: #333333;
             line-height: 0.85;
         }
 
@@ -240,7 +243,7 @@
 
         /* Section Headers */
         .section-header {
-            background: rgba(192, 192, 192, 0.5);
+            background: rgb(192 192 192 / 0.5);
             padding: 4px 5px;
             font-weight: bold;
             font-size: 9px;
@@ -300,7 +303,7 @@
         .vehicle-table-new .label {
             font-weight: bold;
             width: 65px;
-            color: #333;
+            color: #333333;
         }
 
         .vehicle-table-new .value {
@@ -366,7 +369,7 @@
         }
 
         .defects-table th {
-            background: rgba(192, 192, 192, 0.5);
+            background: rgb(192 192 192 / 0.5);
         }
 
         /* Section V - Final Result */
@@ -397,14 +400,14 @@
         }
 
         .seal-box {
-            border: 1px solid #999;
+            border: 1px solid #999999;
             width: 150px;
             height: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #666;
+            color: #666666;
             font-size: 12px;
             cursor: pointer;
             position: relative;
@@ -432,7 +435,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: #1a237e;
+            background: #282828;
             color: white;
             display: flex;
             align-items: center;
@@ -453,18 +456,16 @@
         }
 
 .ci-red {
-    color: red;
+    color: #333333;
 }
 
 /* ========== ESTILOS DE LA INTERFAZ (UI) ========== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #0d0d1a;
+            font-family: 'Poppins', Arial, sans-serif;
+            background: #0e0e0e;
             background-image:
-                radial-gradient(ellipse at 15% 50%, rgba(183,28,28,0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(30,30,70,0.3) 0%, transparent 50%);
+                radial-gradient(ellipse at 15% 50%, rgb(61 61 61 / 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgb(33 33 33 / 0.3) 0%, transparent 50%);
             display: flex;
             justify-content: center;
             padding-right: 460px;
@@ -483,8 +484,8 @@
             left: 0;
             right: 0;
             height: 70px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-bottom: 1px solid rgba(183,28,28,0.2);
+            background: linear-gradient(135deg, #1b1b1b 0%, #212121 100%);
+            border-bottom: 1px solid rgb(61 61 61 / 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -503,7 +504,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #b71c1c, #ff5252, #b71c1c, transparent);
+            background: linear-gradient(90deg, transparent, #3d3d3d, #777777, #3d3d3d, transparent);
         }
 
         .header-content {
@@ -524,11 +525,11 @@
         .main-header .separator {
             width: 1px;
             height: 32px;
-            background: linear-gradient(180deg, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(180deg, transparent, rgb(255 255 255 / 0.3), transparent);
         }
 
         .main-header h1 {
-            color: rgba(255,255,255,0.9);
+            color: rgb(255 255 255 / 0.9);
             font-size: 14px;
             font-weight: 400;
             margin: 0;
@@ -542,8 +543,8 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(13,13,26,0.95);
-            border-top: 1px solid rgba(255,255,255,0.05);
+            background: rgb(14 14 14 / 0.95);
+            border-top: 1px solid rgb(255 255 255 / 0.05);
             padding: 0 30px;
             padding-right: 460px;
             backdrop-filter: blur(20px);
@@ -563,7 +564,7 @@
 
         .footer-bottom p {
             font-size: 11px;
-            color: rgba(255,255,255,0.3);
+            color: rgb(255 255 255 / 0.3);
             margin: 0;
             letter-spacing: 0.5px;
         }
@@ -583,8 +584,8 @@
             right: 0;
             top: 70px;
             bottom: 0;
-            background: rgba(16,16,32,0.98);
-            border-left: 1px solid rgba(255,255,255,0.06);
+            background: rgb(17 17 17 / 0.98);
+            border-left: 1px solid rgb(255 255 255 / 0.06);
             display: flex;
             flex-direction: column;
             z-index: 1001;
@@ -601,7 +602,7 @@
         }
 
         .form-panel::-webkit-scrollbar-thumb {
-            background: rgba(183,28,28,0.4);
+            background: rgb(61 61 61 / 0.4);
             border-radius: 2px;
         }
 
@@ -635,18 +636,18 @@
         }
 
         .form-panel-content::-webkit-scrollbar-thumb {
-            background: rgba(183,28,28,0.3);
+            background: rgb(61 61 61 / 0.3);
             border-radius: 3px;
         }
 
         .form-panel-content::-webkit-scrollbar-thumb:hover {
-            background: rgba(183,28,28,0.5);
+            background: rgb(61 61 61 / 0.5);
         }
 
         /* Form Sections */
         .form-section {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
+            background: rgb(255 255 255 / 0.03);
+            border: 1px solid rgb(255 255 255 / 0.06);
             padding: 18px;
             border-radius: 14px;
             margin-bottom: 16px;
@@ -654,9 +655,9 @@
         }
 
         .form-section:hover {
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(183,28,28,0.15);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            background: rgb(255 255 255 / 0.05);
+            border-color: rgb(61 61 61 / 0.15);
+            box-shadow: none;
         }
 
         .form-section.sticky-buttons {
@@ -665,8 +666,8 @@
             margin: -20px -20px 20px -20px;
             border-radius: 0;
             border: none;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            background: rgba(16,16,32,0.98);
+            border-bottom: 1px solid rgb(255 255 255 / 0.06);
+            background: rgb(17 17 17 / 0.98);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             z-index: 10;
@@ -676,12 +677,12 @@
         .form-section-title {
             font-size: 10px;
             font-weight: 700;
-            color: #ff5252;
+            color: #777777;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 16px;
             padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255,82,82,0.15);
+            border-bottom: 1px solid rgb(119 119 119 / 0.15);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -691,7 +692,7 @@
             content: '';
             width: 3px;
             height: 14px;
-            background: linear-gradient(180deg, #ff5252, #b71c1c);
+            background: linear-gradient(180deg, #777777, #3d3d3d);
             border-radius: 2px;
         }
 
@@ -708,7 +709,7 @@
         .form-group label {
             display: block;
             font-size: 10px;
-            color: rgba(255,255,255,0.4);
+            color: rgb(255 255 255 / 0.4);
             margin-bottom: 6px;
             font-weight: 500;
             text-transform: uppercase;
@@ -720,27 +721,27 @@
         .form-group textarea {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgb(255 255 255 / 0.08);
             border-radius: 8px;
             font-size: 13px;
-            background: rgba(255,255,255,0.04);
-            color: rgba(255,255,255,0.9);
+            background: rgb(255 255 255 / 0.04);
+            color: rgb(255 255 255 / 0.9);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: inherit;
             outline: none;
         }
 
         .form-group input::placeholder {
-            color: rgba(255,255,255,0.2);
+            color: rgb(255 255 255 / 0.2);
         }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            border-color: rgba(183,28,28,0.5);
-            background: rgba(183,28,28,0.06);
-            box-shadow: 0 0 0 3px rgba(183,28,28,0.1), 0 4px 12px rgba(0,0,0,0.2);
-            color: #fff;
+            border-color: rgb(61 61 61 / 0.5);
+            background: rgb(61 61 61 / 0.06);
+            box-shadow: none;
+            color: #ffffff;
         }
 
         .form-group select {
@@ -752,8 +753,8 @@
         }
 
         .form-group select option {
-            background: #1a1a2e;
-            color: #fff;
+            background: #1b1b1b;
+            color: #ffffff;
         }
 
         /* Vehicle Grid */
@@ -786,7 +787,7 @@
             gap: 8px;
             width: 100%;
             padding: 12px 16px;
-            background: linear-gradient(135deg, #c62828, #b71c1c);
+            background: linear-gradient(135deg, #4a4a4a, #3d3d3d);
             color: white;
             border: none;
             border-radius: 10px;
@@ -807,7 +808,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.1), transparent);
             transition: left 0.5s;
         }
 
@@ -816,20 +817,20 @@
         }
 
         .btn-action:hover {
-            background: linear-gradient(135deg, #d32f2f, #c62828);
+            background: linear-gradient(135deg, #525252, #4a4a4a);
             transform: translateY(-1px);
-            box-shadow: 0 4px 20px rgba(183,28,28,0.4);
+            box-shadow: none;
         }
 
         .btn-action:active {
             transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(183,28,28,0.3);
+            box-shadow: none;
         }
 
         .btn-action.secondary {
-            background: rgba(255,255,255,0.05);
-            color: rgba(255,255,255,0.7);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgb(255 255 255 / 0.05);
+            color: rgb(255 255 255 / 0.7);
+            border: 1px solid rgb(255 255 255 / 0.08);
             box-shadow: none;
         }
 
@@ -838,10 +839,10 @@
         }
 
         .btn-action.secondary:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(183,28,28,0.3);
-            color: #ff5252;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            background: rgb(255 255 255 / 0.08);
+            border-color: rgb(61 61 61 / 0.3);
+            color: #777777;
+            box-shadow: none;
             transform: translateY(-1px);
         }
 
@@ -850,8 +851,8 @@
             position: fixed;
             bottom: 20px;
             left: 20px;
-            background: rgba(20,20,40,0.9);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgb(21 21 21 / 0.9);
+            border: 1px solid rgb(255 255 255 / 0.08);
             padding: 6px 14px;
             border-radius: 50px;
             display: flex;
@@ -860,13 +861,13 @@
             z-index: 1000;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: none;
         }
 
         .zoom-controls button {
             background: transparent;
-            color: rgba(255,255,255,0.7);
-            border: 1px solid rgba(255,255,255,0.1);
+            color: rgb(255 255 255 / 0.7);
+            border: 1px solid rgb(255 255 255 / 0.1);
             width: 28px;
             height: 28px;
             border-radius: 50%;
@@ -879,13 +880,13 @@
         }
 
         .zoom-controls button:hover {
-            background: rgba(183,28,28,0.3);
-            border-color: rgba(183,28,28,0.5);
+            background: rgb(61 61 61 / 0.3);
+            border-color: rgb(61 61 61 / 0.5);
             color: white;
         }
 
         .zoom-controls span {
-            color: rgba(255,255,255,0.5);
+            color: rgb(255 255 255 / 0.5);
             font-size: 12px;
             min-width: 45px;
             text-align: center;
@@ -1017,7 +1018,8 @@
         }
 
     </style>
-    <link rel="stylesheet" href="css/sistema-visual.css?v=3">
+    <link rel="stylesheet" href="css/sistema-visual.css?v=7">
+    <link rel="stylesheet" href="css/interfaz-poppins.css?v=6">
 </head>
 
 <body class="fv-citv">
@@ -2279,7 +2281,7 @@ CUSCO - LA CONVENCION - SANTA ANA</textarea>
      administrador no paga créditos (consume_credits lo resuelve por
      rol), así que traer los datos aquí no cuesta nada. -->
 <script src="js/modules/toasts.js?v=2"></script>
-<script src="js/modules/render-helpers.js?v=57"></script>
+<script src="js/modules/render-helpers.js?v=58"></script>
 <script src="js/modules/consulta-runner.js?v=14"></script>
 <script>
     (async function () {

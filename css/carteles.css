@@ -27,7 +27,7 @@ html.ctl-abierto body { overflow: hidden; }
   justify-content: center;
   padding: 16px;
   padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  background: rgba(20, 29, 28, .74);
+  background: rgb(27 27 27 / .74);
   animation: ctl-entra-fondo .22s ease-out;
 }
 
@@ -38,7 +38,7 @@ html.ctl-abierto body { overflow: hidden; }
   width: min(520px, 100%);
   max-height: calc(100dvh - 32px);
   border-radius: 16px;
-  background: var(--c-surface, #fff);
+  background: var(--c-surface, #ffffff);
   overflow: hidden;
   animation: ctl-entra-ventana .26s cubic-bezier(.16, 1, .3, 1);
 }
@@ -89,13 +89,13 @@ html.ctl-abierto body { overflow: hidden; }
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: rgba(20, 29, 28, .78);
-  color: #fff;
+  background: rgb(27 27 27 / .78);
+  color: #ffffff;
   cursor: pointer;
 }
 .ctl-cerrar svg { width: 20px; height: 20px; }
-.ctl-cerrar:hover { background: rgba(20, 29, 28, .92); }
-.ctl-cerrar:focus-visible { outline: 2px solid var(--c-accent, #8fc72e); outline-offset: 2px; }
+.ctl-cerrar:hover { background: rgb(27 27 27 / .92); }
+.ctl-cerrar:focus-visible { outline: 2px solid var(--c-accent, #292929); outline-offset: 2px; }
 
 .ctl-flecha {
   position: absolute;
@@ -110,12 +110,12 @@ html.ctl-abierto body { overflow: hidden; }
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: rgba(20, 29, 28, .62);
-  color: #fff;
+  background: rgb(27 27 27 / .62);
+  color: #ffffff;
   cursor: pointer;
 }
 .ctl-flecha svg { width: 20px; height: 20px; }
-.ctl-flecha:hover { background: rgba(20, 29, 28, .85); }
+.ctl-flecha:hover { background: rgb(27 27 27 / .85); }
 .ctl-flecha-izq { left: 10px; }
 .ctl-flecha-der { right: 10px; }
 
@@ -126,7 +126,7 @@ html.ctl-abierto body { overflow: hidden; }
   justify-content: center;
   gap: 6px;
   padding: 12px 0;
-  background: var(--c-surface, #fff);
+  background: var(--c-surface, #ffffff);
 }
 .ctl-punto {
   width: 24px;
@@ -134,10 +134,10 @@ html.ctl-abierto body { overflow: hidden; }
   padding: 0;
   border: 0;
   border-radius: 3px;
-  background: var(--c-border, #dcdcdc);
+  background: var(--c-border, #dadada);
   cursor: pointer;
 }
-.ctl-punto.esta-activo { background: var(--c-accent, #8fc72e); }
+.ctl-punto.esta-activo { background: var(--c-accent, #292929); }
 
 @keyframes ctl-entra-fondo {
   from { opacity: 0; }

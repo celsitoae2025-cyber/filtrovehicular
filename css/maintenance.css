@@ -10,7 +10,7 @@ html.mnt-locked body {
 
 /* ── Aviso a pantalla completa ── */
 .mnt-overlay {
-  --mnt-orange: #f5a000;
+  --mnt-orange: #292929;
   position: fixed;
   inset: 0;
   z-index: 99999;
@@ -18,7 +18,7 @@ html.mnt-locked body {
   align-items: center;
   overflow-y: auto;
   padding: clamp(18px, 4vw, 44px);
-  background: radial-gradient(ellipse at 50% 30%, #29241c 0%, #111315 60%);
+  background: radial-gradient(ellipse at 50% 30%, #242424 0%, #131313 60%);
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
   -webkit-overflow-scrolling: touch;
 }
@@ -29,10 +29,10 @@ html.mnt-locked body {
   margin: auto;
   padding: 34px 42px 28px;
   overflow: hidden;
-  border: 1px solid #3e3b34;
+  border: 1px solid #3b3b3b;
   border-radius: 20px;
-  background: linear-gradient(155deg, #25282b, #1b1e21 70%);
-  box-shadow: 0 35px 100px #0008, inset 0 1px 0 #ffffff08;
+  background: linear-gradient(155deg, #282828, #1e1e1e 70%);
+  box-shadow: none;
   text-align: center;
   animation: mnt-card-in .45s ease both;
 }
@@ -41,7 +41,7 @@ html.mnt-locked body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: #f4f4f3;
+  color: #f4f4f4;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -.2px;
@@ -60,7 +60,7 @@ html.mnt-locked body {
   letter-spacing: .12em;
   text-transform: uppercase;
 }
-.mnt-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mnt-orange); box-shadow: 0 0 12px #f5a00060; animation: mnt-status-pulse 2.4s ease-in-out infinite; }
+.mnt-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mnt-orange); box-shadow: none; animation: mnt-status-pulse 2.4s ease-in-out infinite; }
 .mnt-icon {
   display: grid;
   place-items: center;
@@ -68,23 +68,23 @@ html.mnt-locked body {
   width: 94px;
   height: 94px;
   margin: 29px auto 26px;
-  border: 1px solid #f5a00045;
+  border: 1px solid #a7a7a745;
   border-radius: 50%;
   color: var(--mnt-orange);
-  background: radial-gradient(circle, #f5a00018, #f5a00005);
-  box-shadow: 0 0 36px #f5a00012;
+  background: radial-gradient(circle, #a7a7a718, #a7a7a705);
+  box-shadow: none;
 }
-.mnt-icon::before { content: ''; position: absolute; inset: -7px; border: 1px dashed #f5a00050; border-radius: 50%; animation: mnt-orbit 35s linear infinite; }
-.mnt-icon::after { content: ''; position: absolute; inset: -19px; border-radius: 50%; background: #f5a00008; z-index: 0; animation: mnt-glow 3s ease-in-out infinite; }
+.mnt-icon::before { content: ''; position: absolute; inset: -7px; border: 1px dashed #a7a7a750; border-radius: 50%; animation: mnt-orbit 35s linear infinite; }
+.mnt-icon::after { content: ''; position: absolute; inset: -19px; border-radius: 50%; background: #a7a7a708; z-index: 0; animation: mnt-glow 3s ease-in-out infinite; }
 .mnt-icon svg { position: relative; z-index: 1; width: 36px; height: 36px; }
-.mnt-title { max-width: 410px; margin: 0 auto 15px; color: #fafaf8; font-size: clamp(25px, 4vw, 30px); font-weight: 700; letter-spacing: -.7px; line-height: 1.2; }
-.mnt-text { max-width: 410px; margin: 0 auto 28px; color: #b9bdc0; font-size: 15px; line-height: 1.7; font-weight: 400; }
-.mnt-retry { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 51px; padding: 14px 18px; border: 1px solid #ffb831; border-radius: 10px; background: var(--mnt-orange); color: #1c1b18; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 18px #f5a00012; transition: background .2s, transform .2s, box-shadow .2s; }
+.mnt-title { max-width: 410px; margin: 0 auto 15px; color: #fafafa; font-size: clamp(25px, 4vw, 30px); font-weight: 700; letter-spacing: -.7px; line-height: 1.2; }
+.mnt-text { max-width: 410px; margin: 0 auto 28px; color: #bcbcbc; font-size: 15px; line-height: 1.7; font-weight: 400; }
+.mnt-retry { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 51px; padding: 14px 18px; border: 1px solid #bdbdbd; border-radius: 10px; background: var(--mnt-orange); color: #1b1b1b; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: none; transition: background .2s, transform .2s, box-shadow .2s; }
 .mnt-retry svg { width: 19px; height: 19px; }
-.mnt-retry:hover { background: #ffb323; transform: translateY(-2px); box-shadow: 0 7px 24px #f5a00030; }
+.mnt-retry:hover { background: #b9b9b9; transform: translateY(-2px); box-shadow: none; }
 .mnt-retry:active { transform: translateY(0); }
-.mnt-retry:focus-visible { outline: 3px solid #ffc65f; outline-offset: 4px; }
-.mnt-footer { margin: 17px auto 0; max-width: 320px; color: #8d9398; font-size: 11px; line-height: 1.6; }
+.mnt-retry:focus-visible { outline: 3px solid #cbcbcb; outline-offset: 4px; }
+.mnt-footer { margin: 17px auto 0; max-width: 320px; color: #929292; font-size: 11px; line-height: 1.6; }
 @keyframes mnt-card-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes mnt-status-pulse { 50% { opacity: .55; } }
 @keyframes mnt-orbit { to { transform: rotate(360deg); } }
@@ -107,7 +107,7 @@ html.mnt-locked body {
   flex-wrap: wrap;
   padding: 8px 16px;
   background: var(--c-surface-dark);
-  border-bottom: 2px solid var(--c-accent, #8fc72e);
+  border-bottom: 2px solid var(--c-accent, #292929);
   color: #ffffff;
   font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
@@ -115,13 +115,13 @@ html.mnt-locked body {
   text-align: center;
 }
 .mnt-banner strong { font-weight: 700; }
-.mnt-banner span:not(.mnt-banner-dot) { color: rgba(255, 255, 255, 0.75); }
+.mnt-banner span:not(.mnt-banner-dot) { color: rgb(255 255 255 / 0.75); }
 
 .mnt-banner-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--c-accent, #8fc72e);
+  background: var(--c-accent, #292929);
   flex: none;
 }
 
@@ -154,16 +154,16 @@ html.mnt-with-banner body { padding-top: 34px; }
   gap: 12px;
   padding: 14px 16px;
   border-radius: 12px;
-  background: #F6F8F5;
-  border-left: 3px solid var(--c-accent, #8fc72e);
+  background: #f7f7f7;
+  border-left: 3px solid var(--c-accent, #292929);
 }
-.mnt-admin-state.is-on { border-left-color: #03a7a4; }
+.mnt-admin-state.is-on { border-left-color: #292929; }
 
 .mnt-admin-state strong {
   display: block;
   font-size: 15px;
   font-weight: 700;
-  color: var(--c-primary, #141d1c);
+  color: var(--c-primary, #171717);
   margin-bottom: 2px;
 }
 .mnt-admin-state p {
@@ -171,7 +171,7 @@ html.mnt-with-banner body { padding-top: 34px; }
   font-size: 13px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--c-muted, #5A6B6A);
+  color: var(--c-muted, #676767);
 }
 
 .mnt-admin-dot {
@@ -179,10 +179,10 @@ html.mnt-with-banner body { padding-top: 34px; }
   height: 10px;
   margin-top: 5px;
   border-radius: 50%;
-  background: var(--c-accent, #8fc72e);
+  background: var(--c-accent, #292929);
   flex: none;
 }
-.mnt-admin-dot.is-on { background: #03a7a4; }
+.mnt-admin-dot.is-on { background: #292929; }
 
 /* Mismo latido que el interruptor de la barra: es el mismo estado
    contado en dos sitios y debe leerse igual en los dos. */
@@ -192,7 +192,7 @@ html.mnt-with-banner body { padding-top: 34px; }
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: #03a7a4;
+  background: #292929;
   animation: mnt-latido 1.9s ease-out infinite;
 }
 
@@ -201,7 +201,7 @@ html.mnt-with-banner body { padding-top: 34px; }
   font-size: 13px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--c-muted, #5A6B6A);
+  color: var(--c-muted, #676767);
 }
 
 /* ==========================================================
@@ -222,11 +222,11 @@ html.mnt-with-banner body { padding-top: 34px; }
   padding: 0;
   border: none;
   border-radius: 999px;
-  background: #d92d20;                  /* apagado */
+  background: #515151;                  /* apagado */
   cursor: pointer;
   transition: background .2s ease;
 }
-.mnt-switch.is-on { background: #8fc72e; }   /* encendido */
+.mnt-switch.is-on { background: #292929; }   /* encendido */
 .mnt-switch:disabled { opacity: .6; cursor: not-allowed; }
 
 /* El pomo se desplaza de un extremo al otro: esa es la animacion
@@ -262,5 +262,5 @@ html.mnt-with-banner body { padding-top: 34px; }
   font-weight: 700;
   cursor: pointer;
 }
-.btn-danger:hover { background: #1e2b2a; }
+.btn-danger:hover { background: #282828; }
 .btn-danger:disabled { opacity: .6; cursor: not-allowed; }

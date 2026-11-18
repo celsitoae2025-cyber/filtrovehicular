@@ -620,12 +620,12 @@
       + '    <div class="modal-body">'
       + '      <div class="ac-user-info" id="addCreditsUserInfo" style="padding:12px 14px;background:var(--c-bg);border-radius:8px;margin-bottom:14px;font-size:13px;color:var(--c-muted);"></div>'
       + '      <div class="ac-mode-tabs" role="tablist" style="display:flex;gap:4px;background:var(--c-bg);padding:4px;border-radius:10px;margin-bottom:14px;">'
-      + '        <button type="button" class="ac-mode-tab is-active" data-mode="add" role="tab" aria-selected="true" style="flex:1;padding:9px 8px;border:none;background:var(--c-surface);border-radius:7px;font-size:13px;font-weight:400;cursor:pointer;color:var(--c-primary);box-shadow:0 1px 2px rgba(0,0,0,.06);">+ Sumar</button>'
+      + '        <button type="button" class="ac-mode-tab is-active" data-mode="add" role="tab" aria-selected="true" style="flex:1;padding:9px 8px;border:none;background:var(--c-surface);border-radius:7px;font-size:13px;font-weight:400;cursor:pointer;color:var(--c-primary);box-shadow: none;">+ Sumar</button>'
       + '        <button type="button" class="ac-mode-tab" data-mode="sub" role="tab" aria-selected="false" style="flex:1;padding:9px 8px;border:none;background:transparent;border-radius:7px;font-size:13px;font-weight:400;cursor:pointer;color:var(--c-muted);">− Restar</button>'
       + '        <button type="button" class="ac-mode-tab" data-mode="clear" role="tab" aria-selected="false" style="flex:1;padding:9px 8px;border:none;background:transparent;border-radius:7px;font-size:13px;font-weight:400;cursor:pointer;color:var(--c-muted);">Vaciar todo</button>'
       + '      </div>'
       + '      <div class="form-field" id="acAmountField"><label for="acAmount" id="acAmountLabel">Cantidad a sumar</label><input type="number" id="acAmount" class="input" min="1" step="1" placeholder="Ej: 200" required></div>'
-      + '      <div id="acClearNotice" hidden style="padding:12px 14px;background:#f5f5f5;border:1px solid #DCDCDC;color:#141d1c;border-radius:8px;font-size:13px;margin-bottom:14px;">Esta acción <strong>vaciará por completo</strong> los créditos del usuario (saldo quedará en <strong>0</strong>). El movimiento queda registrado en el historial.</div>'
+      + '      <div id="acClearNotice" hidden style="padding:12px 14px;background:#f6f6f6;border:1px solid #dcdcdc;color:#171717;border-radius:8px;font-size:13px;margin-bottom:14px;">Esta acción <strong>vaciará por completo</strong> los créditos del usuario (saldo quedará en <strong>0</strong>). El movimiento queda registrado en el historial.</div>'
       + '      <div class="form-field"><label for="acMethod">Método</label><select id="acMethod" class="input"><option value="whatsapp">WhatsApp (Yape/Plin/transferencia)</option><option value="mercadopago">Mercado Pago</option><option value="manual">Ajuste manual (bonus, reembolso, error, etc.)</option></select></div>'
       + '      <div class="form-field"><label for="acNote">Nota (opcional)</label><input type="text" id="acNote" class="input" placeholder="Ej: pago Yape comp 001 del 22/04"></div>'
       + '      <div class="form-field"><label for="acRef">Referencia externa (opcional)</label><input type="text" id="acRef" class="input" placeholder="ID de transacción, número de operación…"></div>'
@@ -665,7 +665,7 @@
       t.setAttribute('aria-selected', active ? 'true' : 'false');
       t.style.background = active ? 'var(--c-surface)' : 'transparent';
       t.style.color = active ? 'var(--c-primary)' : 'var(--c-muted)';
-      t.style.boxShadow = active ? '0 1px 2px rgba(0,0,0,.06)' : 'none';
+      t.style.boxShadow = active ? '0 1px 2px rgb(0 0 0 / .06)' : 'none';
     });
 
     var amountField = document.getElementById('acAmountField');

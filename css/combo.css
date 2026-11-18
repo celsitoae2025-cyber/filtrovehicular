@@ -64,14 +64,14 @@
   min-height: 52px !important;
   padding: 14px 44px 14px 44px !important;
   font-family: inherit;
-  font-size: 15px !important;
+  font-size: var(--fv-tipo-base, 1rem) !important;
   color: var(--c-primary);
   background: #ffffff;
-  border: 1px solid rgba(20, 29, 28, .18) !important;
+  border: 1px solid rgb(27 27 27 / .18) !important;
   border-radius: 12px !important;
   transition: border-color .18s cubic-bezier(.16, 1, .3, 1);
 }
-.cbx-input::placeholder { color: rgba(20, 29, 28, .42); }
+.cbx-input::placeholder { color: rgb(27 27 27 / .42); }
 .cbx-input:focus {
   outline: none;
   border-color: var(--c-surface-dark) !important;

@@ -89,7 +89,7 @@ html, body { background: #ffffff; }
 .header-center .address  { font-size: 8px; }
 
 .header-right { flex: 0 0 194px; text-align: center; }
-.mtc-letters { font-size: 20px; font-weight: bold; font-style: italic; color: red; line-height: 0.85; }
+.mtc-letters { font-size: 20px; font-weight: bold; font-style: italic; color: #333333; line-height: 0.85; }
 
 .main-title  { text-align: center; font-size: 12px; font-weight: bold; margin: 10px 0 5px 0; }
 .cert-number { text-align: center; font-size: 10px; margin-bottom: 8px; }
@@ -100,7 +100,7 @@ html, body { background: #ffffff; }
 .info-bar .label { font-weight: bold; margin-right: 5px; }
 
 .section-header {
-  background: rgba(192, 192, 192, 0.5);
+  background: rgb(192 192 192 / 0.5);
   padding: 4px 5px; font-weight: bold; font-size: 9px;
   border: 1px solid black; margin-top: 8px; height: 18px;
 }
@@ -113,7 +113,7 @@ td, th { border: 1px solid black; padding: 1px 3px; text-align: center; vertical
 .vehicle-table-new { width: 100%; border-collapse: collapse; font-size: 8px; margin-top: 5px; }
 .vehicle-table-new td { padding: 2px 3px; vertical-align: middle; text-align: left; border: 1px solid black; }
 .vehicle-table-new .num   { width: 18px; text-align: center; font-weight: bold; }
-.vehicle-table-new .label { font-weight: bold; width: 65px; color: #333; }
+.vehicle-table-new .label { font-weight: bold; width: 65px; color: #333333; }
 .vehicle-table-new .value { width: 90px; }
 #cTipoUso { white-space: nowrap; font-size: 7px; letter-spacing: -0.2px; }
 
@@ -131,7 +131,7 @@ td, th { border: 1px solid black; padding: 1px 3px; text-align: center; vertical
 .emissions-table td { font-size: 7px; }
 
 .defects-table { margin-top: 5px; }
-.defects-table th { background: rgba(192, 192, 192, 0.5); }
+.defects-table th { background: rgb(192 192 192 / 0.5); }
 
 .result-section { display: flex; gap: 10px; margin-top: 8px; align-items: flex-start; }
 .result-table-container { flex: 1.5; }
@@ -148,10 +148,10 @@ td, th { border: 1px solid black; padding: 1px 3px; text-align: center; vertical
 .signature-line { margin-top: 15px; border-top: 1px solid black; width: 150px; text-align: center; padding-top: 3px; font-size: 8px; }
 
 .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; }
-.mtc-circle { width: 50px; height: 50px; border-radius: 50%; background: #1a237e; margin-top: 20px; }
+.mtc-circle { width: 50px; height: 50px; border-radius: 50%; background: #282828; margin-top: 20px; }
 .ci-code { font-size: 16px; font-weight: bold; margin-top: 20px; }
 .ci-black { color: black; }
-.ci-red { color: red; }
+.ci-red { color: #333333; }
 
 @media print {
   @page { size: A4 portrait; margin: 0; }

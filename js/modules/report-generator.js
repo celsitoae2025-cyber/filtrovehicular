@@ -9,8 +9,8 @@
    Filtro Vehicular+ (no la paleta navy/cyan de VeriNexo).
 
    Colores institucionales FV+:
-     Header  #141d1c  →  [20, 29, 28]
-     Acento  #8fc72e  →  [143, 199, 46]
+     Header  #1b1b1b  →  [20, 29, 28]
+     Acento  #b0b0b0  →  [143, 199, 46]
 
    Expone:
      Consultia.ReportGenerator.generate(p, meta, photos)
@@ -22,8 +22,8 @@
   window.Consultia = window.Consultia || {};
 
   // ── Colores institucionales ────────────────────────────────
-  var C_PRIMARY  = [20,  29,  28];   // #141d1c — fondo de las franjas
-  var C_ACCENT   = [143, 199,  46];  // #8fc72e verde institucional
+  var C_PRIMARY  = [20,  29,  28];   // #1b1b1b — fondo de las franjas
+  var C_ACCENT   = [143, 199,  46];  // #b0b0b0 verde institucional
   var C_WHITE    = [255, 255, 255];
   var C_SUBHEAD  = [200, 215, 212];  // texto secundario sobre fondo oscuro
   var C_TEXT     = [31,  42,  40];   // texto de cuerpo sobre fondo blanco
@@ -528,7 +528,7 @@
     var W = doc.internal.pageSize.getWidth();
     var H = doc.internal.pageSize.getHeight();
     var M = 18;
-    var VERDE = [78, 117, 25];       // #4e7519 — contraste AA sobre blanco
+    var VERDE = [78, 117, 25];       // #666666 — contraste AA sobre blanco
     var VERDE_BG = [235, 248, 220];
     var GRIS_CLARO = [226, 232, 240];
 

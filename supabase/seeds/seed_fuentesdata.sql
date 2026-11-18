@@ -210,17 +210,17 @@ values
  15, 15, null, '{"texto": true, "pdf": true}'::jsonb, 20, true),
 
 ('TIVE Original',
- 'Consulta la tarjeta de identificación vehicular (TIVE) en PDF mediante placa.',
+ 'Consulta la Tarjeta de Propiedad (TIVE) en PDF mediante placa.',
  'vehiculos', 'placa', 'fuentesdata', '/tivep {valor}',
  8, 8, null, '{"texto": true, "pdf": true}'::jsonb, 30, true),
 
 ('TIVE Original Premium',
- 'Consulta la tarjeta de identificación vehicular original en PDF mediante placa.',
+ 'Consulta la Tarjeta de Propiedad (TIVE) original en PDF mediante placa.',
  'vehiculos', 'placa', 'fuentesdata', '/tive {valor}',
  15, 15, null, '{"texto": true, "pdf": true}'::jsonb, 40, true),
 
 ('Duplicado Tarjeta Vehicular Online',
- 'Genera el duplicado de la tarjeta de identificación vehicular (TIVE) online en PDF.',
+ 'Genera el duplicado de la Tarjeta de Propiedad (TIVE) online en PDF.',
  'vehiculos', 'placa', 'fuentesdata', '/duplicado {valor}',
  12, 12, null, '{"texto": true, "pdf": true}'::jsonb, 50, true),
 

@@ -3,13 +3,13 @@
 ============================================================ */
 
 :root {
-  --c-primary: #141d1c;
-  --c-primary-2: #141d1c;
+  --c-primary: #191919;
+  --c-primary-2: #191919;
 
-  /* UN SOLO OSCURO EN TODA LA CASA: #141d1c
+  /* UN SOLO OSCURO EN TODA LA CASA: #171717
 
      Es el gris oscuro del panel de administración, y desde hoy también
-     el de la plataforma. Antes aquí vivía un esmeralda (#0b2a20) con su
+     el de la plataforma. Antes aquí vivía un esmeralda (#171717) con su
      familia de verdes para los estados —encima, pulsado—, así que el
      panel y la aplicación se veían de dos marcas distintas.
 
@@ -19,29 +19,27 @@
      este valor las mueve todas a la vez y no toca ni un botón; para los
      botones están --btn-oscuro y los suyos, en botones.css.
 
-     El verde de la marca (#8fc72e) no se toca: sigue siendo el acento.
-     Lo que desaparece es el verde OSCURO, que no acentuaba nada —solo
-     teñía fondos— y peleaba con el lima cada vez que coincidían.
-     Blanco encima da 16,1:1. */
-  --c-surface-dark: #141d1c;
+     El carbón mantiene el contraste en superficies oscuras. El acento,
+     los estados y las superficies se resuelven con grises neutros. */
+  --c-surface-dark: #191919;
 
   /* El panel de arte del acceso. Comparte el mismo oscuro que el resto:
      es media pantalla de color plano y era justo donde más se notaba
      que el fondo tiraba a verde mientras el panel de al lado era gris. */
-  --c-auth-panel: var(--c-surface-dark);
+  --c-auth-panel: #191919;
 
-  --c-secondary: #141d1c;
-  --c-text: #141d1c;
-  --c-accent: #8fc72e;
-  --c-accent-hover: #7ab325;
-  --c-teal-soft: #edf7d9;
+  --c-secondary: #333333;
+  --c-text: #191919;
+  --c-accent: #292929;
+  --c-accent-hover: #414141;
+  --c-teal-soft: #f0f0f0;
   --c-surface: #ffffff;
-  --c-bg: #F3F3F3;
-  --c-border: #DCDCDC;
-  --c-muted: #5A6B6A;
-  --c-success: #141d1c;
-  --c-danger: #141d1c;
-  --c-warning: #141d1c;
+  --c-bg: #f3f3f3;
+  --c-border: #d8d8d8;
+  --c-muted: #696969;
+  --c-success: #414141;
+  --c-danger: #414141;
+  --c-warning: #414141;
   --sidebar-w: 260px;
   /* Valor de arranque, no la verdad. El alto real de la barra lo mide
      footer.js y lo reescribe aquí en cuanto la página se pinta, porque
@@ -54,19 +52,17 @@
   --t-base: .18s cubic-bezier(.2, .8, .2, 1);
   --t-slow: .28s cubic-bezier(.2, .8, .2, 1);
 
-  --shadow-sm: 0 1px 2px rgba(31, 42, 40, .06);
-  --shadow-md: 0 4px 12px rgba(31, 42, 40, .08);
-  --shadow-lg: 0 14px 40px rgba(31, 42, 40, .14);
-  --focus-ring: 0 0 0 3px rgba(31, 42, 40, .18);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --focus-ring: none;
 
-  /* Escala tipográfica — únicos 5 tamaños permitidos en la app de
-     consultas. xs/sm se mantienen fijos en móvil (ya están cerca del
-     mínimo legible); md/lg/xl se reducen en el breakpoint de 768px. */
-  --fs-xs: 13px;
-  --fs-sm: 15px;
-  --fs-md: 17px;
-  --fs-lg: 21px;
-  --fs-xl: 30px;
+  /* Alias heredados: los tamaños reales se administran en sistema-visual.css. */
+  --fs-xs: var(--fv-tipo-auxiliar, .75rem);
+  --fs-sm: var(--fv-tipo-base, 1rem);
+  --fs-md: var(--fv-tipo-base, 1rem);
+  --fs-lg: var(--fv-tipo-titulo, 1.375rem);
+  --fs-xl: var(--fv-tipo-titulo, 1.375rem);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -95,15 +91,15 @@ body {
    ese hueco lo rellena con BLANCO: era el fogonazo blanco que se veia
    al deslizar para actualizar. Con el gris puesto aqui, el paso de una
    pagina a la otra no cambia de color y no se nota. */
-html { background: #d4dade; }
+html { background: #d9d9d9; }
 
 [hidden] { display: none !important; }
 
 body {
-  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--fv-tipografia, "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif);
   background: var(--c-bg);
   color: var(--c-primary);
-  font-size: var(--fs-sm);
+  font-size: var(--fv-tipo-base, 1rem);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -146,7 +142,7 @@ button, input, select, textarea { font-family: inherit; }
   flex-direction: column;
   gap: 15px;                                  /* 5mm uniforme entre bloques */
   box-sizing: border-box;
-  background: #03a7a4;                        /* fondo turquesa */
+  background: #292929;                        /* fondo turquesa */
   min-height: calc(100vh - var(--topbar-h));  /* llena el viewport */
   min-height: calc(100dvh - var(--topbar-h));
 }
@@ -194,9 +190,9 @@ button, input, select, textarea { font-family: inherit; }
   body .content { padding: 15px !important; gap: 15px !important; }
 }
 /* Fondo GRIS en TODA la app (body, main, content) — sin turquesa */
-body { background: #d4dade !important; }
-.main { background: #d4dade !important; }
-.content { background: #d4dade !important; }
+body { background: #d9d9d9 !important; }
+.main { background: #d9d9d9 !important; }
+.content { background: #d9d9d9 !important; }
 
 /* Accesos rápidos del dashboard — botones centrados sin importar cuántos entren */
 /* Accesos rapidos.
@@ -241,22 +237,18 @@ body { background: #d4dade !important; }
   white-space: normal;
   overflow-wrap: anywhere;
   line-height: 1.25;
-  /* 13px y peso normal. Estaba en 12px con peso 500: el 500 no existe
-     en este proyecto —solo 400 y 700— y a 12px sobre el turquesa la
-     etiqueta se leia con esfuerzo. Va con `!important` porque
-     mobile.css la fija en --fs-xs y se carga despues que este archivo. */
-  font-size: 13px !important;
+  /* El texto auxiliar usa el menor tamaño común de la plataforma. */
+  font-size: var(--fv-tipo-auxiliar, .75rem) !important;
   font-weight: 400 !important;
   letter-spacing: 0 !important;
 }
 
-/* Logo del sidebar — tamaño fijo, no forma parte de la escala de 5
-   tamaños de contenido (no debe moverse si --fs-xl cambia). */
+/* El logotipo usa el tamaño de título de la escala común. */
 .brand-name,
 .sidebar-brand,
 .sidebar .brand strong,
 .sidebar .brand-title {
-  font-size: 24px !important;
+  font-size: var(--fv-tipo-titulo, 1.375rem) !important;
   font-weight: 700 !important;
   line-height: 1.2 !important;
   letter-spacing: .1px !important;
@@ -275,7 +267,7 @@ body { background: #d4dade !important; }
   font-size: var(--fs-lg) !important;
   font-weight: 700 !important;
   line-height: 1 !important;
-  color: #141d1c !important;
+  color: #171717 !important;
 }
 
 /* Título "CONSULTA SERVICIOS VEHICULARES CON TU PLACA" — se pierde
@@ -298,7 +290,7 @@ body { background: #d4dade !important; }
 .view > .services-section { margin: 0 0 15px !important; padding-bottom: 15px !important; }
 .services-grid { padding-bottom: 0 !important; }
 .services-section .services-title {
-  color: #141d1c !important;
+  color: #171717 !important;
   font-size: var(--fs-sm) !important;
   font-weight: 700 !important;
   letter-spacing: .5px !important;
@@ -355,7 +347,7 @@ body { background: #d4dade !important; }
   gap: 2px;
   padding: 20px 14px 16px;
   background: #ffffff;
-  border: 1px solid rgba(20,29,28,.1);
+  border: 1px solid rgb(27 27 27 / .1);
   border-radius: 12px;
   cursor: pointer;
   font-family: inherit;
@@ -367,11 +359,11 @@ body { background: #d4dade !important; }
 .pay-kard:focus-visible,
 .pay-kard:active,
 .pay-kard.is-selected {
-  /* Turquesa institucional #03a7a4. Una sesión anterior lo cambió por
-     #00B4D8 creyendo que estaba «fuera de paleta»: era al revés, y el
+  /* Turquesa institucional #292929. Una sesión anterior lo cambió por
+     #909090 creyendo que estaba «fuera de paleta»: era al revés, y el
      dueño lo señaló al ver el cian desentonando. Revertido 2026-08-16. */
-  border-color: #03a7a4 !important;
-  background: #03a7a4 !important;
+  border-color: #292929 !important;
+  background: #292929 !important;
   color: #ffffff !important;
   outline: none;
 }
@@ -394,11 +386,11 @@ body { background: #d4dade !important; }
 .pay-kard:hover .pk-unit-price,
 .pay-kard:focus-visible .pk-unit-price,
 .pay-kard:active .pk-unit-price,
-.pay-kard.is-selected .pk-unit-price { color: rgba(255,255,255,.85) !important; }
+.pay-kard.is-selected .pk-unit-price { color: rgb(255 255 255 / .85) !important; }
 .pay-kard:hover .pk-divider,
 .pay-kard:focus-visible .pk-divider,
 .pay-kard:active .pk-divider,
-.pay-kard.is-selected .pk-divider { background: rgba(255,255,255,.4) !important; }
+.pay-kard.is-selected .pk-divider { background: rgb(255 255 255 / .4) !important; }
 
 /* Jerarquía: primero cuánto recibes, después cuánto cuesta, y al final el
    precio unitario en pequeño. Antes los tres pesaban igual y la tarjeta se
@@ -406,14 +398,14 @@ body { background: #d4dade !important; }
 .pk-credits-num {
   font-size: var(--fs-xl);
   font-weight: 700;
-  color: #141d1c;
+  color: #171717;
   line-height: 1;
   letter-spacing: -.5px;
   font-variant-numeric: tabular-nums;
 }
 .pk-credits-unit {
   font-size: var(--fs-xs);
-  color: rgba(20,29,28,.55);
+  color: rgb(27 27 27 / .55);
   font-weight: 400;
   letter-spacing: .4px;
   text-transform: uppercase;
@@ -421,7 +413,7 @@ body { background: #d4dade !important; }
 .pk-divider {
   width: 28px;
   height: 1px;
-  background: rgba(20,29,28,.15);
+  background: rgb(27 27 27 / .15);
   margin: 10px 0 8px;
 }
 .pk-price {
@@ -430,7 +422,7 @@ body { background: #d4dade !important; }
   gap: 3px;
   font-size: var(--fs-md);
   font-weight: 700;
-  color: #141d1c;
+  color: #171717;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
@@ -438,13 +430,13 @@ body { background: #d4dade !important; }
 .pk-cur {
   font-size: var(--fs-xs);
   font-weight: 400;
-  color: rgba(20,29,28,.55);
+  color: rgb(27 27 27 / .55);
 }
 .pk-unit-price {
   margin-top: 5px;
   font-size: 13px;
   font-weight: 400;
-  color: rgba(20,29,28,.45);
+  color: rgb(27 27 27 / .45);
   font-variant-numeric: tabular-nums;
 }
 
@@ -455,7 +447,7 @@ body { background: #d4dade !important; }
   gap: 13px;
   padding: 18px;
   /* Turquesa institucional, igual que el resto de la interfaz. */
-  background: #03a7a4;
+  background: #292929;
   border-radius: 12px;
   color: #ffffff;
 }
@@ -464,7 +456,7 @@ body { background: #d4dade !important; }
   flex-shrink: 0;
   padding: 6px;
   border-radius: 8px;
-  background: rgba(255,255,255,.18);
+  background: rgb(255 255 255 / .18);
   color: #ffffff;
 }
 .terms-notice-body { flex: 1; min-width: 0; }
@@ -479,7 +471,7 @@ body { background: #d4dade !important; }
   font-size: var(--fs-sm);
   line-height: 1.55;
   margin: 0;
-  color: rgba(255,255,255,.9);
+  color: rgb(255 255 255 / .9);
 }
 .terms-notice-body a {
   color: #ffffff;
@@ -516,11 +508,11 @@ body { background: #d4dade !important; }
     gap: 2px !important;
   }
   .pk-credits-num { font-size: var(--fs-lg) !important; }
-  .pk-credits-unit { font-size: 13px !important; }
+  .pk-credits-unit { font-size: var(--fv-tipo-auxiliar, .75rem) !important; }
   .pk-divider { margin: 8px 0 6px !important; width: 22px !important; }
   .pk-price { font-size: var(--fs-md) !important; }
-  .pk-cur { font-size: 13px !important; }
-  .pk-unit-price { font-size: 13px !important; margin-top: 4px !important; }
+  .pk-cur { font-size: var(--fv-tipo-auxiliar, .75rem) !important; }
+  .pk-unit-price { font-size: var(--fv-tipo-auxiliar, .75rem) !important; margin-top: 4px !important; }
   #plansSection-credits, #plansSection-custom {
     padding: 14px !important;
   }
@@ -542,7 +534,7 @@ body { background: #d4dade !important; }
   width: 100%;
   padding: 18px;
   background: #ffffff;
-  border: 1px solid rgba(20,29,28,.1);
+  border: 1px solid rgb(27 27 27 / .1);
   border-radius: 12px;
   cursor: pointer;
   font-family: inherit;
@@ -553,40 +545,40 @@ body { background: #d4dade !important; }
 }
 .pay-custom:hover,
 .pay-custom:focus-visible {
-  border-color: #03a7a4;
+  border-color: #292929;
   outline: none;
 }
 .pay-custom-eyebrow {
   font-size: 13px;
   font-weight: 400;
-  color: rgba(20,29,28,.5);
+  color: rgb(27 27 27 / .5);
   letter-spacing: .5px;
   text-transform: uppercase;
 }
 .pay-custom-title {
   font-size: var(--fs-md) !important;
   font-weight: 700 !important;
-  color: #141d1c !important;
+  color: #171717 !important;
   margin: 5px 0 0 !important;
   line-height: 1.2;
 }
 .pay-custom-sub {
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.6);
+  color: rgb(27 27 27 / .6);
   line-height: 1.5;
   margin: 4px 0 14px;
 }
 .pay-custom-cta {
   align-self: stretch;
   padding: 11px 20px;
-  background: #8fc72e;
+  background: #292929;
   color: #ffffff;
   border-radius: 8px;
   font-size: var(--fs-sm);
   font-weight: 700;
   text-align: center;
 }
-.pay-custom:hover .pay-custom-cta { background: #7ab325; }
+.pay-custom:hover .pay-custom-cta { background: #171717; }
 
 /* ── HERO DE RECARGA PERSONALIZADA ─────────────────────── */
 .custom-plan-hero {
@@ -596,7 +588,7 @@ body { background: #d4dade !important; }
   gap: 20px;
   width: 100%;
   padding: 22px 24px;
-  border: 2px dashed rgba(20,29,28,.2);
+  border: 2px dashed rgb(27 27 27 / .2);
   border-radius: 12px;
   background: #ffffff;
   cursor: pointer;
@@ -606,15 +598,15 @@ body { background: #d4dade !important; }
   transition: border-color .15s, background .15s;
 }
 .custom-plan-hero:hover {
-  border-color: #8fc72e;
+  border-color: #292929;
   border-style: solid;
-  background: #f9fef0;
+  background: #f0f0f0;
 }
 .custom-plan-hero-icon {
   width: 52px; height: 52px;
   border-radius: 12px;
-  background: #ecfccb;
-  color: #365314;
+  background: #f5f5f5;
+  color: #414141;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
@@ -623,19 +615,19 @@ body { background: #d4dade !important; }
 .custom-plan-hero-title {
   font-size: var(--fs-md) !important;
   font-weight: 700 !important;
-  color: #141d1c !important;
+  color: #171717 !important;
   margin: 0 0 4px !important;
   line-height: 1.25;
 }
 .custom-plan-hero-sub {
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.65);
+  color: rgb(27 27 27 / .65);
   margin: 0;
   line-height: 1.4;
 }
 .custom-plan-hero-cta {
   padding: 10px 18px;
-  background: #8fc72e;
+  background: #292929;
   color: #ffffff;
   border-radius: 8px;
   font-size: var(--fs-sm);
@@ -655,7 +647,7 @@ body { background: #d4dade !important; }
    Toda la tarjeta es el botón — al clic abre el modal de pago. */
 .plan-card-v2-clickable {
   cursor: pointer;
-  border: 1px solid rgba(20,29,28,.12);
+  border: 1px solid rgb(27 27 27 / .12);
   background: #ffffff;
   border-radius: 12px;
   padding: 16px 18px;
@@ -669,16 +661,16 @@ body { background: #d4dade !important; }
   width: 100%;
 }
 .plan-card-v2-clickable:hover {
-  border-color: #8fc72e;
+  border-color: #292929;
   transform: translateY(-1px);
 }
 .plan-card-v2-clickable:active { transform: translateY(0); }
 .plan-card-v2-custom {
   border-style: dashed !important;
-  border-color: rgba(20,29,28,.25) !important;
-  background: rgba(255,255,255,.6);
+  border-color: rgb(27 27 27 / .25) !important;
+  background: rgb(255 255 255 / .6);
 }
-.plan-card-v2-custom:hover { border-color: #8fc72e !important; background: #ffffff; }
+.plan-card-v2-custom:hover { border-color: #292929 !important; background: #ffffff; }
 
 /* ── MODAL DE RECARGA PERSONALIZADA (LIMPIO, SIN OSCUROS) ─ */
 .rx-modal {
@@ -690,7 +682,7 @@ body { background: #d4dade !important; }
 .rx-modal[hidden] { display: none !important; }
 .rx-modal-backdrop {
   position: absolute; inset: 0;
-  background: rgba(20,29,28,.35);
+  background: rgb(27 27 27 / .35);
   backdrop-filter: blur(3px);
 }
 .rx-modal-shell {
@@ -707,14 +699,14 @@ body { background: #d4dade !important; }
   position: absolute; top: 12px; right: 12px;
   width: 32px; height: 32px;
   border: none; background: transparent;
-  color: rgba(20,29,28,.55);
+  color: rgb(27 27 27 / .55);
   cursor: pointer;
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   z-index: 3;
   transition: background .13s, color .13s;
 }
-.rx-modal-close:hover { background: rgba(20,29,28,.06); color: #141d1c; }
+.rx-modal-close:hover { background: rgb(27 27 27 / .06); color: #171717; }
 .rx-modal-close svg { width: 16px; height: 16px; }
 
 .rx-modal-main {
@@ -726,13 +718,13 @@ body { background: #d4dade !important; }
 .rx-main-title {
   font-size: var(--fs-md);
   font-weight: 400;
-  color: #141d1c;
+  color: #171717;
   margin: 0;
   line-height: 1.3;
 }
 .rx-main-sub {
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.6);
+  color: rgb(27 27 27 / .6);
   line-height: 1.5;
   margin: -8px 0 0;
 }
@@ -741,7 +733,7 @@ body { background: #d4dade !important; }
 }
 .rx-label {
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.6);
+  color: rgb(27 27 27 / .6);
 }
 .rx-input-wrap {
   position: relative;
@@ -750,62 +742,62 @@ body { background: #d4dade !important; }
 .rx-input {
   width: 100%;
   padding: 12px 88px 12px 14px;
-  border: 1px solid rgba(20,29,28,.15);
+  border: 1px solid rgb(27 27 27 / .15);
   border-radius: 8px;
   font-size: var(--fs-md);
   font-weight: 400;
   font-family: inherit;
-  color: #141d1c;
+  color: #171717;
   background: #ffffff;
   transition: border-color .13s;
 }
-.rx-input:focus { outline: none; border-color: #8fc72e; }
+.rx-input:focus { outline: none; border-color: #292929; }
 .rx-input-suffix {
   position: absolute;
   right: 14px;
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.5);
+  color: rgb(27 27 27 / .5);
   pointer-events: none;
 }
 
 .rx-summary {
   display: flex; align-items: baseline; justify-content: space-between;
   padding: 12px 14px;
-  background: #f3f4f6;
+  background: #f4f4f4;
   border-radius: 8px;
 }
 .rx-summary-key {
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.6);
+  color: rgb(27 27 27 / .6);
 }
 .rx-summary-val {
   font-size: var(--fs-lg);
-  color: #141d1c;
+  color: #171717;
   font-variant-numeric: tabular-nums;
 }
 
 .rx-cta {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 12px 20px;
-  background: #8fc72e;
+  background: #292929;
   color: #ffffff !important;
   border-radius: 8px;
   font-size: var(--fs-sm);
   text-decoration: none;
   transition: background .13s;
 }
-.rx-cta:hover { background: #7ab325; }
+.rx-cta:hover { background: #171717; }
 .rx-cta[aria-disabled="true"],
 .rx-cta.is-disabled {
-  background: rgba(20,29,28,.1);
-  color: rgba(20,29,28,.4) !important;
+  background: rgb(27 27 27 / .1);
+  color: rgb(27 27 27 / .4) !important;
   pointer-events: none;
   cursor: not-allowed;
 }
 .rx-foot-note {
   margin: 0;
   font-size: var(--fs-xs);
-  color: rgba(20,29,28,.5);
+  color: rgb(27 27 27 / .5);
   text-align: center;
 }
 
@@ -819,7 +811,7 @@ body { background: #d4dade !important; }
 .pay-modal[hidden] { display: none !important; }
 .pay-modal-backdrop {
   position: absolute; inset: 0;
-  background: #4b5563;   /* gris opaco — sin dejar ver el turquesa */
+  background: #545454;   /* gris opaco — sin dejar ver el turquesa */
   backdrop-filter: blur(3px);
 }
 .pay-modal-card {
@@ -833,27 +825,27 @@ body { background: #d4dade !important; }
 }
 .pay-modal-stripes {
   height: 5px;
-  background: #8fc72e;      /* una sola franja verde */
+  background: #292929;      /* una sola franja verde */
 }
 .pay-modal-close {
   position: absolute; top: 12px; right: 12px;
   width: 30px; height: 30px;
   border: none; background: transparent;
-  color: rgba(20,29,28,.55);
+  color: rgb(27 27 27 / .55);
   cursor: pointer;
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   z-index: 2;
 }
-.pay-modal-close:hover { background: rgba(20,29,28,.08); color: #141d1c; }
+.pay-modal-close:hover { background: rgb(27 27 27 / .08); color: #171717; }
 .pay-modal-close svg { width: 16px; height: 16px; }
 .pay-modal-body { padding: 26px 26px 22px; }
 .pay-modal-eyebrow {
   display: inline-block;
   font-size: var(--fs-xs);
   font-weight: 700;
-  color: #365314;
-  background: #ecfccb;
+  color: #414141;
+  background: #f5f5f5;
   padding: 3px 10px;
   border-radius: 999px;
   text-transform: uppercase;
@@ -863,13 +855,13 @@ body { background: #d4dade !important; }
 .pay-modal-title {
   font-size: var(--fs-lg) !important;
   font-weight: 700 !important;
-  color: #141d1c !important;
+  color: #171717 !important;
   margin: 0 0 6px !important;
   line-height: 1.2;
 }
 .pay-modal-sub {
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.65);
+  color: rgb(27 27 27 / .65);
   margin: 0 0 20px;
   line-height: 1.5;
 }
@@ -882,29 +874,29 @@ body { background: #d4dade !important; }
   align-items: center;
   gap: 10px 12px;
   padding: 14px 16px;
-  border: 2px solid rgba(20,29,28,.12);
+  border: 2px solid rgb(27 27 27 / .12);
   border-radius: 12px;
   background: #ffffff;
-  color: #141d1c;
+  color: #171717;
   cursor: pointer;
   text-decoration: none;
   font-family: inherit;
   transition: border-color .13s, background .13s;
 }
-.pay-opt:hover { border-color: #8fc72e; background: #f9fef0; }
+.pay-opt:hover { border-color: #292929; background: #f0f0f0; }
 .pay-opt svg { grid-row: 1 / 3; width: 24px; height: 24px; }
-.pay-opt-mp svg { color: #009ee3; }
-.pay-opt-wa svg { color: #25d366; }
+.pay-opt-mp svg { color: #818181; }
+.pay-opt-wa svg { color: #a6a6a6; }
 .pay-opt-label {
   grid-column: 2;
   font-size: var(--fs-sm);
   font-weight: 700;
-  color: #141d1c;
+  color: #171717;
 }
 .pay-opt-hint {
   grid-column: 2;
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.55);
+  color: rgb(27 27 27 / .55);
   font-weight: 400;
 }
 
@@ -916,54 +908,54 @@ body { background: #d4dade !important; }
 .custom-pay-label {
   font-size: var(--fs-sm);
   font-weight: 700;
-  color: #141d1c;
+  color: #171717;
   margin-bottom: -2px;
 }
 .custom-pay-input {
   width: 100%;
   padding: 14px 16px;
-  border: 2px solid rgba(20,29,28,.15);
+  border: 2px solid rgb(27 27 27 / .15);
   border-radius: 12px;
   font-size: var(--fs-md);
   font-weight: 700;
   font-family: inherit;
-  color: #141d1c;
+  color: #171717;
   background: #ffffff;
   transition: border-color .13s;
 }
 .custom-pay-input:focus {
   outline: none;
-  border-color: #8fc72e;
+  border-color: #292929;
 }
 .custom-pay-summary {
   display: flex; align-items: baseline; justify-content: space-between;
   padding: 14px 16px;
-  background: #d4dade;
+  background: #d9d9d9;
   border-radius: 12px;
   margin-top: 4px;
 }
 .custom-pay-summary-label {
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.65);
+  color: rgb(27 27 27 / .65);
   font-weight: 400;
 }
 .custom-pay-summary-value {
   font-size: var(--fs-xl);
   font-weight: 700;
-  color: #141d1c;
+  color: #171717;
   font-variant-numeric: tabular-nums;
 }
 .custom-pay-note {
   margin: 0;
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.55);
+  color: rgb(27 27 27 / .55);
   line-height: 1.5;
   text-align: center;
 }
 .custom-pay-cta {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   padding: 14px 20px;
-  background: #25d366;
+  background: #a6a6a6;
   color: #ffffff !important;
   border-radius: 12px;
   font-size: var(--fs-sm);
@@ -972,15 +964,15 @@ body { background: #d4dade !important; }
   transition: background .13s, opacity .13s;
   margin-top: 6px;
 }
-.custom-pay-cta:hover { background: #1eb554; }
+.custom-pay-cta:hover { background: #8e8e8e; }
 .custom-pay-cta svg { width: 20px; height: 20px; color: #ffffff; }
 .custom-pay-cta.is-disabled {
-  background: rgba(20,29,28,.15);
-  color: rgba(20,29,28,.4) !important;
+  background: rgb(27 27 27 / .15);
+  color: rgb(27 27 27 / .4) !important;
   pointer-events: none;
   cursor: not-allowed;
 }
-.custom-pay-cta.is-disabled svg { color: rgba(20,29,28,.4); }
+.custom-pay-cta.is-disabled svg { color: rgb(27 27 27 / .4); }
 
 /* ── AVISO CENTRADO (mantenimiento / mejora en curso) ─────
    Modal en el centro de la pantalla al cargar. Se cierra con la X. */
@@ -998,7 +990,7 @@ body { background: #d4dade !important; }
 .center-notice-backdrop {
   position: absolute;
   inset: 0;
-  background: #4b5563;   /* gris opaco — sin turquesa detrás */
+  background: #545454;   /* gris opaco — sin turquesa detrás */
   backdrop-filter: blur(3px);
 }
 .center-notice-card {
@@ -1018,14 +1010,14 @@ body { background: #d4dade !important; }
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 6px;
-  background: #8fc72e;
+  background: #292929;
 }
 /* Franja inferior — un solo color verde más tenue */
 .center-notice-stripes-bottom {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 3px;
-  background: #8fc72e;
+  background: #292929;
   opacity: .55;
 }
 /* Chip / badge "EN MEJORA" */
@@ -1034,8 +1026,8 @@ body { background: #d4dade !important; }
   margin: 0 0 8px;
   padding: 4px 12px;
   border-radius: 999px;
-  background: #ecfccb;
-  color: #365314;
+  background: #f5f5f5;
+  color: #414141;
   font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: .8px;
@@ -1048,33 +1040,33 @@ body { background: #d4dade !important; }
   width: 30px; height: 30px;
   border: none;
   background: transparent;
-  color: rgba(20,29,28,.55);
+  color: rgb(27 27 27 / .55);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   border-radius: 8px;
   padding: 0;
 }
-.center-notice-close:hover { background: rgba(20,29,28,.08); color: #141d1c; }
+.center-notice-close:hover { background: rgb(27 27 27 / .08); color: #171717; }
 .center-notice-close svg { width: 16px; height: 16px; }
 .center-notice-icon {
   width: 64px; height: 64px;
   margin: 0 auto 16px;
   border-radius: 50%;
-  background: #ecfccb;
-  color: #365314;
+  background: #f5f5f5;
+  color: #414141;
   display: flex; align-items: center; justify-content: center;
 }
 .center-notice-icon svg { width: 34px; height: 34px; }
 .center-notice-title {
   font-size: var(--fs-lg) !important;
   font-weight: 700 !important;
-  color: #141d1c !important;
+  color: #171717 !important;
   margin: 0 0 8px !important;
   line-height: 1.2;
 }
 .center-notice-sub {
   font-size: var(--fs-sm);
-  color: rgba(20,29,28,.65);
+  color: rgb(27 27 27 / .65);
   margin: 0;
   line-height: 1.5;
 }
@@ -1112,10 +1104,10 @@ body { background: #d4dade !important; }
    CSP pueda bloquear.
 ------------------------------------------------------------ */
 .auth-modal {
-  --auth-tex-dots: radial-gradient(circle at 1px 1px, rgba(20, 29, 28, .05) 1px, transparent 1.6px);
+  --auth-tex-dots: radial-gradient(circle at 1px 1px, rgb(27 27 27 / .05) 1px, transparent 1.6px);
 }
 .auth-modal-overlay {
-  background-color: var(--c-bg, #F3F3F3) !important;
+  background-color: var(--c-bg, #f3f3f3) !important;
   background-image: var(--auth-tex-dots) !important;
   background-size: 18px 18px !important;
   background-repeat: repeat !important;
@@ -1149,13 +1141,13 @@ body { background: #d4dade !important; }
   margin: 0 !important;
 }
 .auth-brand-title .brand-plus-lg {
-  color: #8fc72e !important;                     /* el "+" en verde lima sobre verde oscuro */
+  color: #292929 !important;                     /* el "+" en verde lima sobre verde oscuro */
   margin-left: 2px !important;
 }
 .auth-brand-tagline {
   font-size: var(--fs-sm) !important;
   line-height: 1.55 !important;
-  color: rgba(255,255,255,.9) !important;
+  color: rgb(255 255 255 / .9) !important;
   max-width: 340px !important;
   margin: 0 0 4px !important;
 }
@@ -1185,7 +1177,7 @@ body { background: #d4dade !important; }
   padding-left: 18px;
   font-size: var(--fs-sm);
   line-height: 1.4;
-  color: rgba(255,255,255,.85);
+  color: rgb(255 255 255 / .85);
 }
 .auth-brand-list li::before {
   content: '';
@@ -1195,7 +1187,7 @@ body { background: #d4dade !important; }
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #8fc72e;
+  background: #292929;
 }
 /* Encabezado del formulario — oculto en desktop, donde la marca ya vive
    en el lado oscuro. El bloque responsive completo vive al final del
@@ -1204,14 +1196,14 @@ body { background: #d4dade !important; }
 .auth-form-mh { display: none; }
 
 /* «Olvidaste tu contrasena» y «Crear cuenta» van en el oscuro de marca,
-   no en verde. Estuvieron en un verde oscurecido (#4e7519) para llegar
+   no en verde. Estuvieron en un verde oscurecido (#414141) para llegar
    al 4.5:1 que exige el texto pequeno; el oscuro lo da de sobra (15:1)
    y ademas deja el verde libre para lo que de verdad senala. El
    `!important` hace falta: auth.css los pinta con --c-accent. Sobre
    fondo oscuro el verde original no se toca. */
 .auth-forgot,
 .auth-switch button {
-  color: #141d1c !important;
+  color: #171717 !important;
 }
 .auth-forgot:hover,
 .auth-switch button:hover {
@@ -1227,8 +1219,8 @@ body { background: #d4dade !important; }
    era lo unico que gritaba en toda la mitad del formulario. En oscuro
    sobre blanco pesa igual como accion primaria y no compite con nada.
 
-   Blanco sobre #141d1c da 17.6:1, mas contraste que el par anterior. El
-   hover sube al #141d1c de la paleta: se nota el cambio sin encender
+   Blanco sobre #171717 da 17.6:1, mas contraste que el par anterior. El
+   hover sube al #171717 de la paleta: se nota el cambio sin encender
    ningun color. */
 .auth-submit {
   background: var(--c-surface-dark) !important;
@@ -1239,12 +1231,12 @@ body { background: #d4dade !important; }
 /* Footer "© 2026 Filtro Vehicular+ Perú" al pie del cuadro verde */
 .auth-brand-foot {
   font-size: var(--fs-xs) !important;
-  color: rgba(255,255,255,.7) !important;
+  color: rgb(255 255 255 / .7) !important;
   letter-spacing: .5px !important;
   text-transform: uppercase !important;
   margin: 0 !important;
   padding-top: 16px !important;
-  border-top: 1px solid rgba(255,255,255,.15) !important;
+  border-top: 1px solid rgb(255 255 255 / .15) !important;
 }
 .auth-brand-side::before {
   display: none !important;
@@ -1261,7 +1253,7 @@ body.auth-modal-open .auth-legal-foot {
   margin: 0 !important;
   padding: 0 !important;
   z-index: 9999;
-  color: rgba(20,29,28,.75) !important;
+  color: rgb(27 27 27 / .75) !important;
   font-size: var(--fs-sm) !important;
   letter-spacing: .3px;
   text-align: center !important;
@@ -1271,9 +1263,9 @@ body.auth-modal-open .auth-legal-foot {
   gap: 10px !important;
   pointer-events: auto;
 }
-.auth-legal-foot a { color: rgba(20,29,28,.75) !important; }
-.auth-legal-foot a:hover { color: #141d1c !important; text-decoration: underline; }
-.auth-legal-foot .dot { color: rgba(20,29,28,.5) !important; opacity: 1 !important; }
+.auth-legal-foot a { color: rgb(27 27 27 / .75) !important; }
+.auth-legal-foot a:hover { color: #171717 !important; text-decoration: underline; }
+.auth-legal-foot .dot { color: rgb(27 27 27 / .5) !important; opacity: 1 !important; }
 
 /* Sidebar siempre expandido — el botón toggle causaba colapsos accidentales
    al confundirse con otros controles del topbar. Se oculta y se fuerza el
@@ -1299,20 +1291,9 @@ body.auth-modal-open .auth-legal-foot {
 .hero.compact-hero,
 header.compact-hero { display: none !important; }
 
-/* ─── Barra de acento cuatricolor bajo cada encabezado de sección ────
-   Aplicada de forma sutil y consistente: solo debajo de los títulos
-   principales de panel/vista, no en cada input. */
+/* Acento terracota único para las cabeceras de sección. */
 :root {
-  /* Un solo tramo por color. Antes la secuencia se repetía dos veces
-     (ocho tramos del 12.5%) y la barra se leía como un patrón repetido
-     en vez de como cuatro colores de marca. */
-  --accent-gradient: linear-gradient(
-    to right,
-    #00bcd4 0%,    #00bcd4 25%,
-    #8fc72e 25%,   #8fc72e 50%,
-    #ffb020 50%,   #ffb020 75%,
-    #e53935 75%,   #e53935 100%
-  );
+  --accent-gradient: #292929;
 }
 /* La barra cuatricolor se coloca DENTRO del panel, justo debajo del
    título/encabezado, no en el borde inferior del contenedor. */
@@ -1392,7 +1373,7 @@ select,
 .combo-trigger {
   border-width: 2px !important;
   border-style: solid !important;
-  border-color: rgba(20, 29, 28, .22) !important;
+  border-color: rgb(27 27 27 / .22) !important;
   border-radius: 8px !important;
 }
 .input:focus,
@@ -1401,14 +1382,14 @@ textarea:focus,
 select:focus,
 .combo-trigger:focus,
 .combo-trigger[aria-expanded="true"] {
-  border-color: #8fc72e !important;
+  border-color: #292929 !important;
   outline: none !important;
 }
 
 /* ── CABECERA (topbar) más profesional y estructurada ────── */
 .topbar {
   background: #ffffff !important;
-  border-bottom: 1px solid rgba(20, 29, 28, .1) !important;
+  border-bottom: 1px solid rgb(27 27 27 / .1) !important;
   padding: 0 22px !important;
   height: 71px !important;
   display: flex !important;
@@ -1433,11 +1414,11 @@ select:focus,
   font-size: var(--fs-sm);
   min-width: 0;
   padding: 6px 14px;
-  background: rgba(20, 29, 28, .04);
+  background: rgb(27 27 27 / .04);
   border-radius: 999px;
 }
 .breadcrumb .crumb {
-  color: rgba(20, 29, 28, .55);
+  color: rgb(27 27 27 / .55);
   background: none;
   border: none;
   padding: 0;
@@ -1447,35 +1428,35 @@ select:focus,
   font-weight: 400;
   letter-spacing: .1px;
 }
-.breadcrumb .crumb-link:hover { color: #141d1c; }
+.breadcrumb .crumb-link:hover { color: #171717; }
 .breadcrumb .crumb.current {
-  color: #141d1c !important;
+  color: #171717 !important;
   font-weight: 700 !important;
   font-size: var(--fs-sm) !important;
   letter-spacing: .8px !important;
 }
 .breadcrumb .sep {
-  color: rgba(20, 29, 28, .35);
+  color: rgb(27 27 27 / .35);
   display: inline-flex;
   align-items: center;
 }
 .breadcrumb .sep svg { width: 13px; height: 13px; }
 
-/* Botón primario en verde lima (antes era rojo #dc2626) */
+/* Botón primario en verde lima (antes era rojo #4d4d4d) */
 .btn-primary,
 button.btn-primary,
 .plan-cta,
 .primary-btn {
-  background: #8fc72e !important;
-  border-color: #8fc72e !important;
+  background: #292929 !important;
+  border-color: #292929 !important;
   color: #ffffff !important;
 }
 .btn-primary:hover,
 button.btn-primary:hover,
 .plan-cta:hover,
 .primary-btn:hover {
-  background: #7ab325 !important;
-  border-color: #7ab325 !important;
+  background: #171717 !important;
+  border-color: #171717 !important;
 }
 
 /* «Consultar» va en oscuro, no en verde: es la acción de la plataforma, no
@@ -1490,8 +1471,8 @@ button.btn-primary:hover,
 .form-row .btn-primary:hover,
 .nm-fields .btn-primary:hover,
 .filter-form .btn-primary:hover {
-  background: #2a3b38 !important;
-  border-color: #2a3b38 !important;
+  background: #2f2f2f !important;
+  border-color: #2f2f2f !important;
 }
 
 /* Plan-card del dashboard: cover con esquinas redondeadas + contenido
@@ -1539,7 +1520,7 @@ button.btn-primary:hover,
   font-size: var(--fs-xs);
   letter-spacing: .8px;
   text-transform: uppercase;
-  color: rgba(255,255,255,.75);
+  color: rgb(255 255 255 / .75);
   font-weight: 400;
 }
 .sb-info-plan {
@@ -1549,7 +1530,7 @@ button.btn-primary:hover,
   text-transform: uppercase;
   padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(255,255,255,.15);
+  background: rgb(255 255 255 / .15);
   color: #ffffff;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1570,7 +1551,7 @@ button.btn-primary:hover,
 }
 .sb-info-credits span {
   font-size: var(--fs-xs);
-  color: rgba(255,255,255,.8);
+  color: rgb(255 255 255 / .8);
 }
 .sb-info-cta {
   display: inline-flex;
@@ -1578,8 +1559,8 @@ button.btn-primary:hover,
   justify-content: center;
   gap: 6px;
   padding: 9px 12px;
-  background: rgba(255,255,255,.16);
-  border: 1px solid rgba(255,255,255,.25);
+  background: rgb(255 255 255 / .16);
+  border: 1px solid rgb(255 255 255 / .25);
   color: #ffffff;
   border-radius: 8px;
   font-size: var(--fs-sm);
@@ -1589,18 +1570,18 @@ button.btn-primary:hover,
   margin-top: 2px;
   transition: background .13s;
 }
-.sb-info-cta:hover { background: rgba(255,255,255,.25); }
+.sb-info-cta:hover { background: rgb(255 255 255 / .25); }
 .sb-info-cta svg { width: 14px; height: 14px; }
 /* Anónimo → texto genérico */
-body.is-anonymous .sb-info-card { background: rgba(20,29,28,.06); color: #141d1c; }
-body.is-anonymous .sb-info-eyebrow { color: rgba(20,29,28,.55); }
-body.is-anonymous .sb-info-plan { background: rgba(20,29,28,.08); color: #141d1c; }
-body.is-anonymous .sb-info-credits strong { color: #141d1c; }
-body.is-anonymous .sb-info-credits span { color: rgba(20,29,28,.55); }
+body.is-anonymous .sb-info-card { background: rgb(27 27 27 / .06); color: #171717; }
+body.is-anonymous .sb-info-eyebrow { color: rgb(27 27 27 / .55); }
+body.is-anonymous .sb-info-plan { background: rgb(27 27 27 / .08); color: #171717; }
+body.is-anonymous .sb-info-credits strong { color: #171717; }
+body.is-anonymous .sb-info-credits span { color: rgb(27 27 27 / .55); }
 body.is-anonymous .sb-info-cta {
-  background: #8fc72e; border-color: #8fc72e; color: #ffffff;
+  background: #292929; border-color: #292929; color: #ffffff;
 }
-body.is-anonymous .sb-info-cta:hover { background: #7ab325; border-color: #7ab325; }
+body.is-anonymous .sb-info-cta:hover { background: #171717; border-color: #171717; }
 
 /* ── Pestaña "Extras" del sidebar (agrupa todas las categorías) ── */
 .nav-item.nav-parent {
@@ -1622,7 +1603,7 @@ body.is-anonymous .sb-info-cta:hover { background: #7ab325; border-color: #7ab32
   gap: 2px;
   padding-left: 10px;
   margin: 4px 0 6px;
-  border-left: 1px solid rgba(255,255,255,.08);
+  border-left: 1px solid rgb(255 255 255 / .08);
   margin-left: 20px;
 }
 .nav-submenu[hidden] { display: none !important; }
@@ -1632,7 +1613,7 @@ body.is-anonymous .sb-info-cta:hover { background: #7ab325; border-color: #7ab32
 #view-dashboard .quick-compact,
 #view-dashboard .quick-actions-compact > button,
 #view-dashboard .quick-actions-compact > a {
-  background: #03a7a4 !important;
+  background: #292929 !important;
   border: none !important;
   color: #ffffff !important;
 }
@@ -1642,21 +1623,21 @@ body.is-anonymous .sb-info-cta:hover { background: #7ab325; border-color: #7ab32
   stroke: #ffffff !important;
 }
 #view-dashboard .quick-compact:hover {
-  background: #028f8c !important;
+  background: #2f2f2f !important;
 }
 
 /* Botón "Ver historial de consumos" (dashboard credits-card) — verde lima */
 #view-dashboard .credits-card .btn-outline,
 #view-dashboard .credits-card .btn.btn-outline,
 #view-dashboard .credits-info .btn-outline {
-  background: #8fc72e !important;
-  border-color: #8fc72e !important;
+  background: #292929 !important;
+  border-color: #292929 !important;
   color: #ffffff !important;
 }
 #view-dashboard .credits-card .btn-outline:hover,
 #view-dashboard .credits-info .btn-outline:hover {
-  background: #7ab325 !important;
-  border-color: #7ab325 !important;
+  background: #171717 !important;
+  border-color: #171717 !important;
   color: #ffffff !important;
 }
 .content > * { margin: 0 !important; }
@@ -1788,12 +1769,12 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     top: 14px !important;
     right: 16px !important;
     z-index: 5 !important;
-    color: rgba(20,29,28,.5) !important;
+    color: rgb(27 27 27 / .5) !important;
   }
   #authModalLogin  .auth-modal-close:hover,
   #authModalSignup .auth-modal-close:hover {
-    color: #141d1c !important;
-    background: rgba(20,29,28,.06) !important;
+    color: #171717 !important;
+    background: rgb(27 27 27 / .06) !important;
   }
 
   /* ---------- Encabezado del login ----------
@@ -1806,7 +1787,7 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     gap: 5px !important;
     flex: 0 0 auto !important;
     background: transparent !important;
-    color: #141d1c !important;
+    color: #171717 !important;
     /* Dos margenes auto aqui, mas uno en la tarjeta, reparten el
        espacio sobrante en tres partes iguales: arriba del encabezado,
        entre encabezado y tarjeta, y debajo de la tarjeta. El resultado
@@ -1850,10 +1831,10 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
     font-weight: 700 !important;
     letter-spacing: -.6px !important;
     line-height: 1.1 !important;
-    color: #141d1c !important;
+    color: #171717 !important;
   }
   .mh-plus {
-    color: #8fc72e !important;
+    color: #292929 !important;
     margin-left: 1px !important;
   }
 
@@ -1899,10 +1880,10 @@ body.app-ready { opacity: 1; transition: opacity .2s ease; }
      la tarjeta del lienzo (sin sombra, segun la guia del proyecto). */
   .auth-modal-panel.auth-split .auth-form-card {
     background: #ffffff !important;
-    /* En el gris de la casa, no en el azulado #a4b1b9 que traía: los
-       campos de dentro cerraron con rgba(20,29,28,.18) y el filete de la
+    /* En el gris de la casa, no en el azulado #afafaf que traía: los
+       campos de dentro cerraron con rgb(27 27 27 / .18) y el filete de la
        tarjeta era el único trazo de la pantalla que tiraba a azul. */
-    border: 1px solid rgba(20, 29, 28, .18) !important;
+    border: 1px solid rgb(27 27 27 / .18) !important;
     border-radius: 14px !important;
     padding: 30px 22px 26px !important;
     margin: 0 0 auto !important;

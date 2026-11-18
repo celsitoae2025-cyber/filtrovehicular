@@ -90,6 +90,13 @@
   var catalogCache = {}; // { [categoria]: { data, ts } }
   var CATALOG_TTL_MS = 60000;
 
+  function normalizarTextoTive(valor) {
+    return String(valor || '').replace(
+      /tarjeta\s+de\s+identificaci[o\u00f3]n\s+vehicular(?:\s+electr[o\u00f3]nica)?(?:\s*\(TIVE\))?/gi,
+      'Tarjeta de Propiedad (TIVE)'
+    );
+  }
+
   async function loadCatalog(categoria) {
     var key = categoria || '__all__';
     var cached = catalogCache[key];
@@ -103,7 +110,12 @@
     q = q.order("orden", { ascending: true });
     var res = await q;
     if (res.error) throw res.error;
-    var data = res.data || [];
+    var data = (res.data || []).map(function (item) {
+      return Object.assign({}, item, {
+        nombre: normalizarTextoTive(item.nombre),
+        descripcion: normalizarTextoTive(item.descripcion),
+      });
+    });
     catalogCache[key] = { data: data, ts: Date.now() };
     return data;
   }

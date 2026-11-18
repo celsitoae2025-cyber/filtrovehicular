@@ -1152,7 +1152,7 @@
           var boxW = Math.round(w * 0.45);
           var boxH = Math.round(h * 0.065);
           var bx = w - boxW, by = h - boxH;
-          ctx.fillStyle = '#141d1c';
+          ctx.fillStyle = '#1b1b1b';
           ctx.fillRect(bx, by, boxW, boxH);
           var fontSize = Math.max(13, Math.round(boxH * 0.55));
           ctx.font = 'bold ' + fontSize + 'px sans-serif';

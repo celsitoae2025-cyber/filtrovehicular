@@ -149,6 +149,7 @@
     /* Elegir una consulta es un paso atrás desde el catálogo: sin esta
        entrada, el «atrás» del navegador sacaba de la plataforma. */
     if (abriendo && NV.abrirCapa) NV.abrirCapa('consulta', volverAlCatalogo);
+    if (NV.actualizarInicio) NV.actualizarInicio();
   }
 
   /* Atrás desde una consulta elegida: se vuelve al catálogo, no fuera. */
@@ -161,7 +162,9 @@
     if (NV.actualizarModoNombre) NV.actualizarModoNombre(null);
     var res = $('filter-result');
     if (res) res.hidden = true;
+    if (NV.actualizarInicio) NV.actualizarInicio();
   }
+  NV.volverAlCatalogo = volverAlCatalogo;
   NV.mostrarBuscador = mostrarBuscador;
 
   function elegir(id) {
@@ -395,7 +398,7 @@
       .sort(function (a, b) { return b[1] - a[1]; });
     var suma = filas.reduce(function (a, f) { return a + f[1]; }, 0);
     /* Del oscuro de la casa al gris claro: la interfaz es monocroma. */
-    var TONOS = ['#141d1c', '#2f4d43', '#56706a', '#7f948e', '#a8b7b2', '#cdd6d2', '#e3e9e6'];
+    var TONOS = ['#202020', '#484848', '#707070', '#929292', '#b3b3b3', '#cecece', '#e4e4e4'];
     if (!suma) {
       $('nvReparto').innerHTML = '<p class="nv-vacio">Aún sin consultas.</p>';
     } else {

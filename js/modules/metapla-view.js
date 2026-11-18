@@ -205,7 +205,7 @@
     facts.forEach(function (item) {
       if (item.topic !== 'tive') return;
       if (out.some(function (card) { return /tive|tarjeta.*propiedad|tarjeta unica/.test(normal(card.label)); })) return;
-      out.push({ label: 'Tarjeta de propiedad electrónica', value: item.title.match(/tramitad|emitid|registrad|vigente/) ? 'TRAMITADO' : 'Ver detalle', status: markerFor({ titulo: item.title, filas: item.rows }, out) });
+      out.push({ label: 'Tarjeta de Propiedad (TIVE)', value: item.title.match(/tramitad|emitid|registrad|vigente/) ? 'TRAMITADO' : 'Ver detalle', status: markerFor({ titulo: item.title, filas: item.rows }, out) });
     });
     return out;
   }

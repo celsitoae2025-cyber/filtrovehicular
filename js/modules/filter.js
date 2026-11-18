@@ -773,7 +773,7 @@
     var creditsEl = $('filter-credits');
     if (creditsEl) {
       var isPrem = c.categoria === 'premium' || c.requires_subscription;
-      var BOLT = '<svg viewBox="0 0 24 24" fill="#141d1c" stroke="none" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px;" aria-hidden="true"><path d="M13 2L4.5 13.5H11L10 22L20.5 10.5H14L13 2Z"/></svg>';
+      var BOLT = '<svg viewBox="0 0 24 24" fill="#1b1b1b" stroke="none" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px;" aria-hidden="true"><path d="M13 2L4.5 13.5H11L10 22L20.5 10.5H14L13 2Z"/></svg>';
       creditsEl.innerHTML = isPrem ? BOLT + 'Premium' : c.precio_venta + ' crédito' + (c.precio_venta === 1 ? '' : 's');
       creditsEl.classList.toggle('is-premium', !!isPrem);
     }

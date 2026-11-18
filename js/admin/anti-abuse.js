@@ -115,15 +115,15 @@
     counter.textContent = list.length + (list.length === 1 ? ' cuenta' : ' cuentas');
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">Sin cuentas sospechosas. ✅</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">Sin cuentas sospechosas.</td></tr>';
       return;
     }
     tbody.innerHTML = list.map(function (r) {
       var reason = REASON_LABEL[r.signup_block_reason] || r.signup_block_reason || '—';
-      var creditsClass = (r.credits_balance === 0) ? 'style="color:#141d1c;font-weight:400"' : '';
+      var creditsClass = (r.credits_balance === 0) ? 'style="color:#171717;font-weight:400"' : '';
       return (
         '<tr>' +
-          '<td>' + escapeHtml(r.email) + (r.full_name ? '<br><small style="color:#5A6B6A">' + escapeHtml(r.full_name) + '</small>' : '') + '</td>' +
+          '<td>' + escapeHtml(r.email) + (r.full_name ? '<br><small style="color:#767676">' + escapeHtml(r.full_name) + '</small>' : '') + '</td>' +
           '<td><code style="font-size:.85em">' + escapeHtml(r.email_normalized || '—') + '</code></td>' +
           '<td><span class="admin-badge">' + escapeHtml(reason) + '</span></td>' +
           '<td ' + creditsClass + '>' + (r.credits_balance != null ? r.credits_balance : '—') + '</td>' +
@@ -143,7 +143,7 @@
     counter.textContent = list.length + (list.length === 1 ? ' dispositivo' : ' dispositivos');
 
     if (!list.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">Ningún dispositivo compartido. ✅</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">Ningún dispositivo compartido.</td></tr>';
       return;
     }
     tbody.innerHTML = list.map(function (r) {
@@ -153,7 +153,7 @@
       }).join('');
       return (
         '<tr>' +
-          '<td><strong style="color:#141d1c">' + r.account_count + '</strong></td>' +
+          '<td><strong style="color:#171717">' + r.account_count + '</strong></td>' +
           '<td>' + emailsHtml + '</td>' +
           '<td>' + formatDate(r.first_signup) + '</td>' +
           '<td>' + formatDate(r.last_signup) + '</td>' +

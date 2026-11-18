@@ -11,7 +11,7 @@
      2. parseSections()   — secciones I…XI, campos y tablas
      3. buildPdf()        — jsPDF + autoTable, maquetación editorial
 
-   Paleta institucional: #141d1c · #8fc72e · blancos y grises.
+   Paleta institucional: #1b1b1b · #b0b0b0 · blancos y grises.
 
    Expone:
      Consultia.MetaplaReport.generate(pdfBase64, meta, onProgress)
@@ -21,16 +21,16 @@
   window.Consultia = window.Consultia || {};
 
   // ── Paleta ─────────────────────────────────────────────────
-  var C_INK    = [20, 29, 28];     // #141d1c — texto principal
-  var C_ACCENT = [143, 199, 46];   // #8fc72e — verde institucional
-  var C_TURQ   = [3, 167, 164];    // #03a7a4 — turquesa, segundo acento
+  var C_INK    = [20, 29, 28];     // #1b1b1b — texto principal
+  var C_ACCENT = [143, 199, 46];   // #b0b0b0 — verde institucional
+  var C_TURQ   = [3, 167, 164];    // #848484 — turquesa, segundo acento
   var C_MUTED  = [122, 130, 128];  // etiquetas y textos secundarios
   var C_HAIR   = [223, 227, 222];  // filetes y separadores
   var C_SOFT   = [248, 250, 247];  // fondos muy tenues
 
   // Colores de estado: verde favorable y rojo con observaciones.
-  var C_OK     = [143, 199, 46];   // #8fc72e — favorable o sin hallazgos graves
-  var C_BAD    = [229, 57, 53];    // #e53935 — riesgo alto
+  var C_OK     = [143, 199, 46];   // #b0b0b0 — favorable o sin hallazgos graves
+  var C_BAD    = [229, 57, 53];    // #5d5d5d — riesgo alto
 
   /* El nivel medio se representa en verde como pidió la plataforma;
      los niveles alto y grave quedan en rojo. */
@@ -200,7 +200,7 @@
       var tiveStatus = /ANULAD|CANCELAD|NO REGISTRA|NO TIENE/.test(tiveText) ? 'NO VIGENTE'
         : /TRAMITAD|EMITID|REGISTRAD|VIGENTE/.test(tiveText) ? 'TRAMITADO' : 'Ver detalle';
       items = items.filter(function (item) { return !/TIVE|TARJETA.*PROPIEDAD|TARJETA UNICA/.test(normalizaIdentidad(item.label)); });
-      items.push({ label: 'Tarjeta de propiedad electrónica', value: tiveStatus });
+      items.push({ label: 'Tarjeta de Propiedad (TIVE)', value: tiveStatus });
     }
     return items;
   }

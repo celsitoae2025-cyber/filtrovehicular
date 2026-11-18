@@ -171,6 +171,15 @@
 
   NV.alEntrar = {};   // nombre -> función que pinta la pantalla al abrirla
 
+  NV.actualizarInicio = function () {
+    var inicio = $('nvInicio');
+    if (!inicio) return;
+    var seleccion = $('nvConsultaSeleccion');
+    var resultado = $('filter-result');
+    inicio.hidden = pantallaDelHash() === 'consultar' &&
+      (!seleccion || seleccion.hidden) && (!resultado || resultado.hidden);
+  };
+
   function pantallaDelHash() {
     var h = (location.hash || '').replace(/^#/, '');
     if (ALIAS[h]) h = ALIAS[h];
@@ -199,6 +208,7 @@
     });
     var p = PANTALLAS[nombre];
     $('nvTitulo').textContent = p.titulo;
+    NV.actualizarInicio();
     document.title = nombre === 'consultar'
       ? 'Plataforma Filtro Vehicular+'
       : p.titulo + ' · Plataforma Filtro Vehicular+';
@@ -223,6 +233,30 @@
   var capas = [];
   var cerrandoDesdeHistorial = false;
   var ultimoHash = location.hash;
+
+  /* Volver al inicio es una acción explícita: restablece el catálogo aun
+     cuando el hash ya sea #consultar. Se cierran las capas sin retroceder
+     de forma asíncrona a una ruta anterior. */
+  NV.volverAlInicio = function () {
+    var pendientes = capas.splice(0);
+    for (var i = pendientes.length - 1; i >= 0; i--) {
+      try { pendientes[i].cerrar(); } catch (e) { console.error('[nueva] inicio:', e); }
+    }
+    if (NV.volverAlCatalogo) NV.volverAlCatalogo();
+    if (history.state && history.state.nvCapa) {
+      history.replaceState(null, '', location.href);
+    }
+    NV.ir('consultar');
+    $('nvTitulo').focus({ preventScroll: true });
+  };
+
+  document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var enlace = e.target.closest('[data-inicio], [data-ir="consultar"]');
+    if (!enlace) return;
+    e.preventDefault();
+    NV.volverAlInicio();
+  });
 
   NV.abrirCapa = function (nombre, cerrar) {
     capas.push({ nombre: nombre, cerrar: cerrar });

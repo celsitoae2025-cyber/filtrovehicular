@@ -48,7 +48,7 @@
 }
 .input:focus, .textarea:focus, .select:focus {
   outline: none;
-  border-color: #4b5563;
+  border-color: #545454;
   border-width: 2px;
   box-shadow: none;
 }
@@ -118,7 +118,7 @@
 .ghost-btn:hover:not(:disabled) {
   background: var(--c-bg);
   color: var(--c-primary);
-  border-color: #b8c0cc;
+  border-color: #bfbfbf;
 }
 .ghost-btn:disabled { opacity: .45; cursor: not-allowed; }
 .ghost-btn svg { width: 15px; height: 15px; }
@@ -178,13 +178,13 @@
   max-height: min(70vh, 540px);
   background: var(--c-surface);
   /* El filete que recorta el cuadro contra el velo. Va bastante mas
-     oscuro que --c-border (#DCDCDC): ese gris esta pensado para separar
+     oscuro que --c-border (#dcdcdc): ese gris esta pensado para separar
      cajas sobre fondo claro y aqui, contra el blanco del propio cuadro,
-     no se veia. Es el mismo #a4b1b9 que ya recorta la tarjeta del
+     no se veia. Es el mismo #afafaf que ya recorta la tarjeta del
      acceso, asi que no se inventa un gris nuevo.
      Lleva `!important` porque base.css quita el borde a todos los
      paneles de la aplicacion en bloque. */
-  border: 1px solid #a4b1b9 !important;
+  border: 1px solid #afafaf !important;
   border-radius: 14px;
   padding: 10px;
   overflow-y: auto;
@@ -224,7 +224,7 @@
   content: '';
   position: fixed;
   inset: 0;
-  background: rgba(20, 29, 28, .48);
+  background: rgb(27 27 27 / .48);
   z-index: 600;
   animation: comboVelo .18s ease both;
 }
@@ -247,7 +247,7 @@
    siguiente. Un pixel basta: mas y la lista se estira de mas a lo alto
    y obliga a deslizar antes de tiempo. */
 .combo-option + .combo-option { margin-top: 1px; }
-.combo-option:hover { background: #f4f5f5; }
+.combo-option:hover { background: #f5f5f5; }
 
 /* La elegida y la que esta bajo el raton se distinguen, y las dos en
    gris: el color se reserva para lo que hay que mirar, y aqui no hace
@@ -256,11 +256,11 @@
    veian igual. La diferencia la hacen ahora dos cosas a la vez: la
    elegida va un tono mas honda y en negrita. */
 .combo-option.selected {
-  background: #eceeee;
+  background: #eeeeee;
 }
 .combo-option.selected .combo-opt-text {
   font-weight: 700;
-  color: #141d1c;
+  color: #171717;
 }
 
 .combo-opt-text {
@@ -317,7 +317,7 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 4px;
-  background: #8fc72e;
+  background: #292929;
   color: #ffffff;
   font-size: var(--fs-xs);
   font-weight: 700;
@@ -344,8 +344,8 @@
 .credits-badge svg { display: inline-block; }
 .credits-success { background: var(--c-surface-dark); color: #ffffff; }
 .credits-badge.is-premium {
-  background: #f5f5f5;
-  color: #141d1c;
+  background: #f6f6f6;
+  color: #171717;
 }
 
 /* Combo group header (separador de módulos en dropdown) */
@@ -373,11 +373,11 @@
   text-transform: uppercase;
   white-space: nowrap;
 }
-.status-empty { background: #f1f3f6; color: #6b7785; }
-.status-empty .status-dot { background: #9aa3ae; }
-.status-ok { background: #f5f5f5; color: #141d1c; }
+.status-empty { background: #f3f3f3; color: #757575; }
+.status-empty .status-dot { background: #a2a2a2; }
+.status-ok { background: #f6f6f6; color: #171717; }
 .status-ok .status-dot { background: var(--c-surface-dark); animation: pulse 1.5s ease-in-out infinite; }
-.status-loading { background: #f5f5f5; color: #141d1c; }
+.status-loading { background: #f6f6f6; color: #171717; }
 .status-loading .status-dot { background: var(--c-surface-dark); animation: pulse 1s ease-in-out infinite; }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
@@ -460,7 +460,7 @@
    Skeletons — placeholders animados de carga
 ============================================================ */
 .skeleton {
-  background: linear-gradient(90deg, #ececec 0%, #f5f5f5 50%, #ececec 100%);
+  background: linear-gradient(90deg, #ececec 0%, #f6f6f6 50%, #ececec 100%);
   background-size: 200% 100%;
   animation: skeleton-pulse 1.3s ease-in-out infinite;
   border-radius: 8px;
@@ -548,10 +548,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Verde WhatsApp (#25D366). Es un color semantico, no de la paleta de
+  /* Verde WhatsApp (#a6a6a6). Es un color semantico, no de la paleta de
      marca: identifica el canal de un vistazo, igual que el amarillo de la
      cartera. El logo va en blanco, como en la propia app de WhatsApp. */
-  background: #25D366;
+  background: #a6a6a6;
   color: #ffffff;
   border: none;
   border-radius: 50%;
@@ -562,7 +562,7 @@
      habra que reponer tambien su transicion. */
   transition: background var(--t-fast);
 }
-.wa-fab:hover { background: #1da851; }
+.wa-fab:hover { background: #848484; }
 .wa-fab-icon {
   width: 33px;
   height: 33px;
@@ -682,7 +682,7 @@
     position: fixed;
     inset: 0;
     z-index: 460;
-    background: rgba(20, 29, 28, .45);
+    background: rgb(27 27 27 / .45);
     -webkit-backdrop-filter: blur(7px);
     backdrop-filter: blur(7px);
   }

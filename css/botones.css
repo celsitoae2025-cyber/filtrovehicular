@@ -10,15 +10,13 @@
      · en negrita unas veces y en fino otras;
      · el «Iniciar sesión» de la barra con letra de 13 px, por debajo
        del mínimo de 15;
-     · texto BLANCO sobre el verde: no se leía;
+     · texto sin contraste suficiente sobre los botones de acento;
      · y polish.css anulaba el foco del teclado en todos, así que quien
        navega con el tabulador no sabía dónde estaba.
 
    Esta hoja se carga la ÚLTIMA en app.html y admin.html y manda sobre
-   todas. No cambia ningún color de sitio: lo oscuro sigue oscuro
-   (Consultar, Iniciar sesión, los botones del acceso) y lo verde sigue
-   verde (comprar créditos, planes, los del panel). Lo que cambia es la
-   FORMA, que ahora es una sola, y la RESPUESTA al tocarlos.
+   todas. La paleta global define carbón y grises neutros. Esta hoja
+   unifica la FORMA y la RESPUESTA al tocar los botones.
 
    Reglas de la casa, todas respetadas:
      · sin sombras y sin franjas;
@@ -40,26 +38,25 @@
   --btn-pad: 20px;
   --btn-pad-sm: 16px;
   --btn-hueco: 8px;
-  --btn-letra: 16px;
-  --btn-letra-sm: 15px;
-  --btn-letra-lg: 17px;
+  --btn-letra: var(--fv-tipo-base, 1rem);
+  --btn-letra-sm: var(--fv-tipo-base, 1rem);
+  --btn-letra-lg: var(--fv-tipo-base, 1rem);
   --btn-tiempo: .15s;
 
-  --btn-verde: #8fc72e;
-  --btn-verde-encima: #7ab325;
-  --btn-verde-pulsado: #6a9c20;
-  --btn-oscuro: var(--c-surface-dark);
-  --btn-oscuro-encima: #2a3b38;
-  --btn-oscuro-pulsado: #0a1211;
-  --btn-tinta: #141d1c;
-  --btn-borde: #dcdcdc;
-  --btn-borde-encima: #b9c2c1;
-  --btn-claro-encima: #f3f3f3;
-  --btn-claro-pulsado: #e8ebea;
+  --btn-verde: #292929;
+  --btn-verde-encima: #414141;
+  --btn-verde-pulsado: #171717;
+  --btn-oscuro: #191919;
+  --btn-oscuro-encima: #333333;
+  --btn-oscuro-pulsado: #111111;
+  --btn-tinta: #191919;
+  --btn-borde: #d8d8d8;
+  --btn-borde-encima: #bdbdbd;
+  --btn-claro-encima: #f0f0f0;
+  --btn-claro-pulsado: #e5e5e5;
 
-  /* El aro del teclado: turquesa, de la paleta, y se ve sobre blanco,
-     sobre oscuro y sobre verde. */
-  --btn-aro: #03a7a4;
+  /* El aro de teclado usa el carbón y mantiene contraste en ambos fondos. */
+  --btn-aro: #292929;
 }
 
 
@@ -141,7 +138,7 @@
 
 /* ── 2 · Verde: la acción comercial ─────────────────────────── */
 /* Texto oscuro, no blanco: blanco sobre este verde apenas se leía
-   (contraste 2:1). El #141d1c es el de la paleta. */
+   (contraste 2:1). El #171717 es el de la paleta. */
 
 .btn-primary,
 button.btn-primary,

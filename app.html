@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#141d1c">
+<meta name="theme-color" content="#171717">
 <meta name="application-name" content="Plataforma Filtro Vehicular+">
 <meta name="description" content="Plataforma Filtro Vehicular+ — consultas vehiculares, Sunarp, Reniec, Sunat e infracciones en Perú. Resultados oficiales al instante.">
 <meta name="robots" content="index, follow">
@@ -36,6 +36,9 @@
 </script>
 <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
 <link rel="dns-prefetch" href="https://challenges.cloudflare.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- ============================================================
      LA PLATAFORMA FILTRO VEHICULAR+ (la única: la de antes se retiró)
@@ -51,20 +54,21 @@
      resultados, que pinta ese motor. css/nueva.css va la última y manda.
 ============================================================ -->
 
-<link rel="stylesheet" href="css/components.css?v=22">
-<link rel="stylesheet" href="css/views.css?v=120">
-<link rel="stylesheet" href="css/overlays.css?v=12">
-<link rel="stylesheet" href="css/polish.css?v=9">
-<link rel="stylesheet" href="css/combo.css?v=3">
-<link rel="stylesheet" href="css/botones.css?v=4">
+<link rel="stylesheet" href="css/components.css?v=24">
+<link rel="stylesheet" href="css/views.css?v=123">
+<link rel="stylesheet" href="css/overlays.css?v=14">
+<link rel="stylesheet" href="css/polish.css?v=11">
+<link rel="stylesheet" href="css/combo.css?v=6">
+<link rel="stylesheet" href="css/botones.css?v=7">
 <!-- El aviso de mantenimiento: el mismo de app.html -->
-<link rel="stylesheet" href="css/maintenance.css?v=16">
+<link rel="stylesheet" href="css/maintenance.css?v=18">
 <!-- La ventana de carteles y el aviso a clientes: los mismos de siempre. -->
-<link rel="stylesheet" href="css/carteles.css?v=3">
-<link rel="stylesheet" href="css/aviso-clientes.css?v=17">
-<link rel="stylesheet" href="css/nueva.css?v=110">
-<link rel="stylesheet" href="css/puerta-entrada.css?v=5">
-<link rel="stylesheet" href="css/sistema-visual.css?v=7">
+<link rel="stylesheet" href="css/carteles.css?v=5">
+<link rel="stylesheet" href="css/aviso-clientes.css?v=19">
+<link rel="stylesheet" href="css/nueva.css?v=116">
+<link rel="stylesheet" href="css/puerta-entrada.css?v=10">
+<link rel="stylesheet" href="css/sistema-visual.css?v=11">
+<link rel="stylesheet" href="css/interfaz-poppins.css?v=6">
 </head>
 <body class="nv-body">
 
@@ -76,34 +80,35 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <!-- navegación -->
-    <symbol id="i-consultar" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/><circle cx="10.5" cy="10.5" r="2.6" style="fill:currentColor;stroke:none"/></symbol>
-    <symbol id="i-resumen" viewBox="0 0 24 24"><rect x="3.5" y="11" width="4.5" height="9" rx="1.5"/><rect x="16" y="7" width="4.5" height="13" rx="1.5"/><rect x="9.75" y="3.5" width="4.5" height="16.5" rx="1.5" style="fill:currentColor;stroke:none"/></symbol>
-    <symbol id="i-historial" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v3.4h3.4"/><path d="M12 8v4l2.6 1.6"/><circle cx="12" cy="12" r="1.7" style="fill:currentColor;stroke:none"/></symbol>
-    <symbol id="i-pagos" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><circle cx="16.5" cy="14.5" r="2.2" style="fill:currentColor;stroke:none"/></symbol>
-    <symbol id="i-cuenta" viewBox="0 0 24 24"><circle cx="11" cy="8" r="4"/><path d="M3.5 20c.8-3.8 3.7-6 7.5-6 1.4 0 2.6.3 3.7.9"/><circle cx="18" cy="17.5" r="3" style="fill:currentColor;stroke:none"/></symbol>
-    <symbol id="i-admin" viewBox="0 0 24 24"><path d="M12 3 5 5.8v5.4c0 4.3 2.9 7.7 7 9.8 4.1-2.1 7-5.5 7-9.8V5.8L12 3Z"/><path d="M12 8.2v6.6M8.7 11.5h6.6" style="stroke:currentColor;stroke-width:2.4"/></symbol>
+    <symbol id="i-consultar" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></symbol>
+    <symbol id="i-resumen" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-historial" viewBox="0 0 24 24"><path d="M3.5 10a8.5 8.5 0 1 1 1 6.4M3.5 4.5V10H9M12 7.5v5l3.2 2"/></symbol>
+    <symbol id="i-pagos" viewBox="0 0 24 24"><rect x="2.8" y="5" width="18.4" height="14" rx="2.2"/><path d="M3 9.2h18M6 14.8h4.8M17 14.5h.2"/></symbol>
+    <symbol id="i-cuenta" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20v-1a7.5 5 0 0 1 15 0v1"/></symbol>
+    <symbol id="i-admin" viewBox="0 0 24 24"><path d="m12 3 7 2.8v5.4c0 4.4-2.8 7.7-7 9.8-4.2-2.1-7-5.4-7-9.8V5.8L12 3Z"/><circle cx="12" cy="11.5" r="2.3"/><path d="M12 7.2v1M12 14.8v1M7.7 11.5h1M15.3 11.5h1M9 8.5l.7.7M14.3 13.8l.7.7M15 8.5l-.7.7M9.7 13.8l-.7.7"/></symbol>
     <!-- categorías -->
-    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 16v-3.2l1.8-4.3A2 2 0 0 1 7.6 7.3h8.8a2 2 0 0 1 1.8 1.2L20 12.8V16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="M6 17v2M18 17v2"/><rect x="6" y="12.2" width="3" height="2" rx="1" style="fill:currentColor;stroke:none"/><rect x="15" y="12.2" width="3" height="2" rx="1" style="fill:currentColor;stroke:none"/></symbol>
-    <symbol id="i-reniec" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M13 10h5M13 13.5h4"/><rect x="5.8" y="8.3" width="5" height="6.4" rx="1.2" style="fill:currentColor;stroke:none"/></symbol>
-    <symbol id="i-telefonia" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.8"/><path d="M10.5 18.5h3"/><rect x="9" y="6" width="6" height="7.5" rx="1" style="fill:currentColor;stroke:none"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="m5 11 1.4-4a2 2 0 0 1 1.9-1.3h7.4A2 2 0 0 1 17.6 7l1.4 4M3.5 13a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v4.5h-17V13ZM6 17.5v2M18 17.5v2M7 14.5h1M16 14.5h1"/></symbol>
+    <symbol id="i-reniec" viewBox="0 0 24 24"><rect x="2.8" y="4.5" width="18.4" height="15" rx="2.2"/><circle cx="8.5" cy="10" r="2.1"/><path d="M5.5 16c.5-1.6 1.5-2.4 3-2.4s2.5.8 3 2.4M14 9h4M14 12h4M14 15h2.5"/></symbol>
+    <symbol id="i-telefonia" viewBox="0 0 24 24"><path d="M6.8 3.5 9.5 3l2 4.6-2.1 1.7a15 15 0 0 0 5.3 5.3l1.7-2.1 4.6 2-.5 2.7a2.7 2.7 0 0 1-3 2.2A16.5 16.5 0 0 1 4.6 6.5a2.7 2.7 0 0 1 2.2-3Z"/></symbol>
     <!-- acciones -->
-    <symbol id="i-reporte" viewBox="0 0 24 24"><path d="M8 3h8l4 4v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M9.5 11h7M9.5 14.5h7M9.5 18h4"/><path d="M16 3v4h4" style="fill:currentColor"/></symbol>
-    <symbol id="i-rayo" viewBox="0 0 24 24"><path d="M13.5 2.5 5 13.5h6l-1 8 8.5-11h-6l1-8Z" style="fill:currentColor"/></symbol>
+    <symbol id="i-reporte" viewBox="0 0 24 24"><path d="M6 3.5h8l4 4v13H6V3.5Z"/><path d="M14 3.5v4h4M9 12h6M9 15h6M9 18h3"/></symbol>
+    <symbol id="i-rayo" viewBox="0 0 24 24"><path d="m13.5 2.8-8 11h5.8l-.8 7.4 8-11h-5.8l.8-7.4Z"/></symbol>
     <symbol id="i-ir" viewBox="0 0 24 24"><path d="M6 12h12M13 7l5 5-5 5"/></symbol>
-    <symbol id="i-fuera" viewBox="0 0 24 24"><path d="M9 5h10v10M19 5 7 17"/></symbol>
+    <symbol id="i-fuera" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4 10 14M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
+    <symbol id="i-cerrar" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
     <symbol id="i-repetir" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.6L4 15M4 20v-5h5"/></symbol>
     <symbol id="i-salir" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l-4-4 4-4M6 12h10"/></symbol>
-    <symbol id="i-soporte" viewBox="0 0 24 24"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8 18.5l-3.5 1Z"/><circle cx="9" cy="12" r="1.1" style="fill:currentColor;stroke:none"/><circle cx="12.5" cy="12" r="1.1" style="fill:currentColor;stroke:none"/><circle cx="16" cy="12" r="1.1" style="fill:currentColor;stroke:none"/></symbol>
+    <symbol id="i-soporte" viewBox="0 0 24 24"><path d="M4 18.8 5.2 15A8 8 0 1 1 8 18.1L4 18.8Z"/><path d="M8 12h.1M12 12h.1M16 12h.1"/></symbol>
     <symbol id="i-anterior" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
     <!-- trámites directos: cada uno dibuja lo que es -->
-    <symbol id="i-soat" viewBox="0 0 24 24"><path d="M12 21.4c1.7-.8 7.4-3.7 7.4-9.4V5.6L12 2.6 4.6 5.6V12c0 5.7 5.7 8.6 7.4 9.4Z"/><path d="M8.3 13.8h7.4"/><path d="M9.4 13.8l.8-2.3a1.2 1.2 0 0 1 1.1-.8h1.4a1.2 1.2 0 0 1 1.1.8l.8 2.3"/></symbol>
-    <symbol id="i-citv" viewBox="0 0 24 24"><path d="M9 6.4V4.6a1.8 1.8 0 0 1 1.8-1.8h4.4l3.6 3.6v8.8a1.8 1.8 0 0 1-1.8 1.8h-1.6"/><path d="M15.2 2.8v3.6h3.6"/><rect x="4.6" y="7.6" width="10.4" height="13.6" rx="1.9"/><path d="M7.2 11.2h5.2M7.2 13.6h3.4"/><circle cx="11.4" cy="17.5" r="2.1"/></symbol>
-    <symbol id="i-lunas" viewBox="0 0 24 24"><path d="M4.9 9.4 9.7 6.1a2 2 0 0 1 1.13-.35h5.34a1.8 1.8 0 0 1 1.8 1.8v9.1a1.8 1.8 0 0 1-1.8 1.8H6.7a1.8 1.8 0 0 1-1.8-1.8Z"/><path d="M14.4 7.9 9.6 14.7"/><path d="M17.2 10.6 13.1 16.4"/></symbol>
-    <symbol id="i-region" viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 22s7-6 7-12a7 7 0 1 0-14 0c0 6 7 12 7 12z"/></symbol>
+    <symbol id="i-soat" viewBox="0 0 24 24"><path d="m12 2.8 7.2 2.8v5.8c0 4.7-2.9 8-7.2 9.9-4.3-1.9-7.2-5.2-7.2-9.9V5.6L12 2.8Z"/><path d="m7.8 12.8 1.4-3.2a1.4 1.4 0 0 1 1.3-.9h3a1.4 1.4 0 0 1 1.3.9l1.4 3.2v2.3H7.8v-2.3ZM9 15.1v1.2M15 15.1v1.2M8 12.8h8"/></symbol>
+    <symbol id="i-citv" viewBox="0 0 24 24"><path d="M6 3.5h8l4 4v7M14 3.5v4h4M6 3.5v17h8"/><path d="M9 11h5M9 14h3"/><circle cx="17" cy="17" r="4"/><path d="m15.2 17 1.2 1.2 2.4-2.5"/></symbol>
+    <symbol id="i-lunas" viewBox="0 0 24 24"><path d="m4 13 1.5-5.1A2.5 2.5 0 0 1 7.9 6h8.2a2.5 2.5 0 0 1 2.4 1.9L20 13v4H4v-4Z"/><path d="M6 13h12M7.2 17v1.5M16.8 17v1.5M8.5 8.5h7"/></symbol>
+    <symbol id="i-region" viewBox="0 0 24 24"><path d="m3.5 6 5-2 7 2 5-2v14l-5 2-7-2-5 2V6Z"/><path d="M8.5 4v14M15.5 6v14"/><path d="M14.7 10.5c0 2.3-2.7 5.3-2.7 5.3s-2.7-3-2.7-5.3a2.7 2.7 0 1 1 5.4 0Z"/><circle cx="12" cy="10.4" r=".7"/></symbol>
     <symbol id="i-volver" viewBox="0 0 24 24"><path d="M18 12H6M11 7l-5 5 5 5"/></symbol>
     <symbol id="i-clave" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
     <symbol id="i-editar" viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16Z"/><path d="m13.5 6.5 4 4"/></symbol>
-    <symbol id="i-legal" viewBox="0 0 24 24"><path d="M14.2 2.9H7a2.2 2.2 0 0 0-2.2 2.2v13.8A2.2 2.2 0 0 0 7 21.1h10a2.2 2.2 0 0 0 2.2-2.2V7.9Z"/><path d="M14.2 2.9v5h5"/><path d="M8.4 12.6h7.2M8.4 16h4.6"/></symbol>
+    <symbol id="i-legal" viewBox="0 0 24 24"><path d="M6 3.5h8l4 4v13H6v-17Z"/><path d="M14 3.5v4h4M9 11h6M9 14h6M9 17h4"/></symbol>
   </defs>
 </svg>
 
@@ -119,7 +124,7 @@
       <p class="nv-puerta-sobretitulo">PLATAFORMA DE CONSULTAS</p>
       <h2>Información vehicular<br>para decidir mejor.</h2>
       <p>Consulta datos de placas, revisa antecedentes y reúne la información que necesitas en un solo lugar.</p>
-      <button class="nv-auth-fvc nv-auth-fvc-desktop" id="fvcOpen" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span class="nv-auth-fvc-label">SOLICITA TU FILTRO VEHICULAR COMPLETO</span><span class="nv-auth-fvc-arrow" aria-hidden="true">↗</span></button>
+      <button class="nv-auth-fvc nv-auth-fvc-desktop" id="fvcOpen" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span class="nv-auth-fvc-label">Solicitar filtro vehicular completo</span><span class="nv-auth-fvc-arrow" aria-hidden="true"><svg><use href="#i-ir"/></svg></span></button>
     </div>
   </aside>
 
@@ -250,7 +255,7 @@
     </div>
   </form>
     </div>
-    <button class="nv-auth-fvc nv-auth-fvc-mobile" id="fvcOpenMobile" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span class="nv-auth-fvc-label">SOLICITA TU FILTRO VEHICULAR COMPLETO</span><span class="nv-auth-fvc-arrow" aria-hidden="true">↗</span></button>
+    <button class="nv-auth-fvc nv-auth-fvc-mobile" id="fvcOpenMobile" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span class="nv-auth-fvc-label">Solicitar filtro vehicular completo</span><span class="nv-auth-fvc-arrow" aria-hidden="true"><svg><use href="#i-ir"/></svg></span></button>
     </div>
 
   <footer class="nv-puerta-legal" aria-label="Información legal">
@@ -262,7 +267,7 @@
 
 <dialog class="nv-fvc-dialogo" id="nvFvcDialogo" aria-modal="true" aria-labelledby="nvFvcTitulo" aria-describedby="nvFvcDescripcion">
   <form id="nvFvcForm" novalidate>
-    <button class="nv-fvc-cerrar" type="button" data-fvc-cerrar aria-label="Cerrar">×</button>
+    <button class="nv-fvc-cerrar" type="button" data-fvc-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
     <p class="nv-fvc-kicker">FILTRO VEHICULAR COMPLETO</p>
     <h2 id="nvFvcTitulo">¿Cuál es la placa del vehículo?</h2>
     <p class="nv-fvc-descripcion" id="nvFvcDescripcion">Preparamos un mensaje con la placa para que lo revises y envíes desde WhatsApp.</p>
@@ -281,7 +286,7 @@
     <p class="nv-fvc-error" id="nvFvcError" role="alert" hidden></p>
     <div class="nv-fvc-acciones">
       <button type="button" data-fvc-cerrar>Cancelar</button>
-      <button type="submit">Continuar a WhatsApp <span aria-hidden="true">↗</span></button>
+      <button type="submit">Continuar a WhatsApp <svg class="nv-fvc-ir" aria-hidden="true"><use href="#i-fuera"/></svg></button>
     </div>
   </form>
 </dialog>
@@ -290,12 +295,12 @@
 <div class="nv-app" id="nvApp" hidden>
 
   <aside class="nv-lado" aria-label="Navegación principal">
-    <a class="nv-marca" href="#consultar" aria-label="Plataforma Filtro Vehicular Plus, ir a Consultar"><img src="icons/logo-filtro.svg" alt=""><span>Plataforma Filtro<br>Vehicular<b>+</b></span></a>
+    <a class="nv-marca" href="#consultar" data-inicio aria-label="Plataforma Filtro Vehicular Plus, volver al inicio"><img src="icons/logo-filtro.svg" alt=""><span>Plataforma Filtro<br>Vehicular<b>+</b></span></a>
 
     <nav class="nv-lado-nav">
       <a class="nv-nav" href="#consultar" data-ir="consultar"><svg><use href="#i-consultar"/></svg><span>Consultar</span></a>
       <a class="nv-nav" href="#resumen" data-ir="resumen"><svg><use href="#i-resumen"/></svg><span>Resumen</span></a>
-      <a class="nv-nav" href="#historial" data-ir="historial"><svg><use href="#i-historial"/></svg><span>Historial</span></a>
+    <a class="nv-nav" href="#historial" data-ir="historial"><svg><use href="#i-historial"/></svg><span>Historial</span></a>
       <a class="nv-nav" href="#vehiculos" data-ir="vehiculos"><svg><use href="#i-filter"/></svg><span>Mis vehículos</span></a>
       <a class="nv-nav" href="#pagos" data-ir="pagos"><svg><use href="#i-pagos"/></svg><span>Pagos</span></a>
       <a class="nv-nav" href="#cuenta" data-ir="cuenta"><svg><use href="#i-cuenta"/></svg><span>Cuenta</span></a>
@@ -319,9 +324,12 @@
 
   <div class="nv-principal">
     <header class="nv-barra">
-      <h1 class="nv-barra-titulo" id="nvTitulo">Consultar</h1>
+      <div class="nv-barra-principal">
+        <a class="nv-inicio" id="nvInicio" href="#consultar" data-inicio aria-label="Volver al inicio" title="Volver al inicio" hidden><svg aria-hidden="true"><use href="#i-volver"/></svg></a>
+        <h1 class="nv-barra-titulo" id="nvTitulo" tabindex="-1">Consultar</h1>
+      </div>
       <div class="nv-barra-acciones">
-        <a class="nv-comprar" href="#pagos" aria-label="Comprar créditos"><span class="nv-comprar-largo">Comprar créditos</span><span class="nv-comprar-corto" aria-hidden="true">Comprar</span></a>
+        <a class="nv-comprar" href="#pagos" aria-label="Comprar"><svg class="nv-comprar-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 13h.01M15 13h.01"/></svg><span>Comprar</span></a>
         <div class="nv-yo">
           <button class="nv-avatar" id="nvAvatar" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="nvYoMenu" aria-label="Menú de la cuenta">—</button>
           <div class="nv-yo-menu" id="nvYoMenu" role="menu" hidden>
@@ -351,7 +359,7 @@
         <div class="nv-saldo-bajo" id="nvSaldoBajo" role="status" hidden>
           <span>Te quedan <strong id="nvSaldoBajoN">0 créditos</strong>. Recarga para seguir consultando.</span>
           <a class="nv-cta nv-cta-chica" href="#pagos"><span>Recargar</span></a>
-          <button class="nv-saldo-bajo-cerrar" type="button" aria-label="Cerrar el aviso">&times;</button>
+          <button class="nv-saldo-bajo-cerrar" type="button" aria-label="Cerrar el aviso"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
         </div>
 
         <div class="nv-explorar" id="nvExplorar">
@@ -450,6 +458,31 @@
           <a class="nv-tramite" data-wa-msg="Hola, necesito tramitar el permiso de mis lunas oscurecidas." target="_blank" rel="noopener noreferrer"><svg><use href="#i-lunas"/></svg><span>Lunas Oscurecidas</span></a>
         </div>
 
+        <section class="nv-sunarp" aria-label="Servicios registrales SUNARP">
+          <div class="nv-sunarp-grid">
+            <a class="nv-sunarp-tarjeta" href="https://vigenciaexpress.sunarp.gob.pe/vigenciaexpress/#/busqueda" target="_blank" rel="noopener noreferrer" aria-label="Abrir Vigencia Express, certificado de vigencia de poder">
+              <img src="assets/services/sunarp-vigencia-express.png" alt="" loading="lazy" decoding="async">
+              <span class="nv-sunarp-caption">Solicita Certificado de Vigencia de Poder de Persona Jurídica</span>
+            </a>
+            <a class="nv-sunarp-tarjeta" href="https://copialiteral-altoque.sunarp.gob.pe/copialiteral-altoque/#/busqueda/busqueda-partida" target="_blank" rel="noopener noreferrer" aria-label="Abrir Copia Literal al Toque">
+              <img src="assets/services/sunarp-copia-literal.png" alt="" loading="lazy" decoding="async">
+              <span class="nv-sunarp-caption">Solicita Certificado Literal de la Partida Electrónica</span>
+            </a>
+            <a class="nv-sunarp-tarjeta" href="https://sprl.sunarp.gob.pe/sprl/ingreso" target="_blank" rel="noopener noreferrer" aria-label="Abrir Certificado Negativo de Sucesión Intestada">
+              <img src="assets/services/sunarp-sucesion-intestada.png" alt="" loading="lazy" decoding="async">
+              <span class="nv-sunarp-caption">Solicita Certificado Negativo de Sucesión Intestada</span>
+            </a>
+            <a class="nv-sunarp-tarjeta" href="https://sprl.sunarp.gob.pe/sprl/ingreso" target="_blank" rel="noopener noreferrer" aria-label="Abrir Certificado Negativo de Testamento">
+              <img src="assets/services/sunarp-testamento.png" alt="" loading="lazy" decoding="async">
+              <span class="nv-sunarp-caption">Solicita Certificado Negativo de Testamento</span>
+            </a>
+            <a class="nv-sunarp-tarjeta" href="https://sprl.sunarp.gob.pe/sprl/ingreso" target="_blank" rel="noopener noreferrer" aria-label="Abrir Certificado Registral Vehicular">
+              <img src="assets/services/sunarp-vehicular.png" alt="" loading="lazy" decoding="async">
+              <span class="nv-sunarp-caption">Solicita Certificado Registral Vehicular</span>
+            </a>
+          </div>
+        </section>
+
         <section class="nv-gratuitas" aria-labelledby="nvGratuitasTitulo">
           <header class="nv-gratuitas-cabecera">
             <div class="nv-gratuitas-intro"><h2 id="nvGratuitasTitulo">CONSULTAS VEHICULARES GRATUITAS</h2><small>Propiedad, papeletas, SOAT y más</small></div>
@@ -467,7 +500,7 @@
           <p>Elige una región para abrir su página de consulta de papeletas o multas.</p>
         </header>
         <div class="nv-regiones-barra">
-          <a class="nv-volver" href="#consultar"><svg><use href="#i-volver"/></svg><span>Consultar</span></a>
+          <a class="nv-volver" href="#consultar" data-inicio><svg><use href="#i-volver"/></svg><span>Volver al inicio</span></a>
           <input class="nv-campo nv-campo-chico" type="search" id="nvRegionesBuscar" placeholder="Filtrar por región" autocomplete="off" aria-label="Filtrar por región">
           <span class="nv-regiones-n"><strong id="nvRegionesN">17</strong> regiones</span>
         </div>
@@ -633,12 +666,11 @@
     </main>
   </div>
 
-  <nav class="nv-abajo" aria-label="Navegación">
+  <nav class="nv-abajo" aria-label="Navegación principal">
     <a href="#consultar" data-ir="consultar"><svg><use href="#i-consultar"/></svg><span>Consultar</span></a>
     <a href="#resumen" data-ir="resumen"><svg><use href="#i-resumen"/></svg><span>Resumen</span></a>
     <a href="#vehiculos" data-ir="vehiculos"><svg><use href="#i-filter"/></svg><span>Vehículos</span></a>
     <a href="#pagos" data-ir="pagos"><svg><use href="#i-pagos"/></svg><span>Pagos</span></a>
-    <a href="#cuenta" data-ir="cuenta"><svg><use href="#i-cuenta"/></svg><span>Cuenta</span></a>
   </nav>
 </div>
 
@@ -739,7 +771,7 @@
 <script src="js/shared/mp-reconciliation.js?v=1"></script>
 <script src="js/shared/auth.js?v=28"></script>
 <script src="js/shared/turnstile.js?v=6"></script>
-<script src="js/nueva/nucleo.js?v=21"></script>
+<script src="js/nueva/nucleo.js?v=22"></script>
 <script src="js/nueva/acceso.js?v=20"></script>
 <script src="js/overlays.js?v=2"></script>
 <script>
@@ -753,8 +785,8 @@
 
 <script src="js/modules/confirm-dialog.js?v=2"></script>
 <script src="js/modules/validation.js?v=1"></script>
-<script src="js/modules/consulta-runner.js?v=16"></script>
-<script src="js/modules/render-helpers.js?v=59"></script>
+<script src="js/modules/consulta-runner.js?v=17"></script>
+<script src="js/modules/render-helpers.js?v=60"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
   if (window.pdfjsLib) {
@@ -766,24 +798,24 @@
   if (window.jspdf && window.jspdf.jsPDF && !window.jsPDF) { window.jsPDF = window.jspdf.jsPDF; }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<script src="js/modules/report-generator.js?v=17"></script>
+<script src="js/modules/report-generator.js?v=18"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="js/modules/reporte-modelo.js?v=5"></script>
 <script src="js/modules/reporte-veredicto.js?v=4"></script>
-<script src="js/modules/metapla-report.js?v=31"></script>
+<script src="js/modules/metapla-report.js?v=32"></script>
 <script src="js/modules/metapla-view.js?v=7"></script>
-<script src="js/modules/filter.js?v=64"></script>
+<script src="js/modules/filter.js?v=65"></script>
 <script src="js/modules/combo-buscador.js?v=5"></script>
 
 <!-- El Duplicado CITV: la hoja, el dibujante del PDF y el trámite. -->
-<script src="js/modules/citv-certificado.js?v=2"></script>
+<script src="js/modules/citv-certificado.js?v=3"></script>
 <script src="js/modules/citv-pdf.js?v=3"></script>
 <script src="js/modules/citv-aviso.js?v=9"></script>
 
 <script src="js/shared/vehicles.js?v=1"></script>
-<script src="js/nueva/pantallas.js?v=20"></script>
+<script src="js/nueva/pantallas.js?v=23"></script>
 <script src="js/nueva/nombres.js?v=1"></script>
-<script src="js/nueva/servicios.js?v=8"></script>
+<script src="js/nueva/servicios.js?v=9"></script>
 
 <!-- Lo que corre por su cuenta, igual que en la plataforma de siempre:
      el aviso de pago acreditado, el soporte por WhatsApp, los carteles,

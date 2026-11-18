@@ -37,7 +37,7 @@ values
 
   -- #3 — TIVE original (PDF)
   ('TIVE Original PDF',
-   'Tarjeta de Identificación Vehicular Electrónica original en PDF.',
+   'Tarjeta de Propiedad (TIVE) original en PDF.',
    'filter', 'placa', 'recupsd', '/tiv {valor}',
    20, 20, null,
    '{"texto": true, "pdf": true}'::jsonb,

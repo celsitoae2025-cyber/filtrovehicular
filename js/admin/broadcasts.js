@@ -59,10 +59,10 @@
   };
 
   var TYPE_COLORS = {
-    info:    { bg: '#f1f3f1', fg: '#141d1c', border: '#DCDCDC' },
-    system:  { bg: '#f5f5f5', fg: '#141d1c', border: '#f5f5f5' },
-    promo:   { bg: '#f5f5f5', fg: '#141d1c', border: '#f5f5f5' },
-    credits: { bg: '#f1f3f1', fg: '#141d1c', border: '#DCDCDC' }
+    info:    { bg: '#f3f3f3', fg: '#171717', border: '#dcdcdc' },
+    system:  { bg: '#f6f6f6', fg: '#171717', border: '#f6f6f6' },
+    promo:   { bg: '#f6f6f6', fg: '#171717', border: '#f6f6f6' },
+    credits: { bg: '#f3f3f3', fg: '#171717', border: '#dcdcdc' }
   };
 
   // --------------------------------------------------------------
