@@ -1598,6 +1598,57 @@ body.nv-body #nvFvcDialogo :is(
 body.nv-body #nvFvcDialogo :is(.nv-fvc-descripcion, #nvFvcPlaca) { font-size: var(--fv-tipo-base) !important; }
 body.nv-body #nvFvcDialogo h2 { font-size: var(--fv-tipo-titulo) !important; }
 
+/* Descarga de resultados de búsqueda por nombres. */
+.nv-body .nm-export { padding: 16px; }
+.nv-body .nm-export-formats { display: flex; flex-wrap: wrap; gap: 8px; }
+.nv-body .nm-export-formats[hidden] { display: none; }
+.nv-body .nm-export button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #1b1b1b;
+  border-radius: 8px;
+  background: #1b1b1b;
+  color: #ffffff;
+  font: inherit;
+  font-size: var(--fv-tipo-auxiliar) !important;
+  font-weight: 600;
+  cursor: pointer;
+}
+.nv-body .nm-export .nm-export-format { background: #ffffff; color: #1b1b1b; border-color: #d0d0d0; }
+.nv-body .nm-export button:disabled { opacity: .6; cursor: wait; }
+.nv-body :is(.nm-export-notice, .nm-export-status) { margin: 0 0 8px; color: var(--ui-muted); font-size: var(--fv-tipo-auxiliar) !important; }
+@media (max-width: 480px) { .nv-body .nm-export-formats button { flex: 1 1 130px; } }
+
+/* Búsqueda y categorías son dos controles independientes en el catálogo móvil. */
+.nv-body .nv-busqueda-etiqueta { display: none; }
+@media (max-width: 900px) {
+  .nv-body .nv-busqueda-grupo { display: grid; gap: 7px; min-width: 0; }
+  .nv-body .nv-busqueda-etiqueta {
+    display: block;
+    color: #696969;
+    font-size: var(--fv-tipo-auxiliar) !important;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .nv-body .nv-busqueda-grupo .nv-busqueda {
+    background: #ffffff;
+    border-color: #cfcfcf !important;
+  }
+  .nv-body .nv-categoria-menu {
+    overflow: hidden;
+    border-color: #1b1b1b !important;
+  }
+  .nv-body .nv-categoria-menu summary {
+    background: #1b1b1b;
+    color: #ffffff;
+  }
+  .nv-body .nv-categoria-menu summary strong { color: #ffffff; font-weight: 600; }
+  .nv-body .nv-categoria-menu summary > span { background: #353535; color: #eeeeee; }
+  .nv-body .nv-categoria-menu summary svg { color: #ffffff; }
+  .nv-body .nv-categoria-opciones { background: #f3f3f3; }
+}
+
 /* Acceso móvil: solicitud por placa, solo en iniciar sesión. */
 .nv-body #nvPuerta .nv-auth-fvc-mobile-wrap { display: none; }
 @media (max-width: 860px) {

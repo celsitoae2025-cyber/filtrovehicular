@@ -2493,12 +2493,18 @@
 
   function renderNmPersonas(p, botones, valorConsultado) {
     var regs = nmRegistros(p);
-    if (!regs.length) return '';
-    return renderNmTabla(regs, {
+    var descarga = (botones || []).find(function (b) {
+      return /descargar/i.test(b.text || '') && b.data && b.msgId;
+    });
+    if (!regs.length && !descarga) return '<p class="nm-export-notice">No se encontraron registros o la descarga no está disponible.</p>';
+    return '<div class="nm-export" aria-live="polite">' +
+      (descarga ? '<p class="nm-export-status" role="status">Preparando opciones de descarga…</p>' +
+        '<button type="button" class="nm-export-open" hidden>Reintentar</button>' :
+        '<p class="nm-export-notice">La descarga no está disponible para este resultado.</p>') +
+      '<div class="nm-export-formats" hidden></div></div>' + renderNmTabla(regs, {
       valor: valorConsultado,
-      total: nmTotalResultados(p, regs.length),
-      pie: nmBotonDescargar(botones)
-    }) + renderOpcionesSueltas(nmOtrasOpciones(botones));
+      total: nmTotalResultados(p, regs.length)
+    });
   }
 
   function textoNmDesdeBase64(base64) {
@@ -2527,6 +2533,11 @@
      de recibir un adjunto legible o la lista completa en texto. */
   function wireNmButtons(container, opts) {
     opts = opts || {};
+    var exportArea = container.querySelector('.nm-export');
+    if (exportArea) {
+      wireNmExport(exportArea, opts);
+      return;
+    }
     var valor = opts.valor || '';
     wireOpcionesDelBot(container, {
       consulta: opts.consulta,
@@ -2648,6 +2659,121 @@
         txtBtn.disabled = false;
       }
     });
+  }
+
+  /* El teclado del proveedor tiene dos pasos: menú de descarga y formato. */
+  function wireNmExport(area, opts) {
+    var open = area.querySelector('.nm-export-open');
+    var formats = area.querySelector('.nm-export-formats');
+    var status = area.querySelector('.nm-export-status');
+    if (!open || !formats || !status) return;
+    function texto(b) { return String(b.text || '').toLowerCase(); }
+    function opcion(botones, tipo) {
+      return (botones || []).find(function (b) {
+        var t = texto(b);
+        return b.data && b.msgId && !/zip|\u{1f4e6}/u.test(t) &&
+          (tipo === 'txt' ? /\btxt\b/.test(t) : /excel|xlsx?/.test(t));
+      });
+    }
+    function pintar(botones) {
+      var txt = opcion(botones, 'txt');
+      var excel = opcion(botones, 'excel');
+      formats.innerHTML = '';
+      [ ['txt', 'Descargar en texto', txt], ['excel', 'Descargar en Excel', excel] ].forEach(function (item) {
+        if (!item[2]) return;
+        var boton = document.createElement('button');
+        boton.type = 'button';
+        boton.className = 'nm-export-format';
+        boton.textContent = item[1];
+        boton.addEventListener('click', function () { return solicitar(item[2], item[0], boton); });
+        formats.appendChild(boton);
+      });
+      if (!txt && !excel) throw new Error('El proveedor no entregó los formatos de descarga. Intenta de nuevo.');
+      open.hidden = true;
+      status.hidden = true;
+      formats.hidden = false;
+    }
+    async function solicitar(b, tipo, boton) {
+      var consulta = typeof opts.consulta === 'function' ? opts.consulta() : null;
+      if (!consulta || !b || !b.msgId || !b.data) {
+        if (tipo === 'menu') {
+          status.textContent = 'No se pudieron obtener las opciones de descarga.';
+          status.hidden = false;
+          open.hidden = false;
+        }
+        if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Opción no disponible', message: 'Vuelve a realizar la consulta.' });
+        return;
+      }
+      var todos = area.querySelectorAll('button');
+      todos.forEach(function (el) { el.disabled = true; });
+      var textoAnterior = boton.textContent;
+      boton.textContent = 'Procesando…';
+      var aborto = new AbortController();
+      var limite;
+      try {
+        // Un menú no debe tardar lo mismo que generar un archivo pesado.
+        // El límite local también libera la UI si el transporte queda pendiente.
+        var respuesta = await Promise.race([
+          Consultia.ConsultaRunner.ejecutarCallback(consulta, parseInt(b.msgId, 10), b.data, {
+            timeoutMs: tipo === 'menu' ? 20000 : 150000, signal: aborto.signal
+          }),
+          new Promise(function (_, rechazar) {
+            limite = setTimeout(function () {
+              aborto.abort();
+              rechazar(new Error(tipo === 'menu'
+                ? 'No llegó el menú de descarga. Pulsa Reintentar.'
+                : 'La descarga tardó demasiado. Intenta de nuevo.'));
+            }, tipo === 'menu' ? 45000 : 170000);
+          })
+        ]);
+        var parsed = respuesta.parsed || {};
+        if (tipo === 'menu') {
+          pintar(parsed.botones || []);
+        } else {
+          var archivo = (parsed.medios || []).find(function (m) {
+            var nombre = m.filename || '';
+            var mime = m.mimeType || '';
+            return m.base64 && (tipo === 'txt'
+              ? /\.txt$/i.test(nombre) || /^text\/plain/i.test(mime)
+              : /\.xlsx?$/i.test(nombre) || /spreadsheet|ms-excel/i.test(mime));
+          });
+          if (!archivo) throw new Error('El proveedor todavía no entregó el archivo solicitado. Intenta de nuevo.');
+          var url = base64ToBlobUrl(archivo.base64, archivo.mimeType || 'application/octet-stream');
+          var enlace = document.createElement('a');
+          enlace.href = url;
+          enlace.download = (archivo.filename || (tipo === 'txt' ? 'Busqueda_Personas.txt' : 'Busqueda_Personas.xlsx')).replace(/[\\/:*?"<>|]/g, '_');
+          document.body.appendChild(enlace);
+          enlace.click();
+          enlace.remove();
+          setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+        }
+      } catch (e) {
+        if (tipo === 'menu') {
+          status.hidden = false;
+          status.textContent = 'No se pudieron obtener las opciones de descarga.';
+          open.hidden = false;
+        }
+        if (Consultia.toast) Consultia.toast({ type: 'error', title: 'No se pudo descargar', message: (e && e.message) || 'Intenta de nuevo.' });
+      } finally {
+        clearTimeout(limite);
+        boton.textContent = textoAnterior;
+        todos.forEach(function (el) { el.disabled = false; });
+      }
+    }
+    function prepararOpciones() {
+      open.hidden = true;
+      status.hidden = false;
+      status.textContent = 'Preparando opciones de descarga…';
+      var botones = opts.botones || [];
+      if (opcion(botones, 'txt') || opcion(botones, 'excel')) {
+        try { pintar(botones); } catch (e) { status.textContent = e.message; open.hidden = false; }
+        return;
+      }
+      var menu = botones.find(function (b) { return /descargar/i.test(b.text || '') && b.data && b.msgId; });
+      return solicitar(menu, 'menu', open);
+    }
+    open.addEventListener('click', prepararOpciones);
+    prepararOpciones();
   }
 
   /* ── Árbol genealógico (/ag): el bot manda varios mensajes de Telegram
