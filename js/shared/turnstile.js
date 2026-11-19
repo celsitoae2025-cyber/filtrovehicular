@@ -159,9 +159,9 @@
           w.id = window.turnstile.render('#' + containerId, {
             sitekey: SITEKEY,
             theme: 'light',
-            // El widget normal mide 300 px; en un móvil angosto se sale
-            // del formulario. Cloudflare ofrece esta variante compacta.
-            size: el.clientWidth < 300 ? 'compact' : 'normal',
+            // El acceso reserva 300 px incluso antes de mostrar el formulario.
+            // No elegir compact por un ancho de 0 al montar un panel oculto.
+            size: containerId === 'nvTsAcceso' ? 'flexible' : (el.clientWidth < 300 ? 'compact' : 'normal'),
             language: 'es',
             action: containerId,
             callback: function (token) { entregarToken(containerId, token); },

@@ -59,8 +59,10 @@
     credenciales.hidden = true;
     if (reintentar) reintentar.hidden = true;
     actualizarPestanas('acceso', false);
-    $('nvPuerta').classList.remove('es-acceso-limpio');
-    $('nvPuerta').classList.add('es-verificacion');
+    var puerta = $('nvPuerta');
+    puerta.dataset.pasoActivo = 'acceso';
+    puerta.classList.remove('es-acceso-limpio');
+    puerta.classList.add('es-verificacion');
     estadoVerificacion(mensaje || 'Completa la verificación para continuar.');
   }
 

@@ -1351,7 +1351,7 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   }
 }
 
-/* El registro aprovecha la altura disponible y se compacta en pantallas bajas. */
+/* El registro llena el espacio entre el borde superior y el pie de página. */
 @media (max-width: 860px), (max-width: 1180px) and (pointer: coarse) {
   .nv-body #nvPuerta[data-paso-activo="registro"] {
     --registro-espacio: clamp(10px, calc(10svh - 58px), 24px);
@@ -1369,15 +1369,20 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     flex: 1 0 auto;
     gap: 0;
     margin-block: 0;
-    padding-block: 8px;
+    padding: 0 0 64px;
+    justify-content: flex-start;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
+    flex: 1 0 auto;
     gap: var(--registro-separacion);
     padding: var(--registro-relleno);
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro:not([hidden]) {
+    flex: 1 0 auto;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--registro-espacio) 12px;
+    align-content: space-between;
+    align-items: start;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro > .nv-mitad {
     grid-column: auto;
@@ -1421,13 +1426,6 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   }
 }
 
-@media (min-width: 600px) and (max-width: 860px) {
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
-    width: min(560px, 100%);
-    max-width: 560px;
-  }
-}
-
 /* Las tablets táctiles presentan el registro en una sola columna centrada. */
 @media (min-width: 861px) and (max-width: 1180px) and (pointer: coarse) {
   .nv-body #nvPuerta[data-paso-activo="registro"]:not([hidden]):not(.es-encima) {
@@ -1453,7 +1451,6 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     overscroll-behavior: contain;
     background: var(--ui-page);
   }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell { width: min(560px, 100%); }
   .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-legal {
     position: sticky;
     bottom: 0;
@@ -1475,7 +1472,7 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     padding: 12px;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro:not([hidden]) {
-    gap: 8px 10px;
+    gap: 6px 10px;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] .nv-auth-tab {
     min-height: 40px;
@@ -1484,6 +1481,9 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
 }
 
 @media (max-width: 860px) and (max-height: 620px) {
+  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-formularios {
+    padding-bottom: 44px;
+  }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
     padding-inline: 16px;
   }
@@ -1496,6 +1496,44 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     width: 24px;
     height: 24px;
   }
+}
+
+/* Verificación horizontal: ancho útil estable, también al montar el widget. */
+.nv-body #nvPuerta.es-verificacion:not([hidden]):not(.es-encima) {
+  padding: 0;
+  background: var(--ui-surface);
+}
+.nv-body #nvPuerta.es-verificacion:not([hidden]) .nv-puerta-panel {
+  width: 100%;
+  max-width: none;
+  min-height: 100svh;
+  padding: 24px max(10px, env(safe-area-inset-left, 0px)) 24px max(10px, env(safe-area-inset-right, 0px));
+  justify-content: center;
+  background: var(--ui-surface);
+}
+.nv-body #nvPuerta.es-verificacion .nv-puerta-formularios {
+  flex: 0 0 auto;
+  width: min(100%, 420px);
+  max-width: none;
+  min-height: 0;
+  margin: auto;
+  padding: 0;
+}
+.nv-body #nvPuerta.es-verificacion #nvAuthShell {
+  width: 100%;
+  max-width: none;
+  gap: 0;
+  padding: 20px clamp(0px, calc(50vw - 170px), 20px);
+  border: 0;
+  border-radius: 0;
+}
+.nv-body #nvPuerta.es-verificacion .nv-acceso-verificacion {
+  gap: 16px;
+}
+.nv-body #nvPuerta.es-verificacion #nvTsAcceso {
+  width: 100%;
+  min-width: 300px;
+  min-height: 65px;
 }
 
 /* Registro móvil: una tarjeta amplia con un único margen lateral constante. */
