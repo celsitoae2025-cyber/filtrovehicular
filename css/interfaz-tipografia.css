@@ -1449,12 +1449,18 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   #nvPuerta.es-acceso-limpio #nvAuthShell .nv-puerta-pie { padding: 4px 0 0; }
   #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-content: space-between;
+    align-content: center;
     align-items: start;
-    gap: var(--acceso-gap) 12px;
+    gap: clamp(12px, 2.5svh, 24px) 12px;
   }
   #nvPuerta.es-acceso-limpio #nvRegistro > .nv-mitad { grid-column: auto; }
+  #nvPuerta.es-acceso-limpio #nvRegistro .nv-auth-intro { margin: 0; }
   #nvPuerta.es-acceso-limpio #nvRegistro .nv-etiqueta { min-width: 0; }
+  #nvPuerta.es-acceso-limpio #nvRegistro .nv-campo,
+  #nvPuerta.es-acceso-limpio #nvRegistroBtn {
+    height: clamp(44px, 6svh, 54px);
+    min-height: clamp(44px, 6svh, 54px);
+  }
   #nvPuerta[data-paso-activo="acceso"].es-acceso-limpio .nv-navegadores-trigger-mobile { display: inline-flex; }
   #nvPuerta.es-acceso-limpio #nvRegistro .nv-puerta-pie,
   #nvPuerta[data-paso-activo="registro"].es-acceso-limpio .nv-navegadores-trigger-mobile { display: none; }
@@ -1502,6 +1508,19 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   #nvPuerta.es-acceso-limpio .nv-auth-tab { min-height: 36px; padding-block: 6px; }
   #nvPuerta.es-acceso-limpio #nvAuthShell .nv-campo,
   #nvPuerta.es-acceso-limpio #nvAuthShell .nv-cta { min-height: 40px; height: 40px; padding-block: 6px; }
+  #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) { gap: clamp(6px, 1.8svh, 12px) 12px; }
+}
+
+@media (max-width: 860px) and (min-height: 621px) and (orientation: portrait) {
+  #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(12px, 2.5svh, 22px);
+  }
+  #nvPuerta.es-acceso-limpio #nvRegistro .nv-campo,
+  #nvPuerta.es-acceso-limpio #nvRegistroBtn {
+    height: clamp(44px, 6.5svh, 56px);
+    min-height: clamp(44px, 6.5svh, 56px);
+  }
 }
 
 /* Verificación horizontal: ancho útil estable, también al montar el widget. */
