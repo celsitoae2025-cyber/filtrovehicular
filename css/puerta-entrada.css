@@ -236,17 +236,35 @@ body:has(#nvPuerta.es-verificacion:not([hidden])) .wa-fab { display: none !impor
     margin: 0;
   }
   #nvPuerta .nv-auth-fvc-desktop {
+    min-height: 50px;
     margin-top: 22px;
+    border-color: #f4f4f4 !important;
+    background: #f4f4f4 !important;
+    color: #171717 !important;
+    font-size: var(--fv-tipo-base) !important;
+    font-weight: 600;
+  }
+  #nvPuerta .nv-auth-fvc-desktop .nv-auth-fvc-arrow {
+    color: #171717;
+  }
+  #nvPuerta .nv-auth-fvc-desktop:hover {
+    border-color: #e5e5e5 !important;
+    background: #e5e5e5 !important;
+    color: #171717 !important;
+  }
+  #nvPuerta .nv-auth-fvc-desktop:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 4px;
   }
   #nvPuerta .nv-navegadores-trigger-desktop {
     align-self: flex-start;
     justify-content: flex-start;
     margin: 8px 0 0;
     padding-left: 0;
+    color: #bdbdbd;
     text-align: left;
   }
-  #nvPuerta .nv-auth-fvc-desktop:focus-visible {
-    outline: 2px solid #d6d6d6;
-    outline-offset: 3px;
+  #nvPuerta .nv-navegadores-trigger-desktop:hover {
+    color: #ffffff;
   }
 }
