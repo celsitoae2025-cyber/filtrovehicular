@@ -1314,3 +1314,39 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     transform: translateX(-28px);
   }
 }
+
+/* Acceso móvil: pie compacto y CTA visible solo en el paso de inicio. */
+@media (max-width: 860px) {
+  .nv-body #nvPuerta:not([hidden]):not(.es-encima) .nv-puerta-legal {
+    min-height: 42px;
+    padding: 3px 12px calc(3px + env(safe-area-inset-bottom, 0px));
+    gap: 0 10px;
+  }
+  .nv-body #nvPuerta:not([hidden]):not(.es-encima) .nv-puerta-legal a {
+    min-height: 32px;
+  }
+  .nv-body.auth-locked .wa-fab {
+    bottom: calc(54px + env(safe-area-inset-bottom, 0px));
+  }
+  .nv-body #nvPuerta .nv-auth-fvc-mobile {
+    display: none !important;
+  }
+  .nv-body #nvPuerta[data-paso-activo="acceso"].es-acceso-limpio .nv-auth-fvc-mobile {
+    display: flex !important;
+  }
+  .nv-body #nvPuerta[data-paso-activo="acceso"] .nv-puerta-panel {
+    padding-top: max(8px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+  }
+  .nv-body #nvPuerta[data-paso-activo="acceso"] .nv-puerta-formularios {
+    gap: 8px;
+  }
+  .nv-body #nvPuerta[data-paso-activo="acceso"] .nv-auth-shell {
+    gap: 10px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+  .nv-body #nvPuerta[data-paso-activo="acceso"] #nvAccesoCredenciales:not([hidden]) {
+    gap: 8px;
+  }
+}

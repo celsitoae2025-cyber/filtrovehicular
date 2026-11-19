@@ -201,6 +201,7 @@
     if (!existe) return NV.verPuerta('acceso');
 
     var puerta = $('nvPuerta');
+    if (puerta) puerta.dataset.pasoActivo = paso;
     if (paso !== 'acceso' || accesoVerificado) puerta.classList.remove('es-verificacion');
     if (paso === 'acceso') {
       if (!accesoVerificado) prepararVerificacionAcceso(undefined, pasoTrasVerificacion);
