@@ -68,7 +68,7 @@
 <link rel="stylesheet" href="css/nueva.css?v=124">
 <link rel="stylesheet" href="css/puerta-entrada.css?v=22">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
-<link rel="stylesheet" href="css/interfaz-tipografia.css?v=6">
+<link rel="stylesheet" href="css/interfaz-tipografia.css?v=7">
 </head>
 <body class="nv-body">
 
@@ -198,6 +198,7 @@
         </button>
       </div>
 
+    <div class="nv-auth-contenido">
   <form class="nv-puerta-caja" id="nvAcceso" data-paso="acceso" novalidate>
     <section class="nv-acceso-verificacion" id="nvAccesoVerificacion" aria-labelledby="nvVerificacionTitulo">
       <h1 id="nvVerificacionTitulo">Verificación de seguridad</h1>
@@ -221,11 +222,13 @@
           <input class="nv-campo" type="email" name="email" autocomplete="email" inputmode="email" placeholder="Ingrese su usuario" required>
         </span>
       </label>
+      <div class="nv-acceso-clave-grupo">
       <div class="nv-puerta-clave-encabezado"><label for="nvAccesoClave">Contraseña</label><a href="#" data-paso-ir="olvido">¿Olvidaste tu contraseña?</a></div>
       <div class="nv-puerta-clave-campo nv-auth-campo">
         <svg class="nv-auth-campo-icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.5 14a5.5 5.5 0 1 1 5.27-7h6.98A1.25 1.25 0 0 1 22 8.25V11h-2v2h-3v-2h-3.23A5.5 5.5 0 0 1 8.5 14Zm0-3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>
         <input class="nv-campo" id="nvAccesoClave" type="password" name="password" autocomplete="current-password" placeholder="Ingrese su contraseña" required>
         <button type="button" id="nvMostrarClave" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-5.5 10-5.5S22 12 22 12s-3.6 5.5-10 5.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg></button>
+      </div>
       </div>
       <label class="nv-marcar"><input type="checkbox" name="remember" checked> Mantener la sesión abierta</label>
       <p class="nv-error" id="nvAccesoError" role="alert" hidden></p>
@@ -319,7 +322,6 @@
       <a href="#" data-paso-ir="olvido">Otro correo</a>
     </div>
   </form>
-    </div>
     <div class="nv-auth-fvc-mobile-wrap" id="nvFvcMovil" aria-label="Filtro vehicular completo">
       <form class="nv-portada-filtro nv-portada-filtro-mobile" id="nvPortadaFiltroMobile" novalidate>
         <h2>Solicita tu Filtro Vehicular Completo</h2>
@@ -333,6 +335,8 @@
       </form>
     </div>
     <button class="nv-navegadores-trigger nv-navegadores-trigger-mobile" type="button" data-navegadores-abrir aria-haspopup="dialog" aria-controls="nvNavegadoresDialog">NAVEGADORES COMPATIBLES</button>
+    </div>
+    </div>
     </div>
 
   <footer class="nv-puerta-legal" aria-label="Información legal">
@@ -912,7 +916,7 @@
 <script src="js/shared/auth.js?v=28"></script>
 <script src="js/shared/turnstile.js?v=7"></script>
 <script src="js/nueva/nucleo.js?v=23"></script>
-<script src="js/nueva/acceso.js?v=25"></script>
+<script src="js/nueva/acceso.js?v=26"></script>
 <script src="js/shared/credit-packages.js?v=1"></script>
 <script src="js/nueva/planes-portada.js?v=1"></script>
 <script src="js/overlays.js?v=2"></script>

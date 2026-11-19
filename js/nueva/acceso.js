@@ -225,7 +225,10 @@
     var mostrarTabs = !encima && accesoVerificado && (paso === 'registro' || paso === 'acceso');
     actualizarPestanas(paso, mostrarTabs);
     if (C.Turnstile && CAPTCHA[paso] && (paso !== 'acceso' || !accesoVerificado)) C.Turnstile.render(CAPTCHA[paso]);
-    if (puerta) puerta.scrollTop = 0;
+    if (puerta) {
+      puerta.scrollTop = 0;
+      puerta.querySelector('.nv-auth-contenido').scrollTop = 0;
+    }
     window.scrollTo(0, 0);
 
     var primero = document.querySelector('#nvPuerta [data-paso="' + paso + '"] input:not([readonly]):not([type="checkbox"])');
@@ -490,6 +493,27 @@
     if (puertaIniciada) return;
     puertaIniciada = true;
     NV.pasoInicial = pasoDeLaDireccion() || 'acceso';
+
+    // Algunos teclados reducen solo la parte visible del navegador.
+    var vista = window.visualViewport;
+    if (vista) {
+      var contenido = document.querySelector('#nvAuthShell .nv-auth-contenido');
+      function ajustarAlturaVisible() {
+        if (vista.scale !== 1 || vista.height >= document.documentElement.clientHeight) {
+          document.body.style.removeProperty('--acceso-alto-visible');
+          return;
+        }
+        document.body.style.setProperty('--acceso-alto-visible', vista.height + 'px');
+        var campo = document.activeElement;
+        if (campo && campo.matches('input') && contenido.contains(campo)) {
+          var limite = contenido.getBoundingClientRect();
+          var rect = campo.getBoundingClientRect();
+          contenido.scrollTop += Math.max(0, rect.bottom - limite.bottom) + Math.min(0, rect.top - limite.top);
+        }
+      }
+      vista.addEventListener('resize', ajustarAlturaVisible);
+      ajustarAlturaVisible();
+    }
 
     document.getElementById('nvPuerta').addEventListener('click', function (e) {
       var a = e.target.closest('[data-paso-ir]');

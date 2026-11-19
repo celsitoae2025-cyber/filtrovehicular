@@ -1345,168 +1345,163 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   .nv-body #nvPuerta[data-paso-activo="acceso"].es-acceso-limpio .nv-auth-fvc-mobile {
     display: flex !important;
   }
-  .nv-body #nvPuerta[data-paso-activo="acceso"] .nv-puerta-panel {
-    padding-top: max(8px, env(safe-area-inset-top, 0px));
-    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
-  }
-  .nv-body #nvPuerta[data-paso-activo="acceso"] .nv-puerta-formularios {
-    gap: 8px;
-  }
-  .nv-body #nvPuerta[data-paso-activo="acceso"] .nv-auth-shell {
-    gap: 10px;
-    padding-top: 14px;
-    padding-bottom: 14px;
-  }
-  .nv-body #nvPuerta[data-paso-activo="acceso"] #nvAccesoCredenciales:not([hidden]) {
-    gap: 8px;
-  }
 }
 
-/* El registro llena el espacio entre el borde superior y el pie de página. */
+/* La misma tarjeta aloja ambos pasos. Solo su contenido puede desplazarse
+   si el teclado, el zoom o la orientación reducen el espacio disponible. */
+.nv-auth-contenido, .nv-acceso-clave-grupo { display: contents; }
+
 @media (max-width: 860px), (max-width: 1180px) and (pointer: coarse) {
-  .nv-body #nvPuerta[data-paso-activo="registro"] {
-    --registro-espacio: clamp(10px, calc(10svh - 58px), 24px);
-    --registro-relleno: clamp(16px, calc(5svh - 18px), 32px);
-    --registro-separacion: clamp(12px, calc(4svh - 14px), 24px);
-    --registro-campo: clamp(44px, calc(4svh + 18px), 54px);
-    --registro-etiqueta: clamp(4px, calc(2svh - 10px), 8px);
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"]:not(.es-encima) .nv-puerta-panel {
-    max-width: none;
-    padding-top: max(8px, env(safe-area-inset-top, 0px));
-    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-formularios {
-    flex: 1 0 auto;
-    gap: 0;
-    margin-block: 0;
-    padding: 0 0 64px;
-    justify-content: flex-start;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
-    flex: 1 0 auto;
-    gap: var(--registro-separacion);
-    padding: var(--registro-relleno);
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro:not([hidden]) {
-    flex: 1 0 auto;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--registro-espacio) 12px;
-    align-content: space-between;
-    align-items: start;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro > .nv-mitad {
-    grid-column: auto;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-auth-intro {
-    gap: var(--registro-etiqueta);
-    margin: 0;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-puerta-nota {
-    font-size: var(--fv-tipo-auxiliar) !important;
-    line-height: 1.5;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-etiqueta {
-    min-width: 0;
-    gap: 4px;
-    line-height: 1.4;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-campo {
-    height: var(--registro-campo);
-    min-height: var(--registro-campo);
-    padding: 9px 10px;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-ayuda {
-    margin: 0;
-    color: var(--ui-muted);
-    font-size: var(--fv-tipo-auxiliar) !important;
-    line-height: 1.4;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-marcar {
-    align-items: center;
-    min-height: 28px;
-    line-height: 1.4;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistroBtn {
-    min-height: var(--registro-campo);
-    padding-block: 9px;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-puerta-pie,
-  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-navegadores-trigger-mobile {
-    display: none;
-  }
-}
-
-/* Las tablets táctiles presentan el registro en una sola columna centrada. */
-@media (min-width: 861px) and (max-width: 1180px) and (pointer: coarse) {
-  .nv-body #nvPuerta[data-paso-activo="registro"]:not([hidden]):not(.es-encima) {
+  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) {
+    --acceso-margen: clamp(4px, 1.4vw, 12px);
+    --acceso-relleno: clamp(10px, 2.2svh, 24px);
+    --acceso-gap: clamp(6px, 1.4svh, 16px);
     position: fixed;
     inset: 0;
     z-index: 400;
     display: flex;
-    flex-direction: column;
     width: 100%;
-    height: 100dvh;
+    height: 100vh;
+    height: min(100dvh, var(--acceso-alto-visible, 100dvh));
     min-height: 0;
     padding: 0;
     overflow: hidden;
     background: var(--ui-page);
   }
-  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-presentacion { display: none; }
-  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-panel {
-    flex: 1 1 0%;
+  #nvPuerta.es-acceso-limpio .nv-puerta-presentacion { display: none; }
+  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) .nv-puerta-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-items: stretch;
+    width: 100%;
+    max-width: none;
     min-height: 0;
-    padding-inline: max(24px, env(safe-area-inset-left, 0px));
-    overflow-x: hidden;
+    height: 100%;
+    padding: max(var(--acceso-margen), env(safe-area-inset-top)) max(var(--acceso-margen), env(safe-area-inset-right)) 0 max(var(--acceso-margen), env(safe-area-inset-left));
+    overflow: hidden;
+    background: var(--ui-page);
+  }
+  #nvPuerta.es-acceso-limpio .nv-puerta-formularios {
+    display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    align-items: stretch;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+  #nvPuerta.es-acceso-limpio #nvAuthShell {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: stretch;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    margin: 0;
+    padding: var(--acceso-relleno) clamp(12px, 4vw, 32px);
+    gap: var(--acceso-gap);
+    overflow: hidden;
+  }
+  #nvPuerta.es-acceso-limpio .nv-auth-tabs,
+  #nvPuerta.es-acceso-limpio .nv-auth-contenido {
+    width: 100%;
+    max-width: 640px;
+    margin-inline: auto;
+  }
+  #nvPuerta.es-acceso-limpio .nv-auth-contenido {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    gap: var(--acceso-gap);
     overflow-y: auto;
     overscroll-behavior: contain;
-    background: var(--ui-page);
   }
-  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-legal {
-    position: sticky;
-    bottom: 0;
-    flex: 0 0 auto;
+  #nvPuerta.es-acceso-limpio .nv-auth-tab { transition: none; }
+  #nvPuerta.es-acceso-limpio #nvAcceso:not([hidden]),
+  #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) { flex: 1 0 auto; }
+  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales:not([hidden]) {
+    flex: 1;
+    justify-content: space-evenly;
+    gap: var(--acceso-gap);
+  }
+  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-intro {
+    gap: 4px;
+    margin: 0;
+    transform: none;
+  }
+  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-emblema {
+    width: clamp(38px, 7svh, 64px);
+    height: clamp(38px, 7svh, 64px);
+    margin-bottom: 4px;
+  }
+  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-emblema-imagen {
+    position: static;
+    width: 100%;
+    height: 100%;
+    transform: none;
+  }
+  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-intro :is(h1, p) { transform: none; }
+  #nvPuerta.es-acceso-limpio .nv-acceso-clave-grupo { display: grid; gap: 4px; }
+  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-puerta-clave-encabezado { margin: 0; }
+  #nvPuerta.es-acceso-limpio #nvAuthShell .nv-etiqueta { gap: 4px; }
+  #nvPuerta.es-acceso-limpio #nvAuthShell .nv-campo,
+  #nvPuerta.es-acceso-limpio #nvPortadaPlacaMobile { font-size: 16px !important; }
+  #nvPuerta.es-acceso-limpio #nvAuthShell .nv-puerta-pie { padding: 4px 0 0; }
+  #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: space-between;
+    align-items: start;
+    gap: var(--acceso-gap) 12px;
+  }
+  #nvPuerta.es-acceso-limpio #nvRegistro > .nv-mitad { grid-column: auto; }
+  #nvPuerta.es-acceso-limpio #nvRegistro .nv-etiqueta { min-width: 0; }
+  #nvPuerta[data-paso-activo="acceso"].es-acceso-limpio .nv-navegadores-trigger-mobile { display: inline-flex; }
+  #nvPuerta.es-acceso-limpio #nvRegistro .nv-puerta-pie,
+  #nvPuerta[data-paso-activo="registro"].es-acceso-limpio .nv-navegadores-trigger-mobile { display: none; }
+  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) .nv-navegadores-trigger-mobile {
+    align-self: center;
+    flex-shrink: 0;
+    min-height: 26px;
+    margin: 0;
+    transform: none;
+  }
+  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) .nv-puerta-legal {
+    position: static;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-wrap: nowrap;
-    width: min(560px, 100%);
-    min-height: 42px;
-    padding: 3px 0 calc(3px + env(safe-area-inset-bottom, 0px));
-    background: var(--ui-page);
-  }
-  .nv-body.auth-locked:has(#nvPuerta[data-paso-activo="registro"]:not([hidden])) .wa-fab {
-    bottom: calc(54px + env(safe-area-inset-bottom, 0px));
-  }
-}
-
-@media (max-width: 860px) and (max-height: 660px) {
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
+    width: 100%;
+    max-width: none;
+    min-height: 44px;
+    margin: 0;
+    padding: 0 46px env(safe-area-inset-bottom) 4px;
     gap: 8px;
-    padding: 12px;
+    border: 0;
+    background: transparent;
   }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro:not([hidden]) {
-    gap: 6px 10px;
+  .nv-body #nvPuerta.es-acceso-limpio .nv-puerta-legal a {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
-  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-auth-tab {
-    min-height: 40px;
-    padding-block: 7px;
+  .nv-body.auth-locked:has(#nvPuerta.es-acceso-limpio:not([hidden])) .wa-fab {
+    right: max(6px, env(safe-area-inset-right));
+    bottom: calc(3px + env(safe-area-inset-bottom));
+    bottom: calc(3px + env(safe-area-inset-bottom) + max(0px, 100dvh - var(--acceso-alto-visible, 100dvh)));
+    width: 38px;
+    height: 38px;
   }
+  .nv-body.auth-locked:has(#nvPuerta.es-acceso-limpio:not([hidden])) .wa-fab-icon { width: 23px; height: 23px; }
 }
 
-@media (max-width: 860px) and (max-height: 620px) {
-  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-formularios {
-    padding-bottom: 44px;
+@media (max-width: 860px) and (max-height: 720px), (min-width: 861px) and (max-width: 1180px) and (max-height: 800px) and (pointer: coarse) {
+  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) {
+    --acceso-relleno: 8px;
+    --acceso-gap: 4px;
   }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
-    padding-inline: 16px;
-  }
-  .nv-body.auth-locked:has(#nvPuerta[data-paso-activo="registro"]:not([hidden])) .wa-fab {
-    right: 4px;
-    width: 40px;
-    height: 40px;
-  }
-  .nv-body.auth-locked:has(#nvPuerta[data-paso-activo="registro"]:not([hidden])) .wa-fab-icon {
-    width: 24px;
-    height: 24px;
-  }
+  #nvPuerta.es-acceso-limpio .nv-auth-tab { min-height: 36px; padding-block: 6px; }
+  #nvPuerta.es-acceso-limpio #nvAuthShell .nv-campo,
+  #nvPuerta.es-acceso-limpio #nvAuthShell .nv-cta { min-height: 40px; height: 40px; padding-block: 6px; }
 }
 
 /* Verificación horizontal: ancho útil estable, también al montar el widget. */
@@ -1545,20 +1540,6 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   width: 100%;
   min-width: 300px;
   min-height: 65px;
-}
-
-/* Registro móvil: una tarjeta amplia con un único margen lateral constante. */
-@media (max-width: 860px), (min-width: 861px) and (max-width: 1180px) and (pointer: coarse) {
-  .nv-body #nvPuerta[data-paso-activo="registro"]:not([hidden]) {
-    padding-inline: 0;
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-panel {
-    padding-inline: max(12px, 3vw, env(safe-area-inset-left, 0px)) max(12px, 3vw, env(safe-area-inset-right, 0px));
-  }
-  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
-    width: 100%;
-    max-width: none;
-  }
 }
 
 /* Los campos mantienen un solo borde fino al recibir foco. */
@@ -1651,7 +1632,7 @@ body.nv-body #nvFvcDialogo h2 { font-size: var(--fv-tipo-titulo) !important; }
 
 /* Acceso móvil: solicitud por placa, solo en iniciar sesión. */
 .nv-body #nvPuerta .nv-auth-fvc-mobile-wrap { display: none; }
-@media (max-width: 860px) {
+@media (max-width: 860px), (max-width: 1180px) and (pointer: coarse) {
   .nv-body #nvPuerta .nv-auth-fvc-mobile-wrap {
     display: none;
     box-sizing: border-box;
@@ -1736,4 +1717,61 @@ body.nv-body #nvFvcDialogo h2 { font-size: var(--fv-tipo-titulo) !important; }
   .nv-body #nvPuerta #nvPortadaPlacaAyudaMobile,
   .nv-body #nvPuerta #nvPortadaPlacaErrorMobile { margin: 0; color: var(--ui-muted); font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.35; }
   .nv-body #nvPuerta #nvPortadaPlacaErrorMobile { color: #a13d30; }
+}
+
+@media (max-width: 860px) and (max-height: 620px) {
+  .nv-body #nvPuerta.es-acceso-limpio .nv-portada-filtro-mobile {
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 2px 6px;
+  }
+  .nv-portada-filtro-mobile > :is(h2, .nv-portada-filtro-fila, [role="alert"]) { grid-column: 1 / -1; }
+  #nvPortadaPlacaAyudaMobile { grid-area: 2 / 2; text-align: end; }
+}
+
+@media (min-width: 560px) and (max-width: 1180px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+  #nvPuerta.es-acceso-limpio :is(.nv-auth-tabs, .nv-auth-contenido) { max-width: none; }
+  #nvPuerta[data-paso-activo="acceso"].es-acceso-limpio .nv-auth-contenido {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-rows: 1fr auto 1fr;
+    column-gap: 20px;
+    align-items: center;
+  }
+  #nvPuerta.es-acceso-limpio #nvAcceso { grid-area: 1 / 1 / -1 / 2; align-self: stretch; }
+  #nvPuerta.es-acceso-limpio #nvFvcMovil { grid-area: 2 / 2; }
+  #nvPuerta.es-acceso-limpio .nv-navegadores-trigger-mobile { grid-area: 3 / 2; align-self: start; justify-self: center; }
+  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales:not([hidden]) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    align-content: space-evenly;
+    column-gap: 10px;
+  }
+  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales > :is(.nv-auth-intro, .nv-puerta-pie, .nv-error) { grid-column: 1 / -1; }
+  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-intro {
+    grid-template-columns: auto auto;
+    justify-content: center;
+    align-items: center;
+    column-gap: 10px;
+  }
+  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-emblema { grid-row: span 2; margin: 0; }
+  #nvPuerta.es-acceso-limpio #nvRegistro > :is(.nv-etiqueta, .nv-marcar, .nv-cta) { grid-column: auto; }
+  #nvPuerta.es-acceso-limpio #nvRegistro .nv-auth-intro {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    margin: 0;
+  }
+}
+
+@media (min-width: 560px) and (max-width: 1180px) and (max-height: 345px) and (pointer: coarse) {
+  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) {
+    --acceso-margen: 3px;
+    --acceso-relleno: 4px;
+  }
+  #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  #nvPuerta.es-acceso-limpio #nvRegistro > :is(.nv-auth-intro, .nv-etiqueta, .nv-cta, .nv-marcar) { grid-column: span 2; }
+  #nvPuerta.es-acceso-limpio #nvRegistro > .nv-mitad { grid-column: span 1; }
 }
