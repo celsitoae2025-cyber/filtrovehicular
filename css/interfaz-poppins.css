@@ -1350,3 +1350,94 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     gap: 8px;
   }
 }
+
+/* Registro móvil: tres filas de campos y accesos secundarios sin duplicar. */
+@media (max-width: 860px) {
+  .nv-body #nvPuerta[data-paso-activo="registro"]:not(.es-encima) .nv-puerta-panel {
+    padding-top: max(8px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-formularios {
+    flex: 1 0 auto;
+    gap: 0;
+    margin-block: 0;
+    padding-block: 8px;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
+    gap: 12px;
+    padding: 16px;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro:not([hidden]) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro > .nv-mitad {
+    grid-column: auto;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-auth-intro {
+    gap: 4px;
+    margin: 0;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-puerta-nota {
+    font-size: var(--fv-tipo-auxiliar) !important;
+    line-height: 1.5;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-etiqueta {
+    min-width: 0;
+    gap: 4px;
+    line-height: 1.4;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-campo {
+    height: 44px;
+    min-height: 44px;
+    padding: 9px 10px;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-ayuda {
+    margin: 0;
+    color: var(--ui-muted);
+    font-size: var(--fv-tipo-auxiliar) !important;
+    line-height: 1.4;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-marcar {
+    align-items: center;
+    min-height: 28px;
+    line-height: 1.4;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistroBtn {
+    min-height: 44px;
+    padding-block: 9px;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-puerta-pie,
+  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-navegadores-trigger-mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) and (max-height: 660px) {
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
+    gap: 8px;
+    padding: 12px;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro:not([hidden]) {
+    gap: 8px 10px;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-auth-tab {
+    min-height: 40px;
+    padding-block: 7px;
+  }
+}
+
+@media (max-width: 860px) and (max-height: 620px) {
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
+    padding-inline: 16px;
+  }
+  .nv-body.auth-locked:has(#nvPuerta[data-paso-activo="registro"]:not([hidden])) .wa-fab {
+    right: 4px;
+    width: 40px;
+    height: 40px;
+  }
+  .nv-body.auth-locked:has(#nvPuerta[data-paso-activo="registro"]:not([hidden])) .wa-fab-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
