@@ -248,6 +248,7 @@ body:has(#nvPuerta.es-verificacion:not([hidden])) .wa-fab { display: none !impor
 /* Portada de escritorio: propuesta, servicios y acceso a precios. */
 @media (min-width: 861px) {
   #nvPuerta .nv-portada {
+    --fv-tipo-titulo: 24px;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto 1fr auto;
@@ -259,7 +260,20 @@ body:has(#nvPuerta.es-verificacion:not([hidden])) .wa-fab { display: none !impor
     background: #1b1b1b;
     color: #ffffff;
   }
-  #nvPuerta .nv-portada > * { width: 100%; max-width: 620px; justify-self: center; }
+  #nvPuerta .nv-portada::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    right: 8px;
+    bottom: clamp(100px, 17vh, 190px);
+    width: clamp(150px, 18vw, 240px);
+    aspect-ratio: 1;
+    background: url("../icons/logo-filtro.svg") center / contain no-repeat;
+    filter: grayscale(1) brightness(0) invert(1);
+    opacity: .035;
+    pointer-events: none;
+  }
+  #nvPuerta .nv-portada > * { position: relative; z-index: 1; width: 100%; max-width: 620px; justify-self: center; }
   #nvPuerta .nv-portada-marca {
     display: flex; align-items: center; gap: 13px;
     width: 100%; padding-bottom: 22px; border-bottom: 1px solid #383838;
@@ -426,6 +440,7 @@ body:has(#nvPuerta.es-verificacion:not([hidden])) .wa-fab { display: none !impor
   #nvPuerta .nv-portada-acciones { padding-top: 6px; }
 }
 @media (min-width: 1200px) and (max-height: 820px) {
+  #nvPuerta .nv-portada { gap: 12px; }
   #nvPuerta .nv-portada-contenido { gap: 12px; }
   #nvPuerta .nv-portada-filtro { margin-top: 14px; }
   #nvPuerta .nv-portada-servicios { margin-block: 6px; }
