@@ -66,7 +66,7 @@
 <link rel="stylesheet" href="css/carteles.css?v=5">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=20">
 <link rel="stylesheet" href="css/nueva.css?v=124">
-<link rel="stylesheet" href="css/puerta-entrada.css?v=17">
+<link rel="stylesheet" href="css/puerta-entrada.css?v=18">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
 <link rel="stylesheet" href="css/interfaz-tipografia.css?v=1">
 </head>
@@ -134,9 +134,25 @@
     </header>
 
     <div class="nv-portada-contenido">
+      <div class="nv-portada-hero">
       <p class="nv-portada-etiqueta">ANTES DE COMPRAR, CONSULTA</p>
-      <h2 id="nvPortadaTitulo">Conoce su historia.<br>Decide con claridad.</h2>
-      <p class="nv-portada-descripcion">Revisa la información del vehículo que te interesa y da el siguiente paso con más confianza.</p>
+      <h2 id="nvPortadaTitulo">Verifica cualquier vehículo<br>en segundos.</h2>
+      <p class="nv-portada-descripcion">Un filtro inteligente y 100% automatizado que revisa por ti SUNARP, MTC, SUTRAN, SBS, APESEG, ATU, PNP y municipalidades a nivel nacional, sin que entres página por página. Todo en un solo reporte.</p>
+      </div>
+      <form class="nv-portada-filtro" id="nvPortadaFiltro" novalidate>
+        <div class="nv-portada-filtro-cabecera">
+          <svg class="nv-portada-icono" aria-hidden="true"><use href="#i-vehiculo"/></svg>
+          <h3>Solicita tu Filtro Vehicular Completo</h3>
+        </div>
+        <label for="nvPortadaPlaca">Ingresa tu placa</label>
+        <div class="nv-portada-filtro-fila">
+          <input id="nvPortadaPlaca" name="placa" type="text" placeholder="ABC-123" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="nvPortadaPlacaAyuda nvPortadaPlacaError" required>
+          <button class="nv-portada-filtrar" id="fvcOpen" type="submit" aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span>Filtrar placa</span><svg aria-hidden="true"><use href="#i-ir"/></svg></button>
+        </div>
+        <small id="nvPortadaPlacaAyuda">Ingresa 6 letras o números. Ejemplo: ABC123.</small>
+        <p class="nv-portada-filtro-error" id="nvPortadaPlacaError" role="alert" hidden></p>
+      </form>
+      <p class="nv-portada-lema">Conoce su historia. Decide con claridad.</p>
       <ul class="nv-portada-servicios" aria-label="Información que puedes consultar">
         <li>
           <span class="nv-portada-simbolo"><svg class="nv-portada-icono" aria-hidden="true"><use href="#i-vehiculo"/></svg></span>
@@ -164,8 +180,6 @@
     </div>
 
     <footer class="nv-portada-acciones">
-      <p class="nv-portada-pregunta">¿Prefieres un reporte completo?</p>
-      <button class="nv-auth-fvc nv-auth-fvc-desktop" id="fvcOpen" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span class="nv-auth-fvc-label">Solicita tu Filtro Vehicular Completo</span><span class="nv-auth-fvc-arrow" aria-hidden="true"><svg><use href="#i-ir"/></svg></span></button>
       <button class="nv-navegadores-trigger nv-navegadores-trigger-desktop" type="button" data-navegadores-abrir aria-haspopup="dialog" aria-controls="nvNavegadoresDialog"><svg class="nv-portada-icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c4 4.5 4 12.5 0 17-4-4.5-4-12.5 0-17Z"/></svg><span>NAVEGADORES COMPATIBLES</span></button>
     </footer>
   </aside>
@@ -885,7 +899,7 @@
 <script src="js/shared/auth.js?v=28"></script>
 <script src="js/shared/turnstile.js?v=7"></script>
 <script src="js/nueva/nucleo.js?v=23"></script>
-<script src="js/nueva/acceso.js?v=23"></script>
+<script src="js/nueva/acceso.js?v=24"></script>
 <script src="js/shared/credit-packages.js?v=1"></script>
 <script src="js/nueva/planes-portada.js?v=1"></script>
 <script src="js/overlays.js?v=2"></script>

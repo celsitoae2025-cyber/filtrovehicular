@@ -523,12 +523,40 @@
     var fvcPlaca = $('nvFvcPlaca');
     var fvcError = $('nvFvcError');
     var ultimoAbridorFvc = $('fvcOpen');
+    function abrirFiltroCompleto(boton, placa) {
+      ultimoAbridorFvc = boton;
+      fvcError.hidden = true;
+      fvcPlaca.removeAttribute('aria-invalid');
+      fvcPlaca.value = placa || '';
+      fvcDialogo.showModal();
+      if (placa) fvcForm.querySelector('[type="submit"]').focus();
+      else fvcPlaca.focus();
+    }
     document.querySelectorAll('#nvPuerta [data-fvc-abrir]').forEach(function (boton) {
       boton.addEventListener('click', function () {
-        ultimoAbridorFvc = boton;
-        fvcDialogo.showModal();
-        fvcPlaca.focus();
+        abrirFiltroCompleto(boton);
       });
+    });
+    var portadaFiltro = $('nvPortadaFiltro');
+    var portadaPlaca = $('nvPortadaPlaca');
+    var portadaError = $('nvPortadaPlacaError');
+    portadaPlaca.addEventListener('input', function () {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+      this.removeAttribute('aria-invalid');
+      portadaError.hidden = true;
+    });
+    portadaFiltro.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var placa = portadaPlaca.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!/^[A-Z0-9]{6}$/.test(placa)) {
+        portadaError.textContent = 'Ingresa una placa válida de 6 letras o números.';
+        portadaError.hidden = false;
+        portadaPlaca.setAttribute('aria-invalid', 'true');
+        portadaPlaca.focus();
+        return;
+      }
+      portadaPlaca.value = placa;
+      abrirFiltroCompleto($('fvcOpen'), placa);
     });
     fvcDialogo.querySelectorAll('[data-fvc-cerrar]').forEach(function (boton) {
       boton.addEventListener('click', function () { fvcDialogo.close(); });
