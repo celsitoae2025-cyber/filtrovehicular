@@ -117,6 +117,38 @@
     });
   }
 
+  // Los proveedores suelen separar las palabras del nombre con guiones o
+  // guiones bajos. Se normaliza el rótulo, la descarga y el visor; los bytes no cambian.
+  function nombreLegibleArchivo(nombreArchivo) {
+    var base = String(nombreArchivo || 'documento').trim().split(/[\\/]/).pop();
+    if (!base) base = 'documento';
+    var extensionMatch = base.match(/\.([^.]+)$/);
+    var extension = extensionMatch ? '.' + extensionMatch[1].toLowerCase() : '';
+    var titulo = extensionMatch ? base.slice(0, -extensionMatch[0].length) : base;
+    titulo = titulo
+      .replace(/([a-záéíóúüñ])([A-ZÁÉÍÓÚÜÑ])/g, '$1 $2')
+      .replace(/_/g, ' ')
+      .replace(/([A-Za-zÁÉÍÓÚÜÑáéíóúüñ])-(?=[A-Za-zÁÉÍÓÚÜÑáéíóúüñ])/g, '$1 ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    var siglas = /^(DNI|RUC|CITV|SOAT|TIVE|SUNARP|RENIEC|SUNAT|MTC|PNP|SBS|AFP|SAT|ATU|OSIPTEL|FV)$/i;
+    var conectores = /^(de|del|la|las|el|los|y|en|para|por|con)$/i;
+    var palabras = titulo.split(' ').filter(Boolean).map(function (palabra, indice) {
+      if (siglas.test(palabra) || /^(?=.*\d)[A-Za-z0-9-]+$/.test(palabra)) {
+        return palabra.toUpperCase();
+      }
+      if (indice > 0 && conectores.test(palabra)) return palabra.toLowerCase();
+      if (/^[A-ZÁÉÍÓÚÜÑ]+$/.test(palabra)) {
+        palabra = palabra.charAt(0) + palabra.slice(1).toLowerCase();
+      }
+      if (indice === 0) palabra = palabra.charAt(0).toUpperCase() + palabra.slice(1);
+      return palabra;
+    });
+
+    return (palabras.join(' ') || 'Documento') + extension;
+  }
+
   /* â"€â"€ Input helpers â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   function placeholderFor(t) {
     if (t === 'dni')      return 'Ingresa el DNI (8 dígitos)';
@@ -194,6 +226,7 @@
 
   /* â"€â"€ PDF fallback UI â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   function pdfFallbackUI(blobUrl, dataUrl, fileName) {
+    fileName = nombreLegibleArchivo(fileName || 'Documento.pdf');
     return '<div class="cr-pdf-fallback">' +
       '<div class="cr-pdf-fallback-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/></svg></div>' +
       '<div class="cr-pdf-fallback-name">' + escapeHtml(fileName) + '</div>' +
@@ -211,6 +244,7 @@
      miniatura de apoyo. Sin la opción, se mantiene la hoja única con
      flechas, que es lo que quiere el resto de vistas. */
   async function renderPdfIntoContainer(container, blobUrl, fileName, base64, opts) {
+    fileName = nombreLegibleArchivo(fileName || 'Documento.pdf');
     var todasLasPaginas = !!(opts && opts.todasLasPaginas);
     var dataUrl = base64 ? ('data:application/pdf;base64,' + base64) : blobUrl;
     if (!window.pdfjsLib) {
@@ -1317,7 +1351,7 @@
     var m = pdfs[0];
     var mime = m.mimeType || 'application/pdf';
     var blobUrl = base64ToBlobUrl(m.base64, mime);
-    var fn = m.filename || 'documento.pdf';
+    var fn = nombreLegibleArchivo(m.filename || 'documento.pdf');
     return '<div class="cr-dl-bar">' +
       '<a class="nm-download" href="' + blobUrl + '" download="' + escapeHtml(fn) + '">' +
         '<span>' + escapeHtml(dlLabel || 'Descargar') + '</span>' +
@@ -1335,7 +1369,7 @@
      Rasterizar con pdf.js las diez hojas de una partida cuesta segundos de
      hilo principal y decenas de MB de lienzo para dejar una hoja diminuta
      que igual hay que abrir para leerla. El panel enseña de qué documento
-     se trata —nombre y peso— y lo único que hay que hacer con él:
+     se trata por su nombre y lo único que hay que hacer con él:
      visualizarlo. El visor a pantalla completa es donde se lee, con zoom,
      páginas e impresión. Ahí el trabajo de dibujar SÍ se aprovecha.
 
@@ -1350,16 +1384,13 @@
     var parts = ['<div class="cr-doccards"><div class="cr-doclist">'];
     pdfs.forEach(function (m, i) {
       var blobUrl = base64ToBlobUrl(m.base64, m.mimeType || 'application/pdf');
-      var fn = m.filename || ('documento-' + (i + 1) + '.pdf');
-      var kb = m.base64 ? Math.round((m.base64.length * 3 / 4) / 1024) : 0;
-      var peso = kb >= 1024 ? (kb / 1024).toFixed(1) + ' MB' : kb + ' KB';
+      var fn = nombreLegibleArchivo(m.filename || ('documento-' + (i + 1) + '.pdf'));
       parts.push(
         '<div class="cr-docitem">' +
           '<span class="cr-docitem-ico">' + ICONO_DOC + '</span>' +
           '<span class="cr-docitem-nom">' +
             (varios ? '<span class="cr-docitem-orden">' + (i + 1) + ' de ' + pdfs.length + '</span>' : '') +
             escapeHtml(fn) +
-            (kb ? '<span class="cr-docitem-peso">' + peso + '</span>' : '') +
           '</span>' +
           '<button type="button" class="cr-docitem-ver cr-doccard-view" ' +
             'data-blob="' + blobUrl + '" data-fn="' + escapeHtml(fn) + '">Visualizar</button>' +
@@ -1372,7 +1403,7 @@
 
   function renderDocumentDownload(medio) {
     if (!medio || !medio.base64) return '';
-    var nombre = medio.filename || 'resultado.txt';
+    var nombre = nombreLegibleArchivo(medio.filename || 'resultado.txt');
     var mime = medio.mimeType || 'text/plain';
     var url = base64ToBlobUrl(medio.base64, mime);
     return '<div class="cr-archivo-listo">' +
@@ -1973,6 +2004,7 @@
      no quien llamó aquí, así que la referencia se guarda en el módulo. */
   var _alNuevaConsultaPdfModal = null;
   function openPdfModal(src, fileName, opts) {
+    fileName = nombreLegibleArchivo(fileName || 'Documento.pdf');
     var alNuevaConsulta = (opts && typeof opts.alNuevaConsulta === 'function') ? opts.alNuevaConsulta : null;
     /* El iframe con el visor nativo solo sirve en escritorio: en un móvil
        Chrome no lo pinta, se BAJA el archivo y lo abre en el visor del
@@ -2808,6 +2840,7 @@
     htmlEnProceso:           htmlEnProceso,
     stripEmoji:              stripEmoji,
     escapeHtml:              escapeHtml,
+    nombreLegibleArchivo:    nombreLegibleArchivo,
     placeholderFor:          placeholderFor,
     maxLenFor:               maxLenFor,
     inputModeFor:            inputModeFor,

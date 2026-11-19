@@ -539,6 +539,24 @@
       fvcPlaca.removeAttribute('aria-invalid');
       if (ultimoAbridorFvc && ultimoAbridorFvc.isConnected) ultimoAbridorFvc.focus();
     });
+    var navegadoresDialogo = $('nvNavegadoresDialog');
+    var ultimoAbridorNavegadores = null;
+    document.querySelectorAll('#nvPuerta [data-navegadores-abrir]').forEach(function (boton) {
+      boton.addEventListener('click', function () {
+        ultimoAbridorNavegadores = boton;
+        navegadoresDialogo.showModal();
+        navegadoresDialogo.querySelector('[data-navegadores-cerrar]').focus();
+      });
+    });
+    navegadoresDialogo.querySelectorAll('[data-navegadores-cerrar]').forEach(function (boton) {
+      boton.addEventListener('click', function () { navegadoresDialogo.close(); });
+    });
+    navegadoresDialogo.addEventListener('click', function (e) {
+      if (e.target === navegadoresDialogo) navegadoresDialogo.close();
+    });
+    navegadoresDialogo.addEventListener('close', function () {
+      if (ultimoAbridorNavegadores && ultimoAbridorNavegadores.isConnected) ultimoAbridorNavegadores.focus();
+    });
     fvcPlaca.addEventListener('input', function () {
       this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
       fvcError.hidden = true;

@@ -85,6 +85,9 @@ body.modal-open { overflow: hidden; }
   border: 1px solid var(--c-surface-dark);
 }
 .cd-confirm-danger:hover { background: var(--c-surface-dark); border-color: var(--c-surface-dark); color: #ffffff; }
+/* El botón primario del confirm usa !important en botones.css. El ID
+   asegura contraste cuando el tema pinta el fondo de carbón. */
+#confirmDialogRoot .cd-confirm:not(.cd-confirm-danger) { color: #ffffff !important; }
 body.confirm-dialog-open { overflow: hidden; }
 @media (max-width: 480px) {
   .cd-panel { padding: 22px 20px 18px; }

@@ -154,7 +154,7 @@
     html += '</section>';
 
     var safePlate = placa.replace(/[^A-Z0-9-]/gi, '').slice(0, 16);
-    var pdfName = 'Boleta-informativa' + (safePlate ? '-' + safePlate : '') + '.pdf';
+    var pdfName = 'Boleta informativa' + (safePlate ? ' ' + safePlate : '') + '.pdf';
     return {
       html: html,
       pdfs: (archivos || []).map(function (m) {
@@ -472,14 +472,13 @@
 
   function renderReporteArchivo(medio, original, conFoto) {
     if (!medio || !medio.base64) return '';
-    var nombre = medio.filename || 'Reporte_vehicular.pdf';
+    var nombre = H.nombreLegibleArchivo(medio.filename || 'Reporte_vehicular.pdf');
     var url = H.base64ToBlobUrl(medio.base64, 'application/pdf');
-    var mb = (medio.base64.length * 3 / 4 / (1024 * 1024)).toFixed(1);
     return '<section class="rep-pdf-archivo" aria-label="Reporte PDF disponible">' +
       '<div class="rep-pdf-info">' +
         '<span class="rep-pdf-k">' + (original ? 'Documento original del proveedor' : 'Reporte completo listo') + '</span>' +
         '<strong>Tu reporte vehicular en PDF</strong>' +
-        '<span class="rep-pdf-nombre">' + escapeHtml(nombre) + ' · ' + mb + ' MB</span>' +
+        '<span class="rep-pdf-nombre">' + escapeHtml(nombre) + '</span>' +
       '</div>' +
       '<div class="rep-pdf-acciones">' +
         '<a class="rep-pdf-descargar" href="' + url + '" download="' + escapeHtml(nombre) + '" aria-label="Descargar PDF" title="Descargar PDF">' +
