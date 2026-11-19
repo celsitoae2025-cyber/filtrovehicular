@@ -1351,9 +1351,17 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   }
 }
 
-/* Registro móvil: tres filas de campos y accesos secundarios sin duplicar. */
-@media (max-width: 860px) {
+/* El registro aprovecha la altura disponible y se compacta en pantallas bajas. */
+@media (max-width: 860px), (max-width: 1180px) and (pointer: coarse) {
+  .nv-body #nvPuerta[data-paso-activo="registro"] {
+    --registro-espacio: clamp(10px, calc(10svh - 58px), 24px);
+    --registro-relleno: clamp(16px, calc(5svh - 18px), 32px);
+    --registro-separacion: clamp(12px, calc(4svh - 14px), 24px);
+    --registro-campo: clamp(44px, calc(4svh + 18px), 54px);
+    --registro-etiqueta: clamp(4px, calc(2svh - 10px), 8px);
+  }
   .nv-body #nvPuerta[data-paso-activo="registro"]:not(.es-encima) .nv-puerta-panel {
+    max-width: none;
     padding-top: max(8px, env(safe-area-inset-top, 0px));
     padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
   }
@@ -1364,18 +1372,18 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     padding-block: 8px;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
-    gap: 12px;
-    padding: 16px;
+    gap: var(--registro-separacion);
+    padding: var(--registro-relleno);
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro:not([hidden]) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px 12px;
+    gap: var(--registro-espacio) 12px;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro > .nv-mitad {
     grid-column: auto;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-auth-intro {
-    gap: 4px;
+    gap: var(--registro-etiqueta);
     margin: 0;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-puerta-nota {
@@ -1388,8 +1396,8 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     line-height: 1.4;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-campo {
-    height: 44px;
-    min-height: 44px;
+    height: var(--registro-campo);
+    min-height: var(--registro-campo);
     padding: 9px 10px;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] .nv-ayuda {
@@ -1404,12 +1412,60 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     line-height: 1.4;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistroBtn {
-    min-height: 44px;
+    min-height: var(--registro-campo);
     padding-block: 9px;
   }
   .nv-body #nvPuerta[data-paso-activo="registro"] #nvRegistro .nv-puerta-pie,
   .nv-body #nvPuerta[data-paso-activo="registro"] .nv-navegadores-trigger-mobile {
     display: none;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 860px) {
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
+    width: min(560px, 100%);
+    max-width: 560px;
+  }
+}
+
+/* Las tablets táctiles presentan el registro en una sola columna centrada. */
+@media (min-width: 861px) and (max-width: 1180px) and (pointer: coarse) {
+  .nv-body #nvPuerta[data-paso-activo="registro"]:not([hidden]):not(.es-encima) {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    background: var(--ui-page);
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-presentacion { display: none; }
+  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-panel {
+    flex: 1 1 0%;
+    min-height: 0;
+    padding-inline: max(24px, env(safe-area-inset-left, 0px));
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--ui-page);
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell { width: min(560px, 100%); }
+  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-legal {
+    position: sticky;
+    bottom: 0;
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    width: min(560px, 100%);
+    min-height: 42px;
+    padding: 3px 0 calc(3px + env(safe-area-inset-bottom, 0px));
+    background: var(--ui-page);
+  }
+  .nv-body.auth-locked:has(#nvPuerta[data-paso-activo="registro"]:not([hidden])) .wa-fab {
+    bottom: calc(54px + env(safe-area-inset-bottom, 0px));
   }
 }
 
