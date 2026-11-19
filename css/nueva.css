@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    INTERFAZ NUEVA DE FILTRO VEHICULAR+ — sistema de diseño
 
    Firma propia de la marca:
@@ -63,7 +63,7 @@
   margin: 0;
   background: var(--nv-lienzo);
   color: var(--nv-tinta);
-  font-family: var(--fv-tipografia, "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif);
+  font-family: var(--fv-tipografia, "Inter", "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif);
   font-size: var(--fv-tipo-base, 1rem);
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
@@ -1703,47 +1703,54 @@ body.nv-puerta-encima { overflow: hidden; }
 
 .nv-fvc-dialogo:not([open]) { display: none; }
 .nv-fvc-dialogo {
-  width: min(440px, calc(100% - 32px)); max-height: calc(100dvh - 32px);
-  margin: auto; padding: 0; overflow: auto;
-  border: 1px solid #dedede; border-radius: 16px;
-  background: #f6f6f6; color: #191919; font: inherit; box-shadow: none;
+  box-sizing: border-box;
+  width: min(460px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  margin: auto; padding: 0; overflow: auto; overscroll-behavior: contain;
+  border: 1px solid var(--ui-line); border-radius: 12px;
+  background: var(--ui-surface); color: var(--ui-ink); font: inherit; box-shadow: none;
 }
-.nv-fvc-dialogo::backdrop { background: rgb(16 16 16 / .68); }
-.nv-fvc-dialogo form { position: relative; display: flex; flex-direction: column; padding: 32px; }
+.nv-fvc-dialogo::backdrop { background: rgb(0 0 0 / 45%); }
+.nv-fvc-dialogo form { position: relative; display: flex; flex-direction: column; padding: 24px; }
 .nv-fvc-cerrar {
-  position: absolute; top: 16px; right: 16px;
-  display: grid; place-items: center; width: 32px; height: 32px;
-  border: 0; border-radius: 6px; background: transparent;
-  color: #646464; font: inherit; font-size: 26px; line-height: 1; cursor: pointer;
+  position: absolute; top: 10px; right: 10px;
+  display: grid; place-items: center; width: 36px; height: 36px;
+  border: 1px solid transparent; border-radius: 8px; background: transparent;
+  color: var(--ui-muted); font: inherit; line-height: 1; cursor: pointer;
 }
-.nv-fvc-cerrar:hover { background: #eaeaea; }
-.nv-fvc-kicker { margin: 0 30px 12px 0; color: #767676; font-size: 11px; font-weight: 700; letter-spacing: .15em; }
-.nv-fvc-dialogo h2 { margin: 0; font-size: 25px; line-height: 1.15; letter-spacing: -.035em; }
-.nv-fvc-descripcion { margin: 12px 0 25px; color: #6a6a6a; font-size: 14px; line-height: 1.5; }
-.nv-fvc-alcance { margin: -4px 0 24px; padding: 15px 16px; border: 1px solid #dedede; border-radius: 8px; background: #ffffff; }
-.nv-body .nv-fvc-alcance strong { display: block; font-size: 13px; font-weight: 700; }
-.nv-fvc-alcance ul { display: grid; gap: 5px; margin: 10px 0; padding-left: 19px; font-size: 13px; }
-.nv-fvc-alcance small { display: block; color: #6a6a6a; font-size: 12px; line-height: 1.4; }
-.nv-fvc-dialogo label { margin-bottom: 8px; font-size: 13px; font-weight: 600; }
+.nv-fvc-cerrar:hover { border-color: var(--ui-line); background: var(--ui-soft); }
+.nv-fvc-cerrar svg { width: 17px; height: 17px; }
+.nv-fvc-intro { display: grid; gap: 7px; margin: 0 38px 15px 0; }
+.nv-fvc-kicker { margin: 0; color: var(--ui-muted); font-size: 12px !important; font-weight: 700; letter-spacing: .13em; line-height: 1.3; }
+.nv-fvc-dialogo h2 { margin: 0; color: var(--ui-ink); font-size: 22px; line-height: 1.25; letter-spacing: -.025em; }
+.nv-fvc-descripcion { margin: 0; color: var(--ui-muted); font-size: 16px; line-height: 1.4; }
+.nv-fvc-alcance { display: grid; gap: 0; margin: 0 0 15px; padding: 13px 14px; border: 1px solid var(--ui-line); border-radius: 10px; background: #fafafa; }
+.nv-body .nv-fvc-alcance h3 { margin: 0; color: var(--ui-ink); font-size: 12px !important; font-weight: 700; line-height: 1.35; }
+.nv-fvc-alcance ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 4px 16px; min-width: 0; margin: 8px 0 9px; padding-left: 15px; color: var(--ui-muted); list-style: disc; }
+.nv-fvc-alcance li { min-width: 0; color: var(--ui-ink); font-size: 12px !important; line-height: 1.3; }
+.nv-fvc-alcance li::marker { color: var(--ui-muted); font-size: 10px; }
+.nv-fvc-alcance > small { margin: 0; color: var(--ui-muted); font-size: 12px !important; line-height: 1.35; }
+.nv-fvc-campo { display: grid; gap: 6px; min-width: 0; }
+.nv-fvc-dialogo label { margin: 0; color: var(--ui-ink-2); font-size: 12px !important; font-weight: 600; line-height: 1.4; }
 .nv-fvc-dialogo input {
-  width: 100%; min-height: 52px; padding: 0 15px;
-  border: 1px solid #cdcdcd; border-radius: 8px;
-  background: #ffffff; color: #191919; font: inherit; font-size: 18px; font-weight: 600; letter-spacing: .08em;
+  box-sizing: border-box; width: 100%; min-height: 46px; padding: 0 13px;
+  border: 1px solid var(--ui-line); border-radius: 8px;
+  background: var(--ui-surface); color: var(--ui-ink); font: inherit; font-size: 16px !important; font-weight: 500; letter-spacing: .08em;
   text-transform: uppercase;
 }
-.nv-fvc-dialogo input:focus { outline: 2px solid #767676; outline-offset: 2px; }
-.nv-fvc-dialogo input[aria-invalid="true"] { border-color: #454545; }
-.nv-fvc-dialogo small { margin-top: 8px; color: #7a7a7a; font-size: 12px; }
-.nv-fvc-error { margin: 10px 0 0; color: #454545; font-size: 13px; }
-.nv-fvc-acciones { display: flex; gap: 10px; margin-top: 28px; }
+.nv-fvc-dialogo input:focus { outline: none; border-color: var(--ui-ink-2); box-shadow: none; }
+.nv-fvc-dialogo input[aria-invalid="true"] { border-color: var(--ui-ink-2); }
+.nv-fvc-ayuda { margin: 0; color: var(--ui-muted); font-size: 12px !important; line-height: 1.35; }
+.nv-fvc-error { margin: 0; color: var(--ui-ink-2); font-size: 12px !important; line-height: 1.35; }
+.nv-fvc-acciones { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 9px; margin-top: 17px; }
 .nv-fvc-acciones button {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 46px; padding: 0 16px; border: 1px solid #d0d0d0; border-radius: 8px;
-  background: transparent; color: #191919; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; min-width: 0; min-height: 44px; padding: 7px 9px; border: 1px solid var(--ui-line); border-radius: 8px;
+  background: var(--ui-surface); color: var(--ui-ink); font: inherit; font-size: 12px !important; font-weight: 600; line-height: 1.2; white-space: nowrap; cursor: pointer;
 }
-.nv-fvc-acciones button[type="submit"] { flex: 1; border-color: #191919; background: #191919; color: #ffffff; }
-.nv-fvc-acciones button[type="submit"]:hover { background: #323232; }
-.nv-fvc-acciones .nv-fvc-ir { width: 17px; height: 17px; margin-left: 7px; vertical-align: middle; }
+.nv-fvc-acciones button[type="submit"] { border-color: var(--ui-wa); background: var(--ui-wa); color: #ffffff; }
+.nv-fvc-acciones button[type="submit"]:hover { border-color: var(--ui-wa-hover); background: var(--ui-wa-hover); }
+.nv-fvc-acciones .nv-fvc-whatsapp { flex: 0 0 17px; width: 17px; height: 17px; fill: currentColor; stroke: none; }
 .nv-fvc-acciones button:focus-visible,
 .nv-fvc-cerrar:focus-visible { outline: 2px solid #767676; outline-offset: 2px; }
 
@@ -1845,8 +1852,7 @@ body.nv-puerta-encima { overflow: hidden; }
 @media (max-width: 520px) {
   .nv-comprar-largo { display: none; }
   .nv-comprar-corto { display: inline; }
-  .nv-fvc-dialogo form { padding: 28px 20px 20px; }
-  .nv-fvc-acciones { flex-direction: column-reverse; }
+  .nv-fvc-dialogo form { padding: 20px 18px 18px; }
   .nv-fvc-acciones button { width: 100%; }
   .nv-puerta-presentacion { min-height: 220px; padding: 15px 20px 16px; }
   .nv-puerta-relato { padding: 8px 0 0; }
@@ -1862,7 +1868,14 @@ body.nv-puerta-encima { overflow: hidden; }
   .nv-puerta-panel .nv-puerta-legal { flex-direction: row; }
   .nv-puerta-panel .nv-puerta-legal { gap: 2px 16px; }
 }
-
+@media (max-width: 340px) {
+  .nv-fvc-dialogo form { padding: 16px 16px 14px; }
+  .nv-fvc-intro { gap: 5px; margin-bottom: 10px; }
+  .nv-fvc-kicker { letter-spacing: 0; }
+  .nv-fvc-alcance { margin-bottom: 10px; padding: 10px 12px; }
+  .nv-fvc-acciones { grid-template-columns: minmax(0, 1fr); gap: 6px; margin-top: 11px; }
+  .nv-fvc-acciones button[type="submit"] { order: -1; }
+}
 /* Acceso previo: espaciado claro y estable para el reto de seguridad. */
 .nv-puerta-panel .nv-acceso-verificacion {
   display: grid;

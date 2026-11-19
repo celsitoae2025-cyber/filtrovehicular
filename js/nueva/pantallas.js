@@ -646,12 +646,7 @@
      PAGOS
      ============================================================ */
 
-  var PAQUETES = [
-    { id: 'cp-prof-1', creditos: 200,  precio: 15 },
-    { id: 'cp-prof-2', creditos: 420,  precio: 25 },
-    { id: 'cp-biz-1',  creditos: 1800, precio: 90 },
-    { id: 'cp-biz-2',  creditos: 4000, precio: 150 }
-  ];
+  var PAQUETES = C.CreditPackages;
   var LIBRE_TARIFA = 0.05;
   var LIBRE_MINIMO = 400;
 

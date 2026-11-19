@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    BASE — variables, reset, tipografía, utilidades globales
 ============================================================ */
 
@@ -96,7 +96,7 @@ html { background: #d9d9d9; }
 [hidden] { display: none !important; }
 
 body {
-  font-family: var(--fv-tipografia, "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif);
+  font-family: var(--fv-tipografia, "Inter", "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif);
   background: var(--c-bg);
   color: var(--c-primary);
   font-size: var(--fv-tipo-base, 1rem);

@@ -6,7 +6,7 @@ Reconstruir y unificar la interfaz de todo FV+ para que sea clara, profesional, 
 
 ## Dirección visual acordada
 
-- **Tipografía:** Poppins, con una pila de respaldo sans-serif legible si no carga la fuente.
+- **Tipografía:** Inter, con una pila de respaldo sans-serif legible si no carga la fuente.
 - **Tres tamaños para la interfaz:** 12 px para metadatos y ayudas; 16 px para lectura, controles y contenido; 22 px para títulos y cifras principales. La escala debe vivir en tokens y no multiplicarse con tamaños ad hoc.
 - **Colores:** blanco, grises neutros y carbón/gris oscuro para estructura, texto y acciones principales. Verde real de WhatsApp solamente en sus acciones y su acceso flotante.
 - **Componentes:** tarjetas y botones sencillos, alineados, con bordes discretos cuando aporten estructura y sin sombras decorativas. Estados de foco, carga, selección, error y deshabilitado deben seguir siendo visibles.
@@ -35,19 +35,19 @@ Reconstruir y unificar la interfaz de todo FV+ para que sea clara, profesional, 
 
 1. Recorrer `app.html`, `admin.html`, `citv-emisor.html`, `verificar.html`, `pago-exitoso.html`, `pago-pendiente.html` e `index.html`; registrar cada vista, estado, modal, formulario y acción visible.
 2. Trazar cada acción a sus controladores en `js/nueva/`, `js/modules/`, `js/admin/` y `js/shared/`; marcar cuáles cambian de ruta, abren una capa, consultan datos o inician un pago.
-3. Registrar los estilos que actualmente compiten entre `css/base.css`, `css/estructura.css`, `css/components.css`, `css/botones.css`, `css/nueva.css`, `css/sistema-visual.css`, `css/interfaz-poppins.css`, `css/puerta-entrada.css` y `css/admin.css`.
+3. Registrar los estilos que actualmente compiten entre `css/base.css`, `css/estructura.css`, `css/components.css`, `css/botones.css`, `css/nueva.css`, `css/sistema-visual.css`, `css/interfaz-tipografia.css`, `css/puerta-entrada.css` y `css/admin.css`.
 4. Levantar capturas de referencia de las vistas existentes en móvil y escritorio para detectar regresiones durante la reconstrucción.
 
 **Salida:** mapa de pantallas y flujos, inventario de componentes reutilizables y línea base visual.
 
 ### Fase 2: sistema visual compartido
 
-1. Consolidar en `css/interfaz-poppins.css` los tokens únicos de tipografía, color, espaciado, radio, borde, foco y movimiento; hacer que las demás hojas los consuman sin redefinir la paleta.
-2. Normalizar Poppins y limitar los textos de interfaz a los tokens de 12, 16 y 22 px; eliminar diferencias de tamaño arbitrarias gradualmente en hojas compartidas y estilos en línea de controles visibles.
+1. Consolidar en `css/interfaz-tipografia.css` los tokens únicos de tipografía, color, espaciado, radio, borde, foco y movimiento; hacer que las demás hojas los consuman sin redefinir la paleta.
+2. Normalizar Inter y limitar los textos de interfaz a los tokens de 12, 16 y 22 px; eliminar diferencias de tamaño arbitrarias gradualmente en hojas compartidas y estilos en línea de controles visibles.
 3. Unificar botones, campos, tarjetas, pestañas, etiquetas, tablas, estados vacíos, avisos y diálogos desde `css/base.css`, `css/components.css`, `css/botones.css` y `css/overlays.css`.
 4. Reemplazar o normalizar iconos visibles con el conjunto SVG existente en `app.html` y los módulos; estandarizar dimensiones, grosor, alineación y nombres accesibles.
 5. Retirar sombras de la interfaz y documentar sus únicos colores de acento permitidos; aislar el verde de WhatsApp para que no se propague a controles generales.
-6. Consolidar reglas responsivas duplicadas, en especial las sobreescrituras tardías de `css/nueva.css`; evitar que `css/interfaz-poppins.css` y `css/sistema-visual.css` definan valores incompatibles.
+6. Consolidar reglas responsivas duplicadas, en especial las sobreescrituras tardías de `css/nueva.css`; evitar que `css/interfaz-tipografia.css` y `css/sistema-visual.css` definan valores incompatibles.
 
 **Criterio de salida:** los componentes compartidos usan los mismos tokens y los estados de interacción siguen siendo perceptibles sin depender de sombras o color únicamente.
 
@@ -108,7 +108,7 @@ Reconstruir y unificar la interfaz de todo FV+ para que sea clara, profesional, 
 4. Comparar contra la línea base y resolver regresiones antes de cerrar la implementación; registrar por separado cualquier límite que dependa de servicios externos.
 5. Verificar que la previsualización local sirva los archivos actualizados. La publicación queda fuera de este plan.
 
-**Criterio de aceptación global:** todas las pantallas incluidas comparten Poppins y la escala 12/16/22 px para la interfaz; la paleta es neutral con verde exclusivo para WhatsApp; no hay sombras decorativas; la navegación y los controles se adaptan a móvil y escritorio; y los flujos existentes siguen funcionando.
+**Criterio de aceptación global:** todas las pantallas incluidas comparten Inter y la escala 12/16/22 px para la interfaz; la paleta es neutral con verde exclusivo para WhatsApp; no hay sombras decorativas; la navegación y los controles se adaptan a móvil y escritorio; y los flujos existentes siguen funcionando.
 
 ## Orden y dependencias
 

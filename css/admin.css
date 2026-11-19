@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    ADMIN PANEL — minimalista, solo con la paleta del proyecto
    Usa: --c-primary, --c-accent, --c-surface, --c-bg, --c-border, --c-muted
 ============================================================ */
@@ -1321,7 +1321,7 @@ body .btn-danger {
   background: var(--c-bg);
   border: 1px solid var(--c-border);
   border-radius: 8px;
-  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   color: var(--c-primary);
   word-break: break-all;

@@ -1,4 +1,4 @@
-/* Sistema de interfaz FV+: Poppins, carbón, blanco y grises neutros. */
+/* Sistema de interfaz FV+: Inter, carbón, blanco y grises neutros. */
 :root {
   --ui-ink: #1b1b1b;
   --ui-ink-2: #383838;
@@ -13,7 +13,7 @@
   --fv-tipo-auxiliar: 12px;
   --fv-tipo-base: 16px;
   --fv-tipo-titulo: 22px;
-  --fv-tipografia: "Poppins", Arial, sans-serif;
+  --fv-tipografia: "Inter", Arial, sans-serif;
   --fv-tinta: var(--ui-ink);
   --fv-texto-secundario: var(--ui-muted);
   --fv-fondo: var(--ui-page);
@@ -78,7 +78,7 @@ body.fv-verificar,
 body.fv-citv {
   background: var(--ui-page);
   color: var(--ui-ink);
-  font-family: "Poppins", Arial, sans-serif;
+  font-family: "Inter", Arial, sans-serif;
   font-size: var(--fv-tipo-base);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -370,6 +370,10 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
 }
 .nv-body .nv-pantalla { gap: 18px; }
 .nv-body .nv-pantalla[data-pantalla="consultar"] { max-width: 1380px; }
+.nv-body .nv-pantalla[data-pantalla="consultar"] > .nv-seleccion {
+  width: 100%;
+  max-width: none;
+}
 
 /* Catálogo: cabecera, búsqueda, categorías y filas de consulta. */
 .nv-body .nv-explorar { width: 100%; }
@@ -574,7 +578,7 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
 .nv-body .nv-seleccion-cab h2 { line-height: 1.4; overflow-wrap: anywhere; }
 .nv-body :is(.nv-fvc-cerrar, .nv-saldo-bajo-cerrar, .modal-close, .cd-close) { display: grid; place-items: center; width: 36px; height: 36px; min-height: 36px; padding: 0; border-radius: 6px; line-height: 1; }
 .nv-body :is(.nv-fvc-cerrar, .nv-saldo-bajo-cerrar, .modal-close, .cd-close) svg { width: 18px; height: 18px; }
-.nv-body .nv-fvc-acciones button { min-height: 44px; height: auto; padding: 11px 16px; line-height: 1.5; font-size: var(--fv-tipo-auxiliar) !important; white-space: normal; }
+.nv-body .nv-fvc-acciones button { min-height: 44px; height: auto; padding: 7px 9px; line-height: 1.2; font-size: var(--fv-tipo-auxiliar) !important; white-space: nowrap; }
 .nv-body .nv-segmentos { max-width: 100%; overflow-x: auto; }
 .nv-body .nv-segmentos button { flex-shrink: 0; padding: 8px 12px; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; }
 .nv-body .nv-cta:hover:not(:disabled),
@@ -1069,6 +1073,13 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
 }
 .nv-body .nv-fvc-acciones button[type="submit"]:hover,
 .nv-body #nvLibreIr:not(.es-inactivo):hover { border-color: var(--ui-wa-hover) !important; background: var(--ui-wa-hover) !important; }
+.nv-body .nv-fvc-acciones .nv-fvc-whatsapp {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  stroke: none;
+}
 
 /* Barra inferior: cuatro destinos, con espacio táctil y texto legible. */
 .nv-body .nv-abajo { display: none; }
@@ -1549,3 +1560,40 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     max-width: none;
   }
 }
+
+/* Los campos mantienen un solo borde fino al recibir foco. */
+:is(body.nv-body, body.fv-admin, body.fv-pago, body.fv-verificar, body.fv-citv)
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="color"]),
+    textarea, select, .nv-campo, .input, .textarea, .select, .admin-select, .nm-input
+  ):not(.nv-busqueda input):is(:focus, :focus-visible) {
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: #414141 !important;
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
+/* El control de búsqueda dibuja el marco en el contenedor, no alrededor
+   del input interno; ambos focos conservan un marco único de un píxel. */
+.nv-body .nv-busqueda:focus-within {
+  border-width: 1px !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.nv-body .nv-busqueda input:is(:focus, :focus-visible) {
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* El modal tiene su propia escala; las reglas generales de herencia
+   dejaban su lista a 14–16 px pese a declarar 12 px en nueva.css. */
+body.nv-body #nvFvcDialogo :is(
+  .nv-fvc-kicker, .nv-fvc-alcance h3, .nv-fvc-alcance li,
+  .nv-fvc-alcance small, .nv-fvc-campo label, .nv-fvc-campo small,
+  .nv-fvc-error, .nv-fvc-acciones button
+) { font-size: var(--fv-tipo-auxiliar) !important; }
+body.nv-body #nvFvcDialogo :is(.nv-fvc-descripcion, #nvFvcPlaca) { font-size: var(--fv-tipo-base) !important; }
+body.nv-body #nvFvcDialogo h2 { font-size: var(--fv-tipo-titulo) !important; }

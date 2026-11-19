@@ -1,6 +1,6 @@
 # Reconstrucción del panel de presentación del acceso
 
-Alcance aprobado: rehacer la columna oscura de escritorio, reorganizar su contenido y corregir los textos. Mantener la paleta carbón, blanco y gris, Poppins y los tamaños 12 / 16 / 22 px.
+Alcance aprobado: rehacer la columna oscura de escritorio, reorganizar su contenido y corregir los textos. Mantener la paleta carbón, blanco y gris, Inter y los tamaños 12 / 16 / 22 px.
 
 1. Reemplazar el contenido del `aside` en `app.html`: marca con el ícono existente en la cabecera, introducción clara y tres áreas de consulta en el centro, solicitud del filtro completo y acceso a navegadores en la zona inferior. Conservar los identificadores y atributos que abren los diálogos.
 2. Sustituir los ajustes anteriores del panel en `css/puerta-entrada.css` por una composición con clases propias. Aplicarla desde 861 px, con espacios más compactos en portátiles y ventanas bajas. Conservar el formulario derecho y los controles móviles.

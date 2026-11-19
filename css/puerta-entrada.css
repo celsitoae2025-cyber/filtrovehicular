@@ -212,198 +212,113 @@ body:has(#nvPuerta.es-verificacion:not([hidden])) .wa-fab { display: none !impor
   #nvPuerta * { animation: none !important; transition: none !important; }
 }
 
-/* Portada de escritorio: marca, información y solicitud en tres zonas. */
+/* Catálogo público: los mismos paquetes que aparecen en Pagos. */
+#nvPlanesDialogo:not([open]) { display: none; }
+#nvPlanesDialogo {
+  box-sizing: border-box; width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px);
+  margin: auto; padding: 28px; overflow: auto; border: 1px solid #dddddd; border-radius: 12px;
+  background: #ffffff; color: #1b1b1b; font: inherit; box-shadow: none;
+}
+#nvPlanesDialogo::backdrop { background: rgb(0 0 0 / 45%); }
+#nvPlanesDialogo .nv-planes-cabecera { position: relative; padding-right: 28px; }
+#nvPlanesDialogo .nv-planes-etiqueta { margin: 0 0 12px; color: #707070; font-size: var(--fv-tipo-auxiliar) !important; font-weight: 600; letter-spacing: .1em; line-height: 1.4; }
+#nvPlanesDialogo h2 { margin: 0; font-size: var(--fv-tipo-titulo) !important; line-height: 1.3; letter-spacing: -.02em; }
+#nvPlanesDialogo #nvPlanesDescripcion { margin: 10px 0 0; color: #606060; font-size: var(--fv-tipo-base) !important; line-height: 1.5; }
+#nvPlanesDialogo .nv-planes-cerrar { position: absolute; top: -10px; right: -12px; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #606060; cursor: pointer; }
+#nvPlanesDialogo .nv-planes-cerrar svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+#nvPlanesDialogo .nv-planes-opciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-block: 22px; }
+#nvPlanesDialogo .nv-planes-opcion { display: grid; gap: 8px; padding: 16px; border: 1px solid #dddddd; border-radius: 9px; background: #fafafa; }
+#nvPlanesDialogo .nv-planes-opcion h3 { margin: 0; font-size: var(--fv-tipo-base) !important; font-weight: 500; line-height: 1.4; }
+#nvPlanesDialogo .nv-planes-opcion strong { font-size: var(--fv-tipo-titulo) !important; line-height: 1.2; font-variant-numeric: tabular-nums; }
+#nvPlanesDialogo .nv-planes-opcion span, #nvPlanesDialogo .nv-planes-pie p { color: #606060; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; }
+#nvPlanesDialogo .nv-planes-pie { display: grid; gap: 12px; }
+#nvPlanesDialogo .nv-planes-pie p { margin: 0 0 3px; }
+#nvPlanesDialogo .nv-planes-continuar { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 46px; padding: 10px 14px; border: 1px solid #1b1b1b; border-radius: 8px; background: #1b1b1b; color: #ffffff; font: inherit; font-size: var(--fv-tipo-base) !important; font-weight: 600; cursor: pointer; }
+#nvPlanesDialogo .nv-planes-continuar svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+#nvPlanesDialogo .nv-planes-entrar { min-height: 34px; padding: 4px; border: 0; background: transparent; color: #454545; font: inherit; font-size: var(--fv-tipo-auxiliar) !important; font-weight: 500; cursor: pointer; }
+#nvPlanesDialogo .nv-planes-continuar:hover { background: #383838; }
+#nvPlanesDialogo :is(.nv-planes-entrar, .nv-planes-cerrar):hover { background: #f3f3f3; }
+#nvPlanesDialogo button:focus-visible { outline: 1px solid #707070; outline-offset: 3px; }
+@media (max-width: 600px) {
+  #nvPlanesDialogo { padding: 20px; }
+  #nvPlanesDialogo .nv-planes-opciones { gap: 8px; }
+  #nvPlanesDialogo .nv-planes-opcion { padding: 12px; }
+}
+
+/* Portada de escritorio: propuesta, servicios y acceso a precios. */
 @media (min-width: 861px) {
   #nvPuerta .nv-portada {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto 1fr auto;
-    align-content: stretch;
     justify-content: stretch;
-    gap: 32px;
+    align-items: start;
+    gap: 28px;
     min-width: 0;
-    padding: 40px clamp(32px, 4vw, 72px) 28px;
+    padding: 32px clamp(28px, 4.2vw, 80px) 24px;
     background: #1b1b1b;
     color: #ffffff;
   }
+  #nvPuerta .nv-portada > * { width: 100%; max-width: 620px; justify-self: center; }
   #nvPuerta .nv-portada-marca {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #383838;
+    display: flex; align-items: center; gap: 13px;
+    width: 100%; padding-bottom: 22px; border-bottom: 1px solid #383838;
   }
   #nvPuerta .nv-portada-marca > img {
-    display: block;
-    flex: 0 0 40px;
-    width: 40px;
-    height: 40px;
+    display: block; flex: 0 0 40px; width: 40px; height: 40px;
     filter: brightness(0) invert(1);
   }
-  #nvPuerta .nv-portada-identidad { display: grid; gap: 2px; }
-  #nvPuerta .nv-portada-identidad strong {
-    color: #ffffff;
-    font-size: var(--fv-tipo-base) !important;
-    line-height: 1.5;
-  }
-  #nvPuerta .nv-portada-identidad > span {
-    color: #b8b8b8;
-    font-size: var(--fv-tipo-auxiliar) !important;
-    line-height: 1.5;
-  }
-  #nvPuerta .nv-portada-contenido {
-    align-self: center;
-    width: 100%;
-    max-width: 520px;
-    padding-block: 12px;
-  }
-  #nvPuerta .nv-portada-etiqueta {
-    margin: 0 0 14px;
-    color: #b8b8b8;
-    font-size: var(--fv-tipo-auxiliar) !important;
-    font-weight: 500;
-    line-height: 1.5;
-    letter-spacing: .12em;
-  }
-  #nvPuerta .nv-portada-contenido h2 {
-    margin: 0;
-    color: #ffffff;
-    font-size: var(--fv-tipo-titulo) !important;
-    font-weight: 600;
-    line-height: 1.4;
-    letter-spacing: -.02em;
-    text-wrap: balance;
-  }
-  #nvPuerta .nv-portada-descripcion {
-    max-width: 42ch;
-    margin: 16px 0 0;
-    color: #c8c8c8;
-    font-size: var(--fv-tipo-base) !important;
-    line-height: 1.65;
-  }
-  #nvPuerta .nv-portada-servicios {
-    display: grid;
-    gap: 0;
-    margin: 26px 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  #nvPuerta .nv-portada-servicios li {
-    display: grid;
-    grid-template-columns: 24px minmax(0, 1fr);
-    align-items: center;
-    gap: 16px;
-    min-width: 0;
-    padding: 13px 0;
-    border-bottom: 1px solid #383838;
-  }
-  #nvPuerta .nv-portada-servicios li:last-child { border-bottom: 0; padding-bottom: 0; }
-  #nvPuerta .nv-portada-servicios h3 {
-    margin: 0;
-    color: #f2f2f2;
-    font-size: var(--fv-tipo-base) !important;
-    font-weight: 500;
-    line-height: 1.4;
-  }
-  #nvPuerta .nv-portada-servicios p {
-    margin: 3px 0 0;
-    color: #b8b8b8;
-    font-size: var(--fv-tipo-auxiliar) !important;
-    line-height: 1.5;
-  }
-  #nvPuerta .nv-portada-icono {
-    display: block;
-    width: 24px;
-    height: 24px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.65;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    color: #d6d6d6;
-  }
-  #nvPuerta .nv-portada-acciones {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    padding-top: 24px;
-    border-top: 1px solid #383838;
-  }
-  #nvPuerta .nv-portada-pregunta {
-    margin: 0;
-    color: #f2f2f2;
-    font-size: var(--fv-tipo-base) !important;
-    font-weight: 500;
-    line-height: 1.5;
-  }
-  #nvPuerta .nv-portada-ayuda {
-    margin: 5px 0 0;
-    color: #b8b8b8;
-    font-size: var(--fv-tipo-auxiliar) !important;
-    line-height: 1.5;
-  }
-  #nvPuerta .nv-portada .nv-auth-fvc-desktop {
-    flex-shrink: 0;
-    gap: 12px;
-    min-height: 50px;
-    margin: 16px 0 0;
-    padding: 12px 16px;
-    border-color: #f4f4f4 !important;
-    background: #f4f4f4 !important;
-    color: #171717 !important;
-    font-size: var(--fv-tipo-base) !important;
-    font-weight: 600;
-  }
-  #nvPuerta .nv-portada .nv-auth-fvc-desktop .nv-auth-fvc-arrow {
-    color: #171717;
-  }
-  #nvPuerta .nv-portada .nv-auth-fvc-desktop:hover {
-    border-color: #e5e5e5 !important;
-    background: #e5e5e5 !important;
-    color: #171717 !important;
-  }
-  #nvPuerta .nv-portada .nv-auth-fvc-desktop:focus-visible {
-    outline: 2px solid #ffffff;
-    outline-offset: 4px;
-  }
-  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop {
-    align-self: flex-start;
-    justify-content: flex-start;
-    gap: 8px;
-    min-height: 32px;
-    margin: 12px 0 0;
-    padding: 4px 0;
-    color: #bdbdbd;
-    font-size: var(--fv-tipo-auxiliar) !important;
-    font-weight: 500;
-    letter-spacing: .02em;
-    text-align: left;
-  }
-  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop .nv-portada-icono {
-    width: 16px;
-    height: 16px;
-    color: inherit;
-  }
-  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop:hover {
-    color: #ffffff;
-  }
+  #nvPuerta .nv-portada-identidad { display: grid; gap: 3px; }
+  #nvPuerta .nv-portada-identidad strong { color: #ffffff; font-size: var(--fv-tipo-base) !important; line-height: 1.4; }
+  #nvPuerta .nv-portada-identidad > span { color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.4; }
+  #nvPuerta .nv-portada-pais { margin-left: auto; padding-left: 12px; color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; letter-spacing: .12em; }
+  #nvPuerta .nv-portada-contenido { align-self: center; width: 100%; max-width: 620px; padding-block: 4px; }
+  #nvPuerta .nv-portada-etiqueta { margin: 0 0 12px; color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; font-weight: 500; line-height: 1.5; letter-spacing: .12em; }
+  #nvPuerta .nv-portada-contenido h2 { margin: 0; color: #ffffff; font-size: var(--fv-tipo-titulo) !important; font-weight: 600; line-height: 1.3; letter-spacing: -.025em; }
+  #nvPuerta .nv-portada-descripcion { max-width: 48ch; margin: 14px 0 0; color: #c8c8c8; font-size: var(--fv-tipo-base) !important; line-height: 1.6; text-wrap: pretty; }
+  #nvPuerta .nv-portada-servicios { display: grid; gap: 0; margin: 24px 0; padding: 0; list-style: none; }
+  #nvPuerta .nv-portada-servicios li { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px; min-width: 0; padding: 12px 0; border-bottom: 1px solid #333333; }
+  #nvPuerta .nv-portada-servicios li:first-child { padding-top: 0; }
+  #nvPuerta .nv-portada-servicios li:last-child { padding-bottom: 0; border-bottom: 0; }
+  #nvPuerta .nv-portada-simbolo { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #3c3c3c; border-radius: 9px; color: #e3e3e3; background: #242424; }
+  #nvPuerta .nv-portada-icono { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+  #nvPuerta .nv-portada-servicios h3 { margin: 0; color: #f4f4f4; font-size: var(--fv-tipo-base) !important; font-weight: 500; line-height: 1.4; }
+  #nvPuerta .nv-portada-servicios p { margin: 4px 0 0; color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; }
+  #nvPuerta .nv-portada-planes { display: grid; gap: 18px; padding: 20px; border: 1px solid #444444; border-radius: 12px; background: #242424; }
+  #nvPuerta .nv-portada-plan-texto h3 { margin: 0; color: #ffffff; font-size: var(--fv-tipo-base) !important; font-weight: 600; line-height: 1.4; }
+  #nvPuerta .nv-portada-plan-texto p { max-width: 50ch; margin: 5px 0 0; color: #c8c8c8; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; }
+  #nvPuerta .nv-portada-plan-compra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 18px; }
+  #nvPuerta .nv-portada-precio { display: grid; gap: 3px; margin: 0; }
+  #nvPuerta .nv-portada-precio > span { color: #c8c8c8; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.4; }
+  #nvPuerta .nv-portada-precio > strong { color: #ffffff; font-size: var(--fv-tipo-titulo) !important; font-weight: 600; line-height: 1.2; letter-spacing: -.02em; }
+  #nvPuerta .nv-portada-plan-boton { display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 46px; padding: 11px 16px; border: 1px solid #f4f4f4; border-radius: 8px; color: #1b1b1b; background: #f4f4f4; font: inherit; font-size: var(--fv-tipo-base) !important; font-weight: 600; line-height: 1.4; cursor: pointer; }
+  #nvPuerta .nv-portada-plan-boton svg { flex: 0 0 18px; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  #nvPuerta .nv-portada-plan-boton:hover { background: #e4e4e4; border-color: #e4e4e4; }
+  #nvPuerta .nv-portada-acciones { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 10px; width: 100%; max-width: 620px; padding-top: 18px; border-top: 1px solid #383838; }
+  #nvPuerta .nv-portada-pregunta { margin: 0; color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; }
+  #nvPuerta .nv-portada .nv-auth-fvc-desktop { width: fit-content; max-width: 100%; min-height: 42px; gap: 16px; margin: 0; padding: 10px 13px; border-color: #555555 !important; color: #f4f4f4 !important; background: transparent !important; font-size: var(--fv-tipo-auxiliar) !important; font-weight: 500; line-height: 1.4; }
+  #nvPuerta .nv-portada .nv-auth-fvc-desktop:hover { border-color: #999999 !important; background: #292929 !important; }
+  #nvPuerta .nv-portada .nv-auth-fvc-arrow svg { width: 16px; height: 16px; }
+  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop { display: inline-flex; align-items: center; justify-content: flex-start; gap: 7px; min-height: 28px; margin: 0; padding: 2px 0; color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; font-weight: 400; line-height: 1.4; text-align: left; }
+  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop svg { width: 15px; height: 15px; }
+  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop:hover { color: #ffffff; }
+  #nvPuerta .nv-portada :is(button, a):focus-visible { outline: 1px solid #ffffff; outline-offset: 3px; }
 }
-
+@media (min-width: 1200px) {
+  #nvPuerta:not([hidden]) { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); }
+}
 @media (min-width: 861px) and (max-width: 1100px) {
-  #nvPuerta .nv-portada { padding-inline: 32px; }
-  #nvPuerta .nv-portada .nv-auth-fvc-desktop { font-size: var(--fv-tipo-auxiliar) !important; }
+  #nvPuerta .nv-portada { padding-inline: 28px; }
+  #nvPuerta .nv-portada-plan-boton { gap: 10px; font-size: var(--fv-tipo-auxiliar) !important; }
 }
 @media (min-width: 861px) and (max-height: 820px) {
-  #nvPuerta .nv-portada { gap: 20px; padding-top: 24px; padding-bottom: 20px; }
-  #nvPuerta .nv-portada-marca { padding-bottom: 16px; }
-  #nvPuerta .nv-portada-contenido { padding-block: 0; }
-  #nvPuerta .nv-portada-etiqueta { margin-bottom: 10px; }
-  #nvPuerta .nv-portada-descripcion { margin-top: 12px; }
-  #nvPuerta .nv-portada-servicios { margin-top: 16px; }
+  #nvPuerta .nv-puerta-formularios { padding-block: 18px 28px; }
+  #nvPuerta .nv-portada { gap: 14px; padding-block: 22px 18px; }
+  #nvPuerta .nv-portada-marca { padding-bottom: 14px; }
+  #nvPuerta .nv-portada-etiqueta { margin-bottom: 8px; }
+  #nvPuerta .nv-portada-descripcion { margin-top: 10px; }
+  #nvPuerta .nv-portada-servicios { margin-block: 18px; }
   #nvPuerta .nv-portada-servicios li { padding-block: 9px; }
-  #nvPuerta .nv-portada-servicios li:last-child { padding-bottom: 0; }
-  #nvPuerta .nv-portada-acciones { padding-top: 16px; }
-  #nvPuerta .nv-portada .nv-auth-fvc-desktop { margin-top: 12px; }
-  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop { margin-top: 8px; }
+  #nvPuerta .nv-portada-planes { gap: 12px; padding: 16px; }
+  #nvPuerta .nv-portada-acciones { gap: 8px; padding-top: 14px; }
 }

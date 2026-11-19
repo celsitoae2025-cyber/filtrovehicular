@@ -19,7 +19,7 @@ html.mnt-locked body {
   overflow-y: auto;
   padding: clamp(18px, 4vw, 44px);
   background: radial-gradient(ellipse at 50% 30%, #242424 0%, #131313 60%);
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
   -webkit-overflow-scrolling: touch;
 }
 .mnt-card {
@@ -109,7 +109,7 @@ html.mnt-locked body {
   background: var(--c-surface-dark);
   border-bottom: 2px solid var(--c-accent, #292929);
   color: #ffffff;
-  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   font-weight: 400;
   text-align: center;
@@ -257,7 +257,7 @@ html.mnt-with-banner body { padding-top: 34px; }
   border-radius: 12px;
   background: var(--c-surface-dark);
   color: #ffffff;
-  font-family: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;

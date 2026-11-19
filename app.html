@@ -38,7 +38,7 @@
 <link rel="dns-prefetch" href="https://challenges.cloudflare.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!-- ============================================================
      LA PLATAFORMA FILTRO VEHICULAR+ (la única: la de antes se retiró)
@@ -55,20 +55,20 @@
 ============================================================ -->
 
 <link rel="stylesheet" href="css/components.css?v=24">
-<link rel="stylesheet" href="css/views.css?v=123">
-<link rel="stylesheet" href="css/overlays.css?v=15">
+<link rel="stylesheet" href="css/views.css?v=124">
+<link rel="stylesheet" href="css/overlays.css?v=16">
 <link rel="stylesheet" href="css/polish.css?v=11">
 <link rel="stylesheet" href="css/combo.css?v=6">
 <link rel="stylesheet" href="css/botones.css?v=7">
 <!-- El aviso de mantenimiento: el mismo de app.html -->
-<link rel="stylesheet" href="css/maintenance.css?v=18">
+<link rel="stylesheet" href="css/maintenance.css?v=19">
 <!-- La ventana de carteles y el aviso a clientes: los mismos de siempre. -->
 <link rel="stylesheet" href="css/carteles.css?v=5">
-<link rel="stylesheet" href="css/aviso-clientes.css?v=19">
-<link rel="stylesheet" href="css/nueva.css?v=117">
-<link rel="stylesheet" href="css/puerta-entrada.css?v=13">
+<link rel="stylesheet" href="css/aviso-clientes.css?v=20">
+<link rel="stylesheet" href="css/nueva.css?v=124">
+<link rel="stylesheet" href="css/puerta-entrada.css?v=16">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
-<link rel="stylesheet" href="css/interfaz-poppins.css?v=31">
+<link rel="stylesheet" href="css/interfaz-tipografia.css?v=1">
 </head>
 <body class="nv-body">
 
@@ -105,6 +105,7 @@
     <symbol id="i-repetir" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.6L4 15M4 20v-5h5"/></symbol>
     <symbol id="i-salir" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l-4-4 4-4M6 12h10"/></symbol>
     <symbol id="i-soporte" viewBox="0 0 24 24"><path d="M4 18.8 5.2 15A8 8 0 1 1 8 18.1L4 18.8Z"/><path d="M8 12h.1M12 12h.1M16 12h.1"/></symbol>
+<symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></symbol>
     <symbol id="i-anterior" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
     <!-- trámites directos: cada uno dibuja lo que es -->
     <symbol id="i-soat" viewBox="0 0 24 24"><path d="m12 2.8 7.2 2.8v5.8c0 4.7-2.9 8-7.2 9.9-4.3-1.9-7.2-5.2-7.2-9.9V5.6L12 2.8Z"/><path d="m7.8 12.8 1.4-3.2a1.4 1.4 0 0 1 1.3-.9h3a1.4 1.4 0 0 1 1.3.9l1.4 3.2v2.3H7.8v-2.3ZM9 15.1v1.2M15 15.1v1.2M8 12.8h8"/></symbol>
@@ -123,38 +124,48 @@
      cuenta, verificar el correo con el código, pedir el código para
      cambiar la contraseña y ponerla. Los mueve js/nueva/acceso.js. -->
 <div class="nv-puerta" id="nvPuerta" hidden>
-  <aside class="nv-puerta-presentacion nv-portada" aria-label="Plataforma Filtro Vehicular Plus">
+  <aside class="nv-puerta-presentacion nv-portada" aria-labelledby="nvPortadaTitulo">
     <header class="nv-portada-marca">
       <img src="icons/logo-filtro.svg" alt="" width="40" height="40">
       <div class="nv-portada-identidad">
         <strong>Filtro Vehicular+</strong>
-        <span>Plataforma de consultas</span>
+        <span>Información para decidir mejor</span>
       </div>
+      <span class="nv-portada-pais">PERÚ</span>
     </header>
 
     <div class="nv-portada-contenido">
-      <p class="nv-portada-etiqueta">CONSULTAS VEHICULARES</p>
-      <h2>Conoce el vehículo<br>antes de decidir.</h2>
-      <p class="nv-portada-descripcion">Revisa datos, antecedentes y documentos del vehículo en una sola plataforma.</p>
+      <p class="nv-portada-etiqueta">ANTES DE COMPRAR, CONSULTA</p>
+      <h2 id="nvPortadaTitulo">Conoce su historia.<br>Decide con claridad.</h2>
+      <p class="nv-portada-descripcion">Revisa la información del vehículo que te interesa y da el siguiente paso con más confianza.</p>
       <ul class="nv-portada-servicios" aria-label="Información que puedes consultar">
         <li>
-          <svg class="nv-portada-icono" aria-hidden="true"><use href="#i-vehiculo"/></svg>
-          <div><h3>Datos del vehículo</h3><p>Identificación y características.</p></div>
+          <span class="nv-portada-simbolo"><svg class="nv-portada-icono" aria-hidden="true"><use href="#i-vehiculo"/></svg></span>
+          <div><h3>Identifica el vehículo</h3><p>Propietarios y características registradas.</p></div>
         </li>
         <li>
-          <svg class="nv-portada-icono" aria-hidden="true"><use href="#i-historial"/></svg>
-          <div><h3>Historial y antecedentes</h3><p>Consulta la información disponible.</p></div>
+          <span class="nv-portada-simbolo"><svg class="nv-portada-icono" aria-hidden="true"><use href="#i-historial"/></svg></span>
+          <div><h3>Revisa lo que importa</h3><p>Historial, papeletas y órdenes de captura.</p></div>
         </li>
         <li>
-          <svg class="nv-portada-icono" aria-hidden="true"><use href="#i-reporte"/></svg>
-          <div><h3>Documentos vehiculares</h3><p>Solicita reportes y certificados.</p></div>
+          <span class="nv-portada-simbolo"><svg class="nv-portada-icono" aria-hidden="true"><use href="#i-reporte"/></svg></span>
+          <div><h3>Completa tu revisión</h3><p>SOAT, revisión técnica y documentos vehiculares.</p></div>
         </li>
       </ul>
+      <section class="nv-portada-planes" aria-labelledby="nvPortadaPlanesTitulo">
+        <div class="nv-portada-plan-texto">
+          <h3 id="nvPortadaPlanesTitulo">Tus consultas, a tu medida</h3>
+          <p>Elige un paquete de créditos y consulta lo que necesitas.</p>
+        </div>
+        <div class="nv-portada-plan-compra">
+          <p class="nv-portada-precio"><span>Paquetes desde</span><strong id="nvPortadaPrecio">S/ 15</strong></p>
+          <button class="nv-portada-plan-boton" type="button" data-planes-abrir aria-haspopup="dialog" aria-controls="nvPlanesDialogo"><span>Ver planes y precios</span><svg aria-hidden="true"><use href="#i-ir"/></svg></button>
+        </div>
+      </section>
     </div>
 
     <footer class="nv-portada-acciones">
-      <p class="nv-portada-pregunta">¿Necesitas un filtro vehicular completo?</p>
-      <p class="nv-portada-ayuda">Solicítalo aquí y recibe atención por WhatsApp.</p>
+      <p class="nv-portada-pregunta">¿Prefieres un reporte completo?</p>
       <button class="nv-auth-fvc nv-auth-fvc-desktop" id="fvcOpen" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span class="nv-auth-fvc-label">Solicita tu Filtro Vehicular Completo</span><span class="nv-auth-fvc-arrow" aria-hidden="true"><svg><use href="#i-ir"/></svg></span></button>
       <button class="nv-navegadores-trigger nv-navegadores-trigger-desktop" type="button" data-navegadores-abrir aria-haspopup="dialog" aria-controls="nvNavegadoresDialog"><svg class="nv-portada-icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c4 4.5 4 12.5 0 17-4-4.5-4-12.5 0-17Z"/></svg><span>NAVEGADORES COMPATIBLES</span></button>
     </footer>
@@ -308,28 +319,48 @@
   </div>
 </div>
 
+<dialog class="nv-planes-dialogo" id="nvPlanesDialogo" aria-labelledby="nvPlanesTitulo" aria-describedby="nvPlanesDescripcion">
+  <header class="nv-planes-cabecera">
+    <p class="nv-planes-etiqueta">PLANES DE CONSULTA</p>
+    <button class="nv-planes-cerrar" type="button" data-planes-cerrar aria-label="Cerrar planes"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+    <h2 id="nvPlanesTitulo">Elige cómo quieres consultar</h2>
+    <p id="nvPlanesDescripcion">Recarga créditos en tu cuenta. Cada consulta muestra su costo antes de buscar.</p>
+  </header>
+  <div class="nv-planes-opciones" id="nvPlanesOpciones"></div>
+  <footer class="nv-planes-pie">
+    <p>Para comprar un paquete necesitas una cuenta. El pago se realiza desde la sección Pagos mediante Mercado Pago.</p>
+    <button type="button" class="nv-planes-continuar" data-planes-destino="registro">Crear cuenta para comprar<svg aria-hidden="true"><use href="#i-ir"/></svg></button>
+    <button type="button" class="nv-planes-entrar" data-planes-destino="acceso">Ya tengo cuenta · Iniciar sesión</button>
+  </footer>
+</dialog>
+
 <dialog class="nv-fvc-dialogo" id="nvFvcDialogo" aria-modal="true" aria-labelledby="nvFvcTitulo" aria-describedby="nvFvcDescripcion">
   <form id="nvFvcForm" novalidate>
     <button class="nv-fvc-cerrar" type="button" data-fvc-cerrar aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
-    <p class="nv-fvc-kicker">FILTRO VEHICULAR COMPLETO</p>
-    <h2 id="nvFvcTitulo">¿Cuál es la placa del vehículo?</h2>
-    <p class="nv-fvc-descripcion" id="nvFvcDescripcion">Preparamos un mensaje con la placa para que lo revises y envíes desde WhatsApp.</p>
-    <div class="nv-fvc-alcance">
-      <strong>El reporte puede incluir</strong>
+    <header class="nv-fvc-intro">
+      <p class="nv-fvc-kicker">FILTRO VEHICULAR COMPLETO</p>
+      <h2 id="nvFvcTitulo">¿Cuál es la placa del vehículo?</h2>
+      <p class="nv-fvc-descripcion" id="nvFvcDescripcion">Ingresa la placa para solicitar el reporte por WhatsApp.</p>
+    </header>
+    <section class="nv-fvc-alcance" aria-labelledby="nvFvcAlcanceTitulo">
+      <h3 id="nvFvcAlcanceTitulo">El reporte incluye</h3>
       <ul>
-        <li>Datos del vehículo</li>
-        <li>SOAT y revisión técnica</li>
-        <li>Deudas e incidencias disponibles</li>
+        <li>Papeletas vigentes</li>
+        <li>Dueños e historial</li>
+        <li>Órdenes de captura</li>
+        <li>Cambio de características</li>
       </ul>
       <small>El contenido depende de la información disponible en cada fuente.</small>
+    </section>
+    <div class="nv-fvc-campo">
+      <label for="nvFvcPlaca">Placa del vehículo</label>
+      <input id="nvFvcPlaca" name="placa" type="text" placeholder="ABC123" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="nvFvcAyuda nvFvcError" required>
+      <small id="nvFvcAyuda">6 caracteres: letras o números.</small>
+      <p class="nv-fvc-error" id="nvFvcError" role="alert" hidden></p>
     </div>
-    <label for="nvFvcPlaca">Placa del vehículo</label>
-    <input id="nvFvcPlaca" name="placa" type="text" placeholder="ABC123" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="nvFvcAyuda nvFvcError" required>
-    <small id="nvFvcAyuda">6 letras o números. Puedes escribirla con espacios o guion.</small>
-    <p class="nv-fvc-error" id="nvFvcError" role="alert" hidden></p>
     <div class="nv-fvc-acciones">
       <button type="button" data-fvc-cerrar>Cancelar</button>
-      <button type="submit">Continuar a WhatsApp <svg class="nv-fvc-ir" aria-hidden="true"><use href="#i-fuera"/></svg></button>
+      <button type="submit"><svg class="nv-fvc-whatsapp" aria-hidden="true"><use href="#i-whatsapp"/></svg><span>Solicitar por WhatsApp</span></button>
     </div>
   </form>
 </dialog>
@@ -843,9 +874,7 @@
 <div class="wa-backdrop" id="waBackdrop" hidden></div>
 <div class="wa-menu" id="waMenu" role="menu" aria-label="Opciones de soporte" hidden></div>
 <button class="wa-fab" type="button" id="waSupport" aria-haspopup="true" aria-expanded="false" aria-controls="waMenu" aria-label="Contactar por WhatsApp">
-  <svg class="wa-fab-icon" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-  </svg>
+  <svg class="wa-fab-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-whatsapp"/></svg>
 </button>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -858,6 +887,8 @@
 <script src="js/shared/turnstile.js?v=7"></script>
 <script src="js/nueva/nucleo.js?v=23"></script>
 <script src="js/nueva/acceso.js?v=23"></script>
+<script src="js/shared/credit-packages.js?v=1"></script>
+<script src="js/nueva/planes-portada.js?v=1"></script>
 <script src="js/overlays.js?v=2"></script>
 <script>
   // El retorno de verificación/restablecimiento conserva su arranque habitual
@@ -898,7 +929,7 @@
 <script src="js/modules/citv-aviso.js?v=9"></script>
 
 <script src="js/shared/vehicles.js?v=1"></script>
-<script src="js/nueva/pantallas.js?v=24"></script>
+<script src="js/nueva/pantallas.js?v=25"></script>
 <script src="js/nueva/nombres.js?v=1"></script>
 <script src="js/nueva/servicios.js?v=10"></script>
 
