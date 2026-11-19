@@ -228,3 +228,25 @@ body:has(#nvPuerta.es-verificacion:not([hidden])) .wa-fab { display: none !impor
 @media (prefers-reduced-motion: reduce) {
   #nvPuerta * { animation: none !important; transition: none !important; }
 }
+
+/* Escritorio: una misma guía izquierda para la marca y el contenido. */
+@media (min-width: 861px) {
+  #nvPuerta .nv-puerta-relato {
+    width: min(100%, 460px);
+    margin: 0;
+  }
+  #nvPuerta .nv-auth-fvc-desktop {
+    margin-top: 22px;
+  }
+  #nvPuerta .nv-navegadores-trigger-desktop {
+    align-self: flex-start;
+    justify-content: flex-start;
+    margin: 8px 0 0;
+    padding-left: 0;
+    text-align: left;
+  }
+  #nvPuerta .nv-auth-fvc-desktop:focus-visible {
+    outline: 2px solid #d6d6d6;
+    outline-offset: 3px;
+  }
+}
