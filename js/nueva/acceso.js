@@ -558,6 +558,27 @@
       portadaPlaca.value = placa;
       abrirFiltroCompleto($('fvcOpen'), placa);
     });
+    var portadaFiltroMobile = $('nvPortadaFiltroMobile');
+    var portadaPlacaMobile = $('nvPortadaPlacaMobile');
+    var portadaErrorMobile = $('nvPortadaPlacaErrorMobile');
+    portadaPlacaMobile.addEventListener('input', function () {
+      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+      this.removeAttribute('aria-invalid');
+      portadaErrorMobile.hidden = true;
+    });
+    portadaFiltroMobile.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var placa = portadaPlacaMobile.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!/^[A-Z0-9]{6}$/.test(placa)) {
+        portadaErrorMobile.textContent = 'Ingresa una placa v\u00e1lida de 6 letras o n\u00fameros.';
+        portadaErrorMobile.hidden = false;
+        portadaPlacaMobile.setAttribute('aria-invalid', 'true');
+        portadaPlacaMobile.focus();
+        return;
+      }
+      portadaPlacaMobile.value = placa;
+      abrirFiltroCompleto($('fvcOpenMobilePlaca'), placa);
+    });
     fvcDialogo.querySelectorAll('[data-fvc-cerrar]').forEach(function (boton) {
       boton.addEventListener('click', function () { fvcDialogo.close(); });
     });

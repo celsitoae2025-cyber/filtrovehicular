@@ -1597,3 +1597,92 @@ body.nv-body #nvFvcDialogo :is(
 ) { font-size: var(--fv-tipo-auxiliar) !important; }
 body.nv-body #nvFvcDialogo :is(.nv-fvc-descripcion, #nvFvcPlaca) { font-size: var(--fv-tipo-base) !important; }
 body.nv-body #nvFvcDialogo h2 { font-size: var(--fv-tipo-titulo) !important; }
+
+/* Acceso móvil: solicitud por placa, solo en iniciar sesión. */
+.nv-body #nvPuerta .nv-auth-fvc-mobile-wrap { display: none; }
+@media (max-width: 860px) {
+  .nv-body #nvPuerta .nv-auth-fvc-mobile-wrap {
+    display: none;
+    box-sizing: border-box;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    width: min(100%, 448px);
+    margin: 0 auto;
+  }
+  .nv-body #nvPuerta[data-paso-activo="acceso"].es-acceso-limpio:not(.es-encima) .nv-auth-fvc-mobile-wrap { display: grid !important; }
+  .nv-body #nvPuerta .nv-portada-filtro-mobile {
+    display: none;
+    box-sizing: border-box;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .nv-body #nvPuerta[data-paso-activo="acceso"] .nv-portada-filtro-mobile { display: grid !important; }
+  .nv-body #nvPuerta .nv-portada-filtro-mobile h2 {
+    margin: 0 0 3px;
+    color: var(--ui-ink);
+    font-size: var(--fv-tipo-base) !important;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .nv-body #nvPuerta .nv-portada-filtro-mobile > label {
+    color: var(--ui-ink);
+    font-size: var(--fv-tipo-auxiliar) !important;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+  .nv-body #nvPuerta .nv-portada-filtro-mobile .nv-portada-filtro-fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px;
+  }
+  .nv-body #nvPuerta #nvPortadaPlacaMobile {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 8px 11px;
+    border: 1px solid var(--ui-line) !important;
+    border-radius: 7px !important;
+    background: #ffffff !important;
+    color: var(--ui-ink) !important;
+    font: inherit;
+    font-size: var(--fv-tipo-base) !important;
+    letter-spacing: .08em;
+    text-align: center;
+    text-transform: uppercase;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  .nv-body #nvPuerta #nvPortadaPlacaMobile::placeholder { color: #a0a0a0; opacity: 1; }
+  .nv-body #nvPuerta #nvPortadaPlacaMobile:focus { border-color: #a0a0a0 !important; }
+  .nv-body #nvPuerta .nv-portada-filtro-mobile .nv-portada-filtrar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: 116px;
+    min-height: 42px;
+    margin: 0;
+    padding: 8px 11px;
+    border: 1px solid #ffb51b;
+    border-radius: 7px;
+    background: #ffb51b;
+    color: #1b1b1b;
+    font: inherit;
+    font-size: var(--fv-tipo-auxiliar) !important;
+    font-weight: 600;
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  .nv-body #nvPuerta .nv-portada-filtro-mobile .nv-portada-filtrar:hover { border-color: #ffc343; background: #ffc343; }
+  .nv-body #nvPuerta .nv-portada-filtro-mobile .nv-portada-filtrar svg { flex: 0 0 16px; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+  .nv-body #nvPuerta #nvPortadaPlacaAyudaMobile,
+  .nv-body #nvPuerta #nvPortadaPlacaErrorMobile { margin: 0; color: var(--ui-muted); font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.35; }
+  .nv-body #nvPuerta #nvPortadaPlacaErrorMobile { color: #a13d30; }
+}

@@ -68,7 +68,7 @@
 <link rel="stylesheet" href="css/nueva.css?v=124">
 <link rel="stylesheet" href="css/puerta-entrada.css?v=22">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
-<link rel="stylesheet" href="css/interfaz-tipografia.css?v=1">
+<link rel="stylesheet" href="css/interfaz-tipografia.css?v=2">
 </head>
 <body class="nv-body">
 
@@ -320,7 +320,18 @@
     </div>
   </form>
     </div>
-    <button class="nv-auth-fvc nv-auth-fvc-mobile" id="fvcOpenMobile" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span class="nv-auth-fvc-label">Solicita tú Filtro Vehicular Completo</span><span class="nv-auth-fvc-arrow" aria-hidden="true"><svg><use href="#i-ir"/></svg></span></button>
+    <div class="nv-auth-fvc-mobile-wrap" id="nvFvcMovil" aria-label="Filtro vehicular completo">
+      <form class="nv-portada-filtro nv-portada-filtro-mobile" id="nvPortadaFiltroMobile" novalidate>
+        <h2>Solicita tu Filtro Vehicular Completo</h2>
+        <label for="nvPortadaPlacaMobile">Ingresa tu placa</label>
+        <div class="nv-portada-filtro-fila">
+          <input id="nvPortadaPlacaMobile" name="placa" type="text" placeholder="ABC-123" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="nvPortadaPlacaAyudaMobile nvPortadaPlacaErrorMobile" required>
+          <button class="nv-portada-filtrar" id="fvcOpenMobilePlaca" type="submit" aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span>Filtrar placa</span><svg aria-hidden="true"><use href="#i-ir"/></svg></button>
+        </div>
+        <small id="nvPortadaPlacaAyudaMobile">Ingresa 6 letras o n&#250;meros.</small>
+        <p class="nv-portada-filtro-error" id="nvPortadaPlacaErrorMobile" role="alert" hidden></p>
+      </form>
+    </div>
     <button class="nv-navegadores-trigger nv-navegadores-trigger-mobile" type="button" data-navegadores-abrir aria-haspopup="dialog" aria-controls="nvNavegadoresDialog">NAVEGADORES COMPATIBLES</button>
     </div>
 
@@ -898,7 +909,7 @@
 <script src="js/shared/auth.js?v=28"></script>
 <script src="js/shared/turnstile.js?v=7"></script>
 <script src="js/nueva/nucleo.js?v=23"></script>
-<script src="js/nueva/acceso.js?v=24"></script>
+<script src="js/nueva/acceso.js?v=25"></script>
 <script src="js/shared/credit-packages.js?v=1"></script>
 <script src="js/nueva/planes-portada.js?v=1"></script>
 <script src="js/overlays.js?v=2"></script>
