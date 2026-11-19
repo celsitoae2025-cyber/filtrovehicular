@@ -1497,3 +1497,17 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     height: 24px;
   }
 }
+
+/* Registro móvil: una tarjeta amplia con un único margen lateral constante. */
+@media (max-width: 860px), (min-width: 861px) and (max-width: 1180px) and (pointer: coarse) {
+  .nv-body #nvPuerta[data-paso-activo="registro"]:not([hidden]) {
+    padding-inline: 0;
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] .nv-puerta-panel {
+    padding-inline: max(12px, 3vw, env(safe-area-inset-left, 0px)) max(12px, 3vw, env(safe-area-inset-right, 0px));
+  }
+  .nv-body #nvPuerta[data-paso-activo="registro"] #nvAuthShell {
+    width: 100%;
+    max-width: none;
+  }
+}
