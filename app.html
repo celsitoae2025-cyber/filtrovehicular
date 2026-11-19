@@ -66,7 +66,7 @@
 <link rel="stylesheet" href="css/carteles.css?v=5">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=19">
 <link rel="stylesheet" href="css/nueva.css?v=117">
-<link rel="stylesheet" href="css/puerta-entrada.css?v=12">
+<link rel="stylesheet" href="css/puerta-entrada.css?v=13">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
 <link rel="stylesheet" href="css/interfaz-poppins.css?v=27">
 </head>
@@ -123,16 +123,41 @@
      cuenta, verificar el correo con el código, pedir el código para
      cambiar la contraseña y ponerla. Los mueve js/nueva/acceso.js. -->
 <div class="nv-puerta" id="nvPuerta" hidden>
-  <aside class="nv-puerta-presentacion" aria-label="Plataforma Filtro Vehicular Plus">
-    <div class="nv-puerta-firma">Plataforma Filtro Vehicular<span>+</span></div>
-    <div class="nv-puerta-relato">
-      <img src="icons/logo-filtro.svg" alt="" class="nv-puerta-emblema">
-      <p class="nv-puerta-sobretitulo">PLATAFORMA DE CONSULTAS</p>
-      <h2>Información vehicular<br>para decidir mejor.</h2>
-      <p>Consulta datos de placas, revisa antecedentes y reúne la información que necesitas en un solo lugar.</p>
-      <button class="nv-auth-fvc nv-auth-fvc-desktop" id="fvcOpen" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span class="nv-auth-fvc-label">Solicita tú Filtro Vehicular Completo</span><span class="nv-auth-fvc-arrow" aria-hidden="true"><svg><use href="#i-ir"/></svg></span></button>
-      <button class="nv-navegadores-trigger nv-navegadores-trigger-desktop" type="button" data-navegadores-abrir aria-haspopup="dialog" aria-controls="nvNavegadoresDialog">NAVEGADORES COMPATIBLES</button>
+  <aside class="nv-puerta-presentacion nv-portada" aria-label="Plataforma Filtro Vehicular Plus">
+    <header class="nv-portada-marca">
+      <img src="icons/logo-filtro.svg" alt="" width="40" height="40">
+      <div class="nv-portada-identidad">
+        <strong>Filtro Vehicular+</strong>
+        <span>Plataforma de consultas</span>
+      </div>
+    </header>
+
+    <div class="nv-portada-contenido">
+      <p class="nv-portada-etiqueta">CONSULTAS VEHICULARES</p>
+      <h2>Conoce el vehículo<br>antes de decidir.</h2>
+      <p class="nv-portada-descripcion">Revisa datos, antecedentes y documentos del vehículo en una sola plataforma.</p>
+      <ul class="nv-portada-servicios" aria-label="Información que puedes consultar">
+        <li>
+          <svg class="nv-portada-icono" aria-hidden="true"><use href="#i-vehiculo"/></svg>
+          <div><h3>Datos del vehículo</h3><p>Identificación y características.</p></div>
+        </li>
+        <li>
+          <svg class="nv-portada-icono" aria-hidden="true"><use href="#i-historial"/></svg>
+          <div><h3>Historial y antecedentes</h3><p>Consulta la información disponible.</p></div>
+        </li>
+        <li>
+          <svg class="nv-portada-icono" aria-hidden="true"><use href="#i-reporte"/></svg>
+          <div><h3>Documentos vehiculares</h3><p>Solicita reportes y certificados.</p></div>
+        </li>
+      </ul>
     </div>
+
+    <footer class="nv-portada-acciones">
+      <p class="nv-portada-pregunta">¿Necesitas un filtro vehicular completo?</p>
+      <p class="nv-portada-ayuda">Solicítalo aquí y recibe atención por WhatsApp.</p>
+      <button class="nv-auth-fvc nv-auth-fvc-desktop" id="fvcOpen" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span class="nv-auth-fvc-label">Solicita tu Filtro Vehicular Completo</span><span class="nv-auth-fvc-arrow" aria-hidden="true"><svg><use href="#i-ir"/></svg></span></button>
+      <button class="nv-navegadores-trigger nv-navegadores-trigger-desktop" type="button" data-navegadores-abrir aria-haspopup="dialog" aria-controls="nvNavegadoresDialog"><svg class="nv-portada-icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c4 4.5 4 12.5 0 17-4-4.5-4-12.5 0-17Z"/></svg><span>NAVEGADORES COMPATIBLES</span></button>
+    </footer>
   </aside>
 
   <div class="nv-puerta-panel">

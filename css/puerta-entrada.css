@@ -20,23 +20,6 @@
   background: #1b1b1b;
   color: #ffffff;
 }
-#nvPuerta .nv-puerta-firma { font-weight: 600; line-height: 1.5; }
-#nvPuerta .nv-puerta-firma span { color: inherit; }
-#nvPuerta .nv-puerta-relato {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  width: min(100%, 420px);
-  margin: 0 auto;
-  padding: 48px 0;
-  text-align: left;
-}
-#nvPuerta .nv-puerta-emblema { width: 52px; height: 52px; margin: 0 0 28px; }
-#nvPuerta .nv-puerta-sobretitulo { margin: 0 0 12px; color: #b8b8b8; font-size: var(--fv-tipo-auxiliar) !important; letter-spacing: .14em; font-weight: 500; }
-#nvPuerta .nv-puerta-relato h2 { margin: 0 0 18px; color: #ffffff; }
-#nvPuerta .nv-puerta-relato > p:not(.nv-puerta-sobretitulo) { display: block; margin: 0; color: #c8c8c8; line-height: 1.75; }
 #nvPuerta .nv-puerta-panel {
   display: flex;
   flex-direction: column;
@@ -229,42 +212,198 @@ body:has(#nvPuerta.es-verificacion:not([hidden])) .wa-fab { display: none !impor
   #nvPuerta * { animation: none !important; transition: none !important; }
 }
 
-/* Escritorio: una misma guía izquierda para la marca y el contenido. */
+/* Portada de escritorio: marca, información y solicitud en tres zonas. */
 @media (min-width: 861px) {
-  #nvPuerta .nv-puerta-relato {
-    width: min(100%, 460px);
-    margin: 0;
+  #nvPuerta .nv-portada {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    align-content: stretch;
+    justify-content: stretch;
+    gap: 32px;
+    min-width: 0;
+    padding: 40px clamp(32px, 4vw, 72px) 28px;
+    background: #1b1b1b;
+    color: #ffffff;
   }
-  #nvPuerta .nv-auth-fvc-desktop {
+  #nvPuerta .nv-portada-marca {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #383838;
+  }
+  #nvPuerta .nv-portada-marca > img {
+    display: block;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    filter: brightness(0) invert(1);
+  }
+  #nvPuerta .nv-portada-identidad { display: grid; gap: 2px; }
+  #nvPuerta .nv-portada-identidad strong {
+    color: #ffffff;
+    font-size: var(--fv-tipo-base) !important;
+    line-height: 1.5;
+  }
+  #nvPuerta .nv-portada-identidad > span {
+    color: #b8b8b8;
+    font-size: var(--fv-tipo-auxiliar) !important;
+    line-height: 1.5;
+  }
+  #nvPuerta .nv-portada-contenido {
+    align-self: center;
+    width: 100%;
+    max-width: 520px;
+    padding-block: 12px;
+  }
+  #nvPuerta .nv-portada-etiqueta {
+    margin: 0 0 14px;
+    color: #b8b8b8;
+    font-size: var(--fv-tipo-auxiliar) !important;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: .12em;
+  }
+  #nvPuerta .nv-portada-contenido h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: var(--fv-tipo-titulo) !important;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+  }
+  #nvPuerta .nv-portada-descripcion {
+    max-width: 42ch;
+    margin: 16px 0 0;
+    color: #c8c8c8;
+    font-size: var(--fv-tipo-base) !important;
+    line-height: 1.65;
+  }
+  #nvPuerta .nv-portada-servicios {
+    display: grid;
+    gap: 0;
+    margin: 26px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  #nvPuerta .nv-portada-servicios li {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+    padding: 13px 0;
+    border-bottom: 1px solid #383838;
+  }
+  #nvPuerta .nv-portada-servicios li:last-child { border-bottom: 0; padding-bottom: 0; }
+  #nvPuerta .nv-portada-servicios h3 {
+    margin: 0;
+    color: #f2f2f2;
+    font-size: var(--fv-tipo-base) !important;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  #nvPuerta .nv-portada-servicios p {
+    margin: 3px 0 0;
+    color: #b8b8b8;
+    font-size: var(--fv-tipo-auxiliar) !important;
+    line-height: 1.5;
+  }
+  #nvPuerta .nv-portada-icono {
+    display: block;
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.65;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: #d6d6d6;
+  }
+  #nvPuerta .nv-portada-acciones {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding-top: 24px;
+    border-top: 1px solid #383838;
+  }
+  #nvPuerta .nv-portada-pregunta {
+    margin: 0;
+    color: #f2f2f2;
+    font-size: var(--fv-tipo-base) !important;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  #nvPuerta .nv-portada-ayuda {
+    margin: 5px 0 0;
+    color: #b8b8b8;
+    font-size: var(--fv-tipo-auxiliar) !important;
+    line-height: 1.5;
+  }
+  #nvPuerta .nv-portada .nv-auth-fvc-desktop {
+    flex-shrink: 0;
+    gap: 12px;
     min-height: 50px;
-    margin-top: 22px;
+    margin: 16px 0 0;
+    padding: 12px 16px;
     border-color: #f4f4f4 !important;
     background: #f4f4f4 !important;
     color: #171717 !important;
     font-size: var(--fv-tipo-base) !important;
     font-weight: 600;
   }
-  #nvPuerta .nv-auth-fvc-desktop .nv-auth-fvc-arrow {
+  #nvPuerta .nv-portada .nv-auth-fvc-desktop .nv-auth-fvc-arrow {
     color: #171717;
   }
-  #nvPuerta .nv-auth-fvc-desktop:hover {
+  #nvPuerta .nv-portada .nv-auth-fvc-desktop:hover {
     border-color: #e5e5e5 !important;
     background: #e5e5e5 !important;
     color: #171717 !important;
   }
-  #nvPuerta .nv-auth-fvc-desktop:focus-visible {
+  #nvPuerta .nv-portada .nv-auth-fvc-desktop:focus-visible {
     outline: 2px solid #ffffff;
     outline-offset: 4px;
   }
-  #nvPuerta .nv-navegadores-trigger-desktop {
+  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop {
     align-self: flex-start;
     justify-content: flex-start;
-    margin: 8px 0 0;
-    padding-left: 0;
+    gap: 8px;
+    min-height: 32px;
+    margin: 12px 0 0;
+    padding: 4px 0;
     color: #bdbdbd;
+    font-size: var(--fv-tipo-auxiliar) !important;
+    font-weight: 500;
+    letter-spacing: .02em;
     text-align: left;
   }
-  #nvPuerta .nv-navegadores-trigger-desktop:hover {
+  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop .nv-portada-icono {
+    width: 16px;
+    height: 16px;
+    color: inherit;
+  }
+  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop:hover {
     color: #ffffff;
   }
+}
+
+@media (min-width: 861px) and (max-width: 1100px) {
+  #nvPuerta .nv-portada { padding-inline: 32px; }
+  #nvPuerta .nv-portada .nv-auth-fvc-desktop { font-size: var(--fv-tipo-auxiliar) !important; }
+}
+@media (min-width: 861px) and (max-height: 820px) {
+  #nvPuerta .nv-portada { gap: 20px; padding-top: 24px; padding-bottom: 20px; }
+  #nvPuerta .nv-portada-marca { padding-bottom: 16px; }
+  #nvPuerta .nv-portada-contenido { padding-block: 0; }
+  #nvPuerta .nv-portada-etiqueta { margin-bottom: 10px; }
+  #nvPuerta .nv-portada-descripcion { margin-top: 12px; }
+  #nvPuerta .nv-portada-servicios { margin-top: 16px; }
+  #nvPuerta .nv-portada-servicios li { padding-block: 9px; }
+  #nvPuerta .nv-portada-servicios li:last-child { padding-bottom: 0; }
+  #nvPuerta .nv-portada-acciones { padding-top: 16px; }
+  #nvPuerta .nv-portada .nv-auth-fvc-desktop { margin-top: 12px; }
+  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop { margin-top: 8px; }
 }
