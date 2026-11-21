@@ -2,14 +2,9 @@
    ADMIN AUTH — comprueba la sesión de Supabase e `is_admin`
 
    El panel NO tiene pantalla de acceso propia. Quien llegue sin sesión,
-   sin perfil o sin permiso de administrador va a app.html, que es la
-   única puerta de la plataforma.
-
-   Tuvo una durante un tiempo porque el aviso de mantenimiento se pintaba
-   encima del acceso de la app y dejaba al dueño fuera de su propia
-   plataforma. Eso ya no pasa: sin sesión, el aviso no tapa nada
-   (js/modules/maintenance.js), así que la puerta siempre está libre y
-   sobraba pedir la contraseña dos veces en dos sitios distintos.
+   sin perfil o sin permiso de administrador va al acceso de app.html.
+   La ruta directa permite iniciar sesión durante el mantenimiento;
+   solo el rol de administrador validado puede abrir la plataforma.
 ============================================================ */
 
 (function () {
@@ -47,7 +42,7 @@
   /* Fuera del panel. El motivo no se le dice a nadie: quien no tiene
      permiso no tiene por qué saber si falló la sesión o el rol. */
   function alAcceso() {
-    window.location.replace('app.html');
+    window.location.replace('app.html?acceso=administrador');
   }
 
   A.initAuth = async function (onLoginSuccess) {

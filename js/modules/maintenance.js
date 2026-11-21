@@ -12,6 +12,8 @@
   var POLL_MS = 5000;
   var estadoActual = null;
   var esAdmin = false;
+  var sinSesionConfirmada = false;
+  var accesoDirecto = new URLSearchParams(window.location.search).get('acceso') === 'administrador';
   var revisionAcceso = 0;
   var MENSAJE_POR_DEFECTO =
     'Estamos realizando mejoras en la plataforma. ' +
@@ -115,9 +117,11 @@
 
   function applyState(estado) {
     estadoActual = estado;
-    // El aviso también cubre dispositivos nuevos y visitantes sin sesión.
-    // Solo una sesión administradora validada queda exenta.
-    if (!estado || !estado.enabled || esAdmin) {
+    var puerta = document.getElementById('nvPuerta');
+    // La ruta directa solo descubre el formulario sin sesión. Nunca
+    // concede una excepción a la plataforma ni a sus consultas.
+    var mostrarAcceso = accesoDirecto && sinSesionConfirmada && puerta && !puerta.hidden;
+    if (!estado || !estado.enabled || esAdmin || mostrarAcceso) {
       quitarAviso();
       return;
     }
@@ -127,14 +131,17 @@
   async function actualizarAcceso() {
     var revision = ++revisionAcceso;
     var autorizado = false;
+    var anonimo = false;
     try {
       var auth = window.Consultia.Auth;
       var usuario = auth && await auth.getUser();
+      anonimo = !!auth && !usuario;
       var perfil = usuario && await auth.getProfile(usuario);
       autorizado = !!(perfil && perfil.id === usuario.id && perfil.is_admin === true);
     } catch (e) { /* Sin un perfil validado no se concede la excepción. */ }
     if (revision !== revisionAcceso) return;
     esAdmin = autorizado;
+    sinSesionConfirmada = anonimo;
     applyState(estadoActual);
   }
 
@@ -172,6 +179,7 @@
       if (evento !== 'SIGNED_OUT' && evento !== 'SIGNED_IN' && evento !== 'USER_UPDATED') return;
       revisionAcceso++;
       esAdmin = false;
+      sinSesionConfirmada = evento === 'SIGNED_OUT';
       applyState(estadoActual);
       // Supabase no debe recibir consultas dentro del bloqueo de su callback.
       if (evento !== 'SIGNED_OUT') setTimeout(actualizarAcceso, 0);

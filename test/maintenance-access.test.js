@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const path = require('node:path');
 
-function fixture(initialRole) {
+function fixture(initialRole, directLogin = false) {
   const nodes = new Map();
   const classes = new Set();
   function element() {
@@ -49,8 +49,8 @@ function fixture(initialRole) {
     supabase: { rpc: async () => ({ data: { enabled: true }, error: null }) },
   };
   const context = vm.createContext({
-    Consultia, document, navigator: {}, console, setTimeout, clearInterval, setInterval: () => 1,
-    window: { Consultia, addEventListener() {} },
+    Consultia, document, navigator: {}, console, URLSearchParams, setTimeout, clearInterval, setInterval: () => 1,
+    window: { Consultia, location: { search: directLogin ? '?acceso=administrador' : '' }, addEventListener() {} },
   });
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../js/modules/maintenance.js'), 'utf8'), context);
   return {
@@ -69,6 +69,29 @@ test('administrator can use the app while maintenance remains enabled', async ()
   assert.equal(app.blocked(), false);
   app.maintenance.applyState({ enabled: true });
   assert.equal(app.blocked(), false);
+});
+
+test('direct login allows an anonymous administrator to authenticate during maintenance', async () => {
+  const app = fixture(null, true);
+  await app.flush();
+  assert.equal(app.blocked(), false);
+  app.maintenance.applyState({ enabled: true });
+  assert.equal(app.blocked(), false, 'polling must preserve the direct login form');
+  app.authEvent('SIGNED_IN', 'admin');
+  await app.flush();
+  assert.equal(app.blocked(), false);
+});
+
+test('direct login never exempts a regular account, including after signing in', async () => {
+  const app = fixture(null, true);
+  await app.flush();
+  app.authEvent('SIGNED_IN', 'member');
+  assert.equal(app.blocked(), true, 'login immediately restores maintenance until the role is validated');
+  await app.flush();
+  assert.equal(app.blocked(), true);
+  const existing = fixture('member', true);
+  await existing.flush();
+  assert.equal(existing.blocked(), true);
 });
 
 test('regular accounts remain blocked without an administrator shortcut', async () => {
