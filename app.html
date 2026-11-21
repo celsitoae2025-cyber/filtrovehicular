@@ -69,7 +69,7 @@
 <link rel="stylesheet" href="css/puerta-entrada.css?v=30">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
 <link rel="stylesheet" href="css/interfaz-tipografia.css?v=22">
-<link rel="stylesheet" href="css/plataforma.css?v=23">
+<link rel="stylesheet" href="css/plataforma.css?v=24">
 </head>
 <body class="nv-body">
 
@@ -432,11 +432,8 @@
       <a class="nv-nav" href="#cuenta" data-ir="cuenta"><svg><use href="#fv-cuenta"/></svg><span>Cuenta</span></a>
     </nav>
 
-    <!-- El Duplicado CITV abre su propio trámite; Infracciones lleva
-         a las consultas por regiones. -->
-    <span class="nv-lado-titulo">Servicios adicionales</span>
-    <nav class="nv-lado-nav" aria-label="Servicios adicionales">
-      <button class="nv-nav" type="button" id="navCitv"><svg><use href="#fv-citv"/></svg><span>Duplicado CITV</span></button>
+    <span class="nv-lado-titulo">Consultas gratuitas</span>
+    <nav class="nv-lado-nav" aria-label="Consultas gratuitas">
       <a class="nv-nav" href="#regiones" data-ir="regiones"><svg><use href="#fv-region"/></svg><span>Infracciones por regiones</span></a>
     </nav>
 
@@ -582,16 +579,8 @@
         </section>
 
         <div class="nv-recursos">
-        <section class="nv-panel nv-complementarios" aria-labelledby="nvComplementariosTitulo">
-          <h2 id="nvComplementariosTitulo">Trámites y servicios</h2>
-          <button class="nv-tramite nv-citv-acceso" type="button" data-citv>
-            <svg aria-hidden="true"><use href="#fv-citv"/></svg><span>Duplicado CITV</span><svg class="nv-servicio-flecha" aria-hidden="true"><use href="#fv-ir"/></svg>
-          </button>
-          <details class="nv-sunarp nv-registrales" id="nvRegistrales">
-            <summary class="nv-servicios-resumen">
-              <svg aria-hidden="true"><use href="#fv-legal"/></svg><span>Servicios SUNARP</span><small>5 accesos</small>
-              <svg class="nv-servicios-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
-            </summary>
+        <section class="nv-panel nv-complementarios nv-registrales" id="nvRegistrales" aria-labelledby="nvComplementariosTitulo">
+          <header class="nv-recursos-cabecera"><h2 id="nvComplementariosTitulo">Servicios SUNARP</h2><span>5 accesos</span></header>
           <div class="nv-sunarp-grid">
             <a class="nv-sunarp-tarjeta" href="https://vigenciaexpress.sunarp.gob.pe/vigenciaexpress/#/busqueda" target="_blank" rel="noopener noreferrer" aria-label="Abrir Vigencia Express, certificado de vigencia de poder">
               <img src="assets/services/sunarp-vigencia-express.png" alt="" loading="lazy" decoding="async">
@@ -614,7 +603,6 @@
               <span class="nv-sunarp-caption">Certificado vehicular</span>
             </a>
           </div>
-          </details>
         </section>
 
         <section class="nv-gratuitas" aria-labelledby="nvGratuitasTitulo">
@@ -909,7 +897,7 @@
 <script src="js/shared/auth.js?v=28"></script>
 <script src="js/shared/turnstile.js?v=7"></script>
 <script src="js/shared/interior-icons.js?v=3"></script>
-<script src="js/nueva/nucleo.js?v=27"></script>
+<script src="js/nueva/nucleo.js?v=28"></script>
 <script src="js/nueva/acceso.js?v=28"></script>
 <script src="js/shared/credit-packages.js?v=1"></script>
 <script src="js/nueva/planes-portada.js?v=1"></script>
@@ -944,7 +932,7 @@
 <script src="js/modules/reporte-veredicto.js?v=4"></script>
 <script src="js/modules/metapla-report.js?v=32"></script>
 <script src="js/modules/metapla-view.js?v=7"></script>
-<script src="js/modules/filter.js?v=68"></script>
+<script src="js/modules/filter.js?v=69"></script>
 <script src="js/modules/combo-buscador.js?v=5"></script>
 
 <!-- El Duplicado CITV: la hoja, el dibujante del PDF y el trámite. -->
@@ -953,9 +941,9 @@
 <script src="js/modules/citv-aviso.js?v=10"></script>
 
 <script src="js/shared/vehicles.js?v=1"></script>
-<script src="js/nueva/pantallas.js?v=33"></script>
+<script src="js/nueva/pantallas.js?v=34"></script>
 <script src="js/nueva/nombres.js?v=1"></script>
-<script src="js/nueva/servicios.js?v=16"></script>
+<script src="js/nueva/servicios.js?v=17"></script>
 
 <!-- Lo que corre por su cuenta, igual que en la plataforma de siempre:
      el aviso de pago acreditado, el soporte por WhatsApp, los carteles,

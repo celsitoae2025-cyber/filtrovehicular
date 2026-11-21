@@ -39,7 +39,6 @@
   var catalogo = [];
   var reporteDestacado = null;
   var textoBuscado = '';
-  var LIMITE_INICIAL = 6;
   var datoPendiente = null;
   var ICONOS_CATEGORIA = {
     todas: 'resumen', filter: 'placa', vehiculos: 'vehiculo', reniec: 'reniec',
@@ -53,7 +52,7 @@
     '/tiv': 'tarjeta-vehicular', '/tive': 'tarjeta-vehicular', '/tiveg': 'tarjeta-vehicular',
     '/lplaca': 'registro', '/ivehi': 'registro',
     '/soat': 'poliza', '/hsoat': 'historial-seguro', '/hsoat2': 'historial-seguro',
-    '/citv': 'citv', '/mtc': 'reniec', '/mtcb': 'puntos', '/record': 'historial',
+    '/citv': 'citv', '/mtc': 'reniec', '/mtcb': 'puntos', '/record': 'historial', '/reve': 'historial',
     '/csat': 'policia', '/sat': 'papeleta',
     '/sun': 'propiedad', '/sunb': 'propiedad', '/pro': 'propiedad', '/propdf': 'propiedad',
     '/dnit': 'reniec', '/dniv': 'reniec', '/dnivel': 'reniec', '/dnis': 'reniec', '/dnib': 'reniec', '/dox': 'reniec',
@@ -128,7 +127,7 @@
 
   function filaCatalogo(c) {
     var comando = (c.comando || '').trim().toLowerCase().split(/\s+/, 1)[0];
-    var icono = Object.hasOwn(ICONOS_CONSULTA, comando) ? ICONOS_CONSULTA[comando] : iconoCategoria(c.categoria);
+    var icono = c.accion === 'citv' ? 'citv' : (Object.hasOwn(ICONOS_CONSULTA, comando) ? ICONOS_CONSULTA[comando] : iconoCategoria(c.categoria));
     return '<button type="button" class="nv-op" data-id="' + esc(c.id) + '">' +
       '<span class="nv-op-ico" aria-hidden="true"><svg><use href="#fv-' + icono + '"/></svg></span>' +
       '<span class="nv-op-principal"><span class="nv-op-nombre">' + esc(c.nombre) + '</span>' +
@@ -149,95 +148,18 @@
       if (categoriaActiva !== 'todas' && c.categoria !== categoriaActiva) return false;
       return !q || NV.llano(c.nombre + ' ' + nombreCat(c.categoria)).indexOf(q) !== -1;
     });
-    var primeras = lista.slice(0, LIMITE_INICIAL);
-    var adicionales = lista.slice(LIMITE_INICIAL);
     var totalResultados = lista.length + (reporteVisible ? 1 : 0);
     $('nvCatalogoTitulo').textContent = q ? 'Resultados de búsqueda' : 'Consultas disponibles';
     $('nvCatalogoInfo').textContent = totalResultados + ' resultado' + (totalResultados === 1 ? '' : 's');
     $('nvAbrirBusqueda').classList.toggle('tiene-busqueda', Boolean(q));
     $('nvLimpiarBusqueda').hidden = !textoBuscado;
     $('ctaReporteBtn').hidden = !reporteVisible;
-    var contenido = primeras.length ? grupoCatalogo(primeras) : '';
-    if (adicionales.length) {
-      contenido += '<div class="nv-catalogo-adicional" id="nvCatalogoAdicional" aria-hidden="true" inert>' +
-        '<div class="nv-catalogo-adicional-filas">' + grupoCatalogo(adicionales) + '</div></div>';
-    }
+    var contenido = lista.length ? grupoCatalogo(lista) : '';
     if (!lista.length && !reporteVisible) contenido = '<p class="nv-vacio">Sin coincidencias. Prueba otra palabra o categoría.</p>';
     $('nvCatalogo').innerHTML = contenido;
     marcarElegida();
   }
 
-  function mostrarConsultasAdicionales(adicional, mostrar) {
-    // El foco puede estar en una de estas filas al desplazarse con el teclado.
-    if (!mostrar && adicional.contains(document.activeElement)) return;
-    adicional.toggleAttribute('inert', !mostrar);
-    adicional.setAttribute('aria-hidden', String(!mostrar));
-  }
-
-  function conectarDesplazamientoCatalogo(menu, limites, ajustarMenu) {
-    var yAnterior = Math.max(0, window.scrollY);
-    var fotogramaPendiente = false;
-    window.addEventListener('scroll', function () {
-      if (fotogramaPendiente) return;
-      fotogramaPendiente = true;
-      window.requestAnimationFrame(function () {
-        fotogramaPendiente = false;
-        var y = Math.max(0, window.scrollY);
-        var avance = y - yAnterior;
-        yAnterior = y;
-        if (menu.open) {
-          ajustarMenu();
-          return;
-        }
-        var adicional = $('nvCatalogoAdicional');
-        if (!avance || !adicional || !adicional.getClientRects().length) return;
-        var borde = adicional.getBoundingClientRect().top;
-        var fin = limites().inferior;
-        var plegado = adicional.hasAttribute('inert');
-        // Inicia el despliegue antes de que las tarjetas lleguen al área visible.
-        if (avance > 0 && plegado && borde <= fin + 48) {
-          mostrarConsultasAdicionales(adicional, true);
-        } else if (avance < 0 && !plegado && (borde >= fin + 80 || y <= 1)) {
-          mostrarConsultasAdicionales(adicional, false);
-        }
-      });
-    }, { passive: true });
-
-    $('nvCatalogo').addEventListener('focusin', function (e) {
-      var adicional = $('nvCatalogoAdicional');
-      if (adicional && e.target === adicional.previousElementSibling.lastElementChild && e.target.matches(':focus-visible')) {
-        mostrarConsultasAdicionales(adicional, true);
-      }
-    });
-
-    // En una pantalla alta se puede llegar al inicio sin que cambie scrollY.
-    function ajustarSinDesplazamiento(avance) {
-      var adicional = $('nvCatalogoAdicional');
-      if (menu.open || !adicional || !adicional.getClientRects().length) return;
-      var sinScroll = document.scrollingElement.scrollHeight <= window.innerHeight + 1;
-      if (sinScroll || (avance < 0 && window.scrollY <= 1 && !adicional.inert)) {
-        mostrarConsultasAdicionales(adicional, avance > 0);
-      }
-    }
-    var principal = $('nvExplorar').closest('.nv-principal');
-    principal.addEventListener('wheel', function (e) {
-      if (!e.ctrlKey && e.deltaY) ajustarSinDesplazamiento(e.deltaY);
-    }, { passive: true });
-    var inicioTacto = null;
-    principal.addEventListener('touchstart', function (e) {
-      inicioTacto = e.touches.length === 1 ? e.touches[0].clientY : null;
-    }, { passive: true });
-    principal.addEventListener('touchend', function (e) {
-      if (inicioTacto !== null) {
-        var avance = inicioTacto - e.changedTouches[0].clientY;
-        if (Math.abs(avance) > 28) ajustarSinDesplazamiento(avance);
-      }
-      inicioTacto = null;
-    }, { passive: true });
-  }
-
-  /* La fila de la consulta que está puesta en el desplegable se marca:
-     se ve de un vistazo qué se va a lanzar. */
   function marcarElegida() {
     var sel = document.querySelector('#filterComboPanel .combo-option.selected');
     var id = !$('nvConsultaSeleccion').hidden && sel ? sel.dataset.id : '';
@@ -291,15 +213,19 @@
   NV.mostrarBuscador = mostrarBuscador;
 
   function elegir(id) {
-    if (C.setFilterOption) C.setFilterOption(id);
+    var item = catalogo.find(function (c) { return c.id === id; });
+    if (item && item.accion === 'citv') {
+      if (C.CitvAviso && C.CitvAviso.abrir) C.CitvAviso.abrir();
+      return;
+    }
+    if (C.setFilterOption) item = C.setFilterOption(id) || item;
     var combo = $('filterCombo');
     if (combo) combo.classList.remove('open');
     marcarElegida();
-    var item = catalogo.find(function (c) { return c.id === id; });
     mostrarBuscador(item);
     if (NV.actualizarModoNombre) NV.actualizarModoNombre(item);
     if (datoPendiente) {
-      if (item && item.categoria === datoPendiente.categoria &&
+      if (item && item.categoria === (datoPendiente.categoria === 'vehiculos' ? 'filter' : datoPendiente.categoria) &&
           item.tipo_dato === datoPendiente.tipo &&
           !(item.comando && item.comando.indexOf('/nm') === 0)) {
         $('filter-input').value = datoPendiente.valor;
@@ -317,7 +243,7 @@
       if (NV.cerrarDesdeCapa) NV.cerrarDesdeCapa('consulta');
       volverAlCatalogo();
     }
-    categoriaActiva = cat;
+    categoriaActiva = cat === 'vehiculos' ? 'filter' : cat;
     textoBuscado = '';
     $('nvBuscarConsulta').value = '';
     pintarCategorias();
@@ -405,7 +331,7 @@
     }
     menuCategorias.addEventListener('toggle', acomodarCategorias);
     window.addEventListener('resize', acomodarCategorias);
-    conectarDesplazamientoCatalogo(menuCategorias, limitesVisibles, acomodarCategorias);
+    window.addEventListener('scroll', acomodarCategorias, { passive: true });
     $('nvCategoriaOpciones').addEventListener('click', function (e) {
       var b = e.target.closest('.nv-categoria-opcion');
       if (!b) return;
@@ -458,7 +384,10 @@
 
     var espera = (C.FilterView && C.FilterView.whenReady) ? C.FilterView.whenReady() : Promise.resolve();
     espera.then(function () {
-      catalogo = (C.FilterView && C.FilterView.getCatalog()) || [];
+      catalogo = ((C.FilterView && C.FilterView.getCatalog()) || []).concat([{
+        id: 'tramite-duplicado-citv', nombre: 'Duplicado CITV', categoria: 'filter',
+        tipo_dato: 'placa', accion: 'citv'
+      }]);
       reporteDestacado = catalogo.find(function (c) { return ((c && c.comando) || '').indexOf('/mpla') === 0; }) ||
         catalogo.find(esReporteDestacado) || null;
       $('ctaReporteBtn').hidden = !reporteDestacado;

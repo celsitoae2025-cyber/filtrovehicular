@@ -129,11 +129,11 @@
   function pintarServicios() {
     $('nvServicios').innerHTML = GRUPOS_GRATIS.map(function (grupo) {
       var lista = SERVICIOS.filter(function (s) { return (DATOS_GRATIS[s.nombre] || ['otros'])[0] === grupo.id; });
-      return '<details class="nv-gratis-grupo" aria-labelledby="nvGratisGrupo-' + grupo.id + '">' +
-        '<summary class="nv-gratis-grupo-cab"><h3 id="nvGratisGrupo-' + grupo.id + '">' + esc(grupo.titulo) + '</h3>' +
-        '<span>' + lista.length + ' accesos</span><svg class="nv-servicios-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>' +
+      return '<section class="nv-gratis-grupo" aria-labelledby="nvGratisGrupo-' + grupo.id + '">' +
+        '<header class="nv-gratis-grupo-cab"><h3 id="nvGratisGrupo-' + grupo.id + '">' + esc(grupo.titulo) + '</h3>' +
+        '<span>' + lista.length + ' accesos</span></header>' +
         '<div class="nv-gratis-grid">' + lista.map(tarjetaGratis).join('') + '</div>' +
-      '</details>';
+      '</section>';
     }).join('');
     var cantidad = $('nvGratisCantidad');
     if (cantidad) cantidad.textContent = SERVICIOS.length + ' accesos';

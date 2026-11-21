@@ -11,6 +11,7 @@
   window.Consultia = window.Consultia || {};
 
   var catalog = [];
+  var catalogAliases = Object.create(null);
   var currentConsulta = null;
   var catalogReadyPromise = null;
   var consultaEnCurso = false;
@@ -669,8 +670,7 @@
      del telefono (js/modules/app-movil.js): una sola manera de nombrar
      las cosas en toda la aplicacion. */
   var GRUPOS = {
-    filter:     'Consulta vehicular',
-    vehiculos:  'Vehículos',
+    filter:     'Vehicular',
     reniec:     'Reniec',
     sunarp:     'Sunarp',
     telefonia:  'Telefonía',
@@ -679,14 +679,34 @@
     delitos:    'Justicia',
     extras:     'Extras'
   };
-  var ORDEN_GRUPOS = ['filter', 'vehiculos', 'reniec', 'sunarp', 'telefonia',
+  var ORDEN_GRUPOS = ['filter', 'reniec', 'sunarp', 'telefonia',
                       'familiares', 'financiero', 'delitos', 'extras'];
 
   /* Deja el catalogo listo para pintarlo de un tiron: fuera lo que no
      tiene grupo (premium), luego por grupo y, dentro del grupo, por el
      mismo `orden` que ya traia cada consulta. */
   function ordenarPorGrupo(filas) {
-    return filas
+    var vehiculares = Object.create(null);
+    catalogAliases = Object.create(null);
+    // Las consultas de la categoría principal conservan su posición y precio.
+    var unificadas = filas.filter(function (c) { return c.categoria !== 'vehiculos'; })
+      .concat(filas.filter(function (c) { return c.categoria === 'vehiculos'; }))
+      .filter(function (c) {
+        if (c.categoria !== 'filter' && c.categoria !== 'vehiculos') return true;
+        var comando = (c.comando || '').trim().toLowerCase().split(/\s+/, 1)[0];
+        if (comando === '/tiv') comando = '/tive';
+        var formato = c.respuesta_formato || {};
+        var clave = comando + '|' + c.tipo_dato + '|' + (formato.pdf === true ? 'pdf' : 'texto');
+        if (vehiculares[clave]) {
+          catalogAliases[c.id] = vehiculares[clave];
+          return false;
+        }
+        vehiculares[clave] = c.id;
+        return true;
+      }).map(function (c) {
+        return c.categoria === 'vehiculos' ? Object.assign({}, c, { categoria: 'filter' }) : c;
+      });
+    return unificadas
       .filter(function (c) { return ORDEN_GRUPOS.indexOf(c.categoria) !== -1; })
       .sort(function (a, b) {
         var ga = ORDEN_GRUPOS.indexOf(a.categoria);
@@ -1398,6 +1418,7 @@
 
   function selectByOptionId(optionId) {
     if (!optionId || !catalog.length) return;
+    optionId = catalogAliases[optionId] || optionId;
     var c = catalog.find(function (x) { return x.id === optionId; });
     if (!c) return;
     setConsulta(c);
@@ -1407,6 +1428,7 @@
         o.classList.toggle('selected', o.dataset.id === optionId);
       });
     }
+    return c;
   }
 
   Consultia.setFilterOption = selectByOptionId;

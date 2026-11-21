@@ -59,7 +59,7 @@
   };
 
   NV.CATEGORIAS = {
-    filter:     'Consulta vehicular',
+    filter:     'Vehicular',
     vehiculos:  'Vehículos',
     reniec:     'Reniec',
     sunarp:     'Sunarp',
@@ -71,7 +71,7 @@
     premium:    'Premium',
     general:    'General'
   };
-  NV.ORDEN = ['filter', 'vehiculos', 'reniec', 'sunarp', 'telefonia', 'familiares', 'financiero', 'delitos', 'extras'];
+  NV.ORDEN = ['filter', 'reniec', 'sunarp', 'telefonia', 'familiares', 'financiero', 'delitos', 'extras'];
 
   NV.whatsapp = function (texto) {
     return 'https://wa.me/' + C.WHATSAPP_NUMBER + '?text=' + encodeURIComponent(texto || '');

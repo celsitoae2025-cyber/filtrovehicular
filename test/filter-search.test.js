@@ -40,7 +40,7 @@ async function search(options = {}) {
   const C = {
     Auth: { getUser: async () => { calls.auth++; return options.auth ? options.auth() : { id: 'unit-test-only' }; } },
     ConsultaRunner: {
-      loadCatalog: async () => [{ id: 'sample', categoria: 'filter', nombre: 'Consulta por placa', tipo_dato: 'placa', precio_venta: 5, comando: '/sample' }],
+      loadCatalog: async () => options.catalog || [{ id: 'sample', categoria: 'filter', nombre: 'Consulta por placa', tipo_dato: 'placa', precio_venta: 5, comando: '/sample' }],
       ejecutarConsultaConCobro: async () => { calls.runner++; return options.run ? options.run(calls.runner, response) : response; },
     },
     toast: notice => calls.notices.push(notice),
@@ -180,4 +180,26 @@ test('la espera muestra un estado accesible y se reemplaza al recibir el resulta
   assert.doesNotMatch(s.elements['filter-result-body'].innerHTML, /fv-query-loading/);
   assert.equal(s.elements['filter-consultar'].disabled, false);
   assert.equal(s.elements['filter-input'].disabled, false);
+});
+
+test('Vehicular reúne las categorías, elimina duplicados y conserva variantes de texto y PDF', async () => {
+  const item = (id, categoria, comando, pdf) => ({ id, categoria, comando, nombre: id, tipo_dato: 'placa', precio_venta: 5, respuesta_formato: { pdf } });
+  const original = [
+    item('placa-principal', 'filter', '/placa {valor}', false),
+    item('placa-anterior', 'vehiculos', '/placa {valor}', false),
+    item('soat-texto', 'filter', '/soat {valor}', false),
+    item('soat-pdf', 'filter', '/soat {valor}', true),
+    item('soat-pdf-anterior', 'vehiculos', '/soat {valor}', true),
+    item('tive-principal', 'filter', '/tive {valor}', true),
+    item('tive-anterior', 'vehiculos', '/tiv {valor}', true),
+  ];
+  const s = await search({ catalog: original });
+  const catalog = s.C.FilterView.getCatalog();
+  assert.deepEqual(Array.from(catalog, c => c.id), ['placa-principal', 'soat-pdf', 'soat-texto', 'tive-principal']);
+  assert.ok(catalog.every(c => c.categoria === 'filter'));
+  assert.equal(original[1].categoria, 'vehiculos');
+  s.C.setFilterOption('tive-anterior');
+  assert.equal(s.elements.filterComboText.textContent, 'tive-principal');
+  s.C.setFilterOption('placa-anterior');
+  assert.equal(s.elements.filterComboText.textContent, 'placa-principal');
 });
