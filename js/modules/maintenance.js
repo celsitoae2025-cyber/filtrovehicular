@@ -12,7 +12,7 @@
   var POLL_MS = 5000;
   var estadoActual = null;
   var esAdmin = false;
-  var accesoSolicitado = false;
+  var sinSesion = false;
   var revisionAcceso = 0;
   var MENSAJE_POR_DEFECTO =
     'Estamos realizando mejoras en la plataforma. ' +
@@ -83,7 +83,6 @@
           '</svg>' +
           '<span>Comprobar disponibilidad</span>' +
         '</button>' +
-        '<button type="button" class="mnt-access" id="mntAccess">Acceso administrador</button>' +
         '<p class="mnt-footer">Esta pantalla comprueba la disponibilidad automáticamente.</p>' +
       '</div>';
     // El aviso permanece legible mientras se renueva una hoja antigua.
@@ -101,14 +100,6 @@
     document.documentElement.classList.add('mnt-locked');
     actualizarEstilosAviso();
 
-    document.getElementById('mntAccess').addEventListener('click', function () {
-      var acceso = window.Consultia.AuthModals;
-      if (!acceso || !acceso.openLogin) return;
-      accesoSolicitado = true;
-      quitarAviso();
-      acceso.openLogin();
-    });
-
     var btn = document.getElementById('mntRetry');
     if (btn) btn.addEventListener('click', async function () {
       btn.disabled = true;
@@ -125,8 +116,9 @@
 
   function applyState(estado) {
     estadoActual = estado;
-    var puerta = document.getElementById('nvPuerta');
-    if (!estado || !estado.enabled || esAdmin || (accesoSolicitado && puerta && !puerta.hidden)) {
+    // El acceso habitual sigue disponible para identificar la cuenta.
+    // Solo una sesión administradora validada puede usar la plataforma.
+    if (!estado || !estado.enabled || esAdmin || sinSesion) {
       quitarAviso();
       return;
     }
@@ -136,14 +128,17 @@
   async function actualizarAcceso() {
     var revision = ++revisionAcceso;
     var autorizado = false;
+    var anonimo = false;
     try {
       var auth = window.Consultia.Auth;
       var usuario = auth && await auth.getUser();
+      anonimo = !!auth && !usuario;
       var perfil = usuario && await auth.getProfile(usuario);
       autorizado = !!(perfil && perfil.id === usuario.id && perfil.is_admin === true);
     } catch (e) { /* Sin un perfil validado no se concede la excepción. */ }
     if (revision !== revisionAcceso) return;
     esAdmin = autorizado;
+    sinSesion = anonimo;
     applyState(estadoActual);
   }
 
@@ -181,7 +176,7 @@
       if (evento !== 'SIGNED_OUT' && evento !== 'SIGNED_IN' && evento !== 'USER_UPDATED') return;
       revisionAcceso++;
       esAdmin = false;
-      accesoSolicitado = false;
+      sinSesion = evento === 'SIGNED_OUT';
       applyState(estadoActual);
       // Supabase no debe recibir consultas dentro del bloqueo de su callback.
       if (evento !== 'SIGNED_OUT') setTimeout(actualizarAcceso, 0);

@@ -46,7 +46,6 @@ function fixture(initialRole) {
   };
   const Consultia = {
     Auth: auth,
-    AuthModals: { openLogin() { door.hidden = false; } },
     supabase: { rpc: async () => ({ data: { enabled: true }, error: null }) },
   };
   const context = vm.createContext({
@@ -58,7 +57,7 @@ function fixture(initialRole) {
     maintenance: Consultia.Maintenance,
     blocked: () => classes.has('mnt-locked'),
     async flush() { await new Promise(resolve => setTimeout(resolve, 5)); },
-    loginLink() { document.getElementById('mntAccess').listeners.click(); },
+    noticeHtml() { return nodes.get('maintenanceOverlay')?.innerHTML || ''; },
     authEvent(event, nextRole) { role = nextRole; door.hidden = !!nextRole; authListener(event); },
     delayProfile(promise) { delayedProfile = promise; },
   };
@@ -72,18 +71,16 @@ test('administrator can use the app while maintenance remains enabled', async ()
   assert.equal(app.blocked(), false);
 });
 
-test('regular accounts and anonymous visitors remain blocked', async () => {
-  for (const role of ['member', null]) {
-    const app = fixture(role);
-    await app.flush();
-    assert.equal(app.blocked(), true);
-  }
+test('regular accounts remain blocked without an administrator shortcut', async () => {
+  const app = fixture('member');
+  await app.flush();
+  assert.equal(app.blocked(), true);
+  assert.doesNotMatch(app.noticeHtml(), /mntAccess|Acceso administrador/);
 });
 
-test('administrator can reach login and gain access without disabling maintenance', async () => {
+test('normal login automatically recognizes an administrator during maintenance', async () => {
   const app = fixture(null);
   await app.flush();
-  app.loginLink();
   assert.equal(app.blocked(), false);
   app.maintenance.applyState({ enabled: true });
   assert.equal(app.blocked(), false, 'maintenance polling must not cover the login form');
@@ -95,16 +92,18 @@ test('administrator can reach login and gain access without disabling maintenanc
 test('login with a regular account does not grant a maintenance exception', async () => {
   const app = fixture(null);
   await app.flush();
-  app.loginLink();
   app.authEvent('SIGNED_IN', 'member');
   await app.flush();
   assert.equal(app.blocked(), true);
 });
 
-test('signing out revokes the administrator exception immediately', async () => {
+test('signing out restores normal login and does not grant the next account admin access', async () => {
   const app = fixture('admin');
   await app.flush();
   app.authEvent('SIGNED_OUT', null);
+  assert.equal(app.blocked(), false);
+  app.authEvent('SIGNED_IN', 'member');
+  await app.flush();
   assert.equal(app.blocked(), true);
 });
 
@@ -116,6 +115,9 @@ test('a late administrator profile cannot reopen access after sign-out', async (
   app.authEvent('USER_UPDATED', 'admin');
   await app.flush();
   app.authEvent('SIGNED_OUT', null);
+  app.delayProfile(null);
+  app.authEvent('SIGNED_IN', 'member');
+  await app.flush();
   resolveProfile({ id: 'account', is_admin: true });
   await app.flush();
   assert.equal(app.blocked(), true);

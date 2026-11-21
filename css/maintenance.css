@@ -17,14 +17,11 @@ html.mnt-locked, html.mnt-locked body { overflow: hidden; }
 .mnt-retry:hover { background: #333; }
 .mnt-retry:focus-visible { outline: 2px solid #7ac943; outline-offset: 3px; }
 .mnt-retry:disabled { opacity: .65; cursor: wait; }
-.mnt-access { display: block; margin: 12px auto 0; padding: 6px 10px; border: 0; border-radius: 4px; background: transparent; color: #636b65; font: inherit; font-size: 12px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
-.mnt-access:hover { color: #1b1b1b; }
-.mnt-access:focus-visible { outline: 2px solid #7ac943; outline-offset: 2px; }
 .mnt-footer { margin: 14px 0 0; color: #777e79; font-size: 12px; line-height: 1.5; }
 @layer fv-componentes-internos {
   .mnt-overlay :is(.mnt-title,.fv-wordmark) { font-size: 22px !important; }
   .mnt-overlay :is(.mnt-text,.mnt-retry) { font-size: 16px !important; }
-  .mnt-overlay :is(.mnt-status,.mnt-footer,.mnt-access) { font-size: 12px !important; }
+  .mnt-overlay :is(.mnt-status,.mnt-footer) { font-size: 12px !important; }
 }
 
 .mnt-banner {
