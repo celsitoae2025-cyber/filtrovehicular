@@ -168,9 +168,9 @@ values
    'Consulta papeletas SAT por placa.',
    'premium', 'VEHÍCULOS', 'placa', 'recupsd', '/sat {valor}', 0, 4, 54, true),
 
-  ('SAT CAPTURAS',
-   'Consulta capturas vehiculares SAT por placa.',
-   'premium', 'VEHÍCULOS', 'placa', 'recupsd', '/csat {valor}', 0, 4, 55, true),
+  ('RQ Orden de captura',
+   'Consulta órdenes de captura vehicular por placa.',
+   'premium', 'VEHÍCULOS', 'placa', 'ghostdataxxx', '/rqv {valor}', 0, 4, 55, true),
 
   -- ── FINANCIERO ───────────────────────────────────────────
   ('REPORTE FINANCIERO',

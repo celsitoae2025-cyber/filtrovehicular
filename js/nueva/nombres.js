@@ -1,5 +1,5 @@
 /* ============================================================
-   BÚSQUEDA POR NOMBRES (/nm)
+   BÚSQUEDA POR NOMBRES (/nm y /nmd)
 
    Unas pocas consultas (Reniec: recuperar el segundo apellido, etc.)
    no piden un solo dato sino tres: nombres, apellido paterno y
@@ -21,7 +21,7 @@
   var activo = false;
 
   function esDeNombre(consulta) {
-    return !!(consulta && consulta.comando && consulta.comando.indexOf('/nm') === 0);
+    return !!(consulta && /^\/(?:nm|nmd)(?:\s|$)/i.test(consulta.comando || ''));
   }
 
   /* nombres|apPaterno|apMaterno, con los espacios internos de cada campo

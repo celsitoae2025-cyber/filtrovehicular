@@ -203,7 +203,7 @@
         : null;
       var nmRow = $(prefix + '-nm-row');
 
-      if (c && c.comando && c.comando.indexOf('/nm') === 0) {
+      if (c && /^\/(?:nm|nmd)(?:\s|$)/i.test(c.comando || '')) {
         if (formRow) formRow.style.display = 'none';
         if (!nmRow) {
           var panelParent = formRow ? formRow.parentNode : null;
@@ -243,9 +243,9 @@
     //       por "+" (apellidos) o "," (nombres).
     function formatValueForCommand(consulta, valor) {
       if (!consulta || !consulta.comando) return { value: valor };
-      if (consulta.comando.indexOf('/nm') === 0) {
+      if (/^\/(?:nm|nmd)(?:\s|$)/i.test(consulta.comando)) {
         // Si el usuario pegó "/nm ..." por error, quitamos el prefijo
-        valor = valor.replace(/^\/nm\s+/i, '').trim();
+        valor = valor.replace(/^\/(?:nm|nmd)\s+/i, '').trim();
         var partes = valor.split('|').map(function (p) { return p.trim(); });
         if (partes.length !== 3) {
           return { error: 'El formato debe ser: nombres|apellido paterno|apellido materno (3 campos separados por |)' };
@@ -283,7 +283,7 @@
       var input = $(prefix + '-input');
       if (input) {
         // Placeholder especial para /nm (búsqueda por nombres)
-        if (c.comando && c.comando.indexOf('/nm') === 0) {
+        if (/^\/(?:nm|nmd)(?:\s|$)/i.test(c.comando || '')) {
           input.placeholder = 'nombres|apellido paterno|apellido materno';
           input.maxLength = 120;
           input.inputMode = 'text';
@@ -375,7 +375,7 @@
       var hasMedia = pdfs.length > 0 || photos.length > 0;
       var hasFacial = p.facial && p.facial.length > 0;
       var hasTabla  = p.tabla && p.tabla.filas && p.tabla.filas.length > 0;
-      var isNm = !!(currentConsulta && /^\/nm\b/i.test(currentConsulta.comando || ''));
+      var isNm = !!(currentConsulta && /^\/(?:nm|nmd)(?:\s|$)/i.test(currentConsulta.comando || ''));
       var nmHtml = isNm ? renderNmPersonas(p, botones, valorConsultado) : '';
       var esArbol = currentConsulta && currentConsulta.comando && /^\/ag\b/i.test(currentConsulta.comando);
       var htmlArbol = esArbol ? renderArbolGenealogico(p, valorConsultado) : '';
@@ -392,7 +392,10 @@
       // genérico igual arma un informe propio a partir de esas líneas.
       var pParaPdf = p;
       var abrirVisor = false;   // el documento es el resultado, no un adjunto
-      if (H.esRespuestaEnProceso(p)) {
+      var sinPapeletas = H.esSatSinPapeletas(p, currentConsulta && currentConsulta.comando);
+      if (sinPapeletas) {
+        html = H.htmlSatSinPapeletas(p, valorConsultado);
+      } else if (H.esRespuestaEnProceso(p)) {
         /* Antes que nada: el acuse de recibo del proveedor trae SU logo
            adjunto, y ni el aviso ni el logo son el resultado. */
         html = H.htmlEnProceso();
@@ -474,7 +477,11 @@
       var status = $(statusId());
       if (status) {
         status.classList.remove('status-empty', 'status-loading');
-        if (botones.length > 0 && !hasMedia && !isNm) {
+        if (sinPapeletas) {
+          status.classList.remove('status-ok');
+          status.classList.add('status-empty');
+          status.innerHTML = '<span class="status-dot"></span> Sin papeletas';
+        } else if (botones.length > 0 && !hasMedia && !isNm) {
           status.classList.remove('status-ok');
           status.classList.add('status-empty');
           status.innerHTML = '<span class="status-dot"></span> Elige una opción';
@@ -586,7 +593,7 @@
         }
         valor = selectedFile.name;
         photoOpts = { base64: selectedFileBase64, filename: selectedFile.name };
-      } else if (currentConsulta.comando && currentConsulta.comando.indexOf('/nm') === 0) {
+      } else if (/^\/(?:nm|nmd)(?:\s|$)/i.test(currentConsulta.comando || '')) {
         var nmNombres = $(prefix + '-nm-nombres');
         var nmApPat = $(prefix + '-nm-appat');
         var nmApMat = $(prefix + '-nm-apmat');
@@ -619,7 +626,7 @@
         }
         valor = formatted.value;
         // Validación genérica por tipo_dato (solo si no es un comando con formato propio)
-        if (currentConsulta.comando && currentConsulta.comando.indexOf('/nm') !== 0) {
+        if (currentConsulta.comando && !/^\/(?:nm|nmd)(?:\s|$)/i.test(currentConsulta.comando)) {
           var err = validarValor(currentConsulta.tipo_dato, valor);
           if (err) {
             if (Consultia.toast) Consultia.toast({ type: 'error', title: 'Formato inválido', message: err });

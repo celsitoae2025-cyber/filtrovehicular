@@ -98,6 +98,18 @@
     ].join('');
   }
 
+  function esSatSinPapeletas(p, comando) {
+    return !!(p && p.sin_papeletas === true && /^\/sat(?:\s|$)/i.test(comando || ''));
+  }
+
+  function htmlSatSinPapeletas(p, placaConsultada) {
+    var placa = String(placaConsultada || p.placa || '').trim().toUpperCase();
+    return '<div class="cr-mantenimiento cr-sat-sin-papeletas" role="status">' +
+      '<h4 class="cr-mant-titulo">No cuenta con papeletas</h4>' +
+      '<p class="cr-mant-texto">Placa: <strong>' + escapeHtml(placa) + '</strong></p>' +
+      '</div>';
+  }
+
   /* â"€â"€ Text helpers â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
   /* Quita emojis y caracteres decorativos del texto visible al usuario.
 
@@ -1353,6 +1365,67 @@
     return '<div class="cr-gallery-layout">' + parts.join('') + '</div>';
   }
 
+  function renderSatBloques(p, photos) {
+    var bloques = p.bloques;
+    var usados = [];
+    var parts = ['<div class="cr-sat-resultados"><p class="cr-sat-resumen" role="status">' +
+      bloques.length + (bloques.length === 1 ? ' papeleta recibida' : ' papeletas recibidas') + '</p>'];
+
+    function renderFotos(lista, titulo) {
+      if (!lista.length) return '';
+      return '<div class="cr-bio-col cr-bio-' + (lista.length <= 4 ? lista.length : 'n') + '">' +
+        lista.map(function (m, i) {
+          var mime = /^image\/(?:jpeg|png|webp|gif)$/i.test(m.mimeType || '') ? m.mimeType : 'image/jpeg';
+          var src = escapeHtml('data:' + mime + ';base64,' + m.base64);
+          return '<div class="cr-bio-tile" data-full="' + src + '"><img src="' + src +
+            '" alt="' + escapeHtml(titulo + (lista.length > 1 ? ', imagen ' + (i + 1) : '')) + '"></div>';
+        }).join('') + '</div>';
+    }
+
+    bloques.forEach(function (bloque, index) {
+      var numero = bloque.numero == null ? index + 1 : bloque.numero;
+      var titulo = bloque.titulo || 'Papeleta ' + numero;
+      var imagenes = [];
+      (bloque.medioIndices || []).forEach(function (indice) {
+        var medio = (p.medios || [])[indice];
+        if (medio && medio.tipo === 'photo' && medio.base64 && imagenes.indexOf(medio) === -1) {
+          imagenes.push(medio);
+          usados.push(medio);
+        }
+      });
+      var secciones = prepararTextoResultado(bloque).secciones;
+      var datos = secciones.map(function (seccion) {
+        var filas = (seccion.campos || []).map(function (campo) {
+          var valor = campo.valor;
+          if (!campo.campo && /^informaci[oó]n\s+de\s+papeleta\s*:\s*\d+\s*$/i.test(valor)) {
+            return '<div class="cr-row"><span class="cr-k">Total de papeletas</span><span class="cr-v">' +
+              escapeHtml(valor.match(/\d+\s*$/)[0].trim()) + '</span></div>';
+          }
+          // Algunas respuestas SAT anteponen S/. también a las fechas.
+          // Se corrige solo su presentación, manteniendo intacto el payload.
+          if (/^(?:f\.?\s*|fecha\s+)(?:de\s+)?(?:infracci[oó]n|emisi[oó]n|vencimiento|pago)\b/i.test(campo.campo || '')) {
+            valor = valor.replace(/^S\s*\/\s*\.?\s*(?=\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b)/i, '');
+          }
+          if (!campo.campo) return '<div class="cr-row cr-row-amplia"><span class="cr-v">' + escapeHtml(valor) + '</span></div>';
+          return '<div class="cr-row' + (valor.length > 70 ? ' cr-row-amplia' : '') + '"><span class="cr-k">' +
+            escapeHtml(etiquetaResultado(campo.campo)) + '</span><span class="' + claseValor(valor) + '">' +
+            escapeHtml(valor) + '</span></div>';
+        }).join('');
+        var encabezado = seccion.titulo && !/^(?:general|datos principales)$/i.test(seccion.titulo)
+          ? '<h4>' + escapeHtml(seccion.titulo) + '</h4>' : '';
+        return '<div class="cr-sect">' + encabezado + '<div class="cr-sect-body">' + filas + '</div></div>';
+      }).join('');
+      parts.push('<article class="cr-sat-bloque" data-papeleta="' + escapeHtml(String(numero)) + '"><h4 class="cr-sat-titulo">' +
+        escapeHtml(titulo) + '</h4><div class="cr-layout"><div class="cr-data">' + datos + '</div><div class="cr-media">' +
+        renderFotos(imagenes, 'Imagen de papeleta ' + numero) + '</div></div></article>');
+    });
+    var restantes = photos.filter(function (medio) { return usados.indexOf(medio) === -1; });
+    if (restantes.length) parts.push('<section class="cr-sat-adjuntos"><h4 class="cr-sat-titulo">Imágenes adicionales</h4>' +
+      renderFotos(restantes, 'Imagen adicional') + '</section>');
+    parts.push('</div>');
+    return parts.join('');
+  }
+
   // Render de datos + fotos al costado (cuando el bot manda texto + imagen)
   // Columna de imágenes biométricas — mismo criterio de VeriNexo:
   // documento escaneado (DNI) => columna más ancha; anverso+reverso (2
@@ -1360,6 +1433,7 @@
   // defecto (foto+firma+huellas) => columna angosta de una sola foto por
   // fila, apiladas en el orden en que llegan.
   function renderDataWithMedia(p, photos) {
+    if (p && Array.isArray(p.bloques) && p.bloques.length) return renderSatBloques(p, photos);
     var esDniDoc = photos.length > 0 && /dni/i.test((photos[0] && photos[0].filename) || '');
     var esAnversoReverso = esDniDoc && photos.length === 2;
 
@@ -3174,6 +3248,8 @@
     htmlMantenimiento:       htmlMantenimiento,
     esRespuestaEnProceso:    esRespuestaEnProceso,
     htmlEnProceso:           htmlEnProceso,
+    esSatSinPapeletas:       esSatSinPapeletas,
+    htmlSatSinPapeletas:     htmlSatSinPapeletas,
     stripEmoji:              stripEmoji,
     escapeHtml:              escapeHtml,
     nombreLegibleArchivo:    nombreLegibleArchivo,

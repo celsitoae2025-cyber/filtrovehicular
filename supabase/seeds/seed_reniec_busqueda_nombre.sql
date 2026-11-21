@@ -1,5 +1,5 @@
 -- Agregar "Búsqueda por Nombre" al catálogo de Reniec
--- Usa el bot @LainData_Bot (bot_id = 'laindata') con comando /nm
+-- Usa el bot @LainDaata_Bot (bot_id = 'laindata') con comando /nmd
 -- Formato del valor: nombres|apellido_paterno|apellido_materno
 
 INSERT INTO public.consultas_catalog
@@ -7,5 +7,5 @@ INSERT INTO public.consultas_catalog
 VALUES
   ('Búsqueda por Nombre',
    'Buscar personas por nombre y apellidos en base de datos RENIEC.',
-   'reniec', 'texto', 'laindata', '/nm {valor}', 5, 5,
+   'reniec', 'texto', 'laindata', '/nmd {valor}', 5, 5,
    '{"texto": true, "imagenes": 0}'::jsonb, true, 6);

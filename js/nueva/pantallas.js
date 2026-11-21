@@ -56,7 +56,8 @@
     '/csat': 'policia', '/sat': 'papeleta',
     '/sun': 'propiedad', '/sunb': 'propiedad', '/pro': 'propiedad', '/propdf': 'propiedad',
     '/dnit': 'reniec', '/dniv': 'reniec', '/dnivel': 'reniec', '/dnis': 'reniec', '/dnib': 'reniec', '/dox': 'reniec',
-    '/nm': 'consultar', '/fab': 'cuenta', '/c4a': 'reporte', '/c4b': 'reporte', '/c4': 'reporte', '/c4i': 'certificado',
+    '/nm': 'consultar', '/nmd': 'consultar', '/fab': 'cuenta', '/c4a': 'reporte', '/c4b': 'reporte', '/c4': 'reporte', '/c4i': 'certificado',
+    '/dnion': 'reniec', '/dnivon': 'reniec', '/dnieon': 'reniec', '/c4aon': 'reporte', '/c4bon': 'reporte', '/c4ion': 'certificado',
     '/telp': 'telefonia', '/lineas': 'telefonia', '/tels': 'telefonia', '/tel': 'telefonia', '/ode': 'telefonia',
     '/operador': 'sim', '/vlop': 'sim', '/port': 'sim', '/claro': 'sim', '/bitel': 'sim', '/movistar': 'sim', '/entel': 'sim',
     '/movn': 'sim', '/movd': 'sim', '/bitx': 'sim', '/bitd': 'sim', '/cl': 'sim', '/clw': 'sim', '/cld': 'sim', '/cldni': 'sim',
@@ -250,12 +251,12 @@
     if (datoPendiente) {
       if (item && item.categoria === (datoPendiente.categoria === 'vehiculos' ? 'filter' : datoPendiente.categoria) &&
           item.tipo_dato === datoPendiente.tipo &&
-          !(item.comando && item.comando.indexOf('/nm') === 0)) {
+          !/^\/(?:nm|nmd)(?:\s|$)/i.test(item.comando || '')) {
         $('filter-input').value = datoPendiente.valor;
       }
       datoPendiente = null;
     }
-    if (window.matchMedia('(hover: hover)').matches && !(item && item.comando && item.comando.indexOf('/nm') === 0)) {
+    if (window.matchMedia('(hover: hover)').matches && !(item && /^\/(?:nm|nmd)(?:\s|$)/i.test(item.comando || ''))) {
       $('filter-input').focus();
     }
     $('nvConsultaSeleccion').scrollIntoView({ behavior: 'smooth', block: 'start' });

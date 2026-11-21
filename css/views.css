@@ -2625,6 +2625,16 @@ body.consulta-espera-abierta { overflow: hidden; }
   --cr-gallery-img-width: 100%;
 }
 
+.cr-sat-resultados { min-width: 0; padding: 18px; }
+.cr-sat-resumen { margin: 0 0 16px; font-weight: 600; }
+.cr-sat-bloque { min-width: 0; margin: 0 0 20px; border: 1px solid var(--pl-linea, #ddd); border-radius: 8px; overflow: hidden; }
+.cr-sat-bloque:last-child { margin-bottom: 0; }
+.cr-sat-titulo { margin: 0; padding: 14px 18px; border-bottom: 1px solid var(--pl-linea, #ddd); background: var(--pl-campo, #f5f5f5); font-size: inherit; font-weight: 600; }
+.cr-sat-bloque .cr-media { transform: none; }
+.cr-sat-adjuntos { min-width: 0; border: 1px solid var(--pl-linea, #ddd); border-radius: 8px; overflow: hidden; }
+.cr-sat-adjuntos > .cr-bio-col { padding: 16px; width: 100%; box-sizing: border-box; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); }
+@media (max-width: 700px) { .cr-sat-resultados { padding: 12px; } .cr-sat-titulo { padding: 12px; } }
+
 .cr-layout {
   display: grid;
   grid-template-columns: 1fr;

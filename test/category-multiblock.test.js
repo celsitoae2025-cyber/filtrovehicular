@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-async function categoryResponse(consulta, parsed) {
+async function categoryResponse(consulta, parsed, input = '11111111') {
   const classes = () => {
     const values = new Set();
     return {
@@ -53,10 +53,21 @@ async function categoryResponse(consulta, parsed) {
   const view = C.createCategoryView({ prefix, categoria: 'familiares' });
   view.init();
   await new Promise(setImmediate);
-  elements[prefix + '-input'].value = '11111111';
+  elements[prefix + '-input'].value = input;
   await elements[prefix + '-consultar'].click();
   return elements[prefix + '-result-body'].innerHTML;
 }
+
+test('SAT sin papeletas muestra placa y aviso sin mantenimiento ni descarga en la vista de categoría', async () => {
+  const html = await categoryResponse(
+    { id: 'sat', nombre: 'SAT Papeletas', comando: '/sat {valor}', tipo_dato: 'placa', precio_venta: 4 },
+    { sin_papeletas: true, placa: 'M5N535', raw: 'No hay datos para la placa M5N535. No se pudo extraer información para M5N535.', secciones: [], medios: [] },
+    'm5n535',
+  );
+  assert.match(html, /No cuenta con papeletas/);
+  assert.match(html, /Placa: <strong>M5N535<\/strong>/);
+  assert.doesNotMatch(html, /Servicio en mantenimiento|Descargar|cr-loading/);
+});
 
 test('una tabla auxiliar parcial no tapa los cuatro bloques de una consulta familiar', async () => {
   const raw = [

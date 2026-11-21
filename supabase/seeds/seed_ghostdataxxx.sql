@@ -24,7 +24,7 @@ where categoria in (
   'certificados', 'actas', 'vip', 'facial'
 );
 
--- 2) Insertar el catálogo nuevo, todo bajo bot_id='ghostdataxxx'.
+-- 2) Insertar el catálogo nuevo. Reniec usa 'laindata'; el resto usa 'ghostdataxxx'.
 insert into public.consultas_catalog
   (nombre, descripcion, categoria, tipo_dato, bot_id, comando,
    costo_interno, precio_venta, plan_minimo_bot, respuesta_formato, orden, activa)
@@ -34,23 +34,23 @@ values
 -- RENIEC (5)
 -- ============================================================
 ('Ficha C4 Azul PDF', 'Datos ficha azul via Reniec online.',
- 'reniec', 'dni', 'ghostdataxxx', '/c4a {valor}',
+ 'reniec', 'dni', 'laindata', '/c4aon {valor}',
  5, 5, null, '{"texto": true, "pdf": true}'::jsonb, 10, true),
 
 ('Ficha C4 Blanco PDF', 'Datos ficha blanco via Reniec online.',
- 'reniec', 'dni', 'ghostdataxxx', '/c4b {valor}',
+ 'reniec', 'dni', 'laindata', '/c4bon {valor}',
  5, 5, null, '{"texto": true, "pdf": true}'::jsonb, 20, true),
 
 ('Ficha C4 Certificado PDF', 'Datos certificado via Reniec online.',
- 'reniec', 'dni', 'ghostdataxxx', '/c4i {valor}',
+ 'reniec', 'dni', 'laindata', '/c4ion {valor}',
  5, 5, null, '{"texto": true, "pdf": true}'::jsonb, 30, true),
 
 ('DNI Digital Azul/Amarillo (Foto)', 'Foto DNI virtual via Reniec online.',
- 'reniec', 'dni', 'ghostdataxxx', '/dniv {valor}',
+ 'reniec', 'dni', 'laindata', '/dnivon {valor}',
  5, 5, null, '{"texto": true, "imagenes": 1}'::jsonb, 40, true),
 
 ('DNI Electrónico (Foto)', 'Foto DNI virtual via Reniec online.',
- 'reniec', 'dni', 'ghostdataxxx', '/dnivel {valor}',
+ 'reniec', 'dni', 'laindata', '/dnieon {valor}',
  5, 5, null, '{"texto": true, "imagenes": 1}'::jsonb, 50, true),
 
 -- ============================================================

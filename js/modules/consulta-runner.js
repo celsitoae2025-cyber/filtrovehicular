@@ -759,6 +759,12 @@
         // 4) Si el bot no trajo datos, el SERVIDOR ya devolvió el crédito y lo
         //    marca aquí. El cliente solo informa; ya no decide sobre el dinero.
         if (resp && resp.sin_resultados) {
+          // SAT sin papeletas es una respuesta final, no un aviso de espera.
+          if (/^\/sat(?:\s|$)/i.test(consulta.comando || '') && resp.parsed && resp.parsed.sin_papeletas === true) {
+            resp.costo_deducido = 0;
+            resp.consulta_id = consultaId;
+            return resp;
+          }
           /* No es lo mismo «el dato no existe» que «el proveedor acusó recibo y
              todavía no contestó». Lo segundo se reconoce porque lo único que
              llegó fue su aviso de espera, y decirle al cliente que su DNI no

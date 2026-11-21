@@ -55,6 +55,28 @@ async function search(options = {}) {
   return { C, elements, calls, view, header, get focused() { return focused; } };
 }
 
+test('SAT sin papeletas muestra un aviso terminal con placa y habilita otra consulta', async () => {
+  const s = await search({
+    catalog: [{ id: 'sat', categoria: 'filter', nombre: 'SAT Papeletas', tipo_dato: 'placa', precio_venta: 4, comando: '/sat {valor}' }],
+    run: async () => ({ sin_resultados: true, costo_deducido: 0, parsed: {
+      sin_papeletas: true, placa: 'M5N535', mensaje: 'No cuenta con papeletas',
+      raw: 'No hay datos para la placa M5N535. No se pudo extraer información para M5N535. Por favor, asegúrese de que los datos sean correctos.',
+      secciones: [], medios: [], bloques: [],
+    } }),
+  });
+  s.elements['filter-input'].value = 'm5n535';
+  await s.elements['filter-consultar'].click();
+  const html = s.elements['filter-result-body'].innerHTML;
+  assert.match(html, /No cuenta con papeletas/);
+  assert.match(html, /Placa: <strong>M5N535<\/strong>/);
+  assert.doesNotMatch(html, /Servicio en mantenimiento|consulta sigue en curso|Descargar|cr-loading/);
+  assert.equal(s.calls.runner, 1);
+  assert.equal(s.elements['filter-consultar'].disabled, false);
+  assert.equal(s.elements['filter-input'].disabled, false);
+  assert.equal(s.elements['filter-result-body'].hidden, false);
+  assert.deepEqual(s.calls.errors, []);
+});
+
 test('la consulta seleccionada tiene etiqueta, campo y una acción Buscar conectada', async () => {
   const s = await search();
   assert.equal(s.elements.nvDatoEtiqueta.textContent, 'Placa del vehículo');
@@ -252,6 +274,26 @@ test('Consultar usa la ficha familiar para todos los bloques de /ag', async () =
   assert.match(html, /data-label="DNI">22222222<\/td><td data-label="Nombres">LUIS<\/td><td data-label="Apellidos">DOS<\/td><td data-label="Edad">30<\/td>/);
   assert.doesNotMatch(html, /11111111 Edad 50/);
 });
+
+for (const command of ['/nm', '/nmd']) {
+  test('Consultar conserva la tabla de personas y descarga para ' + command, async () => {
+    const catalog = [{ id: 'names-test', categoria: 'reniec', nombre: 'Busqueda por Nombre', tipo_dato: 'texto', precio_venta: 5, bot_id: 'laindata', comando: command + ' {valor}' }];
+    const parsed = { raw: 'N° DNI: 12345678\nNOMBRES: MARIA', secciones: [], medios: [], botones: [
+      { text: 'DESCARGAR', msgId: 1, data: 'menu' },
+    ] };
+    const s = await search({ catalog, run: () => ({ parsed }) });
+    s.elements['filter-input'].value = 'MARIA|EJEMPLO|';
+    await s.elements['filter-consultar'].click();
+    const html = s.elements['filter-result-body'].innerHTML;
+    assert.match(html, /class="nm-results"/);
+    assert.match(html, /12345678/);
+    assert.match(html, /nm-export-status/);
+    assert.doesNotMatch(html, /cr-btn-option/);
+    assert.equal(s.calls.runner, 1);
+    assert.equal(s.elements['filter-consultar'].disabled, false);
+    assert.deepEqual(s.calls.errors, []);
+  });
+}
 
 test('Consultar muestra los cuatro bloques familiares aunque la tabla auxiliar solo tenga el primero', async () => {
   const raw = [

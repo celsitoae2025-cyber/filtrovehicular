@@ -1058,9 +1058,10 @@
     // quedó con el nombre viejo del comando cuando el reporte cambió de
     // bot, y el render propio del reporte dejaba de aplicarse.
     var esReporte = esMetapla(currentConsulta);
+    var sinPapeletas = H.esSatSinPapeletas(p, currentConsulta && currentConsulta.comando);
     var enProceso = H.esRespuestaEnProceso(p);
     var errorTecnico = esErrorTecnicoRespuesta(p, resp);
-    var esNm = !!(currentConsulta && /^\/nm\b/i.test(currentConsulta.comando || ''));
+    var esNm = !!(currentConsulta && /^\/(?:nm|nmd)(?:\s|$)/i.test(currentConsulta.comando || ''));
     var htmlNm = esNm ? H.renderNmPersonas(p, botones, valorConsultado) : '';
     var esArbol = !!(currentConsulta && /^\/ag\b/i.test(currentConsulta.comando || ''));
     var htmlArbol = esArbol ? H.renderArbolGenealogico(p, valorConsultado) : '';
@@ -1072,7 +1073,9 @@
     var pParaPdf = p;
     var abrirVisor = false;   // el documento es el resultado, no un adjunto
 
-    if (enProceso) {
+    if (sinPapeletas) {
+      html = H.htmlSatSinPapeletas(p, valorConsultado);
+    } else if (enProceso) {
       /* El acuse de recibo del proveedor trae SU logo adjunto: ni el aviso
          ni el logo son el resultado. */
       html = H.htmlEnProceso();
@@ -1294,11 +1297,11 @@
     var status = $('filterResultStatus');
     if (status) {
       status.classList.remove('status-empty', 'status-loading');
-      if (enProceso || errorTecnico || (esReporte && !pdfs.length)) {
+      if (sinPapeletas || enProceso || errorTecnico || (esReporte && !pdfs.length)) {
         status.classList.remove('status-ok');
         status.classList.add('status-empty');
         status.innerHTML = '<span class="status-dot"></span> ' +
-          (enProceso ? 'En espera' : (errorTecnico ? 'No disponible' : 'Sin PDF'));
+          (sinPapeletas ? 'Sin papeletas' : (enProceso ? 'En espera' : (errorTecnico ? 'No disponible' : 'Sin PDF')));
       } else if (botones.length > 0 && !hasMedia && !htmlNm) {
         status.classList.remove('status-ok');
         status.classList.add('status-empty');
