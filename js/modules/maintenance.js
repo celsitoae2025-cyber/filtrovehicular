@@ -1,5 +1,5 @@
 /*
- * MODO MANTENIMIENTO — aviso para todos los visitantes de la consulta.
+ * MODO MANTENIMIENTO — aviso para visitantes y cuentas sin rol administrador.
  *
  * Consulta el estado compartido en Supabase al cargar, escucha cambios
  * Realtime y vuelve a consultar cada 5 segundos como respaldo. Este módulo
@@ -10,6 +10,10 @@
 
   var OVERLAY_ID = 'maintenanceOverlay';
   var POLL_MS = 5000;
+  var estadoActual = null;
+  var esAdmin = false;
+  var accesoSolicitado = false;
+  var revisionAcceso = 0;
   var MENSAJE_POR_DEFECTO =
     'Estamos realizando mejoras en la plataforma. ' +
     'Las consultas volverán a estar disponibles cuando terminemos.';
@@ -79,6 +83,7 @@
           '</svg>' +
           '<span>Comprobar disponibilidad</span>' +
         '</button>' +
+        '<button type="button" class="mnt-access" id="mntAccess">Acceso administrador</button>' +
         '<p class="mnt-footer">Esta pantalla comprueba la disponibilidad automáticamente.</p>' +
       '</div>';
     // El aviso permanece legible mientras se renueva una hoja antigua.
@@ -96,6 +101,14 @@
     document.documentElement.classList.add('mnt-locked');
     actualizarEstilosAviso();
 
+    document.getElementById('mntAccess').addEventListener('click', function () {
+      var acceso = window.Consultia.AuthModals;
+      if (!acceso || !acceso.openLogin) return;
+      accesoSolicitado = true;
+      quitarAviso();
+      acceso.openLogin();
+    });
+
     var btn = document.getElementById('mntRetry');
     if (btn) btn.addEventListener('click', async function () {
       btn.disabled = true;
@@ -111,14 +124,27 @@
   }
 
   function applyState(estado) {
-    if (!estado || !estado.enabled) {
+    estadoActual = estado;
+    var puerta = document.getElementById('nvPuerta');
+    if (!estado || !estado.enabled || esAdmin || (accesoSolicitado && puerta && !puerta.hidden)) {
       quitarAviso();
       return;
     }
-    // Todos los visitantes de app.html quedan bloqueados, incluso antes
-    // de iniciar sesión o si usan una cuenta administradora. admin.html
-    // es independiente y sigue disponible para gestionar el servicio.
     mostrarAviso(estado.message);
+  }
+
+  async function actualizarAcceso() {
+    var revision = ++revisionAcceso;
+    var autorizado = false;
+    try {
+      var auth = window.Consultia.Auth;
+      var usuario = auth && await auth.getUser();
+      var perfil = usuario && await auth.getProfile(usuario);
+      autorizado = !!(perfil && perfil.id === usuario.id && perfil.is_admin === true);
+    } catch (e) { /* Sin un perfil validado no se concede la excepción. */ }
+    if (revision !== revisionAcceso) return;
+    esAdmin = autorizado;
+    applyState(estadoActual);
   }
 
   var enVuelo = false;
@@ -149,12 +175,24 @@
   }
 
   function iniciar() {
+    actualizarAcceso();
+    var auth = window.Consultia.Auth;
+    if (auth && auth.onAuthChange) auth.onAuthChange(function (evento) {
+      if (evento !== 'SIGNED_OUT' && evento !== 'SIGNED_IN' && evento !== 'USER_UPDATED') return;
+      revisionAcceso++;
+      esAdmin = false;
+      accesoSolicitado = false;
+      applyState(estadoActual);
+      // Supabase no debe recibir consultas dentro del bloqueo de su callback.
+      if (evento !== 'SIGNED_OUT') setTimeout(actualizarAcceso, 0);
+    });
     check();
     timer = setInterval(check, POLL_MS);
     document.addEventListener('visibilitychange', function () {
       if (!document.hidden) check();
     });
     window.addEventListener('focus', check);
+    window.addEventListener('focus', actualizarAcceso);
     if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('controllerchange', function () {
       if (document.getElementById(OVERLAY_ID)) actualizarEstilosAviso();
     });
