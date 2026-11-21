@@ -235,3 +235,63 @@ test('abrir una respuesta guardada respeta una consulta que todavía está en cu
   await running;
   assert.equal(s.calls.runner, 1);
 });
+
+test('Consultar usa la ficha familiar para todos los bloques de /ag', async () => {
+  const raw = [
+    'DNI ➾ 11111111 Edad ➾ 50', 'PRENOMBRES ➾ ANA', 'APELLIDOS ➾ UNO',
+    'DNI ➾ 22222222 Edad ➾ 30', 'PRENOMBRES ➾ LUIS', 'APELLIDOS ➾ DOS'
+  ].join('\n');
+  const catalog = [{ id: 'ag-test', categoria: 'familiares', nombre: 'Árbol Genealógico', tipo_dato: 'dni', precio_venta: 5, comando: '/ag {valor}' }];
+  const s = await search({ catalog, run: () => ({ parsed: { raw, secciones: [{ titulo: 'Datos', campos: [{ campo: 'DNI', valor: '11111111 Edad 50' }] }], medios: [], tabla: { columnas: ['DNI'], filas: [{ dni: '11111111 Edad 50' }] } } }) });
+  s.elements['filter-input'].value = '11111111';
+  await s.elements['filter-consultar'].click();
+  const html = s.elements['filter-result-body'].innerHTML;
+  assert.match(html, /class="nm-results cr-arbol"/);
+  assert.match(html, /2 resultados/);
+  assert.match(html, /data-label="DNI">11111111<\/td><td data-label="Nombres">ANA<\/td><td data-label="Apellidos">UNO<\/td><td data-label="Edad">50<\/td>/);
+  assert.match(html, /data-label="DNI">22222222<\/td><td data-label="Nombres">LUIS<\/td><td data-label="Apellidos">DOS<\/td><td data-label="Edad">30<\/td>/);
+  assert.doesNotMatch(html, /11111111 Edad 50/);
+});
+
+test('Consultar muestra los cuatro bloques familiares aunque la tabla auxiliar solo tenga el primero', async () => {
+  const raw = [
+    'ARBOL GENEALOGICO - DNI\nDNI: 11111111 Edad: 50\nPRENOMBRES: ANA\nRELACION: TITULAR',
+    'Nº\tDNI\tPrenombres\tApellidos\tGénero\tRelación\n2\t22222222 Edad 45\tLUIS\tDOS\tMASCULINO\tPADRE',
+    '3  33333333  42  EVA  TRES  FEMENINO  MADRE',
+    '4\t44444444\tLUZ\tCUATRO\tFEMENINO\tHERMANA\t20'
+  ].join('\n\n');
+  const catalog = [{ id: 'ag-cuatro', categoria: 'familiares', nombre: 'Arbol genealogico', tipo_dato: 'dni', precio_venta: 5, comando: '/ag {valor}' }];
+  const parsed = { raw, secciones: [{ titulo: 'Datos', campos: [{ campo: 'DNI', valor: '11111111' }] }], medios: [], tabla: { columnas: ['DNI'], filas: [{ dni: '11111111' }] } };
+  const s = await search({ catalog, run: () => ({ parsed }) });
+  s.elements['filter-input'].value = '11111111';
+  await s.elements['filter-consultar'].click();
+  const html = s.elements['filter-result-body'].innerHTML;
+  assert.match(html, /4 resultados/);
+  for (const dni of ['11111111', '22222222', '33333333', '44444444']) {
+    assert.match(html, new RegExp('data-label="DNI">' + dni + '</td>'));
+  }
+  assert.match(html, /data-label="DNI">22222222<\/td><td data-label="Nombres">LUIS<\/td><td data-label="Apellidos">DOS<\/td><td data-label="Edad">45<\/td>/);
+  assert.match(html, /data-label="DNI">44444444<\/td><td data-label="Nombres">LUZ<\/td><td data-label="Apellidos">CUATRO<\/td><td data-label="Edad">20<\/td>/);
+});
+
+test('Consultar conserva cuatro bloques de texto con estados diferentes', async () => {
+  const raw = [
+    'Nombre: PERSONA UNO\nEstado: VIGENTE',
+    'Nombre: PERSONA DOS\nEstado: ACTIVO',
+    'Nombre: PERSONA TRES\nEstado: INACTIVO',
+    'Nombre: PERSONA CUATRO\nEstado: PENDIENTE',
+  ].join('\n\n');
+  const catalog = [{ id: 'multi-texto', categoria: 'familiares', nombre: 'Consulta de texto', tipo_dato: 'dni', precio_venta: 5, comando: '/multi {valor}' }];
+  const secciones = [
+    ['PERSONA UNO', 'VIGENTE'], ['PERSONA DOS', 'ACTIVO'],
+    ['PERSONA TRES', 'INACTIVO'], ['PERSONA CUATRO', 'PENDIENTE'],
+  ].map(([nombre, estado]) => ({ titulo: '', campos: [{ campo: 'Nombre', valor: nombre }, { campo: 'Estado', valor: estado }] }));
+  const s = await search({ catalog, run: () => ({ parsed: { raw, secciones, medios: [] } }) });
+  s.elements['filter-input'].value = '11111111';
+  await s.elements['filter-consultar'].click();
+  const html = s.elements['filter-result-body'].innerHTML;
+  for (const name of ['PERSONA UNO', 'PERSONA DOS', 'PERSONA TRES', 'PERSONA CUATRO']) {
+    assert.match(html, new RegExp(name));
+  }
+  assert.match(html, /PENDIENTE/);
+});

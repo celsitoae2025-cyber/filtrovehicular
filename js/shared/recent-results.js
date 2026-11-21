@@ -1,7 +1,7 @@
-/* Dos respuestas locales por cuenta. Reabrirlas nunca ejecuta una consulta. */
+/* Cuatro respuestas locales por cuenta. Reabrirlas nunca ejecuta una consulta. */
 (function (root) {
   'use strict';
-  var LIMIT = 2;
+  var LIMIT = 4;
   var lastSaved = 0;
   function copy(value) { return JSON.parse(JSON.stringify(value)); }
   function newest(rows) {

@@ -61,7 +61,7 @@
       try {
         var result = await Promise.all([
           C.supabase.from('consultas').select('id, module, type, input, status, result_url, created_at')
-            .eq('user_id', id).order('created_at', { ascending: false }).limit(2),
+            .eq('user_id', id).order('created_at', { ascending: false }).limit(4),
           C.RecentResults.list(id)
         ]);
         if (current !== generation || userId() !== id) return;
@@ -87,7 +87,19 @@
   }
   NV.arrancarRecientes = function () {
     var panel = $('nvRecientes');
-    if (!panel || panel.dataset.conectado) return;
+    if (!panel) {
+      if (NV.recientesSinPanelConectado) return;
+      NV.recientesSinPanelConectado = true;
+      owner = userId();
+      if (C.Auth && C.Auth.onAuthChange) C.Auth.onAuthChange(function (event, session) {
+        if (event === 'SIGNED_OUT') {
+          if (owner && C.RecentResults) C.RecentResults.clear(owner);
+          owner = '';
+        } else if (session && session.user) owner = session.user.id || owner;
+      });
+      return;
+    }
+    if (panel.dataset.conectado) return;
     panel.dataset.conectado = '1';
     panel.addEventListener('click', function (event) {
       if (event.target.closest('.nv-recientes-reintentar')) { refresh(); return; }

@@ -61,3 +61,39 @@ test('los rótulos libres separan los grupos y el contenido se escapa', () => {
   assert.ok(html.includes('&lt;img src=x&gt;'));
   assert.doesNotMatch(html, /<img src=x>/);
 });
+
+test('texto libre y campos estructurados usan el mismo render sin perder nombre ni estado', () => {
+  const H = helpers();
+  const raw = 'NOMBRE: PERSONA DE PRUEBA\nDNI: 12345678\nESTADO: VIGENTE';
+  const structured = { secciones: [{ titulo: '', campos: [field('NOMBRE', 'PERSONA DE PRUEBA'), field('DNI', '12345678'), field('ESTADO', 'VIGENTE')] }] };
+  assert.equal(H.renderDataRows({ raw }), H.renderDataRows(structured));
+  for (const value of ['PERSONA DE PRUEBA','12345678','VIGENTE']) assert.ok(H.renderTextoPlano(raw).includes(value));
+});
+
+test('las entidades del proveedor se leen como texto y nunca como HTML ejecutable', () => {
+  const H = helpers();
+  const html = H.renderDataRows({ secciones: [{ campos: [field('EMPRESA', 'GRUPO J &AMP; J'), field('DETALLE', '&lt;img src=x onerror=alert(1)&gt;')] }] });
+  assert.ok(html.includes('GRUPO J &amp; J'));
+  assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'));
+  assert.doesNotMatch(html, /<img src=x/);
+  assert.equal(H.textoResultado('A&#241;o &#x26; estado'), 'Año & estado');
+});
+
+test('la respuesta de opciones usa la misma ficha que los resultados con documentos', () => {
+  const H = helpers();
+  const html = H.renderButtonList({ secciones: [{ titulo: 'Revisión técnica', campos: [field('PLACA', 'ABC123'), field('ESTADO', 'VIGENTE')] }] }, []);
+  assert.ok(html.includes('cr-btn-details cr-data'));
+  assert.ok(html.includes('ABC123'));
+  assert.ok(html.includes('VIGENTE'));
+});
+
+test('normalizar conserva el payload original y los párrafos de texto sin campos', () => {
+  const H = helpers();
+  const response = { raw: 'Primera línea de información.\nSegunda línea de información.\n\nDNI: 12345678', medios: [{ tipo: 'pdf', base64: 'original' }] };
+  const original = JSON.stringify(response);
+  const normalized = H.prepararTextoResultado(response);
+  assert.equal(normalized.secciones.length, 2);
+  assert.equal(normalized.secciones[0].campos[0].valor, 'Primera línea de información.\nSegunda línea de información.');
+  assert.equal(normalized.medios[0].base64, 'original');
+  assert.equal(JSON.stringify(response), original);
+});

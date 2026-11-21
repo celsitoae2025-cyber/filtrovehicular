@@ -60,6 +60,8 @@
     // Sin textos: verde encendido, rojo apagado. El title y el aria
     // cuentan el estado a quien pasa el ratón y a los lectores.
     var bar = $('mntBarBtn');
+    var barEstado = $('mntBarEstado');
+    if (barEstado) barEstado.textContent = activo ? 'Activado · consultas pausadas' : 'Desactivado · servicio operativo';
     if (bar) {
       bar.classList.toggle('is-on', activo);
       bar.setAttribute('aria-checked', activo ? 'true' : 'false');

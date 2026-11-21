@@ -377,7 +377,7 @@
       var hasTabla  = p.tabla && p.tabla.filas && p.tabla.filas.length > 0;
       var isNm = !!(currentConsulta && /^\/nm\b/i.test(currentConsulta.comando || ''));
       var nmHtml = isNm ? renderNmPersonas(p, botones, valorConsultado) : '';
-      var esArbol = currentConsulta && currentConsulta.comando && /^\/ag\s/i.test(currentConsulta.comando);
+      var esArbol = currentConsulta && currentConsulta.comando && /^\/ag\b/i.test(currentConsulta.comando);
       var htmlArbol = esArbol ? renderArbolGenealogico(p, valorConsultado) : '';
       /* La ficha de la licencia se arma una sola vez: antes se llamaba dos
          —una para preguntar si había algo y otra para pintarlo—. Con `H.` por
@@ -402,14 +402,16 @@
         html = renderPdfTopButton() + renderFacialHero(p.facial);
       } else if (nmHtml) {
         html = nmHtml;
+      } else if (htmlArbol) {
+        // La tabla auxiliar puede cubrir solo el primer mensaje. La ficha
+        // familiar une esa tabla con todos los bloques recibidos en raw.
+        html = htmlArbol;
       } else if (hasTabla) {
         html = renderPdfTopButton() + renderTabla(p.tabla);
       } else if (htmlMtc) {
         // La licencia tiene su propia ficha: membrete, rejilla y papeletas.
         html = (pdfs.length > 0 ? renderPdfDlBar(pdfs) : renderPdfTopButton()) +
           htmlMtc + renderDocumentCard(pdfs) + H.renderOpcionesSueltas(botones);
-      } else if (htmlArbol) {
-        html = htmlArbol;
       } else if (botones.length > 0 && !hasMedia) {
         html = renderButtonList(p, botones);
       } else if (hasData || photos.length > 0) {
@@ -436,12 +438,6 @@
         abrirVisor = pdfs.length === 1 && !botones.length;
       } else {
         var rawText = (p.raw || '').trim();
-        rawText = rawText.replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
-        var _rawHide = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
-        rawText = rawText.split(/\r?\n/).filter(function (l) {
-          var t = l.replace(/\[\s*[^\]]*\]\s*/g, '').trim();
-          return t && !_rawHide.test(t);
-        }).join('\n').trim();
         var doc = (p.medios || []).find(function (m) { return m.tipo === 'document' && m.filename && m.filename.endsWith('.txt'); });
         if (doc && doc.base64) {
           try { rawText += '\n\n' + decodeURIComponent(escape(atob(doc.base64))); } catch (e) { rawText += '\n\n' + atob(doc.base64); }
@@ -450,12 +446,10 @@
           if (esErrorTecnico(rawText)) {
             html = htmlMantenimiento();
           } else {
-            // El generador de informes trabaja con secciones; el texto suelto
-            // se le entrega linea por linea (las que son «CLAVE: valor» las
-            // reconoce y salen como fila normal).
-            pParaPdf = { secciones: [{ titulo: '', campos: rawText.split(/\r?\n/).map(function (l) { return { valor: l }; }) }] };
-            html = renderPdfTopButton() +
-              '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding: 16px;"><div style="white-space: pre-wrap; font-family: monospace; font-size: var(--fs-sm); line-height: 1.5;">' + escapeHtml(rawText) + '</div></div></div>';
+            // El mismo parser y la misma tipografía de Consultar. Filtrar
+            // por prefijos aquí ocultaba datos legítimos como Nombre y Estado.
+            pParaPdf = H.prepararTextoResultado(rawText);
+            html = renderPdfTopButton() + H.renderTextoPlano(rawText);
           }
         } else {
           html = '<div class="cr-loading"><div class="cr-loading-text">No se encontraron datos para mostrar.</div></div>';
@@ -465,7 +459,7 @@
       body.innerHTML = html;
       body.hidden = false;
       if (nmHtml) { body.__nmBotones = botones; wireNmButtons(body, valorConsultado); }
-      else if (html === htmlArbol) { body.__arbolRaw = p.raw || ''; wireArbolButtons(body, valorConsultado); }
+      else if (html === htmlArbol) { body.__arbolRespuesta = p; wireArbolButtons(body, valorConsultado); }
       // Se cablean SIEMPRE que existan en el DOM, traiga o no medios la respuesta.
       else if (botones.length > 0 && !hasFacial && !hasTabla) wireResultButtons(body);
       wireGenericPdfButton(body, pParaPdf, valorConsultado, photos);
@@ -531,7 +525,7 @@
       if (!pdfBtn) return;
       pdfBtn.addEventListener('click', function () {
         var RH = Consultia.RenderHelpers;
-        var regs = RH.parseArbolGenealogico(container.__arbolRaw || '');
+        var regs = RH.parseArbolGenealogico(container.__arbolRespuesta || '');
         if (!regs.length) return;
         descargarPdfConOverlay(function () {
           return Consultia.ReportGenerator.generateArbol(regs, { valor: valorConsultado });

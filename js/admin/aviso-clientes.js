@@ -186,6 +186,8 @@
 
     // Interruptor de la barra superior (visible en todas las secciones)
     var bar = $('avcBarBtn');
+    var barEstado = $('avcBarEstado');
+    if (barEstado) barEstado.textContent = activo ? 'Activado · mensaje visible' : 'Desactivado · mensaje oculto';
     if (bar) {
       bar.classList.toggle('is-on', activo);
       bar.setAttribute('aria-checked', activo ? 'true' : 'false');

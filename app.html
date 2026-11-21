@@ -69,7 +69,8 @@
 <link rel="stylesheet" href="css/puerta-entrada.css?v=30">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
 <link rel="stylesheet" href="css/interfaz-tipografia.css?v=22">
-<link rel="stylesheet" href="css/plataforma.css?v=28">
+<link rel="stylesheet" href="css/plataforma.css?v=39">
+<link rel="stylesheet" href="css/resultados-texto.css?v=3">
 </head>
 <body class="nv-body">
 
@@ -422,25 +423,29 @@
 
   <aside class="nv-lado" aria-label="Navegación principal">
     <a class="nv-marca" href="#consultar" data-inicio aria-label="Plataforma Filtro Vehicular Plus, volver al inicio"><span class="fv-wordmark" role="img" aria-label="Plataforma Filtro Vehicular+"><span class="fv-wordmark-line" aria-hidden="true">Plataforma Filtro</span><span class="fv-wordmark-line" aria-hidden="true">Vehicular<span class="fv-wordmark-plus">+</span></span></span></a>
-    <span class="nv-lado-titulo nv-lado-titulo-principal">Tu plataforma</span>
-    <nav class="nv-lado-nav">
-      <a class="nv-nav" href="#consultar" data-ir="consultar"><svg><use href="#fv-consultar"/></svg><span>Consultar</span></a>
-      <a class="nv-nav" href="#resumen" data-ir="resumen"><svg><use href="#fv-resumen"/></svg><span>Resumen</span></a>
-    <a class="nv-nav" href="#historial" data-ir="historial"><svg><use href="#fv-historial"/></svg><span>Historial</span></a>
-      <a class="nv-nav" href="#vehiculos" data-ir="vehiculos"><svg><use href="#fv-vehiculo"/></svg><span>Mis vehículos</span></a>
-      <a class="nv-nav" href="#pagos" data-ir="pagos"><svg><use href="#fv-pagos"/></svg><span>Pagos</span></a>
-      <a class="nv-nav" href="#cuenta" data-ir="cuenta"><svg><use href="#fv-cuenta"/></svg><span>Cuenta</span></a>
-    </nav>
+    <section class="nv-lado-grupo" aria-labelledby="nvPlataformaTitulo">
+      <span class="nv-lado-titulo nv-lado-titulo-principal" id="nvPlataformaTitulo">Tu plataforma</span>
+      <nav class="nv-lado-nav" aria-label="Tu plataforma">
+        <a class="nv-nav" href="#resumen" data-ir="resumen"><svg><use href="#fv-resumen"/></svg><span>Resumen</span></a>
+        <a class="nv-nav" href="#consultar" data-ir="consultar"><svg><use href="#fv-consultar"/></svg><span>Consultar</span></a>
+        <a class="nv-nav" href="#historial" data-ir="historial"><svg><use href="#fv-historial"/></svg><span>Historial</span></a>
+        <a class="nv-nav" href="#vehiculos" data-ir="vehiculos"><svg><use href="#fv-vehiculo"/></svg><span>Mis vehículos</span></a>
+        <a class="nv-nav" href="#pagos" data-ir="pagos"><svg><use href="#fv-pagos"/></svg><span>Pagos</span></a>
+        <a class="nv-nav" href="#cuenta" data-ir="cuenta"><svg><use href="#fv-cuenta"/></svg><span>Cuenta</span></a>
+      </nav>
+    </section>
 
     <section class="nv-categorias-lado" aria-labelledby="nvCategoriasLadoTitulo">
       <h2 class="nv-lado-titulo" id="nvCategoriasLadoTitulo">Categorías de consulta</h2>
       <nav class="nv-categorias-lado-lista" id="nvCategoriasLado" aria-label="Categorías de consulta"></nav>
     </section>
 
-    <span class="nv-lado-titulo">Consultas gratuitas</span>
-    <nav class="nv-lado-nav" aria-label="Consultas gratuitas">
-      <a class="nv-nav" href="#regiones" data-ir="regiones"><svg><use href="#fv-region"/></svg><span>Infracciones por regiones</span></a>
-    </nav>
+    <section class="nv-lado-grupo" aria-labelledby="nvGratuitasLadoTitulo">
+      <span class="nv-lado-titulo" id="nvGratuitasLadoTitulo">Consultas gratuitas</span>
+      <nav class="nv-lado-nav" aria-label="Consultas gratuitas">
+        <a class="nv-nav" href="#regiones" data-ir="regiones"><svg><use href="#fv-region"/></svg><span>Infracciones por regiones</span></a>
+      </nav>
+    </section>
 
     <a class="nv-nav nv-nav-admin" href="admin.html" data-solo-admin hidden><svg><use href="#fv-admin"/></svg><span>Administración</span></a>
 
@@ -449,7 +454,7 @@
   <div class="nv-principal">
     <header class="nv-barra">
       <div class="nv-barra-principal">
-        <a class="nv-inicio" id="nvInicio" href="#consultar" data-inicio aria-label="Volver al inicio" title="Volver al inicio" hidden><svg aria-hidden="true"><use href="#fv-volver"/></svg></a>
+        <a class="nv-inicio" id="nvInicio" href="#consultar" data-inicio aria-label="Volver al inicio" title="Volver al inicio" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6-5 5 5 5M4 11h9.5a5.5 5.5 0 0 1 5.5 5.5V18"/></svg></a>
         <h1 class="nv-barra-titulo" id="nvTitulo" tabindex="-1">Consultar</h1>
       </div>
       <div class="nv-barra-acciones">
@@ -502,11 +507,6 @@
 
         <div class="nv-explorar" id="nvExplorar">
           <div class="nv-explorar-cab">
-            <div>
-              <h2>Encuentra tu consulta</h2>
-              <p>Elige una consulta para ver su costo.</p>
-              <p class="nv-categoria-contexto" id="nvCategoriaContexto"></p>
-            </div>
             <details class="nv-categoria-menu" id="nvCategoriaMenu">
               <summary aria-controls="nvCategoriaPanel">
                 <strong id="nvCategoriaActual">Vehicular</strong>
@@ -520,15 +520,6 @@
                 <div class="nv-categoria-opciones" id="nvCategoriaOpciones" role="group" aria-labelledby="nvCategoriaTitulo"></div>
               </div>
             </details>
-            <aside class="nv-recientes" id="nvRecientes" aria-labelledby="nvRecientesTitulo">
-              <div class="nv-recientes-cab">
-                <h3 id="nvRecientesTitulo">Consultas recientes</h3>
-                <a href="#historial">Ver historial <svg aria-hidden="true"><use href="#fv-ir"/></svg></a>
-              </div>
-              <div class="nv-recientes-lista" id="nvRecientesLista" aria-busy="true">
-                <p class="nv-recientes-vacio">Cargando consultas…</p>
-              </div>
-            </aside>
           </div>
           <div class="nv-lista-cab">
             <h3 id="nvCatalogoTitulo">Consultas disponibles</h3>
@@ -912,7 +903,7 @@
 <script src="js/shared/auth.js?v=28"></script>
 <script src="js/shared/turnstile.js?v=7"></script>
 <script src="js/shared/interior-icons.js?v=3"></script>
-<script src="js/nueva/nucleo.js?v=28"></script>
+<script src="js/nueva/nucleo.js?v=29"></script>
 <script src="js/nueva/acceso.js?v=28"></script>
 <script src="js/shared/credit-packages.js?v=1"></script>
 <script src="js/nueva/planes-portada.js?v=1"></script>
@@ -929,7 +920,7 @@
 <script src="js/modules/confirm-dialog.js?v=2"></script>
 <script src="js/modules/validation.js?v=1"></script>
 <script src="js/modules/consulta-runner.js?v=19"></script>
-<script src="js/modules/render-helpers.js?v=66"></script>
+<script src="js/modules/render-helpers.js?v=70"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
   if (window.pdfjsLib) {
@@ -947,7 +938,7 @@
 <script src="js/modules/reporte-veredicto.js?v=4"></script>
 <script src="js/modules/metapla-report.js?v=32"></script>
 <script src="js/modules/metapla-view.js?v=7"></script>
-<script src="js/modules/filter.js?v=70"></script>
+<script src="js/modules/filter.js?v=72"></script>
 <script src="js/modules/combo-buscador.js?v=5"></script>
 
 <!-- El Duplicado CITV: la hoja, el dibujante del PDF y el trámite. -->
@@ -956,9 +947,9 @@
 <script src="js/modules/citv-aviso.js?v=10"></script>
 
 <script src="js/shared/vehicles.js?v=1"></script>
-<script src="js/shared/recent-results.js?v=1"></script>
-<script src="js/nueva/recientes.js?v=1"></script>
-<script src="js/nueva/pantallas.js?v=36"></script>
+<script src="js/shared/recent-results.js?v=2"></script>
+<script src="js/nueva/recientes.js?v=3"></script>
+<script src="js/nueva/pantallas.js?v=41"></script>
 <script src="js/nueva/nombres.js?v=1"></script>
 <script src="js/nueva/servicios.js?v=17"></script>
 

@@ -71,7 +71,21 @@ test('desde otra sección el regreso lleva al catálogo y actualiza la pantalla 
   assert.equal(page.hash, '#consultar');
   assert.equal(routes.find(r => r.dataset.pantalla === 'consultar').hidden, false);
   assert.equal(routes.find(r => r.dataset.pantalla === 'pagos').hidden, true);
+  assert.equal(elements.nvTitulo.textContent, 'Vehicular');
+});
+
+test('el encabezado muestra la categoría solo mientras se visualiza el catálogo', () => {
+  const { NV, elements } = navigation();
+  NV.nombreCategoriaActiva = () => 'Familia';
+  NV.actualizarInicio();
+  assert.equal(elements.nvTitulo.textContent, 'Familia');
+  NV.mostrarBuscador({ nombre: 'Árbol Genealógico', precio_venta: 5 });
   assert.equal(elements.nvTitulo.textContent, 'Consultar');
+  NV.volverAlCatalogo();
+  assert.equal(elements.nvTitulo.textContent, 'Familia');
+  NV.ir('pagos');
+  NV.actualizarInicio();
+  assert.equal(elements.nvTitulo.textContent, 'Pagos');
 });
 
 test('el acceso Consultar de la barra restablece el catálogo en la misma ruta', () => {

@@ -25,7 +25,7 @@ test('recent results reopen across cache instances without leaking another accou
   assert.deepEqual(await reloaded.list('unknown'), []);
 });
 
-test('recent results retain only two distinct latest responses and isolate mutable renderer data', async () => {
+test('recent results retain four distinct latest responses and isolate mutable renderer data', async () => {
   const cache = createCache(storage());
   const original = response('one');
   await cache.remember('a', consulta, 'ABC123', original);
@@ -36,7 +36,10 @@ test('recent results retain only two distinct latest responses and isolate mutab
   assert.equal((await cache.get('a', 'one')).response.parsed.secciones.length, 1);
   await cache.remember('a', consulta, 'DEF456', response('two'));
   await cache.remember('a', consulta, 'GHI789', response('three'));
-  assert.equal((await cache.list('a')).length, 2);
+  await cache.remember('a', consulta, 'JKL012', response('four'));
+  assert.deepEqual((await cache.list('a')).map(item => item.id), ['four', 'three', 'two', 'one']);
+  await cache.remember('a', consulta, 'MNO345', response('five'));
+  assert.deepEqual((await cache.list('a')).map(item => item.id), ['five', 'four', 'three', 'two']);
   assert.equal(await cache.get('a', 'one'), null);
 });
 

@@ -72,6 +72,9 @@
   };
   /* Arranca en Vehicular; las demás consultas siguen a un filtro o búsqueda. */
   var categoriaActiva = 'filter';
+  NV.nombreCategoriaActiva = function () {
+    return categoriaActiva === 'todas' ? 'Todas las consultas' : nombreCat(categoriaActiva);
+  };
 
   function esReporteDestacado(c) {
     var cmd = (c && c.comando) || '';
@@ -105,6 +108,7 @@
     var claves = NV.ORDEN.filter(function (k) { return cuenta[k]; });
     var otras = Object.keys(cuenta).filter(function (k) { return !NV.ORDEN.includes(k); });
     if (categoriaActiva !== 'todas' && !cuenta[categoriaActiva]) categoriaActiva = 'todas';
+    if (NV.actualizarInicio) NV.actualizarInicio();
     var cantidadActiva = categoriaActiva === 'todas' ? totalCatalogo() : cuenta[categoriaActiva];
     $('nvCategoriaActual').textContent = categoriaActiva === 'todas' ? 'Todas las categorías' : nombreCat(categoriaActiva);
     $('nvCategoriaCuenta').textContent = cantidadActiva + ' consulta' + (cantidadActiva === 1 ? '' : 's');
@@ -113,12 +117,15 @@
     var lateral = $('nvCategoriasLado');
     if (lateral) lateral.innerHTML = ['todas'].concat(claves, otras).map(function (clave) {
       var nombre = clave === 'todas' ? 'Todas las consultas' : nombreCat(clave);
-      var cantidad = clave === 'todas' ? totalCatalogo() : cuenta[clave];
       return '<button type="button" class="nv-categoria-lado" data-cat="' + esc(clave) + '" aria-pressed="' +
-        (clave === categoriaActiva) + '" aria-label="' + esc(nombre + ', ' + cantidad + ' consultas') + '">' +
+        (clave === categoriaActiva) + '">' +
         '<svg aria-hidden="true"><use href="#fv-' + iconoCategoria(clave) + '"/></svg>' +
-        '<span>' + esc(nombre) + '</span><small>' + cantidad + '</small></button>';
+        '<span>' + esc(nombre) + '</span></button>';
     }).join('');
+    if (lateral) {
+      var lado = lateral.closest('.nv-lado');
+      if (lado) lado.style.setProperty('--nv-lado-cantidad', String(lateral.children.length + lado.querySelectorAll('.nv-nav:not([hidden])').length));
+    }
     $('nvCategoriaOpciones').innerHTML = ['todas'].concat(claves, otras).map(function (clave) {
       var todas = clave === 'todas';
       var cantidad = todas ? totalCatalogo() : cuenta[clave];
@@ -474,7 +481,7 @@
     if (c.status === 'pending') return { clase: 'curso', texto: 'En espera' };
     if (c.status === 'in_flight') return { clase: 'curso', texto: 'En proceso' };
     if (c.status === 'error') return { clase: 'error', texto: 'Sin resultado' };
-    return { clase: 'error', texto: 'Por revisar' };
+    return { clase: 'revisar', texto: 'Por revisar' };
   }
 
 
@@ -597,9 +604,10 @@
     var hoy = new Date(); hoy.setHours(0, 0, 0, 0);
     var d = new Date(t); d.setHours(0, 0, 0, 0);
     var dif = Math.round((hoy - d) / 86400000);
-    if (dif === 0) return 'Hoy';
-    if (dif === 1) return 'Ayer';
-    return d.toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' });
+    var fecha = d.toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric' });
+    if (dif === 0) return 'Hoy · ' + fecha;
+    if (dif === 1) return 'Ayer · ' + fecha;
+    return fecha;
   }
 
   function pintarRegistro() {
@@ -621,11 +629,11 @@
 
     var html = '', diaActual = '';
     lista.forEach(function (c) {
-      var dia = tituloDia(c.created_at);
-      if (dia !== diaActual) {
+      var claveDia = new Date(c.created_at).toDateString();
+      if (claveDia !== diaActual) {
         if (diaActual) html += '</div>';
-        html += '<h3 class="nv-dia">' + esc(dia) + '</h3><div class="nv-dia-lista">';
-        diaActual = dia;
+        html += '<h3 class="nv-dia">' + esc(tituloDia(c.created_at)) + '</h3><div class="nv-dia-lista">';
+        diaActual = claveDia;
       }
       var hora = new Date(c.created_at).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
       var estado = estadoConsulta(c);

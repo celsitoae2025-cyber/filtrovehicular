@@ -1062,6 +1062,8 @@
     var errorTecnico = esErrorTecnicoRespuesta(p, resp);
     var esNm = !!(currentConsulta && /^\/nm\b/i.test(currentConsulta.comando || ''));
     var htmlNm = esNm ? H.renderNmPersonas(p, botones, valorConsultado) : '';
+    var esArbol = !!(currentConsulta && /^\/ag\b/i.test(currentConsulta.comando || ''));
+    var htmlArbol = esArbol ? H.renderArbolGenealogico(p, valorConsultado) : '';
 
     var body = $('filter-result-body');
     var html;
@@ -1096,6 +1098,9 @@
     } else if (htmlNm) {
       // /nm necesita su tabla y su descarga real, también desde Consultar.
       html = htmlNm;
+    } else if (htmlArbol) {
+      // /ag reúne a cada familiar en una fila, con DNI y edad separados.
+      html = htmlArbol;
     } else if (botones.length > 0 && !hasMedia) {
       html = renderButtonList(p, botones);
     } else if (htmlMtc) {
@@ -1119,8 +1124,6 @@
       abrirVisor = pdfs.length === 1 && !botones.length;
     } else {
       var rawText = (p.raw || '').trim();
-      var _rawH3 = /^(obteniendo|consultando|buscando|procesando|generando|cargando|la\s+consulta\s+se\s+hizo|consulta\s+(exitosa|realizada)|resultado\s+(exitoso|listo)|cr[eé]ditos?|credits?|nombre|user(name)?|comando|plan\b|monedas?|consultado\s+por|usuario|mensaje|estado|#\w+|∞|♾)/i;
-      rawText = rawText.split(/\r?\n/).filter(function (l) { var t = l.replace(/\[\s*[^\]]*\]\s*/g, '').trim(); return t && !_rawH3.test(t); }).join('\n').trim();
       var doc = (p.medios || []).find(function (m) { return m.tipo === 'document' && m.filename && m.filename.endsWith('.txt'); });
       if (doc && doc.base64) {
         try { rawText += '\n\n' + decodeURIComponent(escape(atob(doc.base64))); } catch (e) { rawText += '\n\n' + atob(doc.base64); }
@@ -1130,9 +1133,8 @@
           html = htmlMantenimiento();
         } else {
           // El generador trabaja con secciones: el texto va linea por linea.
-          pParaPdf = { secciones: [{ titulo: '', campos: rawText.split(/\r?\n/).map(function (l) { return { valor: l }; }) }] };
-          html = renderPdfTopButton() +
-            '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding: 16px;"><div style="white-space: pre-wrap; font-family: monospace; font-size: var(--fs-sm); line-height: 1.5;">' + escapeHtml(rawText) + '</div></div></div>';
+          pParaPdf = H.prepararTextoResultado(rawText);
+          html = renderPdfTopButton() + H.renderTextoPlano(rawText);
         }
       } else {
         html = '<div class="cr-loading"><div class="cr-loading-text">No se encontraron datos para mostrar.</div></div>';
@@ -1169,6 +1171,16 @@
       alNuevaConsulta: volverAlFormulario,
       alResultado: function () { marcarConResultado(true); }
     });
+    else if (htmlArbol && !enProceso && !errorTecnico) {
+      var botonArbol = body.querySelector('.cr-btn-arbol-pdf');
+      if (botonArbol) botonArbol.addEventListener('click', function () {
+        var familiares = H.parseArbolGenealogico(p);
+        if (!familiares.length) return;
+        descargarPdfConOverlay(function () {
+          return Consultia.ReportGenerator.generateArbol(familiares, { valor: valorConsultado });
+        });
+      });
+    }
     else if (botones.length > 0) wireResultButtons(body, valorConsultado);
 
     // «Descargar» de la cabecera: arma el informe al vuelo con los datos que

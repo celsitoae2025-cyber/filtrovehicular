@@ -1,0 +1,59 @@
+/* Una sola presentación para fichas, texto, tablas y opciones del bot. */
+@layer fv-componentes-internos {
+  #nvApp .nv-resultado :is(#filter-result-body,.cr-data,.cr-txt-data,.cr-tabla-wrap,.mtc,.ff,.nm-tabla-wrap),
+  #nvApp .nv-resultado :is(#filter-result-body,.cr-data,.cr-txt-data,.cr-tabla-wrap,.mtc,.ff,.nm-tabla-wrap) * {
+    font-family: "Inter", Arial, sans-serif !important;
+    font-size: 16px !important;
+    line-height: 1.55 !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+  }
+  #nvApp .nv-resultado :is(.cr-k,.cr-tbl-fijo-k,.mtc-dato > span) { color: #646c66 !important; font-weight: 400 !important; }
+  #nvApp .nv-resultado :is(.cr-v,.cr-v-mono,.cr-tbl-fijo-v,.mtc-dato > strong) { font-weight: 500 !important; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  #nvApp .nv-resultado :is(.cr-sect h4,.cr-grupo-titulo,.cr-tabla-tit,.cr-nombre,.mtc-nombre) { font-weight: 600 !important; text-transform: none !important; }
+}
+#nvApp .nv-resultado .cr-txt-data { width: 100%; max-width: none; transform: none; }
+#nvApp .nv-resultado .cr-data .cr-v { white-space: pre-wrap; }
+#nvApp .nv-resultado .cr-btn-details { padding: 0; }
+#nvApp .nv-resultado .cr-btn-details > .cr-sect { margin-top: 20px; }
+#nvApp .nv-resultado .cr-sect:first-child { margin-top: 0; }
+
+/* Los familiares se leen como registros, con una columna por dato. */
+#nvApp .nv-resultado .cr-arbol { min-width: 0; padding: 18px 20px 22px; }
+#nvApp .nv-resultado .cr-arbol .nm-header { margin: 0 0 3px; font-size: 16px; font-weight: 600; }
+#nvApp .nv-resultado .cr-arbol .nm-query-bar { margin: 0; padding: 0; background: transparent; color: #646c66; font-size: 14px; }
+#nvApp .nv-resultado .cr-arbol .nm-meta { margin: 16px 0 8px; padding: 0; font-size: 14px; }
+#nvApp .nv-resultado .cr-arbol .nm-table-wrap { max-width: 100%; border: 1px solid #dedede; border-radius: 8px; overflow: hidden; }
+#nvApp .nv-resultado .cr-arbol .nm-table { width: 100%; min-width: 0; table-layout: fixed; border: 0; border-radius: 0; }
+#nvApp .nv-resultado .cr-arbol .nm-table :is(th,td) { box-sizing: border-box; padding: 10px 8px; font-size: 14px; line-height: 1.45; text-align: left; white-space: normal; overflow-wrap: anywhere; }
+#nvApp .nv-resultado .cr-arbol .nm-table th { font-weight: 600; text-transform: none; }
+#nvApp .nv-resultado .cr-arbol .nm-table :is(th,td):nth-child(1) { width: 4%; }
+#nvApp .nv-resultado .cr-arbol .nm-table :is(th,td):nth-child(2) { width: 11%; }
+#nvApp .nv-resultado .cr-arbol .nm-table :is(th,td):nth-child(3) { width: 16%; }
+#nvApp .nv-resultado .cr-arbol .nm-table :is(th,td):nth-child(4) { width: 18%; }
+#nvApp .nv-resultado .cr-arbol .nm-table :is(th,td):nth-child(5) { width: 7%; }
+#nvApp .nv-resultado .cr-arbol .nm-table :is(th,td):nth-child(6) { width: 12%; }
+#nvApp .nv-resultado .cr-arbol .nm-table :is(th,td):nth-child(7) { width: 16%; }
+#nvApp .nv-resultado .cr-arbol .nm-table :is(th,td):nth-child(8) { width: 16%; }
+#nvApp .nv-resultado .cr-arbol .nm-table.cr-arbol-sin-verificacion :is(th,td):nth-child(1) { width: 5%; }
+#nvApp .nv-resultado .cr-arbol .nm-table.cr-arbol-sin-verificacion :is(th,td):nth-child(2) { width: 12%; }
+#nvApp .nv-resultado .cr-arbol .nm-table.cr-arbol-sin-verificacion :is(th,td):nth-child(3) { width: 19%; }
+#nvApp .nv-resultado .cr-arbol .nm-table.cr-arbol-sin-verificacion :is(th,td):nth-child(4) { width: 24%; }
+#nvApp .nv-resultado .cr-arbol .nm-table.cr-arbol-sin-verificacion :is(th,td):nth-child(5) { width: 8%; }
+#nvApp .nv-resultado .cr-arbol .nm-table.cr-arbol-sin-verificacion :is(th,td):nth-child(6) { width: 12%; }
+#nvApp .nv-resultado .cr-arbol .nm-table.cr-arbol-sin-verificacion :is(th,td):nth-child(7) { width: 20%; }
+@media (max-width: 1240px) {
+  #nvApp .nv-resultado .cr-arbol { padding: 12px; }
+  #nvApp .nv-resultado .cr-arbol .nm-table-wrap { border: 0; overflow: visible; }
+  #nvApp .nv-resultado .cr-arbol .nm-table { display: block; width: 100%; border: 0; }
+  #nvApp .nv-resultado .cr-arbol .nm-table thead { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  #nvApp .nv-resultado .cr-arbol .nm-table tbody { display: grid; gap: 10px; }
+  #nvApp .nv-resultado .cr-arbol .nm-table tbody tr { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px 14px; padding: 12px; border: 1px solid #dedede; border-radius: 8px; background: #fff; }
+  #nvApp .nv-resultado .cr-arbol .nm-table tbody td:nth-child(n) { display: block; width: auto; min-width: 0; padding: 0; border: 0; background: transparent; }
+  #nvApp .nv-resultado .cr-arbol .nm-table.cr-arbol-sin-verificacion tbody td:nth-child(n) { width: auto; }
+  #nvApp .nv-resultado .cr-arbol .nm-table tbody td::before { content: attr(data-label); display: block; margin-bottom: 2px; color: #646c66; font-size: 12px; font-weight: 400; }
+  #nvApp .nv-resultado .cr-arbol .nm-table tbody td:first-child { grid-column: 1 / -1; padding-bottom: 8px; border-bottom: 1px solid #e5e5e5; font-weight: 600; }
+  #nvApp .nv-resultado .cr-arbol .nm-table tbody td:first-child::before { display: inline; margin-right: 5px; color: inherit; font-size: 14px; font-weight: 600; }
+  #nvApp .nv-resultado .cr-arbol .nm-table tbody td:last-child:not(:nth-child(2n+1)) { grid-column: 1 / -1; }
+  #nvApp .nv-resultado .cr-arbol .nm-table tbody td:empty { display: none; }
+}

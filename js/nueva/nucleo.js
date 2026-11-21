@@ -202,6 +202,10 @@
     var enCatalogo = pantallaDelHash() === 'consultar' &&
       (!seleccion || seleccion.hidden) && (!resultado || resultado.hidden);
     inicio.hidden = enCatalogo;
+    if (pantallaDelHash() === 'consultar') {
+      $('nvTitulo').textContent = enCatalogo && NV.nombreCategoriaActiva
+        ? NV.nombreCategoriaActiva() : 'Consultar';
+    }
     if (NV.actualizarBusquedaCatalogo) NV.actualizarBusquedaCatalogo(enCatalogo);
   };
 

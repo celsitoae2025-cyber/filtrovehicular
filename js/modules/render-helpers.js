@@ -585,6 +585,7 @@
      igual en la rejilla: no se pierde nada por no conocerlo. */
   var MTC_EN_MEMBRETE = /^(CONDUCTOR|DNI|NRO\.?\s*LICENCIA|N[°ºRO.]*\s*LICENCIA|LICENCIA|SITUACI[OÓ]N)$/i;
   function renderMtc(p) {
+    p = prepararTextoResultado(p);
     var e = estructurarMtc(p || {});
     var lic = [], pap = [];
     (e.secciones || []).forEach(function (s) {
@@ -857,7 +858,59 @@
     }).filter(function (s) { return s.campos.length; });
   }
 
+  function textoResultado(valor) {
+    var texto = String(valor == null ? '' : valor).replace(/\r\n?/g, '\n');
+    var entidades = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+    for (var i = 0; i < 2; i++) texto = texto.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos|nbsp);/gi, function (original, entidad) {
+      if (entidad[0] !== '#') return entidades[entidad.toLowerCase()];
+      var numero = /^#x/i.test(entidad) ? parseInt(entidad.slice(2), 16) : parseInt(entidad.slice(1), 10);
+      return numero > 0 && numero <= 0x10ffff ? String.fromCodePoint(numero) : original;
+    });
+    return texto.replace(/^\*\*([\s\S]+)\*\*$/, '$1').trim();
+  }
+
+  // Un mismo modelo de campos para texto libre y respuestas estructuradas.
+  // No modifica el payload ni el documento original recibido del proveedor.
+  function prepararTextoResultado(respuesta) {
+    var p = typeof respuesta === 'string' ? { raw: respuesta } : (respuesta || {});
+    var copia = Object.assign({}, p);
+    copia.titulo = textoResultado(p.titulo);
+    copia.secciones = (p.secciones || []).map(function (seccion) {
+      return Object.assign({}, seccion, {
+        titulo: textoResultado(seccion.titulo),
+        campos: (seccion.campos || []).map(function (campo) {
+          return Object.assign({}, campo, { campo: textoResultado(campo.campo), valor: textoResultado(campo.valor) });
+        })
+      });
+    });
+    if (copia.secciones.some(function (seccion) { return seccion.campos.length; }) || !p.raw) return copia;
+    copia.secciones = textoResultado(p.raw).split(/\n\s*\n/).map(function (bloque) {
+      var campos = [], notas = [];
+      function guardarNotas() {
+        if (notas.length) campos.push({ campo: '', valor: notas.join('\n') });
+        notas = [];
+      }
+      bloque.split('\n').forEach(function (linea) {
+        linea = textoResultado(linea);
+        if (!linea || /^[\s─═━_|=*#-]+$/.test(linea) || /^```/.test(linea)) return;
+        var partes = linea.match(/^([^:\n：➾→]{1,80})\s*[:：➾→]\s*(.+)$/);
+        if (partes && !/^https?$/i.test(partes[1].trim())) {
+          guardarNotas();
+          campos.push({ campo: textoResultado(partes[1]), valor: textoResultado(partes[2]) });
+        } else notas.push(linea);
+      });
+      guardarNotas();
+      return { titulo: '', campos: campos };
+    }).filter(function (seccion) { return seccion.campos.length; });
+    return copia;
+  }
+
+  function renderTextoPlano(texto) {
+    return renderDataWithMedia(prepararTextoResultado(texto), []);
+  }
+
   function renderDataRows(p) {
+    p = prepararTextoResultado(p);
     var toTitleCase = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.toTitleCase : function (s) { return s; };
     var dataHtml = [];
     var camposVistos = Object.create(null);   // campo::valor ya impresos
@@ -1013,6 +1066,15 @@
       return v;
     }
     function soloEnVigor(grupo) {
+      // Solo un historial de certificados de revisión admite resumirse a
+      // la vigencia actual. En listados de personas, vehículos o trámites,
+      // «Estado» puede variar entre registros y todos deben permanecer.
+      var esRevision = grupo.some(function (s) {
+        var campos = (s.campos || []).map(function (c) { return nmNorm(c.campo || ''); });
+        return campos.some(function (c) { return /^(CERTIFICADO|NROCERTIFICADO)$/.test(c); }) &&
+          campos.some(function (c) { return /^(VIGENCIA|VIGINICIO|VIGFIN|FECHAVENCIMIENTO)$/.test(c); });
+      });
+      if (!esRevision) return grupo;
       var hayCaducado = grupo.some(function (s) { return RE_CADUCADO.test(estadoDe(s)); });
       if (!hayCaducado) return grupo;
       var enVigor = grupo.filter(function (s) {
@@ -1381,7 +1443,7 @@
     var parts = [];
     parts.push('<div class="cr-tabla-wrap">');
     parts.push('<div class="cr-tabla-head">');
-    parts.push('<span class="cr-tabla-tit">' + escapeHtml(tabla.titulo || 'Resultados') + '</span>');
+    parts.push('<span class="cr-tabla-tit">' + escapeHtml(textoResultado(tabla.titulo || 'Resultados')) + '</span>');
     parts.push('<span class="cr-tabla-total">' + (tabla.total || tabla.filas.length) + ' resultados</span>');
     parts.push('</div>');
     parts.push('<div class="cr-tabla-scroll"><table class="cr-tabla">');
@@ -1393,7 +1455,7 @@
     tabla.filas.forEach(function (f, fi) {
       parts.push('<tr class="' + (fi % 2 === 0 ? 'cr-tabla-even' : 'cr-tabla-odd') + '">');
       (tabla.columnas || []).forEach(function (col) {
-        parts.push('<td>' + escapeHtml(columnaValor(col, f)) + '</td>');
+        parts.push('<td>' + escapeHtml(textoResultado(columnaValor(col, f))) + '</td>');
       });
       parts.push('</tr>');
     });
@@ -1475,6 +1537,7 @@
   }
 
   function renderButtonList(p, botones) {
+    p = prepararTextoResultado(p);
     var parts = [];
     if (p && p.titulo) parts.push('<div class="cr-tit">' + escapeHtml(cleanTitle(p.titulo)) + '</div>');
 
@@ -1526,7 +1589,7 @@
       return (s.campos || []).some(function (c) { return !esAvisoExportacion(c); });
     });
     if (hasData) {
-      parts.push('<div class="cr-btn-details">');
+      parts.push('<div class="cr-btn-details cr-data">');
       parts.push(renderDataRows(p));
       parts.push('</div>');
     }
@@ -1726,14 +1789,13 @@
             throw new Error('El proveedor indicó que preparó el archivo, pero todavía no entregó la descarga. Intenta de nuevo en unos momentos.');
           } else if (hasDataR) {
             resultArea.innerHTML =
-              '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding:16px;">' +
+              '<div class="cr-txt-layout"><div class="cr-txt-data cr-data">' +
                 renderDataRows(rp) +
               '</div></div>';
           } else {
             var rawText = (rp.raw || '').trim().replace(/\[\s*\]/g, '').replace(/\[\s*-\s*\]/g, '').trim();
             if (rawText.length > 5 && !esErrorTecnico(rawText)) {
-              resultArea.innerHTML = '<div class="cr-txt-layout"><div class="cr-txt-data" style="padding:16px;">' +
-                '<div style="white-space:pre-wrap;font-family:monospace;font-size:var(--cr-fs);line-height:1.5;">' + escapeHtml(rawText) + '</div></div></div>';
+              resultArea.innerHTML = renderTextoPlano(rawText);
             } else if (esErrorTecnico(rawText)) {
               resultArea.innerHTML = htmlMantenimiento();
             } else {
@@ -2863,8 +2925,9 @@
      descartar ambos antes de separar por personas. ── */
   var ARBOL_SEP_RE = '(?::{1,2}|→|➾|➤|►|»)';
 
-  function parseArbolGenealogico(rawText) {
-    var text = String(rawText || '');
+  function parseArbolGenealogico(respuesta) {
+    var p = typeof respuesta === 'string' ? { raw: respuesta } : (respuesta || {});
+    var text = String(p.raw || '');
     // Quita el bloque "[⚡] ESTADO DE CUENTA … USUARIO ➾ …" que el bot
     // intercala entre mensajes.
     text = text.replace(/\[?⚡\]?\s*ESTADO\s+DE\s+CUENTA[\s\S]*?USUARIO[^\n]*\n?/gi, '\n');
@@ -2877,7 +2940,18 @@
       return true;
     }).join('\n');
 
-    var bloques = text.split(/\n\s*\n/);
+    // Cada DNI abre una persona. Algunos mensajes no traen una línea en
+    // blanco entre personas o entre los fragmentos enviados por el bot.
+    var bloques = [], bloque = [];
+    var inicioPersona = /\bDNI\s*(?::{1,2}|→|➾|➤|►|»)?\s*(\d{7,9})\b/i;
+    text.split(/\r?\n/).forEach(function (linea) {
+      if (inicioPersona.test(linea) && bloque.some(function (previa) { return inicioPersona.test(previa); })) {
+        bloques.push(bloque.join('\n'));
+        bloque = [];
+      }
+      bloque.push(linea);
+    });
+    if (bloque.length) bloques.push(bloque.join('\n'));
     var campo = function (etiqueta, str) {
       var re = new RegExp('(?:' + etiqueta + ')\\s*' + ARBOL_SEP_RE + '\\s*([^\\n]+)', 'i');
       var m = str.match(re);
@@ -2888,27 +2962,80 @@
     bloques.forEach(function (bloque) {
       var b = bloque.trim();
       if (!b) return;
-      var dniLinea = b.match(/DNI\s*(?::{1,2}|→|➾|➤|►|»)\s*(\d{7,9})/i);
+      var dniLinea = b.match(inicioPersona);
       if (!dniLinea) return;
       regs.push({
         dni: dniLinea[1],
-        edad: campo('EDAD', b),
-        nombres: campo('NOMBRES', b),
+        edad: (b.match(/\bEDAD\s*(?::{1,2}|→|➾|➤|►|»)?\s*(\d{1,3})\b/i) || [,''])[1],
+        nombres: campo('PRENOMBRES|NOMBRES', b),
         apellidos: campo('APELLIDOS', b),
-        sexo: campo('SEXO|GENERO', b),
-        relacion: campo('RELACION', b),
-        verificacion: campo('VERIFICACION', b)
+        sexo: campo('SEXO|GÉNERO|GENERO', b),
+        relacion: campo('RELACIÓN|RELACION', b),
+        verificacion: campo('VERIFICACIÓN|VERIFICACION', b)
       });
     });
-    return regs;
+    // Algunas continuaciones llegan como filas de tabla, sin repetir la
+    // etiqueta «DNI». Aceptar solo filas con índice y DNI, y columnas
+    // separadas por tabulaciones o dos espacios para no adivinar nombres.
+    var vistos = new Set(regs.map(function (r) { return r.dni; }));
+    text.split(/\r?\n/).forEach(function (linea) {
+      var inicio = linea.match(/^\s*(\d{1,3})\s+(\d{7,9})\b/);
+      if (!inicio || vistos.has(inicio[2])) return;
+      var resto = linea.slice(inicio[0].length).trim();
+      var edad = '';
+      var edadRotulada = resto.match(/^Edad\s*(?::{1,2}|→|➾|➤|►|»)?\s*(\d{1,3})\b/i);
+      if (edadRotulada) {
+        edad = edadRotulada[1];
+        resto = resto.slice(edadRotulada[0].length).trim();
+      }
+      var celdas = resto.split(/\t+| {2,}/).map(function (celda) { return celda.trim(); }).filter(Boolean);
+      if (!edad && /^\d{1,3}$/.test(celdas[0] || '')) edad = celdas.shift();
+      if (!edad && /^\d{1,3}$/.test(celdas[celdas.length - 1] || '')) edad = celdas.pop();
+      if (celdas.length < 2) return;
+      regs.push({ dni: inicio[2], edad: edad, nombres: celdas[0], apellidos: celdas[1],
+        sexo: celdas[2] || '', relacion: celdas[3] || '', verificacion: celdas[4] || '' });
+      vistos.add(inicio[2]);
+    });
+    // En respuestas enriquecidas puede llegar una tabla sin texto legible.
+    // También cubre una tabla más completa que el texto del primer bloque.
+    var filas = p.tabla && Array.isArray(p.tabla.filas) ? p.tabla.filas : [];
+    var desdeTabla = filas.map(function (f) {
+      var dniCelda = columnaValor('DNI', f);
+      var dni = String(dniCelda).match(/\b\d{7,9}\b/);
+      var edadCelda = columnaValor('EDAD', f) || (String(dniCelda).match(/\bEDAD\s*[:：➾→]?\s*(\d{1,3})\b/i) || [,''])[1];
+      return dni ? {
+        dni: dni[0], edad: String(edadCelda || ''),
+        nombres: f.prenombres || columnaValor('NOMBRES', f), apellidos: columnaValor('APELLIDOS', f),
+        sexo: f.sexo || columnaValor('GÉNERO', f), relacion: f.relacion || columnaValor('RELACIÓN', f),
+        verificacion: f.verificacion || columnaValor('VERIFICACIÓN', f)
+      } : null;
+    }).filter(Boolean);
+    // La tabla enriquecida puede corresponder solo al primer mensaje. Unir
+    // por DNI: elegir la lista más larga descarta familiares de mensajes
+    // posteriores cuando la primera tabla ya contiene muchas filas.
+    var unidos = desdeTabla.slice();
+    var porDni = new Map(unidos.map(function (r) { return [r.dni, r]; }));
+    regs.forEach(function (r) {
+      var anterior = porDni.get(r.dni);
+      if (!anterior) {
+        unidos.push(r);
+        porDni.set(r.dni, r);
+        return;
+      }
+      ['edad', 'nombres', 'apellidos', 'sexo', 'relacion', 'verificacion'].forEach(function (clave) {
+        if (!anterior[clave] && r[clave]) anterior[clave] = r[clave];
+      });
+    });
+    return unidos;
   }
 
   function renderArbolGenealogico(p, valorConsultado) {
-    var regs = parseArbolGenealogico((p && p.raw) || '');
+    var regs = parseArbolGenealogico(p);
     if (!regs.length) return '';
+    var conVerificacion = regs.some(function (r) { return String(r.verificacion || '').trim(); });
 
     var parts = [];
-    parts.push('<div class="nm-results">');
+    parts.push('<div class="nm-results cr-arbol">');
     parts.push('<div class="cr-dl-bar cr-dl-bar-tabla">' +
       '<button type="button" class="nm-download cr-btn-arbol-pdf">Descargar</button>' +
     '</div>');
@@ -2917,16 +3044,19 @@
     parts.push('<div class="nm-meta"><span class="nm-meta-bold">REGISTROS</span><span class="nm-meta-italic">' + regs.length + ' resultados</span></div>');
 
     parts.push('<div class="nm-table-wrap">');
-    parts.push('<table class="nm-table">');
+    parts.push('<table class="nm-table' + (conVerificacion ? '' : ' cr-arbol-sin-verificacion') + '">');
     parts.push('<thead><tr>');
-    parts.push('<th>Nº</th><th>Nº DNI</th><th>NOMBRES</th><th>APELLIDOS</th><th>EDAD</th><th>SEXO</th><th>RELACIÓN</th><th>VERIFICACIÓN</th>');
+    parts.push('<th>Nº</th><th>Nº DNI</th><th>NOMBRES</th><th>APELLIDOS</th><th>EDAD</th><th>SEXO</th><th>RELACIÓN</th>' + (conVerificacion ? '<th>VERIFICACIÓN</th>' : ''));
     parts.push('</tr></thead>');
     parts.push('<tbody>');
     regs.forEach(function (r, idx) {
       parts.push('<tr>');
-      parts.push('<td>' + (idx + 1) + '</td>');
-      ['dni', 'nombres', 'apellidos', 'edad', 'sexo', 'relacion', 'verificacion'].forEach(function (k) {
-        parts.push('<td>' + escapeHtml(r[k] || '') + '</td>');
+      parts.push('<td data-label="Familiar">' + (idx + 1) + '</td>');
+      var campos = [['dni', 'DNI'], ['nombres', 'Nombres'], ['apellidos', 'Apellidos'],
+        ['edad', 'Edad'], ['sexo', 'Sexo'], ['relacion', 'Relación']];
+      if (conVerificacion) campos.push(['verificacion', 'Verificación']);
+      campos.forEach(function (campo) {
+        parts.push('<td data-label="' + campo[1] + '">' + escapeHtml(r[campo[0]] || '') + '</td>');
       });
       parts.push('</tr>');
     });
@@ -3059,6 +3189,9 @@
     splitIntoRecords:        splitIntoRecords,
     isEmptyValue:            isEmptyValue,
     renderDataRows:          renderDataRows,
+    prepararTextoResultado: prepararTextoResultado,
+    renderTextoPlano:       renderTextoPlano,
+    textoResultado:         textoResultado,
     recortarAlResumen:       recortarAlResumen,
     renderMtc:               renderMtc,
     pdfsDe:                  pdfsDe,

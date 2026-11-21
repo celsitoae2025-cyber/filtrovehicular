@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
 <link rel="stylesheet" href="css/interfaz-tipografia.css?v=1">
 <link rel="stylesheet" href="css/plataforma.css?v=28">
-<link rel="stylesheet" href="css/administracion.css?v=2">
+<link rel="stylesheet" href="css/administracion.css?v=3">
 <link rel="stylesheet" href="css/acceso-admin.css?v=1">
 </head>
 <body class="fv-admin">
@@ -85,15 +85,16 @@
         <details class="ad-estado" id="adEstado">
           <summary class="ad-estado-boton" aria-label="Estado de la plataforma"><svg aria-hidden="true"><use href="#fv-admin"/></svg><span>Estado</span></summary>
           <div class="ad-estado-panel">
+            <header class="ad-estado-panel-cab"><strong>Estado de la plataforma</strong><span>Disponibilidad y comunicación con clientes.</span></header>
             <div class="ad-estado-fila">
-              <span>Mantenimiento</span>
-              <button class="mnt-switch" id="mntBarBtn" type="button" role="switch" aria-checked="false" aria-label="Modo mantenimiento" title="Modo mantenimiento"><span class="mnt-switch-thumb"></span></button>
+              <div class="ad-estado-descripcion"><span id="mntBarLabel">Mantenimiento</span><small>Pausa las consultas de clientes.</small><span class="ad-estado-etiqueta" id="mntBarEstado" aria-live="polite">Comprobando…</span></div>
+              <button class="mnt-switch ad-estado-switch" id="mntBarBtn" type="button" role="switch" aria-checked="false" aria-labelledby="mntBarLabel" aria-describedby="mntBarEstado" title="Modo mantenimiento"><span class="ad-estado-switch-thumb" aria-hidden="true"></span></button>
             </div>
             <div class="ad-estado-fila">
-              <span>Aviso a clientes</span>
-              <button class="avc-switch" id="avcBarBtn" type="button" role="switch" aria-checked="false" aria-label="Aviso a los clientes" title="Aviso a los clientes"><span class="avc-switch-dot" aria-hidden="true"></span><span class="avc-switch-txt">Aviso</span></button>
+              <div class="ad-estado-descripcion"><span id="avcBarLabel">Aviso a clientes</span><small>Muestra un mensaje en la plataforma.</small><span class="ad-estado-etiqueta" id="avcBarEstado" aria-live="polite">Comprobando…</span></div>
+              <button class="avc-switch ad-estado-switch" id="avcBarBtn" type="button" role="switch" aria-checked="false" aria-labelledby="avcBarLabel" aria-describedby="avcBarEstado" title="Aviso a los clientes"><span class="ad-estado-switch-thumb" aria-hidden="true"></span></button>
             </div>
-            <button class="btn-ghost ad-estado-config" type="button" data-admin-view="settings">Configurar</button>
+            <button class="btn-ghost ad-estado-config" type="button" data-admin-view="settings">Abrir configuración</button>
           </div>
         </details>
         <div class="admin-user">
@@ -1112,8 +1113,8 @@
 <script src="js/admin/anti-abuse.js?v=25"></script>
 <script src="js/admin/audit.js?v=23"></script>
 <script src="js/admin/broadcasts.js?v=25"></script>
-<script src="js/admin/maintenance.js?v=4"></script>
-<script src="js/admin/aviso-clientes.js?v=14"></script>
+<script src="js/admin/maintenance.js?v=5"></script>
+<script src="js/admin/aviso-clientes.js?v=15"></script>
 <script src="js/admin/carteles.js?v=2"></script>
 <script src="js/modules/idle-logout.js?v=2"></script>
 <script src="js/admin/cabecera.js?v=6"></script>
