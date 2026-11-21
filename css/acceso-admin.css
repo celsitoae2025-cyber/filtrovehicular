@@ -1,0 +1,27 @@
+.ad-acceso { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 24px; background: #f2f3f2; color: #1b1b1b; }
+.ad-acceso[hidden] { display: none; }
+.ad-acceso-card { width: 100%; max-width: 420px; padding: 32px; border: 1px solid #dedfdd; border-radius: 10px; background: #fff; }
+.ad-acceso .fv-wordmark { color: #202825; font-size: 22px; font-weight: 800; line-height: 1.04; letter-spacing: -.045em; }
+.ad-acceso .fv-wordmark-line { display: block; }
+.ad-acceso .fv-wordmark-plus { color: #7ac943; }
+.ad-acceso h1 { margin: 30px 0 8px; font-size: 22px; font-weight: 600; line-height: 1.3; }
+.ad-acceso-contexto { margin: 0 0 24px; color: #656b67; font-size: 16px; }
+.ad-acceso form { display: grid; gap: 10px; }
+.ad-acceso label { font-size: 12px; }
+.ad-acceso input:is([type=email],[type=password]) { width: 100%; min-height: 48px; margin: 0 0 6px; padding: 10px 12px; border: 1px solid #d9dcda; border-radius: 8px; outline: none; box-shadow: none; background: #fff; color: #1b1b1b; font: inherit; font-size: 16px; }
+.ad-acceso input:focus { border-color: #7ba45d; outline: none; box-shadow: none; }
+.ad-acceso-recordar { display: flex; align-items: center; gap: 8px; margin: 2px 0 6px; color: #656b67; }
+.ad-acceso-recordar input { width: 16px; height: 16px; accent-color: #1b1b1b; }
+.ad-acceso .auth-turnstile { width: 100%; min-height: 65px; }
+.ad-acceso button { min-height: 48px; padding: 10px 16px; border: 1px solid #1b1b1b; border-radius: 8px; background: #1b1b1b; color: #fff; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; }
+.ad-acceso button:disabled { opacity: .65; cursor: wait; }
+.ad-acceso button:focus-visible, .ad-acceso-volver:focus-visible { outline: 2px solid #7ac943; outline-offset: 3px; }
+.ad-acceso-error { margin: 0; padding: 10px 12px; border-radius: 6px; background: #fff3f1; color: #a52a20; font-size: 12px; line-height: 1.5; }
+.ad-acceso-volver { display: block; margin-top: 20px; color: #656b67; font-size: 12px; text-align: center; text-underline-offset: 3px; }
+@media (max-width: 480px) { .ad-acceso { padding: 16px; } .ad-acceso-card { padding: 24px; } }
+@layer fv-componentes-internos {
+  #adminLogin :is(h1,.fv-wordmark) { font-size: 22px !important; }
+  #adminLogin .fv-wordmark :is(.fv-wordmark-line,.fv-wordmark-plus) { font-size: inherit !important; font-weight: inherit; }
+  #adminLogin :is(.ad-acceso-contexto,button,input[type=email],input[type=password]) { font-size: 16px !important; }
+  #adminLogin :is(label,.ad-acceso-error,.ad-acceso-volver) { font-size: 12px !important; }
+}

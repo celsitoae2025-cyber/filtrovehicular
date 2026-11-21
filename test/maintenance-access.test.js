@@ -49,7 +49,7 @@ function fixture(initialRole, directLogin = false) {
     supabase: { rpc: async () => ({ data: { enabled: true }, error: null }) },
   };
   const context = vm.createContext({
-    Consultia, document, navigator: {}, console, URLSearchParams, setTimeout, clearInterval, setInterval: () => 1,
+    Consultia, document, navigator: {}, console, URLSearchParams, setTimeout, clearTimeout, clearInterval, setInterval: () => 1,
     window: { Consultia, location: { search: directLogin ? '?acceso=administrador' : '' }, addEventListener() {} },
   });
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../js/modules/maintenance.js'), 'utf8'), context);
@@ -68,6 +68,16 @@ test('administrator can use the app while maintenance remains enabled', async ()
   await app.flush();
   assert.equal(app.blocked(), false);
   app.maintenance.applyState({ enabled: true });
+  assert.equal(app.blocked(), false);
+});
+
+test('retrying availability also recovers an administrator after a failed profile read', async () => {
+  const app = fixture('admin');
+  app.delayProfile(Promise.resolve(null));
+  await app.flush();
+  assert.equal(app.blocked(), true);
+  app.delayProfile(null);
+  await app.maintenance.check();
   assert.equal(app.blocked(), false);
 });
 

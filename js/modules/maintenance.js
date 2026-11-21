@@ -15,6 +15,7 @@
   var sinSesionConfirmada = false;
   var accesoDirecto = new URLSearchParams(window.location.search).get('acceso') === 'administrador';
   var revisionAcceso = 0;
+  var accesoEnVuelo = null;
   var MENSAJE_POR_DEFECTO =
     'Estamos realizando mejoras en la plataforma. ' +
     'Las consultas volverán a estar disponibles cuando terminemos.';
@@ -60,12 +61,12 @@
     el.setAttribute('aria-describedby', 'mntText');
     el.innerHTML =
       '<div class="mnt-card">' +
-        '<div class="mnt-brand">' +
+        '<a class="mnt-brand" href="/admin" aria-label="Acceder a administración">' +
           '<span class="fv-wordmark" role="img" aria-label="Plataforma Filtro Vehicular+">' +
             '<span class="fv-wordmark-line" aria-hidden="true">Plataforma Filtro</span>' +
             '<span class="fv-wordmark-line" aria-hidden="true">Vehicular<span class="fv-wordmark-plus">+</span></span>' +
           '</span>' +
-        '</div>' +
+        '</a>' +
         '<div class="mnt-divider" aria-hidden="true"></div>' +
         '<div class="mnt-status"><span class="mnt-status-dot" aria-hidden="true"></span>' +
           '<span>Mantenimiento en curso</span></div>' +
@@ -128,21 +129,32 @@
     mostrarAviso(estado.message);
   }
 
-  async function actualizarAcceso() {
-    var revision = ++revisionAcceso;
-    var autorizado = false;
-    var anonimo = false;
-    try {
-      var auth = window.Consultia.Auth;
-      var usuario = auth && await auth.getUser();
-      anonimo = !!auth && !usuario;
-      var perfil = usuario && await auth.getProfile(usuario);
-      autorizado = !!(perfil && perfil.id === usuario.id && perfil.is_admin === true);
-    } catch (e) { /* Sin un perfil validado no se concede la excepción. */ }
-    if (revision !== revisionAcceso) return;
-    esAdmin = autorizado;
-    sinSesionConfirmada = anonimo;
-    applyState(estadoActual);
+  function actualizarAcceso() {
+    if (accesoEnVuelo) return accesoEnVuelo;
+    var revision = revisionAcceso;
+    var tarea = (async function () {
+      var timer;
+      var acceso = { admin: false, anonimo: false };
+      try {
+        acceso = await Promise.race([
+          (async function () {
+            var auth = window.Consultia.Auth;
+            var usuario = auth && await auth.getUser();
+            var perfil = usuario && await auth.getProfile(usuario);
+            return { admin: !!(perfil && perfil.id === usuario.id && perfil.is_admin === true), anonimo: !!auth && !usuario };
+          })(),
+          new Promise(function (resolve) { timer = setTimeout(function () { resolve(acceso); }, 8000); })
+        ]);
+      } catch (e) { /* Se volverá a validar en la siguiente comprobación. */ }
+      finally { clearTimeout(timer); }
+      if (revision !== revisionAcceso) return;
+      esAdmin = acceso.admin;
+      sinSesionConfirmada = acceso.anonimo;
+      applyState(estadoActual);
+    })();
+    accesoEnVuelo = tarea;
+    tarea.finally(function () { if (accesoEnVuelo === tarea) accesoEnVuelo = null; });
+    return tarea;
   }
 
   var enVuelo = false;
@@ -158,6 +170,7 @@
       var res = await c.rpc('get_maintenance');
       if (res.error) throw res.error;
       applyState(res.data || null);
+      if (res.data && res.data.enabled && !esAdmin) await actualizarAcceso();
     } catch (e) {
       var msg = (e && e.message) || '';
       if (/not find|does not exist|404|PGRST202/i.test(msg)) {
@@ -173,11 +186,11 @@
   }
 
   function iniciar() {
-    actualizarAcceso();
     var auth = window.Consultia.Auth;
     if (auth && auth.onAuthChange) auth.onAuthChange(function (evento) {
       if (evento !== 'SIGNED_OUT' && evento !== 'SIGNED_IN' && evento !== 'USER_UPDATED') return;
       revisionAcceso++;
+      accesoEnVuelo = null;
       esAdmin = false;
       sinSesionConfirmada = evento === 'SIGNED_OUT';
       applyState(estadoActual);
