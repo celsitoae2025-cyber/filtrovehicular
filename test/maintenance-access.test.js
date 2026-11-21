@@ -78,12 +78,12 @@ test('regular accounts remain blocked without an administrator shortcut', async 
   assert.doesNotMatch(app.noticeHtml(), /mntAccess|Acceso administrador/);
 });
 
-test('normal login automatically recognizes an administrator during maintenance', async () => {
+test('a new device without a session sees maintenance until an administrator is authenticated', async () => {
   const app = fixture(null);
   await app.flush();
-  assert.equal(app.blocked(), false);
+  assert.equal(app.blocked(), true);
   app.maintenance.applyState({ enabled: true });
-  assert.equal(app.blocked(), false, 'maintenance polling must not cover the login form');
+  assert.equal(app.blocked(), true, 'anonymous visitors must stay under maintenance after polling');
   app.authEvent('SIGNED_IN', 'admin');
   await app.flush();
   assert.equal(app.blocked(), false);
@@ -97,11 +97,11 @@ test('login with a regular account does not grant a maintenance exception', asyn
   assert.equal(app.blocked(), true);
 });
 
-test('signing out restores normal login and does not grant the next account admin access', async () => {
+test('signing out immediately restores maintenance and does not exempt the next account', async () => {
   const app = fixture('admin');
   await app.flush();
   app.authEvent('SIGNED_OUT', null);
-  assert.equal(app.blocked(), false);
+  assert.equal(app.blocked(), true);
   app.authEvent('SIGNED_IN', 'member');
   await app.flush();
   assert.equal(app.blocked(), true);
