@@ -12,7 +12,7 @@
 
 // IMPORTANTE: incrementar CACHE_VERSION en cada deploy para que los usuarios
 // reciban las actualizaciones de JS/CSS/HTML automáticamente.
-const CACHE_VERSION = "v2.314.0-20261121";
+const CACHE_VERSION = "v2.315.0-20261121";
 const SHELL_CACHE = "fv-shell-" + CACHE_VERSION;
 const ASSETS_CACHE = "fv-assets-" + CACHE_VERSION;
 const IMG_CACHE = "fv-img-" + CACHE_VERSION;
@@ -208,6 +208,12 @@ self.addEventListener("fetch", function (event) {
   }
 
   if (sameOrigin && isStaticAsset(url)) {
+    // El aviso de mantenimiento debe leer su versión actual incluso si
+    // la pestaña conserva una copia anterior en la caché de recursos.
+    if (/\/(?:css\/maintenance\.css|js\/modules\/maintenance\.js)(?:$|\?)/i.test(url)) {
+      event.respondWith(networkFirst(req, ASSETS_CACHE));
+      return;
+    }
     // En localhost (desarrollo) NO cachear — siempre pedir red para
     // que los cambios de CSS/JS se vean inmediatamente
     var host = self.location.hostname;

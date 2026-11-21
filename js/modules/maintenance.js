@@ -30,6 +30,15 @@
     document.documentElement.classList.remove('mnt-locked');
   }
 
+  function actualizarEstilosAviso() {
+    if (navigator.onLine === false) return;
+    var link = document.querySelector('link[rel="stylesheet"][href*="css/maintenance.css"]');
+    if (!link) return;
+    var url = new URL(link.href, window.location.href);
+    url.searchParams.set('aviso', String(Date.now()));
+    link.href = url.href;
+  }
+
   function mostrarAviso(mensaje) {
     var actual = document.getElementById(OVERLAY_ID);
     if (actual) {
@@ -72,8 +81,20 @@
         '</button>' +
         '<p class="mnt-footer">Esta pantalla comprueba la disponibilidad automáticamente.</p>' +
       '</div>';
+    // El aviso permanece legible mientras se renueva una hoja antigua.
+    el.style.background = '#f2f3f2';
+    el.style.color = '#1b1b1b';
+    el.querySelector('.mnt-card').style.background = '#fff';
+    el.querySelector('.mnt-brand').style.color = '#202825';
+    el.querySelector('.fv-wordmark').style.color = '#202825';
+    el.querySelector('.mnt-title').style.color = '#1b1b1b';
+    el.querySelector('.mnt-status').style.color = '#636b65';
+    el.querySelector('.mnt-icon').style.color = '#5f9937';
+    el.querySelector('.mnt-retry').style.background = '#1b1b1b';
+    el.querySelector('.mnt-retry').style.color = '#fff';
     document.body.appendChild(el);
     document.documentElement.classList.add('mnt-locked');
+    actualizarEstilosAviso();
 
     var btn = document.getElementById('mntRetry');
     if (btn) btn.addEventListener('click', async function () {
@@ -134,6 +155,9 @@
       if (!document.hidden) check();
     });
     window.addEventListener('focus', check);
+    if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (document.getElementById(OVERLAY_ID)) actualizarEstilosAviso();
+    });
 
     // Realtime da respuesta inmediata cuando app_settings está publicado;
     // el sondeo de 5 segundos cubre desconexiones o falta de publicación.

@@ -44,7 +44,7 @@
     if (!('serviceWorker' in navigator)) return;
     if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js').catch(function (e) {
+      navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).catch(function (e) {
         console.warn('[instalar] el service worker no se registró:', e);
       });
     });
