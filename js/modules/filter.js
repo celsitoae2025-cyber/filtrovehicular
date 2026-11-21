@@ -1028,7 +1028,7 @@
   // `valorConsultado` es lo que escribió el cliente. Llega como argumento
   // y no se relee del campo: al reintentar o al cambiar de consulta el
   // campo puede estar ya vacío o con otra cosa.
-  function renderResultado(resp, valorConsultado) {
+  function renderResultado(resp, valorConsultado, guardado) {
     revokeActiveBlobUrls();
     var p       = H.recortarAlResumen(resp.parsed || {}, currentConsulta && currentConsulta.comando);
     // Con `H.` por delante: un navegador que arrastre la versión vieja de
@@ -1254,7 +1254,7 @@
             var result = await Consultia.MetaplaReport.generate(
               pdfsRef[0].base64, metaReporte, progresoReporte);
             if (!result) throw new Error('MetaplaReport devolvió null');
-            if (mostrarReporte(result) && folio) registrarFolio(folio, valorRef, ultimoVeredicto);
+            if (mostrarReporte(result) && folio && !guardado) registrarFolio(folio, valorRef, ultimoVeredicto);
           } catch (e) {
             console.error('[metapla-report]', e);
             // El archivo original sigue disponible, claramente identificado.
@@ -1436,6 +1436,19 @@
   // API pública para otros módulos (ej. CTAs) que necesiten leer el catálogo.
   Consultia.FilterView = {
     resetResult: function () { volverAlFormulario({ limpiar: false, enfocar: false }); },
+    showSavedResult: function (saved) {
+      if (consultaEnCurso || !saved || !saved.consulta || !saved.response || !saved.response.parsed) return false;
+      var response = JSON.parse(JSON.stringify(saved.response));
+      response.costo_deducido = 0;
+      response.parsed.botones = [];
+      setConsulta(saved.consulta);
+      if (Consultia.NV && Consultia.NV.mostrarBuscador) Consultia.NV.mostrarBuscador(saved.consulta);
+      $('filter-input').value = saved.input || '';
+      $('filter-result').hidden = false;
+      $('filter-result-body').hidden = false;
+      renderResultado(response, saved.input || '', true);
+      return true;
+    },
     getCatalog: function () { return catalog; },
     whenReady: function () { return catalogReadyPromise || Promise.resolve(); },
   };

@@ -1,0 +1,7 @@
+# Implementación de consultas recientes
+
+1. Añadir el bloque y sus estilos en `app.html` y `css/plataforma.css`. Mantener el selector debajo del título y colocar el bloque a su derecha en pantallas amplias; apilarlo y mostrar una consulta en celular.
+2. Crear una caché acotada por cuenta en `js/shared/recent-results.js`, con IndexedDB y respaldo en memoria. Registrar respuestas satisfactorias desde `consulta-runner.js` sin demorar su entrega. Reutilizar `filter.js` para abrir las copias sin cobros, callbacks ni nueva emisión de folios.
+3. Crear `js/nueva/recientes.js` para leer dos registros del usuario, resolver sus nombres y respuestas disponibles, gestionar carga, vacío, error, reintento y cambio de cuenta. Conectar la entrada al catálogo y la actualización tras una consulta. Reutilizar el historial para registros antiguos.
+4. Verificar aislamiento de cuentas, límites, reapertura, fallos de almacenamiento y ausencia de consultas al recuperar resultados. Ejecutar las pruebas existentes y QA de navegador en ordenador y celular con datos locales. Inspeccionar capturas y verificar login sin cambios.
+5. Actualizar versiones de recursos y service worker. Publicar en GitHub y Fly conforme a la autorización vigente y comprobar los archivos publicados y el estado del despliegue. Reversión mediante el commit anterior si falla la publicación; no hay migraciones ni cambios en los cobros.

@@ -18,6 +18,15 @@
 
   function getSB() { return window.Consultia.supabase || null; }
 
+  var recentContexts = new Map();
+  function rememberResult(userId, consulta, input, response) {
+    if (!Consultia.RecentResults) return;
+    // Fuera de la entrega inmediata de la respuesta al visor.
+    setTimeout(function () {
+      Consultia.RecentResults.remember(userId, consulta, input, response).catch(function () {});
+    }, 0);
+  }
+
   // --- Sanitizador de errores del bridge ---
   // Evita exponer detalles técnicos internos al usuario.
   function safeError(errData, fallbackMsg) {
@@ -407,7 +416,13 @@
       console.error('[callback] bridge respondió ' + res.status + ':', errData && errData.error);
       throw new Error(safeError(errData, "Error " + res.status + " del bridge"));
     }
-    return await res.json();
+    var response = await res.json();
+    var recent = recentContexts.get(body.consulta_id);
+    if (recent) {
+      response.consulta_id = body.consulta_id;
+      rememberResult(recent.userId, recent.consulta, recent.input, response);
+    }
+    return response;
   }
 
   /* RESERVAS COLGADAS: SE BARREN ANTES DE EMPEZAR
@@ -771,6 +786,10 @@
         // Inyectamos el costo para que la UI lo muestre
         resp.costo_deducido = esCuentaAdmin ? 0 : consulta.precio_venta;
         resp.consulta_id = consultaId;
+
+        recentContexts.set(consultaId, { userId: userId, consulta: consulta, input: valor });
+        if (recentContexts.size > 2) recentContexts.delete(recentContexts.keys().next().value);
+        rememberResult(userId, consulta, valor, resp);
 
         return resp;
       }

@@ -203,3 +203,35 @@ test('Vehicular reúne las categorías, elimina duplicados y conserva variantes 
   s.C.setFilterOption('placa-anterior');
   assert.equal(s.elements.filterComboText.textContent, 'placa-principal');
 });
+
+test('una respuesta guardada abre el panel oculto sin consultar ni anunciar otro cobro', async () => {
+  const s = await search();
+  s.elements['filter-result'].hidden = true;
+  s.elements['filter-result-body'].hidden = true;
+  const saved = {
+    input: 'ABC123', consulta: s.C.FilterView.getCatalog()[0],
+    response: { costo_deducido: 5, parsed: { raw: 'PLACA ABC123, resultado guardado.', secciones: [], medios: [], botones: [{ texto: 'Callback anterior' }] } },
+  };
+  assert.equal(s.C.FilterView.showSavedResult(saved), true);
+  assert.equal(s.elements['filter-result'].hidden, false);
+  assert.equal(s.elements['filter-result-body'].hidden, false);
+  assert.match(s.elements['filter-result-body'].innerHTML, /ABC123/);
+  assert.doesNotMatch(s.elements['filter-result-body'].innerHTML, /Callback anterior/);
+  assert.equal(s.calls.runner, 0);
+  assert.equal(s.calls.notices.some(notice => notice.title === 'Cobro exitoso'), false);
+  assert.equal(saved.response.costo_deducido, 5, 'el visor no cambia la respuesta conservada');
+});
+
+test('abrir una respuesta guardada respeta una consulta que todavía está en curso', async () => {
+  let finish;
+  const pending = new Promise(resolve => { finish = resolve; });
+  const s = await search({ run: () => pending });
+  s.elements['filter-input'].value = 'ABC123';
+  const running = s.elements['filter-consultar'].click();
+  for (let i = 0; i < 10; i++) await Promise.resolve();
+  assert.equal(s.C.FilterView.showSavedResult({ input: 'XYZ456', consulta: s.C.FilterView.getCatalog()[0], response: { parsed: {} } }), false);
+  assert.equal(s.elements['filter-input'].value, 'ABC123');
+  finish({ costo_deducido: 0, parsed: { raw: 'Resultado de prueba local.', secciones: [], medios: [] } });
+  await running;
+  assert.equal(s.calls.runner, 1);
+});

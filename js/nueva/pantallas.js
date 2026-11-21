@@ -125,9 +125,14 @@
     }).join('');
   }
 
-  function filaCatalogo(c) {
+  function iconoConsulta(c) {
     var comando = (c.comando || '').trim().toLowerCase().split(/\s+/, 1)[0];
-    var icono = c.accion === 'citv' ? 'citv' : (Object.hasOwn(ICONOS_CONSULTA, comando) ? ICONOS_CONSULTA[comando] : iconoCategoria(c.categoria));
+    return c.accion === 'citv' ? 'citv' : (Object.hasOwn(ICONOS_CONSULTA, comando) ? ICONOS_CONSULTA[comando] : iconoCategoria(c.categoria));
+  }
+  NV.iconoConsulta = iconoConsulta;
+
+  function filaCatalogo(c) {
+    var icono = iconoConsulta(c);
     return '<button type="button" class="nv-op" data-id="' + esc(c.id) + '">' +
       '<span class="nv-op-ico" aria-hidden="true"><svg><use href="#fv-' + icono + '"/></svg></span>' +
       '<span class="nv-op-principal"><span class="nv-op-nombre">' + esc(c.nombre) + '</span>' +
@@ -648,6 +653,16 @@
     });
   }
 
+  NV.verConsultaEnHistorial = function (consulta) {
+    filtroHist = 'todas';
+    $('nvHistEstado').value = filtroHist;
+    $('nvHistBuscar').value = consulta && consulta.input || '';
+    $('nvSegmentos').querySelectorAll('button').forEach(function (button) {
+      button.classList.toggle('es-activo', button.dataset.filtro === filtroHist);
+    });
+    NV.ir('historial');
+  };
+
 
   /* ============================================================
      MIS VEHICULOS - guardado voluntario, sin consultar ni cobrar
@@ -1003,6 +1018,7 @@
     arrancarVehiculos();
     arrancarPagos();
     arrancarCuenta();
+    if (NV.arrancarRecientes) NV.arrancarRecientes();
     NV.alEntrar.resumen = entrarResumen;
     NV.alEntrar.historial = entrarHistorial;
     NV.alEntrar.vehiculos = entrarVehiculos;

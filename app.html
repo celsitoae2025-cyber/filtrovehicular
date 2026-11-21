@@ -69,7 +69,7 @@
 <link rel="stylesheet" href="css/puerta-entrada.css?v=30">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
 <link rel="stylesheet" href="css/interfaz-tipografia.css?v=22">
-<link rel="stylesheet" href="css/plataforma.css?v=25">
+<link rel="stylesheet" href="css/plataforma.css?v=26">
 </head>
 <body class="nv-body">
 
@@ -514,6 +514,15 @@
                 <div class="nv-categoria-opciones" id="nvCategoriaOpciones" role="group" aria-labelledby="nvCategoriaTitulo"></div>
               </div>
             </details>
+            <aside class="nv-recientes" id="nvRecientes" aria-labelledby="nvRecientesTitulo">
+              <div class="nv-recientes-cab">
+                <h3 id="nvRecientesTitulo">Consultas recientes</h3>
+                <a href="#historial">Ver historial <svg aria-hidden="true"><use href="#fv-ir"/></svg></a>
+              </div>
+              <div class="nv-recientes-lista" id="nvRecientesLista" aria-busy="true">
+                <p class="nv-recientes-vacio">Cargando consultas…</p>
+              </div>
+            </aside>
           </div>
           <div class="nv-lista-cab">
             <h3 id="nvCatalogoTitulo">Consultas disponibles</h3>
@@ -913,7 +922,7 @@
 
 <script src="js/modules/confirm-dialog.js?v=2"></script>
 <script src="js/modules/validation.js?v=1"></script>
-<script src="js/modules/consulta-runner.js?v=18"></script>
+<script src="js/modules/consulta-runner.js?v=19"></script>
 <script src="js/modules/render-helpers.js?v=65"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
@@ -932,7 +941,7 @@
 <script src="js/modules/reporte-veredicto.js?v=4"></script>
 <script src="js/modules/metapla-report.js?v=32"></script>
 <script src="js/modules/metapla-view.js?v=7"></script>
-<script src="js/modules/filter.js?v=69"></script>
+<script src="js/modules/filter.js?v=70"></script>
 <script src="js/modules/combo-buscador.js?v=5"></script>
 
 <!-- El Duplicado CITV: la hoja, el dibujante del PDF y el trámite. -->
@@ -941,7 +950,9 @@
 <script src="js/modules/citv-aviso.js?v=10"></script>
 
 <script src="js/shared/vehicles.js?v=1"></script>
-<script src="js/nueva/pantallas.js?v=34"></script>
+<script src="js/shared/recent-results.js?v=1"></script>
+<script src="js/nueva/recientes.js?v=1"></script>
+<script src="js/nueva/pantallas.js?v=35"></script>
 <script src="js/nueva/nombres.js?v=1"></script>
 <script src="js/nueva/servicios.js?v=17"></script>
 
