@@ -322,10 +322,10 @@ body.nv-body #nvApp :is(.nv-pagina-intro,.nv-veh-intro) p { margin: 0; color: va
 
 /* Catálogo de servicios: una tabla de acciones, sin mosaicos desiguales. */
 body.nv-body #nvApp .nv-explorar { display: grid; gap: 14px; }
-body.nv-body #nvApp .nv-explorar-cab { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,390px); align-items: center; gap: 12px 24px; margin: 0 0 6px; }
+body.nv-body #nvApp .nv-explorar-cab { display: grid; grid-template-columns: minmax(0,1fr); align-items: start; gap: 16px; margin: 0 0 6px; }
 body.nv-body #nvApp .nv-explorar-cab h2 { margin: 0 0 4px; font-weight: 600; }
 body.nv-body #nvApp .nv-explorar-cab p { margin: 0; color: var(--pl-secundario); }
-body.nv-body #nvApp .nv-categoria-menu { position: relative; overflow: visible; border: 1px solid var(--pl-linea) !important; background: #fff !important; }
+body.nv-body #nvApp .nv-categoria-menu { position: relative; width: min(390px,100%); justify-self: start; overflow: visible; border: 1px solid var(--pl-linea) !important; background: #fff !important; }
 body.nv-body #nvApp .nv-categoria-menu[open] { border-color: var(--pl-foco) !important; }
 body.nv-body #nvApp .nv-categoria-menu:has(> summary:focus-visible) { border-color: var(--pl-tinta) !important; }
 body.nv-body #nvApp .nv-categoria-menu > summary { display: flex; align-items: center; gap: 12px; min-height: 50px; padding: 12px 16px; border-radius: 8px; background: #fff !important; color: var(--pl-tinta) !important; cursor: pointer; list-style: none; }
@@ -672,9 +672,9 @@ body.nv-body #nvApp .nv-menu-ir { margin-left: auto; }
 }
 @media (min-width:901px) and (max-width:1100px) {
   body.nv-body #nvApp .nv-resumen-top { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  body.nv-body #nvApp .nv-explorar-cab { grid-template-columns: minmax(0,1fr) minmax(260px,320px); }
 }
 @media (max-width:900px) {
+  body.nv-body #nvApp .nv-categoria-menu { width: 100%; }
   body.nv-body #nvApp { --pl-alto-nav: calc(71px + env(safe-area-inset-bottom, 0px)); grid-template-columns: minmax(0,1fr); }
   body.nv-body #nvApp .nv-lado { display: none; }
   body.nv-body #nvApp .nv-barra { min-height: 68px; padding-block: 11px; gap: 10px 12px; }
