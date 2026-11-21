@@ -11,8 +11,8 @@
   var OVERLAY_ID = 'maintenanceOverlay';
   var POLL_MS = 5000;
   var MENSAJE_POR_DEFECTO =
-    'El equipo de Filtro Vehicular+ está realizando trabajos de mantenimiento. ' +
-    'Las consultas volverán a estar disponibles al finalizar.';
+    'Estamos realizando mejoras en la plataforma. ' +
+    'Las consultas volverán a estar disponibles cuando terminemos.';
 
   function sb() {
     return window.Consultia && window.Consultia.supabase;
@@ -31,39 +31,44 @@
   }
 
   function mostrarAviso(mensaje) {
-    if (document.getElementById(OVERLAY_ID)) return;
+    var actual = document.getElementById(OVERLAY_ID);
+    if (actual) {
+      actual.querySelector('#mntText').textContent = mensaje || MENSAJE_POR_DEFECTO;
+      return;
+    }
     var el = document.createElement('div');
     el.id = OVERLAY_ID;
     el.className = 'mnt-overlay';
     el.setAttribute('role', 'alertdialog');
+    el.setAttribute('aria-modal', 'true');
     el.setAttribute('aria-live', 'assertive');
     el.setAttribute('aria-labelledby', 'mntTitle');
     el.setAttribute('aria-describedby', 'mntText');
     el.innerHTML =
       '<div class="mnt-card">' +
         '<div class="mnt-brand">' +
-          '<span class="fv-wordmark fv-wordmark--inverse" role="img" aria-label="Plataforma Filtro Vehicular+">' +
+          '<span class="fv-wordmark" role="img" aria-label="Plataforma Filtro Vehicular+">' +
             '<span class="fv-wordmark-line" aria-hidden="true">Plataforma Filtro</span>' +
             '<span class="fv-wordmark-line" aria-hidden="true">Vehicular<span class="fv-wordmark-plus">+</span></span>' +
           '</span>' +
         '</div>' +
         '<div class="mnt-divider" aria-hidden="true"></div>' +
         '<div class="mnt-status"><span class="mnt-status-dot" aria-hidden="true"></span>' +
-          '<span>Mantenimiento activo</span></div>' +
+          '<span>Mantenimiento en curso</span></div>' +
         '<div class="mnt-icon" aria-hidden="true">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" ' +
                'stroke-linecap="round" stroke-linejoin="round">' +
             '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94L14.7 6.3Z"/>' +
           '</svg>' +
         '</div>' +
-        '<h1 class="mnt-title" id="mntTitle">Consultas temporalmente pausadas</h1>' +
+        '<h1 class="mnt-title" id="mntTitle">Estamos en mantenimiento</h1>' +
         '<p class="mnt-text" id="mntText">' + esc(mensaje || MENSAJE_POR_DEFECTO) + '</p>' +
         '<button type="button" class="mnt-retry" id="mntRetry">' +
           '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
             '<path d="M16.2 8a6.5 6.5 0 0 0-11.6-2L3 8m0 0V4.5M3 8h3.5M3.8 12a6.5 6.5 0 0 0 11.6 2L17 12m0 0v3.5M17 12h-3.5" ' +
               'stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
           '</svg>' +
-          '<span>Volver a comprobar</span>' +
+          '<span>Comprobar disponibilidad</span>' +
         '</button>' +
         '<p class="mnt-footer">Esta pantalla comprueba la disponibilidad automáticamente.</p>' +
       '</div>';
@@ -71,7 +76,17 @@
     document.documentElement.classList.add('mnt-locked');
 
     var btn = document.getElementById('mntRetry');
-    if (btn) btn.addEventListener('click', function () { window.location.reload(); });
+    if (btn) btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      btn.querySelector('span').textContent = 'Comprobando…';
+      try { await check(); }
+      finally {
+        btn.disabled = false;
+        btn.removeAttribute('aria-busy');
+        btn.querySelector('span').textContent = 'Comprobar disponibilidad';
+      }
+    });
   }
 
   function applyState(estado) {

@@ -61,7 +61,7 @@
 <link rel="stylesheet" href="css/combo.css?v=6">
 <link rel="stylesheet" href="css/botones.css?v=7">
 <!-- El aviso de mantenimiento: el mismo de app.html -->
-<link rel="stylesheet" href="css/maintenance.css?v=20">
+<link rel="stylesheet" href="css/maintenance.css?v=21">
 <!-- La ventana de carteles y el aviso a clientes: los mismos de siempre. -->
 <link rel="stylesheet" href="css/carteles.css?v=5">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=20">
@@ -69,7 +69,7 @@
 <link rel="stylesheet" href="css/puerta-entrada.css?v=30">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
 <link rel="stylesheet" href="css/interfaz-tipografia.css?v=22">
-<link rel="stylesheet" href="css/plataforma.css?v=27">
+<link rel="stylesheet" href="css/plataforma.css?v=28">
 </head>
 <body class="nv-body">
 
@@ -432,6 +432,11 @@
       <a class="nv-nav" href="#cuenta" data-ir="cuenta"><svg><use href="#fv-cuenta"/></svg><span>Cuenta</span></a>
     </nav>
 
+    <section class="nv-categorias-lado" aria-labelledby="nvCategoriasLadoTitulo">
+      <h2 class="nv-lado-titulo" id="nvCategoriasLadoTitulo">Categorías de consulta</h2>
+      <nav class="nv-categorias-lado-lista" id="nvCategoriasLado" aria-label="Categorías de consulta"></nav>
+    </section>
+
     <span class="nv-lado-titulo">Consultas gratuitas</span>
     <nav class="nv-lado-nav" aria-label="Consultas gratuitas">
       <a class="nv-nav" href="#regiones" data-ir="regiones"><svg><use href="#fv-region"/></svg><span>Infracciones por regiones</span></a>
@@ -500,6 +505,7 @@
             <div>
               <h2>Encuentra tu consulta</h2>
               <p>Elige una consulta para ver su costo.</p>
+              <p class="nv-categoria-contexto" id="nvCategoriaContexto"></p>
             </div>
             <details class="nv-categoria-menu" id="nvCategoriaMenu">
               <summary aria-controls="nvCategoriaPanel">
@@ -952,7 +958,7 @@
 <script src="js/shared/vehicles.js?v=1"></script>
 <script src="js/shared/recent-results.js?v=1"></script>
 <script src="js/nueva/recientes.js?v=1"></script>
-<script src="js/nueva/pantallas.js?v=35"></script>
+<script src="js/nueva/pantallas.js?v=36"></script>
 <script src="js/nueva/nombres.js?v=1"></script>
 <script src="js/nueva/servicios.js?v=17"></script>
 
@@ -968,6 +974,6 @@
 <!-- Modo mantenimiento: bloquea la página de consulta para todos los visitantes,
      también antes de iniciar sesión. El panel admin.html permanece accesible
      para gestionar la plataforma. -->
-<script src="js/modules/maintenance.js?v=13"></script>
+<script src="js/modules/maintenance.js?v=14"></script>
 </body>
 </html>

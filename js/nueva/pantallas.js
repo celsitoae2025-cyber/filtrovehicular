@@ -108,6 +108,17 @@
     var cantidadActiva = categoriaActiva === 'todas' ? totalCatalogo() : cuenta[categoriaActiva];
     $('nvCategoriaActual').textContent = categoriaActiva === 'todas' ? 'Todas las categorías' : nombreCat(categoriaActiva);
     $('nvCategoriaCuenta').textContent = cantidadActiva + ' consulta' + (cantidadActiva === 1 ? '' : 's');
+    var contexto = $('nvCategoriaContexto');
+    if (contexto) contexto.textContent = $('nvCategoriaActual').textContent + ' · ' + $('nvCategoriaCuenta').textContent;
+    var lateral = $('nvCategoriasLado');
+    if (lateral) lateral.innerHTML = ['todas'].concat(claves, otras).map(function (clave) {
+      var nombre = clave === 'todas' ? 'Todas las consultas' : nombreCat(clave);
+      var cantidad = clave === 'todas' ? totalCatalogo() : cuenta[clave];
+      return '<button type="button" class="nv-categoria-lado" data-cat="' + esc(clave) + '" aria-pressed="' +
+        (clave === categoriaActiva) + '" aria-label="' + esc(nombre + ', ' + cantidad + ' consultas') + '">' +
+        '<svg aria-hidden="true"><use href="#fv-' + iconoCategoria(clave) + '"/></svg>' +
+        '<span>' + esc(nombre) + '</span><small>' + cantidad + '</small></button>';
+    }).join('');
     $('nvCategoriaOpciones').innerHTML = ['todas'].concat(claves, otras).map(function (clave) {
       var todas = clave === 'todas';
       var cantidad = todas ? totalCatalogo() : cuenta[clave];
@@ -260,6 +271,22 @@
   function arrancarConsultar() {
     var menuCategorias = $('nvCategoriaMenu');
     var selectorCategoria = menuCategorias.querySelector('summary');
+    var categoriasLado = $('nvCategoriasLado');
+    if (categoriasLado) categoriasLado.addEventListener('click', function (event) {
+      var button = event.target.closest('.nv-categoria-lado');
+      if (!button) return;
+      var categoria = button.dataset.cat;
+      var pantalla = document.querySelector('[data-pantalla="consultar"]');
+      if (pantalla && pantalla.hidden) NV.ir('consultar');
+      cambiarCategoria(categoria);
+      window.scrollTo(0, 0);
+      menuCategorias.open = false;
+      mostrarBusqueda(false);
+      var actual = Array.from(categoriasLado.querySelectorAll('.nv-categoria-lado')).find(function (item) {
+        return item.dataset.cat === categoria;
+      });
+      if (actual) actual.focus({ preventScroll: true });
+    });
     var barra = document.querySelector('#nvApp .nv-barra');
     var navegacion = document.querySelector('#nvApp .nv-abajo');
     var botonBusqueda = $('nvAbrirBusqueda');

@@ -115,10 +115,8 @@
       var ok = true;
       if (Consultia.confirm) {
         ok = await Consultia.confirm({
-          title: 'Activar modo mantenimiento',
-          message: 'Los usuarios dejarán de poder consultar y verán un aviso ' +
-                   'a pantalla completa. Tú podrás seguir operando.<br><br>' +
-                   '¿Confirmas activarlo?',
+          title: 'Pausar las consultas',
+          message: 'Los usuarios verán el aviso de mantenimiento. Podrás seguir trabajando desde Administración.',
           confirmText: 'Activar',
           cancelText: 'Cancelar'
         });
