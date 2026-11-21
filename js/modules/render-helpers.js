@@ -362,19 +362,23 @@
     var list = campos || [];
     var recs = [], cur = [];
     var vistos = Object.create(null);
+    var inicioVisto = false;
     list.forEach(function (c) {
       var cu = (c.campo || '').toUpperCase().trim();
-      // Corta un registro nuevo si el campo es un "arranque" conocido
-      // (DNI, N° expediente/denuncia, etc.) O si este campo YA apareció
+      // Corta cuando reaparece un identificador o un campo ya visto.
+      // El primer DNI puede venir después de los apellidos y no separa
+      // por sí solo un registro nuevo. Un campo que YA apareció
       // en el registro actual — señal de que el bot volvió a repetir el
       // mismo bloque (ej. varios TELEFONO/OPERADOR/PERIODO seguidos en
       // /telp), sin necesidad de conocer de antemano el nombre del campo.
       var esRepetido = cu && vistos[cu];
-      if ((isRecordStart(cu) || esRepetido) && cur.length > 0) {
+      if (((isRecordStart(cu) && inicioVisto) || esRepetido) && cur.length > 0) {
         recs.push(cur);
         cur = [];
         vistos = Object.create(null);
+        inicioVisto = false;
       }
+      if (isRecordStart(cu)) inicioVisto = true;
       if (cu) vistos[cu] = true;
       cur.push(c);
     });
@@ -781,6 +785,47 @@
     return f ? f(campo) : campo;
   }
 
+  function etiquetaResultado(campo) {
+    var etiquetas = {
+      ANMODE: 'Año del modelo', ANOMODELO: 'Año del modelo', ANOFABRICACION: 'Año de fabricación', ANODEFABRICACION: 'Año de fabricación',
+      COCATEG: 'Categoría', CATEG: 'Categoría', NROVERSION: 'Versión', NOVIN: 'Número de VIN',
+      NUMEROVIN: 'Número de VIN', NROMOTOR: 'Número de motor', NUMEROMOTOR: 'Número de motor',
+      NROSERIE: 'Número de serie', NOSERIE: 'Número de serie', CARGAUTIL: 'Carga útil',
+      TIPOPERSONA: 'Tipo de persona', FORMULARODANTE: 'Fórmula rodante', DUA: 'DUA',
+      FECHAHORA: 'Fecha de actualización', NUMEROASIENTOS: 'Número de asientos', NUMERODEASIENTOS: 'Número de asientos',
+      TIPODEPARTICIPACION: 'Tipo de participación', TIPODECARROCERIA: 'Tipo de carrocería',
+      TOTALDEPROPIETARIOS: 'Total de propietarios', OFICINAREGISTRAL: 'Oficina registral'
+    };
+    return etiquetas[nmNorm(campo)] || prettyEtiqueta(campo);
+  }
+
+  // Las notas y los rótulos libres separan bloques. Solo se ordenan los
+  // campos de cada bloque, después de separar los registros del proveedor.
+  function ordenarCamposResultado(campos) {
+    var vehiculo = ['PLACA', 'MARCA', 'MODELO', 'ANMODE', 'ANOMODELO', 'ANOFABRICACION', 'ANODEFABRICACION',
+      'ESTADO', 'CLASE', 'COCATEG', 'CATEGORIA', 'TIPODECARROCERIA', 'COLOR', 'TIPODECOMBUSTIBLE',
+      'TIPODEUSO', 'NOVIN', 'VIN', 'NUMEROVIN', 'NROMOTOR', 'NUMERODEMOTOR', 'NROSERIE'];
+    var persona = ['DNI', 'NUMERODEDOCUMENTO', 'TIPODEDOCUMENTO', 'NOMBRES', 'PRENOMBRES',
+      'APELLIDOPATERNO', 'APELLIDOMATERNO', 'RAZONSOCIAL', 'ESTADOCIVIL', 'TIPOPERSONA', 'TIPODEPARTICIPACION'];
+    var ordered = [], block = [];
+    function flush() {
+      var keys = block.map(function (campo) { return nmNorm(campo.campo); });
+      var priority = keys.some(function (key) { return /^(PLACA|MARCA|MODELO|NOVIN|VIN)$/.test(key); }) ? vehiculo : persona;
+      block.map(function (campo, index) {
+        var rank = priority.indexOf(keys[index]);
+        return { campo: campo, index: index, rank: rank === -1 ? priority.length : rank };
+      }).sort(function (a, b) { return a.rank - b.rank || a.index - b.index; })
+        .forEach(function (item) { ordered.push(item.campo); });
+      block = [];
+    }
+    (campos || []).forEach(function (campo) {
+      if (!campo.campo) { flush(); ordered.push(campo); }
+      else block.push(campo);
+    });
+    flush();
+    return ordered;
+  }
+
   /* El saldo del bot, fuera; los datos del cliente, dentro.
 
      Se filtraba por el NOMBRE del campo: cualquier «Nombre» y cualquier
@@ -813,7 +858,6 @@
   }
 
   function renderDataRows(p) {
-    var prettyLabel = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.prettyLabel : function (s) { return s; };
     var toTitleCase = Consultia.ConsultaRunner ? Consultia.ConsultaRunner.toTitleCase : function (s) { return s; };
     var dataHtml = [];
     var camposVistos = Object.create(null);   // campo::valor ya impresos
@@ -882,7 +926,10 @@
       if (c.campo && _botMeta.test(c.campo.trim())) return '';
       if (!c.campo && c.valor && _botValText.test(c.valor.trim())) return '';
       if (c.campo && isEmptyValue(c.valor)) return '';
-      if (c.campo) return '<div class="cr-row"><span class="cr-k">' + escapeHtml(prettyLabel(c.campo)) + '</span><span class="' + claseValor(c.valor) + '">' + escapeHtml(c.valor) + '</span></div>';
+      if (c.campo) return '<div class="cr-row' + (String(c.valor || '').length > 70 ? ' cr-row-amplia' : '') + '"><span class="cr-k">' + escapeHtml(etiquetaResultado(c.campo)) + '</span><span class="' + claseValor(c.valor) + '">' + escapeHtml(c.valor) + '</span></div>';
+      if (!c.campo && /^(propietarios?|veh[ií]culo|datos del veh[ií]culo|datos del propietario)(?:\s*\(\d+\))?$/i.test((c.valor || '').trim())) {
+        return '<div class="cr-grupo-titulo" role="heading" aria-level="5">' + escapeHtml(nmNorm(c.valor) === 'VEHICULO' ? 'Vehículo' : toTitleCase(c.valor)) + '</div>';
+      }
       if (c.valor && !isEmptyValue(c.valor)) return '<div class="cr-row"><span class="cr-v">' + escapeHtml(c.valor) + '</span></div>';
       return '';
     }
@@ -925,13 +972,13 @@
       if (fijos.length) {
         parts.push('<div class="cr-tbl-fijos">');
         fijos.forEach(function (f) {
-          parts.push('<span class="cr-tbl-fijo"><span class="cr-tbl-fijo-k">' + escapeHtml(prettyLabel(f.campo)) +
+          parts.push('<span class="cr-tbl-fijo"><span class="cr-tbl-fijo-k">' + escapeHtml(etiquetaResultado(f.campo)) +
             '</span><span class="cr-tbl-fijo-v">' + escapeHtml(f.valor) + '</span></span>');
         });
         parts.push('</div>');
       }
       parts.push('<div class="nm-table-wrap"><table class="nm-table"><thead><tr><th>Nº</th>');
-      varian.forEach(function (col) { parts.push('<th>' + escapeHtml(prettyLabel(col)) + '</th>'); });
+      varian.forEach(function (col) { parts.push('<th>' + escapeHtml(etiquetaResultado(col)) + '</th>'); });
       parts.push('</tr></thead><tbody>');
       mapas.forEach(function (map, idx) {
         parts.push('<tr><td>' + (idx + 1) + '</td>');
@@ -1007,12 +1054,14 @@
       var isFirst = idx === 0 && (s.titulo === 'General' || s.titulo === 'Datos principales');
       var campos = s.campos || [];
       if (!campos.length) return;
-      var recs = splitIntoRecords(campos);
+      var recs = splitIntoRecords(campos).map(ordenarCamposResultado);
       var marca = dataHtml.length;   // por si la sección acaba vacía
 
       dataHtml.push('<div class="cr-sect">');
       if (!isFirst) {
-        if (s.titulo) dataHtml.push('<h4>' + escapeHtml(toTitleCase(s.titulo)) + '</h4>');
+        if (s.titulo && !/^foto(?:graf[ií]a)?\s+(?:del?\s+)?veh[ií]culo\b/i.test(s.titulo.trim())) {
+          dataHtml.push('<h4>' + escapeHtml(nmNorm(s.titulo) === 'VEHICULO' ? 'Vehículo' : toTitleCase(s.titulo)) + '</h4>');
+        }
         dataHtml.push('<div class="cr-sect-body">');
       }
       if (recs.length > 1) {
@@ -2015,6 +2064,8 @@
      y luego buscar el botón del panel). Los disparan la delegación global,
      no quien llamó aquí, así que la referencia se guarda en el módulo. */
   var _alNuevaConsultaPdfModal = null;
+  var _focoAntesPdfModal = null;
+  var _revisionPdfModal = 0;
   function openPdfModal(src, fileName, opts) {
     fileName = nombreLegibleArchivo(fileName || 'Documento.pdf');
     var alNuevaConsulta = (opts && typeof opts.alNuevaConsulta === 'function') ? opts.alNuevaConsulta : null;
@@ -2038,34 +2089,40 @@
       el.id = 'cr-pdf-modal';
       el.className = 'cr-pdf-modal';
       el.innerHTML = '<div class="cr-pdf-modal-backdrop"></div>' +
-        '<div class="cr-pdf-modal-panel">' +
+        '<div class="cr-pdf-modal-panel" role="dialog" aria-modal="true" aria-labelledby="crPdfNombre">' +
           '<div class="cr-pdf-modal-header">' +
-            '<span class="cr-pdf-modal-name"></span>' +
+            '<div class="cr-pdf-modal-info"><span class="cr-pdf-modal-name" id="crPdfNombre"></span>' +
             '<span class="cr-pdf-modal-pages" hidden></span>' +
+            '</div>' +
             '<div class="cr-pdf-modal-actions">' +
               '<a class="cr-pdf-modal-dl" download="">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
-                '<span>Descargar</span>' +
+                '<span>Descargar PDF</span>' +
               '</a>' +
               '<button type="button" class="cr-pdf-modal-nueva" hidden>Nueva consulta</button>' +
-              '<button type="button" class="cr-pdf-modal-close" aria-label="Cerrar">' +
+              '<button type="button" class="cr-pdf-modal-close" aria-label="Cerrar vista previa">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
                 '<span>Cerrar</span>' +
               '</button>' +
             '</div>' +
           '</div>' +
           '<div class="cr-pdf-modal-body"></div>' +
-          '<div class="cr-pdf-modal-fallback">' +
+          '<div class="cr-pdf-modal-fallback" hidden>' +
             '<span>¿No se ve el documento? </span>' +
             '<a class="cr-pdf-modal-fallback-link">Ábrelo o descárgalo aquí</a>' +
           '</div>' +
         '</div>';
       document.body.appendChild(el);
     }
+    if (el.hidden || !_focoAntesPdfModal) _focoAntesPdfModal = document.activeElement;
+    var revision = ++_revisionPdfModal;
+    el.hidden = false;
     var body = el.querySelector('.cr-pdf-modal-body');
     var pages = el.querySelector('.cr-pdf-modal-pages');
+    var fallback = el.querySelector('.cr-pdf-modal-fallback');
     body.innerHTML = '';
     pages.hidden = true;
+    fallback.hidden = true;
     if (esMovil) {
       body.classList.add('es-hojas');
       var hojas = document.createElement('div');
@@ -2076,6 +2133,8 @@
       // bytes que desde el blob URL en móvil.
       renderPdfIntoContainer(hojas, src, fileName, _pdfBase64Map[src], { todasLasPaginas: true })
         .then(function (total) {
+          if (revision !== _revisionPdfModal || el.hidden) return;
+          fallback.hidden = !!total;
           if (!total) return;
           pages.textContent = total === 1 ? '1 página' : total + ' páginas';
           pages.hidden = false;
@@ -2086,12 +2145,14 @@
       iframe.src = src;
       iframe.title = fileName || 'Documento PDF';
       iframe.style.cssText = 'width:100%;height:100%;border:none';
+      iframe.onerror = function () { if (revision === _revisionPdfModal && !el.hidden) fallback.hidden = false; };
       body.appendChild(iframe);
     }
     var dlBtn = el.querySelector('.cr-pdf-modal-dl');
     dlBtn.href = src;
     dlBtn.download = fileName || 'documento.pdf';
     el.querySelector('.cr-pdf-modal-name').textContent = fileName || 'Documento PDF';
+    el.querySelector('.cr-pdf-modal-name').title = fileName || 'Documento PDF';
     var fallbackLink = el.querySelector('.cr-pdf-modal-fallback-link');
     fallbackLink.href = src;
     fallbackLink.download = fileName || 'documento.pdf';
@@ -2105,6 +2166,7 @@
        sacar al cliente de la consulta que estaba mirando. */
     var NV = window.Consultia && window.Consultia.NV;
     if (NV && NV.abrirCapa) NV.abrirCapa('pdf', closePdfModal);
+    el.querySelector('.cr-pdf-modal-close').focus({ preventScroll: true });
   }
 
   /* Escape cierra el visor: antes solo se podía con la X. */
@@ -2118,11 +2180,16 @@
     var el = document.getElementById('cr-pdf-modal');
     if (!el || el.hidden) return;
     el.hidden = true;
+    _revisionPdfModal++;
     var NV = window.Consultia && window.Consultia.NV;
     if (NV && NV.cerrarCapa) NV.cerrarCapa('pdf');
     el.querySelector('.cr-pdf-modal-body').innerHTML = '';
     document.body.classList.remove('cr-lightbox-open');
     _alNuevaConsultaPdfModal = null;
+    if (_focoAntesPdfModal && _focoAntesPdfModal.isConnected && typeof _focoAntesPdfModal.focus === 'function') {
+      _focoAntesPdfModal.focus({ preventScroll: true });
+    }
+    _focoAntesPdfModal = null;
   }
 
   /* ── Búsqueda por nombre (/nm): tarjetas de persona ── */
