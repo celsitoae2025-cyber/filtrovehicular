@@ -6,6 +6,11 @@ node_modules
 filtro-bridge
 tg-session-generator
 tools
+scripts
+docs
+dist
+dev-server.js
+deno.lock
 CITV
 supabase
 test
@@ -25,3 +30,4 @@ consulta-vehicular.*
 ACCESOS-Y-CREDENCIALES.md
 INFORME-SEGURIDAD.md
 !robots.txt
+!assets/browsers/LICENSE.txt

@@ -3,6 +3,7 @@
   "private": true,
   "description": "Plataforma Filtro Vehicular+ — sitio estático servido por Cloudflare Pages.",
   "scripts": {
+    "icons:build": "node scripts/build-interior-icons.mjs",
     "test": "node --test \"test/**/*.test.js\""
   }
 }

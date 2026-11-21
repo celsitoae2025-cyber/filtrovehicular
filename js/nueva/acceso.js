@@ -62,6 +62,7 @@
     var puerta = $('nvPuerta');
     puerta.dataset.pasoActivo = 'acceso';
     puerta.classList.remove('es-acceso-limpio');
+    puerta.classList.remove('es-cuenta-ayuda');
     puerta.classList.add('es-verificacion');
     estadoVerificacion(mensaje || 'Completa la verificación para continuar.');
   }
@@ -138,6 +139,11 @@
   var correoAlta = '';     // a quién se le mandó el código de verificación
   var correoClave = '';    // a quién se le mandó el código de la contraseña
   var encima = false;      // la puerta tapa la aplicación (cambio desde Mi cuenta)
+  var reenvios = [];
+
+  function refrescarReenvios() {
+    reenvios.forEach(function (refrescar) { refrescar(); });
+  }
 
   /* ── Mensajes, en cristiano ─────────────────────────────────── */
   function traducir(msg) {
@@ -169,6 +175,7 @@
   /* El botón del paso, ocupado mientras se espera la respuesta. */
   function ocupado(boton, si, texto) {
     if (!boton) return;
+    boton.setAttribute('aria-busy', String(si));
     if (si) {
       boton.dataset.original = boton.dataset.original || boton.innerHTML;
       boton.disabled = true;
@@ -187,8 +194,43 @@
     if (C.Turnstile) C.Turnstile.reset(CAPTCHA[paso]);
   }
 
+  function configurarReenvio(id, errorId, destinatario, enviar, aviso) {
+    var boton = $(id);
+    var textoOriginal = boton.textContent;
+    var control = C.AuthForm.createResendGate(30000);
+    var reloj = null;
+    function refrescar() {
+      var estado = control.state(destinatario());
+      boton.disabled = estado.busy || estado.remaining > 0;
+      boton.setAttribute('aria-busy', String(estado.busy));
+      boton.textContent = estado.busy ? 'Enviando…' : estado.remaining ? 'Reenviar en ' + estado.remaining + ' s' : textoOriginal;
+      if (estado.remaining && !reloj) reloj = setInterval(refrescar, 1000);
+      if (!estado.remaining && reloj) { clearInterval(reloj); reloj = null; }
+    }
+    reenvios.push(refrescar);
+    return async function () {
+      var correo = destinatario();
+      var estado = control.state(correo);
+      if (!correo || estado.busy || estado.remaining) return false;
+      error(errorId, '');
+      var pendiente = control.run(correo, function () { return enviar(correo); });
+      refrescar();
+      try {
+        var enviado = await pendiente;
+        if (enviado && C.toast) C.toast(aviso);
+        return enviado;
+      } catch (ex) {
+        error(errorId, traducir(ex && ex.message));
+        return false;
+      } finally {
+        refrescar();
+      }
+    };
+  }
+
   /* ── Cambiar de paso ────────────────────────────────────────── */
   NV.verPuerta = function (paso) {
+    var pasoAnterior = $('nvPuerta').dataset.pasoActivo;
     if ((paso === 'acceso' || paso === 'registro') && !accesoVerificado) {
       pasoTrasVerificacion = paso;
       paso = 'acceso';
@@ -198,12 +240,18 @@
     formularios.forEach(function (f) {
       var es = f.dataset.paso === paso;
       f.hidden = !es;
-      if (es) existe = true;
+      if (es) {
+        existe = true;
+        if (pasoAnterior !== paso) {
+          f.querySelectorAll('.nv-error').forEach(function (aviso) { aviso.hidden = true; aviso.textContent = ''; });
+        }
+      }
     });
     if (!existe) return NV.verPuerta('acceso');
 
     var puerta = $('nvPuerta');
     if (puerta) puerta.dataset.pasoActivo = paso;
+    puerta.classList.toggle('es-cuenta-ayuda', !encima && ['verificar', 'olvido', 'restablecer'].indexOf(paso) !== -1);
     if (paso !== 'acceso' || accesoVerificado) puerta.classList.remove('es-verificacion');
     if (paso === 'acceso') {
       if (!accesoVerificado) prepararVerificacionAcceso(undefined, pasoTrasVerificacion);
@@ -230,6 +278,7 @@
       puerta.querySelector('.nv-auth-contenido').scrollTop = 0;
     }
     window.scrollTo(0, 0);
+    refrescarReenvios();
 
     var primero = document.querySelector('#nvPuerta [data-paso="' + paso + '"] input:not([readonly]):not([type="checkbox"])');
     if (primero && window.matchMedia('(hover: hover)').matches) primero.focus();
@@ -260,12 +309,11 @@
   }
 
   /* ── Crear cuenta ───────────────────────────────────────────── */
-  var CLAVE_FUERTE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-
   function conectarRegistro() {
     var form = $('nvRegistro');
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
+      if ($('nvRegistroBtn').disabled) return;
       error('nvRegistroError', '');
       var nombre = form.full_name.value.trim();
       var correo = form.email.value.trim();
@@ -279,11 +327,12 @@
         var v = C.EmailValidator.validate(correo);
         if (!v.ok) return error('nvRegistroError', v.error);
       }
-      if (!/^[0-9+\s()-]{6,20}$/.test(telefono)) {
+      telefono = C.AuthForm.normalizePhone(telefono);
+      if (!telefono) {
         return error('nvRegistroError', 'Escribe un teléfono válido.');
       }
-      if (!CLAVE_FUERTE.test(clave)) {
-        return error('nvRegistroError', 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.');
+      if (!C.AuthForm.isStrongPassword(clave)) {
+        return error('nvRegistroError', C.AuthForm.passwordMessage);
       }
       if (!form.terms.checked) {
         return error('nvRegistroError', 'Acepta los términos y condiciones para crear tu cuenta.');
@@ -343,34 +392,32 @@
   };
 
   function conectarVerificar() {
+    NV.reenviarActivacion = configurarReenvio('nvReenviarAlta', 'nvVerificarError', function () { return correoAlta; }, async function (correo) {
+      var token = await tokenAntiBot('verificar');
+      if (!token) throw new Error('Completa la verificación de seguridad para reenviar el correo.');
+      var res;
+      try { res = await C.Auth.resendVerification(correo, token); }
+      finally { quemarToken('verificar'); }
+      if (res && res.error) throw res.error;
+    }, { type: 'success', title: 'Correo reenviado', message: 'Ábrelo y pulsa «Activa tu cuenta» (mira también en spam).' });
     $('nvReenviarAlta').addEventListener('click', async function (e) {
       e.preventDefault();
       if (!correoAlta) return NV.verPuerta('registro');
-      error('nvVerificarError', '');
-      try {
-        var token = await tokenAntiBot('verificar');
-        var res = await C.Auth.resendVerification(correoAlta, token);
-        quemarToken('verificar');
-        if (res && res.error) throw res.error;
-        if (C.toast) C.toast({ type: 'success', title: 'Correo reenviado', message: 'Ábrelo y pulsa «Activa tu cuenta» (mira también en spam).' });
-      } catch (ex) {
-        error('nvVerificarError', traducir(ex && ex.message));
-      }
+      await NV.reenviarActivacion();
     });
   }
 
   /* ── Pedir el código para cambiar la contraseña ────────────── */
   async function pedirCodigoClave(correo, paso) {
     var token = await tokenAntiBot(paso);
-    var res = await C.Auth.requestPasswordReset(correo, token);
-    quemarToken(paso);
-    /* Si el correo no existe no se dice: sería decirle a cualquiera qué
-       correos tienen cuenta. Solo se frena si hay demasiados intentos o
-       falló el anti-bot. */
+    if (!token) throw new Error('Completa la verificación de seguridad para continuar.');
+    var res;
+    try { res = await C.Auth.requestPasswordReset(correo, token); }
+    finally { quemarToken(paso); }
+    // Solo se oculta la inexistencia de la cuenta, nunca un fallo de envío.
     if (res && res.error) {
-      var m = String(res.error.message || '').toLowerCase();
-      if (m.indexOf('rate') !== -1 || m.indexOf('captcha') !== -1) throw res.error;
-      console.warn('[acceso] pedir código:', res.error);
+      if (res.error.code === 'user_not_found' || /^user not found\.?$/i.test(res.error.message || '')) return;
+      throw res.error;
     }
   }
 
@@ -378,9 +425,11 @@
     var form = $('nvOlvido');
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
+      if ($('nvOlvidoBtn').disabled) return;
       error('nvOlvidoError', '');
       var correo = form.email.value.trim();
       if (!correo) return error('nvOlvidoError', 'Escribe tu correo.');
+      if (!C.EmailValidator.isValidFormat(correo)) return error('nvOlvidoError', 'El correo no tiene un formato válido.');
 
       var boton = $('nvOlvidoBtn');
       ocupado(boton, true, 'Enviando…');
@@ -402,11 +451,12 @@
     var form = $('nvRestablecer');
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
+      if ($('nvRestablecerBtn').disabled) return;
       error('nvRestablecerError', '');
       var codigo = (form.code.value || '').replace(/\D/g, '');
       var clave = form.password.value;
       if (codigo.length !== 6) return error('nvRestablecerError', 'El código tiene 6 dígitos.');
-      if (!clave || clave.length < 8) return error('nvRestablecerError', 'La contraseña debe tener al menos 8 caracteres.');
+      if (!C.AuthForm.isStrongPassword(clave)) return error('nvRestablecerError', C.AuthForm.passwordMessage);
       if (clave !== form.password2.value) return error('nvRestablecerError', 'Las dos contraseñas no coinciden.');
       if (!correoClave) return NV.verPuerta('olvido');
 
@@ -430,16 +480,13 @@
       }
     });
 
+    var reenviarClave = configurarReenvio('nvReenviarClave', 'nvRestablecerError', function () { return correoClave; }, function (correo) {
+      return pedirCodigoClave(correo, 'restablecer');
+    }, { type: 'success', title: 'Solicitud enviada', message: 'Si el correo está registrado, recibirás un nuevo código. Revisa también spam.' });
     $('nvReenviarClave').addEventListener('click', async function (e) {
       e.preventDefault();
       if (!correoClave) return NV.verPuerta('olvido');
-      error('nvRestablecerError', '');
-      try {
-        await pedirCodigoClave(correoClave, 'restablecer');
-        if (C.toast) C.toast({ type: 'success', title: 'Código reenviado', message: 'Revisa tu correo (y la carpeta de spam).' });
-      } catch (ex) {
-        error('nvRestablecerError', traducir(ex && ex.message));
-      }
+      await reenviarClave();
     });
   }
 
@@ -535,12 +582,20 @@
       });
     }
     $('nvPuertaVolver').addEventListener('click', cerrarEncima);
-    $('nvMostrarClave').addEventListener('click', function () {
-      var campo = $('nvAccesoClave');
-      var visible = campo.type === 'password';
-      campo.type = visible ? 'text' : 'password';
-      this.setAttribute('aria-pressed', String(visible));
-      this.setAttribute('aria-label', visible ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    [['nvMostrarClave', 'nvAccesoClave'], ['nvMostrarClaveRegistro', 'nvRegistroClave']].forEach(function (par) {
+      var boton = $(par[0]);
+      var campo = $(par[1]);
+      boton.addEventListener('click', function () {
+        var visible = campo.type === 'password';
+        campo.type = visible ? 'text' : 'password';
+        boton.setAttribute('aria-pressed', String(visible));
+        boton.setAttribute('aria-label', visible ? 'Ocultar contraseña' : 'Mostrar contraseña');
+      });
+      campo.form.addEventListener('reset', function () {
+        campo.type = 'password';
+        boton.setAttribute('aria-pressed', 'false');
+        boton.setAttribute('aria-label', 'Mostrar contraseña');
+      });
     });
     var fvcDialogo = $('nvFvcDialogo');
     var fvcForm = $('nvFvcForm');
@@ -581,27 +636,6 @@
       }
       portadaPlaca.value = placa;
       abrirFiltroCompleto($('fvcOpen'), placa);
-    });
-    var portadaFiltroMobile = $('nvPortadaFiltroMobile');
-    var portadaPlacaMobile = $('nvPortadaPlacaMobile');
-    var portadaErrorMobile = $('nvPortadaPlacaErrorMobile');
-    portadaPlacaMobile.addEventListener('input', function () {
-      this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
-      this.removeAttribute('aria-invalid');
-      portadaErrorMobile.hidden = true;
-    });
-    portadaFiltroMobile.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var placa = portadaPlacaMobile.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-      if (!/^[A-Z0-9]{6}$/.test(placa)) {
-        portadaErrorMobile.textContent = 'Ingresa una placa v\u00e1lida de 6 letras o n\u00fameros.';
-        portadaErrorMobile.hidden = false;
-        portadaPlacaMobile.setAttribute('aria-invalid', 'true');
-        portadaPlacaMobile.focus();
-        return;
-      }
-      portadaPlacaMobile.value = placa;
-      abrirFiltroCompleto($('fvcOpenMobilePlaca'), placa);
     });
     fvcDialogo.querySelectorAll('[data-fvc-cerrar]').forEach(function (boton) {
       boton.addEventListener('click', function () { fvcDialogo.close(); });

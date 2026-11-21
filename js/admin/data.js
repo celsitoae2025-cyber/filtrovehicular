@@ -240,6 +240,7 @@
     if (!iso) return '—';
     var now = Date.now();
     var t = new Date(iso).getTime();
+    if (isNaN(t)) return '—';
     var diff = Math.max(0, now - t);
     var m = Math.floor(diff/60000);
     if (m < 1) return 'ahora';
@@ -247,7 +248,7 @@
     var h = Math.floor(m/60);
     if (h < 24) return 'hace ' + h + ' h';
     var d = Math.floor(h/24);
-    if (d < 30) return 'hace ' + d + ' días';
+    if (d < 30) return 'hace ' + d + (d === 1 ? ' día' : ' días');
     var mo = Math.floor(d/30);
     return 'hace ' + mo + ' mes' + (mo>1?'es':'');
   };

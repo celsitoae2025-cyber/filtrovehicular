@@ -61,14 +61,15 @@
 <link rel="stylesheet" href="css/combo.css?v=6">
 <link rel="stylesheet" href="css/botones.css?v=7">
 <!-- El aviso de mantenimiento: el mismo de app.html -->
-<link rel="stylesheet" href="css/maintenance.css?v=19">
+<link rel="stylesheet" href="css/maintenance.css?v=20">
 <!-- La ventana de carteles y el aviso a clientes: los mismos de siempre. -->
 <link rel="stylesheet" href="css/carteles.css?v=5">
 <link rel="stylesheet" href="css/aviso-clientes.css?v=20">
 <link rel="stylesheet" href="css/nueva.css?v=124">
-<link rel="stylesheet" href="css/puerta-entrada.css?v=22">
+<link rel="stylesheet" href="css/puerta-entrada.css?v=30">
 <link rel="stylesheet" href="css/sistema-visual.css?v=11">
-<link rel="stylesheet" href="css/interfaz-tipografia.css?v=8">
+<link rel="stylesheet" href="css/interfaz-tipografia.css?v=22">
+<link rel="stylesheet" href="css/plataforma.css?v=22">
 </head>
 <body class="nv-body">
 
@@ -126,67 +127,65 @@
 <div class="nv-puerta" id="nvPuerta" hidden>
   <aside class="nv-puerta-presentacion nv-portada" aria-labelledby="nvPortadaTitulo">
     <header class="nv-portada-marca">
-      <img src="icons/logo-filtro.svg" alt="" width="40" height="40">
-      <div class="nv-portada-identidad">
-        <strong>Filtro Vehicular+</strong>
-        <span>Información para decidir mejor</span>
-      </div>
+      <span class="fv-wordmark fv-wordmark--inverse" role="img" aria-label="Plataforma Filtro Vehicular+">
+        <span class="fv-wordmark-line" aria-hidden="true">Plataforma Filtro</span>
+        <span class="fv-wordmark-line" aria-hidden="true">Vehicular<span class="fv-wordmark-plus">+</span></span>
+      </span>
     </header>
 
     <div class="nv-portada-contenido">
       <div class="nv-portada-hero">
-        <p class="nv-portada-etiqueta">ANTES DE COMPRAR, CONSULTA</p>
-        <h2 id="nvPortadaTitulo">Verifica cualquier vehículo<br>en segundos.</h2>
-        <p class="nv-portada-descripcion">Un filtro inteligente y 100% automatizado que revisa por ti SUNARP, MTC, SUTRAN, SBS, APESEG, ATU, PNP y municipalidades a nivel nacional, sin que entres página por página. Todo en un solo reporte.</p>
+        <h2 id="nvPortadaTitulo">Conoce el vehículo<br>antes de comprar.</h2>
+        <p class="nv-portada-descripcion">Consulta datos registrales, infracciones y documentos vehiculares en un solo reporte.</p>
         <form class="nv-portada-filtro" id="nvPortadaFiltro" novalidate>
           <div class="nv-portada-filtro-cabecera">
-            <h3>Solicita tu Filtro Vehicular Completo</h3>
+            <h3>Solicita tu reporte vehicular</h3>
           </div>
-          <label for="nvPortadaPlaca">Ingresa tu placa</label>
+          <label for="nvPortadaPlaca">Placa del vehículo</label>
           <div class="nv-portada-filtro-fila">
-            <input id="nvPortadaPlaca" name="placa" type="text" placeholder="ABC-123" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="nvPortadaPlacaAyuda nvPortadaPlacaError" required>
-            <button class="nv-portada-filtrar" id="fvcOpen" type="submit" aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span>Filtrar placa</span><svg aria-hidden="true"><use href="#i-ir"/></svg></button>
+            <input id="nvPortadaPlaca" name="placa" type="text" placeholder="ABC123" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="nvPortadaPlacaAyuda nvPortadaPlacaError" required>
+            <button class="nv-portada-filtrar" id="fvcOpen" type="submit" aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span>Solicitar reporte</span><svg aria-hidden="true"><use href="#i-ir"/></svg></button>
           </div>
-          <small id="nvPortadaPlacaAyuda">Ingresa 6 letras o números. Ejemplo: ABC123.</small>
+          <small id="nvPortadaPlacaAyuda">Solicitud por WhatsApp.</small>
           <p class="nv-portada-filtro-error" id="nvPortadaPlacaError" role="alert" hidden></p>
         </form>
       </div>
-      <p class="nv-portada-lema">Conoce su historia. Decide con claridad.</p>
       <ul class="nv-portada-servicios" aria-label="Información que puedes consultar">
         <li>
           <span class="nv-portada-simbolo"><svg class="nv-portada-icono" aria-hidden="true"><use href="#i-vehiculo"/></svg></span>
-          <div><h3>Identifica el vehículo</h3><p>Propietarios y características registradas.</p></div>
+          <h3>Datos del vehículo</h3>
         </li>
         <li>
           <span class="nv-portada-simbolo"><svg class="nv-portada-icono" aria-hidden="true"><use href="#i-historial"/></svg></span>
-          <div><h3>Revisa lo que importa</h3><p>Historial, papeletas y órdenes de captura.</p></div>
+          <h3>Historial e infracciones</h3>
         </li>
         <li>
           <span class="nv-portada-simbolo"><svg class="nv-portada-icono" aria-hidden="true"><use href="#i-reporte"/></svg></span>
-          <div><h3>Completa tu revisión</h3><p>SOAT, revisión técnica y documentos vehiculares.</p></div>
+          <h3>SOAT y revisión técnica</h3>
         </li>
       </ul>
-      <section class="nv-portada-planes" aria-labelledby="nvPortadaPlanesTitulo">
-        <div class="nv-portada-plan-texto">
-          <h3 id="nvPortadaPlanesTitulo">Tus consultas, a tu medida</h3>
-          <p>Elige un paquete de créditos y consulta lo que necesitas.</p>
-        </div>
-        <div class="nv-portada-plan-compra">
-          <p class="nv-portada-precio"><span>Paquetes desde</span><strong id="nvPortadaPrecio">S/ 15</strong></p>
-          <button class="nv-portada-plan-boton" type="button" data-planes-abrir aria-haspopup="dialog" aria-controls="nvPlanesDialogo"><span>Ver planes y precios</span><svg aria-hidden="true"><use href="#i-ir"/></svg></button>
-        </div>
+      <section class="nv-portada-planes" aria-label="Paquetes de créditos">
+        <p class="nv-portada-precio"><span>Paquetes de créditos desde</span><strong id="nvPortadaPrecio">S/ 15</strong></p>
+        <button class="nv-portada-plan-boton" type="button" data-planes-abrir aria-haspopup="dialog" aria-controls="nvPlanesDialogo"><span>Ver planes</span><svg aria-hidden="true"><use href="#i-ir"/></svg></button>
       </section>
     </div>
 
     <footer class="nv-portada-acciones">
-      <button class="nv-navegadores-trigger nv-navegadores-trigger-desktop" type="button" data-navegadores-abrir aria-haspopup="dialog" aria-controls="nvNavegadoresDialog"><svg class="nv-portada-icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c4 4.5 4 12.5 0 17-4-4.5-4-12.5 0-17Z"/></svg><span>NAVEGADORES COMPATIBLES</span></button>
+      <button class="nv-navegadores-trigger nv-navegadores-trigger-desktop" type="button" data-navegadores-abrir aria-haspopup="dialog" aria-controls="nvNavegadoresDialog"><svg class="nv-portada-icono" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c4 4.5 4 12.5 0 17-4-4.5-4-12.5 0-17Z"/></svg><span>Navegadores compatibles</span></button>
     </footer>
   </aside>
 
   <div class="nv-puerta-panel">
     <button class="nv-puerta-volver" type="button" id="nvPuertaVolver" hidden><svg><use href="#i-volver"/></svg><span>Volver a mi cuenta</span></button>
+    <div class="nv-puerta-cuenta">
     <div class="nv-puerta-formularios">
     <div class="nv-auth-shell" id="nvAuthShell">
+      <div class="nv-auth-identidad-mobile" id="nvMobileMarca">
+        <span class="fv-wordmark fv-wordmark--inverse" role="img" aria-label="Plataforma Filtro Vehicular+">
+          <span class="fv-wordmark-line" aria-hidden="true">Plataforma Filtro</span>
+          <span class="fv-wordmark-line" aria-hidden="true">Vehicular<span class="fv-wordmark-plus">+</span></span>
+        </span>
+      </div>
       <div class="nv-auth-tabs" id="nvPuertaTabs" role="tablist" aria-label="Acceso a la plataforma" hidden>
         <button class="nv-auth-tab" type="button" id="nvAuthTabAcceso" role="tab" aria-controls="nvAcceso" aria-selected="true" tabindex="0" data-paso-ir="acceso">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5M10 16l4-4-4-4M14 12H3"/></svg>
@@ -210,39 +209,32 @@
 
     <div id="nvAccesoCredenciales" hidden>
       <div class="nv-auth-intro">
-        <span class="nv-auth-emblema" aria-hidden="true">
-          <img class="nv-auth-emblema-imagen" src="assets/auth/usuarios-registrados-avatar.svg" alt="" width="64" height="64" draggable="false">
-        </span>
-        <h1>USUARIOS REGISTRADOS</h1>
-        <p class="nv-puerta-nota">Acceso a Plataforma Filtro Vehicular+</p>
+        <h1><span class="nv-auth-titulo-desktop">Accede a tu cuenta</span><span class="nv-auth-titulo-mobile">Iniciar sesión</span></h1>
       </div>
-      <label class="nv-etiqueta">Usuario
+      <label class="nv-etiqueta">Correo electrónico
         <span class="nv-auth-campo">
-          <svg class="nv-auth-campo-icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.15 0-7 2.08-7 4.5V21h14v-2.5c0-2.42-2.85-4.5-7-4.5Z"/></svg>
-          <input class="nv-campo" type="email" name="email" autocomplete="email" inputmode="email" placeholder="Ingrese su usuario" required>
+          <svg class="nv-auth-campo-icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm8 8.2L20 7V6l-8 5.2L4 6v1l8 5.2Z"/></svg>
+          <input class="nv-campo" type="email" name="email" autocomplete="email" inputmode="email" placeholder="nombre@correo.com" required>
         </span>
       </label>
       <div class="nv-acceso-clave-grupo">
       <div class="nv-puerta-clave-encabezado"><label for="nvAccesoClave">Contraseña</label><a href="#" data-paso-ir="olvido">¿Olvidaste tu contraseña?</a></div>
       <div class="nv-puerta-clave-campo nv-auth-campo">
         <svg class="nv-auth-campo-icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.5 14a5.5 5.5 0 1 1 5.27-7h6.98A1.25 1.25 0 0 1 22 8.25V11h-2v2h-3v-2h-3.23A5.5 5.5 0 0 1 8.5 14Zm0-3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>
-        <input class="nv-campo" id="nvAccesoClave" type="password" name="password" autocomplete="current-password" placeholder="Ingrese su contraseña" required>
-        <button type="button" id="nvMostrarClave" aria-label="Mostrar contraseña" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-5.5 10-5.5S22 12 22 12s-3.6 5.5-10 5.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg></button>
+        <input class="nv-campo" id="nvAccesoClave" type="password" name="password" autocomplete="current-password" placeholder="Tu contraseña" required>
+        <button type="button" id="nvMostrarClave" aria-label="Mostrar contraseña" aria-controls="nvAccesoClave" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-5.5 10-5.5S22 12 22 12s-3.6 5.5-10 5.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg></button>
       </div>
       </div>
-      <label class="nv-marcar"><input type="checkbox" name="remember" checked> Mantener la sesión abierta</label>
+      <label class="nv-marcar"><input type="checkbox" name="remember" checked> Mantener sesión abierta</label>
       <p class="nv-error" id="nvAccesoError" role="alert" hidden></p>
       <button class="nv-cta nv-cta-bloque" type="submit" id="nvAccesoBtn"><span>Iniciar sesión</span></button>
-      <div class="nv-puerta-pie" id="nvAccesoPie">
-        <span>¿Aún no tienes cuenta?</span><a href="#" data-paso-ir="registro">Créala gratis</a>
-      </div>
+      <div class="nv-auth-navegacion-mobile"><a href="#" id="nvMobileCrearCuenta" data-paso-ir="registro">Crear cuenta</a></div>
     </div>
   </form>
 
   <form class="nv-puerta-caja" id="nvRegistro" data-paso="registro" novalidate hidden>
     <div class="nv-auth-intro">
-      <h1>Regístrate</h1>
-      <p class="nv-puerta-nota">Crea tu cuenta de acceso vehicular.</p>
+      <h1>Crea tu cuenta</h1>
     </div>
     <!-- Nombre y teléfono comparten fila: son cortos y de la misma
          familia (quién eres y cómo se te llama). El correo y la
@@ -258,21 +250,22 @@
     <label class="nv-etiqueta">Correo
       <input class="nv-campo" type="email" name="email" autocomplete="email" inputmode="email" required>
     </label>
-    <label class="nv-etiqueta">Contraseña
-      <input class="nv-campo" type="password" name="password" autocomplete="new-password" minlength="8" required>
-      <small class="nv-ayuda">8 o más caracteres, con mayúscula, minúscula, número y un símbolo.</small>
-    </label>
-    <label class="nv-marcar"><input type="checkbox" name="terms"> <span>He leído y acepto las condiciones de uso</span></label>
+    <div class="nv-etiqueta nv-registro-clave">
+      <label for="nvRegistroClave">Contraseña</label>
+      <div class="nv-puerta-clave-campo">
+      <input class="nv-campo" id="nvRegistroClave" type="password" name="password" autocomplete="new-password" minlength="8" aria-describedby="nvRegistroClaveAyuda" required>
+        <button type="button" id="nvMostrarClaveRegistro" aria-label="Mostrar contraseña" aria-controls="nvRegistroClave" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-5.5 10-5.5S22 12 22 12s-3.6 5.5-10 5.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg></button>
+      </div>
+      <small class="nv-ayuda" id="nvRegistroClaveAyuda">8 o más caracteres, con mayúscula, minúscula, número y un símbolo.</small>
+    </div>
+    <label class="nv-marcar"><input type="checkbox" name="terms"> <span>He leído y acepto las <a href="#terms" data-modal="terms">condiciones de uso</a></span></label>
     <p class="nv-error" id="nvRegistroError" role="alert" hidden></p>
     <button class="nv-cta nv-cta-bloque" type="submit" id="nvRegistroBtn"><span>Crear cuenta</span></button>
-    <div class="nv-puerta-pie">
-      <span>¿Ya tienes cuenta?</span>
-      <a href="#" data-paso-ir="acceso">Entrar</a>
-    </div>
+    <div class="nv-auth-navegacion-mobile"><a href="#" id="nvMobileEntrar" data-paso-ir="acceso">Ya tengo cuenta</a></div>
   </form>
 
   <form class="nv-puerta-caja" id="nvVerificar" data-paso="verificar" novalidate hidden>
-    <h1>Revisa tu correo</h1>
+    <div class="nv-auth-intro"><h1>Revisa tu correo</h1></div>
     <p class="nv-puerta-nota">Te enviamos un correo a <strong id="nvVerificarCorreo">tu correo</strong>. Ábrelo y pulsa el botón <strong>Activa tu cuenta</strong>: con eso entras directo, sin escribir nada.</p>
     <!-- El correo sale de un remitente propio (noreply@filtrovehicularperu.com):
          Gmail y Outlook lo mandan a Spam o Promociones con bastante frecuencia,
@@ -281,14 +274,14 @@
     <p class="nv-error" id="nvVerificarError" role="alert" hidden></p>
     <div class="nv-captcha auth-turnstile" id="nvTsReenvio"></div>
     <div class="nv-puerta-pie">
-      <a href="#" id="nvReenviarAlta">Reenviar el correo</a>
+      <button type="button" id="nvReenviarAlta">Reenviar el correo</button>
       <a href="#" data-paso-ir="acceso">Ya la activé, entrar</a>
     </div>
   </form>
 
   <form class="nv-puerta-caja" id="nvOlvido" data-paso="olvido" novalidate hidden>
-    <h1>Cambia tu contraseña</h1>
-    <p class="nv-puerta-nota">Te enviamos un código de 6 dígitos a tu correo.</p>
+    <div class="nv-auth-intro"><h1>Cambia tu contraseña</h1></div>
+    <p class="nv-puerta-nota">Te enviaremos un código de 6 dígitos a tu correo.</p>
     <label class="nv-etiqueta">Correo
       <input class="nv-campo" type="email" name="email" autocomplete="email" inputmode="email" required>
     </label>
@@ -302,14 +295,14 @@
   </form>
 
   <form class="nv-puerta-caja" id="nvRestablecer" data-paso="restablecer" novalidate hidden>
-    <h1>Nueva contraseña</h1>
-    <p class="nv-puerta-nota">Escribe el código que llegó a <strong id="nvRestablecerCorreo">tu correo</strong>.</p>
-    <p class="nv-ayuda">Si no lo ves en unos segundos, mira en <strong>Spam</strong> o <strong>Promociones</strong>.</p>
+    <div class="nv-auth-intro"><h1>Nueva contraseña</h1></div>
+    <p class="nv-puerta-nota">Escribe el código para <strong id="nvRestablecerCorreo">tu correo</strong>. Si está registrado, lo recibirás en unos minutos.</p>
     <label class="nv-etiqueta">Código
       <input class="nv-campo nv-codigo" type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required>
     </label>
     <label class="nv-etiqueta">Nueva contraseña
-      <input class="nv-campo" type="password" name="password" autocomplete="new-password" minlength="8" required>
+      <input class="nv-campo" type="password" name="password" autocomplete="new-password" minlength="8" aria-describedby="nvRestablecerClaveAyuda" required>
+      <small class="nv-ayuda" id="nvRestablecerClaveAyuda">8 o más caracteres, con mayúscula, minúscula, número y un símbolo.</small>
     </label>
     <label class="nv-etiqueta">Repítela
       <input class="nv-campo" type="password" name="password2" autocomplete="new-password" minlength="8" required>
@@ -318,23 +311,16 @@
     <button class="nv-cta nv-cta-bloque" type="submit" id="nvRestablecerBtn"><span>Guardar contraseña</span></button>
     <div class="nv-captcha auth-turnstile" id="nvTsReenvioClave"></div>
     <div class="nv-puerta-pie">
-      <a href="#" id="nvReenviarClave">Reenviar el código</a>
+      <button type="button" id="nvReenviarClave">Reenviar el código</button>
       <a href="#" data-paso-ir="olvido">Otro correo</a>
     </div>
+    <small class="nv-ayuda nv-ayuda-correo">Revisa también Spam o Promociones.</small>
   </form>
-    <div class="nv-auth-fvc-mobile-wrap" id="nvFvcMovil" aria-label="Filtro vehicular completo">
-      <form class="nv-portada-filtro nv-portada-filtro-mobile" id="nvPortadaFiltroMobile" novalidate>
-        <h2>Solicita tu Filtro Vehicular Completo</h2>
-        <label for="nvPortadaPlacaMobile">Ingresa tu placa</label>
-        <div class="nv-portada-filtro-fila">
-          <input id="nvPortadaPlacaMobile" name="placa" type="text" placeholder="ABC-123" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="nvPortadaPlacaAyudaMobile nvPortadaPlacaErrorMobile" required>
-          <button class="nv-portada-filtrar" id="fvcOpenMobilePlaca" type="submit" aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span>Filtrar placa</span><svg aria-hidden="true"><use href="#i-ir"/></svg></button>
-        </div>
-        <small id="nvPortadaPlacaAyudaMobile">Ingresa 6 letras o n&#250;meros.</small>
-        <p class="nv-portada-filtro-error" id="nvPortadaPlacaErrorMobile" role="alert" hidden></p>
-      </form>
+    <div class="nv-auth-fvc-mobile-wrap" id="nvFvcMovil" aria-label="Solicitud de reporte vehicular">
+      <button class="nv-auth-reporte-mobile" id="fvcOpenMobile" type="button" data-fvc-abrir aria-haspopup="dialog" aria-controls="nvFvcDialogo"><span>Solicitar reporte</span><svg aria-hidden="true"><use href="#i-ir"/></svg></button>
+      <small>Por WhatsApp</small>
     </div>
-    <button class="nv-navegadores-trigger nv-navegadores-trigger-mobile" type="button" data-navegadores-abrir aria-haspopup="dialog" aria-controls="nvNavegadoresDialog">NAVEGADORES COMPATIBLES</button>
+    </div>
     </div>
     </div>
     </div>
@@ -342,6 +328,7 @@
   <footer class="nv-puerta-legal" aria-label="Información legal">
     <a href="#" data-modal="terms">Términos y condiciones</a>
     <a href="#" data-modal="cookies">Política de cookies</a>
+    <button class="nv-navegadores-trigger nv-navegadores-trigger-mobile" type="button" data-navegadores-abrir aria-haspopup="dialog" aria-controls="nvNavegadoresDialog">Navegadores compatibles</button>
   </footer>
   </div>
 </div>
@@ -378,6 +365,10 @@
         <li>Cambio de características</li>
       </ul>
       <small>El contenido depende de la información disponible en cada fuente.</small>
+      <details class="nv-fvc-fuentes">
+        <summary>Fuentes de consulta</summary>
+        <p>SUNARP, MTC, SUTRAN, SBS, APESEG, ATU, PNP y municipalidades a nivel nacional.</p>
+      </details>
     </section>
     <div class="nv-fvc-campo">
       <label for="nvFvcPlaca">Placa del vehículo</label>
@@ -430,41 +421,39 @@
 <div class="nv-app" id="nvApp" hidden>
 
   <aside class="nv-lado" aria-label="Navegación principal">
-    <a class="nv-marca" href="#consultar" data-inicio aria-label="Plataforma Filtro Vehicular Plus, volver al inicio"><img src="icons/logo-filtro.svg" alt=""><span>Plataforma Filtro<br>Vehicular<b>+</b></span></a>
-
+    <a class="nv-marca" href="#consultar" data-inicio aria-label="Plataforma Filtro Vehicular Plus, volver al inicio"><span class="fv-wordmark" role="img" aria-label="Plataforma Filtro Vehicular+"><span class="fv-wordmark-line" aria-hidden="true">Plataforma Filtro</span><span class="fv-wordmark-line" aria-hidden="true">Vehicular<span class="fv-wordmark-plus">+</span></span></span></a>
+    <span class="nv-lado-titulo nv-lado-titulo-principal">Tu plataforma</span>
     <nav class="nv-lado-nav">
-      <a class="nv-nav" href="#consultar" data-ir="consultar"><svg><use href="#i-consultar"/></svg><span>Consultar</span></a>
-      <a class="nv-nav" href="#resumen" data-ir="resumen"><svg><use href="#i-resumen"/></svg><span>Resumen</span></a>
-    <a class="nv-nav" href="#historial" data-ir="historial"><svg><use href="#i-historial"/></svg><span>Historial</span></a>
-      <a class="nv-nav" href="#vehiculos" data-ir="vehiculos"><svg><use href="#i-vehiculo"/></svg><span>Mis vehículos</span></a>
-      <a class="nv-nav" href="#pagos" data-ir="pagos"><svg><use href="#i-pagos"/></svg><span>Pagos</span></a>
-      <a class="nv-nav" href="#cuenta" data-ir="cuenta"><svg><use href="#i-cuenta"/></svg><span>Cuenta</span></a>
+      <a class="nv-nav" href="#consultar" data-ir="consultar"><svg><use href="#fv-consultar"/></svg><span>Consultar</span></a>
+      <a class="nv-nav" href="#resumen" data-ir="resumen"><svg><use href="#fv-resumen"/></svg><span>Resumen</span></a>
+    <a class="nv-nav" href="#historial" data-ir="historial"><svg><use href="#fv-historial"/></svg><span>Historial</span></a>
+      <a class="nv-nav" href="#vehiculos" data-ir="vehiculos"><svg><use href="#fv-vehiculo"/></svg><span>Mis vehículos</span></a>
+      <a class="nv-nav" href="#pagos" data-ir="pagos"><svg><use href="#fv-pagos"/></svg><span>Pagos</span></a>
+      <a class="nv-nav" href="#cuenta" data-ir="cuenta"><svg><use href="#fv-cuenta"/></svg><span>Cuenta</span></a>
     </nav>
 
-    <!-- Trámites de acceso directo: no son consultas del catálogo. SOAT y
-         Lunas abren WhatsApp con el mensaje escrito; el Duplicado CITV
-         abre su propio trámite (js/modules/citv-aviso.js engancha #navCitv). -->
+    <!-- El Duplicado CITV abre su propio trámite; Infracciones lleva
+         a las consultas por regiones. -->
     <span class="nv-lado-titulo">Servicios adicionales</span>
     <nav class="nv-lado-nav" aria-label="Servicios adicionales">
-      <a class="nv-nav" data-wa-msg="Hola, necesito comprar mi SOAT con un 40% de descuento." target="_blank" rel="noopener noreferrer"><svg><use href="#i-soat"/></svg><span>SOAT Electrónico</span></a>
-      <button class="nv-nav" type="button" id="navCitv"><svg><use href="#i-citv"/></svg><span>Duplicado CITV</span></button>
-      <a class="nv-nav" data-wa-msg="Hola, necesito tramitar el permiso de mis lunas oscurecidas." target="_blank" rel="noopener noreferrer"><svg><use href="#i-lunas"/></svg><span>Lunas Oscurecidas</span></a>
-      <a class="nv-nav" href="#regiones" data-ir="regiones"><svg><use href="#i-region"/></svg><span>Infracciones por regiones</span></a>
+      <button class="nv-nav" type="button" id="navCitv"><svg><use href="#fv-citv"/></svg><span>Duplicado CITV</span></button>
+      <a class="nv-nav" href="#regiones" data-ir="regiones"><svg><use href="#fv-region"/></svg><span>Infracciones por regiones</span></a>
     </nav>
 
-    <a class="nv-nav nv-nav-admin" href="admin.html" data-solo-admin hidden><svg><use href="#i-admin"/></svg><span>Administración</span></a>
+    <a class="nv-nav nv-nav-admin" href="admin.html" data-solo-admin hidden><svg><use href="#fv-admin"/></svg><span>Administración</span></a>
 
-    <p class="nv-lado-legal"><a href="#" data-modal="terms">Términos</a> · <a href="#" data-modal="cookies">Cookies</a> · © <span data-anio>2026</span></p>
   </aside>
 
   <div class="nv-principal">
     <header class="nv-barra">
       <div class="nv-barra-principal">
-        <a class="nv-inicio" id="nvInicio" href="#consultar" data-inicio aria-label="Volver al inicio" title="Volver al inicio" hidden><svg aria-hidden="true"><use href="#i-volver"/></svg></a>
+        <a class="nv-inicio" id="nvInicio" href="#consultar" data-inicio aria-label="Volver al inicio" title="Volver al inicio" hidden><svg aria-hidden="true"><use href="#fv-volver"/></svg></a>
         <h1 class="nv-barra-titulo" id="nvTitulo" tabindex="-1">Consultar</h1>
       </div>
       <div class="nv-barra-acciones">
-        <a class="nv-comprar" href="#pagos" aria-label="Comprar"><svg class="nv-comprar-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/><path d="M9 13h.01M15 13h.01"/></svg><span>Comprar</span></a>
+        <a class="nv-barra-saldo" href="#pagos" aria-label="Ver saldo y recargar"><span>Saldo disponible</span><strong><span data-saldo>—</span> <small data-saldo-uni>créditos</small></strong></a>
+        <button type="button" class="nv-busqueda-toggle" id="nvAbrirBusqueda" aria-label="Buscar consultas" title="Buscar consultas" aria-controls="nvPanelBusqueda" aria-expanded="false" hidden><svg aria-hidden="true"><use href="#fv-consultar"/></svg></button>
+        <a class="nv-comprar" href="#pagos" aria-label="Comprar"><svg class="nv-comprar-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#fv-comprar"/></svg><span>Comprar</span></a>
         <div class="nv-yo">
           <button class="nv-avatar" id="nvAvatar" data-avatar-iniciales type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="nvYoMenu" aria-label="Menú de la cuenta">—</button>
           <div class="nv-yo-menu" id="nvYoMenu" role="menu" aria-label="Opciones de tu cuenta" hidden>
@@ -478,14 +467,21 @@
             </div>
             <a class="nv-yo-saldo" href="#pagos" role="menuitem">
               <span class="nv-yo-saldo-datos"><span>Saldo disponible</span><span class="nv-yo-saldo-cifra"><strong data-saldo>—</strong><em data-saldo-uni>créditos</em></span></span>
-              <span class="nv-yo-saldo-accion"><span id="nvYoAccionSaldo">Recargar</span><svg aria-hidden="true"><use href="#i-ir"/></svg></span>
+              <span class="nv-yo-saldo-accion"><span id="nvYoAccionSaldo">Recargar</span><svg aria-hidden="true"><use href="#fv-ir"/></svg></span>
             </a>
-            <a href="#historial" role="menuitem"><svg><use href="#i-historial"/></svg><span>Historial</span></a>
-            <a href="#vehiculos" role="menuitem"><svg><use href="#i-vehiculo"/></svg><span>Mis vehículos</span></a>
-            <a href="#cuenta" role="menuitem"><svg><use href="#i-cuenta"/></svg><span>Mi cuenta</span></a>
-            <a href="admin.html" role="menuitem" data-solo-admin hidden><svg><use href="#i-admin"/></svg><span>Administración</span></a>
-            <button type="button" role="menuitem" data-salir><svg><use href="#i-salir"/></svg><span>Cerrar sesión</span></button>
+            <a href="#historial" role="menuitem"><svg><use href="#fv-historial"/></svg><span>Historial</span></a>
+            <a href="#vehiculos" role="menuitem"><svg><use href="#fv-vehiculo"/></svg><span>Mis vehículos</span></a>
+            <a href="#cuenta" role="menuitem"><svg><use href="#fv-cuenta"/></svg><span>Mi cuenta</span></a>
+            <a href="admin.html" role="menuitem" data-solo-admin hidden><svg><use href="#fv-admin"/></svg><span>Administración</span></a>
+            <button type="button" role="menuitem" data-salir><svg><use href="#fv-salir"/></svg><span>Cerrar sesión</span></button>
           </div>
+        </div>
+      </div>
+      <div class="nv-barra-busqueda" id="nvPanelBusqueda" role="search" aria-label="Catálogo de consultas" hidden>
+        <div class="nv-busqueda">
+          <svg class="nv-busqueda-icono" aria-hidden="true"><use href="#fv-consultar"/></svg>
+          <input id="nvBuscarConsulta" type="search" autocomplete="off" placeholder="Buscar consulta o entidad" aria-label="Buscar consulta o entidad">
+          <button type="button" class="nv-busqueda-limpiar" id="nvLimpiarBusqueda" aria-label="Borrar búsqueda" title="Borrar búsqueda" hidden><svg aria-hidden="true"><use href="#fv-cerrar"/></svg></button>
         </div>
       </div>
     </header>
@@ -499,52 +495,40 @@
         <div class="nv-saldo-bajo" id="nvSaldoBajo" role="status" hidden>
           <span>Te quedan <strong id="nvSaldoBajoN">0 créditos</strong>. Recarga para seguir consultando.</span>
           <a class="nv-cta nv-cta-chica" href="#pagos"><span>Recargar</span></a>
-          <button class="nv-saldo-bajo-cerrar" type="button" aria-label="Cerrar el aviso"><svg aria-hidden="true"><use href="#i-cerrar"/></svg></button>
+          <button class="nv-saldo-bajo-cerrar" type="button" aria-label="Cerrar el aviso"><svg aria-hidden="true"><use href="#fv-cerrar"/></svg></button>
         </div>
 
         <div class="nv-explorar" id="nvExplorar">
           <div class="nv-explorar-cab">
             <div>
-              <span class="nv-explorar-marca">CATÁLOGO FV+</span>
               <h2>Encuentra tu consulta</h2>
-              <p>Filtra los servicios y revisa su costo antes de continuar.</p>
+              <p>Elige una consulta para ver su costo.</p>
             </div>
-            <span class="nv-explorar-total" id="nvExplorarTotal"></span>
-          </div>
-          <div class="nv-busqueda-grupo">
-            <span class="nv-busqueda-etiqueta" aria-hidden="true">Búsqueda</span>
-            <label class="nv-busqueda" for="nvBuscarConsulta">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
-                <circle cx="10.8" cy="10.8" r="6.6"/>
-                <path d="m15.7 15.7 4.1 4.1"/>
-              </svg>
-              <input id="nvBuscarConsulta" type="search" autocomplete="off" placeholder="Buscar consulta o entidad" aria-label="Buscar consulta o entidad">
-            </label>
-          </div>
-          <div class="nv-pestanas" id="nvPestanas" role="group" aria-label="Categorías"></div>
-          <div class="nv-categoria-mobile">
-            <span class="nv-categoria-etiqueta">Categoría</span>
             <details class="nv-categoria-menu" id="nvCategoriaMenu">
-              <summary>
+              <summary aria-controls="nvCategoriaPanel">
                 <strong id="nvCategoriaActual">Vehicular</strong>
                 <span id="nvCategoriaCuenta"></span>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
               </summary>
-              <div class="nv-categoria-opciones" id="nvCategoriaOpciones" role="group" aria-label="Categorías de consulta"></div>
+              <div class="nv-categoria-panel" id="nvCategoriaPanel">
+                <div class="nv-categoria-cabecera">
+                  <strong id="nvCategoriaTitulo">Categorías de consulta</strong>
+                </div>
+                <div class="nv-categoria-opciones" id="nvCategoriaOpciones" role="group" aria-labelledby="nvCategoriaTitulo"></div>
+              </div>
             </details>
           </div>
           <div class="nv-lista-cab">
-            <h3>Consultas disponibles</h3>
+            <h3 id="nvCatalogoTitulo">Consultas disponibles</h3>
             <span id="nvCatalogoInfo" role="status" aria-live="polite"></span>
           </div>
           <button class="nv-reporte" type="button" id="ctaReporteBtn" hidden>
-            <svg class="nv-reporte-ico"><use href="#i-reporte"/></svg>
+            <svg class="nv-reporte-ico" aria-hidden="true"><use href="#fv-reporte"/></svg>
             <strong>Reporte completo</strong>
             <span>Toda la placa en un PDF</span>
-            <em id="nvReportePrecio" hidden></em>
+            <svg class="nv-reporte-flecha" aria-hidden="true"><use href="#fv-ir"/></svg>
           </button>
           <div class="nv-catalogo" id="nvCatalogo"></div>
-          <button class="nv-catalogo-mas" id="nvCatalogoMas" type="button" hidden>Ver más</button>
         </div>
 
         <section class="nv-seleccion" id="nvConsultaSeleccion" aria-labelledby="nvSeleccionNombre" hidden>
@@ -577,7 +561,7 @@
               <label class="nv-dato-etiqueta" id="nvDatoEtiqueta" for="filter-input">Dato a consultar</label>
               <input class="nv-campo nv-dato" id="filter-input" type="text" autocomplete="off" spellcheck="false" enterkeyhint="search" placeholder="Dato" aria-label="Dato a consultar">
             </div>
-            <button class="nv-cta nv-consultar" id="filter-consultar" type="button"><svg aria-hidden="true"><use href="#i-consultar"/></svg><span>Buscar</span></button>
+            <button class="nv-cta nv-consultar" id="filter-consultar" type="button"><svg aria-hidden="true"><use href="#fv-consultar"/></svg><span>Buscar</span></button>
             <span id="filter-desc" hidden></span>
           </div>
         </section>
@@ -597,45 +581,50 @@
           <div class="reniec-result-body" id="filter-result-body" hidden></div>
         </section>
 
-        <!-- Los tres trámites, también aquí: en el teléfono no hay menú lateral. -->
-        <div class="nv-tramites" aria-label="Trámites">
-          <a class="nv-tramite" data-wa-msg="Hola, necesito comprar mi SOAT con un 40% de descuento." target="_blank" rel="noopener noreferrer"><svg><use href="#i-soat"/></svg><span>SOAT Electrónico</span></a>
-          <button class="nv-tramite" type="button" data-citv><svg><use href="#i-citv"/></svg><span>Duplicado CITV</span></button>
-          <a class="nv-tramite" data-wa-msg="Hola, necesito tramitar el permiso de mis lunas oscurecidas." target="_blank" rel="noopener noreferrer"><svg><use href="#i-lunas"/></svg><span>Lunas Oscurecidas</span></a>
-        </div>
-
-        <section class="nv-sunarp" aria-label="Servicios registrales SUNARP">
+        <div class="nv-recursos">
+        <section class="nv-panel nv-complementarios" aria-labelledby="nvComplementariosTitulo">
+          <h2 id="nvComplementariosTitulo">Trámites y servicios</h2>
+          <button class="nv-tramite nv-citv-acceso" type="button" data-citv>
+            <svg aria-hidden="true"><use href="#fv-citv"/></svg><span>Duplicado CITV</span><svg class="nv-servicio-flecha" aria-hidden="true"><use href="#fv-ir"/></svg>
+          </button>
+          <details class="nv-sunarp nv-registrales" id="nvRegistrales">
+            <summary class="nv-servicios-resumen">
+              <svg aria-hidden="true"><use href="#fv-legal"/></svg><span>Servicios SUNARP</span><small>5 accesos</small>
+              <svg class="nv-servicios-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </summary>
           <div class="nv-sunarp-grid">
             <a class="nv-sunarp-tarjeta" href="https://vigenciaexpress.sunarp.gob.pe/vigenciaexpress/#/busqueda" target="_blank" rel="noopener noreferrer" aria-label="Abrir Vigencia Express, certificado de vigencia de poder">
               <img src="assets/services/sunarp-vigencia-express.png" alt="" loading="lazy" decoding="async">
-              <span class="nv-sunarp-caption">Solicita Certificado de Vigencia de Poder de Persona Jurídica</span>
+              <span class="nv-sunarp-caption">Vigencia de poder</span>
             </a>
             <a class="nv-sunarp-tarjeta" href="https://copialiteral-altoque.sunarp.gob.pe/copialiteral-altoque/#/busqueda/busqueda-partida" target="_blank" rel="noopener noreferrer" aria-label="Abrir Copia Literal al Toque">
               <img src="assets/services/sunarp-copia-literal.png" alt="" loading="lazy" decoding="async">
-              <span class="nv-sunarp-caption">Solicita Certificado Literal de la Partida Electrónica</span>
+              <span class="nv-sunarp-caption">Copia literal</span>
             </a>
             <a class="nv-sunarp-tarjeta" href="https://sprl.sunarp.gob.pe/sprl/ingreso" target="_blank" rel="noopener noreferrer" aria-label="Abrir Certificado Negativo de Sucesión Intestada">
               <img src="assets/services/sunarp-sucesion-intestada.png" alt="" loading="lazy" decoding="async">
-              <span class="nv-sunarp-caption">Solicita Certificado Negativo de Sucesión Intestada</span>
+              <span class="nv-sunarp-caption">Sucesión intestada</span>
             </a>
             <a class="nv-sunarp-tarjeta" href="https://sprl.sunarp.gob.pe/sprl/ingreso" target="_blank" rel="noopener noreferrer" aria-label="Abrir Certificado Negativo de Testamento">
               <img src="assets/services/sunarp-testamento.png" alt="" loading="lazy" decoding="async">
-              <span class="nv-sunarp-caption">Solicita Certificado Negativo de Testamento</span>
+              <span class="nv-sunarp-caption">Testamento</span>
             </a>
             <a class="nv-sunarp-tarjeta" href="https://sprl.sunarp.gob.pe/sprl/ingreso" target="_blank" rel="noopener noreferrer" aria-label="Abrir Certificado Registral Vehicular">
               <img src="assets/services/sunarp-vehicular.png" alt="" loading="lazy" decoding="async">
-              <span class="nv-sunarp-caption">Solicita Certificado Registral Vehicular</span>
+              <span class="nv-sunarp-caption">Certificado vehicular</span>
             </a>
           </div>
+          </details>
         </section>
 
         <section class="nv-gratuitas" aria-labelledby="nvGratuitasTitulo">
           <header class="nv-gratuitas-cabecera">
-            <div class="nv-gratuitas-intro"><h2 id="nvGratuitasTitulo">CONSULTAS VEHICULARES GRATUITAS</h2><small>Propiedad, papeletas, SOAT y más</small></div>
+            <div class="nv-gratuitas-intro"><h2 id="nvGratuitasTitulo">Consultas vehiculares gratuitas</h2><small>Propiedad, papeletas, SOAT y más</small></div>
             <span class="nv-gratuitas-cuenta" id="nvGratisCantidad"></span>
           </header>
           <div class="nv-gratis-grupos" id="nvServicios"></div>
         </section>
+        </div>
       </section>
 
       <!-- ═══ INFRACCIONES POR REGIONES ═══ -->
@@ -646,7 +635,7 @@
           <p>Elige una región para abrir su página de consulta de papeletas o multas.</p>
         </header>
         <div class="nv-regiones-barra">
-          <a class="nv-volver" href="#consultar" data-inicio><svg><use href="#i-volver"/></svg><span>Volver al inicio</span></a>
+          <a class="nv-volver" href="#consultar" data-inicio><svg><use href="#fv-volver"/></svg><span>Volver al inicio</span></a>
           <input class="nv-campo nv-campo-chico" type="search" id="nvRegionesBuscar" placeholder="Filtrar por región" autocomplete="off" aria-label="Filtrar por región">
           <span class="nv-regiones-n"><strong id="nvRegionesN">17</strong> regiones</span>
         </div>
@@ -656,41 +645,47 @@
 
       <!-- ═══ RESUMEN ═══ -->
       <section class="nv-pantalla" data-pantalla="resumen" hidden>
+        <div class="nv-pagina-intro"><h2>Resumen de actividad</h2><p>Revisa tu saldo y el uso de tus consultas.</p></div>
+        <p class="nv-resumen-estado" id="nvResumenEstado" role="status" hidden></p>
         <div class="nv-resumen-top">
           <a class="nv-saldo-card" href="#pagos">
             <span>Saldo disponible</span>
-            <strong data-saldo>—</strong>
-            <em data-saldo-uni>créditos</em>
-            <i class="nv-cta nv-cta-verde nv-cta-chica"><span>Recargar</span></i>
+            <div class="nv-saldo-importe"><strong data-saldo>—</strong><em data-saldo-uni>créditos</em></div>
+            <span class="nv-saldo-accion">Recargar <svg aria-hidden="true"><use href="#fv-ir"/></svg></span>
           </a>
           <div class="nv-metricas" id="nvMetricas"></div>
         </div>
 
-        <div class="nv-panel">
-          <div class="nv-panel-cab"><h2>Actividad</h2><span id="nvActividadTotal"></span></div>
-          <div class="nv-grafico" id="nvGrafico"></div>
+        <div class="nv-panel nv-resumen-atajos">
+          <div class="nv-panel-cab">
+            <h2>Accesos rápidos</h2>
+            <a class="nv-resumen-historial" href="#historial">Ver historial <svg aria-hidden="true"><use href="#fv-ir"/></svg></a>
+          </div>
+          <div class="nv-atajos">
+            <a href="#consultar" data-cat-atajo="filter"><svg aria-hidden="true"><use href="#fv-vehiculo"/></svg><span>Placa</span></a>
+            <a href="#consultar" data-cat-atajo="reniec"><svg aria-hidden="true"><use href="#fv-reniec"/></svg><span>DNI</span></a>
+            <a href="#consultar" data-cat-atajo="telefonia"><svg aria-hidden="true"><use href="#fv-telefonia"/></svg><span>Teléfono</span></a>
+            <a href="#consultar" data-reporte-atajo><svg aria-hidden="true"><use href="#fv-reporte"/></svg><span>Reporte</span></a>
+          </div>
         </div>
 
-        <div class="nv-dos">
-          <div class="nv-panel">
-            <div class="nv-panel-cab"><h2>Por categoría</h2></div>
-            <div class="nv-reparto" id="nvReparto"></div>
+        <div class="nv-resumen-detalle">
+          <div class="nv-panel nv-resumen-actividad">
+            <div class="nv-panel-cab"><h2>Actividad</h2><span id="nvActividadTotal"></span></div>
+            <div class="nv-grafico" id="nvGrafico" role="list" aria-label="Consultas en los últimos 14 días"></div>
           </div>
-          <div class="nv-panel">
-            <div class="nv-panel-cab"><h2>Atajos</h2></div>
-            <div class="nv-atajos">
-              <a href="#consultar" data-cat-atajo="filter"><svg><use href="#i-vehiculo"/></svg><span>Placa</span></a>
-              <a href="#consultar" data-cat-atajo="reniec"><svg><use href="#i-reniec"/></svg><span>DNI</span></a>
-              <a href="#consultar" data-cat-atajo="telefonia"><svg><use href="#i-telefonia"/></svg><span>Teléfono</span></a>
-              <a href="#consultar" data-reporte-atajo><svg><use href="#i-reporte"/></svg><span>Reporte</span></a>
-            </div>
+          <div class="nv-panel nv-resumen-categorias">
+            <div class="nv-panel-cab"><h2>Por categoría</h2><span id="nvRepartoTotal">Con resultado</span></div>
+            <div class="nv-reparto" id="nvReparto"></div>
           </div>
         </div>
       </section>
 
       <!-- ═══ HISTORIAL ═══ -->
       <section class="nv-pantalla" data-pantalla="historial" hidden>
+        <div class="nv-pagina-intro"><h2>Historial de consultas</h2><p>Encuentra una consulta y vuelve a usar sus datos.</p></div>
         <div class="nv-hist-barra">
+          <select class="nv-campo nv-hist-estado" id="nvHistEstado" aria-label="Filtrar historial por estado"><option value="todas">Todas las consultas</option><option value="ok">Con resultado</option><option value="curso">En curso</option><option value="error">Sin resultado</option></select>
           <div class="nv-segmentos" id="nvSegmentos">
             <button type="button" class="es-activo" data-filtro="todas">Todas</button>
             <button type="button" data-filtro="ok">Con resultado</button>
@@ -707,7 +702,7 @@
       <section class="nv-pantalla" data-pantalla="vehiculos" hidden>
         <div class="nv-veh-intro">
           <h2>Mis vehículos</h2>
-          <p>Guarda tus placas para volver a consultarlas cuando quieras. Guardar una placa no realiza consultas ni consume créditos.</p>
+          <p>Ten tus placas a mano. Guardarlas no consume créditos.</p>
         </div>
         <form class="nv-veh-form" id="nvVehForm">
           <label>Placa<input class="nv-campo" id="nvVehPlaca" name="plate" maxlength="10" placeholder="ABC-123" autocomplete="off" required></label>
@@ -723,7 +718,7 @@
           <div>
             <span class="nv-compra-kicker">RECARGA DE CRÉDITOS</span>
             <h2>Compra créditos</h2>
-            <p>Elige un paquete para pagar en línea o solicita una cantidad personalizada.</p>
+            <p>Elige un paquete o una recarga personalizada.</p>
           </div>
           <div class="nv-compra-saldo">
             <span>Saldo actual</span>
@@ -735,7 +730,6 @@
         <div class="nv-compra-seccion">
           <div class="nv-compra-seccion-cab">
             <h3>Paquetes</h3>
-            <span>Pago con Mercado Pago</span>
           </div>
           <div class="nv-paquetes" id="nvPaquetes"></div>
         </div>
@@ -766,7 +760,7 @@
           <div class="nv-movs" id="nvMovimientos"></div>
         </details>
 
-        <p class="nv-nota-legal">Los paquetes se pagan mediante Mercado Pago; las recargas personalizadas se coordinan por WhatsApp. Al recargar aceptas los <a href="#" data-modal="terms">términos y condiciones</a> y la <a href="#" data-modal="cookies">política de cookies</a>. Los créditos son personales, no transferibles y no se reembolsan una vez usados.</p>
+        <p class="nv-nota-legal">Al recargar aceptas los <a href="#" data-modal="terms">términos y condiciones</a> y la <a href="#" data-modal="cookies">política de cookies</a>. Los créditos son personales, no transferibles y no se reembolsan una vez usados.</p>
       </section>
 
       <!-- ═══ CUENTA ═══ -->
@@ -782,30 +776,28 @@
         <form class="nv-panel nv-datos" id="nvDatos" novalidate>
           <div class="nv-panel-cab"><h2>Mis datos</h2></div>
           <label class="nv-etiqueta">Nombre
-            <input class="nv-campo" type="text" name="full_name" autocomplete="name" readonly>
+            <input class="nv-campo" type="text" name="full_name" maxlength="120" autocomplete="name" aria-describedby="nvDatosError" readonly>
           </label>
           <label class="nv-etiqueta">Correo
             <input class="nv-campo" type="email" name="email" readonly disabled>
           </label>
           <label class="nv-etiqueta">Teléfono
-            <input class="nv-campo" type="tel" name="phone" autocomplete="tel" inputmode="tel" readonly>
+            <input class="nv-campo" type="tel" name="phone" maxlength="30" autocomplete="tel" inputmode="tel" aria-describedby="nvDatosError" readonly>
           </label>
           <p class="nv-error" id="nvDatosError" role="alert" hidden></p>
           <div class="nv-datos-botones">
-            <button class="nv-cta nv-cta-chica" type="button" id="nvDatosEditar"><span>Editar</span><i><svg><use href="#i-editar"/></svg></i></button>
+            <button class="nv-cta nv-cta-chica" type="button" id="nvDatosEditar"><span>Editar</span><i><svg><use href="#fv-editar"/></svg></i></button>
             <button class="nv-cta nv-cta-chica" type="submit" id="nvDatosGuardar" hidden><span>Guardar</span></button>
             <button class="nv-boton-claro" type="button" id="nvDatosCancelar" hidden>Cancelar</button>
           </div>
         </form>
 
         <div class="nv-menu">
-          <a href="admin.html" data-solo-admin hidden><svg><use href="#i-admin"/></svg><span>Panel de administrador</span><svg class="nv-menu-ir"><use href="#i-ir"/></svg></a>
-          <a href="#pagos"><svg><use href="#i-pagos"/></svg><span>Recargar créditos</span><svg class="nv-menu-ir"><use href="#i-ir"/></svg></a>
-          <button type="button" id="nvCambiarClave"><svg><use href="#i-clave"/></svg><span>Cambiar contraseña</span><svg class="nv-menu-ir"><use href="#i-ir"/></svg></button>
-          <a id="nvSoporte" target="_blank" rel="noopener noreferrer"><svg><use href="#i-soporte"/></svg><span>Soporte por WhatsApp</span><svg class="nv-menu-ir"><use href="#i-fuera"/></svg></a>
-          <a href="#" data-modal="terms"><svg><use href="#i-legal"/></svg><span>Términos y condiciones</span><svg class="nv-menu-ir"><use href="#i-ir"/></svg></a>
-          <a href="#" data-modal="cookies"><svg><use href="#i-legal"/></svg><span>Política de cookies</span><svg class="nv-menu-ir"><use href="#i-ir"/></svg></a>
-          <button type="button" id="nvSalir" data-salir class="nv-menu-salir"><svg><use href="#i-salir"/></svg><span>Cerrar sesión</span></button>
+          <a href="admin.html" data-solo-admin hidden><svg><use href="#fv-admin"/></svg><span>Panel de administrador</span><svg class="nv-menu-ir"><use href="#fv-ir"/></svg></a>
+          <a href="#pagos"><svg><use href="#fv-pagos"/></svg><span>Recargar créditos</span><svg class="nv-menu-ir"><use href="#fv-ir"/></svg></a>
+          <button type="button" id="nvCambiarClave"><svg><use href="#fv-clave"/></svg><span>Cambiar contraseña</span><svg class="nv-menu-ir"><use href="#fv-ir"/></svg></button>
+          <a id="nvSoporte" target="_blank" rel="noopener noreferrer"><svg><use href="#fv-soporte"/></svg><span>Soporte por WhatsApp</span><svg class="nv-menu-ir"><use href="#fv-fuera"/></svg></a>
+          <button type="button" id="nvSalir" data-salir class="nv-menu-salir"><svg><use href="#fv-salir"/></svg><span>Cerrar sesión</span></button>
         </div>
       </section>
 
@@ -813,10 +805,10 @@
   </div>
 
   <nav class="nv-abajo" aria-label="Navegación principal">
-    <a href="#consultar" data-ir="consultar"><svg><use href="#i-consultar"/></svg><span>Consultar</span></a>
-    <a href="#resumen" data-ir="resumen"><svg><use href="#i-resumen"/></svg><span>Resumen</span></a>
-    <a href="#vehiculos" data-ir="vehiculos"><svg><use href="#i-vehiculo"/></svg><span>Vehículos</span></a>
-    <a href="#pagos" data-ir="pagos"><svg><use href="#i-pagos"/></svg><span>Pagos</span></a>
+    <a href="#consultar" data-ir="consultar"><svg><use href="#fv-consultar"/></svg><span>Consultar</span></a>
+    <a href="#resumen" data-ir="resumen"><svg><use href="#fv-resumen"/></svg><span>Resumen</span></a>
+    <a href="#vehiculos" data-ir="vehiculos"><svg><use href="#fv-vehiculo"/></svg><span>Vehículos</span></a>
+    <a href="#pagos" data-ir="pagos"><svg><use href="#fv-pagos"/></svg><span>Pagos</span></a>
   </nav>
 </div>
 
@@ -911,15 +903,17 @@
 <script src="js/shared/supabase-config.js?v=1"></script>
 <script src="js/shared/utils.js?v=2"></script>
 <script src="js/shared/device-fingerprint.js?v=1"></script>
-<script src="js/shared/email-validator.js?v=1"></script>
+<script src="js/shared/email-validator.js?v=2"></script>
+<script src="js/shared/auth-form-utils.js?v=1"></script>
 <script src="js/shared/mp-reconciliation.js?v=1"></script>
 <script src="js/shared/auth.js?v=28"></script>
 <script src="js/shared/turnstile.js?v=7"></script>
-<script src="js/nueva/nucleo.js?v=23"></script>
-<script src="js/nueva/acceso.js?v=26"></script>
+<script src="js/shared/interior-icons.js?v=3"></script>
+<script src="js/nueva/nucleo.js?v=27"></script>
+<script src="js/nueva/acceso.js?v=28"></script>
 <script src="js/shared/credit-packages.js?v=1"></script>
 <script src="js/nueva/planes-portada.js?v=1"></script>
-<script src="js/overlays.js?v=2"></script>
+<script src="js/overlays.js?v=3"></script>
 <script>
   // El retorno de verificación/restablecimiento conserva su arranque habitual
   // para que Supabase procese primero los tokens de la URL.
@@ -956,12 +950,12 @@
 <!-- El Duplicado CITV: la hoja, el dibujante del PDF y el trámite. -->
 <script src="js/modules/citv-certificado.js?v=3"></script>
 <script src="js/modules/citv-pdf.js?v=3"></script>
-<script src="js/modules/citv-aviso.js?v=9"></script>
+<script src="js/modules/citv-aviso.js?v=10"></script>
 
 <script src="js/shared/vehicles.js?v=1"></script>
-<script src="js/nueva/pantallas.js?v=25"></script>
+<script src="js/nueva/pantallas.js?v=33"></script>
 <script src="js/nueva/nombres.js?v=1"></script>
-<script src="js/nueva/servicios.js?v=10"></script>
+<script src="js/nueva/servicios.js?v=16"></script>
 
 <!-- Lo que corre por su cuenta, igual que en la plataforma de siempre:
      el aviso de pago acreditado, el soporte por WhatsApp, los carteles,
@@ -971,10 +965,10 @@
 <script src="js/modules/carteles.js?v=2"></script>
 <script src="js/modules/aviso-clientes.js?v=8"></script>
 <script src="js/modules/idle-logout.js?v=2"></script>
-<script src="js/modules/instalar.js?v=5"></script>
+<script src="js/modules/instalar.js?v=7"></script>
 <!-- Modo mantenimiento: bloquea la página de consulta para todos los visitantes,
      también antes de iniciar sesión. El panel admin.html permanece accesible
      para gestionar la plataforma. -->
-<script src="js/modules/maintenance.js?v=12"></script>
+<script src="js/modules/maintenance.js?v=13"></script>
 </body>
 </html>

@@ -1,17 +1,12 @@
 /* ============================================================
    INSTALAR LA APLICACIÓN
 
-   Un botón redondo encima del de WhatsApp. Se pulsa y el teléfono la
-   instala. Nada más.
+   Un acceso en el menú de la cuenta. Se pulsa y el teléfono la instala.
+   Las páginas sin ese menú conservan el botón flotante.
 
-   Antes esto era un botón escondido en el menú lateral —que en el
-   celular está en display:none, así que allí no existía— y una hoja
-   explicando dónde buscar la opción en el menú del navegador. Contar los
-   pasos es admitir que el botón no sirve: si hay que leer instrucciones
-   para instalar una aplicación, no se instala nadie.
-
-   Por eso el botón solo aparece cuando la instalación se puede hacer de
-   verdad, en un toque. Si el navegador no la ofrece, no hay botón.
+   En la plataforma, el menú del avatar está disponible tanto en celular
+   como en escritorio. Su acceso solo aparece cuando el navegador ofrece
+   instalar de verdad, en un toque.
 
    La excepción es el iPhone: Safari no deja instalar por código, y ahí
    la única vía posible son los dos toques del menú Compartir. Para no
@@ -103,9 +98,7 @@
   }
 
   /* ── El botón ───────────────────────────────────────────────────
-     Redondo, del tamaño del de WhatsApp y justo encima. Oscuro, para que
-     no compita con el verde del otro: son dos cosas distintas y no deben
-     leerse como una pareja. */
+     En la plataforma va dentro del menú de cuenta, para no tapar precios. */
   function crearBoton() {
     var b = document.createElement('button');
     b.type = 'button';
@@ -114,8 +107,15 @@
     b.hidden = true;
     b.setAttribute('aria-label', 'Instalar la aplicación');
     b.setAttribute('title', 'Instalar la aplicación');
-    b.innerHTML = DESCARGA_SVG;
-    document.body.appendChild(b);
+    var menu = document.getElementById('nvYoMenu');
+    b.innerHTML = DESCARGA_SVG + (menu ? '<span>Instalar la app</span>' : '');
+    if (menu) {
+      b.className = 'nv-instalar';
+      b.setAttribute('role', 'menuitem');
+      menu.insertBefore(b, menu.querySelector('[data-salir]'));
+    } else {
+      document.body.appendChild(b);
+    }
     return b;
   }
 

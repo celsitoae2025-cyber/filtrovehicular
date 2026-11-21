@@ -1,97 +1,37 @@
-# Filtro Vehicular+ — Plataforma de Consultas
+# Filtro Vehicular+
 
-Plataforma web de consultas de datos peruanos (RENIEC, SUNARP, SUNAT, MTC, etc.) con autenticación, sistema de créditos, suscripciones y panel administrativo.
+Plataforma web de consultas vehiculares y trámites en Perú. El frontend usa HTML, CSS y JavaScript. Supabase gestiona el acceso, los créditos y las funciones de servidor.
 
-## Stack
-
-- **Frontend:** HTML/CSS/JS vanilla (sin framework), modular ES con namespace `window.Consultia`.
-- **Backend de datos:** Supabase (PostgreSQL + Auth + RLS + Realtime + Edge Functions).
-- **Bridge de Telegram:** Node.js + Express + GramJS (repo separado: `filtro-bridge/`, deploy en Railway).
-- **Pagos:** Mercado Pago (Edge Function + webhook).
-- **Email transaccional:** Brevo (300 emails/día).
-- **PWA:** `manifest.json` + `sw.js`.
-
-## Estructura
-
-```
-FV+/
-├── index.html                  # Landing + app (sidebar + vistas)
-├── admin.html                  # Panel administrativo
-├── pago-exitoso.html           # Confirmación de pago MP
-├── pago-pendiente.html         # Pago MP en revisión
-├── manifest.json, sw.js        # PWA
-├── dev-server.js               # Servidor estático local (puerto 5500)
-│
-├── css/                        # 10 hojas de estilo modulares
-│   ├── base.css                # Variables, reset, tipografía
-│   ├── sidebar.css, topbar.css # Navegación
-│   ├── components.css          # Botones, inputs, cards, badges
-│   ├── views.css               # Vistas y resultados de consultas
-│   ├── plans-catalog.css       # Catálogo de planes / saldo
-│   ├── auth.css, overlays.css  # Auth + modales / cookies
-│   ├── polish.css              # Refinamientos visuales
-│   └── admin.css               # Panel admin
-│
-├── js/
-│   ├── main.js, sidebar.js, topbar.js, views.js, overlays.js
-│   ├── shared/                 # supabase-config, auth, plans-data,
-│   │                           # device-fingerprint, email-validator
-│   ├── modules/                # 1 archivo por categoría / feature
-│   │                           # (reniec, sunat, vehiculos, mtc, vip, etc.)
-│   └── admin/                  # 18 módulos del panel administrativo
-│
-├── supabase/                   # SQL versionado + Edge Functions
-│   ├── README.md               # Índice + orden de ejecución
-│   ├── schema/                 # Tablas core, RLS base, RPC (00_schema_inicial.sql, etc.)
-│   ├── anti_abuse/             # Trigger handle_new_user con anti-abuso + welcome restriction
-│   ├── admin/                  # Funciones / RLS / RPC del panel admin
-│   ├── seeds/                  # Catálogos: consultas, fuentes, planes premium
-│   ├── fixes/                  # Parches puntuales aplicados a tablas existentes
-│   ├── functions/              # Edge Functions (TypeScript / Deno)
-│   │   ├── bridge-proxy/       # Proxy autenticado al bridge de Telegram
-│   │   ├── consultar-docs/
-│   │   ├── crear-preferencia/  # Mercado Pago checkout
-│   │   ├── diagnose-payment/   # Debug de pagos
-│   │   └── webhook-mercadopago/
-│   └── email-templates/        # Plantillas Brevo (signup, magic-link, reset)
-│
-├── assets/                     # Iconos, regiones, servicios
-├── icons/                      # Favicons PWA
-│
-└── filtro-bridge/              # ⚠ REPO SEPARADO (gitignored del padre)
-                                # Bridge Telegram en Railway
-```
-
-## Cómo correr en local
-
-**1) Bridge de Telegram (puerto 3030):**
-
-```powershell
-cd filtro-bridge
-npm start
-```
-
-> ⚠️ Apaga el deploy de Railway antes para no chocar con la session de Telegram (`AUTH_KEY_DUPLICATED`).
-
-**2) Frontend (puerto 5500):**
+## Vista previa local
 
 ```powershell
 node dev-server.js
 ```
 
-Abrir: **http://localhost:5500**
+Abre [el acceso y la plataforma](http://localhost:5500/app) o [Administración](http://localhost:5500/admin). El servidor escucha en el puerto `5500` y sirve las páginas y recursos de FV+.
 
-`index.html` detecta automáticamente `localhost` y apunta al bridge en `:3030`.
+El emisor CITV se puede revisar en [`/citv-emisor.html`](http://localhost:5500/citv-emisor.html). En Cloudflare Pages, el acceso a esa página requiere Cloudflare Access. La imagen de Fly excluye el emisor.
 
-## Producción
+## Estructura
 
-- **Frontend:** hosting estático (dominio `filtrovehicularperu.com`).
-- **Bridge:** Railway → `https://filtro-bridge-production-6fd9.up.railway.app`.
-- **Supabase:** `https://kkqpayfyhvxatskkrqdg.supabase.co`.
+| Ubicación | Contenido |
+| --- | --- |
+| `index.html`, `app.html`, `admin.html` | Portada pública, acceso y plataforma, panel administrativo. |
+| `verificar.html`, `pago-*.html`, `citv-emisor.html` | Verificación de certificados, retorno de pagos y emisor de certificados. |
+| `css/`, `js/` | Estilos y lógica del frontend. `js/nueva/` corresponde a la plataforma, `js/admin/` a Administración, `js/modules/` a consultas y trámites y `js/shared/` a utilidades compartidas. |
+| `assets/`, `icons/` | Recursos visuales, iconos de marca e imágenes de la PWA. |
+| `supabase/` | SQL versionado, funciones de servidor y plantillas de correo. Consulta su [guía](supabase/README.md). |
+| `deploy/`, `Dockerfile`, `fly.toml` | Configuración de Nginx y del frontend en Fly. |
+| `_headers`, `_redirects` | Encabezados y redirecciones para Cloudflare Pages. |
+| `scripts/`, `test/`, `docs/` | Herramientas de desarrollo, pruebas y documentación. |
 
-## Notas
+El bridge de Telegram tiene su propio repositorio. El frontend solicita las consultas por medio de la función `bridge-proxy` de Supabase. La vista previa usa la configuración de Supabase de la aplicación. Para pruebas internas con operaciones de escritura o cobro, usa cuentas de prueba en un entorno aislado o datos simulados.
 
-- El sidebar se despliega en accordion (solo una categoría abierta a la vez).
-- Todo el código JS usa scripts clásicos con namespace `window.Consultia` (sin bundler).
-- RLS activo en todas las tablas con datos sensibles; admins se identifican por `profiles.is_admin`.
-- Los archivos `*.md` de credenciales y notas personales están en `.gitignore`.
+## Comprobaciones locales
+
+```powershell
+npm test
+deno test --no-lock supabase/functions/_shared/maintenance_test.ts supabase/functions/_shared/empty-response.test.ts
+```
+
+`npm run icons:build` actualiza el sprite de iconos del interior. `python scripts/generar-iconos.py` regenera los favicons y los iconos instalables desde los SVG de marca.

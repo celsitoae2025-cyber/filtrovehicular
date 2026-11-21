@@ -91,6 +91,11 @@
     el.innerHTML =
       '<strong>' + NV.esc(o.title || '') + '</strong>' +
       (o.message ? '<span>' + NV.esc(o.message) + '</span>' : '');
+    /* Un mismo error no debe llenar la pantalla al repetir una acción. */
+    Array.from(caja.children).forEach(function (aviso) {
+      if (aviso.textContent === el.textContent) aviso.remove();
+    });
+    while (caja.children.length >= 3) caja.firstElementChild.remove();
     caja.appendChild(el);
     requestAnimationFrame(function () { el.classList.add('es-visible'); });
     setTimeout(function () {
@@ -175,9 +180,9 @@
     resumen:   { titulo: 'Resumen' },
     pagos:     { titulo: 'Pagos' },
     historial: { titulo: 'Historial' },
-    vehiculos: { titulo: 'Mis vehículos' },
+    vehiculos: { titulo: 'Vehículos' },
     cuenta:    { titulo: 'Mi cuenta' },
-    regiones:  { titulo: 'Infracciones por regiones' }
+    regiones:  { titulo: 'Regiones' }
   };
 
   /* Los enlaces de siempre (#saldo en los mensajes del bot, #dashboard,
@@ -194,8 +199,10 @@
     if (!inicio) return;
     var seleccion = $('nvConsultaSeleccion');
     var resultado = $('filter-result');
-    inicio.hidden = pantallaDelHash() === 'consultar' &&
+    var enCatalogo = pantallaDelHash() === 'consultar' &&
       (!seleccion || seleccion.hidden) && (!resultado || resultado.hidden);
+    inicio.hidden = enCatalogo;
+    if (NV.actualizarBusquedaCatalogo) NV.actualizarBusquedaCatalogo(enCatalogo);
   };
 
   function pantallaDelHash() {
@@ -359,6 +366,7 @@
       e.preventDefault();
       var err = $('nvAccesoError');
       var btn = $('nvAccesoBtn');
+      if (btn.disabled) return;
       var email = (form.email.value || '').trim();
       var pass = form.password.value || '';
       err.hidden = true;
@@ -367,10 +375,16 @@
         err.hidden = false;
         return;
       }
+      if (!C.EmailValidator.isValidFormat(email)) {
+        err.textContent = 'El correo no tiene un formato válido.';
+        err.hidden = false;
+        return;
+      }
       btn.disabled = true;
       btn.innerHTML = '<span class="nv-giro" aria-hidden="true"></span>Entrando…';
       var envioIntentado = false;
       var conservarPantalla = false;
+      var mensajeDeError = '';
       try {
         var token = C.Turnstile ? await C.Turnstile.getToken('nvTsAcceso') : null;
         if (!token) throw new Error('captcha verification required');
@@ -385,11 +399,10 @@
            reenvía el correo con el botón y se le lleva a la pantalla que
            lo explica. Es el camino que más gente perdía. */
         if (/email not confirmed/i.test((ex && ex.message) || '')) {
-          try { await C.Auth.resendVerification(email, null); } catch (e2) { /* el reenvío es un extra */ }
           if (NV.pendienteDeActivar) {
             NV.pendienteDeActivar(email);
             conservarPantalla = true;
-            if (C.toast) C.toast({ type: 'info', title: 'Falta activar tu cuenta', message: 'Te reenviamos el correo: ábrelo y pulsa «Activa tu cuenta».' });
+            if (NV.reenviarActivacion) await NV.reenviarActivacion();
             return;
           }
         }
@@ -397,14 +410,15 @@
           if (C.Turnstile) C.Turnstile.reset('nvTsAcceso');
           NV.prepararVerificacionAcceso('Completa de nuevo la verificación de seguridad para continuar.', 'acceso');
         } else {
-          err.textContent = traducir(ex && ex.message);
+          mensajeDeError = traducir(ex && ex.message);
+          err.textContent = mensajeDeError;
           err.hidden = false;
         }
       } finally {
         if (envioIntentado && !NV.usuario && !conservarPantalla && NV.prepararVerificacionAcceso &&
             !(C.Turnstile && C.Turnstile.LOCAL_TEST_MODE)) {
           if (C.Turnstile) C.Turnstile.reset('nvTsAcceso');
-          NV.prepararVerificacionAcceso('Verifica de nuevo para intentar iniciar sesión.');
+          NV.prepararVerificacionAcceso((mensajeDeError ? mensajeDeError + ' ' : '') + 'Verifica de nuevo para intentar iniciar sesión.');
         }
         btn.disabled = false;
         btn.textContent = 'Iniciar sesión';

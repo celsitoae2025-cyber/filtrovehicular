@@ -1,11 +1,10 @@
 /* ============================================================
    LO QUE RODEA A LAS CONSULTAS
-     · Consultas Vehiculares gratuitas: las 21 tarjetas con el logo de
+     · Consultas Vehiculares gratuitas: accesos agrupados con el logo de
        cada fuente (assets/services/), la primera lleva a las regiones.
      · Infracciones por regiones: las 17, con su logo (assets/regions/)
        y un filtro.
-     · Los tres trámites: SOAT y Lunas escriben a WhatsApp; el Duplicado
-       CITV abre su trámite (js/modules/citv-aviso.js).
+     · Duplicado CITV abre su trámite (js/modules/citv-aviso.js).
      · El aviso de saldo bajo.
      · Mis datos: nombre y teléfono, editables.
 ============================================================ */
@@ -33,7 +32,6 @@
     { nombre: 'Inspección Técnica Vehicular CITV', logo: 'citv.png', url: 'https://rec.mtc.gob.pe/Citv/ArConsultaCitv' },
     { nombre: 'Vigencia del SOAT', logo: 'soat.png', url: 'https://www.apeseg.org.pe/consultas-soat/' },
     { nombre: 'Papeletas SUTRAN', logo: 'sutran.png', url: 'https://www.sutran.gob.pe/consultas/record-de-infracciones/record-de-infracciones/' },
-    { nombre: 'Lunas Oscurecidas', logo: 'lunas-oscurecidas.png', url: 'https://sistemas.policia.gob.pe/consultalunas/ConsultarServicioLunas' },
     { nombre: 'FISE GNV Subsidio Gas', logo: 'fise-gnv.png', url: 'https://fise.minem.gob.pe:23308/consulta-taller/pages/consultaTaller/inicio' },
     { nombre: 'Consulta Deuda GNV', logo: 'deuda-gnv.png', url: 'https://infogas.com.pe/consulta-placa/' },
     { nombre: 'Denuncias y Órdenes de Captura', logo: 'denuncias.png', url: 'https://www.sat.gob.pe/VirtualSAT/modulos/Capturas.aspx' },
@@ -63,7 +61,6 @@
     'Inspección Técnica Vehicular CITV': ['soat', 'Consulta de revisión técnica'],
     'Vigencia del SOAT': ['soat', 'Consulta de vigencia'],
     'Papeletas SUTRAN': ['infracciones', 'Récord de infracciones SUTRAN'],
-    'Lunas Oscurecidas': ['otros', 'Consulta del permiso de lunas'],
     'FISE GNV Subsidio Gas': ['otros', 'Consulta FISE GNV'],
     'Consulta Deuda GNV': ['otros', 'Consulta de deuda por placa'],
     'Denuncias y Órdenes de Captura': ['infracciones', 'Consulta de capturas SAT Lima'],
@@ -98,7 +95,7 @@
   function tarjeta(s, carpeta) {
     var logo = s.logo
       ? '<img src="assets/' + carpeta + '/' + esc(s.logo) + '" alt="" width="48" height="48" decoding="async" loading="lazy">'
-      : '<svg><use href="#i-region"/></svg>';
+      : '<svg><use href="#fv-region"/></svg>';
     var texto = s.meta
       ? '<span class="nv-servicio-txt"><b>' + esc(s.nombre) + '</b><small>' + esc(s.meta) + '</small></span>'
       : (s.detalle
@@ -107,7 +104,7 @@
     if (s.ir) {
       return '<a class="nv-servicio es-oscuro" href="#' + s.ir + '">' +
         '<span class="nv-servicio-logo">' + logo + '</span>' + texto +
-        '<svg class="nv-servicio-ir"><use href="#i-ir"/></svg></a>';
+        '<svg class="nv-servicio-ir"><use href="#fv-ir"/></svg></a>';
     }
     return '<a class="nv-servicio" href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer" data-nombre="' + esc(NV.llano(s.nombre + ' ' + (s.detalle || ''))) + '">' +
       texto + '<span class="nv-servicio-logo">' + logo + '</span>' +
@@ -121,7 +118,7 @@
       : 'href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer"';
     var logo = s.logo
       ? '<img src="assets/services/' + esc(s.logo) + '" alt="" width="44" height="44" decoding="async" loading="lazy">'
-      : '<svg aria-hidden="true"><use href="#i-region"/></svg>';
+      : '<svg aria-hidden="true"><use href="#fv-region"/></svg>';
     return '<a class="nv-gratis-tarjeta' + (s.ir ? ' es-regiones' : '') + '" ' + destino + '>' +
       '<span class="nv-gratis-texto"><b>' + esc(s.nombre) + '</b><small>' + esc(datos[1]) + '</small></span>' +
       '<span class="nv-servicio-logo">' + logo + '</span>' +
@@ -132,11 +129,11 @@
   function pintarServicios() {
     $('nvServicios').innerHTML = GRUPOS_GRATIS.map(function (grupo) {
       var lista = SERVICIOS.filter(function (s) { return (DATOS_GRATIS[s.nombre] || ['otros'])[0] === grupo.id; });
-      return '<section class="nv-gratis-grupo" aria-labelledby="nvGratisGrupo-' + grupo.id + '">' +
-        '<div class="nv-gratis-grupo-cab"><h3 id="nvGratisGrupo-' + grupo.id + '">' + esc(grupo.titulo) + '</h3>' +
-        '<span>' + lista.length + '</span></div>' +
+      return '<details class="nv-gratis-grupo" aria-labelledby="nvGratisGrupo-' + grupo.id + '">' +
+        '<summary class="nv-gratis-grupo-cab"><h3 id="nvGratisGrupo-' + grupo.id + '">' + esc(grupo.titulo) + '</h3>' +
+        '<span>' + lista.length + ' accesos</span><svg class="nv-servicios-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>' +
         '<div class="nv-gratis-grid">' + lista.map(tarjetaGratis).join('') + '</div>' +
-      '</section>';
+      '</details>';
     }).join('');
     var cantidad = $('nvGratisCantidad');
     if (cantidad) cantidad.textContent = SERVICIOS.length + ' accesos';
@@ -171,7 +168,6 @@
       });
     });
   }
-
 
   /* ── Saldo bajo ───────────────────────────────────────────── */
   var UMBRAL = 3;
@@ -225,6 +221,8 @@
     $('nvDatosGuardar').hidden = !si;
     $('nvDatosCancelar').hidden = !si;
     $('nvDatosError').hidden = true;
+    f.full_name.removeAttribute('aria-invalid');
+    f.phone.removeAttribute('aria-invalid');
     if (si) f.full_name.focus();
   }
 
@@ -241,13 +239,26 @@
     });
     f.addEventListener('submit', async function (e) {
       e.preventDefault();
-      if (f.full_name.readOnly) return;
-      var nombre = f.full_name.value.trim();
-      var telefono = f.phone.value.trim();
-      var err = $('nvDatosError');
-      if (!nombre) { err.textContent = 'El nombre no puede quedar vacío.'; err.hidden = false; return; }
       var boton = $('nvDatosGuardar');
+      if (f.full_name.readOnly || boton.disabled) return;
+      var nombre = f.full_name.value.trim();
+      var telefonoOriginal = f.phone.value.trim();
+      var telefono = telefonoOriginal ? C.AuthForm.normalizePhone(telefonoOriginal) : '';
+      var err = $('nvDatosError');
+      err.hidden = true;
+      f.full_name.removeAttribute('aria-invalid');
+      f.phone.removeAttribute('aria-invalid');
+      if (!nombre) {
+        err.textContent = 'El nombre no puede quedar vacío.'; err.hidden = false;
+        f.full_name.setAttribute('aria-invalid', 'true'); f.full_name.focus(); return;
+      }
+      if (telefonoOriginal && !telefono) {
+        err.textContent = 'Escribe un teléfono válido de 6 a 15 dígitos, con código de país si corresponde.'; err.hidden = false;
+        f.phone.setAttribute('aria-invalid', 'true'); f.phone.focus(); return;
+      }
       boton.disabled = true;
+      boton.setAttribute('aria-busy', 'true');
+      $('nvDatosCancelar').disabled = true;
       try {
         var res = await C.Auth.updateProfile({ full_name: nombre, phone: telefono });
         if (res && res.error) throw res.error;
@@ -264,6 +275,8 @@
         err.hidden = false;
       } finally {
         boton.disabled = false;
+        boton.removeAttribute('aria-busy');
+        $('nvDatosCancelar').disabled = false;
       }
     });
     $('nvCambiarClave').addEventListener('click', function () {
@@ -279,7 +292,6 @@
     conectarTramites();
     conectarSaldoBajo();
     conectarDatos();
-    document.querySelectorAll('[data-anio]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
 
     NV.alEntrar.regiones = function () {
       $('nvRegionesBuscar').value = '';

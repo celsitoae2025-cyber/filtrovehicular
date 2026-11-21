@@ -46,8 +46,6 @@ html.mnt-locked body {
   font-weight: 700;
   letter-spacing: -.2px;
 }
-.mnt-brand-logo { width: 30px; height: 30px; object-fit: contain; filter: brightness(0) invert(1); opacity: .8; }
-.mnt-mark-plus { color: var(--mnt-orange); }
 .mnt-divider { height: 1px; margin: 25px 0 23px; background: #ffffff12; }
 .mnt-status {
   display: inline-flex;

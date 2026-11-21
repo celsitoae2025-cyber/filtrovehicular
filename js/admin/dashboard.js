@@ -182,7 +182,7 @@
       topEl.innerHTML = topModules.map(function (e) {
         var pct = Math.round((e.count / max) * 100);
         return '<div class="bar-row">' +
-          '<div class="bar-row-head"><strong>' + (MODULE_LABELS[e.key] || e.key) + '</strong><span>' + e.count + ' consultas</span></div>' +
+          '<div class="bar-row-head"><strong>' + escapeHtml(MODULE_LABELS[e.key] || e.key) + '</strong><span>' + e.count + (e.count === 1 ? ' consulta' : ' consultas') + '</span></div>' +
           '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
         '</div>';
       }).join('') || '<p style="color:var(--c-muted);font-size:13px">Sin datos todavía.</p>';

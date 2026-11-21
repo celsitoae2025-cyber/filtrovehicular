@@ -1,13 +1,5 @@
 /* ============================================================
-   CABECERA DEL PANEL — las cuatro cifras de arriba
-
-   Son las que se miran a diario, así que están siempre a la vista, en
-   cualquier pestaña. Antes vivían en un «Dashboard» que no hacía nada
-   más y había que ir a buscarlo.
-
-   Cada cifra se pide por separado y escribe en cuanto llega: si una
-   consulta tarda, las otras tres ya están puestas en vez de esperar
-   todas a la más lenta.
+   RESUMEN DEL PANEL — cifras generales y altura de la cabecera
 ============================================================ */
 (function () {
   var A = window.Consultia.Admin;
@@ -127,21 +119,14 @@
     devolverColgadas();
   }
 
-  /* CUÁNTO OCUPA LO QUE SE QUEDA QUIETO ARRIBA
-     La barra negra y las pestañas van pegadas al borde; la cabecera de
-     la tabla tiene que pararse justo debajo, no detrás. La altura se
-     mide en vez de escribirla a mano: con otro tamaño de letra, o si las
-     pestañas se parten en dos líneas, el hueco sigue siendo el bueno. */
+  /* El desplegable de estado se coloca debajo de la cabecera móvil. */
   function medirFijo() {
     var app = document.querySelector('.admin-app');
     var cab = document.querySelector('.ad-cab');
-    var pes = document.querySelector('.ad-pestanas');
-    if (!app || !cab || !pes) return;
+    if (!app || !cab) return;
     var hCab = Math.round(cab.getBoundingClientRect().height);
-    var hPes = Math.round(pes.getBoundingClientRect().height);
     if (!hCab) return;
     app.style.setProperty('--ad-cab', hCab + 'px');
-    app.style.setProperty('--ad-fijo', (hCab + hPes) + 'px');
   }
 
   A.initCabecera = function () {

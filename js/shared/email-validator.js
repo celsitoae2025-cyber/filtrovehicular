@@ -40,7 +40,12 @@
     return at > 0 ? email.slice(at + 1).toLowerCase().trim() : '';
   }
 
+  function isValidFormat(email) {
+    return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  }
+
   Consultia.EmailValidator = {
+    isValidFormat: isValidFormat,
     /**
      * Verifica si un email pertenece a un dominio descartable conocido.
      * @returns {boolean}
@@ -61,8 +66,7 @@
       }
       var trimmed = email.trim();
       // Formato básico
-      var emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRx.test(trimmed)) {
+      if (!isValidFormat(trimmed)) {
         return { ok: false, error: 'El correo no tiene un formato válido.' };
       }
       // Dominio descartable

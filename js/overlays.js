@@ -6,12 +6,20 @@
   window.Consultia = window.Consultia || {};
 
   const COOKIE_KEY = 'consultia_cookies_consent';
+  const legalOrigins = new WeakMap();
+  function legalControls(modal) {
+    return [...modal.querySelectorAll('button, a[href], input, select, textarea, [tabindex]')]
+      .filter(el => !el.disabled && el.tabIndex >= 0 && el.getClientRects().length);
+  }
 
   Consultia.openModal = function (name) {
     const modal = document.getElementById(name + 'Modal');
     if (modal) {
+      const legal = name === 'terms' || name === 'cookies';
+      if (legal && modal.hidden) legalOrigins.set(modal, document.activeElement);
       modal.hidden = false;
       document.body.classList.add('modal-open');
+      if (legal) legalControls(modal)[0]?.focus();
     }
   };
 
@@ -21,7 +29,27 @@
     // Si no hay otros modales abiertos, liberar el scroll
     const hasOpen = document.querySelectorAll('.modal:not([hidden])').length > 0;
     if (!hasOpen) document.body.classList.remove('modal-open');
+    const origin = legalOrigins.get(modal);
+    legalOrigins.delete(modal);
+    if (origin?.isConnected) origin.focus();
   };
+
+  document.addEventListener('keydown', e => {
+    const modal = document.querySelector('#termsModal:not([hidden]), #cookiesModal:not([hidden])');
+    if (!modal) return;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      Consultia.closeModal(modal);
+    } else if (e.key === 'Tab') {
+      const controls = legalControls(modal);
+      const first = controls[0], last = controls[controls.length - 1];
+      if (controls.length && (!modal.contains(document.activeElement) ||
+          (e.shiftKey ? document.activeElement === first : document.activeElement === last))) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      }
+    }
+  });
 
   Consultia.initOverlays = function () {
     // Abrir modales desde enlaces del footer

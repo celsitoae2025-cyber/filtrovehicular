@@ -42,8 +42,10 @@
     el.innerHTML =
       '<div class="mnt-card">' +
         '<div class="mnt-brand">' +
-          '<img class="mnt-brand-logo" src="/icons/logo-filtro.svg" alt="" />' +
-          '<span>Filtro Vehicular<span class="mnt-mark-plus">+</span></span>' +
+          '<span class="fv-wordmark fv-wordmark--inverse" role="img" aria-label="Plataforma Filtro Vehicular+">' +
+            '<span class="fv-wordmark-line" aria-hidden="true">Plataforma Filtro</span>' +
+            '<span class="fv-wordmark-line" aria-hidden="true">Vehicular<span class="fv-wordmark-plus">+</span></span>' +
+          '</span>' +
         '</div>' +
         '<div class="mnt-divider" aria-hidden="true"></div>' +
         '<div class="mnt-status"><span class="mnt-status-dot" aria-hidden="true"></span>' +

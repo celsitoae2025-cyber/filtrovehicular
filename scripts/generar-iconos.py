@@ -2,7 +2,7 @@
 """Regenera los favicons y los iconos instalables desde los SVG de marca.
 
 Requiere: pip install svglib rlPyCairo pillow
-Ejecutar desde la raiz: python icons/generar-iconos.py
+Ejecutar desde la raíz: python scripts/generar-iconos.py
 """
 from io import BytesIO
 from pathlib import Path
@@ -11,8 +11,8 @@ from PIL import Image, ImageDraw
 from reportlab.graphics import renderPM
 from svglib.svglib import svg2rlg
 
-ICONS = Path(__file__).resolve().parent
-ROOT = ICONS.parent
+ROOT = Path(__file__).resolve().parents[1]
+ICONS = ROOT / "icons"
 SIZE = 2048
 
 

@@ -1,0 +1,169 @@
+/* Distribución del panel de Administración. Comparte la paleta de FV+. */
+body.fv-admin #adminApp {
+  --ad-margen: 28px;
+  --ad-panel: 18px;
+  display: grid;
+  grid-template-columns: 244px minmax(0, 1fr);
+}
+body.fv-admin #adminApp :is(.admin-main, .admin-body, .admin-view) { min-width: 0; }
+body.fv-admin #adminApp .admin-main { margin: 0; background: var(--pl-fondo) !important; }
+body.fv-admin #adminApp .ad-lateral {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100dvh;
+  padding: 24px 12px;
+  overflow: auto;
+  background: var(--pl-tinta);
+  color: var(--pl-papel);
+}
+body.fv-admin #adminApp .ad-marca { display: grid; gap: 12px; margin: 4px 12px 24px; }
+body.fv-admin #adminApp .ad-marca .fv-wordmark { font-size: var(--pl-texto-titulo); font-weight: 800; line-height: 1.04; letter-spacing: -.045em; }
+body.fv-admin #adminApp .ad-marca .fv-wordmark-line { display: block; }
+body.fv-admin #adminApp .ad-marca .fv-wordmark-plus { color: var(--pl-marca); }
+body.fv-admin #adminApp .ad-marca-contexto { color: #c6c6c6; font-size: var(--pl-texto-auxiliar); }
+body.fv-admin #adminApp .ad-pestanas { position: static; display: grid; gap: 4px; padding: 0; border: 0 !important; background: transparent !important; overflow: visible; }
+body.fv-admin #adminApp .ad-pestana {
+  position: relative;
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
+  padding-inline: 12px;
+  background: transparent !important;
+  color: #dadada !important;
+  text-align: left;
+}
+body.fv-admin #adminApp .ad-pestana.es-activa { background: var(--pl-campo) !important; color: var(--pl-tinta) !important; }
+body.fv-admin #adminApp .ad-pestana.es-activa::before { content: ''; position: absolute; inset-inline-start: -12px; width: 3px; height: 18px; border-radius: 0 2px 2px 0; background: var(--pl-marca); }
+@media (hover: hover) {
+  body.fv-admin #adminApp .ad-pestana:not(.es-activa):hover { background: #303030 !important; }
+}
+
+/* Cabecera y estado. */
+body.fv-admin #adminApp .ad-cab { z-index: 20; min-height: 64px; padding: 8px var(--ad-margen); gap: 12px; flex-wrap: nowrap; }
+body.fv-admin #adminApp :is(.ad-cab-izq, .ad-cab-dcha, .admin-user) { display: flex; align-items: center; min-width: 0; gap: 8px; }
+body.fv-admin #adminApp .ad-cab .admin-user { gap: 8px; }
+body.fv-admin #adminApp #adminUserName { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body.fv-admin #adminApp .ad-volver { flex: none; width: auto; gap: 8px; white-space: nowrap; }
+body.fv-admin #adminApp .ad-menu-boton { display: inline-grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0; border: 1px solid var(--pl-linea); border-radius: var(--pl-radio-control); background: var(--pl-papel); color: var(--pl-tinta); cursor: pointer; }
+body.fv-admin #adminApp #adAbrirMenu { display: none; }
+body.fv-admin #adminApp :is(.ad-cab, .ad-menu-movil, .ad-pago-prueba) svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+body.fv-admin #adminApp .ad-estado { position: relative; flex: none; }
+body.fv-admin #adminApp .ad-estado-boton { display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 10px; border: 1px solid var(--pl-linea); border-radius: var(--pl-radio-control); color: var(--pl-tinta); background: var(--pl-papel); list-style: none; cursor: pointer; }
+body.fv-admin #adminApp :is(.ad-estado-boton, .ad-pago-prueba > summary)::-webkit-details-marker { display: none; }
+body.fv-admin #adminApp .ad-estado[open] > summary { background: var(--pl-campo); }
+body.fv-admin #adminApp .ad-estado:has(button[aria-checked=true]) > summary svg { color: #467822; }
+body.fv-admin #adminApp .ad-estado-panel { position: absolute; top: calc(100% + 6px); inset-inline-end: 0; width: min(300px, calc(100vw - 24px)); padding: 8px; border: 1px solid var(--pl-linea); border-radius: var(--pl-radio); background: var(--pl-papel); box-shadow: 0 8px 28px #0002; }
+body.fv-admin #adminApp .ad-estado-fila { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px; }
+body.fv-admin #adminApp .ad-estado-fila + .ad-estado-fila { border-top: 1px solid var(--pl-linea); }
+body.fv-admin #adminApp .ad-estado-fila :is(.mnt-switch, .avc-switch) { flex: none; min-height: 44px; }
+body.fv-admin #adminApp .ad-estado-fila .mnt-switch-thumb { top: 50%; transform: translateY(-50%); }
+body.fv-admin #adminApp .ad-estado-fila .mnt-switch.is-on .mnt-switch-thumb { transform: translate(24px, -50%); }
+body.fv-admin #adminApp .ad-estado-config { width: 100%; margin-top: 6px; }
+
+body.fv-admin #adminApp .ad-menu-movil {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: min(304px, 88vw);
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 12px;
+  border: 0;
+  background: var(--pl-tinta);
+  color: var(--pl-papel);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+body.fv-admin #adminApp .ad-menu-movil::backdrop { background: #0007; }
+body.fv-admin #adminApp .ad-menu-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0 16px 10px; }
+body.fv-admin #adminApp :is(.ad-menu-boton, .ad-pestana, .ad-ficha, .ad-estado-boton) { touch-action: manipulation; }
+body.fv-admin:has(#adMenuMovil[open]) { overflow: hidden; }
+
+/* Encabezado de cada vista, cifras y contenido. */
+body.fv-admin #adminApp .admin-body { padding: 24px var(--ad-margen) 40px; }
+body.fv-admin #adminApp .ad-pagina { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; min-width: 0; margin-bottom: 16px; }
+body.fv-admin #adminApp .ad-pagina h1 { margin: 0; color: var(--pl-tinta); }
+body.fv-admin #adminApp #adFichas { gap: 6px; max-width: 100%; padding: 0; }
+body.fv-admin #adminApp #adFichas .ad-ficha { padding-inline: 12px; }
+body.fv-admin #adminApp .ad-cifras { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 0; margin-bottom: 16px; background: transparent; }
+body.fv-admin #adminApp .ad-cifra { display: grid; align-content: start; gap: 4px; min-width: 0; padding: 14px; color: var(--pl-tinta); text-align: start; overflow-wrap: anywhere; }
+body.fv-admin #adminApp .ad-cifra-rot { letter-spacing: 0; text-transform: none; }
+body.fv-admin #adminApp .ad-cifra strong { margin: 0; line-height: 1.25; }
+body.fv-admin #adminApp button.ad-cifra { cursor: pointer; }
+body.fv-admin #adminApp button.ad-cifra:hover { border-color: var(--pl-borde-destacado) !important; }
+body.fv-admin #adminApp :is(.admin-panels, .settings-grid, .bc-grid, .cartel-grid, .ad-form-historial) { gap: 14px; align-items: start; }
+body.fv-admin #adminApp :is(.admin-panel, .block-card, .bc-card, .admin-card, .kpi) { min-width: 0; padding: var(--ad-panel); }
+body.fv-admin #adminApp :is(.admin-panel-head, .block-head) { flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+body.fv-admin #adminApp :is(.ad-herramientas, .form-actions, .form-buttons, .cartel-acciones, .bc-form-footer) { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+body.fv-admin #adminApp .block-form { gap: 12px; }
+body.fv-admin #adminApp .ad-form-historial { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); }
+body.fv-admin #adminApp .ad-pago-prueba { grid-column: 1 / -1; }
+body.fv-admin #adminApp .ad-pago-prueba > summary { justify-content: space-between; min-height: 44px; margin: 0; list-style: none; cursor: pointer; }
+body.fv-admin #adminApp .ad-pago-prueba[open] > summary svg { transform: rotate(180deg); }
+body.fv-admin #adminApp .ad-pago-prueba-contenido { display: grid; justify-items: start; gap: 10px; padding-top: 8px; }
+body.fv-admin #adminApp .ad-pago-prueba-contenido p { margin: 0; }
+
+/* Controles de búsqueda y tablas. */
+body.fv-admin #adminApp .admin-toolbar { position: relative; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; padding: 10px; border: 1px solid var(--pl-linea); border-radius: var(--pl-radio); background: var(--pl-papel); }
+body.fv-admin #adminApp .admin-search { flex: 1 1 260px; min-width: 0; max-width: none; }
+body.fv-admin #adminApp :is(.admin-toolbar, .ad-herramientas) > select { width: auto; min-width: 0; max-width: 100%; background-color: var(--pl-papel) !important; }
+body.fv-admin #adminApp .admin-stats-inline { flex-wrap: wrap; width: auto; gap: 4px 12px; padding: 6px 8px; color: var(--pl-secundario); }
+body.fv-admin #adminApp .ad-fichas-filtro { gap: 6px; padding: 0 0 12px; }
+body.fv-admin #adminApp .ad-filtros { position: relative; }
+body.fv-admin #adminApp .ad-filtros:has(.ad-ficha.es-activa:not([data-users-chip=all])) > summary,
+body.fv-admin #adminApp .ad-filtros:has(option:checked:not([value=""]):not([value=all])) > summary,
+body.fv-admin #adminApp .ad-filtros[open] > summary { border-color: var(--pl-borde-destacado); background: var(--pl-campo); }
+body.fv-admin #adminApp .ad-filtros-panel { position: absolute; z-index: 5; top: calc(100% + 6px); inset-inline-end: 0; width: min(440px, calc(100vw - 2 * var(--ad-margen))); max-height: min(360px, 65dvh); overflow: auto; padding: 12px; border: 1px solid var(--pl-linea); border-radius: var(--pl-radio); background: var(--pl-papel); box-shadow: 0 8px 24px #0002; }
+body.fv-admin #adminApp .ad-filtros-panel .ad-fichas { overflow: visible; }
+body.fv-admin #adminApp .users-live-bar { margin-bottom: 10px; padding: 0 2px; }
+body.fv-admin #adminApp .admin-table-wrap { overflow: auto; overscroll-behavior-inline: contain; }
+body.fv-admin #adminApp .admin-table-wrap:focus-visible { outline: 2px solid var(--pl-foco); outline-offset: 2px; }
+body.fv-admin #adminApp .admin-table :is(th, td) { padding: 10px 12px; }
+body.fv-admin #adminApp .admin-table th { letter-spacing: 0; text-transform: none; }
+body.fv-admin #adminApp :is(.admin-empty, .empty-state) { padding: 14px; }
+body.fv-admin #adminApp .avc-plantillas { grid-template-columns: repeat(auto-fill, minmax(min(100%,300px), 1fr)); }
+
+@layer fv-componentes-internos {
+  #adminApp .ad-volver { padding-inline: 10px !important; }
+  #adminApp .ad-marca .fv-wordmark { font-size: var(--pl-texto-titulo) !important; }
+  #adminApp :is(.ad-marca-contexto, .ad-pago-prueba-contenido small, .block-tag, .admin-stats-inline span) { font-size: var(--pl-texto-auxiliar) !important; }
+}
+
+@media (max-width: 1180px) {
+  body.fv-admin #adminApp { --ad-margen: 22px; grid-template-columns: 216px minmax(0, 1fr); }
+  body.fv-admin #adminApp .ad-form-historial { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+  body.fv-admin #adminApp { --ad-margen: 16px; --ad-panel: 14px; grid-template-columns: minmax(0, 1fr); }
+  body.fv-admin #adminApp .ad-lateral { display: none; }
+  body.fv-admin #adminApp #adAbrirMenu { display: inline-grid; }
+  body.fv-admin #adminApp .ad-estado-panel { position: fixed; top: calc(var(--ad-cab, 64px) + 6px); inset-inline-end: 12px; }
+  body.fv-admin #adminApp .admin-body { padding-top: 16px; }
+}
+@media (max-width: 600px) {
+  body.fv-admin #adminApp :is(.ad-volver span, #adminUserName) { display: none; }
+  body.fv-admin #adminApp .ad-cab { gap: 6px; }
+  body.fv-admin #adminApp .ad-pagina { align-items: flex-start; }
+  body.fv-admin #adminApp .ad-cifras { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  body.fv-admin #adminApp .ad-cifra { padding: 10px; }
+  body.fv-admin #adminApp .admin-search { flex-basis: 100%; }
+  body.fv-admin #adminApp .admin-toolbar > select { flex: 1 1 130px; }
+  body.fv-admin #adminApp .admin-stats-inline { flex: 1 1 100%; }
+  body.fv-admin #adminApp .ad-filtros { position: static; }
+  body.fv-admin #adminApp .ad-filtros-panel { width: 100%; }
+}
+@media (max-width: 360px) {
+  body.fv-admin #adminApp { --ad-margen: 12px; }
+  body.fv-admin #adminApp :is(.ad-cab-izq, .ad-cab-dcha) { gap: 5px; }
+  body.fv-admin #adminApp .ad-estado-boton { justify-content: center; min-width: 44px; }
+  body.fv-admin #adminApp .ad-estado-boton span { display: none; }
+}
+@media (min-width: 480px) and (max-width: 900px) and (max-height: 420px) {
+  body.fv-admin #adminApp .ad-menu-movil { width: min(464px, 92vw); }
+  body.fv-admin #adminApp .ad-menu-movil .ad-pestanas { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  body.fv-admin #adminApp .ad-menu-movil .ad-pestana.es-activa::before { inset-inline-start: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.fv-admin #adminApp .admin-view { animation: none; }
+}

@@ -169,63 +169,16 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
 }
 
 /* Marco de la aplicación de escritorio. */
-/* En el acceso, el borde del campo ya marca el foco: se quita el aro
-   externo para que correo y contraseña tengan una sola línea visible. */
-.nv-body .nv-puerta-panel .nv-auth-shell .nv-campo:focus,
-.nv-body .nv-puerta-panel .nv-auth-shell .nv-campo:focus-visible {
-  border: 1px solid #414141 !important;
+/* Un solo borde suave en todos los campos del acceso y de solicitud. */
+body.nv-body #nvPuerta #nvAuthShell .nv-campo:is(:focus, :focus-visible),
+body.nv-body #nvPuerta #nvPortadaPlaca:is(:focus, :focus-visible),
+body.nv-body #nvFvcDialogo #nvFvcPlaca:is(:focus, :focus-visible) {
+  border: 1px solid #a6a6a3 !important;
   outline: none !important;
   outline-offset: 0 !important;
   box-shadow: none !important;
 }
 
-.nv-body #nvAccesoCredenciales .nv-auth-intro {
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  width: 100%;
-  text-align: center;
-  transform: scale(0.95);
-  transform-origin: center center;
-}
-.nv-body #nvAccesoCredenciales .nv-auth-emblema {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  margin-bottom: 2px;
-  border-radius: 50%;
-  background: transparent;
-  overflow: visible;
-}
-.nv-body #nvAccesoCredenciales .nv-auth-emblema-imagen {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: block;
-  width: 64px;
-  height: 64px;
-  max-width: none;
-  object-fit: contain;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-.nv-body #nvAccesoCredenciales .nv-auth-intro h1 {
-  color: var(--ui-ink-2);
-  font-size: var(--fv-tipo-titulo) !important;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: .01em;
-}
-.nv-body #nvAccesoCredenciales .nv-auth-intro .nv-puerta-nota {
-  color: var(--ui-muted);
-  font-size: var(--fv-tipo-auxiliar) !important;
-  text-align: center;
-}.nv-body #nvAccesoCredenciales .nv-auth-intro h1,
-.nv-body #nvAccesoCredenciales .nv-auth-intro .nv-puerta-nota {
-  transform: translateY(16px);
-}
 .nv-body #nvAccesoCredenciales .nv-puerta-clave-encabezado a,
 .nv-body #nvAccesoCredenciales .nv-puerta-pie a {
   text-decoration: none !important;
@@ -281,8 +234,30 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   font-weight: 600;
   line-height: 1.25;
 }
-.nv-body .nv-marca img { width: 34px; height: 34px; filter: none !important; }
-.nv-body .nv-marca b { color: inherit; }
+/* Product wordmark; the vehicle pictogram is reserved for site icons. */
+.nv-body .fv-wordmark {
+  --fv-wordmark-size: 20px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  color: #202a28;
+  font-family: var(--fv-tipografia, "Inter", Arial, sans-serif);
+  font-size: var(--fv-wordmark-size) !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: -.04em;
+  text-align: left;
+  white-space: nowrap;
+}
+.nv-body .fv-wordmark-line { display: block; font: inherit !important; color: inherit; letter-spacing: inherit; }
+.nv-body .fv-wordmark-plus { font: inherit !important; color: #7ac943 !important; letter-spacing: 0; }
+.nv-body .fv-wordmark--inverse { color: #ffffff; }
+.nv-body .nv-marca > .fv-wordmark { --fv-wordmark-size: 19px; }
+.nv-body .mnt-brand > .fv-wordmark { --fv-wordmark-size: 22px; }
 .nv-body .nv-lado-nav { gap: 3px; }
 .nv-body .nv-nav {
   min-height: 42px;
@@ -883,7 +858,7 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
 @media (max-width: 860px) {
   .nv-body .nv-navegadores-trigger-desktop { display: none; }
   .nv-body .nv-navegadores-trigger-mobile { display: none; }
-  .nv-body #nvPuerta.es-acceso-limpio .nv-navegadores-trigger-mobile { display: inline-flex; }
+  .nv-body #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-navegadores-trigger-mobile { display: inline-flex; }
   .nv-body .nv-navegadores-dialogo { width: min(520px, calc(100% - 24px)); max-height: calc(100dvh - 24px); }
 }
 @media (max-width: 420px) {
@@ -1342,20 +1317,34 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
   .nv-body #nvPuerta .nv-auth-fvc-mobile {
     display: none !important;
   }
-  .nv-body #nvPuerta[data-paso-activo="acceso"].es-acceso-limpio .nv-auth-fvc-mobile {
+  .nv-body #nvPuerta[data-paso-activo="acceso"]:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-fvc-mobile {
     display: flex !important;
   }
 }
 
-/* La misma tarjeta aloja ambos pasos. Solo su contenido puede desplazarse
-   si el teclado, el zoom o la orientación reducen el espacio disponible. */
+/* Mobile sign-in: one form, a separate report action and a quiet footer. */
 .nv-auth-contenido, .nv-acceso-clave-grupo { display: contents; }
+.nv-auth-identidad-mobile, .nv-auth-navegacion-mobile,
+.nv-body #nvPuerta .nv-auth-fvc-mobile-wrap { display: none; }
+.nv-auth-titulo-mobile { display: none; }
+.nv-auth-intro h1 > span { font: inherit; color: inherit; }
+.nv-body #nvRegistro .nv-registro-clave > label { margin: 0; color: inherit; font: inherit; }
+.nv-body #nvRegistro .nv-marcar a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.nv-body #nvPuerta.es-cuenta-ayuda #nvAuthShell .nv-puerta-caja { gap: 10px; }
+.nv-body #nvPuerta.es-cuenta-ayuda #nvAuthShell .nv-puerta-nota { margin: 0; color: var(--ui-muted); font-size: 13px !important; line-height: 1.5; text-align: center; overflow-wrap: anywhere; }
+.nv-body #nvPuerta.es-cuenta-ayuda #nvAuthShell .nv-ayuda { margin: 0; font-size: 12px !important; line-height: 1.4; }
+.nv-body #nvPuerta.es-cuenta-ayuda #nvAuthShell .nv-ayuda-correo { text-align: center; }
+
+@media (min-width: 861px) and (pointer: fine), (min-width: 1181px) {
+  #nvPuerta.es-cuenta-ayuda .nv-puerta-cuenta { padding-block: 16px; }
+}
+@media (max-width: 860px) and (min-height: 721px), (min-width: 861px) and (max-width: 1180px) and (min-height: 801px) and (pointer: coarse) {
+  body.nv-body #nvPuerta.es-cuenta-ayuda:not([hidden]):not(.es-encima) { --nv-movil-portada: clamp(100px, calc(100svh * .19), 160px); }
+}
 
 @media (max-width: 860px), (max-width: 1180px) and (pointer: coarse) {
-  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) {
-    --acceso-margen: clamp(4px, 1.4vw, 12px);
-    --acceso-relleno: clamp(10px, 2.2svh, 24px);
-    --acceso-gap: clamp(6px, 1.4svh, 16px);
+  .nv-body #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda):not([hidden]):not(.es-encima) {
+    --nv-movil-portada: clamp(132px, calc(100svh * .265), 220px);
     position: fixed;
     inset: 0;
     z-index: 400;
@@ -1366,23 +1355,24 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     min-height: 0;
     padding: 0;
     overflow: hidden;
-    background: var(--ui-page);
+    overscroll-behavior: none;
+    background: #ededeb;
   }
-  #nvPuerta.es-acceso-limpio .nv-puerta-presentacion { display: none; }
-  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) .nv-puerta-panel {
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-presentacion { display: none; }
+  .nv-body #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda):not([hidden]):not(.es-encima) .nv-puerta-panel {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template: minmax(0, 1fr) auto / minmax(0, 1fr);
     align-items: stretch;
     width: 100%;
     max-width: none;
     min-height: 0;
     height: 100%;
-    padding: max(var(--acceso-margen), env(safe-area-inset-top)) max(var(--acceso-margen), env(safe-area-inset-right)) 0 max(var(--acceso-margen), env(safe-area-inset-left));
+    padding: 0;
     overflow: hidden;
-    background: var(--ui-page);
+    overscroll-behavior: none;
+    background: #ededeb;
   }
-  #nvPuerta.es-acceso-limpio .nv-puerta-formularios {
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-formularios {
     display: grid;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     align-items: stretch;
@@ -1390,137 +1380,219 @@ body.fv-citv :is(small, .hint, .helper, .form-hint):not(.page *) {
     margin: 0;
     padding: 0;
   }
-  #nvPuerta.es-acceso-limpio #nvAuthShell {
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell {
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: min(var(--nv-movil-portada), calc(var(--acceso-alto-visible, 100svh) * .5)) minmax(0, 1fr);
+    align-self: stretch;
     align-items: stretch;
     width: 100%;
     max-width: none;
     min-height: 0;
     margin: 0;
-    padding: var(--acceso-relleno) clamp(12px, 4vw, 32px);
-    gap: var(--acceso-gap);
+    padding: 0;
+    gap: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
     overflow: hidden;
   }
-  #nvPuerta.es-acceso-limpio .nv-auth-tabs,
-  #nvPuerta.es-acceso-limpio .nv-auth-contenido {
-    width: 100%;
-    max-width: 640px;
-    margin-inline: auto;
-  }
-  #nvPuerta.es-acceso-limpio .nv-auth-contenido {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    gap: var(--acceso-gap);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-  #nvPuerta.es-acceso-limpio .nv-auth-tab { transition: none; }
-  #nvPuerta.es-acceso-limpio #nvAcceso:not([hidden]),
-  #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) { flex: 1 0 auto; }
-  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales:not([hidden]) {
-    flex: 1;
-    justify-content: space-evenly;
-    gap: var(--acceso-gap);
-  }
-  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-intro {
-    gap: 4px;
-    margin: 0;
-    transform: none;
-  }
-  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-emblema {
-    width: clamp(38px, 7svh, 64px);
-    height: clamp(38px, 7svh, 64px);
-    margin-bottom: 4px;
-  }
-  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-emblema-imagen {
-    position: static;
-    width: 100%;
-    height: 100%;
-    transform: none;
-  }
-  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-intro :is(h1, p) { transform: none; }
-  #nvPuerta.es-acceso-limpio .nv-acceso-clave-grupo { display: grid; gap: 4px; }
-  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-puerta-clave-encabezado { margin: 0; }
-  #nvPuerta.es-acceso-limpio #nvAuthShell .nv-etiqueta { gap: 4px; }
-  #nvPuerta.es-acceso-limpio #nvAuthShell .nv-campo,
-  #nvPuerta.es-acceso-limpio #nvPortadaPlacaMobile { font-size: 16px !important; }
-  #nvPuerta.es-acceso-limpio #nvAuthShell .nv-puerta-pie { padding: 4px 0 0; }
-  #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-content: center;
-    align-items: start;
-    gap: clamp(12px, 2.5svh, 24px) 12px;
-  }
-  #nvPuerta.es-acceso-limpio #nvRegistro > .nv-mitad { grid-column: auto; }
-  #nvPuerta.es-acceso-limpio #nvRegistro .nv-auth-intro { margin: 0; }
-  #nvPuerta.es-acceso-limpio #nvRegistro .nv-etiqueta { min-width: 0; }
-  #nvPuerta.es-acceso-limpio #nvRegistro .nv-campo,
-  #nvPuerta.es-acceso-limpio #nvRegistroBtn {
-    height: clamp(44px, 6svh, 54px);
-    min-height: clamp(44px, 6svh, 54px);
-  }
-  #nvPuerta[data-paso-activo="acceso"].es-acceso-limpio .nv-navegadores-trigger-mobile { display: inline-flex; }
-  #nvPuerta.es-acceso-limpio #nvRegistro .nv-puerta-pie,
-  #nvPuerta[data-paso-activo="registro"].es-acceso-limpio .nv-navegadores-trigger-mobile { display: none; }
-  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) .nv-navegadores-trigger-mobile {
-    align-self: center;
-    flex-shrink: 0;
-    min-height: 26px;
-    margin: 0;
-    transform: none;
-  }
-  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) .nv-puerta-legal {
-    position: static;
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvPuertaTabs { display: none; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-identidad-mobile {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: nowrap;
+    gap: 10px;
     width: 100%;
     max-width: none;
-    min-height: 44px;
+    min-height: 0;
+    height: 100%;
     margin: 0;
-    padding: 0 46px env(safe-area-inset-bottom) 4px;
-    gap: 8px;
+    padding: max(8px, env(safe-area-inset-top)) 20px 36px;
+    color: #2c2d2b;
+    background: linear-gradient(135deg, #f6f6f4, #ededeb);
+  }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-identidad-mobile > .fv-wordmark { --fv-wordmark-size: 24px; color: #2c2d2b; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-contenido {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+    margin: -28px 0 0;
+    padding: 28px clamp(20px, 6vw, 36px) 0;
+    gap: 16px;
+    border-radius: 28px 28px 0 0;
+    background: #ffffff;
+    overflow-y: auto;
+    overscroll-behavior: none;
+    overflow-anchor: none;
+    scroll-padding-block: 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-contenido::-webkit-scrollbar { display: none; width: 0; height: 0; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAcceso:not([hidden]),
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro:not([hidden]) { flex: 0 0 auto; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-contenido > * { width: min(100%, 400px); max-width: 400px; margin-inline: auto; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAccesoCredenciales:not([hidden]) { flex: 0 0 auto; gap: 12px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-intro { display: block; margin: 0 0 8px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-intro h1 { margin: 0; color: var(--ui-ink); font-size: 22px !important; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; text-align: center; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-titulo-desktop { display: none; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-titulo-mobile { display: inline; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-etiqueta,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-clave-encabezado > label { gap: 6px; font-size: 12px !important; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-acceso-clave-grupo { display: grid; gap: 6px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAccesoCredenciales .nv-puerta-clave-encabezado { margin: 0; gap: 4px 8px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-clave-encabezado a { font-size: 12px !important; line-height: 1.5; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAccesoCredenciales .nv-auth-campo-icono { display: block; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-campo { min-height: 48px; height: 48px; border: 1px solid #e6e6e6 !important; border-radius: 14px !important; background: #f5f5f5 !important; font-size: 16px !important; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAcceso .nv-auth-campo .nv-campo { padding-left: 40px !important; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-campo::placeholder { color: #858585; font-size: 14px !important; opacity: 1; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) :is(#nvMostrarClave, #nvMostrarClaveRegistro) { width: 44px; height: 44px; right: 2px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-cta { min-height: 48px; height: 48px; padding: 11px 14px; border-radius: 999px !important; font-size: 16px !important; font-weight: 600; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-marcar { min-height: 24px; font-size: 12px !important; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-navegacion-mobile { display: flex; justify-content: center; align-items: center; min-height: 32px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-navegacion-mobile a { display: inline-flex; align-items: center; min-height: 32px; color: var(--ui-ink); font-size: 14px !important; font-weight: 500; text-decoration: underline; text-underline-offset: 4px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro:not([hidden]) { grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; align-items: start; gap: 14px 12px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro > .nv-mitad { grid-column: auto; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro .nv-etiqueta { min-width: 0; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro .nv-auth-intro { margin: 0; }
+  .nv-body #nvPuerta[data-paso-activo="acceso"]:is(.es-acceso-limpio, .es-cuenta-ayuda):not(.es-encima) .nv-auth-fvc-mobile-wrap {
+    display: grid;
+    flex-shrink: 0;
+    gap: 6px;
+    width: 100%;
+    margin: 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--ui-line-soft);
+  }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-reporte-mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+    margin: 0;
+    padding: 11px 12px;
+    border: 1px solid #ffb51b;
+    border-radius: 999px;
+    background: #ffb51b;
+    color: #1b1b1b;
+    font: inherit;
+    font-size: 14px !important;
+    font-weight: 600;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-reporte-mobile:hover { background: #ffc343; border-color: #ffc343; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-reporte-mobile svg { width: 18px; height: 18px; flex: 0 0 18px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-fvc-mobile-wrap > small { color: var(--ui-muted); font-size: 12px !important; line-height: 1.5; text-align: center; }
+  .nv-body #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda):not([hidden]):not(.es-encima) .nv-puerta-legal {
+    position: static;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: none;
+    min-height: calc(64px + env(safe-area-inset-bottom));
+    margin: 0;
+    padding: 0 68px env(safe-area-inset-bottom) 8px;
+    gap: 0 10px;
     border: 0;
-    background: transparent;
+    background: #ffffff;
   }
-  .nv-body #nvPuerta.es-acceso-limpio .nv-puerta-legal a {
-    flex: 0 0 auto;
-    white-space: nowrap;
+  .nv-body #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-legal a { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-height: 24px; color: var(--ui-muted); font-size: 11px !important; line-height: 1.5; white-space: nowrap; }
+  .nv-body #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda):not([hidden]):not(.es-encima) .nv-navegadores-trigger-mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 0 100%;
+    min-height: 24px;
+    margin: 0;
+    padding: 0;
+    color: var(--ui-muted);
+    font-size: 11px !important;
+    font-weight: 400;
+    line-height: 1.5;
+    text-transform: none;
+    transform: none;
   }
-  .nv-body.auth-locked:has(#nvPuerta.es-acceso-limpio:not([hidden])) .wa-fab {
-    right: max(6px, env(safe-area-inset-right));
-    bottom: calc(3px + env(safe-area-inset-bottom));
-    bottom: calc(3px + env(safe-area-inset-bottom) + max(0px, 100dvh - var(--acceso-alto-visible, 100dvh)));
-    width: 38px;
-    height: 38px;
+  .nv-body.auth-locked:has(#nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda):not([hidden])) .wa-fab {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    bottom: calc(12px + env(safe-area-inset-bottom) + max(0px, 100dvh - var(--acceso-alto-visible, 100dvh)));
+    width: 44px;
+    height: 44px;
   }
-  .nv-body.auth-locked:has(#nvPuerta.es-acceso-limpio:not([hidden])) .wa-fab-icon { width: 23px; height: 23px; }
+  .nv-body.auth-locked:has(#nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda):not([hidden])) .wa-fab-icon { width: 26px; height: 26px; }
 }
-
 @media (max-width: 860px) and (max-height: 720px), (min-width: 861px) and (max-width: 1180px) and (max-height: 800px) and (pointer: coarse) {
-  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) {
-    --acceso-relleno: 8px;
-    --acceso-gap: 4px;
-  }
-  #nvPuerta.es-acceso-limpio .nv-auth-tab { min-height: 36px; padding-block: 6px; }
-  #nvPuerta.es-acceso-limpio #nvAuthShell .nv-campo,
-  #nvPuerta.es-acceso-limpio #nvAuthShell .nv-cta { min-height: 40px; height: 40px; padding-block: 6px; }
-  #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) { gap: clamp(6px, 1.8svh, 12px) 12px; }
+  .nv-body #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda):not([hidden]):not(.es-encima) { --nv-movil-portada: clamp(72px, calc(100svh * .22), 160px); }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell { padding: 0; gap: 0; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-identidad-mobile { min-height: 0; padding-bottom: 24px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-identidad-mobile > .fv-wordmark { --fv-wordmark-size: 18px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-contenido { margin-top: -24px; padding-top: 16px; gap: 10px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAccesoCredenciales:not([hidden]) { gap: 6px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-intro { margin: 0; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-intro h1 { font-size: 20px !important; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-etiqueta,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-clave-encabezado > label { gap: 4px; font-size: 12px !important; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-acceso-clave-grupo { gap: 4px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-campo,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-cta { height: 44px; min-height: 44px; padding-block: 9px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro:not([hidden]) { gap: 8px 12px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-navegacion-mobile,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-navegacion-mobile a { min-height: 28px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-fvc-mobile-wrap { padding-top: 10px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-reporte-mobile { min-height: 44px; padding-block: 9px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-fvc-mobile-wrap > small { font-size: 11px !important; line-height: 1.4; }
 }
-
-@media (max-width: 860px) and (min-height: 621px) and (orientation: portrait) {
-  #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) {
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(12px, 2.5svh, 22px);
-  }
-  #nvPuerta.es-acceso-limpio #nvRegistro .nv-campo,
-  #nvPuerta.es-acceso-limpio #nvRegistroBtn {
-    height: clamp(44px, 6.5svh, 56px);
-    min-height: clamp(44px, 6.5svh, 56px);
-  }
+@media (max-width: 559px) and (max-height: 620px) {
+  .nv-body #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda):not([hidden]):not(.es-encima) { --nv-movil-portada: clamp(72px, calc(100svh * .19), 112px); }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro:not([hidden]) { row-gap: 4px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistroClaveAyuda { line-height: 1.4; }
+}
+@media (max-width: 380px) {
+  #nvPuerta.es-cuenta-ayuda .nv-auth-contenido { padding-inline: 10px; }
+}
+@media (max-width: 319px) {
+  #nvPuerta.es-cuenta-ayuda .nv-captcha { width: 300px; max-width: none; justify-self: center; zoom: .85; }
+}
+@media (min-width: 560px) and (max-width: 1180px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+  .nv-body #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda):not([hidden]):not(.es-encima) { --nv-movil-portada: 52px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell { padding: 0; gap: 0; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-identidad-mobile { min-height: 0; padding-bottom: 16px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-identidad-mobile > .fv-wordmark { --fv-wordmark-size: 13px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-contenido { max-width: none; margin-top: -16px; padding-top: 12px; border-radius: 24px 24px 0 0; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-contenido > * { max-width: none; width: 100%; }
+  #nvPuerta[data-paso-activo="acceso"]:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-auth-contenido { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-content: safe center; align-items: start; gap: 16px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAcceso { grid-column: 1; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvFvcMovil { grid-column: 2; align-self: center; padding: 0 0 0 16px; border-top: 0; border-left: 1px solid var(--ui-line-soft); }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAccesoCredenciales:not([hidden]) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 6px 10px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAccesoCredenciales > :is(.nv-auth-intro, .nv-error, .nv-auth-navegacion-mobile) { grid-column: 1 / -1; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-clave-encabezado a { font-size: 11px !important; line-height: 1.35; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro:not([hidden]) { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 10px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro .nv-auth-intro { grid-row: 1; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro > .nv-etiqueta { grid-row: 2; grid-column: auto; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro > .nv-etiqueta:has([name="full_name"]) { grid-column: 1; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro > .nv-etiqueta:has([name="phone"]) { grid-column: 2; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro > .nv-etiqueta:has([name="email"]) { grid-column: 3; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro .nv-registro-clave { display: contents; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro .nv-registro-clave > label { grid-area: 2 / 4; align-self: start; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro .nv-registro-clave > .nv-puerta-clave-campo { grid-area: 2 / 4; align-self: end; width: 100%; min-width: 0; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistroClaveAyuda { grid-area: 3 / 1 / 4 / -1; margin: 0; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro .nv-marcar { grid-area: 4 / 1 / 5 / 3; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistroBtn { grid-area: 4 / 3 / 5 / -1; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro .nv-auth-navegacion-mobile { grid-area: 5 / 1 / 6 / -1; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistroError { grid-area: 4 / 1 / 5 / -1; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro:has(#nvRegistroError:not([hidden])) .nv-marcar,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro:has(#nvRegistroError:not([hidden])) #nvRegistroBtn { grid-row: 5; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvRegistro:has(#nvRegistroError:not([hidden])) .nv-auth-navegacion-mobile { grid-row: 6; }
 }
 
 /* Verificación horizontal: ancho útil estable, también al montar el widget. */
@@ -1647,150 +1719,4 @@ body.nv-body #nvFvcDialogo h2 { font-size: var(--fv-tipo-titulo) !important; }
   .nv-body .nv-categoria-menu summary > span { background: #353535; color: #eeeeee; }
   .nv-body .nv-categoria-menu summary svg { color: #ffffff; }
   .nv-body .nv-categoria-opciones { background: #f3f3f3; }
-}
-
-/* Acceso móvil: solicitud por placa, solo en iniciar sesión. */
-.nv-body #nvPuerta .nv-auth-fvc-mobile-wrap { display: none; }
-@media (max-width: 860px), (max-width: 1180px) and (pointer: coarse) {
-  .nv-body #nvPuerta .nv-auth-fvc-mobile-wrap {
-    display: none;
-    box-sizing: border-box;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
-    width: min(100%, 448px);
-    margin: 0 auto;
-  }
-  .nv-body #nvPuerta[data-paso-activo="acceso"].es-acceso-limpio:not(.es-encima) .nv-auth-fvc-mobile-wrap { display: grid !important; }
-  .nv-body #nvPuerta .nv-portada-filtro-mobile {
-    display: none;
-    box-sizing: border-box;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 5px;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-  }
-  .nv-body #nvPuerta[data-paso-activo="acceso"] .nv-portada-filtro-mobile { display: grid !important; }
-  .nv-body #nvPuerta .nv-portada-filtro-mobile h2 {
-    margin: 0 0 3px;
-    color: var(--ui-ink);
-    font-size: var(--fv-tipo-base) !important;
-    font-weight: 600;
-    line-height: 1.35;
-  }
-  .nv-body #nvPuerta .nv-portada-filtro-mobile > label {
-    color: var(--ui-ink);
-    font-size: var(--fv-tipo-auxiliar) !important;
-    font-weight: 500;
-    line-height: 1.35;
-  }
-  .nv-body #nvPuerta .nv-portada-filtro-mobile .nv-portada-filtro-fila {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 7px;
-  }
-  .nv-body #nvPuerta #nvPortadaPlacaMobile {
-    box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-    min-height: 42px;
-    padding: 8px 11px;
-    border: 1px solid var(--ui-line) !important;
-    border-radius: 7px !important;
-    background: #ffffff !important;
-    color: var(--ui-ink) !important;
-    font: inherit;
-    font-size: var(--fv-tipo-base) !important;
-    letter-spacing: .08em;
-    text-align: center;
-    text-transform: uppercase;
-    box-shadow: none !important;
-    outline: none !important;
-  }
-  .nv-body #nvPuerta #nvPortadaPlacaMobile::placeholder { color: #a0a0a0; opacity: 1; }
-  .nv-body #nvPuerta #nvPortadaPlacaMobile:focus { border-color: #a0a0a0 !important; }
-  .nv-body #nvPuerta .nv-portada-filtro-mobile .nv-portada-filtrar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    min-width: 116px;
-    min-height: 42px;
-    margin: 0;
-    padding: 8px 11px;
-    border: 1px solid #ffb51b;
-    border-radius: 7px;
-    background: #ffb51b;
-    color: #1b1b1b;
-    font: inherit;
-    font-size: var(--fv-tipo-auxiliar) !important;
-    font-weight: 600;
-    line-height: 1.35;
-    white-space: nowrap;
-  }
-  .nv-body #nvPuerta .nv-portada-filtro-mobile .nv-portada-filtrar:hover { border-color: #ffc343; background: #ffc343; }
-  .nv-body #nvPuerta .nv-portada-filtro-mobile .nv-portada-filtrar svg { flex: 0 0 16px; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; }
-  .nv-body #nvPuerta #nvPortadaPlacaAyudaMobile,
-  .nv-body #nvPuerta #nvPortadaPlacaErrorMobile { margin: 0; color: var(--ui-muted); font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.35; }
-  .nv-body #nvPuerta #nvPortadaPlacaErrorMobile { color: #a13d30; }
-}
-
-@media (max-width: 860px) and (max-height: 620px) {
-  .nv-body #nvPuerta.es-acceso-limpio .nv-portada-filtro-mobile {
-    grid-template-columns: auto 1fr;
-    align-items: baseline;
-    gap: 2px 6px;
-  }
-  .nv-portada-filtro-mobile > :is(h2, .nv-portada-filtro-fila, [role="alert"]) { grid-column: 1 / -1; }
-  #nvPortadaPlacaAyudaMobile { grid-area: 2 / 2; text-align: end; }
-}
-
-@media (min-width: 560px) and (max-width: 1180px) and (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
-  #nvPuerta.es-acceso-limpio :is(.nv-auth-tabs, .nv-auth-contenido) { max-width: none; }
-  #nvPuerta[data-paso-activo="acceso"].es-acceso-limpio .nv-auth-contenido {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-    grid-template-rows: 1fr auto 1fr;
-    column-gap: 20px;
-    align-items: center;
-  }
-  #nvPuerta.es-acceso-limpio #nvAcceso { grid-area: 1 / 1 / -1 / 2; align-self: stretch; }
-  #nvPuerta.es-acceso-limpio #nvFvcMovil { grid-area: 2 / 2; }
-  #nvPuerta.es-acceso-limpio .nv-navegadores-trigger-mobile { grid-area: 3 / 2; align-self: start; justify-self: center; }
-  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales:not([hidden]) {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: end;
-    align-content: space-evenly;
-    column-gap: 10px;
-  }
-  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales > :is(.nv-auth-intro, .nv-puerta-pie, .nv-error) { grid-column: 1 / -1; }
-  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-intro {
-    grid-template-columns: auto auto;
-    justify-content: center;
-    align-items: center;
-    column-gap: 10px;
-  }
-  #nvPuerta.es-acceso-limpio #nvAccesoCredenciales .nv-auth-emblema { grid-row: span 2; margin: 0; }
-  #nvPuerta.es-acceso-limpio #nvRegistro > :is(.nv-etiqueta, .nv-marcar, .nv-cta) { grid-column: auto; }
-  #nvPuerta.es-acceso-limpio #nvRegistro .nv-auth-intro {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 2px 10px;
-    margin: 0;
-  }
-}
-
-@media (min-width: 560px) and (max-width: 1180px) and (max-height: 345px) and (pointer: coarse) {
-  .nv-body #nvPuerta.es-acceso-limpio:not([hidden]):not(.es-encima) {
-    --acceso-margen: 3px;
-    --acceso-relleno: 4px;
-  }
-  #nvPuerta.es-acceso-limpio #nvRegistro:not([hidden]) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  #nvPuerta.es-acceso-limpio #nvRegistro > :is(.nv-auth-intro, .nv-etiqueta, .nv-cta, .nv-marcar) { grid-column: span 2; }
-  #nvPuerta.es-acceso-limpio #nvRegistro > .nv-mitad { grid-column: span 1; }
 }

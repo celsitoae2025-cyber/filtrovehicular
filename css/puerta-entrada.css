@@ -34,6 +34,7 @@
   background: #ffffff;
   color: #1b1b1b;
 }
+#nvPuerta .nv-puerta-cuenta { display: contents; }
 #nvPuerta .nv-puerta-formularios {
   display: flex;
   flex: 1;
@@ -138,7 +139,8 @@
 #nvPuerta #nvAuthShell .nv-cta { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; height: auto; margin: 0; padding: 11px 16px; border-radius: 8px; font-size: var(--fv-tipo-base) !important; font-weight: 500; line-height: 1.5; transform: none; }
 #nvPuerta #nvAuthShell .nv-cta::after { display: none; }
 #nvPuerta #nvAuthShell .nv-puerta-pie { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 8px; margin: 0; padding: 16px 0 0; border-top: 1px solid #e8e8e8; color: #707070; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; text-align: center; }
-#nvPuerta #nvAuthShell .nv-puerta-pie a { display: inline-flex; justify-content: center; min-height: 24px; padding: 0; border: 0; background: transparent; color: #1b1b1b; font-weight: 500; text-align: center; text-decoration: underline; text-underline-offset: 3px; }
+#nvPuerta #nvAuthShell .nv-puerta-pie :is(a, button) { display: inline-flex; align-items: center; justify-content: center; min-height: 24px; padding: 0; border: 0; border-radius: 0; background: transparent; color: #1b1b1b; font: inherit; font-weight: 500; text-align: center; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+#nvPuerta #nvAuthShell .nv-puerta-pie button:disabled { color: #858585; text-decoration: none; cursor: default; }
 #nvPuerta #nvAuthShell .nv-puerta-pie a::after { display: none; }
 #nvPuerta #nvRegistro:not([hidden]) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 14px; }
 #nvPuerta #nvRegistro > * { grid-column: 1 / -1; }
@@ -245,207 +247,311 @@ body:has(#nvPuerta.es-verificacion:not([hidden])) .wa-fab { display: none !impor
   #nvPlanesDialogo .nv-planes-opcion { padding: 12px; }
 }
 
-/* Portada de escritorio: propuesta, servicios y acceso a precios. */
-@media (min-width: 861px) {
+/* Fuentes ampliadas del reporte: el resumen móvil conserva su altura. */
+.nv-fvc-fuentes { display: none; }
+
+/* Acceso de escritorio: presentación, solicitud y cuenta con una sola jerarquía. */
+@media (min-width: 861px) and (pointer: fine), (min-width: 1181px) {
+  #nvPuerta:not([hidden]):not(.es-verificacion):not(.es-encima) {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+    background: #ffffff;
+  }
   #nvPuerta .nv-portada {
-    --fv-tipo-titulo: 24px;
+    --portada-acento: #ffb51b;
+    --portada-acento-hover: #ffc343;
+    --portada-tinta: #2c2d2b;
+    --portada-texto: #5e605d;
+    --portada-linea: #d7d8d4;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto 1fr auto;
-    justify-content: stretch;
+    grid-template: auto 1fr auto / minmax(0, 1fr);
     align-items: start;
-    gap: 28px;
+    gap: 36px;
     min-width: 0;
-    padding: 32px clamp(28px, 4.2vw, 80px) 24px;
-    background: #1b1b1b;
-    color: #ffffff;
+    padding: 32px clamp(32px, 4.2vw, 80px) 24px;
+    background: linear-gradient(135deg, #f6f6f4, #ededeb);
+    color: var(--portada-tinta);
   }
   #nvPuerta .nv-portada::before {
-    content: "";
-    position: absolute;
-    z-index: 0;
-    inset: 0;
-    background-image:
-      linear-gradient(90deg, rgb(27 27 27 / 18%) 0%, rgb(27 27 27 / 30%) 42%, rgb(27 27 27 / 66%) 100%),
-      url("../assets/portada-inspeccion-vehicular.png");
-    background-position: center, center;
-    background-size: cover, cover;
-    background-repeat: no-repeat, no-repeat;
-    filter: grayscale(1) blur(.7px);
-    opacity: .3;
-    pointer-events: none;
+    content: none;
   }
-  #nvPuerta .nv-portada > * { position: relative; z-index: 1; width: 100%; max-width: 620px; justify-self: center; }
+  #nvPuerta .nv-portada > * {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 740px;
+    justify-self: center;
+  }
   #nvPuerta .nv-portada-marca {
-    display: flex; align-items: center; gap: 13px;
-    width: 100%; padding-bottom: 22px; border-bottom: 1px solid #383838;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 60px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--portada-linea);
   }
-  #nvPuerta .nv-portada-marca > img {
-    display: block; flex: 0 0 40px; width: 40px; height: 40px;
-    filter: brightness(0) invert(1);
+  #nvPuerta .nv-portada-marca > .fv-wordmark { --fv-wordmark-size: 20px; color: var(--portada-tinta); }
+  #nvPuerta .nv-portada-contenido {
+    display: grid;
+    align-self: center;
+    gap: 26px;
+    padding-block: 8px;
   }
-  #nvPuerta .nv-portada-identidad { display: grid; gap: 3px; }
-  #nvPuerta .nv-portada-identidad strong { color: #ffffff; font-size: var(--fv-tipo-base) !important; line-height: 1.4; }
-  #nvPuerta .nv-portada-identidad > span { color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.4; }
-  #nvPuerta .nv-portada-contenido { align-self: center; width: 100%; max-width: 620px; padding-block: 4px; }
-  #nvPuerta .nv-portada-etiqueta { margin: 0 0 12px; color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; font-weight: 500; line-height: 1.5; letter-spacing: .12em; }
-  #nvPuerta .nv-portada-contenido h2 { margin: 0; color: #ffffff; font-size: clamp(30px, 2.64vw, 36px) !important; font-weight: 600; line-height: 1.12; letter-spacing: -.035em; text-transform: uppercase; }
-  #nvPuerta .nv-portada-descripcion { max-width: 48ch; margin: 14px 0 0; color: #c8c8c8; font-size: var(--fv-tipo-base) !important; line-height: 1.6; text-wrap: pretty; }
-  #nvPuerta .nv-portada-servicios { display: grid; gap: 0; margin: 24px 0; padding: 0; list-style: none; }
-  #nvPuerta .nv-portada-servicios li { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 14px; min-width: 0; padding: 12px 0; border-bottom: 1px solid #333333; }
-  #nvPuerta .nv-portada-servicios li:first-child { padding-top: 0; }
-  #nvPuerta .nv-portada-servicios li:last-child { padding-bottom: 0; border-bottom: 0; }
-  #nvPuerta .nv-portada-simbolo { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #3c3c3c; border-radius: 9px; color: #e3e3e3; background: #242424; }
-  #nvPuerta .nv-portada-icono { display: block; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
-  #nvPuerta .nv-portada-servicios h3 { margin: 0; color: #f4f4f4; font-size: var(--fv-tipo-base) !important; font-weight: 500; line-height: 1.4; }
-  #nvPuerta .nv-portada-servicios p { margin: 4px 0 0; color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; }
-  #nvPuerta .nv-portada-planes { display: grid; gap: 18px; padding: 20px; border: 1px solid #444444; border-radius: 12px; background: #242424; }
-  #nvPuerta .nv-portada-plan-texto h3 { margin: 0; color: #ffffff; font-size: var(--fv-tipo-base) !important; font-weight: 600; line-height: 1.4; }
-  #nvPuerta .nv-portada-plan-texto p { max-width: 50ch; margin: 5px 0 0; color: #c8c8c8; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; }
-  #nvPuerta .nv-portada-plan-compra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 18px; }
-  #nvPuerta .nv-portada-precio { display: grid; gap: 3px; margin: 0; }
-  #nvPuerta .nv-portada-precio > span { color: #c8c8c8; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.4; }
-  #nvPuerta .nv-portada-precio > strong { color: #ffffff; font-size: var(--fv-tipo-titulo) !important; font-weight: 600; line-height: 1.2; letter-spacing: -.02em; }
-  #nvPuerta .nv-portada-plan-boton { display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 46px; padding: 11px 16px; border: 1px solid #f4f4f4; border-radius: 8px; color: #1b1b1b; background: #f4f4f4; font: inherit; font-size: var(--fv-tipo-base) !important; font-weight: 600; line-height: 1.4; cursor: pointer; }
-  #nvPuerta .nv-portada-plan-boton svg { flex: 0 0 18px; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-  #nvPuerta .nv-portada-plan-boton:hover { background: #e4e4e4; border-color: #e4e4e4; }
-  #nvPuerta .nv-portada-acciones { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 10px; width: 100%; max-width: 620px; padding-top: 18px; border-top: 1px solid #383838; }
-  #nvPuerta .nv-portada-pregunta { margin: 0; color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; }
-  #nvPuerta .nv-portada .nv-auth-fvc-arrow svg { width: 16px; height: 16px; }
-  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop { display: inline-flex; align-items: center; justify-content: flex-start; gap: 7px; min-height: 28px; margin: 0; padding: 2px 0; color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; font-weight: 400; line-height: 1.4; text-align: left; }
-  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop svg { width: 15px; height: 15px; }
-  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop:hover { color: #ffffff; }
-  #nvPuerta .nv-portada :is(button, a):focus-visible { outline: 1px solid #ffffff; outline-offset: 3px; }
-}
-
-/* Consulta por placa integrada en la portada, con el acento solicitado. */
-@media (min-width: 861px) {
-  #nvPuerta .nv-portada { --portada-acento: #ffb51b; --portada-acento-hover: #ffc343; }
-  #nvPuerta .nv-portada > *, #nvPuerta .nv-portada-contenido, #nvPuerta .nv-portada-acciones { max-width: 760px; }
-  #nvPuerta .nv-portada-contenido { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
   #nvPuerta .nv-portada-hero { min-width: 0; }
-  #nvPuerta .nv-portada-descripcion { max-width: 64ch; line-height: 1.55; }
-  #nvPuerta .nv-portada-filtro { display: grid; gap: 8px; min-width: 0; margin: 20px 0 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
-  #nvPuerta .nv-portada-filtro-cabecera { display: flex; align-items: center; margin: 0 0 2px; }
-  #nvPuerta .nv-portada-filtro h3 { margin: 0; color: #ffffff; font-size: var(--fv-tipo-base) !important; font-weight: 600; line-height: 1.4; }
-  #nvPuerta .nv-portada-filtro label { color: #d6d6d6; font-size: var(--fv-tipo-auxiliar) !important; font-weight: 500; line-height: 1.4; }
-  #nvPuerta .nv-portada-filtro-fila { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 9px; }
-  #nvPuerta #nvPortadaPlaca { width: 100%; min-width: 0; min-height: 50px; padding: 10px 12px; border: 1px solid #606060 !important; border-radius: 8px !important; background: #1b1b1b !important; color: #ffffff !important; font: inherit; font-size: var(--fv-tipo-titulo) !important; font-weight: 500; line-height: 1.2; letter-spacing: .13em; text-align: center; text-transform: uppercase; box-shadow: none !important; outline: none !important; }
-  #nvPuerta #nvPortadaPlaca::placeholder { color: #969696; opacity: 1; }
-  #nvPuerta #nvPortadaPlaca:is(:focus, :focus-visible, [aria-invalid="true"]) { border-color: #a0a0a0 !important; }
-  #nvPuerta .nv-portada .nv-portada-filtrar { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-width: 0; min-height: 50px; margin: 0; padding: 11px 16px; border: 1px solid var(--portada-acento); border-radius: 8px; background: var(--portada-acento); color: #1b1b1b; font: inherit; font-size: var(--fv-tipo-base) !important; font-weight: 600; line-height: 1.4; cursor: pointer; }
-  #nvPuerta .nv-portada .nv-portada-filtrar:hover { background: var(--portada-acento-hover); border-color: var(--portada-acento-hover); }
-  #nvPuerta .nv-portada-filtrar svg { width: 18px; height: 18px; flex: 0 0 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-  #nvPuerta #nvPortadaPlacaAyuda, #nvPuerta .nv-portada-filtro-error { margin: 0; color: #bdbdbd; font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; }
-  #nvPuerta .nv-portada-filtro-error { color: #ffcb66; }
-  #nvPuerta .nv-portada-lema { margin: 0 0 -6px; color: #ededed; font-size: var(--fv-tipo-base) !important; font-weight: 500; line-height: 1.4; }
-  #nvPuerta .nv-portada-servicios { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; }
-  #nvPuerta .nv-portada-servicios li { grid-template-columns: 22px minmax(0, 1fr); align-items: start; gap: 9px; padding: 0 12px 0 0; border-bottom: 0; border-right: 1px solid #383838; }
-  #nvPuerta .nv-portada-servicios li:last-child { padding-right: 0; border-right: 0; }
-  #nvPuerta .nv-portada-simbolo { width: 22px; height: 24px; border: 0; border-radius: 0; background: transparent; }
-  #nvPuerta .nv-portada-servicios h3 { font-size: var(--fv-tipo-auxiliar) !important; font-weight: 600; }
-  #nvPuerta .nv-portada-servicios p { margin-top: 5px; }
-  #nvPuerta .nv-portada-planes { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 16px; }
-  #nvPuerta .nv-portada-plan-texto p { max-width: 35ch; }
-  #nvPuerta .nv-portada-plan-compra { justify-content: flex-end; gap: 10px 16px; }
-  #nvPuerta .nv-portada-plan-boton { min-height: 42px; padding: 9px 12px; gap: 10px; font-size: var(--fv-tipo-auxiliar) !important; }
-  #nvPuerta .nv-portada-acciones { gap: 0; padding-top: 10px; }
-}
-@media (min-width: 1200px) {
-  #nvPuerta .nv-portada-contenido { grid-template-columns: minmax(0, 1fr); gap: 18px; }
-  #nvPuerta :is(.nv-portada-lema, .nv-portada-servicios, .nv-portada-planes) { grid-column: 1 / -1; }
-  #nvPuerta .nv-portada-hero h2 { text-wrap: balance; }
-}
-@media (min-width: 861px) and (max-width: 1199px) {
-  #nvPuerta .nv-portada-contenido { gap: 14px; }
-  #nvPuerta .nv-portada-filtro { gap: 6px; margin-top: 14px; }
-  #nvPuerta .nv-portada-servicios { gap: 9px; }
-  #nvPuerta .nv-portada-servicios li { grid-template-columns: minmax(0, 1fr); gap: 6px; padding-right: 9px; }
-  #nvPuerta .nv-portada-planes { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 14px; }
-  #nvPuerta .nv-portada-plan-texto p { max-width: none; }
-  #nvPuerta .nv-portada-plan-compra { justify-content: space-between; }
+  #nvPuerta .nv-portada-hero h2 {
+    margin: 0;
+    color: var(--portada-tinta);
+    font-family: var(--fv-tipografia, "Inter", Arial, sans-serif);
+    font-size: clamp(36px, 3vw, 46px) !important;
+    font-weight: 800 !important;
+    line-height: 1.08;
+    letter-spacing: -.04em;
+    text-transform: none;
+    text-wrap: balance;
+  }
+  #nvPuerta .nv-portada-descripcion {
+    max-width: 49ch;
+    margin: 18px 0 0;
+    color: var(--portada-texto);
+    font-size: 16px !important;
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+  #nvPuerta .nv-portada-filtro {
+    display: grid;
+    gap: 10px;
+    width: min(100%, 420px);
+    min-width: 0;
+    margin: 32px 0 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  #nvPuerta .nv-portada-filtro-cabecera { margin-bottom: 4px; }
+  #nvPuerta .nv-portada-filtro h3 {
+    margin: 0;
+    color: var(--portada-tinta);
+    font-size: 16px !important;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  #nvPuerta .nv-portada-filtro label {
+    color: var(--portada-texto);
+    font-size: 13px !important;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  #nvPuerta .nv-portada-filtro-fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+  #nvPuerta #nvPortadaPlaca {
+    width: 100%;
+    min-width: 0;
+    min-height: 52px;
+    padding: 11px 14px;
+    border: 1px solid #c8c8c4 !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    color: var(--portada-tinta) !important;
+    font: inherit;
+    font-size: 22px !important;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: .13em;
+    text-align: center;
+    text-transform: uppercase;
+    box-shadow: none !important;
+  }
+  #nvPuerta #nvPortadaPlaca::placeholder { color: #767772; opacity: 1; }
+  #nvPuerta #nvPortadaPlaca[aria-invalid="true"] { border-color: #a05122 !important; }
+  #nvPuerta .nv-portada .nv-portada-filtrar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-width: 0;
+    min-height: 52px;
+    margin: 0;
+    padding: 11px 16px;
+    border: 1px solid var(--portada-acento);
+    border-radius: 12px;
+    background: var(--portada-acento);
+    color: #1b1b1b;
+    font: inherit;
+    font-size: 16px !important;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color 160ms ease;
+  }
+  #nvPuerta .nv-portada .nv-portada-filtrar:hover { background: var(--portada-acento-hover); }
+  #nvPuerta .nv-portada-filtrar svg,
+  #nvPuerta .nv-portada-plan-boton svg {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  #nvPuerta #nvPortadaPlacaAyuda,
+  #nvPuerta .nv-portada-filtro-error {
+    margin: 0;
+    color: var(--portada-texto);
+    font-size: 13px !important;
+    line-height: 1.5;
+  }
+  #nvPuerta .nv-portada-filtro-error { color: #8d431f; }
+  #nvPuerta .nv-portada-servicios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  #nvPuerta .nv-portada-servicios li { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  #nvPuerta .nv-portada-simbolo { display: grid; place-items: center; flex: 0 0 18px; color: var(--portada-texto); }
+  #nvPuerta .nv-portada-icono { display: block; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+  #nvPuerta .nv-portada-servicios h3 { margin: 0; color: var(--portada-texto); font-size: 13px !important; font-weight: 400; line-height: 1.5; }
+  #nvPuerta .nv-portada-planes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+    margin: 0;
+    padding: 22px 0 0;
+    border: 0;
+    border-top: 1px solid var(--portada-linea);
+    border-radius: 0;
+    background: transparent;
+  }
+  #nvPuerta .nv-portada-precio { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 0; }
+  #nvPuerta .nv-portada-precio > span { color: var(--portada-texto); font-size: 13px !important; line-height: 1.5; }
+  #nvPuerta .nv-portada-precio > strong { color: var(--portada-tinta); font-size: 16px !important; font-weight: 600; line-height: 1.5; }
+  #nvPuerta .nv-portada-plan-boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    color: var(--portada-tinta);
+    background: transparent;
+    font: inherit;
+    font-size: 13px !important;
+    font-weight: 500;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+  #nvPuerta .nv-portada-plan-boton:hover { color: #20211f; text-decoration: underline; text-underline-offset: 4px; }
+  #nvPuerta .nv-portada-acciones {
+    display: flex;
+    align-items: center;
+    min-height: 46px;
+    padding-top: 14px;
+    border-top: 1px solid var(--portada-linea);
+  }
+  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; margin: 0; padding: 0; color: var(--portada-texto); font-size: 13px !important; font-weight: 400; line-height: 1.5; text-align: left; }
+  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop svg { width: 15px; height: 15px; }
+  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop:hover { color: var(--portada-tinta); }
+  #nvPuerta .nv-portada :is(button, a):focus-visible { outline: 2px solid #70716c !important; outline-offset: 4px; }
+
+  #nvPuerta:not(.es-verificacion):not(.es-encima) .nv-puerta-panel {
+    justify-content: center;
+    padding: 32px clamp(20px, 2.8vw, 48px) 24px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-panel { gap: 24px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-cuenta {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: min(100%, 420px);
+    min-width: 0;
+    margin-block: auto;
+    padding: clamp(24px, calc(30svh - 184px), 68px) 24px;
+    border: 1px solid #e4e4e1;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 12px 36px rgb(44 45 43 / 6%);
+  }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-formularios { flex: 0 0 auto; padding: 0; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell {
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+    gap: 20px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-tab { min-height: 48px; font-size: 14px !important; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-tabs,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-tab { border-radius: 999px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-puerta-caja,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAccesoCredenciales:not([hidden]) { gap: 12px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-intro { display: block; margin: 0 0 4px; transform: none; text-align: center; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-intro h1 { margin: 0; color: #1b1b1b; font-size: 22px !important; font-weight: 600; line-height: 1.25; letter-spacing: -.03em; text-align: center; text-transform: none; transform: none; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-intro > .nv-puerta-nota,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-emblema { display: none; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-etiqueta,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-clave-encabezado > label { gap: 6px; color: #454545; font-size: 13px !important; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-acceso-clave-grupo { display: grid; gap: 6px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAccesoCredenciales .nv-puerta-clave-encabezado { margin: 0; gap: 6px 10px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-clave-encabezado a,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-marcar,
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-ayuda { font-size: 13px !important; line-height: 1.5; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-campo {
+    height: 48px;
+    min-height: 48px;
+    border: 1px solid #e6e6e6 !important;
+    border-radius: 14px !important;
+    background: #f5f5f5 !important;
+    font-size: 16px !important;
+  }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-campo::placeholder { color: #858585; font-size: 14px !important; opacity: 1; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-cta { min-height: 48px; border-radius: 999px !important; font-size: 16px !important; font-weight: 600; }
+  #nvPuerta .nv-puerta-legal { width: min(100%, 400px); min-height: 46px; padding: 14px 0 0; gap: 8px 20px; }
+  #nvPuerta .nv-puerta-legal a { color: #707070; font-size: 13px !important; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-legal { flex: 0 0 auto; width: min(100%, 420px); min-height: 56px; padding: 0; gap: 6px 16px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-legal a { min-height: 24px; font-size: 12px !important; }
+  .nv-fvc-fuentes { display: block; margin-top: 14px; color: #707070; font-size: 13px; line-height: 1.5; }
+  .nv-fvc-fuentes summary { width: fit-content; cursor: pointer; }
+  .nv-fvc-fuentes p { margin: 8px 0 0; }
 }
 
-/* Movimiento breve al entrar y respuesta discreta a la interacción. */
-@media (min-width: 861px) and (prefers-reduced-motion: no-preference) {
-  @keyframes nv-portada-entrar {
-    from { opacity: 0; transform: translateY(7px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  #nvPuerta .nv-portada-marca,
-  #nvPuerta .nv-portada-hero > :is(.nv-portada-etiqueta, h2, .nv-portada-descripcion),
-  #nvPuerta .nv-portada-servicios li,
-  #nvPuerta .nv-portada-filtro,
-  #nvPuerta .nv-portada-planes,
-  #nvPuerta .nv-portada-acciones {
-    animation: nv-portada-entrar 440ms cubic-bezier(.2, .65, .3, 1) both;
-  }
-  #nvPuerta .nv-portada-hero > :is(.nv-portada-etiqueta, h2, .nv-portada-descripcion) { animation-delay: 50ms; }
-  #nvPuerta .nv-portada-servicios li:nth-child(1) { animation-delay: 100ms; }
-  #nvPuerta .nv-portada-filtro { animation-delay: 100ms; }
-  #nvPuerta .nv-portada-servicios li:nth-child(2) { animation-delay: 150ms; }
-  #nvPuerta .nv-portada-servicios li:nth-child(3) { animation-delay: 200ms; }
-  #nvPuerta .nv-portada-planes { animation-delay: 250ms; }
-  #nvPuerta .nv-portada-acciones { animation-delay: 300ms; }
-  #nvPuerta .nv-portada :is(.nv-portada-plan-boton, .nv-portada-filtrar) {
-    transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
-  }
-  #nvPuerta .nv-portada :is(.nv-portada-plan-boton svg, .nv-auth-fvc-arrow svg) { transition: transform 180ms ease; }
-  #nvPuerta .nv-portada :is(.nv-portada-simbolo, .nv-portada-planes) { transition: background-color 200ms ease, border-color 200ms ease; }
-  #nvPuerta .nv-portada .nv-navegadores-trigger-desktop { transition: color 180ms ease; }
+@media (min-width: 861px) and (max-width: 1100px) and (pointer: fine) {
+  #nvPuerta .nv-portada { gap: 24px; padding-inline: 28px; }
+  #nvPuerta .nv-portada-contenido { gap: 22px; }
+  #nvPuerta .nv-portada-servicios { gap: 10px 16px; }
+  #nvPuerta:not(.es-verificacion):not(.es-encima) .nv-puerta-panel { padding-inline: 16px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-cuenta { padding-inline: 20px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-auth-tab svg { display: none; }
+  #nvPuerta .nv-puerta-legal { justify-content: flex-start; gap: 8px 12px; padding-right: 58px; }
+  #nvPuerta .nv-puerta-legal a { font-size: 11px !important; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-legal { justify-content: flex-start; padding-right: 64px; gap: 4px 10px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-legal a { font-size: 11px !important; }
 }
-@media (min-width: 861px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
-  #nvPuerta .nv-portada-servicios li:hover .nv-portada-simbolo { background: #303030; border-color: #666666; }
-  #nvPuerta .nv-portada-planes:hover { border-color: #686868; }
-  #nvPuerta .nv-portada :is(.nv-portada-plan-boton, .nv-portada-filtrar):hover { transform: translateY(-1px); }
-  #nvPuerta .nv-portada :is(.nv-portada-plan-boton, .nv-portada-filtrar):hover svg { transform: translateX(3px); }
-  #nvPuerta .nv-portada :is(.nv-portada-plan-boton, .nv-portada-filtrar):active { transform: translateY(0); }
-}
-@media (min-width: 1200px) {
-  #nvPuerta:not([hidden]) { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); }
-}
-@media (min-width: 861px) and (max-width: 1100px) {
-  #nvPuerta .nv-portada { padding-inline: 28px; }
-  #nvPuerta .nv-portada-plan-boton { gap: 10px; font-size: var(--fv-tipo-auxiliar) !important; }
-}
-@media (min-width: 861px) and (max-height: 820px) {
-  #nvPuerta .nv-puerta-formularios { padding-block: 18px 28px; }
-  #nvPuerta .nv-portada { gap: 14px; padding-block: 22px 18px; }
-  #nvPuerta .nv-portada-marca { padding-bottom: 14px; }
-  #nvPuerta .nv-portada-etiqueta { margin-bottom: 8px; }
-  #nvPuerta .nv-portada-descripcion { margin-top: 10px; }
-  #nvPuerta .nv-portada-servicios { margin-block: 18px; }
-  #nvPuerta .nv-portada-servicios li { padding-block: 9px; }
-  #nvPuerta .nv-portada-planes { gap: 12px; padding: 16px; }
-  #nvPuerta .nv-portada-acciones { gap: 8px; padding-top: 14px; }
-}
-@media (min-width: 861px) and (max-width: 1199px) {
-  #nvPuerta .nv-portada { gap: 10px; }
-  #nvPuerta .nv-portada-contenido { gap: 10px; }
-  #nvPuerta .nv-portada-descripcion { font-size: var(--fv-tipo-auxiliar) !important; line-height: 1.5; }
-  #nvPuerta .nv-portada-servicios { margin-block: 0; }
-  #nvPuerta .nv-portada-servicios li { padding-block: 0; }
-  #nvPuerta .nv-portada-planes { padding: 12px; }
-}
-@media (min-width: 861px) and (max-width: 960px) {
-  #nvPuerta .nv-portada-filtro h3 { font-size: var(--fv-tipo-auxiliar) !important; }
-  #nvPuerta .nv-portada-filtro { gap: 5px; }
-  #nvPuerta #nvPortadaPlaca, #nvPuerta .nv-portada .nv-portada-filtrar { min-height: 46px; }
-}
-@media (min-width: 861px) and (max-width: 960px) and (max-height: 820px) {
-  #nvPuerta .nv-portada { gap: 8px; padding-block: 16px 12px; }
-  #nvPuerta .nv-portada-marca { padding-bottom: 10px; }
-  #nvPuerta .nv-portada-contenido { gap: 8px; }
-  #nvPuerta .nv-portada-contenido h2 { line-height: 1.05; }
-  #nvPuerta .nv-portada-descripcion { margin-top: 6px; }
-  #nvPuerta .nv-portada-filtro { margin-top: 6px; }
-  #nvPuerta .nv-portada-servicios p { line-height: 1.4; }
-  #nvPuerta .nv-portada-plan-texto h3 { font-size: var(--fv-tipo-auxiliar) !important; }
-  #nvPuerta .nv-portada-acciones { padding-top: 6px; }
-}
-@media (min-width: 1200px) and (max-height: 820px) {
-  #nvPuerta .nv-portada { gap: 12px; }
-  #nvPuerta .nv-portada-contenido { gap: 12px; }
-  #nvPuerta .nv-portada-filtro { margin-top: 14px; }
-  #nvPuerta .nv-portada-servicios { margin-block: 6px; }
+@media (min-width: 861px) and (max-height: 760px) and (pointer: fine), (min-width: 1181px) and (max-height: 760px) {
+  #nvPuerta .nv-portada { gap: 24px; padding-block: 24px 20px; }
+  #nvPuerta .nv-portada-contenido { gap: 22px; padding-block: 0; }
+  #nvPuerta .nv-portada-marca { min-height: 54px; padding-bottom: 14px; }
+  #nvPuerta .nv-portada-filtro { margin-top: 24px; }
+  #nvPuerta:not(.es-verificacion):not(.es-encima) .nv-puerta-panel { padding-block: 24px 20px; }
+  #nvPuerta:not(.es-verificacion):not(.es-encima) .nv-puerta-formularios { padding-block: 8px 20px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-formularios { padding: 0; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-panel { gap: 20px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) .nv-puerta-cuenta { padding-inline: 22px; gap: 16px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell { min-height: 0; gap: 20px; }
+  #nvPuerta:is(.es-acceso-limpio, .es-cuenta-ayuda) #nvAuthShell .nv-puerta-caja { gap: 12px; }
 }

@@ -47,8 +47,7 @@
             '</div>' +
           '</div>' +
 
-          '<p class="citv-texto">Tu duplicado se consulta al registro y se arma al instante. ' +
-          'Cuando esté listo lo verás en este mismo cuadro y podrás descargarlo en PDF.</p>' +
+          '<p class="citv-texto">Consulta tu duplicado y descárgalo en PDF desde esta pantalla.</p>' +
 
           '<ul class="citv-puntos">' +
             '<li>Es el mismo certificado, con la validez de siempre.</li>' +
@@ -393,6 +392,7 @@
      placa, con el dato puesto, y lo único que queda por decidir es el
      logotipo. */
   function abrir(placaInicial) {
+    var origen = document.activeElement;
     var previo = document.getElementById('citv-modal');
     if (previo) previo.remove();
 
@@ -405,7 +405,7 @@
     root.innerHTML =
       '<div class="rep-modal-fondo"></div>' +
       '<div class="rep-modal-caja">' +
-        '<button class="rep-modal-cerrar" type="button" aria-label="Cerrar">' + CERRAR_SVG + '</button>' +
+        '<div class="rep-modal-controles"><span>Trámite vehicular</span><button class="rep-modal-cerrar" type="button" aria-label="Cerrar">' + CERRAR_SVG + '</button></div>' +
         htmlAviso() +
         '<div class="rep-modal-pie"><button class="rep-modal-ok" type="button">Entendido</button></div>' +
       '</div>';
@@ -429,8 +429,20 @@
       if (emitiendo && Consultia.ConsultaRunner) Consultia.ConsultaRunner.cancelarConsulta();
       document.body.classList.remove('modal-open');
       root.remove();
+      if (origen && origen.isConnected) origen.focus({ preventScroll: true });
     }
-    function alPulsarTecla(e) { if (e.key === 'Escape') cerrar(); }
+    function alPulsarTecla(e) {
+      if (e.key === 'Escape') { e.preventDefault(); cerrar(); return; }
+      if (e.key !== 'Tab') return;
+      var opciones = Array.prototype.filter.call(root.querySelectorAll('button, a[href], input, select, textarea, iframe, [tabindex="0"]'), function (el) {
+        return !el.disabled && el.getClientRects().length;
+      });
+      var primera = opciones[0], ultima = opciones[opciones.length - 1];
+      if (primera && (!root.contains(document.activeElement) || (e.shiftKey ? document.activeElement === primera : document.activeElement === ultima))) {
+        e.preventDefault();
+        (e.shiftKey ? ultima : primera).focus({ preventScroll: true });
+      }
+    }
     document.addEventListener('keydown', alPulsarTecla);
     root.querySelector('.rep-modal-fondo').addEventListener('click', cerrar);
     root.querySelector('.rep-modal-cerrar').addEventListener('click', cerrar);
@@ -779,7 +791,9 @@
       paso2(String(placaInicial).trim().toUpperCase());
     } else {
       boton.onclick = function () { paso2(); };
-      setTimeout(function () { if (boton) boton.focus(); }, 50);
+      setTimeout(function () {
+        if (root.isConnected) root.querySelector('.rep-modal-cerrar').focus({ preventScroll: true });
+      }, 50);
     }
   }
 

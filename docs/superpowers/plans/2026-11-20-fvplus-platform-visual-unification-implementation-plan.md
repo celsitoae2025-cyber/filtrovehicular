@@ -1,0 +1,9 @@
+# FV+: unificación visual de la plataforma
+
+Solicitud: analizar y mejorar la plataforma usando el estilo aprobado del acceso y registro. Mantener todo local y conservar las mejoras ya aprobadas del login.
+
+1. Inventariar Consultar, Resumen, Historial, Mis vehículos, Pagos, Cuenta y Regiones; revisar administración y páginas auxiliares de pago, verificación y emisor. Capturar referencias con datos ficticios en navegador aislado. Interceptar servicios y mutaciones: sin consultas pagadas, compras, mensajes ni cambios de datos reales.
+2. Añadir una hoja final `css/plataforma.css` con una paleta compartida de gris claro, blanco, negro y amarillo. Aplicar tarjetas de 20 px, campos suaves de 14 px, botones en cápsula, foco de un solo borde, estados activos claros y espacios uniformes. Limitarla al área interna y páginas auxiliares; conservar el login y los documentos PDF/impresión.
+3. Reorganizar catálogo, destacados, servicios registrales, saldo, paquetes, actividad y formularios con jerarquía visual consistente. Conservar identificadores, catálogos, precios, imágenes oficiales y lógica de los controles. Corregir problemas funcionales o de disposición que se reproduzcan durante la revisión.
+4. Aplicar los mismos componentes a administración: cabecera, pestañas, filtros, tablas, formularios, modales y acciones. Mantener estados de carga, vacíos y errores legibles. Revisar el ajuste en escritorio, tableta y celular, sin desbordamientos ni superposición de controles.
+5. Actualizar referencias y caché. Ejecutar pruebas existentes, comprobar búsqueda/categorías/selección de consulta, navegación, historial, placas, edición de datos, pagos y diálogos mediante respuestas locales simuladas. Revisar capturas, foco y controles accesibles; repetir la verificación del login para detectar regresiones. Entregar resumen de cambios y límites de las pruebas, sin publicación.
