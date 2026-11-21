@@ -163,3 +163,21 @@ test('un fallo al leer la sesión no deja bloqueadas búsquedas posteriores', as
   await s.elements['filter-consultar'].click();
   assert.equal(s.calls.runner, 1);
 });
+
+test('la espera muestra un estado accesible y se reemplaza al recibir el resultado', async () => {
+  let deliver;
+  const pending = new Promise(resolve => { deliver = resolve; });
+  const s = await search({ run: () => pending });
+  s.elements['filter-input'].value = 'ABC123';
+  const running = s.elements['filter-consultar'].click();
+  for (let i = 0; i < 10; i++) await Promise.resolve();
+  assert.match(s.elements['filter-result-body'].innerHTML, /fv-query-loading/);
+  assert.match(s.elements['filter-result-body'].innerHTML, /role="status"/);
+  assert.equal(s.elements['filter-result'].hidden, false);
+  assert.equal(s.elements['filter-consultar'].disabled, true);
+  deliver({ parsed: { raw: 'PLACA ABC123, resultado de la prueba local.', secciones: [], medios: [] }, costo_deducido: 0 });
+  await running;
+  assert.doesNotMatch(s.elements['filter-result-body'].innerHTML, /fv-query-loading/);
+  assert.equal(s.elements['filter-consultar'].disabled, false);
+  assert.equal(s.elements['filter-input'].disabled, false);
+});

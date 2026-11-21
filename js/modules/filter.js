@@ -838,12 +838,7 @@
     if (empty) empty.hidden = true;
     if (body) {
       body.hidden = false;
-      body.innerHTML =
-        '<div class="cr-loading">' +
-          '<div class="cr-spinner"></div>' +
-          '<div class="cr-loading-text">Consultando…</div>' +
-          '<div class="cr-loading-hint">Estamos recuperando los datos, puede demorar unos segundos.</div>' +
-        '</div>';
+      body.innerHTML = H.htmlConsultaCargando();
     }
     var status = $('filterResultStatus');
     if (status) {

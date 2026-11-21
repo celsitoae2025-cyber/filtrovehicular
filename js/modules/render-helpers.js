@@ -117,6 +117,18 @@
     });
   }
 
+  function htmlConsultaCargando() {
+    return '<div class="cr-loading fv-query-loading" role="status" aria-live="polite" aria-atomic="true">' +
+      '<div class="fv-query-document" aria-hidden="true">' +
+        '<svg viewBox="0 0 32 40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2h13l7 7v29H6zM19 2v8h7M11 17h10M11 23h10M11 29h6"/></svg>' +
+        '<span class="fv-query-scan"></span>' +
+      '</div>' +
+      '<div class="fv-query-copy"><strong class="cr-loading-text">Consultando información</strong>' +
+        '<p class="cr-loading-hint">El resultado aparecerá aquí en cuanto esté listo.</p></div>' +
+      '<div class="fv-query-progress" aria-hidden="true"><span></span></div>' +
+    '</div>';
+  }
+
   // Los proveedores suelen separar las palabras del nombre con guiones o
   // guiones bajos. Se normaliza el rótulo, la descarga y el visor; los bytes no cambian.
   function nombreLegibleArchivo(nombreArchivo) {
@@ -2957,6 +2969,7 @@
   }
 
   Consultia.RenderHelpers = {
+    htmlConsultaCargando:    htmlConsultaCargando,
     entrarModoResultado:     entrarModoResultado,
     salirModoResultado:      salirModoResultado,
     esErrorTecnico:          esErrorTecnico,

@@ -282,6 +282,8 @@
       // datos ANTES de tocar el bridge: comprueba que la reserva exista, sea
       // de este usuario, esté sin usar y sea reciente. Sin él responde 402.
       consulta_id: opts.consultaId || null,
+      // El contenido completo ya está en parsed. Evita enviar los adjuntos duplicados.
+      compactResponse: true,
     };
     if (opts.photo && opts.photo.base64) {
       body.photoBase64 = opts.photo.base64;
@@ -299,6 +301,11 @@
     // además suele ser un reporte que junta varias fuentes (SUNARP, denuncias,
     // papeletas, SOAT…), así que la segunda espera puede tardar bastante.
     var formato = consulta.respuesta_formato || {};
+    body.responseFormat = {
+      texto: formato.texto === true,
+      pdf: formato.pdf === true,
+      imagenes: typeof formato.imagenes === 'number' ? formato.imagenes : null,
+    };
     if (formato.auto_click) body.autoClick = formato.auto_click;
 
     var controller = new AbortController();
@@ -361,6 +368,7 @@
       // El bridge-proxy comprueba que sea del usuario y esté en curso; aquí
       // no se cobra nada, es la segunda fase de algo ya cobrado.
       consulta_id: opts.consultaId || ultimaConsultaId || null,
+      compactResponse: true,
     };
     var controller = new AbortController();
     var fetchTimeout = setTimeout(function () { controller.abort(); }, esperaBridge + 15000);
